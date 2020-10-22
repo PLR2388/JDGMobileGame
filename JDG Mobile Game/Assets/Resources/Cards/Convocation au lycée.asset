@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
+  m_Name: "Convocation au lyc\xE9e"
+  m_EditorClassIdentifier: 
+  nom: "Convocation au lyc\xE9e"
+  description: "N'oubliez votre justificatif de domicile et le ch\xE8que de 42\u20AC
+    pour la vie scolaire !"
+  descriptionDetaillee: "Cette carte vous permet d'attribuer la famille d'INVOCATION
+    affili\xE9e \xE0 votre TERRAIN \xE0 toutes les cartes INVOCATION pr\xE9sentes
+    sur votre terrain tant que cette carte y susbsiste. Vous pouvez la conserver
+    pour le tour suivant en sacrifiant 0.5 de vos \xE9toiles de vie \xE0 la fin de
+    chaque tour."
+  type: effect
+  materialCard: {fileID: 2100000, guid: 735aa2c824e3a9f42b3368545a3b0e98, type: 2}

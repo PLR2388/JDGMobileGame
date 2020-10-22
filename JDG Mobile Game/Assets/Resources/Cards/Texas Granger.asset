@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: Texas Granger
+  m_EditorClassIdentifier: 
+  nom: Texas Granger
+  description: La plus belle fille du... Attendez, mais c'est encore Benzaie ?!
+  descriptionDetaillee: "Toujours \xE0 l'heure et pourtant, deux semaines de retard.
+    D'o\xF9 l'absence d'effet bonus, sans doute..."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: 1ca3c02ff3a890a4bb3b6e1e555be2ff, type: 2}
+  attack: 2.5
+  defense: 2.5
+  family:
+  - sorcier
+  equipmentCard: {fileID: 0}

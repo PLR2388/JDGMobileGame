@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: Petite caille
+  m_EditorClassIdentifier: 
+  nom: Petite caille
+  description: Attends mon benzou. Je me fais le maillot !
+  descriptionDetaillee: "\xC7a va peut-\xEAtre t'\xE9tonner, mais m\xEAme ce corps
+    d'athl\xE8te ne t'apportera pas d'effet bonus."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: 1468df718e0ea6645b5e60e0af90104f, type: 2}
+  attack: 3
+  defense: 2.5
+  family:
+  - hardcorner
+  equipmentCard: {fileID: 0}

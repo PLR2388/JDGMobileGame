@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
+  m_Name: Armure trop lourde
+  m_EditorClassIdentifier: 
+  nom: Armure trop lourde
+  description: Quoi ?! Game Over ?!!
+  descriptionDetaillee: "La DEF de l'INVOCATION \xE9quip\xE9e est multipli\xE9e par
+    deux, mais elle ne peut plus attaquer tant que cette carte lui est \xE9quip\xE9e."
+  type: equipment
+  materialCard: {fileID: 2100000, guid: 66890f93fe8ac1a489df592dcb787c23, type: 2}

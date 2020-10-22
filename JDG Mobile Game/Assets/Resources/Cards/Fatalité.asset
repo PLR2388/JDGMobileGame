@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
+  m_Name: "Fatalit\xE9"
+  m_EditorClassIdentifier: 
+  nom: "Fatalit\xE9"
+  description: "\xAB Benzaie wins. \xBB. NOTE: c'est un pav\xE9 de saumon \xE0 l'image"
+  descriptionDetaillee: "S'il reste \xE0 votre adversaire moins de 5 \xE9toiles de
+    vie, vous pouvez les attaquer directement avec une de vos cartes INVOCATION pendant
+    ce tour."
+  type: effect
+  materialCard: {fileID: 2100000, guid: 0b84674589530ed4c95e0a7cd3587104, type: 2}

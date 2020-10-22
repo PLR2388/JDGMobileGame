@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: Revers du droit
+  m_EditorClassIdentifier: 
+  nom: Revers du droit
+  description: "Apparemment \xE7a parle de tennis."
+  descriptionDetaillee: "Si une INVOCATION adverse attaque une de vos cartes INVOCATION
+    sur le terrain ou directement vos \xE9toiles de vie, la puissance de son attaque
+    est multipli\xE9e par 2 et lui est renvoy\xE9e."
+  type: contre
+  materialCard: {fileID: 2100000, guid: f5bd9ae8d674f2d42bdc01ff6556d51b, type: 2}

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: Crotte de nez
+  m_EditorClassIdentifier: 
+  nom: Crotte de nez
+  description: Cadeau de la maison, joie du patron.
+  descriptionDetaillee: "Si votre adversaire invoque une ou plusieurs cartes INVOCATION
+    lors de ce tour, vous pouvez lui soustraire 3 \xE9toiles de vie par carte invoqu\xE9e."
+  type: contre
+  materialCard: {fileID: 2100000, guid: ec2fa65ac39c96d40ad260cdc9f880fd, type: 2}

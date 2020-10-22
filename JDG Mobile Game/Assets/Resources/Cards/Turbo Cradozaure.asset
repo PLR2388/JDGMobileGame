@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
+  m_Name: Turbo Cradozaure
+  m_EditorClassIdentifier: 
+  nom: Turbo Cradozaure
+  description: "Il d\xE9truit tous ses ennemis en leur vomissant dessus !"
+  descriptionDetaillee: "L'INVOCATION \xE9quip\xE9e obtient la capacit\xE9 de pouvoir
+    attaquer directement les \xE9toiles de vie m\xEAme si d'autres cartes INVOCATION
+    sont pr\xE9sentes sur le terrain, et elle est prot\xE9g\xE9e par cette carte
+    en cas de destruction, auquel cas c'est cette carte qui sera d\xE9truite \xE0
+    la place de la carte INVOCATION \xE9quip\xE9e."
+  type: equipment
+  materialCard: {fileID: 2100000, guid: 64c30c6c3cf591c498b702a143f8934a, type: 2}

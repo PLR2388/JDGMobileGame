@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: Inspecteur Magret
+  m_EditorClassIdentifier: 
+  nom: Inspecteur Magret
+  description: Une carte assez chouette... 'Chouette', z'avez compris ?
+  descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'aller
+    chercher dans votre pioche la carte \xAB Canard-signal \xBB pour l'ajouter \xE0
+    votre main."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: 51871a87da1812046919d4237280c02b, type: 2}
+  attack: 2
+  defense: 2
+  family:
+  - comics
+  - police
+  equipmentCard: {fileID: 0}

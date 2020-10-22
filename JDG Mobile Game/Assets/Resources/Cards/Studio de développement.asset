@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
+  m_Name: "Studio de d\xE9veloppement"
+  m_EditorClassIdentifier: 
+  nom: "Studio de d\xE9veloppement"
+  description: "La vie de d\xE9veloppeur, c'est pas toujours facile !"
+  descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB D\xE9veloppeur
+    \xBB sur ce terrain perdent 0.5 \xE9toile d'ATQ et gagnent 1.5 \xE9toile de DEF.
+    Si les cartes \xAB Jean-Michel Bruitages \xBB et/ou \xAB Le Patron d'infogrammes
+    \xBB sont invoqu\xE9s sur ce terrain, leur famille de base est remplac\xE9e par
+    \xAB D\xE9veloppeur \xBB."
+  type: field
+  materialCard: {fileID: 2100000, guid: 5cfa96f2ed49284499d2fde7687e4821, type: 2}

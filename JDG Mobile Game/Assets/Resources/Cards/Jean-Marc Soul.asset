@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: Jean-Marc Soul
+  m_EditorClassIdentifier: 
+  nom: Jean-Marc Soul
+  description: Je suis mort 34 fois pour traverser la rue. C'est la vie.
+  descriptionDetaillee: "Chaque fois que cette carte est envoy\xE9e \xE0 la poubelle
+    jaune, elle revient dans la main de son propri\xE9taire."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: bb984dd9e5cfb9a459ec79c5b4745298, type: 2}
+  attack: 1
+  defense: 1
+  family:
+  - rpg
+  - hardcorner
+  equipmentCard: {fileID: 0}

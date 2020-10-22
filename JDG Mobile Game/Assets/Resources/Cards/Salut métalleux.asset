@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: "Salut m\xE9talleux"
+  m_EditorClassIdentifier: 
+  nom: "Salut m\xE9talleux"
+  description: Saluez-moi en bonne et due forme !
+  descriptionDetaillee: "Si une INVOCATION adverse attaque une carte INVOCATION de
+    votre terrain, son attaque est annul\xE9e et l'INVOCATION qui a lanc\xE9 l'attaque
+    passe de votre c\xF4t\xE9 du terrain s'il y a un emplacement libre, ce qui vous
+    permet d'en prendre le contr\xF4le jusqu'\xE0 la fin du prochain tour."
+  type: contre
+  materialCard: {fileID: 2100000, guid: c00766f8d1aa73e418a83df57df0164f, type: 2}

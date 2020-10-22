@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
+  m_Name: Petite culotte
+  m_EditorClassIdentifier: 
+  nom: Petite culotte
+  description: "Taille 12 ans \xE9videmment."
+  descriptionDetaillee: "\xC9quiper cette carte \xE0 une invocation permet de lui
+    d\xE9s\xE9quiper et envoyer \xE0 la poubelle jaune une carte EQUIPEMENT d\xE9j\xE0
+    \xE9quip\xE9e."
+  type: equipment
+  materialCard: {fileID: 2100000, guid: 9998414d579eeff42a2ac03d8b125c87, type: 2}

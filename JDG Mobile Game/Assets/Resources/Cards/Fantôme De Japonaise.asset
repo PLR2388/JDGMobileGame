@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: "Fant\xF4me De Japonaise"
+  m_EditorClassIdentifier: 
+  nom: "Fant\xF4me De Japonaise"
+  description: Attende, c'est pas Benzaie ?
+  descriptionDetaillee: "Et si tu arrives \xE0 imiter sa voix en posant cette carte,
+    eh bien super ! Mais tu ne gagnes rien de particulier..."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: 37cbfe955d81b634c82532e61a3abc0a, type: 2}
+  attack: 3
+  defense: 2
+  family:
+  - japon
+  - incarnation
+  equipmentCard: {fileID: 0}

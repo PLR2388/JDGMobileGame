@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: Le triple dwa
+  m_EditorClassIdentifier: 
+  nom: Le triple dwa
+  description: "\xC0 utiliser dans toutes les situations !"
+  descriptionDetaillee: "Jouable \xE0 la fin du tour en cours. Faites l'invocation
+    sp\xE9ciale sur votre terrain d'un maximum de trois de vos cartes INVOCATIONS
+    envoy\xE9es \xE0 la poubelle jaune pendant ce tour."
+  type: contre
+  materialCard: {fileID: 2100000, guid: d2d47b4e4983f6140885d631bbeec8a3, type: 2}

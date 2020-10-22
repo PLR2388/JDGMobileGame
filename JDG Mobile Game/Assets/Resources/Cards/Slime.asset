@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: Slime
+  m_EditorClassIdentifier: 
+  nom: Slime
+  description: "Tu peux faire un pr\xE9l\xE9vement ?"
+  descriptionDetaillee: "Si votre adversaire joue une carte quelle qu'elle soit vous
+    pouvez annuler cette action et la renvoyer dans sa main, l'emp\xEAchant de la
+    jouer avant le tour suivant."
+  type: contre
+  materialCard: {fileID: 2100000, guid: bdaa3239e4bb75c4fb9afca2ce212368, type: 2}

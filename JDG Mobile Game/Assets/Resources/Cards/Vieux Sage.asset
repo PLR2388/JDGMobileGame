@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: Vieux Sage
+  m_EditorClassIdentifier: 
+  nom: Vieux Sage
+  description: "Pour m\xE9diter avec lui, appelez le 0835837512 num\xE9ro payant
+    1,30\u20AC/min."
+  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
+    le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant la carte \xAB
+    Seb Du Grenier \xBB sur le TERRAIN \xAB For\xEAt des elfes sylvains \xBB."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: 2434d98821f186d4b9811658b1daad4e, type: 2}
+  attack: 4
+  defense: 5
+  family:
+  - rpg
+  equipmentCard: {fileID: 0}

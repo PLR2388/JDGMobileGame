@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: La Mort
+  m_EditorClassIdentifier: 
+  nom: La Mort
+  description: Mdr !
+  descriptionDetaillee: "Cette carte ne peut-\xEAtre invoqu\xE9e et subsister sur
+    votre terrain que si se trouvent au moins 10 cartes INVOCATION dans votre poubelle
+    jaune. Invoquer cette carte vous permet le tour de son invocation d'envoyer une
+    carte INVOCATION du terrain de votre adversaire \xE0 la poubelle jaune."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: e8a1aa1aba87cb447847ca9e161400d7, type: 2}
+  attack: 2.5
+  defense: 4
+  family:
+  - incarnation
+  equipmentCard: {fileID: 0}

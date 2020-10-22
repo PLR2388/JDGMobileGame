@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: Mohammad
+  m_EditorClassIdentifier: 
+  nom: Mohammad
+  description: "J'esp\xE8re que Jeannot ne nous a pas pos\xE9... un lapin !"
+  descriptionDetaillee: "Si cette carte est invoqu\xE9e sur votre TERRAIN \xAB Studio
+    de d\xE9veloppement \xBB et que vous y sacrifiez une carte \xAB Joueur du Grenier
+    \xBB, ses statistiques passent \xE0 4.5 d'ATQ et 4.5 de DEF."
+  type: invocation
+  materialCard: {fileID: 2100000, guid: 1a6f473562793ff48a98ce516b996c63, type: 2}
+  attack: 2
+  defense: 2
+  family:
+  - "d\xE9veloppeur"
+  equipmentCard: {fileID: 0}

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
+  m_Name: "Pains aux raisins \xE0 la place des mains"
+  m_EditorClassIdentifier: 
+  nom: "Pains aux raisins \xE0 la place des mains"
+  description: "C'est qu'une petite carte. Y'a 150 endroits o\xF9 elle pourrait se
+    la mettre !"
+  descriptionDetaillee: "D\xE9truit une carte EQUIPEMENT pr\xE9sente sur le terrain."
+  type: effect
+  materialCard: {fileID: 2100000, guid: 957f0da8efb28854e90237c6b316f754, type: 2}

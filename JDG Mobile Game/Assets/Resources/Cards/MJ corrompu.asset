@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
+  m_Name: MJ corrompu
+  m_EditorClassIdentifier: 
+  nom: MJ corrompu
+  description: Cette carte chitineuse vous scrute avec un regard carnassier.
+  descriptionDetaillee: "Vous permet de regarder les cinq premi\xE8res cartes d'une
+    des pioches du terrain et de les remettre dans l'ordre que vous souhaitez."
+  type: effect
+  materialCard: {fileID: 2100000, guid: 58e3bb38ec43ece478b0349008f26b6d, type: 2}

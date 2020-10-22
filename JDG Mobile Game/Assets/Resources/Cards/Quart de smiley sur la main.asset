@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
+  m_Name: Quart de smiley sur la main
+  m_EditorClassIdentifier: 
+  nom: Quart de smiley sur la main
+  description: "S'accompagne en g\xE9n\xE9ral d'un dicours sur l'amiti\xE9."
+  descriptionDetaillee: "Les \xE9toiles de DEF des cartes INVOCATION de votre adversaire
+    sont divis\xE9es par 2 pour ce tour."
+  type: effect
+  materialCard: {fileID: 2100000, guid: 72d3875769182c545a92ac6d1d8e1f17, type: 2}

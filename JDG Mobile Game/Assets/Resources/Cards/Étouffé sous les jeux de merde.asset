@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: "\xC9touff\xE9 sous les jeux de merde"
+  m_EditorClassIdentifier: 
+  nom: "\xC9touff\xE9 sous les jeux de merde"
+  description: Mon p'tit gars ?!
+  descriptionDetaillee: "Si une INVOCATION adverse attaque une de vos cartes INVOCATION
+    sur le terrain ou directement vos \xE9toiles de vie, vous pouvez annuler son
+    attaque et l'envoyer directement \xE0 la poubelle jaune en vous d\xE9faussant
+    d'une carte de votre main."
+  type: contre
+  materialCard: {fileID: 2100000, guid: 9ff40a80b884dd641857814eeb237533, type: 2}

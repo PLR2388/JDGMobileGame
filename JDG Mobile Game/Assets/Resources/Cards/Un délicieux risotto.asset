@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
+  m_Name: "Un d\xE9licieux risotto"
+  m_EditorClassIdentifier: 
+  nom: "Un d\xE9licieux risotto"
+  description: "Ajoutez du poivre... Et voil\xE0 c'est pr\xEAt !"
+  descriptionDetaillee: "Sacrifiez une INVOCATION de votre terrain ayant au moins
+    5 \xE9toiles d'ATQ ou de DEF pour r\xE9cup\xE9rer l'int\xE9gralit\xE9 de vos
+    \xE9toiles de vie."
+  type: effect
+  materialCard: {fileID: 2100000, guid: e75ce7d42c59bcb4194fc7f32b30be64, type: 2}

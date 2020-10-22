@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
+  m_Name: Cicatrice maudite
+  m_EditorClassIdentifier: 
+  nom: Cicatrice maudite
+  description: "La douleur me signale la pr\xE9sence d'un jeu de merde de puissance
+    5 !"
+  descriptionDetaillee: "Tant qu'une des cartes INVOCATION pr\xE9sentes sur votre
+    terrain est \xE9quip\xE9e de cette carte, les cartes INVOCATION de votre adversaire
+    ne peuvent pas attaquer lors de leur tour d'invocation."
+  type: equipment
+  materialCard: {fileID: 2100000, guid: b97feb45a60777b41a3c7ef2b07621cf, type: 2}

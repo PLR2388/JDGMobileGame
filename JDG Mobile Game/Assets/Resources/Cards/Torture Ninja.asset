@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
+  m_Name: Torture Ninja
+  m_EditorClassIdentifier: 
+  nom: Torture Ninja
+  description: Une carte de merde qui va vous faire mal au cul.
+  descriptionDetaillee: "Votre adversaire perd 1 \xE9toile de vie pour chaque carte
+    de sa main."
+  type: effect
+  materialCard: {fileID: 2100000, guid: 8b31b0d47749aa74683eede15fe83ab0, type: 2}

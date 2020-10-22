@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: Injonction du tribunal
+  m_EditorClassIdentifier: 
+  nom: Injonction du tribunal
+  description: "Pour vous emp\xEAcher de faire cette blague."
+  descriptionDetaillee: "D\xE9faussez une carte de votre main pour annuler l'activation
+    d'une carte brillante jou\xE9e par votre adversaire et l'envoyer \xE0 la poubelle
+    jaune."
+  type: contre
+  materialCard: {fileID: 2100000, guid: 95d33fdb89cc0df459ba978860360c54, type: 2}

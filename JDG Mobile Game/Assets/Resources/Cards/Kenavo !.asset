@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
+  m_Name: Kenavo !
+  m_EditorClassIdentifier: 
+  nom: Kenavo !
+  description: "Sort d'attaque classique du Lyc\xE9e George Pompidou."
+  descriptionDetaillee: "Si une carte INVOCATION de votre adversaire lance une attaque
+    sur l'une des v\xF4tres, vous pouvez suspendre cette attaque pour en lancer une
+    avant avec une de vos cartes INVOCATION. Si l'INVOCATION adverse est d\xE9truite
+    par cette attaque, l'attaque d'origine suspendue est annul\xE9e."
+  type: contre
+  materialCard: {fileID: 2100000, guid: 71291704f20827a49bfefe570ea28504, type: 2}
