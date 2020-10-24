@@ -20,6 +20,7 @@ MonoBehaviour:
     Seb Du Grenier \xBB sur le TERRAIN \xAB For\xEAt des elfes sylvains \xBB."
   type: invocation
   materialCard: {fileID: 2100000, guid: 2434d98821f186d4b9811658b1daad4e, type: 2}
+  collector: 1
   attack: 4
   defense: 5
   family:

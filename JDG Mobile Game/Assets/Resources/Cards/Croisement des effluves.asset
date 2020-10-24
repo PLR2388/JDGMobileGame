@@ -19,3 +19,4 @@ MonoBehaviour:
     pour pouvoir d\xE9truire toutes les cartes pr\xE9sentes sur le terrain."
   type: effect
   materialCard: {fileID: 2100000, guid: 2909f2ef20210054bb29a3ac4d116cd5, type: 2}
+  collector: 1

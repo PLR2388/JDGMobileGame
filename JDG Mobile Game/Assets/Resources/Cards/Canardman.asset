@@ -19,6 +19,7 @@ MonoBehaviour:
     Joueur Du Grenier \xBB \xE9quip\xE9 d'une carte \xAB Canarang \xBB."
   type: invocation
   materialCard: {fileID: 2100000, guid: de4c31eed23f03841bcdbdc4d24abd86, type: 2}
+  collector: 1
   attack: 5
   defense: 4
   family:

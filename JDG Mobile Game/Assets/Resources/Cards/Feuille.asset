@@ -18,3 +18,4 @@ MonoBehaviour:
     n'importe quelle carte sur votre terrain ou celui de votre adversaire."
   type: effect
   materialCard: {fileID: 2100000, guid: 7160e52962ceeb9468bd287634713f17, type: 2}
+  collector: 1

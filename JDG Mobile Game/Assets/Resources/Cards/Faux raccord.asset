@@ -20,3 +20,4 @@ MonoBehaviour:
     est d\xE9truite."
   type: effect
   materialCard: {fileID: 2100000, guid: d8427a05ef6be4548a621aa63c4ea121, type: 2}
+  collector: 1

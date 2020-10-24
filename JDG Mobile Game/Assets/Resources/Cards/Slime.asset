@@ -19,3 +19,4 @@ MonoBehaviour:
     jouer avant le tour suivant."
   type: contre
   materialCard: {fileID: 2100000, guid: bdaa3239e4bb75c4fb9afca2ce212368, type: 2}
+  collector: 1

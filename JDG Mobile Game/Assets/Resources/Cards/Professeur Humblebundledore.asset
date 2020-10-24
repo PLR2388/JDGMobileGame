@@ -20,6 +20,7 @@ MonoBehaviour:
     \xBB."
   type: invocation
   materialCard: {fileID: 2100000, guid: 259d58188dfb5ec4bada0b35ab6af22a, type: 2}
+  collector: 1
   attack: 5
   defense: 4
   family:

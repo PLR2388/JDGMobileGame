@@ -19,3 +19,4 @@ MonoBehaviour:
     l'utilisation de cartes CONTRE pendant ce tour."
   type: effect
   materialCard: {fileID: 2100000, guid: 3abe17bf55a617c458c963d1ba258927, type: 2}
+  collector: 1

@@ -10,9 +10,15 @@ public class Card : ScriptableObject
     [SerializeField] protected string descriptionDetaillee;
     [SerializeField] protected string type;
     [SerializeField] protected Material materialCard;
+    [SerializeField] protected bool collector;
 
     public Material GetMaterialCard()
     {
         return materialCard;
+    }
+
+    public string GetNom()
+    {
+        return nom;
     }
 }

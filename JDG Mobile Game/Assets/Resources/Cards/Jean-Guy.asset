@@ -20,6 +20,7 @@ MonoBehaviour:
     3 d'ATQ ou de DEF."
   type: invocation
   materialCard: {fileID: 2100000, guid: e7be0338302b8ae49b51c3660ecc9cba, type: 2}
+  collector: 1
   attack: 4
   defense: 5
   family:

@@ -19,3 +19,4 @@ MonoBehaviour:
     ce tour vont directement \xE0 la poubelle jaune."
   type: contre
   materialCard: {fileID: 2100000, guid: 618ebd11d5dcbdd4785eca92de543093, type: 2}
+  collector: 1

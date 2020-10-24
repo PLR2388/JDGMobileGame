@@ -19,3 +19,4 @@ MonoBehaviour:
     jaune."
   type: contre
   materialCard: {fileID: 2100000, guid: 95d33fdb89cc0df459ba978860360c54, type: 2}
+  collector: 1

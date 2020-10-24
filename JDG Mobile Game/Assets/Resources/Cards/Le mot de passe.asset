@@ -18,3 +18,4 @@ MonoBehaviour:
     ou votre poubelle jaune pour l'ajouter \xE0 votre main."
   type: effect
   materialCard: {fileID: 2100000, guid: f83339aec693bae48b514fd477c99fbd, type: 2}
+  collector: 1

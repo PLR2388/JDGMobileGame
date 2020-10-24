@@ -18,3 +18,4 @@ MonoBehaviour:
     3 et sa DEF passe \xE0 0 \xE9toile."
   type: equipment
   materialCard: {fileID: 2100000, guid: 9e8a8278007e57745a962c7af3c9ba7a, type: 2}
+  collector: 1

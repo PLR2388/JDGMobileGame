@@ -19,6 +19,7 @@ MonoBehaviour:
     Joueur Du Grenier \xBB sur le TERRAIN \xAB For\xEAt des elfes sylvains \xBB."
   type: invocation
   materialCard: {fileID: 2100000, guid: 10c86aff4e7499d4d9d6a56c5fb2d39b, type: 2}
+  collector: 1
   attack: 5
   defense: 4
   family:

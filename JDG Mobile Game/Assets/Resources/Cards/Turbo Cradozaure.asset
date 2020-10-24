@@ -21,3 +21,4 @@ MonoBehaviour:
     la place de la carte INVOCATION \xE9quip\xE9e."
   type: equipment
   materialCard: {fileID: 2100000, guid: 64c30c6c3cf591c498b702a143f8934a, type: 2}
+  collector: 1

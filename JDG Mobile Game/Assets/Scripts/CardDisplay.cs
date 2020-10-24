@@ -30,6 +30,10 @@ private Image image;
             {
                 image.material = card.GetMaterialCard();
             }
+            else
+            {
+                image.material = defaultMaterial;
+            }
         }
     }
 }

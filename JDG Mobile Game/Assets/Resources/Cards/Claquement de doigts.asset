@@ -17,3 +17,4 @@ MonoBehaviour:
   descriptionDetaillee: "Annule une carte CONTRE et l'envoie \xE0 la poubelle jaune."
   type: contre
   materialCard: {fileID: 2100000, guid: 95176ad67479f6c42b596910edea228d, type: 2}
+  collector: 1
