@@ -19,9 +19,6 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private GameObject miniMenuCard;
     [SerializeField] private GameObject detailCardPanel;
     [SerializeField] private GameObject detailButtonText;
-    [SerializeField] private GameObject putCardButtonText;
-    [SerializeField] private GameObject putCardButton;
-    [SerializeField] private GameObject detailCardButton;
     [SerializeField] private GameObject inHandButton;
     [SerializeField] private Card currentSelectedCard;
     
@@ -48,8 +45,8 @@ public class InGameMenuScript : MonoBehaviour
         }
         else
         {
-            miniMenuCard.transform.position = mousePosition + padding;
             miniMenuCard.SetActive(true);
+            miniMenuCard.transform.position = mousePosition + padding;
         }
 #endif
     }

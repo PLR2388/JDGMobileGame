@@ -35,4 +35,9 @@ public class InvocationCard : Card
     {
         return defense;
     }
+
+    public EquipmentCard getEquipmentCard()
+    {
+        return equipmentCard;
+    }
 }

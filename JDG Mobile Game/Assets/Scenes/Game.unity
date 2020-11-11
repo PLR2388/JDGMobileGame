@@ -307,7 +307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &128609971
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3190,9 +3190,6 @@ MonoBehaviour:
   miniMenuCard: {fileID: 1989458480}
   detailCardPanel: {fileID: 128609970}
   detailButtonText: {fileID: 1617317194}
-  putCardButtonText: {fileID: 2122246937}
-  putCardButton: {fileID: 1930089324}
-  detailCardButton: {fileID: 748373745}
   inHandButton: {fileID: 829748139}
   currentSelectedCard: {fileID: 0}
 --- !u!1 &1928831686
@@ -3450,7 +3447,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1989458481
 RectTransform:
   m_ObjectHideFlags: 0
