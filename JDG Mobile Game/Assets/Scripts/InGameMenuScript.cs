@@ -1,17 +1,86 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityEngine.XR;
+
+[System.Serializable]
+public class CardEvent : UnityEvent<Card>
+{
+}
 
 public class InGameMenuScript : MonoBehaviour
 {
-    [SerializeField] private GameObject ButtonText;
-    [SerializeField] private GameObject HandScreen;
+    [SerializeField] private GameObject buttonText;
+    [SerializeField] private GameObject handScreen;
+    [SerializeField] private GameObject miniMenuCard;
+    [SerializeField] private GameObject detailCardPanel;
+    [SerializeField] private GameObject detailButtonText;
+    [SerializeField] private GameObject putCardButtonText;
+    [SerializeField] private GameObject putCardButton;
+    [SerializeField] private GameObject detailCardButton;
+    [SerializeField] private GameObject inHandButton;
+    [SerializeField] private Card currentSelectedCard;
+    
+    public static CardEvent EventClick = new CardEvent();
 
-    public void Click()
+    private Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
+    private Vector3 padding = new Vector3(490,-350,0);
+ private void Start()
     {
-        if (HandScreen.activeSelf)
+        miniMenuCard.SetActive(false);
+        detailCardPanel.SetActive(false);
+        EventClick.AddListener(ClickOnCard);
+    }
+
+    public void ClickOnCard(Card card)
+    {
+        currentSelectedCard = card;
+#if UNITY_EDITOR
+        Vector3 mousePosition = Input.mousePosition;
+	    
+        if (miniMenuCard.activeSelf)
+        {
+            miniMenuCard.transform.position = mousePosition + padding;
+        }
+        else
+        {
+            miniMenuCard.transform.position = mousePosition + padding;
+            miniMenuCard.SetActive(true);
+        }
+#endif
+    }
+
+    public void DetailCardClick()
+    {
+        if (detailCardPanel.activeSelf)
+        {
+           detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Détails";
+           miniMenuCard.SetActive(false);
+           detailCardPanel.SetActive(false);
+           handScreen.SetActive(true);
+           inHandButton.SetActive(true);
+        }
+        else
+        {
+            handScreen.SetActive(false);
+
+            miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640,360);
+            
+            detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Retour";
+            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard;
+            detailCardPanel.SetActive(true);
+            inHandButton.SetActive(false);
+        }
+
+    }
+
+    public void ClickHandCard()
+    {
+        if (handScreen.activeSelf)
         {
             HideHand();
         }
@@ -23,13 +92,15 @@ public class InGameMenuScript : MonoBehaviour
 
     private void DisplayHand()
     {
-        HandScreen.SetActive(true);
-        ButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Retour";
+        handScreen.SetActive(true);
+        buttonText.GetComponent<TMPro.TextMeshProUGUI>().text="Retour";
     }
 
     private void HideHand()
     {
-        HandScreen.SetActive(false);
-        ButtonText.GetComponent<TextMeshProUGUI>().SetText("Cartes en main");
+        miniMenuCard.SetActive(false);
+        detailCardPanel.SetActive(false);
+        handScreen.SetActive(false);
+        buttonText.GetComponent<TextMeshProUGUI>().SetText("Cartes en main");
     }
 }

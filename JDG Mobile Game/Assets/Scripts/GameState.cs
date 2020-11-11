@@ -12,6 +12,9 @@ public class GameState : MonoBehaviour
     
     private static GameState _instance;
 
+    public static String BUTTON_TAG = "Buttons";
+    public static String DETAIL_TAG = "Detail";
+
     public static GameState Instance
     {
         get

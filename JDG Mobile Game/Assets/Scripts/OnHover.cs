@@ -2,16 +2,33 @@
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
- 
+using UnityEngine.SceneManagement;
+
 [RequireComponent(typeof(Image))]
 public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
  
     private Image image;
     private bool bIsSelected = false;
- 
+    private bool bIsInGame=false;
+
+
+
+
     void Start()
     {
         image = GetComponent<Image> ();
+    }
+    
+    void Update()
+    {
+        if (SceneManager.GetActiveScene () == SceneManager.GetSceneByName ("Game"))
+        {
+            bIsInGame = true;
+        }
+        else
+        {
+            bIsInGame = false;
+        }
     }
  
  
@@ -42,15 +59,23 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
  
     void OnClick()
     {
-        if (bIsSelected)
+        if(!bIsInGame)
         {
-            image.color=Color.white;
-            bIsSelected = false;
+            if (bIsSelected)
+            {
+                image.color=Color.white;
+                bIsSelected = false;
+            }
+            else
+            {
+                image.color=Color.green;
+                bIsSelected = true;
+            }
         }
         else
         {
-            image.color=Color.green;
-            bIsSelected = true;
+            Card currentCard = GetComponent<CardDisplay>().card;
+            InGameMenuScript.EventClick.Invoke(currentCard);
         }
     }
  

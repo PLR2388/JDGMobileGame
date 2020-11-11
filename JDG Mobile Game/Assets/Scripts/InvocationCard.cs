@@ -20,4 +20,19 @@ public class InvocationCard : Card
     {
         this.type = "invocation";
     }
+
+    public String[] GetFamily()
+    {
+        return family;
+    }
+
+    public float GetAttack()
+    {
+        return attack;
+    }
+
+    public float GetDefense()
+    {
+        return defense;
+    }
 }
