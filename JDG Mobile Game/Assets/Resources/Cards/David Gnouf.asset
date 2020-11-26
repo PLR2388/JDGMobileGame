@@ -19,8 +19,18 @@ MonoBehaviour:
     votre terrain."
   type: invocation
   materialCard: {fileID: 2100000, guid: 84dc4a483d3040f49ac9fe5fdcba2d60, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - "d\xE9veloppeur"
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 11400000, guid: 353c0e29cbc387e44b95cc9bd3060fc3,
+    type: 2}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

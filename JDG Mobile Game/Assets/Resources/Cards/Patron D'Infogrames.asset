@@ -26,3 +26,12 @@ MonoBehaviour:
   family:
   - monstre
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: 7374ccf0580b1ae46983df7d4ac45993,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

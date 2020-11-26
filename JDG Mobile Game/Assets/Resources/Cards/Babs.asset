@@ -20,9 +20,19 @@ MonoBehaviour:
     chaque autre carte INVOCATION de type \xAB Comics \xBB sur votre terrain."
   type: invocation
   materialCard: {fileID: 2100000, guid: 78bdfda30414e7146bd00b5c24c0370a, type: 2}
+  collector: 0
   attack: 1
   defense: 1
   family:
   - comics
   - police
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 11400000, guid: 566c4e9a6c916374ba4f0be5d31b0ed8,
+    type: 2}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

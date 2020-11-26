@@ -19,9 +19,19 @@ MonoBehaviour:
     votre main."
   type: invocation
   materialCard: {fileID: 2100000, guid: 51871a87da1812046919d4237280c02b, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - comics
   - police
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: a1a4f068ad2ef0b48a47a9808fc70a44,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

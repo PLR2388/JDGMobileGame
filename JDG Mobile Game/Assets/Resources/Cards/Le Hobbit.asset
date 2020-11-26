@@ -18,8 +18,18 @@ MonoBehaviour:
     la carte \xAB For\xEAt des elfes sylvains \xBB \xE0 votre main depuis votre pioche."
   type: invocation
   materialCard: {fileID: 2100000, guid: 0b22a56ed661c7b4582103de667bdd40, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - rpg
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: 2958c3ee7068f01488f2055623e96a3c,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

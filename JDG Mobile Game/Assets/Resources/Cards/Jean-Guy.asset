@@ -26,3 +26,12 @@ MonoBehaviour:
   family:
   - hardcorner
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: d3596293e9c214e40928604e1134f7fc,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

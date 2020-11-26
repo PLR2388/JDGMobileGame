@@ -40,7 +40,7 @@ public class GameState : MonoBehaviour
             DeckP1.Add(allCards[i]);
         }
 
-        for (int i = 0; i < 30; i++)
+        for (int i = 30; i < 60; i++)
         {
             DeckP2.Add(allCards[i]);
         }

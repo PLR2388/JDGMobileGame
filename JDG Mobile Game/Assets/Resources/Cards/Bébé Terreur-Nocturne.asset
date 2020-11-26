@@ -20,8 +20,19 @@ MonoBehaviour:
     le terrain tant qu'elle y est pr\xE9sente."
   type: invocation
   materialCard: {fileID: 2100000, guid: 635a085786f26a54faa5ff361c0b9815, type: 2}
+  collector: 0
   attack: 1
   defense: 1
   family:
   - monstre
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: 0c7932d7af677f74cb76134450bd1c48,
+    type: 2}
+  invocationPermEffect: {fileID: 11400000, guid: 5508c6bf58b63e8468b619da42e94a21,
+    type: 2}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

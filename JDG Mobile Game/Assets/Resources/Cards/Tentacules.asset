@@ -20,8 +20,19 @@ MonoBehaviour:
     peuvent pas attaquer d'autre carte que celle-ci."
   type: invocation
   materialCard: {fileID: 2100000, guid: 778f3bf8428a5f84da0f5f505129f3f8, type: 2}
+  collector: 0
   attack: 2.5
   defense: 4
   family:
   - japon
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: 517b2c377df6f744187950ca7821a55a,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 11400000, guid: 8e61308b80999504d8a131a8529b6aac,
+    type: 2}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

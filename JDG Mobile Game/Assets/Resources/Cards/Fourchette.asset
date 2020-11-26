@@ -18,8 +18,18 @@ MonoBehaviour:
     depuis votre pioche la carte \xAB Dresseur de Bidulmon \xBB."
   type: invocation
   materialCard: {fileID: 2100000, guid: ea2eb274b8afbe943b9589bd1b94a31f, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - japon
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: e4aba13b2d8b1a44d890c70718f8026c,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

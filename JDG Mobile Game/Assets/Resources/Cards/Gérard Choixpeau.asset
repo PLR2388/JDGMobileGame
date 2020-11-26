@@ -19,8 +19,18 @@ MonoBehaviour:
     \xE0 votre main."
   type: invocation
   materialCard: {fileID: 2100000, guid: 79a1cc355d3952b4b8fb92670c243a7f, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - sorcier
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: 206ff897f84f65841aefcaed4bb71cf2,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

@@ -19,8 +19,18 @@ MonoBehaviour:
     vous pouvez piocher deux cartes.
   type: invocation
   materialCard: {fileID: 2100000, guid: cf6541f0a44416f498fa9673bfbcfeea, type: 2}
+  collector: 0
   attack: 1.5
   defense: 1.5
   family:
   - hardcorner
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: ec0684c586def5340a79fe4a77441b00,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

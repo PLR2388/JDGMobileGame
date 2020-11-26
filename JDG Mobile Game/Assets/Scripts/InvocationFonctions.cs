@@ -1,156 +1,341 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Jobs;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class InvocationFonctions : MonoBehaviour
 {
-    [SerializeField] private GameObject previousPlayer;
-    [SerializeField] private GameObject currentPlayer;
-
-    private PlayerCards currentPlayerCards;
-    // Start is called before the first frame update
-    void Start()
+    private PlayerCards currentPlayerCard;
+    private GameObject P1;
+    private GameObject P2;
+    
+    public void Start()
     {
-        currentPlayerCards = currentPlayer.GetComponent<PlayerCards>();
+        GameLoop.ChangePlayer.AddListener(ChangePlayer);
+        InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
+        P1 = GameObject.Find("Player1");
+        P2 = GameObject.Find("Player2");
+        currentPlayerCard = P1.GetComponent<PlayerCards>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void ChangePlayer()
     {
-        if (currentPlayer != previousPlayer)
+        if (GameLoop.isP1Turn)
         {
-            previousPlayer = currentPlayer;
-            currentPlayerCards = currentPlayer.GetComponent<PlayerCards>();
+            currentPlayerCard = P1.GetComponent<PlayerCards>();
+        }
+        else
+        {
+            currentPlayerCard = P2.GetComponent<PlayerCards>();
         }
     }
 
-    bool isInvocationCardOnField(string invocationCardName)
+    private void PutInvocationCard(InvocationCard invocationCard)
     {
-        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-        for (int i = 0; i < invocationCards.Length; i++)
-        {
-            if (invocationCards[i].GetNom() == invocationCardName)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    bool isInvocationCardOfTheSameFamilyOnField(string currentCardName, string familyName)
-    {
-        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-        for (int i = 0; i < invocationCards.Length; i++)
+        if (currentPlayerCard.InvocationCards.Length < 4)
         {
             
-            if (invocationCards[i].GetNom() != currentCardName)
-            {
-                string[] families = invocationCards[i].GetFamily();
-                for (int j = 0; j < families.Length; j++)
-                {
-                    if (families[i] == familyName)
-                    {
-                        return true;
-                    }
-                }
-            }
         }
-
-        return false;
     }
 
-    bool isInvocationPossible(string necessaryInvocation, FieldCard necessaryField)
+    public void Shuffle(List<Card> cards)
     {
-        FieldCard fieldCard = currentPlayerCards.Field;
-
-        if (fieldCard.GetNom() == necessaryField.GetNom())
+        int deckSize = cards.Count;
+        for (int i = 0; i < deckSize; i++)
         {
-            InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-            for (int i = 0; i < invocationCards.Length; i++)
-            {
-                if (invocationCards[i].GetNom() == necessaryInvocation)
-                {
-                    return true;
-                }
-            }
-            List<Card> handCards = currentPlayerCards.handCards;
-            for(int i=0;i<handCards.Count;i++)
-            {
-                if (handCards[i].GetNom() == necessaryInvocation)
-                {
-                    return true;
-                }
-            }
+            Card tmp = cards[i];
+            int randomIndex = Random.Range(i, deckSize);
+            cards[i] = cards[randomIndex];
+            cards[randomIndex] = cards[i];
         }
-
-        return false;
     }
 
-    bool isInvocationPossible(string necessaryInvocation, EquipmentCard necessaryEquipment)
+    private static InvocationCard CheckSpecificCardOnField(string cardName,PlayerCards currentPlayerCards)
     {
+        bool found = false;
         InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-        bool foundInvocation = false;
-        
-        for (int i = 0; i < invocationCards.Length; i++)
-        {
-            if (invocationCards[i].GetNom() == necessaryInvocation)
-            {
-                if (invocationCards[i].getEquipmentCard().GetNom() == necessaryEquipment.GetNom())
-                {
-                    return true;
-                }
+        int size = invocationCards.Length;
+        InvocationCard invocationCard = null;
 
-                foundInvocation = true;
+        int j = 0;
+        while (j < size && !found)
+        {
+            if (invocationCards[j].GetNom() == cardName)
+            {
+                found = true;
+                invocationCard = invocationCards[j];
+            }
+
+            j++;
+        }
+
+        return invocationCard;
+    }
+
+    private static InvocationCard CheckSacrificeSpecificCard(string cardName,PlayerCards currentPlayerCards)
+    {
+        InvocationCard foundCard = null;
+        bool found = false;
+        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
+        int size = invocationCards.Length;
+        int j = 0;
+
+        while (j < size && !found)
+        {
+            if (invocationCards[j].GetNom() == cardName)
+            {
+                foundCard = invocationCards[j];
+                found = true;
+            }
+
+            j++;
+        }
+
+        return foundCard;
+    }
+
+    private static bool CheckSpecificEquipmentAttached(InvocationCard invocationCard, string equipmentName)
+    {
+        bool isChecked = false;
+        if (invocationCard)
+        {
+            if (invocationCard.getEquipmentCard())
+            {
+                isChecked = invocationCard.getEquipmentCard().GetNom() == equipmentName;
             }
         }
 
-        if (foundInvocation)
+        return isChecked;
+    }
+
+    private static bool CheckSpecificField(string fieldName,PlayerCards currentPlayerCards)
+    {
+        bool isCorrectField = false;
+        FieldCard fieldCard = currentPlayerCards.Field;
+        if (fieldCard)
         {
-            List<Card> handCards = currentPlayerCards.handCards;
-            for (int i = 0; i < handCards.Count; i++)
+            isCorrectField = fieldCard.GetNom() == fieldName;
+        }
+
+        return isCorrectField;
+    }
+
+    private static List<InvocationCard> CheckFamily(string familyName,PlayerCards currentPlayerCards)
+    {
+        List<InvocationCard> sameFamilyCards = new List<InvocationCard>();
+        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
+        foreach (var invocationCard in invocationCards)
+        {
+            string[] families = invocationCard.GetFamily();
+
+            foreach (var family in families)
             {
-                if (handCards[i] is EquipmentCard)
+                if (family == familyName)
                 {
-                    if (handCards[i].GetNom() == necessaryEquipment.GetNom())
-                    {
-                        return true;
-                    }
+                    sameFamilyCards.Add(invocationCard);
+                }
+            }
+        }
+
+        return sameFamilyCards;
+    }
+    
+    private static List<InvocationCard> CheckThreshold(bool isAttack,float value,PlayerCards currentPlayerCards)
+    {
+        List<InvocationCard> Threshold = new List<InvocationCard>();
+        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
+        if (isAttack)
+        {
+            foreach (var invocationCard in invocationCards)
+            {
+                if (invocationCard.GetAttack() >= value)
+                {
+                    Threshold.Add(invocationCard);
                 }
             }
         }
         else
         {
-            List<Card> handCards = currentPlayerCards.handCards;
-            for (int i = 0; i < handCards.Count; i++)
+            foreach (var invocationCard in invocationCards)
             {
-                if (handCards[i] is EquipmentCard)
+                if (invocationCard.GetDefense() >= value)
                 {
-                    if (handCards[i].GetNom() == necessaryEquipment.GetNom())
-                    {
-                        if (foundInvocation)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                else if (handCards[i] is InvocationCard)
-                {
-                    if (handCards[i].GetNom() == necessaryInvocation)
-                    {
-                        foundInvocation = true;
-                    }
+                    Threshold.Add(invocationCard);
                 }
             }
         }
-        return false;
-    }
-        
 
- 
-    
-    
-    
+        return Threshold;
+    }
+
+    static int checkNumberInvocationCardInYellowTrash(PlayerCards currentPlayerCards)
+    {
+        List<Card> trashCards = currentPlayerCards.YellowTrash;
+        int count = 0;
+        
+        foreach (var card in trashCards)
+        {
+            if (card.GetType() == "invocation")
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static bool isInvocationPossible(InvocationConditions conditions,string playerName)
+    {
+        GameObject player = GameObject.Find(playerName);
+        PlayerCards currentPlayerCard = player.GetComponent<PlayerCards>();
+        if (conditions == null)
+        {
+            return true;
+        }
+        else
+        {
+            List<Condition> cardConditions = conditions.Keys;
+            List<string> cardExplanation = conditions.Values;
+
+            InvocationCard specificCardFound = null;
+
+            List<InvocationCard> sacrificedCards = new List<InvocationCard>();
+
+            bool isInvocationPossible = true;
+
+            int i = 0;
+            while (i < cardConditions.Count && isInvocationPossible)
+            {
+                switch (cardConditions[i])
+                {
+                    case Condition.SpecificCardOnField:
+                    {
+                        string cardName = cardExplanation[i];
+                        InvocationCard invocationCard = CheckSpecificCardOnField(cardName,currentPlayerCard);
+                        isInvocationPossible = (invocationCard != null);
+                    }
+                        break;
+                    case Condition.SacrificeSpecificCard:
+                    {
+                        string cardName = cardExplanation[i];
+                        if (!specificCardFound)
+                        {
+                            specificCardFound = CheckSacrificeSpecificCard(cardName,currentPlayerCard);
+                            isInvocationPossible = specificCardFound != null;
+                        }
+                    }
+                        break;
+                    case Condition.SpecificEquipmentAttached:
+                    {
+                        string equipmentName = cardExplanation[i];
+                        isInvocationPossible = CheckSpecificEquipmentAttached(specificCardFound, equipmentName);
+                    }
+                        break;
+                    case Condition.SpecificField:
+                    {
+                        string fieldName = cardExplanation[i];
+                        isInvocationPossible = CheckSpecificField(fieldName,currentPlayerCard);
+                    }
+                        break;
+                    case Condition.SacrificeFamily:
+                    {
+                        string familyName = cardExplanation[i];
+                        sacrificedCards = CheckFamily(familyName,currentPlayerCard);
+                        isInvocationPossible = sacrificedCards.Count > 0;
+                    }
+                        break;
+                    case Condition.SpecificFamilyOnField:
+                    {
+                        string familyName = cardExplanation[i];
+                        sacrificedCards = CheckFamily(familyName,currentPlayerCard);
+                        isInvocationPossible = sacrificedCards.Count > 0;
+                    }
+                        break;
+                    case Condition.NumberCard:
+                    {
+                        int numberCard = Int32.Parse(cardExplanation[i]);
+                        if (sacrificedCards.Count > 0)
+                        {
+                            isInvocationPossible = sacrificedCards.Count >= numberCard;
+                        }
+                        else
+                        {
+                            isInvocationPossible = false;
+                        }
+                    }
+                        break;
+                    case Condition.SacrificeThresholdATK: 
+                    {
+                        float threshold = float.Parse(cardExplanation[i]);
+                        if(sacrificedCards.Count > 0)
+                        {
+                            int j = 0;
+                            while (j < sacrificedCards.Count)
+                            {
+                                if (sacrificedCards[j].GetAttack() < threshold)
+                                {
+                                    sacrificedCards.RemoveAt(j);
+                                }
+                                else
+                                {
+                                    j++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            sacrificedCards = CheckThreshold(true, threshold,currentPlayerCard);
+                        }
+                    } 
+                        break;
+                    case Condition.SacrificeThresholdDEF:
+                    {
+                        int threshold = Int32.Parse(cardExplanation[i]);
+                        if(sacrificedCards.Count > 0)
+                        {
+                            int j = 0;
+                            while (j < sacrificedCards.Count)
+                            {
+                                if (sacrificedCards[j].GetDefense() < threshold)
+                                {
+                                    sacrificedCards.RemoveAt(j);
+                                }
+                                else
+                                {
+                                    j++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            sacrificedCards = CheckThreshold(false, threshold,currentPlayerCard);
+                        }
+                    }
+                        break;
+                    case Condition.NumberInvocationCardInYellowTrash:
+                    {
+                        int numberCardToHave = Int32.Parse(cardExplanation[i]);
+                        int realNumber = checkNumberInvocationCardInYellowTrash(currentPlayerCard);
+
+                        isInvocationPossible = (realNumber >= numberCardToHave);
+                    }
+                        break;
+                    case Condition.ComeFromYellowTrash:
+                    {
+                        if (specificCardFound != null)
+                        {
+                            isInvocationPossible = (specificCardFound.getNumberDeaths() > 0);
+                        }
+                    }
+                        break;
+                }
+                i++;
+            }
+            return isInvocationPossible;
+        }
+    }
 }

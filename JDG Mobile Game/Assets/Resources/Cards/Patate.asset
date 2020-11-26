@@ -19,8 +19,18 @@ MonoBehaviour:
     le terrain du joueur si celle-ci a une plus grande DEF."
   type: invocation
   materialCard: {fileID: 2100000, guid: 0b76724b87ba9c44c878b3f5412696ee, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - japon
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 11400000, guid: 86d2778ae6dc2f54d937c26f7232bab2,
+    type: 2}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

@@ -19,8 +19,18 @@ MonoBehaviour:
     \xBB."
   type: invocation
   materialCard: {fileID: 2100000, guid: bf06fac9869aa004f97e89c7308f6e12, type: 2}
+  collector: 0
   attack: 4
   defense: 2.5
   family:
   - incarnation
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: d76bd398b170f0c418214aae7d05b35c,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

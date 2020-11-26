@@ -19,8 +19,19 @@ MonoBehaviour:
     \xE0 votre main une carte \xAB La Mort \xBB depuis votre pioche."
   type: invocation
   materialCard: {fileID: 2100000, guid: 6bbe4f31efd733e429cd67cfe07d2ebe, type: 2}
+  collector: 0
   attack: 4
   defense: 2
   family:
   - humain
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 11400000, guid: 022636aa8dc814448be9fffa182f5fcf,
+    type: 2}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 11400000, guid: 0141e1807edc22544b8952c28c17ec6c,
+    type: 2}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

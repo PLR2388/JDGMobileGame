@@ -25,3 +25,12 @@ MonoBehaviour:
   family:
   - comics
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: 97d5ac54ded281540973c44eda203745,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

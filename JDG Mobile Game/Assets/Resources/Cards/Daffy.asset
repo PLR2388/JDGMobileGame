@@ -20,8 +20,18 @@ MonoBehaviour:
     passent \xE0 4.5 d'ATQ et 4.5 de DEF."
   type: invocation
   materialCard: {fileID: 2100000, guid: cceab59d158b88d48aadc523cc98d053, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - hardcorner
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 11400000, guid: 64ebef5e1248ec84f8c77f3b94392704,
+    type: 2}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

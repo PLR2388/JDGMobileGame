@@ -15,11 +15,26 @@ public class InvocationCard : Card
     [SerializeField] private float defense;
     [SerializeField] private string[] family;
     [SerializeField] private EquipmentCard equipmentCard;
+    [SerializeField] private InvocationConditions invocationConditions;
+    [SerializeField] private InvocationStartEffect invocationStartEffect;
+    [SerializeField] private InvocationPermEffect invocationPermEffect;
+    [SerializeField] private InvocationActionEffect invocationActionEffect;
+    [SerializeField] private InvocationDeathEffect invocationDeathEffect;
+    [SerializeField] private float bonusAttack;
+    [SerializeField] private float bonusDefense;
+    [SerializeField] private float numberTurnOnField;
+    [SerializeField] private int numberDeaths;
+
 
     private void Awake()
     {
         this.type = "invocation";
+        this.bonusAttack = 0;
+        this.bonusDefense = 0;
+        this.numberTurnOnField = 0;
+        this.numberDeaths = 0;
     }
+
 
     public String[] GetFamily()
     {
@@ -40,4 +55,23 @@ public class InvocationCard : Card
     {
         return equipmentCard;
     }
+
+    public int getNumberDeaths()
+    {
+        return numberDeaths;
+    }
+
+    public bool isInvocationPossible()
+    {
+        if (GameLoop.isP1Turn)
+        {
+            return InvocationFonctions.isInvocationPossible(this.invocationConditions,"Player1");
+        }
+        else
+        {
+            return InvocationFonctions.isInvocationPossible(this.invocationConditions,"Player2");
+        }
+    }
+    
+    
 }

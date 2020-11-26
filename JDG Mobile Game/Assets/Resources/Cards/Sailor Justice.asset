@@ -26,3 +26,12 @@ MonoBehaviour:
   family:
   - japon
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: d9d8c3cbc2d1e2c459bbe7303233e22e,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

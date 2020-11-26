@@ -20,9 +20,20 @@ MonoBehaviour:
     ne peuvent pas attaquer d'autre carte que celle-ci."
   type: invocation
   materialCard: {fileID: 2100000, guid: e425be3e0c6408542900e2bd7d9c3226, type: 2}
+  collector: 0
   attack: 4
   defense: 3.5
   family:
   - incarnation
   - hardcorner
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: e18178d1a83a0f345bc0832cde355dfe,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 11400000, guid: af4abe7212258fc479f6737e262629da,
+    type: 2}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

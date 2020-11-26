@@ -21,8 +21,19 @@ MonoBehaviour:
     en sautant son tour d'attaque et en divisant son ATQ par 2."
   type: invocation
   materialCard: {fileID: 2100000, guid: a978ba873330dac4a9c3e9f92194547c, type: 2}
+  collector: 0
   attack: 4
   defense: 3.5
   family:
   - japon
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: 1743190256c2b234a9185d5122a686ea,
+    type: 2}
+  invocationStartEffect: {fileID: 11400000, guid: 36ade2356531b2349a95d679771aed2b,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

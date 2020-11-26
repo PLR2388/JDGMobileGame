@@ -21,8 +21,19 @@ MonoBehaviour:
     de type \xAB Spatial \xBB depuis votre pioche."
   type: invocation
   materialCard: {fileID: 2100000, guid: 1f86c511923a5d24486ca1da73e28204, type: 2}
+  collector: 0
   attack: 4
   defense: 3
   family:
   - spatial
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: 43b2cc72fcac90f4e92dac9e987dcea7,
+    type: 2}
+  invocationStartEffect: {fileID: 11400000, guid: d6030126980a4b840af65771b564a945,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

@@ -18,8 +18,18 @@ MonoBehaviour:
     \xE9galement la carte \xAB Tentacules \xBB depuis votre pioche."
   type: invocation
   materialCard: {fileID: 2100000, guid: 40af43125afbf424cb6b1c15f1c751d8, type: 2}
+  collector: 0
   attack: 1
   defense: 1
   family:
   - japon
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: c34966f9469fc684583b687b1af254e3,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

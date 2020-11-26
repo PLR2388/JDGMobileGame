@@ -20,9 +20,20 @@ MonoBehaviour:
     sauter la phase d'attaque d'une carte INVOCATION du terrain de votre adversaire."
   type: invocation
   materialCard: {fileID: 2100000, guid: 67f8153bd872ea54097ac09ea0f77cea, type: 2}
+  collector: 0
   attack: 3.5
   defense: 4
   family:
   - japon
   - incarnation
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: fe61dc8ba28252d4492a84ce7e1369ec,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 11400000, guid: 445e13e59762aa647a4570a5d2332906,
+    type: 2}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

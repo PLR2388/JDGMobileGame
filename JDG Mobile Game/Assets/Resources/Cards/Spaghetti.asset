@@ -19,8 +19,18 @@ MonoBehaviour:
     \xBB pour l'ajouter \xE0 votre main."
   type: invocation
   materialCard: {fileID: 2100000, guid: 00e23f21ba271474899cbf37429139b5, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - monstre
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 11400000, guid: e53cabda86edbb649bd6d322ef39493c,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

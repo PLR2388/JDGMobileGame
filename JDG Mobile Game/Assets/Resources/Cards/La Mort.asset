@@ -20,8 +20,19 @@ MonoBehaviour:
     carte INVOCATION du terrain de votre adversaire \xE0 la poubelle jaune."
   type: invocation
   materialCard: {fileID: 2100000, guid: e8a1aa1aba87cb447847ca9e161400d7, type: 2}
+  collector: 0
   attack: 2.5
   defense: 4
   family:
   - incarnation
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: 154df2927e474384196b12ecec5e2cad,
+    type: 2}
+  invocationStartEffect: {fileID: 11400000, guid: 9729cc9bbf601534bae3a2085731ccdc,
+    type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

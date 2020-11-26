@@ -19,8 +19,18 @@ MonoBehaviour:
     le terrain que si s'y trouve une carte INVOCATION de type \xAB Comics \xBB."
   type: invocation
   materialCard: {fileID: 2100000, guid: b526156dcefb918478ad8f41fc079543, type: 2}
+  collector: 0
   attack: 2.5
   defense: 4
   family:
   - comics
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 11400000, guid: 77fe8d16de9b7384395c91b4b05b1b4f,
+    type: 2}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0

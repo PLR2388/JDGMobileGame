@@ -19,8 +19,18 @@ MonoBehaviour:
     \xBB, ses statistiques passent \xE0 4.5 d'ATQ et 4.5 de DEF."
   type: invocation
   materialCard: {fileID: 2100000, guid: 1a6f473562793ff48a98ce516b996c63, type: 2}
+  collector: 0
   attack: 2
   defense: 2
   family:
   - "d\xE9veloppeur"
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 11400000, guid: f2ae43ae38bc9d54ea58d64916556df5,
+    type: 2}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
