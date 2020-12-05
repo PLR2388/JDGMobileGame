@@ -84,8 +84,8 @@ public class GameLoop : MonoBehaviour
     
         if (phaseId == 3)
         {
-            ChangePlayer.Invoke();
             isP1Turn = !isP1Turn;
+            ChangePlayer.Invoke();
             if (isP1Turn)
             {
                 playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 1";

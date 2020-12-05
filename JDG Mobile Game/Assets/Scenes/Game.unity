@@ -1144,6 +1144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 397230403}
   - component: {fileID: 397230404}
+  - component: {fileID: 397230405}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1183,6 +1184,19 @@ MonoBehaviour:
   healthText: {fileID: 29170106}
   P1: {fileID: 230530442}
   P2: {fileID: 2017354827}
+--- !u!114 &397230405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e55e582599c6fac40bd81be5ff9fe264, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  miniCardMenu: {fileID: 1989458480}
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0

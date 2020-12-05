@@ -12,7 +12,8 @@ public class InvocationFonctions : MonoBehaviour
     private PlayerCards currentPlayerCard;
     private GameObject P1;
     private GameObject P2;
-    
+    [SerializeField] private GameObject miniCardMenu;
+
     public void Start()
     {
         GameLoop.ChangePlayer.AddListener(ChangePlayer);
@@ -34,11 +35,261 @@ public class InvocationFonctions : MonoBehaviour
         }
     }
 
-    private void PutInvocationCard(InvocationCard invocationCard)
+    private int FindFirstEmptyInvocationLocationCurrentPlayer()
     {
-        if (currentPlayerCard.InvocationCards.Length < 4)
+        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+        bool end = false;
+        int i = 0;
+        while (i < 4 && !end)
         {
-            
+            if (invocationCards[i] != null)
+            {
+                if (invocationCards[i].GetNom() == null)
+                {
+                    end = true;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            else
+            {
+                end = true;
+            }
+        }
+
+        return i;
+    }
+    
+    private int FindFirstEmptyInvocationLocation(InvocationCard[] invocationCards)
+    {
+        bool end = false;
+        int i = 0;
+        while (i < 4 && !end)
+        {
+            if (invocationCards[i] != null)
+            {
+                if (invocationCards[i].GetNom() == null)
+                {
+                    end = true;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            else
+            {
+                end = true;
+            }
+        }
+
+        return i;
+    }
+
+    private void DealWithStartEffect(InvocationStartEffect invocationStartEffect)
+    {
+        List<StartEffect> keys = invocationStartEffect.Keys;
+        List<String> values = invocationStartEffect.Values;
+
+        String cardName = "";
+        String typeCard = "";
+        String familyName = "";
+        
+        List<Card> cardFound = new List<Card>();
+
+        for (int i = 0; i < keys.Count; i++)
+        {
+            switch (keys[i])
+            {
+                case StartEffect.GetSpecificCard:
+                {
+                    cardName = values[i];
+                }
+                    break;
+                case StartEffect.GetSpecificTypeCard:
+                {
+                    typeCard = values[i];
+                }
+                    break;
+                case StartEffect.GetCardFamily:
+                {
+                    familyName = values[i];
+                }
+                    break;
+                case StartEffect.GetCardSource:
+                {
+                    String source = values[i];
+                    if (source == "deck")
+                    {
+                        List<Card> deck = currentPlayerCard.Deck;
+                        if (cardName != "")
+                        {
+                            bool isFound = false;
+                            int j = 0;
+                            while (j < deck.Count && !isFound)
+                            {
+                                if (deck[j].GetNom() == cardName)
+                                {
+                                    isFound = true;
+                                    cardFound.Add(deck[j]);
+                                }
+
+                                j++;
+                            }
+                        }
+                        else if (typeCard != "")
+                        {
+                            for (int j = 0; j < deck.Count; j++)
+                            {
+                                if (deck[j].GetType() == typeCard)
+                                {
+                                    cardFound.Add(deck[j]);
+                                }
+                            }
+                        }
+                        else if (familyName != "")
+                        {
+                            for (int j = 0; j < deck.Count; j++)
+                            {
+                                if (deck[i].GetType() == "invocation")
+                                {
+                                    InvocationCard invocationCard = (InvocationCard)deck[i];
+
+                                    String[] listFamily = invocationCard.GetFamily();
+                                    for (int k = 0; k < listFamily.Length; k++)
+                                    {
+                                        if (listFamily[k] == familyName)
+                                        {
+                                            cardFound.Add(invocationCard);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (source == "trash")
+                    {
+                        List<Card> trash = currentPlayerCard.YellowTrash;
+                        if (cardName != "")
+                        {
+                            bool isFound = false;
+                            int j = 0;
+                            while (j < trash.Count && !isFound)
+                            {
+                                if (trash[j].GetNom() == cardName)
+                                {
+                                    isFound = true;
+                                    cardFound.Add(trash[j]);
+                                }
+
+                                j++;
+                            }
+                        }
+                        else if (typeCard != "")
+                        {
+                            for (int j = 0; j < trash.Count; j++)
+                            {
+                                if (trash[j].GetType() == typeCard)
+                                {
+                                    cardFound.Add(trash[j]);
+                                }
+                            }
+                        }
+                        else if (familyName != "")
+                        {
+                            for (int j = 0; j < trash.Count; j++)
+                            {
+                                if (trash[i].GetType() == "invocation")
+                                {
+                                    InvocationCard invocationCard = (InvocationCard)trash[i];
+
+                                    String[] listFamily = invocationCard.GetFamily();
+                                    for (int k = 0; k < listFamily.Length; k++)
+                                    {
+                                        if (listFamily[k] == familyName)
+                                        {
+                                            cardFound.Add(invocationCard);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                    break;
+                case StartEffect.RemoveAllInvocationCards:
+                {
+                    String dontRemoveCard = values[i];
+                    InvocationCard[] P1InvocationCards = this.P1.GetComponent<PlayerCards>().InvocationCards;
+                    InvocationCard[] P2InvocationCards = this.P2.GetComponent<PlayerCards>().InvocationCards;
+                    
+                    
+                    for (int j = 0; j < FindFirstEmptyInvocationLocation(P1InvocationCards) ; j++)
+                    {
+                        if (P1InvocationCards[j].GetNom() != dontRemoveCard)
+                        {
+                            P1.GetComponent<PlayerCards>().handCards.Add(P1InvocationCards[j]);
+                            P1.GetComponent<PlayerCards>().InvocationCards[j] = null;
+                        }
+                    }
+                    
+                }
+                    break;
+                case StartEffect.InvokeSpecificCard:
+                {
+                }
+                    break;
+                case StartEffect.PutField:
+                {
+                }
+                    break;
+                case StartEffect.DestroyField:
+                {
+                }
+                    break;
+                case StartEffect.Divide2ATK:
+                {
+                }
+                    break;
+                case StartEffect.Divide2DEF:
+                {
+                }
+                    break;
+                case StartEffect.SendToDeath:
+                {
+                }
+                    break;
+                case StartEffect.DrawXCards:
+                {
+                }
+                    break;
+                case StartEffect.Condition:
+                {
+                }
+                    break;
+            }
+        }
+    }
+
+    public void PutInvocationCard(InvocationCard invocationCard)
+    {
+        int size = FindFirstEmptyInvocationLocationCurrentPlayer();
+
+        if (size < 4)
+        {
+            miniCardMenu.SetActive(false);
+            currentPlayerCard.InvocationCards[size] = invocationCard;
+
+            currentPlayerCard.handCards.Remove(invocationCard);
+
+            InvocationStartEffect invocationStartEffect = invocationCard.GetInvocationStartEffect();
+
+            if (invocationStartEffect != null)
+            {
+                DealWithStartEffect(invocationStartEffect);
+            }
         }
     }
 
@@ -54,7 +305,7 @@ public class InvocationFonctions : MonoBehaviour
         }
     }
 
-    private static InvocationCard CheckSpecificCardOnField(string cardName,PlayerCards currentPlayerCards)
+    private static InvocationCard CheckSpecificCardOnField(string cardName, PlayerCards currentPlayerCards)
     {
         bool found = false;
         InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
@@ -64,7 +315,7 @@ public class InvocationFonctions : MonoBehaviour
         int j = 0;
         while (j < size && !found)
         {
-            if (invocationCards[j].GetNom() == cardName)
+            if (invocationCards[j] != null && invocationCards[j].GetNom() == cardName)
             {
                 found = true;
                 invocationCard = invocationCards[j];
@@ -76,7 +327,7 @@ public class InvocationFonctions : MonoBehaviour
         return invocationCard;
     }
 
-    private static InvocationCard CheckSacrificeSpecificCard(string cardName,PlayerCards currentPlayerCards)
+    private static InvocationCard CheckSacrificeSpecificCard(string cardName, PlayerCards currentPlayerCards)
     {
         InvocationCard foundCard = null;
         bool found = false;
@@ -86,11 +337,12 @@ public class InvocationFonctions : MonoBehaviour
 
         while (j < size && !found)
         {
-            if (invocationCards[j].GetNom() == cardName)
+            if (invocationCards[j] != null && invocationCards[j].GetNom() == cardName)
             {
                 foundCard = invocationCards[j];
                 found = true;
             }
+
 
             j++;
         }
@@ -112,7 +364,7 @@ public class InvocationFonctions : MonoBehaviour
         return isChecked;
     }
 
-    private static bool CheckSpecificField(string fieldName,PlayerCards currentPlayerCards)
+    private static bool CheckSpecificField(string fieldName, PlayerCards currentPlayerCards)
     {
         bool isCorrectField = false;
         FieldCard fieldCard = currentPlayerCards.Field;
@@ -124,7 +376,7 @@ public class InvocationFonctions : MonoBehaviour
         return isCorrectField;
     }
 
-    private static List<InvocationCard> CheckFamily(string familyName,PlayerCards currentPlayerCards)
+    private static List<InvocationCard> CheckFamily(string familyName, PlayerCards currentPlayerCards)
     {
         List<InvocationCard> sameFamilyCards = new List<InvocationCard>();
         InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
@@ -143,8 +395,8 @@ public class InvocationFonctions : MonoBehaviour
 
         return sameFamilyCards;
     }
-    
-    private static List<InvocationCard> CheckThreshold(bool isAttack,float value,PlayerCards currentPlayerCards)
+
+    private static List<InvocationCard> CheckThreshold(bool isAttack, float value, PlayerCards currentPlayerCards)
     {
         List<InvocationCard> Threshold = new List<InvocationCard>();
         InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
@@ -176,7 +428,7 @@ public class InvocationFonctions : MonoBehaviour
     {
         List<Card> trashCards = currentPlayerCards.YellowTrash;
         int count = 0;
-        
+
         foreach (var card in trashCards)
         {
             if (card.GetType() == "invocation")
@@ -188,7 +440,7 @@ public class InvocationFonctions : MonoBehaviour
         return count;
     }
 
-    public static bool isInvocationPossible(InvocationConditions conditions,string playerName)
+    public static bool isInvocationPossible(InvocationConditions conditions, string playerName)
     {
         GameObject player = GameObject.Find(playerName);
         PlayerCards currentPlayerCard = player.GetComponent<PlayerCards>();
@@ -215,7 +467,7 @@ public class InvocationFonctions : MonoBehaviour
                     case Condition.SpecificCardOnField:
                     {
                         string cardName = cardExplanation[i];
-                        InvocationCard invocationCard = CheckSpecificCardOnField(cardName,currentPlayerCard);
+                        InvocationCard invocationCard = CheckSpecificCardOnField(cardName, currentPlayerCard);
                         isInvocationPossible = (invocationCard != null);
                     }
                         break;
@@ -224,7 +476,7 @@ public class InvocationFonctions : MonoBehaviour
                         string cardName = cardExplanation[i];
                         if (!specificCardFound)
                         {
-                            specificCardFound = CheckSacrificeSpecificCard(cardName,currentPlayerCard);
+                            specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
                             isInvocationPossible = specificCardFound != null;
                         }
                     }
@@ -238,20 +490,20 @@ public class InvocationFonctions : MonoBehaviour
                     case Condition.SpecificField:
                     {
                         string fieldName = cardExplanation[i];
-                        isInvocationPossible = CheckSpecificField(fieldName,currentPlayerCard);
+                        isInvocationPossible = CheckSpecificField(fieldName, currentPlayerCard);
                     }
                         break;
                     case Condition.SacrificeFamily:
                     {
                         string familyName = cardExplanation[i];
-                        sacrificedCards = CheckFamily(familyName,currentPlayerCard);
+                        sacrificedCards = CheckFamily(familyName, currentPlayerCard);
                         isInvocationPossible = sacrificedCards.Count > 0;
                     }
                         break;
                     case Condition.SpecificFamilyOnField:
                     {
                         string familyName = cardExplanation[i];
-                        sacrificedCards = CheckFamily(familyName,currentPlayerCard);
+                        sacrificedCards = CheckFamily(familyName, currentPlayerCard);
                         isInvocationPossible = sacrificedCards.Count > 0;
                     }
                         break;
@@ -268,10 +520,10 @@ public class InvocationFonctions : MonoBehaviour
                         }
                     }
                         break;
-                    case Condition.SacrificeThresholdATK: 
+                    case Condition.SacrificeThresholdATK:
                     {
                         float threshold = float.Parse(cardExplanation[i]);
-                        if(sacrificedCards.Count > 0)
+                        if (sacrificedCards.Count > 0)
                         {
                             int j = 0;
                             while (j < sacrificedCards.Count)
@@ -288,14 +540,14 @@ public class InvocationFonctions : MonoBehaviour
                         }
                         else
                         {
-                            sacrificedCards = CheckThreshold(true, threshold,currentPlayerCard);
+                            sacrificedCards = CheckThreshold(true, threshold, currentPlayerCard);
                         }
-                    } 
+                    }
                         break;
                     case Condition.SacrificeThresholdDEF:
                     {
                         int threshold = Int32.Parse(cardExplanation[i]);
-                        if(sacrificedCards.Count > 0)
+                        if (sacrificedCards.Count > 0)
                         {
                             int j = 0;
                             while (j < sacrificedCards.Count)
@@ -312,7 +564,7 @@ public class InvocationFonctions : MonoBehaviour
                         }
                         else
                         {
-                            sacrificedCards = CheckThreshold(false, threshold,currentPlayerCard);
+                            sacrificedCards = CheckThreshold(false, threshold, currentPlayerCard);
                         }
                     }
                         break;
@@ -333,8 +585,10 @@ public class InvocationFonctions : MonoBehaviour
                     }
                         break;
                 }
+
                 i++;
             }
+
             return isInvocationPossible;
         }
     }

@@ -33,7 +33,7 @@ public class HandCardDisplay : MonoBehaviour
         if (GameLoop.isP1Turn)
         {
             List<Card> handCard = Player1.GetComponent<PlayerCards>().handCards;
-            if (createdCards.Count != handCard.Count)
+            if (createdCards.Count < handCard.Count)
             {
                 for (int i = 0; i < handCard.Count; i++)
                 {
@@ -45,13 +45,19 @@ public class HandCardDisplay : MonoBehaviour
                 RectTransform rectTransform = GetComponent<RectTransform>();
                 rectTransform.sizeDelta = new Vector2(420 * handCard.Count,rectTransform.sizeDelta.y);
             }
-
-            
+            else if (createdCards.Count > handCard.Count)
+            {
+                for (int i = 0; i < createdCards.Count; i++)
+                {
+                    Destroy(createdCards[i]);
+                }
+                createdCards.Clear();
+            }
         }
         else
         {
             List<Card> handCard = Player2.GetComponent<PlayerCards>().handCards;
-            if (createdCards.Count != handCard.Count)
+            if (createdCards.Count < handCard.Count)
             {
                 for (int i = 0; i < handCard.Count; i++)
                 {
@@ -62,6 +68,14 @@ public class HandCardDisplay : MonoBehaviour
                 }
                 RectTransform rectTransform = GetComponent<RectTransform>();
                 rectTransform.sizeDelta = new Vector2(420 * handCard.Count,rectTransform.sizeDelta.y);
+            }
+            else if (createdCards.Count > handCard.Count)
+            {
+                for (int i = 0; i < createdCards.Count; i++)
+                {
+                    Destroy(createdCards[i]);
+                }
+                createdCards.Clear();
             }
         }
     }

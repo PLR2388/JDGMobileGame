@@ -41,6 +41,11 @@ public class InvocationCard : Card
         return family;
     }
 
+    public InvocationStartEffect GetInvocationStartEffect()
+    {
+        return invocationStartEffect;
+    }
+
     public float GetAttack()
     {
         return attack;
