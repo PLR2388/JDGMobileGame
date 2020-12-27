@@ -35,7 +35,7 @@ public class GameState : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < allCards.Count; i++)
         {
             DeckP1.Add(allCards[i]);
         }

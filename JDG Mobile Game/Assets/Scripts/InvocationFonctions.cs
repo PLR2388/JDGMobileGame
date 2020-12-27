@@ -13,6 +13,7 @@ public class InvocationFonctions : MonoBehaviour
     private GameObject P1;
     private GameObject P2;
     [SerializeField] private GameObject miniCardMenu;
+    [SerializeField] private GameObject messageBox;
 
     public void Start()
     {
@@ -61,7 +62,7 @@ public class InvocationFonctions : MonoBehaviour
 
         return i;
     }
-    
+
     private int FindFirstEmptyInvocationLocation(InvocationCard[] invocationCards)
     {
         bool end = false;
@@ -96,7 +97,8 @@ public class InvocationFonctions : MonoBehaviour
         String cardName = "";
         String typeCard = "";
         String familyName = "";
-        
+        List<String> invokeCardNames = new List<string>();
+
         List<Card> cardFound = new List<Card>();
 
         for (int i = 0; i < keys.Count; i++)
@@ -138,6 +140,79 @@ public class InvocationFonctions : MonoBehaviour
 
                                 j++;
                             }
+
+                            if (isFound)
+                            {
+                                GameObject message = Instantiate(messageBox);
+                                message.GetComponent<MessageBox>().title = "Carte en main";
+
+                                message.GetComponent<MessageBox>().description =
+                                    "Voulez-vous aussi ajouter " + cardName + " à votre main ?";
+                                message.GetComponent<MessageBox>().positiveAction = () =>
+                                {
+                                    currentPlayerCard.handCards.Add(cardFound[0]);
+
+                                    currentPlayerCard.Deck.Remove(cardFound[0]);
+
+                                    Destroy(message);
+                                };
+                                message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
+                            }
+                        }
+                        else if (invokeCardNames.Count > 0)
+                        {
+                            for (int j = 0; j < deck.Count; j++)
+                            {
+                                foreach (var invokeCardName in invokeCardNames)
+                                {
+                                    if (deck[j].GetNom() == invokeCardName)
+                                    {
+                                        cardFound.Add(deck[j]);
+                                    }
+                                }
+                            }
+
+                            int size = FindFirstEmptyInvocationLocationCurrentPlayer();
+                            if (cardFound.Count > 0 && size < 4)
+                            {
+                                if (cardFound.Count == 1)
+                                {
+                                    GameObject message = Instantiate(messageBox);
+                                    message.GetComponent<MessageBox>().title = "Invocation";
+                                    message.GetComponent<MessageBox>().description =
+                                        "Voulez-vous aussi invoquer " + cardFound[0].GetNom() + " ?";
+                                    message.GetComponent<MessageBox>().positiveAction = () =>
+                                    {
+                                        InvocationCard invocationCard = (InvocationCard) cardFound[cardFound.Count - 1];
+                                        currentPlayerCard.InvocationCards[size] = invocationCard;
+
+                                        currentPlayerCard.Deck.Remove(invocationCard);
+
+                                        Destroy(message);
+                                    };
+                                    message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
+                                }
+                                else
+                                {
+                                    GameObject message = Instantiate(messageBox);
+                                    message.GetComponent<MessageBox>().title = "Invocation";
+                                    message.GetComponent<MessageBox>().positiveText = cardFound[0].GetNom();
+                                    message.GetComponent<MessageBox>().negativeText = cardFound[1].GetNom();
+                                    message.GetComponent<MessageBox>().description =
+                                        "Voulez-vous aussi invoquer " + invokeCardNames[0] + " ou " +
+                                        invokeCardNames[1] + " ?";
+                                    message.GetComponent<MessageBox>().positiveAction = () =>
+                                    {
+                                        InvocationCard invocationCard = (InvocationCard) cardFound[cardFound.Count - 1];
+                                        currentPlayerCard.InvocationCards[size] = invocationCard;
+
+                                        currentPlayerCard.Deck.Remove(invocationCard);
+
+                                        Destroy(message);
+                                    };
+                                    message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
+                                }
+                            }
                         }
                         else if (typeCard != "")
                         {
@@ -155,7 +230,7 @@ public class InvocationFonctions : MonoBehaviour
                             {
                                 if (deck[i].GetType() == "invocation")
                                 {
-                                    InvocationCard invocationCard = (InvocationCard)deck[i];
+                                    InvocationCard invocationCard = (InvocationCard) deck[i];
 
                                     String[] listFamily = invocationCard.GetFamily();
                                     for (int k = 0; k < listFamily.Length; k++)
@@ -187,6 +262,19 @@ public class InvocationFonctions : MonoBehaviour
                                 j++;
                             }
                         }
+                        else if (invokeCardNames.Count>0)
+                        {
+                            for (int j = 0; j < trash.Count; j++)
+                            {
+                                foreach (var invokeCardName in invokeCardNames)
+                                {
+                                    if (trash[j].GetNom() == invokeCardName)
+                                    {
+                                        cardFound.Add(trash[j]);
+                                    }
+                                }
+                            }
+                        }
                         else if (typeCard != "")
                         {
                             for (int j = 0; j < trash.Count; j++)
@@ -203,7 +291,7 @@ public class InvocationFonctions : MonoBehaviour
                             {
                                 if (trash[i].GetType() == "invocation")
                                 {
-                                    InvocationCard invocationCard = (InvocationCard)trash[i];
+                                    InvocationCard invocationCard = (InvocationCard) trash[i];
 
                                     String[] listFamily = invocationCard.GetFamily();
                                     for (int k = 0; k < listFamily.Length; k++)
@@ -224,9 +312,9 @@ public class InvocationFonctions : MonoBehaviour
                     String dontRemoveCard = values[i];
                     InvocationCard[] P1InvocationCards = this.P1.GetComponent<PlayerCards>().InvocationCards;
                     InvocationCard[] P2InvocationCards = this.P2.GetComponent<PlayerCards>().InvocationCards;
-                    
-                    
-                    for (int j = 0; j < FindFirstEmptyInvocationLocation(P1InvocationCards) ; j++)
+
+
+                    for (int j = 0; j < FindFirstEmptyInvocationLocation(P1InvocationCards); j++)
                     {
                         if (P1InvocationCards[j].GetNom() != dontRemoveCard)
                         {
@@ -234,11 +322,20 @@ public class InvocationFonctions : MonoBehaviour
                             P1.GetComponent<PlayerCards>().InvocationCards[j] = null;
                         }
                     }
-                    
+
+                    for (int j = 0; j < FindFirstEmptyInvocationLocation(P2InvocationCards); j++)
+                    {
+                        if (P2InvocationCards[j].GetNom() != dontRemoveCard)
+                        {
+                            P2.GetComponent<PlayerCards>().handCards.Add(P2InvocationCards[j]);
+                            P2.GetComponent<PlayerCards>().InvocationCards[j] = null;
+                        }
+                    }
                 }
                     break;
                 case StartEffect.InvokeSpecificCard:
                 {
+                    invokeCardNames.Add(values[i]);
                 }
                     break;
                 case StartEffect.PutField:
@@ -380,15 +477,18 @@ public class InvocationFonctions : MonoBehaviour
     {
         List<InvocationCard> sameFamilyCards = new List<InvocationCard>();
         InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-        foreach (var invocationCard in invocationCards)
+        for (int i = 0; i < invocationCards.Length; i++)
         {
-            string[] families = invocationCard.GetFamily();
-
-            foreach (var family in families)
+            if (invocationCards[i] != null)
             {
-                if (family == familyName)
+                string[] families = invocationCards[i].GetFamily();
+
+                foreach (var family in families)
                 {
-                    sameFamilyCards.Add(invocationCard);
+                    if (family == familyName)
+                    {
+                        sameFamilyCards.Add(invocationCards[i]);
+                    }
                 }
             }
         }

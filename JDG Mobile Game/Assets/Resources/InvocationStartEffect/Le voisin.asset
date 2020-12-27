@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29fc04c6ed918d340a494d6278f09e43, type: 3}
   m_Name: Le voisin
   m_EditorClassIdentifier: 
-  keys: 0500000005000000
+  keys: 050000000500000003000000
   values:
-  - Joueur du Grenier
-  - Seb du Grenier
+  - Joueur Du Grenier
+  - Seb Du Grenier
+  - deck

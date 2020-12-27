@@ -105,6 +105,19 @@ public class PlayerCards : MonoBehaviour
             AllPhysicalCards[i].transform.position=new Vector3(999,999);
         }
         Deck.RemoveRange(Deck.Count-5,5);
+
+        if (IsPlayerOne)
+        {
+            for (int i = 0; i < Deck.Count; i++)
+            {
+                if (Deck[i].GetNom() == "Le voisin")
+                {
+                    handCards.Add(Deck[i]);
+                    Deck.Remove(Deck[i]);
+                    break;
+                }
+            }
+        }
     }
 
     // Update is called once per frame
@@ -112,6 +125,7 @@ public class PlayerCards : MonoBehaviour
     {
         if (IsPlayerOne)
         {
+
             for (int i = 0; i < InvocationCards.Length; i++)
             {
                 if (InvocationCards[i])
@@ -171,6 +185,10 @@ public class PlayerCards : MonoBehaviour
                 {
                     int index = FindCard(InvocationCards[i]);
                     AllPhysicalCards[index].transform.position = invocationCardsLocationP2[i];
+                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                    {
+                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                    }
                 }
             }
             for (int i = 0; i < EffectCards.Length; i++)

@@ -1197,6 +1197,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
+  messageBox: {fileID: 435952082473488534, guid: ee6c28c42c106e24eb2886b9461ab3b4,
+    type: 3}
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0

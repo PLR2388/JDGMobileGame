@@ -93,7 +93,6 @@ public class InGameMenuScript : MonoBehaviour
 
     public void ClickPutCard()
     {
-        Debug.Log("PUT CARD");
         if (currentSelectedCard.GetType() == "invocation")
         {
             InvocationCard invocationCard = (InvocationCard)currentSelectedCard;
