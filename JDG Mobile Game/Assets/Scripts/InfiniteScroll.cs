@@ -16,6 +16,8 @@ public class InfiniteScroll : MonoBehaviour
        for (int i = 0; i < AllCards.Count; i++)
             {
                 GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+
+                newCard.GetComponent<OnHover>().bIsInGame = false;
                 newCard.transform.SetParent(transform,true);
                 newCard.GetComponent<CardDisplay>().card = AllCards[i];
             }

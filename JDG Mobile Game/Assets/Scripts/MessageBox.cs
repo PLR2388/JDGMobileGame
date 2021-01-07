@@ -12,9 +12,9 @@ public class MessageBox : MonoBehaviour
     public UnityAction negativeAction;
     public String title;
     public String description;
-
-    public String positiveText;
-    public String negativeText;
+    public Boolean isInformation = false;
+    public DisplayCards displayCardsScript;
+    public Boolean displayCards = false;
 
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
@@ -24,7 +24,9 @@ public class MessageBox : MonoBehaviour
     [SerializeField] private GameObject positiveButton;
     [SerializeField] private GameObject negativeButton;
     [SerializeField] private GameObject okButton;
-    [SerializeField] private Boolean isInformation = false;
+    
+    [SerializeField] private GameObject scrollCardDisplay;
+
     
     // Start is called before the first frame update
     void Start()
@@ -41,16 +43,9 @@ public class MessageBox : MonoBehaviour
         }
         else
         {
-            if (positiveText != "")
-            {
-                positiveButtonText.text = positiveText;
-                negativeButtonText.text = negativeText;
-            }
-            else
-            {
-                positiveButtonText.text = "Oui";
-                negativeButtonText.text = "Non";
-            }
+            positiveButtonText.text = "Oui";
+            negativeButtonText.text = "Non";
+            
            
             Button positiveBtn = positiveButton.GetComponent<Button>();
             Button negativeBtn = negativeButton.GetComponent<Button>();
@@ -62,11 +57,14 @@ public class MessageBox : MonoBehaviour
             negativeButton.SetActive(true);
             okButton.SetActive(false);
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (displayCards)
+        {
+            scrollCardDisplay.SetActive(true);
+        }
+        else
+        {
+            scrollCardDisplay.SetActive(false);
+        }
     }
 }

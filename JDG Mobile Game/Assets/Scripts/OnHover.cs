@@ -9,7 +9,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
  
     private Image image;
     private bool bIsSelected = false;
-    private bool bIsInGame=false;
+    public bool bIsInGame=false;
 
 
 
@@ -21,14 +21,6 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     
     void Update()
     {
-        if (SceneManager.GetActiveScene () == SceneManager.GetSceneByName ("Game"))
-        {
-            bIsInGame = true;
-        }
-        else
-        {
-            bIsInGame = false;
-        }
     }
  
  

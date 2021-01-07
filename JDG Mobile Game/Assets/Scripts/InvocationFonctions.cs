@@ -195,12 +195,12 @@ public class InvocationFonctions : MonoBehaviour
                                 else
                                 {
                                     GameObject message = Instantiate(messageBox);
-                                    message.GetComponent<MessageBox>().title = "Invocation";
-                                    message.GetComponent<MessageBox>().positiveText = cardFound[0].GetNom();
-                                    message.GetComponent<MessageBox>().negativeText = cardFound[1].GetNom();
-                                    message.GetComponent<MessageBox>().description =
-                                        "Voulez-vous aussi invoquer " + invokeCardNames[0] + " ou " +
-                                        invokeCardNames[1] + " ?";
+                                    message.GetComponent<MessageBox>().title = "Choix de l'invocation";
+                                    message.GetComponent<MessageBox>().description = "";
+                                    message.GetComponent<MessageBox>().displayCardsScript.cardslist = cardFound;
+                                    message.GetComponent<MessageBox>().displayCards = true;
+                                
+                                    
                                     message.GetComponent<MessageBox>().positiveAction = () =>
                                     {
                                         InvocationCard invocationCard = (InvocationCard) cardFound[cardFound.Count - 1];
@@ -223,6 +223,12 @@ public class InvocationFonctions : MonoBehaviour
                                     cardFound.Add(deck[j]);
                                 }
                             }
+
+                            if (cardFound.Count > 0)
+                            {
+                                
+                            }
+                            
                         }
                         else if (familyName != "")
                         {

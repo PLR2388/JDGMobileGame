@@ -6,7 +6,6 @@ using UnityEngine;
 public class HandCardDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
-    //[SerializeField] private List<Card> AllCards;
 
     public GameObject Player1;
 
@@ -40,6 +39,7 @@ public class HandCardDisplay : MonoBehaviour
                     GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
                     newCard.transform.SetParent(transform,true);
                     newCard.GetComponent<CardDisplay>().card = handCard[i];
+                    newCard.GetComponent<OnHover>().bIsInGame = true;
                     createdCards.Add(newCard);
                 }
                 RectTransform rectTransform = GetComponent<RectTransform>();
@@ -64,6 +64,7 @@ public class HandCardDisplay : MonoBehaviour
                     GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
                     newCard.transform.SetParent(transform,true);
                     newCard.GetComponent<CardDisplay>().card = handCard[i];
+                    newCard.GetComponent<OnHover>().bIsInGame = true;
                     createdCards.Add(newCard);
                 }
                 RectTransform rectTransform = GetComponent<RectTransform>();
