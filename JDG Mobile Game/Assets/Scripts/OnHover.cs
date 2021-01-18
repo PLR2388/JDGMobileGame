@@ -16,6 +16,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     private Image image;
     public bool bIsSelected = false;
     public bool bIsInGame = false;
+    private Card card;
 
     public static CardSelectedEvent cardSelectedEvent = new CardSelectedEvent();
 
@@ -23,6 +24,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     void Start()
     {
         image = GetComponent<Image>();
+        card = gameObject.GetComponent<CardDisplay>().card;
     }
 
     void Update()
@@ -33,6 +35,10 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             {
                 image.color = Color.green;
           
+            }
+            else if (card.IsCollector())
+            {
+                image.color = Color.yellow;
             }
             else
             {

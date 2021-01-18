@@ -31,8 +31,6 @@ public class InfiniteScroll : MonoBehaviour
 
     private void displayMessageBox(String msg)
     {
-        gameObject.GetComponent<OnHover>().bIsSelected = false;
-                                
         GameObject message = Instantiate(messageBox);
         message.GetComponent<MessageBox>().title = "Modifie ton deck";
         message.GetComponent<MessageBox>().isInformation = true;
