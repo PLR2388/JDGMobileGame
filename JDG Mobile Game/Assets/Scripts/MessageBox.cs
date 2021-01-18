@@ -24,13 +24,21 @@ public class MessageBox : MonoBehaviour
     [SerializeField] private GameObject positiveButton;
     [SerializeField] private GameObject negativeButton;
     [SerializeField] private GameObject okButton;
-    
-    [SerializeField] private GameObject scrollCardDisplay;
+    [SerializeField] private GameObject container;
 
-    
+    [SerializeField] private GameObject scrollCardDisplay;
+    private Card currentSelectedCard;
+
+    public Card getSelectedCard()
+    {
+        return currentSelectedCard;
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
+        OnHover.cardSelectedEvent.AddListener(onCardSelected);
         titleText.text = title;
         descriptionText.text = description;
 
@@ -40,19 +48,25 @@ public class MessageBox : MonoBehaviour
             positiveButton.SetActive(false);
             negativeButton.SetActive(false);
             okButton.SetActive(true);
+
+            Button okBtn = okButton.GetComponent<Button>();
+            okBtn.onClick.AddListener(() =>
+            {
+                Destroy(gameObject);
+            });
         }
         else
         {
             positiveButtonText.text = "Oui";
             negativeButtonText.text = "Non";
-            
-           
+
+
             Button positiveBtn = positiveButton.GetComponent<Button>();
             Button negativeBtn = negativeButton.GetComponent<Button>();
             positiveBtn.onClick.AddListener(positiveAction);
             negativeBtn.onClick.AddListener(negativeAction);
-            
-            
+
+
             positiveButton.SetActive(true);
             negativeButton.SetActive(true);
             okButton.SetActive(false);
@@ -65,6 +79,33 @@ public class MessageBox : MonoBehaviour
         else
         {
             scrollCardDisplay.SetActive(false);
+        }
+    }
+
+    void onCardSelected(Card card)
+    {
+        currentSelectedCard = card;
+    }
+
+    void Update()
+    {
+        if (currentSelectedCard != null)
+        {
+            Transform[] children = container.GetComponentsInChildren<Transform>();
+            for (int i = 0; i < children.Length; i++)
+            {
+                GameObject gameObject = children[i].gameObject;
+                 if(gameObject.GetComponent<CardDisplay>() != null)
+                 {
+                     String name = gameObject.GetComponent<CardDisplay>().card.GetNom();
+                
+                     if (currentSelectedCard.GetNom() != name)
+                     {
+                         gameObject.GetComponent<OnHover>().bIsSelected = false;
+                     }
+                 }
+
+            }
         }
     }
 }

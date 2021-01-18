@@ -18,6 +18,16 @@ public class InvocationCardEvent : UnityEvent<InvocationCard>
 {
 }
 
+[System.Serializable]
+public class FieldCardEvent : UnityEvent<FieldCard>
+{
+}
+
+[System.Serializable]
+public class EffectCardEvent : UnityEvent<EffectCard>
+{
+}
+
 public class InGameMenuScript : MonoBehaviour
 {
     [SerializeField] private GameObject buttonText;
@@ -33,6 +43,8 @@ public class InGameMenuScript : MonoBehaviour
     
     public static CardEvent EventClick = new CardEvent();
     public static InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
+    public static FieldCardEvent FieldCardEvent = new FieldCardEvent();
+    public static EffectCardEvent EffectCardEvent = new EffectCardEvent();
 
 
     private Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
@@ -97,6 +109,14 @@ public class InGameMenuScript : MonoBehaviour
         {
             InvocationCard invocationCard = (InvocationCard)currentSelectedCard;
             InvocationCardEvent.Invoke(invocationCard);
+        } else if (currentSelectedCard.GetType() == "field")
+        {
+            FieldCard fieldCard = (FieldCard) currentSelectedCard;
+            FieldCardEvent.Invoke(fieldCard);
+        } else if (currentSelectedCard.GetType() == "effect")
+        {
+            EffectCard effectCard = (EffectCard) currentSelectedCard;
+            EffectCardEvent.Invoke(effectCard);
         }
     }
 

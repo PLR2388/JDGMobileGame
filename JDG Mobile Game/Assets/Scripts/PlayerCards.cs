@@ -144,6 +144,11 @@ public class PlayerCards : MonoBehaviour
                 {
                     int index = FindCard(EffectCards[i]);
                     AllPhysicalCards[index].transform.position = effectCardsLocationP1[i];
+                    
+                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                    {
+                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                    }
                 }
             }
             
@@ -174,6 +179,10 @@ public class PlayerCards : MonoBehaviour
             {
                 int index = FindCard(Field);
                 AllPhysicalCards[index].transform.position = FieldCardLocationP1;
+                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
             }
             
         }

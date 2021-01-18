@@ -203,7 +203,8 @@ public class InvocationFonctions : MonoBehaviour
                                     
                                     message.GetComponent<MessageBox>().positiveAction = () =>
                                     {
-                                        InvocationCard invocationCard = (InvocationCard) cardFound[cardFound.Count - 1];
+                                        InvocationCard invocationCard =
+                                            (InvocationCard) message.GetComponent<MessageBox>().getSelectedCard();
                                         currentPlayerCard.InvocationCards[size] = invocationCard;
 
                                         currentPlayerCard.Deck.Remove(invocationCard);
