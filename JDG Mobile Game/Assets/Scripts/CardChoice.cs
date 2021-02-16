@@ -5,7 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Random = System.Random;
+using Random = UnityEngine.Random;
 
 public class CardChoice : MonoBehaviour
 {
@@ -115,38 +115,37 @@ public class CardChoice : MonoBehaviour
         }
     }
 
-    public void getRandomDeck()
+    public void randomDeck()
     {
         List<Card> deck1 = new List<Card>();
         List<Card> deck2 = new List<Card>();
 
-        int size = gameState.GetComponent<GameState>().allCards.Count;
-        Card[] cards = new Card[size];
+        List<Card> allCards = gameState.GetComponent<GameState>().allCards;
 
-        gameState.GetComponent<GameState>().allCards.CopyTo(cards);
-
-        List<Card> allDeck = cards.ToList();
-        Random alea = new Random();
-
-        for (int i = 0; i < 30; i++)
+        while (deck1.Count != 30)
         {
-            int random = alea.Next(size);
-            deck1.Add(allDeck[random]);
-            allDeck.Remove(allDeck[random]);
-            size--;
-            random = alea.Next(size);
-            deck2.Add(allDeck[random]);
-            allDeck.Remove(allDeck[random]);
-            size--;
+            int randomIndex = Random.Range(0, allCards.Count - 1);
+            Card card = allCards[randomIndex];
+            if (card.GetType() != "contre")
+            {
+                deck1.Add(card);
+                allCards.Remove(card);
+            }
         }
-
+        
+        while (deck2.Count != 30)
+        {
+            int randomIndex = Random.Range(0, allCards.Count - 1);
+            Card card = allCards[randomIndex];
+            if (card.GetType() != "contre")
+            {
+                deck2.Add(card);
+                allCards.Remove(card);
+            }
+        }
         gameState.GetComponent<GameState>().DeckP1 = deck1;
         gameState.GetComponent<GameState>().DeckP2 = deck2;
-        
         SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
-        label.text = "Choix de cartes pour le joueur 1";
-        buttonLabel.text = "Choix joueur 2";
-        isPlayerOneCardChosen = true;
     }
 
     public void back()

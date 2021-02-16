@@ -21,11 +21,14 @@ public class InfiniteScroll : MonoBehaviour
         List<Card> AllCards=gameState.GetComponent<GameState>().allCards;
        for (int i = 0; i < AllCards.Count; i++)
             {
-                GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+                if (AllCards[i].GetType() != "contre")
+                {
+                    GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
 
-                newCard.GetComponent<OnHover>().bIsInGame = false;
-                newCard.transform.SetParent(transform,true);
-                newCard.GetComponent<CardDisplay>().card = AllCards[i];
+                    newCard.GetComponent<OnHover>().bIsInGame = false;
+                    newCard.transform.SetParent(transform,true);
+                    newCard.GetComponent<CardDisplay>().card = AllCards[i];
+                }
             }
     }
 

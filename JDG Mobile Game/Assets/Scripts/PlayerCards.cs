@@ -83,6 +83,7 @@ public class PlayerCards : MonoBehaviour
                 newPhysicalCard.transform.position=new Vector3(DeckLocationP1.x,DeckLocationP1.y+0.1f*i,DeckLocationP1.z);
                 newPhysicalCard.name = Deck[i].GetNom()+"P1";
                 newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
+                newPhysicalCard.tag = "card1";
                 AllPhysicalCards.Add(newPhysicalCard);
             }
         }
@@ -95,6 +96,7 @@ public class PlayerCards : MonoBehaviour
                 newPhysicalCard.transform.position=new Vector3(DeckLocationP2.x,DeckLocationP2.y+0.1f*i,DeckLocationP2.z);
                 newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
                 newPhysicalCard.name = Deck[i].GetNom()+"P2";
+                newPhysicalCard.tag = "card2";
                 AllPhysicalCards.Add(newPhysicalCard);
             }
         }
