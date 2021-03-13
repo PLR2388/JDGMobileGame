@@ -160,6 +160,10 @@ public class PlayerCards : MonoBehaviour
                 {
                     int index = FindCard(EquipmentCards[i]);
                     AllPhysicalCards[index].transform.position = equipmentCardsLocationP1[i];
+                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                    {
+                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                    }
                 }
             }
 

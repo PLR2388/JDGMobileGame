@@ -28,6 +28,12 @@ public class EffectCardEvent : UnityEvent<EffectCard>
 {
 }
 
+
+[System.Serializable]
+public class EquipmentCardEvent : UnityEvent<EquipmentCard>
+{
+}
+
 public class InGameMenuScript : MonoBehaviour
 {
     [SerializeField] private GameObject buttonText;
@@ -40,11 +46,13 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private GameObject inHandButton;
     [SerializeField] private GameObject backgroundInformations;
     [SerializeField] private Card currentSelectedCard;
+    [SerializeField] private GameObject messageBox;
     
     public static CardEvent EventClick = new CardEvent();
     public static InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
     public static FieldCardEvent FieldCardEvent = new FieldCardEvent();
     public static EffectCardEvent EffectCardEvent = new EffectCardEvent();
+    public static EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
 
 
     private Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
@@ -85,6 +93,15 @@ public class InGameMenuScript : MonoBehaviour
                 break;
             case "equipment" :
                 putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Équiper une invocation";
+                EquipmentCard equipmentCard = (EquipmentCard) card;
+                if (equipmentCard.isEquipmentPossible())
+                {
+                    putCardButton.GetComponent<Button>().interactable = true;
+                }
+                else
+                {
+                    putCardButton.GetComponent<Button>().interactable = false;
+                }
                 break;
             case "field" : 
                 putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Poser la carte";
@@ -117,6 +134,10 @@ public class InGameMenuScript : MonoBehaviour
         {
             EffectCard effectCard = (EffectCard) currentSelectedCard;
             EffectCardEvent.Invoke(effectCard);
+        } else if (currentSelectedCard.GetType() == "equipment")
+        {
+            EquipmentCard equipmentCard = (EquipmentCard) currentSelectedCard;
+            EquipmentCardEvent.Invoke(equipmentCard);
         }
     }
 

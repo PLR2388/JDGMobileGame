@@ -1148,6 +1148,7 @@ GameObject:
   - component: {fileID: 397230405}
   - component: {fileID: 397230406}
   - component: {fileID: 397230407}
+  - component: {fileID: 397230408}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1229,6 +1230,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e37cfa7900d35814580aab3400bf56b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  miniCardMenu: {fileID: 1989458480}
+--- !u!114 &397230408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abcec8b0e97cae24f82c293611afb001, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageBox: {fileID: 435952082473488534, guid: ee6c28c42c106e24eb2886b9461ab3b4,
+    type: 3}
   miniCardMenu: {fileID: 1989458480}
 --- !u!1 &414799418
 GameObject:
@@ -4027,6 +4043,7 @@ MonoBehaviour:
   inHandButton: {fileID: 829748139}
   backgroundInformations: {fileID: 1582983282}
   currentSelectedCard: {fileID: 0}
+  messageBox: {fileID: 0}
 --- !u!1 &1928831686
 GameObject:
   m_ObjectHideFlags: 0
