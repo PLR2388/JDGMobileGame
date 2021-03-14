@@ -89,7 +89,7 @@ public class InvocationFonctions : MonoBehaviour
         return i;
     }
 
-    private void DealWithStartEffect(InvocationStartEffect invocationStartEffect)
+    private void DealWithStartEffect(InvocationCard currentInvocationCard,InvocationStartEffect invocationStartEffect)
     {
         List<StartEffect> keys = invocationStartEffect.Keys;
         List<String> values = invocationStartEffect.Values;
@@ -98,9 +98,9 @@ public class InvocationFonctions : MonoBehaviour
         String typeCard = "";
         String familyName = "";
         List<String> invokeCardNames = new List<string>();
-
         List<Card> cardFound = new List<Card>();
-
+        bool mustDividAttack = false;
+        bool mustDividDefense = false; 
         for (int i = 0; i < keys.Count; i++)
         {
             switch (keys[i])
@@ -347,30 +347,264 @@ public class InvocationFonctions : MonoBehaviour
                     break;
                 case StartEffect.PutField:
                 {
+                    if (cardFound.Count > 0)
+                    { 
+                        if (currentPlayerCard.Field == null) 
+                        {
+                            GameObject message = Instantiate(messageBox);
+                            message.GetComponent<MessageBox>().title = "Choix du terrain à poser";
+                            message.GetComponent<MessageBox>().displayCardsScript.cardslist = cardFound;
+                            message.GetComponent<MessageBox>().displayCards = true;
+                                    
+                                        
+                            message.GetComponent<MessageBox>().positiveAction = () =>
+                            {
+                                FieldCard fieldCard =
+                                    (FieldCard) message.GetComponent<MessageBox>().getSelectedCard();
+
+                                if (fieldCard != null)
+                                {
+                                    currentPlayerCard.Field = fieldCard;
+                                    currentPlayerCard.Deck.Remove(fieldCard);
+                                    Destroy(message);
+                                }
+                                else
+                                {
+                                    Destroy(message);
+                                    GameObject informativeMessage = Instantiate(messageBox);
+                                    informativeMessage.GetComponent<MessageBox>().title = "Information";
+                                    informativeMessage.GetComponent<MessageBox>().description =
+                                        "Aucune carte n'a été choisie";
+                                    informativeMessage.GetComponent<MessageBox>().isInformation = true;
+                                }
+                               
+                            };
+                            message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
+                        }
+                        else
+                        {
+                            GameObject message = Instantiate(messageBox);
+                            message.GetComponent<MessageBox>().title = "Choix du terrain à prendre en main";
+                            message.GetComponent<MessageBox>().displayCardsScript.cardslist = cardFound;
+                            message.GetComponent<MessageBox>().displayCards = true;
+                                    
+                                        
+                            message.GetComponent<MessageBox>().positiveAction = () =>
+                            {
+                                FieldCard fieldCard =
+                                    (FieldCard) message.GetComponent<MessageBox>().getSelectedCard();
+
+                                if (fieldCard != null)
+                                {
+                                    currentPlayerCard.Deck.Add(fieldCard);
+                                    currentPlayerCard.Deck.Remove(fieldCard);
+                                    Destroy(message);
+                                }
+                                else
+                                {
+                                    Destroy(message);
+                                    GameObject informativeMessage = Instantiate(messageBox);
+                                    informativeMessage.GetComponent<MessageBox>().title = "Information";
+                                    informativeMessage.GetComponent<MessageBox>().description =
+                                        "Aucune carte n'a été choisie";
+                                    informativeMessage.GetComponent<MessageBox>().isInformation = true;
+                                }
+                            };
+                            message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
+                        } 
+                    }
                 }
                     break;
                 case StartEffect.DestroyField:
                 {
+                    FieldCard fieldCardP1 = P1.GetComponent<PlayerCards>().Field;
+                    FieldCard fieldCardP2 = P2.GetComponent<PlayerCards>().Field;
+
+                    if (fieldCardP1 != null)
+                    {
+                        cardFound.Add(fieldCardP1);
+                    }
+
+                    if (fieldCardP2 != null)
+                    {
+                        cardFound.Add(fieldCardP2);
+                    }
+
+                    if (cardFound.Count > 0)
+                    {
+                        GameObject message = Instantiate(messageBox);
+                        message.GetComponent<MessageBox>().title = "Choix du terrain à détruire";
+                        message.GetComponent<MessageBox>().displayCardsScript.cardslist = cardFound;
+                        message.GetComponent<MessageBox>().displayCards = true;
+                        
+                                                            
+                        message.GetComponent<MessageBox>().positiveAction = () =>
+                        {
+                            FieldCard fieldCard =
+                                (FieldCard) message.GetComponent<MessageBox>().getSelectedCard();
+
+                            if (fieldCard != null)
+                            {
+                                if (mustDividAttack)
+                                {
+                                    currentInvocationCard.setBonusAttack(-currentInvocationCard.GetAttack()/2);
+                                }
+
+                                if (mustDividDefense)
+                                {
+                                    currentInvocationCard.setBonusAttack(-currentInvocationCard.GetDefense()/2);
+                                }
+                                currentPlayerCard.Deck.Add(fieldCard);
+                                currentPlayerCard.Deck.Remove(fieldCard);
+                                Destroy(message);
+                            }
+                            else
+                            {
+                                Destroy(message);
+                                GameObject informativeMessage = Instantiate(messageBox);
+                                informativeMessage.GetComponent<MessageBox>().title = "Information";
+                                informativeMessage.GetComponent<MessageBox>().description =
+                                    "Aucune carte n'a été choisie";
+                                informativeMessage.GetComponent<MessageBox>().isInformation = true;
+                            }
+                        };
+
+                        message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
+                    }
                 }
                     break;
                 case StartEffect.Divide2ATK:
                 {
+                    mustDividAttack = true;
                 }
                     break;
                 case StartEffect.Divide2DEF:
                 {
+                    mustDividDefense = true;
                 }
                     break;
                 case StartEffect.SendToDeath:
                 {
+                    PlayerCards opponentPlayerCards = null;
+                    if (GameLoop.isP1Turn)
+                    {
+                        opponentPlayerCards = P2.GetComponent<PlayerCards>();
+                        InvocationCard[] P2InvocationCards = opponentPlayerCards.InvocationCards;
+
+                        for (int j = 0; j < P2InvocationCards.Length; j++)
+                        {
+                            if (P2InvocationCards[j] != null && P2InvocationCards[j].GetNom() != null)
+                            {
+                                cardFound.Add(P2InvocationCards[i]);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        opponentPlayerCards = P1.GetComponent<PlayerCards>();
+                        InvocationCard[] P1InvocationCards = opponentPlayerCards.InvocationCards;
+
+                        for (int j = 0; j < P1InvocationCards.Length; j++)
+                        {
+                            if (P1InvocationCards[j] != null && P1InvocationCards[j].GetNom() != null)
+                            {
+                                cardFound.Add(P1InvocationCards[i]);
+                            }
+                        }
+                    }
+                    
+                    
+                    GameObject message = Instantiate(messageBox);
+                    message.GetComponent<MessageBox>().title = "Choix de la carte à tuer :";
+                    message.GetComponent<MessageBox>().displayCardsScript.cardslist = cardFound;
+                    message.GetComponent<MessageBox>().displayCards = true;
+                    message.GetComponent<MessageBox>().positiveAction = () =>
+                    {
+                        InvocationCard invocationCardSelected = (InvocationCard)message.GetComponent<MessageBox>().getSelectedCard();
+                        if (invocationCardSelected != null)
+                        {
+                            InvocationCard[] invocationCards = opponentPlayerCards.InvocationCards;
+                            int k = 0;
+                            bool found = false;
+                            while (!found && k < invocationCards.Length)
+                            {
+                                if (invocationCards[k] != null &&
+                                    invocationCards[k].GetNom() == invocationCardSelected.GetNom())
+                                {
+                                    found = true;
+                                }
+                                else
+                                {
+                                    k++;
+                                }
+                            }
+
+                            if (found)
+                            {
+                                if (GameLoop.isP1Turn)
+                                {
+                                    P2.GetComponent<PlayerCards>().InvocationCards[k] = null;
+                                    P2.GetComponent<PlayerCards>().YellowTrash.Add(invocationCardSelected);
+                                }
+                                else
+                                {
+                                    P1.GetComponent<PlayerCards>().InvocationCards[k] = null;
+                                    P1.GetComponent<PlayerCards>().YellowTrash.Add(invocationCardSelected);
+                                }
+                                currentInvocationCard.incrementNumberDeaths();
+                            }
+                            else
+                            {
+                                Debug.Log("Something went wrong!");
+                            }
+                            Destroy(message);
+                        }
+                        else
+                        {
+                            Destroy(message);
+                            GameObject informativeMessage = Instantiate(messageBox);
+                            informativeMessage.GetComponent<MessageBox>().title = "Information";
+                            informativeMessage.GetComponent<MessageBox>().description =
+                                "Aucune carte n'a été choisie";
+                            informativeMessage.GetComponent<MessageBox>().isInformation = true;
+                        }
+                    };
+                    message.GetComponent<MessageBox>().negativeAction = () =>
+                    {
+                        Destroy(message);
+                    };
                 }
                     break;
                 case StartEffect.DrawXCards:
                 {
+                    int X = int.Parse(values[i]);
+                    int size = currentPlayerCard.Deck.Count;
+                    if (size >= 0)
+                    {
+                        int j = size - 1;
+                        while (j >= 0 && X != 0)
+                        {
+                            Card c = currentPlayerCard.Deck[j];
+                            currentPlayerCard.handCards.Add(c);
+                            currentPlayerCard.Deck.RemoveAt(j);
+                            j--;
+                            X--;
+                        }
+                    }
+                    
                 }
                     break;
                 case StartEffect.Condition:
                 {
+                    string condition = values[i];
+                    switch (condition)
+                    {
+                        case "skipAttack":
+                        {
+                            currentInvocationCard.blockAttack();
+                        }
+                            break;
+                    }
                 }
                     break;
             }
@@ -392,7 +626,7 @@ public class InvocationFonctions : MonoBehaviour
 
             if (invocationStartEffect != null)
             {
-                DealWithStartEffect(invocationStartEffect);
+                DealWithStartEffect(invocationCard,invocationStartEffect);
             }
         }
     }

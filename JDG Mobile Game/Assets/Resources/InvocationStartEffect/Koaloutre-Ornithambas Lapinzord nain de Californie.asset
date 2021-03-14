@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29fc04c6ed918d340a494d6278f09e43, type: 3}
   m_Name: Koaloutre-Ornithambas Lapinzord nain de Californie
   m_EditorClassIdentifier: 
-  keys: 0700000008000000
+  keys: 0c0000000800000007000000
   values:
+  - skipAttack
   - true
   - true

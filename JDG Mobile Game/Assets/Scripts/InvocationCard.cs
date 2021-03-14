@@ -24,6 +24,7 @@ public class InvocationCard : Card
     [SerializeField] private float bonusDefense;
     [SerializeField] private float numberTurnOnField;
     [SerializeField] private int numberDeaths;
+    [SerializeField] private bool blockAttackNextTurn = false;
 
 
     private void Awake()
@@ -33,6 +34,36 @@ public class InvocationCard : Card
         this.bonusDefense = 0;
         this.numberTurnOnField = 0;
         this.numberDeaths = 0;
+    }
+
+    public void setBonusDefense(float bonus)
+    {
+        bonusDefense = bonus;
+    }
+
+    public void blockAttack()
+    {
+        blockAttackNextTurn = true;
+    }
+
+    public void unblockAttack()
+    {
+        blockAttackNextTurn = false;
+    }
+    
+    public void setBonusAttack(float bonus)
+    {
+        bonusAttack = bonus;
+    }
+
+    public void incrementNumberDeaths()
+    {
+        numberDeaths++;
+    }
+
+    public void resetNumberDeaths()
+    {
+        numberDeaths = 0;
     }
 
 
