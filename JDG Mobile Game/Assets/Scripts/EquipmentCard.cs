@@ -6,6 +6,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName="New Card",menuName="EquipmentCard")]
 public class EquipmentCard : Card
 {
+    
+    [SerializeField] private EquipmentInstantEffect equipmentInstantEffect;
+    [SerializeField] private EquipmentPermEffect equipmentPermEffect;
     private void Awake()
     {
         this.type= "equipment";

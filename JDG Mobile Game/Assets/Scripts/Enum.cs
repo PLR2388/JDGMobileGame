@@ -69,3 +69,26 @@ public enum DeathEffect
     GetCardSource,
     KillAlsoOtherCard
 }
+
+// Equipment
+public enum InstantEffect //Happen only at the beginning
+{
+    AddDEF,
+    AddATK,
+    MultiplyATK,
+    MultiplyDEF,
+    SetATK,
+    SetDEF,
+    BlockATK,
+    DirectATK, // Direct attack opponent stars
+    SwitchEquipment, // Change previous equipmentCard by this one
+    DisableBonus, // Remove native card bonus
+}
+
+public enum PermanentEffect //Must be frequently change
+{
+    AddATKBaseOnHandCards,
+    AddDEFBaseOnHandCards,
+    BlockOpponentDuringInvocation, // Prevent opponent's attack during invocation
+    PreventAttackOnInvocation, // Prevent opponent to attack this card
+}

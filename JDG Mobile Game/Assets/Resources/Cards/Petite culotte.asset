@@ -19,3 +19,7 @@ MonoBehaviour:
     \xE9quip\xE9e."
   type: equipment
   materialCard: {fileID: 2100000, guid: 9998414d579eeff42a2ac03d8b125c87, type: 2}
+  collector: 0
+  equipmentInstantEffect: {fileID: 11400000, guid: 3d227de83a4684f45b97f78093d499a7,
+    type: 2}
+  equipmentPermEffect: {fileID: 0}

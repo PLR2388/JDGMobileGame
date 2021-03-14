@@ -19,3 +19,7 @@ MonoBehaviour:
     de vie de l'adversaire."
   type: equipment
   materialCard: {fileID: 2100000, guid: 13c03c155c76e7142a41a49ce83c5694, type: 2}
+  collector: 0
+  equipmentInstantEffect: {fileID: 11400000, guid: 7d49ebb9c80acfd4abd29c33def60ed1,
+    type: 2}
+  equipmentPermEffect: {fileID: 0}

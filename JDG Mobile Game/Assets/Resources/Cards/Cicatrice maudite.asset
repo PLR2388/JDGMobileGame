@@ -20,3 +20,7 @@ MonoBehaviour:
     ne peuvent pas attaquer lors de leur tour d'invocation."
   type: equipment
   materialCard: {fileID: 2100000, guid: b97feb45a60777b41a3c7ef2b07621cf, type: 2}
+  collector: 0
+  equipmentInstantEffect: {fileID: 0}
+  equipmentPermEffect: {fileID: 11400000, guid: a376d54abb727ff4bbcf9b22f5650caa,
+    type: 2}

@@ -18,3 +18,7 @@ MonoBehaviour:
     en DEF."
   type: equipment
   materialCard: {fileID: 2100000, guid: a5a06fe8b19fd704a8b2da652101352e, type: 2}
+  collector: 0
+  equipmentInstantEffect: {fileID: 11400000, guid: 51dfa16c365da1e44bf6a891ef1ed8b4,
+    type: 2}
+  equipmentPermEffect: {fileID: 0}

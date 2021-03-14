@@ -18,3 +18,7 @@ MonoBehaviour:
     \xE9toile en DEF."
   type: equipment
   materialCard: {fileID: 2100000, guid: bc4eadaa97a446a42a73856a82b1066d, type: 2}
+  collector: 0
+  equipmentInstantEffect: {fileID: 11400000, guid: 7b966f354cc14bb42b5de9fa90e9ff11,
+    type: 2}
+  equipmentPermEffect: {fileID: 0}

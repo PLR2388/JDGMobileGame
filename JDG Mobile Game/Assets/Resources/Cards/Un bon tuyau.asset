@@ -17,3 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "Annule l'effet bonus de la carte INVOCATION \xE9quip\xE9e."
   type: equipment
   materialCard: {fileID: 2100000, guid: 260094d22db58fa43b15e7d583ca104c, type: 2}
+  collector: 0
+  equipmentInstantEffect: {fileID: 11400000, guid: d1c499bdfaa10a4498af7cd3e19d7bfc,
+    type: 2}
+  equipmentPermEffect: {fileID: 0}
