@@ -83,7 +83,6 @@ public class PlayerCards : MonoBehaviour
                 newPhysicalCard.transform.position=new Vector3(DeckLocationP1.x,DeckLocationP1.y+0.1f*i,DeckLocationP1.z);
                 newPhysicalCard.name = Deck[i].GetNom()+"P1";
                 newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
-                newPhysicalCard.tag = "card1";
                 AllPhysicalCards.Add(newPhysicalCard);
             }
         }
@@ -96,7 +95,6 @@ public class PlayerCards : MonoBehaviour
                 newPhysicalCard.transform.position=new Vector3(DeckLocationP2.x,DeckLocationP2.y+0.1f*i,DeckLocationP2.z);
                 newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
                 newPhysicalCard.name = Deck[i].GetNom()+"P2";
-                newPhysicalCard.tag = "card2";
                 AllPhysicalCards.Add(newPhysicalCard);
             }
         }
@@ -138,6 +136,7 @@ public class PlayerCards : MonoBehaviour
                     {
                         AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                     }
+                    AllPhysicalCards[index].tag = "card1";
                 }
             }
             for (int i = 0; i < EffectCards.Length; i++)
@@ -151,6 +150,7 @@ public class PlayerCards : MonoBehaviour
                     {
                         AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                     }
+                    AllPhysicalCards[index].tag = "card1";
                 }
             }
             
@@ -164,6 +164,7 @@ public class PlayerCards : MonoBehaviour
                     {
                         AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                     }
+                    AllPhysicalCards[index].tag = "card1";
                 }
             }
 
@@ -189,6 +190,7 @@ public class PlayerCards : MonoBehaviour
                 {
                     AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                 }
+                AllPhysicalCards[index].tag = "card1";
             }
             
         }
@@ -204,6 +206,7 @@ public class PlayerCards : MonoBehaviour
                     {
                         AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                     }
+                    AllPhysicalCards[index].tag = "card2";
                 }
             }
             for (int i = 0; i < EffectCards.Length; i++)
@@ -212,6 +215,12 @@ public class PlayerCards : MonoBehaviour
                 {
                     int index = FindCard(EffectCards[i]);
                     AllPhysicalCards[index].transform.position = effectCardsLocationP2[i];
+                    
+                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                    {
+                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                    }
+                    AllPhysicalCards[index].tag = "card2";
                 }
             }
             
@@ -221,6 +230,11 @@ public class PlayerCards : MonoBehaviour
                 {
                     int index = FindCard(EquipmentCards[i]);
                     AllPhysicalCards[index].transform.position = equipmentCardsLocationP2[i];
+                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                    {
+                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                    }
+                    AllPhysicalCards[index].tag = "card2";
                 }
             }
 
@@ -242,6 +256,11 @@ public class PlayerCards : MonoBehaviour
             {
                 int index = FindCard(Field);
                 AllPhysicalCards[index].transform.position = FieldCardLocationP2;
+                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
+                AllPhysicalCards[index].tag = "card2";
             }
         }
    

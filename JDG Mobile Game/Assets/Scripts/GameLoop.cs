@@ -71,7 +71,7 @@ public class GameLoop : MonoBehaviour
                     if (tag == "card1")
                     {
                         GameObject cardObject = hitInfo.transform.gameObject;
-                        if (Input.GetMouseButtonDown(0))
+                        if (Input.GetMouseButtonUp(0))
                         {
                             totalDownTime = 0;
                             clicking = true;
