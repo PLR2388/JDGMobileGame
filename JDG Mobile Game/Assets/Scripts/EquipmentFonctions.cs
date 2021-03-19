@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -98,6 +99,67 @@ public class EquipmentFonctions : MonoBehaviour
         message.GetComponent<MessageBox>().displayCards = true;
 
         return message;
+    }
+
+    public void DealWithInstantEffect(InvocationCard invocationCard, EquipmentInstantEffect equipmentInstantEffect)
+    {
+        List<InstantEffect> keys = equipmentInstantEffect.Keys; 
+        List<string> values = equipmentInstantEffect.Values;
+
+        for (int i = 0; i < keys.Count; i++)
+        {
+
+            switch (keys[i])
+            {
+                case InstantEffect.AddATK:
+                    break;
+                case InstantEffect.AddDEF:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.MultiplyATK:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.MultiplyDEF:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.SetATK:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.SetDEF:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.BlockATK:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.DirectATK:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.SwitchEquipment:
+                {
+                    
+                }
+                    break;
+                case InstantEffect.DisableBonus:
+                {
+                    
+                }
+                    break;
+            }
+        }
     }
 
 

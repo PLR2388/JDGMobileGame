@@ -617,7 +617,6 @@ public class InvocationFonctions : MonoBehaviour
 
         if (size < 4)
         {
-            miniCardMenu.SetActive(false);
             currentPlayerCard.InvocationCards[size] = invocationCard;
 
             currentPlayerCard.handCards.Remove(invocationCard);

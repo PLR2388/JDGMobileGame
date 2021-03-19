@@ -139,6 +139,15 @@ public class InGameMenuScript : MonoBehaviour
             EquipmentCard equipmentCard = (EquipmentCard) currentSelectedCard;
             EquipmentCardEvent.Invoke(equipmentCard);
         }
+        
+        miniMenuCard.SetActive(false);
+        if (detailCardPanel.activeSelf)
+        {
+            // The detail panel is visible. One must go back to card display
+            detailCardPanel.SetActive(false);
+            handScreen.SetActive(true);
+            inHandButton.SetActive(true);
+        }
     }
 
     public void DetailCardClick()
