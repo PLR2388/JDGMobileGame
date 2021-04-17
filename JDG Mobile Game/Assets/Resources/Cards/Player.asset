@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
+  m_Name: Player
+  m_EditorClassIdentifier: 
+  nom: Player
+  description: 
+  descriptionDetaillee: 
+  type: invocation
+  materialCard: {fileID: 2100000, guid: 3d7a571462775dc4a9a6739ed46cf083, type: 2}
+  collector: 0
+  attack: 0
+  defense: 0
+  family: []
+  equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

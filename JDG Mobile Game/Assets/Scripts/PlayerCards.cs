@@ -120,6 +120,17 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    public void resetInvocationCardNewTurn()
+    {
+        foreach (var invocationCard in InvocationCards)
+        {
+            if (invocationCard != null && invocationCard.GetNom() != null)
+            {
+                invocationCard.resetNewTurn();
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -180,6 +191,10 @@ public class PlayerCards : MonoBehaviour
                 int index = FindCard(YellowTrash[i]);
                 AllPhysicalCards[index].transform.position =
                     new Vector3(YellowTrashLocationP1.x, YellowTrashLocationP1.y + 0.1f * i, YellowTrashLocationP1.z);
+                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
+                }
             }
 
             if (Field)
@@ -250,6 +265,10 @@ public class PlayerCards : MonoBehaviour
                 int index = FindCard(YellowTrash[i]);
                 AllPhysicalCards[index].transform.position =
                     new Vector3(YellowTrashLocationP2.x, YellowTrashLocationP2.y + 0.1f * i, YellowTrashLocationP2.z);
+                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
+                }
             }
 
             if (Field)
@@ -264,6 +283,11 @@ public class PlayerCards : MonoBehaviour
             }
         }
    
+    }
+
+    public void sendCardToYellowTrash(Card card)
+    {
+        YellowTrash.Add(card);
     }
 
     int FindCard(Card card)

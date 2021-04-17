@@ -47,6 +47,7 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private GameObject backgroundInformations;
     [SerializeField] private Card currentSelectedCard;
     [SerializeField] private GameObject messageBox;
+    [SerializeField] private GameObject invocationMenu;
     
     public static CardEvent EventClick = new CardEvent();
     public static InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
@@ -176,6 +177,7 @@ public class InGameMenuScript : MonoBehaviour
 
     public void ClickHandCard()
     {
+        invocationMenu.SetActive(false);
         if (handScreen.activeSelf)
         {
             HideHand();

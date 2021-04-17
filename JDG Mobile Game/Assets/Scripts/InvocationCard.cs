@@ -25,7 +25,7 @@ public class InvocationCard : Card
     [SerializeField] private float numberTurnOnField;
     [SerializeField] private int numberDeaths;
     [SerializeField] private bool blockAttackNextTurn = false;
-
+    [SerializeField] private bool hasAlreadyAttackThisTurn = false;
 
     private void Awake()
     {
@@ -85,6 +85,31 @@ public class InvocationCard : Card
     public float GetDefense()
     {
         return defense;
+    }
+
+    public bool hasAttack()
+    {
+        return hasAlreadyAttackThisTurn;
+    }
+
+    public void attackTurnDone()
+    {
+        hasAlreadyAttackThisTurn = true;
+    }
+
+    public void resetNewTurn()
+    {
+        hasAlreadyAttackThisTurn = false;
+    }
+
+    public float GetCurrentDefense()
+    {
+        return defense + bonusDefense;
+    }
+
+    public float GetCurrentAttack()
+    {
+        return attack + bonusAttack;
     }
 
     public EquipmentCard getEquipmentCard()
