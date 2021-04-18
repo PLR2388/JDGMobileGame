@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class CardDisplay : MonoBehaviour
 {
-public Card card;
-public Material defaultMaterial;
-public bool bIsFaceHidden;
-private Image image;
+    public Card card;
+    public Material defaultMaterial;
+    public bool bIsFaceHidden;
+    private Image image;
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +28,7 @@ private Image image;
         {
             if (card)
             {
-                image.material = card.GetMaterialCard();
+                image.material = card.MaterialCard;
             }
             else
             {

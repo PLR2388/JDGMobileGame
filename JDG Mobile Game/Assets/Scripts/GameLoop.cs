@@ -89,13 +89,10 @@ public class GameLoop : MonoBehaviour
     {
         if (Input.GetMouseButton(0) && phaseId == 2 && !stopDetectClicking)
         {
-            Debug.Log("Mouse is down");
-         
             RaycastHit hitInfo = new RaycastHit();
             bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
             if (hit) 
             {
-                Debug.Log("Hit " + hitInfo.transform.gameObject.name);
                 if (isP1Turn)
                 {
                     String tag = hitInfo.transform.gameObject.tag;
@@ -191,7 +188,6 @@ public class GameLoop : MonoBehaviour
                 bigImageCard.SetActive(false);
                 Debug.Log("No hit");
             }
-            Debug.Log("Mouse is down");
         } 
     }
 
@@ -203,7 +199,7 @@ public class GameLoop : MonoBehaviour
             List<Card> notEmptyOpponent = new List<Card>();
             for (int i = 0; i < opponentCards.Length; i++)
             {
-                if (opponentCards[i] != null && opponentCards[i].GetNom() != null)
+                if (opponentCards[i] != null && opponentCards[i].Nom != null)
                 {
                     notEmptyOpponent.Add(opponentCards[i]);
                 }
@@ -264,7 +260,7 @@ public class GameLoop : MonoBehaviour
         attacker.attackTurnDone();
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = false;
 
-        if (opponent.GetNom() == "Player")
+        if (opponent.Nom == "Player")
         {
             if (isP1Turn)
             {
@@ -279,41 +275,104 @@ public class GameLoop : MonoBehaviour
         {
             if (diff > 0)
             {
+                attacker.incrementNumberDeaths();
                 if (isP1Turn)
                 {
                     P1.GetComponent<PlayerStatus>().changePV(-diff);
-                    P1.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                    if (attacker.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(attacker,true);
+                    }
+                    else
+                    {
+                        P1.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                    }
                 }
                 else
                 {
                     P2.GetComponent<PlayerStatus>().changePV(-diff);
-                    P2.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                    if (attacker.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(attacker,false);
+                    }
+                    else
+                    {
+                        P2.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                    }
                 }
             }
             else if (diff == 0)
             {
+                attacker.incrementNumberDeaths();
+                opponent.incrementNumberDeaths();
                 if (isP1Turn)
                 {
-                    P1.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
-                    P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                    if (attacker.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(attacker,true);
+                    }
+                    else
+                    {
+                        P1.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
+                    }
+                    
+                    if (opponent.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(opponent,false);
+                    }
+                    else
+                    {
+                        P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                    }
                 }
                 else
                 {
-                    P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
-                    P2.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                    if (attacker.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(attacker,false);
+                    }
+                    else
+                    {
+                        P2.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
+                    }
+                    
+                    if (opponent.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(opponent,true);
+                    }
+                    else
+                    {
+                        P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                    }
                 }
             }
             else
             {
+                opponent.incrementNumberDeaths();
                 if (isP1Turn)
                 {
                     P2.GetComponent<PlayerStatus>().changePV(diff);
-                    P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+
+                    if (opponent.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(opponent,false);
+                    }
+                    else
+                    {
+                        P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                    }
                 }
                 else
                 {
                     P1.GetComponent<PlayerStatus>().changePV(diff);
-                    P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                    if (opponent.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffet(opponent,true);
+                    }
+                    else
+                    {
+                        P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                    }
                 }
             }
         }
@@ -321,10 +380,143 @@ public class GameLoop : MonoBehaviour
 
     }
 
+    private void DealWithDeathEffet(InvocationCard invocationCard,bool isP1Card)
+    {
+        InvocationDeathEffect invocationDeathEffect = invocationCard.GetInvocationDeathEffect();
+        List<DeathEffect> keys = invocationDeathEffect.Keys;
+        List<String> values = invocationDeathEffect.Values;
+
+        string cardName = "";
+        Card cardFound= null;
+        for (int i = 0; i < keys.Count; i++)
+        {
+            switch (keys[i])
+            {
+                case DeathEffect.GetSpecificCard:
+                    cardName = values[i];
+                    break;
+                case DeathEffect.GetCardSource:
+                {
+                     String source = values[i];
+                     PlayerCards currentPlayerCard = null;
+                     if (isP1Card)
+                     {
+                         currentPlayerCard = P1.GetComponent<PlayerCards>();
+                     }
+                     else
+                     {
+                         currentPlayerCard = P2.GetComponent<PlayerCards>();
+                     }
+                     if (source == "deck")
+                     {
+                        List<Card> deck = currentPlayerCard.Deck;
+                        if (cardName != "")
+                        {
+                            bool isFound = false;
+                            int j = 0;
+                            while (j < deck.Count && !isFound)
+                            {
+                                if (deck[j].Nom == cardName)
+                                {
+                                    isFound = true;
+                                    cardFound = deck[j];
+                                }
+
+                                j++;
+                            }
+
+                            if (isFound)
+                            {
+                                GameObject message = Instantiate(messageBox);
+                                message.GetComponent<MessageBox>().title = "Carte en main";
+
+                                message.GetComponent<MessageBox>().description =
+                                    "Voulez-vous aussi ajouter " + cardName + " à votre main ?";
+                                message.GetComponent<MessageBox>().positiveAction = () =>
+                                {
+                                    currentPlayerCard.handCards.Add(cardFound);
+
+                                    currentPlayerCard.Deck.Remove(cardFound);
+
+                                    Destroy(message);
+                                };
+                                message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
+                            }
+                        }
+                     }
+                     else if (source == "trash")
+                     {
+                        List<Card> trash = currentPlayerCard.YellowTrash;
+                        if (cardName != "")
+                        {
+                            bool isFound = false;
+                            int j = 0;
+                            while (j < trash.Count && !isFound)
+                            {
+                                if (trash[j].Nom == cardName)
+                                {
+                                    isFound = true;
+                                    cardFound = trash[j];
+                                }
+
+                                j++;
+                            }
+                        }
+                     }
+                }
+                    break;
+                case DeathEffect.ComeBackToHand:
+                    int number = int.Parse(values[i]);
+                    if (number != 0)
+                    {
+                        if (invocationCard.getNumberDeaths() > number)
+                        {
+                            if (isP1Card)
+                            {
+                                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(invocationCard);
+                            }
+                            else
+                            {
+                                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(invocationCard);
+                            }
+                        }
+                        else
+                        {
+                            if (isP1Card)
+                            {
+                                P1.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                            }
+                            else
+                            {
+                                P2.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (isP1Card)
+                        {
+                            P1.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                        }
+                        else
+                        {
+                            P2.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                        }
+                    }
+                    break;
+                case DeathEffect.KillAlsoOtherCard:
+                    break;
+                
+            }
+        }
+
+        
+    }
+
     private void DisplayCurrentCard(Card card)
     {
         bigImageCard.SetActive(true);
-        bigImageCard.GetComponent<Image>().material = card.GetMaterialCard();
+        bigImageCard.GetComponent<Image>().material = card.MaterialCard;
     }
 
     private void draw()

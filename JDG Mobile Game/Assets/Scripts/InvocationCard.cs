@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -77,6 +78,11 @@ public class InvocationCard : Card
         return invocationStartEffect;
     }
 
+    public InvocationDeathEffect GetInvocationDeathEffect()
+    {
+        return invocationDeathEffect;
+    }
+
     public float GetAttack()
     {
         return attack;
@@ -89,19 +95,16 @@ public class InvocationCard : Card
 
     public bool hasAttack()
     {
-        Debug.Log("Test Attack " + nom);
         return hasAlreadyAttackThisTurn;
     }
 
     public void attackTurnDone()
     {
-        Debug.Log("Attack done " + nom);
         hasAlreadyAttackThisTurn = true;
     }
 
     public void resetNewTurn()
     {
-        Debug.Log("ResetHasAlready Attack " + nom);
         hasAlreadyAttackThisTurn = false;
     }
 

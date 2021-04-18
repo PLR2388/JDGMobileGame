@@ -36,7 +36,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
                 image.color = Color.green;
           
             }
-            else if (card.IsCollector())
+            else if (card.Collector)
             {
                 image.color = Color.yellow;
             }

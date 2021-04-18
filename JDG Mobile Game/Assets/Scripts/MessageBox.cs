@@ -97,9 +97,9 @@ public class MessageBox : MonoBehaviour
                 GameObject gameObject = children[i].gameObject;
                  if(gameObject.GetComponent<CardDisplay>() != null)
                  {
-                     String name = gameObject.GetComponent<CardDisplay>().card.GetNom();
+                     String name = gameObject.GetComponent<CardDisplay>().card.Nom;
                      
-                     if (currentSelectedCard.GetNom() != name)
+                     if (currentSelectedCard.Nom != name)
                      {
                          gameObject.GetComponent<OnHover>().bIsSelected = false;
                          currentSelectedCard = null;

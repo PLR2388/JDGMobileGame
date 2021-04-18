@@ -13,33 +13,33 @@ public class Card : ScriptableObject
     [SerializeField] protected Material materialCard;
     [SerializeField] protected bool collector;
 
-    public Material GetMaterialCard()
+    public string Nom
     {
-        return materialCard;
+        get => nom;
     }
 
-    public string GetNom()
+    public string Description
     {
-        return nom;
+        get => description;
     }
 
-    public string GetType()
+    public string DetailedDescription
     {
-        return type;
+        get => descriptionDetaillee;
     }
 
-    public string GetDescription()
+    public string Type
     {
-        return description;
+        get => type;
     }
-
-    public string GetDescriptionDetaillee()
+    
+    public Material MaterialCard
     {
-        return descriptionDetaillee;
+        get => materialCard;
     }
-
-    public bool IsCollector()
+    
+    public bool Collector
     {
-        return collector;
+        get => collector;
     }
 }

@@ -81,7 +81,7 @@ public class PlayerCards : MonoBehaviour
                 GameObject newPhysicalCard = Instantiate(PrefabCard, DeckLocationP1, Quaternion.identity);
                 newPhysicalCard.transform.rotation=Quaternion.Euler(0,180,0);
                 newPhysicalCard.transform.position=new Vector3(DeckLocationP1.x,DeckLocationP1.y+0.1f*i,DeckLocationP1.z);
-                newPhysicalCard.name = Deck[i].GetNom()+"P1";
+                newPhysicalCard.name = Deck[i].Nom+"P1";
                 newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
                 AllPhysicalCards.Add(newPhysicalCard);
             }
@@ -94,7 +94,7 @@ public class PlayerCards : MonoBehaviour
                 GameObject newPhysicalCard = Instantiate(PrefabCard, DeckLocationP2, Quaternion.identity);
                 newPhysicalCard.transform.position=new Vector3(DeckLocationP2.x,DeckLocationP2.y+0.1f*i,DeckLocationP2.z);
                 newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
-                newPhysicalCard.name = Deck[i].GetNom()+"P2";
+                newPhysicalCard.name = Deck[i].Nom+"P2";
                 AllPhysicalCards.Add(newPhysicalCard);
             }
         }
@@ -110,7 +110,7 @@ public class PlayerCards : MonoBehaviour
         {
             for (int i = 0; i < Deck.Count; i++)
             {
-                if (Deck[i].GetNom() == "Le voisin")
+                if (Deck[i].Nom == "Le voisin")
                 {
                     handCards.Add(Deck[i]);
                     Deck.Remove(Deck[i]);
@@ -124,7 +124,7 @@ public class PlayerCards : MonoBehaviour
     {
         foreach (var invocationCard in InvocationCards)
         {
-            if (invocationCard != null && invocationCard.GetNom() != null)
+            if (invocationCard != null && invocationCard.Nom != null)
             {
                 invocationCard.resetNewTurn();
             }
@@ -290,9 +290,14 @@ public class PlayerCards : MonoBehaviour
         YellowTrash.Add(card);
     }
 
+    public void sendCardToHand(Card card)
+    {
+        handCards.Add(card);
+    }
+
     int FindCard(Card card)
     {
-        string CardName = card.GetNom();
+        string CardName = card.Nom;
         if (IsPlayerOne)
         {
             for (int i = 0; i < AllPhysicalCards.Count; i++)

@@ -19,17 +19,17 @@ public class InfiniteScroll : MonoBehaviour
     void Start()
     {
         List<Card> AllCards=gameState.GetComponent<GameState>().allCards;
-       for (int i = 0; i < AllCards.Count; i++)
+        foreach (var card in AllCards)
+        {
+            if (card.Type != "contre")
             {
-                if (AllCards[i].GetType() != "contre")
-                {
-                    GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+                GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
 
-                    newCard.GetComponent<OnHover>().bIsInGame = false;
-                    newCard.transform.SetParent(transform,true);
-                    newCard.GetComponent<CardDisplay>().card = AllCards[i];
-                }
+                newCard.GetComponent<OnHover>().bIsInGame = false;
+                newCard.transform.SetParent(transform,true);
+                newCard.GetComponent<CardDisplay>().card = card;
             }
+        }
     }
 
     private void displayMessageBox(String msg)
@@ -56,7 +56,7 @@ public class InfiniteScroll : MonoBehaviour
                     if (numberSelected < GameState.maxDeckCards)
                     {
                         numberSelected++;
-                        if (gameObject.GetComponent<CardDisplay>().card.IsCollector())
+                        if (gameObject.GetComponent<CardDisplay>().card.Collector)
                         {
                             if (numberRare < GameState.maxRare)
                             {

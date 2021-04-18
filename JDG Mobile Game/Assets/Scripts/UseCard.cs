@@ -14,7 +14,7 @@ public class UseCard : MonoBehaviour
 
     public void LaunchCalculationCard(Card card)
     {
-        string type = card.GetType();
+        string type = card.Type;
         switch (type)
         {
             case "invocation" : break;

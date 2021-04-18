@@ -42,7 +42,7 @@ public class EquipmentCard : Card
         int count = 0;
         for (int i = 0; i < invocationCards.Length; i++)
         {
-            if (invocationCards[i] != null && invocationCards[i].GetNom() != null)
+            if (invocationCards[i] != null && invocationCards[i].Nom != null)
             {
                 count++;
             } 

@@ -27,7 +27,7 @@ public class EffectFonctions : MonoBehaviour
         {
             if (effectCards[i] != null)
             {
-                if (effectCards[i].GetNom() == null)
+                if (effectCards[i].Nom == null)
                 {
                     end = true;
                 }

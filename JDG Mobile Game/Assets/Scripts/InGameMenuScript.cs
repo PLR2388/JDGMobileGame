@@ -71,7 +71,7 @@ public class InGameMenuScript : MonoBehaviour
 #if UNITY_EDITOR
         Vector3 mousePosition = Input.mousePosition;
 
-        string cardType = currentSelectedCard.GetType();
+        string cardType = currentSelectedCard.Type;
         switch (cardType)
         {
             case "invocation":
@@ -123,19 +123,19 @@ public class InGameMenuScript : MonoBehaviour
 
     public void ClickPutCard()
     {
-        if (currentSelectedCard.GetType() == "invocation")
+        if (currentSelectedCard.Type == "invocation")
         {
             InvocationCard invocationCard = (InvocationCard)currentSelectedCard;
             InvocationCardEvent.Invoke(invocationCard);
-        } else if (currentSelectedCard.GetType() == "field")
+        } else if (currentSelectedCard.Type == "field")
         {
             FieldCard fieldCard = (FieldCard) currentSelectedCard;
             FieldCardEvent.Invoke(fieldCard);
-        } else if (currentSelectedCard.GetType() == "effect")
+        } else if (currentSelectedCard.Type == "effect")
         {
             EffectCard effectCard = (EffectCard) currentSelectedCard;
             EffectCardEvent.Invoke(effectCard);
-        } else if (currentSelectedCard.GetType() == "equipment")
+        } else if (currentSelectedCard.Type == "equipment")
         {
             EquipmentCard equipmentCard = (EquipmentCard) currentSelectedCard;
             EquipmentCardEvent.Invoke(equipmentCard);

@@ -20,11 +20,11 @@ public class UpdateDescription : MonoBehaviour
     void Update()
     {
         card = GetComponent<CardDisplay>().card;
-        titleCardText.GetComponent<TMPro.TextMeshProUGUI>().text = card.GetNom();
-        shortDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.GetDescription();
-        descriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.GetDescriptionDetaillee();
+        titleCardText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Nom;
+        shortDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Description;
+        descriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.DetailedDescription;
 
-        if (card.GetType() == "invocation")
+        if (card.Type == "invocation")
         {
             allInvocationOptions.SetActive(true);
             cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte INVOCATION";
@@ -47,7 +47,7 @@ public class UpdateDescription : MonoBehaviour
         else
         {
             allInvocationOptions.SetActive(false);
-            switch (card.GetType())
+            switch (card.Type)
             {
                 case "effect":
                     cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte EFFET";
@@ -64,7 +64,7 @@ public class UpdateDescription : MonoBehaviour
             }
         }
 
-        if (card.IsCollector())
+        if (card.Collector)
         {
             collectorImage.SetActive(true);
         }

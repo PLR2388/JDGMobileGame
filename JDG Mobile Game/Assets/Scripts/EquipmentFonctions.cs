@@ -46,7 +46,7 @@ public class EquipmentFonctions : MonoBehaviour
             InvocationCard currentSelectedInvocationCard = (InvocationCard)message.GetComponent<MessageBox>().getSelectedCard();
             if (currentSelectedInvocationCard != null)
             {
-                int index = indexInvocationCard(invocationCards, currentSelectedInvocationCard.GetNom());
+                int index = indexInvocationCard(invocationCards, currentSelectedInvocationCard.Nom);
                 miniCardMenu.SetActive(false);
                 playerCards.EquipmentCards[index] = equipmentCard;
 
@@ -69,7 +69,7 @@ public class EquipmentFonctions : MonoBehaviour
         {
             if (invocationCards[i] != null)
             {
-                string invocationCardName = invocationCards[i].GetNom();
+                string invocationCardName = invocationCards[i].Nom;
                 if (invocationCardName != null)
                 {
                     if (invocationCardName == nameInvocationCard)
@@ -90,7 +90,7 @@ public class EquipmentFonctions : MonoBehaviour
         List<Card> cards = new List<Card>();
         for (int i = 0; i < invocationCards.Length; i++)
         {
-            if (invocationCards[i] != null && invocationCards[i].GetNom() != null)
+            if (invocationCards[i] != null && invocationCards[i].Nom != null)
             {
                 cards.Add(invocationCards[i]);
             }

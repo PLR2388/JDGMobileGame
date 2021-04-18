@@ -19,7 +19,7 @@ public class InteractPhysicalCards : MonoBehaviour
     private void DisplayCurrentCard(Card card)
     {
         bigImageCard.SetActive(true);
-        bigImageCard.GetComponent<Image>().material = card.GetMaterialCard();
+        bigImageCard.GetComponent<Image>().material = card.MaterialCard;
     }
 
     // Update is called once per frame

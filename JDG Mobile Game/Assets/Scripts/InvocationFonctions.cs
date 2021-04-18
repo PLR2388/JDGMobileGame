@@ -45,7 +45,7 @@ public class InvocationFonctions : MonoBehaviour
         {
             if (invocationCards[i] != null)
             {
-                if (invocationCards[i].GetNom() == null)
+                if (invocationCards[i].Nom == null)
                 {
                     end = true;
                 }
@@ -71,7 +71,7 @@ public class InvocationFonctions : MonoBehaviour
         {
             if (invocationCards[i] != null)
             {
-                if (invocationCards[i].GetNom() == null)
+                if (invocationCards[i].Nom == null)
                 {
                     end = true;
                 }
@@ -132,7 +132,7 @@ public class InvocationFonctions : MonoBehaviour
                             int j = 0;
                             while (j < deck.Count && !isFound)
                             {
-                                if (deck[j].GetNom() == cardName)
+                                if (deck[j].Nom == cardName)
                                 {
                                     isFound = true;
                                     cardFound.Add(deck[j]);
@@ -165,7 +165,7 @@ public class InvocationFonctions : MonoBehaviour
                             {
                                 foreach (var invokeCardName in invokeCardNames)
                                 {
-                                    if (deck[j].GetNom() == invokeCardName)
+                                    if (deck[j].Nom == invokeCardName)
                                     {
                                         cardFound.Add(deck[j]);
                                     }
@@ -180,7 +180,7 @@ public class InvocationFonctions : MonoBehaviour
                                     GameObject message = Instantiate(messageBox);
                                     message.GetComponent<MessageBox>().title = "Invocation";
                                     message.GetComponent<MessageBox>().description =
-                                        "Voulez-vous aussi invoquer " + cardFound[0].GetNom() + " ?";
+                                        "Voulez-vous aussi invoquer " + cardFound[0].Nom + " ?";
                                     message.GetComponent<MessageBox>().positiveAction = () =>
                                     {
                                         InvocationCard invocationCard = (InvocationCard) cardFound[cardFound.Count - 1];
@@ -219,7 +219,7 @@ public class InvocationFonctions : MonoBehaviour
                         {
                             for (int j = 0; j < deck.Count; j++)
                             {
-                                if (deck[j].GetType() == typeCard)
+                                if (deck[j].Type == typeCard)
                                 {
                                     cardFound.Add(deck[j]);
                                 }
@@ -235,7 +235,7 @@ public class InvocationFonctions : MonoBehaviour
                         {
                             for (int j = 0; j < deck.Count; j++)
                             {
-                                if (deck[i].GetType() == "invocation")
+                                if (deck[i].Type == "invocation")
                                 {
                                     InvocationCard invocationCard = (InvocationCard) deck[i];
 
@@ -260,7 +260,7 @@ public class InvocationFonctions : MonoBehaviour
                             int j = 0;
                             while (j < trash.Count && !isFound)
                             {
-                                if (trash[j].GetNom() == cardName)
+                                if (trash[j].Nom == cardName)
                                 {
                                     isFound = true;
                                     cardFound.Add(trash[j]);
@@ -275,7 +275,7 @@ public class InvocationFonctions : MonoBehaviour
                             {
                                 foreach (var invokeCardName in invokeCardNames)
                                 {
-                                    if (trash[j].GetNom() == invokeCardName)
+                                    if (trash[j].Nom == invokeCardName)
                                     {
                                         cardFound.Add(trash[j]);
                                     }
@@ -286,7 +286,7 @@ public class InvocationFonctions : MonoBehaviour
                         {
                             for (int j = 0; j < trash.Count; j++)
                             {
-                                if (trash[j].GetType() == typeCard)
+                                if (trash[j].Type == typeCard)
                                 {
                                     cardFound.Add(trash[j]);
                                 }
@@ -296,7 +296,7 @@ public class InvocationFonctions : MonoBehaviour
                         {
                             for (int j = 0; j < trash.Count; j++)
                             {
-                                if (trash[i].GetType() == "invocation")
+                                if (trash[i].Type == "invocation")
                                 {
                                     InvocationCard invocationCard = (InvocationCard) trash[i];
 
@@ -323,7 +323,7 @@ public class InvocationFonctions : MonoBehaviour
 
                     for (int j = 0; j < FindFirstEmptyInvocationLocation(P1InvocationCards); j++)
                     {
-                        if (P1InvocationCards[j].GetNom() != dontRemoveCard)
+                        if (P1InvocationCards[j].Nom != dontRemoveCard)
                         {
                             P1.GetComponent<PlayerCards>().handCards.Add(P1InvocationCards[j]);
                             P1.GetComponent<PlayerCards>().InvocationCards[j] = null;
@@ -332,7 +332,7 @@ public class InvocationFonctions : MonoBehaviour
 
                     for (int j = 0; j < FindFirstEmptyInvocationLocation(P2InvocationCards); j++)
                     {
-                        if (P2InvocationCards[j].GetNom() != dontRemoveCard)
+                        if (P2InvocationCards[j].Nom != dontRemoveCard)
                         {
                             P2.GetComponent<PlayerCards>().handCards.Add(P2InvocationCards[j]);
                             P2.GetComponent<PlayerCards>().InvocationCards[j] = null;
@@ -493,7 +493,7 @@ public class InvocationFonctions : MonoBehaviour
 
                         for (int j = 0; j < P2InvocationCards.Length; j++)
                         {
-                            if (P2InvocationCards[j] != null && P2InvocationCards[j].GetNom() != null)
+                            if (P2InvocationCards[j] != null && P2InvocationCards[j].Nom != null)
                             {
                                 cardFound.Add(P2InvocationCards[i]);
                             }
@@ -506,7 +506,7 @@ public class InvocationFonctions : MonoBehaviour
 
                         for (int j = 0; j < P1InvocationCards.Length; j++)
                         {
-                            if (P1InvocationCards[j] != null && P1InvocationCards[j].GetNom() != null)
+                            if (P1InvocationCards[j] != null && P1InvocationCards[j].Nom != null)
                             {
                                 cardFound.Add(P1InvocationCards[i]);
                             }
@@ -529,7 +529,7 @@ public class InvocationFonctions : MonoBehaviour
                             while (!found && k < invocationCards.Length)
                             {
                                 if (invocationCards[k] != null &&
-                                    invocationCards[k].GetNom() == invocationCardSelected.GetNom())
+                                    invocationCards[k].Nom == invocationCardSelected.Nom)
                                 {
                                     found = true;
                                 }
@@ -652,7 +652,7 @@ public class InvocationFonctions : MonoBehaviour
         int j = 0;
         while (j < size && !found)
         {
-            if (invocationCards[j] != null && invocationCards[j].GetNom() == cardName)
+            if (invocationCards[j] != null && invocationCards[j].Nom == cardName)
             {
                 found = true;
                 invocationCard = invocationCards[j];
@@ -674,7 +674,7 @@ public class InvocationFonctions : MonoBehaviour
 
         while (j < size && !found)
         {
-            if (invocationCards[j] != null && invocationCards[j].GetNom() == cardName)
+            if (invocationCards[j] != null && invocationCards[j].Nom == cardName)
             {
                 foundCard = invocationCards[j];
                 found = true;
@@ -694,7 +694,7 @@ public class InvocationFonctions : MonoBehaviour
         {
             if (invocationCard.getEquipmentCard())
             {
-                isChecked = invocationCard.getEquipmentCard().GetNom() == equipmentName;
+                isChecked = invocationCard.getEquipmentCard().Nom == equipmentName;
             }
         }
 
@@ -707,7 +707,7 @@ public class InvocationFonctions : MonoBehaviour
         FieldCard fieldCard = currentPlayerCards.Field;
         if (fieldCard)
         {
-            isCorrectField = fieldCard.GetNom() == fieldName;
+            isCorrectField = fieldCard.Nom == fieldName;
         }
 
         return isCorrectField;
@@ -771,7 +771,7 @@ public class InvocationFonctions : MonoBehaviour
 
         foreach (var card in trashCards)
         {
-            if (card.GetType() == "invocation")
+            if (card.Type == "invocation")
             {
                 count++;
             }

@@ -30,20 +30,20 @@ public class CardChoice : MonoBehaviour
     {
     }
 
-    private int checkCard(List<Card> deck)
+    private int CheckCard(List<Card> deck)
     {
         int numberSelected = 0;
         Transform[] children = container.GetComponentsInChildren<Transform>();
         for (int i = 0; i < children.Length; i++)
         {
-            GameObject gameObject = children[i].gameObject;
-            if (gameObject.GetComponent<OnHover>() != null)
+            GameObject cardGameObject = children[i].gameObject;
+            if (cardGameObject.GetComponent<OnHover>() != null)
             {
-                bool isSelected = gameObject.GetComponent<OnHover>().bIsSelected;
+                bool isSelected = cardGameObject.GetComponent<OnHover>().bIsSelected;
                 if (isSelected)
                 {
                     numberSelected++;
-                    deck.Add(gameObject.GetComponent<CardDisplay>().card);
+                    deck.Add(cardGameObject.GetComponent<CardDisplay>().card);
                 }
             }
         }
@@ -51,7 +51,7 @@ public class CardChoice : MonoBehaviour
         return numberSelected;
     }
 
-    private void displayMessageBox(int remainedCards)
+    private void DisplayMessageBox(int remainedCards)
     {
         GameObject message = Instantiate(messageBox);
         message.GetComponent<MessageBox>().title = "Modifie ton deck";
@@ -78,7 +78,7 @@ public class CardChoice : MonoBehaviour
         if (!isPlayerOneCardChosen)
         {
             List<Card> deck = new List<Card>();
-            int numberSelected = checkCard(deck);
+            int numberSelected = CheckCard(deck);
 
             if (numberSelected == GameState.maxDeckCards)
             {
@@ -91,13 +91,13 @@ public class CardChoice : MonoBehaviour
             else
             {
                 int remainedCards = GameState.maxDeckCards - numberSelected;
-                displayMessageBox(remainedCards);
+                DisplayMessageBox(remainedCards);
             }
         }
         else
         {
             List<Card> deck = new List<Card>();
-            int numberSelected = checkCard(deck);
+            int numberSelected = CheckCard(deck);
 
             if (numberSelected == GameState.maxDeckCards)
             {
@@ -110,7 +110,7 @@ public class CardChoice : MonoBehaviour
             else
             {
                 int remainedCards = GameState.maxDeckCards - numberSelected;
-                displayMessageBox(remainedCards);
+                DisplayMessageBox(remainedCards);
             }
         }
     }
@@ -126,7 +126,7 @@ public class CardChoice : MonoBehaviour
         {
             int randomIndex = Random.Range(0, allCards.Count - 1);
             Card card = allCards[randomIndex];
-            if (card.GetType() != "contre")
+            if (card.Type != "contre")
             {
                 deck1.Add(card);
                 allCards.Remove(card);
@@ -137,7 +137,7 @@ public class CardChoice : MonoBehaviour
         {
             int randomIndex = Random.Range(0, allCards.Count - 1);
             Card card = allCards[randomIndex];
-            if (card.GetType() != "contre")
+            if (card.Type != "contre")
             {
                 deck2.Add(card);
                 allCards.Remove(card);

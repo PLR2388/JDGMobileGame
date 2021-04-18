@@ -5,18 +5,18 @@ using UnityEngine;
 
 public class PhysicalCardDisplay : MonoBehaviour
 {
-public Card card;
-public Material defaultMaterial;
-public bool bIsFaceHidden;
-private MeshRenderer meshRenderer;
+    public Card card;
+    public Material defaultMaterial;
+    public bool bIsFaceHidden;
+    private MeshRenderer meshRenderer;
 
-private void Awake()
-{
-    meshRenderer = GetComponent<MeshRenderer>();
-}
+    private void Awake()
+    {
+        meshRenderer = GetComponent<MeshRenderer>();
+    }
 
-private void Update()
-{
+    private void Update()
+    {
         if (bIsFaceHidden)
         {
             meshRenderer.material = defaultMaterial;
@@ -25,13 +25,13 @@ private void Update()
         {
             if (card)
             {
-                meshRenderer.material = card.GetMaterialCard();
+                meshRenderer.material = card.MaterialCard;
             }
             else
             {
                 meshRenderer.material = defaultMaterial;
             }
         }
-}
+    }
 
 }
