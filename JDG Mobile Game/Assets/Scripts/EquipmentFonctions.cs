@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class EquipmentFonctions : MonoBehaviour
@@ -12,34 +10,31 @@ public class EquipmentFonctions : MonoBehaviour
         InGameMenuScript.EquipmentCardEvent.AddListener(displayEquipmentPopUp);
     }
 
-    // Update is called once per frame
-    void Update()
+    public PlayerCards CurrentPlayerCard
     {
-        
-    }
-
-    public PlayerCards getCurrentPlayerCard()
-    {
-        PlayerCards currentPlayerCard = null;
-        if (GameLoop.isP1Turn)
+        get
         {
-            GameObject player = GameObject.Find("Player1");
-            currentPlayerCard = player.GetComponent<PlayerCards>();
-        }
-        else
-        {
-            GameObject player = GameObject.Find("Player2");
-            currentPlayerCard = player.GetComponent<PlayerCards>();
-        }
+            PlayerCards currentPlayerCard = null;
+            if (GameLoop.isP1Turn)
+            {
+                GameObject player = GameObject.Find("Player1");
+                currentPlayerCard = player.GetComponent<PlayerCards>();
+            }
+            else
+            {
+                GameObject player = GameObject.Find("Player2");
+                currentPlayerCard = player.GetComponent<PlayerCards>();
+            }
 
-        return currentPlayerCard;
+            return currentPlayerCard;
+        }
     }
 
     public void displayEquipmentPopUp(EquipmentCard equipmentCard)
     {
-        PlayerCards playerCards = getCurrentPlayerCard();
+        PlayerCards playerCards = CurrentPlayerCard;
         InvocationCard[] invocationCards = playerCards.InvocationCards;
-        GameObject message = displayEquipmentMessageBox(invocationCards);
+        GameObject message = DisplayEquipmentMessageBox(invocationCards);
 
         message.GetComponent<MessageBox>().positiveAction = () =>
         {
@@ -82,7 +77,7 @@ public class EquipmentFonctions : MonoBehaviour
         return -1;
     }
     
-    private GameObject displayEquipmentMessageBox( InvocationCard[] invocationCards)
+    private GameObject DisplayEquipmentMessageBox( InvocationCard[] invocationCards)
     {
         GameObject message = Instantiate(messageBox);
         message.GetComponent<MessageBox>().title = "Choisis l'invocation auquelle associée l'équipement :";

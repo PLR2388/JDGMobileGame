@@ -19,22 +19,22 @@ public class EquipmentCard : Card
         if (GameLoop.isP1Turn)
         {
             GameObject player = GameObject.Find("Player1");
-            PlayerCards currentPlayerCard = player.GetComponent<PlayerCards>();
-
-            InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
-
-            return hasEnoughInvocationCard(invocationCards);
-
+            return HasEnoughInvocationCard(player);
         }
         else
         {
             GameObject player = GameObject.Find("Player2");
-            PlayerCards currentPlayerCard = player.GetComponent<PlayerCards>();
-
-            InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
-            
-            return hasEnoughInvocationCard(invocationCards);
+            return HasEnoughInvocationCard(player);
         }
+    }
+
+    private bool HasEnoughInvocationCard(GameObject player)
+    {
+        PlayerCards currentPlayerCard = player.GetComponent<PlayerCards>();
+
+        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+
+        return hasEnoughInvocationCard(invocationCards);
     }
 
     private bool hasEnoughInvocationCard(InvocationCard[] invocationCards)
@@ -48,13 +48,6 @@ public class EquipmentCard : Card
             } 
         }
 
-        if (count > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return count > 0;
     }
 }

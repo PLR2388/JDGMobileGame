@@ -26,14 +26,7 @@ public class CardDisplay : MonoBehaviour
         }
         else
         {
-            if (card)
-            {
-                image.material = card.MaterialCard;
-            }
-            else
-            {
-                image.material = defaultMaterial;
-            }
+            image.material = card ? card.MaterialCard : defaultMaterial;
         }
     }
 }

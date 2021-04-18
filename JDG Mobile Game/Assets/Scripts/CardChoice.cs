@@ -20,16 +20,6 @@ public class CardChoice : MonoBehaviour
 
     private bool isPlayerOneCardChosen = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     private int CheckCard(List<Card> deck)
     {
         int numberSelected = 0;
@@ -60,7 +50,7 @@ public class CardChoice : MonoBehaviour
             "Tu dois avoir 30 cartes !\n " + remainedCards + " cartes restantes à choisir !";
     }
 
-    private void deselectAllCards()
+    private void DeselectAllCards()
     {
         Transform[] children = container.GetComponentsInChildren<Transform>();
         for (int i = 0; i < children.Length; i++)
@@ -73,7 +63,7 @@ public class CardChoice : MonoBehaviour
         }
     }
 
-    public void checkPlayerCards()
+    public void CheckPlayerCards()
     {
         if (!isPlayerOneCardChosen)
         {
@@ -86,7 +76,7 @@ public class CardChoice : MonoBehaviour
                 buttonLabel.text = "Jouer";
                 isPlayerOneCardChosen = true;
                 gameState.GetComponent<GameState>().DeckP1 = deck;
-                deselectAllCards();
+                DeselectAllCards();
             }
             else
             {
@@ -115,7 +105,7 @@ public class CardChoice : MonoBehaviour
         }
     }
 
-    public void randomDeck()
+    public void RandomDeck()
     {
         List<Card> deck1 = new List<Card>();
         List<Card> deck2 = new List<Card>();
@@ -124,31 +114,31 @@ public class CardChoice : MonoBehaviour
 
         while (deck1.Count != 30)
         {
-            int randomIndex = Random.Range(0, allCards.Count - 1);
-            Card card = allCards[randomIndex];
-            if (card.Type != "contre")
-            {
-                deck1.Add(card);
-                allCards.Remove(card);
-            }
+            GetRandomCards(allCards, deck1);
         }
         
         while (deck2.Count != 30)
         {
-            int randomIndex = Random.Range(0, allCards.Count - 1);
-            Card card = allCards[randomIndex];
-            if (card.Type != "contre")
-            {
-                deck2.Add(card);
-                allCards.Remove(card);
-            }
+            GetRandomCards(allCards,deck2);
         }
+        
         gameState.GetComponent<GameState>().DeckP1 = deck1;
         gameState.GetComponent<GameState>().DeckP2 = deck2;
         SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
     }
 
-    public void back()
+    private void GetRandomCards(List<Card> allCards, List<Card> deck)
+    {
+        int randomIndex = Random.Range(0, allCards.Count - 1);
+        Card card = allCards[randomIndex];
+        if (card.Type != "contre")
+        {
+            deck.Add(card);
+            allCards.Remove(card);
+        }
+    }
+
+    public void Back()
     {
         if (isPlayerOneCardChosen)
         {
@@ -156,11 +146,11 @@ public class CardChoice : MonoBehaviour
             buttonLabel.text = "Choix joueur 2";
             isPlayerOneCardChosen = false;
             gameState.GetComponent<GameState>().DeckP1 = new List<Card>();
-            deselectAllCards();
+            DeselectAllCards();
         }
         else
         {
-            deselectAllCards();
+            DeselectAllCards();
             choiceCardMenu.SetActive(false);
             gameModeMenu.SetActive(true);
         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -102,7 +100,6 @@ public class MessageBox : MonoBehaviour
                      if (currentSelectedCard.Nom != name)
                      {
                          gameObject.GetComponent<OnHover>().bIsSelected = false;
-                         currentSelectedCard = null;
                      }
                      else if(!gameObject.GetComponent<OnHover>().bIsSelected)
                      {

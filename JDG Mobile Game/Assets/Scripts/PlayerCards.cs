@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCards : MonoBehaviour
@@ -64,6 +63,21 @@ public class PlayerCards : MonoBehaviour
     private Vector3 FieldCardLocationP2=new Vector3(-32,0.5f,21);
     private Vector3 DeckLocationP2=new Vector3(-53,0.5f,34);
     private Vector3 YellowTrashLocationP2=new Vector3(-32,0.5f,46);
+
+    public string TAG
+    {
+        get
+        {
+            if (IsPlayerOne)
+            {
+                return "card1";
+            }
+            else
+            {
+                return "card2";
+            }
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -191,7 +205,7 @@ public class PlayerCards : MonoBehaviour
                 int index = FindCard(YellowTrash[i]);
                 AllPhysicalCards[index].transform.position =
                     new Vector3(YellowTrashLocationP1.x, YellowTrashLocationP1.y + 0.1f * i, YellowTrashLocationP1.z);
-                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                if (!AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
                 {
                     AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
                 }
@@ -265,7 +279,7 @@ public class PlayerCards : MonoBehaviour
                 int index = FindCard(YellowTrash[i]);
                 AllPhysicalCards[index].transform.position =
                     new Vector3(YellowTrashLocationP2.x, YellowTrashLocationP2.y + 0.1f * i, YellowTrashLocationP2.z);
-                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                if (!AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
                 {
                     AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
                 }

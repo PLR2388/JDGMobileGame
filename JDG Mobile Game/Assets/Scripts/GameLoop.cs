@@ -51,15 +51,15 @@ public class GameLoop : MonoBehaviour
             case 0: draw();
                 break;
             case 1:
-                choosePhase();
+                ChoosePhase();
                 break;
             case 2:
-                chooseAttack();
+                ChooseAttack();
                 break;
         }
     }
 
-    private void choosePhase()
+    private void ChoosePhase()
     {
         if (isP1Turn)
         {
@@ -69,7 +69,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
-            P1.GetComponent<PlayerCards>().resetInvocationCardNewTurn();
+            P2.GetComponent<PlayerCards>().resetInvocationCardNewTurn();
         }
     }
 
@@ -85,7 +85,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void chooseAttack()
+    private void ChooseAttack()
     {
         if (Input.GetMouseButton(0) && phaseId == 2 && !stopDetectClicking)
         {
@@ -93,97 +93,7 @@ public class GameLoop : MonoBehaviour
             bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
             if (hit) 
             {
-                if (isP1Turn)
-                {
-                    String tag = hitInfo.transform.gameObject.tag;
-                    if (tag == "card1")
-                    {
-                        GameObject cardObject = hitInfo.transform.gameObject;
-                        cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            totalDownTime = 0;
-                            clicking = true;
-                            Vector3 mousePosition = Input.mousePosition;
-                            if (cardSelected is InvocationCard )
-                            {
-                                attacker = (InvocationCard) cardSelected;
-                                invocationMenu.SetActive(true);
-                                invocationMenu.transform.position = mousePosition;
-                                if (!attacker.hasAttack())
-                                {
-                                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
-                                }
-                            }
-                        }
-
-                        // If a first click detected, and still clicking,
-                        // measure the total click time, and fire an event
-                        // if we exceed the duration specified
-                        if (clicking && Input.GetMouseButton(0))
-                        {
-                            totalDownTime += Time.deltaTime;
-
-                            if (totalDownTime >= ClickDuration)
-                            {
-                                Debug.Log("Long click");
-                                clicking = false;
-                                invocationMenu.SetActive(false);
-                                DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                            }
-                        }
-
-                        // If a first click detected, and we release before the
-                        // duraction, do nothing, just cancel the click
-                        if (clicking && Input.GetMouseButtonUp(0))
-                        {
-                            clicking = false;
-                        }
-                    } else if (tag == "card2")
-                    {
-                        GameObject cardObject = hitInfo.transform.gameObject;
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            totalDownTime = 0;
-                            clicking = true;
-                        }
-
-                        // If a first click detected, and still clicking,
-                        // measure the total click time, and fire an event
-                        // if we exceed the duration specified
-                        if (clicking && Input.GetMouseButton(0))
-                        {
-                            totalDownTime += Time.deltaTime;
-
-                            if (totalDownTime >= ClickDuration)
-                            {
-                                Debug.Log("Long click");
-                                clicking = false;
-                                DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                            }
-                        }
-
-                        // If a first click detected, and we release before the
-                        // duraction, do nothing, just cancel the click
-                        if (clicking && Input.GetMouseButtonUp(0))
-                        {
-                            clicking = false;
-                        }
-                    }
-                    else {
-                        bigImageCard.SetActive(false);
-                    }
-                }
-                else
-                {
-                    if (hitInfo.transform.gameObject.tag == "card2")
-                    {
-                        Debug.Log ("It's working!");
-                    } else {
-                        Debug.Log ("nopz");
-                    }
-                }
-        
+                HandleClick(hitInfo);
             } else {
                 bigImageCard.SetActive(false);
                 Debug.Log("No hit");
@@ -191,53 +101,132 @@ public class GameLoop : MonoBehaviour
         } 
     }
 
-    public void displayAvailableOpponent()
+    private void HandleClick(RaycastHit hitInfo)
+    {
+        string tag = hitInfo.transform.gameObject.tag;
+        string persoTag = isP1Turn ? P1.GetComponent<PlayerCards>().TAG : P2.GetComponent<PlayerCards>().TAG;
+        string opponentTag = isP1Turn ? P2.GetComponent<PlayerCards>().TAG : P1.GetComponent<PlayerCards>().TAG;
+        GameObject cardObject = hitInfo.transform.gameObject;
+        
+        if (tag == persoTag)
+        {
+            cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
+            if (Input.GetMouseButtonDown(0))
+            {
+                totalDownTime = 0;
+                clicking = true;
+                Vector3 mousePosition = Input.mousePosition;
+                if (cardSelected is InvocationCard)
+                {
+                    attacker = (InvocationCard) cardSelected;
+                    invocationMenu.SetActive(true);
+                    invocationMenu.transform.position = mousePosition;
+                    if (!attacker.hasAttack())
+                    {
+                        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
+                    }
+                }
+            }
+            if (clicking && Input.GetMouseButton(0))
+            {
+                totalDownTime += Time.deltaTime;
+
+                if (totalDownTime >= ClickDuration)
+                {
+                    Debug.Log("Long click");
+                    clicking = false;
+                    invocationMenu.SetActive(false);
+                    DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
+                }
+            }
+            
+            if (clicking && Input.GetMouseButtonUp(0))
+            {
+                clicking = false;
+            }
+        }
+        else if (tag == opponentTag)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                totalDownTime = 0;
+                clicking = true;
+            }
+            
+            if (clicking && Input.GetMouseButton(0))
+            {
+                totalDownTime += Time.deltaTime;
+
+                if (totalDownTime >= ClickDuration)
+                {
+                    clicking = false;
+                    DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
+                }
+            }
+            
+            if (clicking && Input.GetMouseButtonUp(0))
+            {
+                clicking = false;
+            }
+        }
+        else
+        {
+            bigImageCard.SetActive(false);
+        }
+    }
+
+    public void DisplayAvailableOpponent()
     {
         if (isP1Turn)
         {
             InvocationCard[] opponentCards = P2.GetComponent<PlayerCards>().InvocationCards;
-            List<Card> notEmptyOpponent = new List<Card>();
-            for (int i = 0; i < opponentCards.Length; i++)
-            {
-                if (opponentCards[i] != null && opponentCards[i].Nom != null)
-                {
-                    notEmptyOpponent.Add(opponentCards[i]);
-                }
-            }
-
-            if (notEmptyOpponent.Count == 0)
-            {
-                notEmptyOpponent.Add(player);
-            }
-
-            GameObject messageBox = displayOpponentMessageBox(notEmptyOpponent);
-            stopDetectClicking = true;
-            messageBox.GetComponent<MessageBox>().positiveAction = () =>
-            {
-                InvocationCard invocationCard =
-                    (InvocationCard) messageBox.GetComponent<MessageBox>().getSelectedCard();
-
-                if (invocationCard != null)
-                {
-                    ComputeAttack(invocationCard);
-                }
-
-                stopDetectClicking = false;
-                Destroy(messageBox);
-            };
-            messageBox.GetComponent<MessageBox>().negativeAction = () =>
-            {
-                Destroy(messageBox);
-                stopDetectClicking = false;
-            };
-
+            DisplayCards(opponentCards);
         }
         else
         {
-            
+            InvocationCard[] opponentCards = P1.GetComponent<PlayerCards>().InvocationCards;
+            DisplayCards(opponentCards);
         }
     }
-    
+
+    private void DisplayCards(InvocationCard[] invocationCards)
+    {
+        List<Card> notEmptyOpponent = new List<Card>();
+        for (int i = 0; i < invocationCards.Length; i++)
+        {
+            if (invocationCards[i] != null && invocationCards[i].Nom != null)
+            {
+                notEmptyOpponent.Add(invocationCards[i]);
+            }
+        }
+
+        if (notEmptyOpponent.Count == 0)
+        {
+            notEmptyOpponent.Add(player);
+        }
+
+        GameObject messageBox = displayOpponentMessageBox(notEmptyOpponent);
+        stopDetectClicking = true;
+        messageBox.GetComponent<MessageBox>().positiveAction = () =>
+        {
+            InvocationCard invocationCard =
+                (InvocationCard) messageBox.GetComponent<MessageBox>().getSelectedCard();
+
+            if (invocationCard != null)
+            {
+                ComputeAttack(invocationCard);
+            }
+
+            stopDetectClicking = false;
+            Destroy(messageBox);
+        };
+        messageBox.GetComponent<MessageBox>().negativeAction = () =>
+        {
+            Destroy(messageBox);
+            stopDetectClicking = false;
+        };
+    }
+
     private GameObject displayOpponentMessageBox ( List<Card> invocationCards)
     {
         GameObject message = Instantiate(messageBox);

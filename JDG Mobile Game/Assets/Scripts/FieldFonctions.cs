@@ -38,10 +38,5 @@ public class FieldFonctions : MonoBehaviour
             currentPlayerCard = P2.GetComponent<PlayerCards>();
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }
