@@ -53,8 +53,7 @@ public enum ActionEffect
 {
     SacrificeInvocation,
     SpecificField,
-    IncreaseATK,
-    IncreaseDEF,
+    IncreaseStarsATKAndDEF,
     GiveATK,
     GiveDEF,
     SpecificFamily,

@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3cffaa8773cde545bf1d6275d3b1989, type: 3}
   m_Name: Mohammad
   m_EditorClassIdentifier: 
-  keys: 00000000010000000200000003000000
+  keys: 000000000100000002000000
   values:
   - Joueur du Grenier
   - "Studio de d\xE9veloppement"
-  - 2.5
   - 2.5

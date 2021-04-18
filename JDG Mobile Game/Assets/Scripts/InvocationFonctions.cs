@@ -622,11 +622,101 @@ public class InvocationFonctions : MonoBehaviour
             currentPlayerCard.handCards.Remove(invocationCard);
 
             InvocationStartEffect invocationStartEffect = invocationCard.GetInvocationStartEffect();
+            InvocationActionEffect invocationActionEffect = invocationCard.InvocationActionEffect;
 
             if (invocationStartEffect != null)
             {
                 DealWithStartEffect(invocationCard,invocationStartEffect);
             }
+
+            if (invocationActionEffect != null && CheckIfContainsSacrificeInvocation(invocationActionEffect))
+            {
+                AskIfUserWantToUseActionEffect(invocationCard, invocationActionEffect);
+            }
+        }
+    }
+
+    private bool CheckIfContainsSacrificeInvocation(InvocationActionEffect invocationActionEffect)
+    {
+        return invocationActionEffect.Keys[0] == ActionEffect.SacrificeInvocation;
+    }
+
+    private void AskIfUserWantToUseActionEffect(InvocationCard invocationCard, InvocationActionEffect invocationActionEffect)
+    {
+        List<ActionEffect> keys = invocationActionEffect.Keys;
+        List<string> values = invocationActionEffect.Values;
+        string cardName = null;
+        string fieldName = null;
+        for (int i = 0; i < keys.Count; i++)
+        {
+            switch (keys[i])
+            {
+                case ActionEffect.SacrificeInvocation:
+                    cardName = values[i];
+                break;
+                case ActionEffect.SpecificField:
+                    fieldName = values[i];
+                    break;
+                case ActionEffect.IncreaseStarsATKAndDEF:
+                {
+                    float valueStars = float.Parse(values[i]);
+                    if (fieldName != null && cardName != null)
+                    {
+                        bool isPossible = currentPlayerCard.Field.Nom == fieldName;
+                        if (isPossible)
+                        {
+                            InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                            AskToSacrifice(invocationCard, invocationCards, cardName, valueStars);
+                        }
+
+                    }
+                    else if (cardName != null)
+                    {
+                        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                        AskToSacrifice(invocationCard, invocationCards, cardName, valueStars);
+                    }
+                }
+                    break;
+                case ActionEffect.BackToLife:
+                    break;
+                
+            }
+        }
+    }
+
+    private void AskToSacrifice(InvocationCard invocationCard, InvocationCard[] invocationCards, string cardName,
+        float valueStars)
+    {
+        int j = 0;
+        bool cardFound = false;
+        Card card = null;
+        while (j < invocationCards.Length && !cardFound)
+        {
+            if (invocationCards[j] != null && invocationCards[j].Nom == cardName)
+            {
+                cardFound = true;
+                card = invocationCards[j];
+            }
+
+            j++;
+        }
+
+        if (cardFound)
+        {
+            GameObject message = Instantiate(messageBox);
+            message.GetComponent<MessageBox>().title = "Amélioration";
+            message.GetComponent<MessageBox>().description =
+                "Voulez-vous augmenter de " + valueStars + " l'ATQ et la DEF de " + invocationCard.Nom + " en sacrifiant " +
+                cardName + " ?";
+            message.GetComponent<MessageBox>().positiveAction = () =>
+            {
+                currentPlayerCard.sendCardToYellowTrash(card);
+                invocationCard.setBonusAttack(valueStars);
+                invocationCard.setBonusDefense(valueStars);
+
+                Destroy(message);
+            };
+            message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
         }
     }
 

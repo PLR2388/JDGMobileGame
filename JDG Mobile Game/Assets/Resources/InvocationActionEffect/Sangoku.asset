@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3cffaa8773cde545bf1d6275d3b1989, type: 3}
   m_Name: Sangoku
   m_EditorClassIdentifier: 
-  keys: 040000000500000006000000
+  keys: 030000000400000005000000
   values:
   - 2
   - 2

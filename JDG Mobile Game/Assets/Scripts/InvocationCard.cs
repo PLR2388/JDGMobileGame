@@ -42,6 +42,14 @@ public class InvocationCard : Card
         bonusDefense = bonus;
     }
 
+    public InvocationActionEffect InvocationActionEffect
+    {
+        get
+        {
+            return invocationActionEffect;
+        }
+    }
+
     public void blockAttack()
     {
         blockAttackNextTurn = true;
