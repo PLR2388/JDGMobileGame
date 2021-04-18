@@ -30,6 +30,7 @@ public class GameLoop : MonoBehaviour
     
     private float ClickDuration = 2;
 
+    private bool stopDetectClicking = false;
     bool clicking = false;
     float totalDownTime = 0;
     private Card cardSelected;
@@ -86,7 +87,7 @@ public class GameLoop : MonoBehaviour
 
     private void chooseAttack()
     {
-        if (Input.GetMouseButton(0) && phaseId == 2)
+        if (Input.GetMouseButton(0) && phaseId == 2 && !stopDetectClicking)
         {
             Debug.Log("Mouse is down");
          
@@ -107,13 +108,14 @@ public class GameLoop : MonoBehaviour
                             totalDownTime = 0;
                             clicking = true;
                             Vector3 mousePosition = Input.mousePosition;
-                            if (cardSelected is InvocationCard)
+                            if (cardSelected is InvocationCard )
                             {
                                 attacker = (InvocationCard) cardSelected;
+                                invocationMenu.SetActive(true);
+                                invocationMenu.transform.position = mousePosition;
                                 if (!attacker.hasAttack())
                                 {
-                                    invocationMenu.SetActive(true);
-                                    invocationMenu.transform.position = mousePosition;
+                                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
                                 }
                             }
                         }
@@ -129,6 +131,7 @@ public class GameLoop : MonoBehaviour
                             {
                                 Debug.Log("Long click");
                                 clicking = false;
+                                invocationMenu.SetActive(false);
                                 DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
                             }
                         }
@@ -212,6 +215,7 @@ public class GameLoop : MonoBehaviour
             }
 
             GameObject messageBox = displayOpponentMessageBox(notEmptyOpponent);
+            stopDetectClicking = true;
             messageBox.GetComponent<MessageBox>().positiveAction = () =>
             {
                 InvocationCard invocationCard =
@@ -221,11 +225,14 @@ public class GameLoop : MonoBehaviour
                 {
                     ComputeAttack(invocationCard);
                 }
+
+                stopDetectClicking = false;
                 Destroy(messageBox);
             };
             messageBox.GetComponent<MessageBox>().negativeAction = () =>
             {
                 Destroy(messageBox);
+                stopDetectClicking = false;
             };
 
         }
