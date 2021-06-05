@@ -1344,6 +1344,7 @@ MonoBehaviour:
   P2: {fileID: 2017354827}
   player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
   inHandButton: {fileID: 829748139}
+  camera: {fileID: 1233983595}
 --- !u!114 &397230405
 MonoBehaviour:
   m_ObjectHideFlags: 0

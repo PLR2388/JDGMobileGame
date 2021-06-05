@@ -13,7 +13,7 @@ public class PlayerCards : MonoBehaviour
     [SerializeField] private bool IsPlayerOne;
     [SerializeField] private GameObject PrefabCard;
     [SerializeField] private List<GameObject> AllPhysicalCards;
-    
+
     private Vector3[] invocationCardsLocationP1= {
         new Vector3(-53.5f,0.5f,-21),
         new Vector3(-32,0.5f,-21),
@@ -145,12 +145,24 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    public bool containsCardInInvocation(InvocationCard invocationCard)
+    {
+        foreach (var invocation in InvocationCards)
+        {
+            if (invocation != null && invocation.Nom == invocationCard.Nom)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (IsPlayerOne)
         {
-
             for (int i = 0; i < InvocationCards.Length; i++)
             {
                 if (InvocationCards[i])
@@ -301,11 +313,39 @@ public class PlayerCards : MonoBehaviour
 
     public void sendCardToYellowTrash(Card card)
     {
+        for (int i = 0; i < InvocationCards.Length; i++)
+        {
+            if (InvocationCards[i] != null && InvocationCards[i].Nom == card.Nom)
+            {
+                InvocationCards[i] = null;
+            }
+        }
+        
+        for (int i = 0; i < EffectCards.Length; i++)
+        {
+            if (EffectCards[i] != null && EffectCards[i].Nom == card.Nom)
+            {
+                EffectCards[i] = null;
+            }
+        }
+
+        if (Field != null && Field.Nom == card.Nom)
+        {
+            Field = null;
+        }
+
         YellowTrash.Add(card);
     }
 
     public void sendCardToHand(Card card)
     {
+        for (int i = 0; i < InvocationCards.Length; i++)
+        {
+            if (InvocationCards[i] != null && InvocationCards[i].Nom == card.Nom)
+            {
+                InvocationCards[i] = null;
+            }
+        }
         handCards.Add(card);
     }
 

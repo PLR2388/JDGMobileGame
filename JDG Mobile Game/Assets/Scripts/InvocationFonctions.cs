@@ -834,7 +834,7 @@ public class InvocationFonctions : MonoBehaviour
         {
             foreach (var invocationCard in invocationCards)
             {
-                if (invocationCard.GetAttack() >= value)
+                if (invocationCard != null && invocationCard.Nom != null && invocationCard.GetAttack() >= value)
                 {
                     Threshold.Add(invocationCard);
                 }

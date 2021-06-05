@@ -23,6 +23,7 @@ public class GameLoop : MonoBehaviour
     [SerializeField] private GameObject P2;
     [SerializeField] private Card player;
     [SerializeField] private GameObject inHandButton;
+    [SerializeField] private GameObject camera;
     
     public static UnityEvent ChangePlayer = new UnityEvent();
     
@@ -34,6 +35,8 @@ public class GameLoop : MonoBehaviour
     float totalDownTime = 0;
     private Card cardSelected;
     private InvocationCard attacker;
+    
+    private Vector3 cameraRotation = new Vector3(0,0,180);
 
     // Start is called before the first frame update
     void Start()
@@ -102,6 +105,7 @@ public class GameLoop : MonoBehaviour
     private void HandleClick(RaycastHit hitInfo)
     {
         string tag = hitInfo.transform.gameObject.tag;
+        PlayerCards ownPlayerCards = isP1Turn ? P1.GetComponent<PlayerCards>() : P2.GetComponent<PlayerCards>();
         string persoTag = isP1Turn ? P1.GetComponent<PlayerCards>().TAG : P2.GetComponent<PlayerCards>().TAG;
         string opponentTag = isP1Turn ? P2.GetComponent<PlayerCards>().TAG : P1.GetComponent<PlayerCards>().TAG;
         GameObject cardObject = hitInfo.transform.gameObject;
@@ -114,13 +118,13 @@ public class GameLoop : MonoBehaviour
                 totalDownTime = 0;
                 clicking = true;
                 Vector3 mousePosition = Input.mousePosition;
-                if (cardSelected is InvocationCard)
+                if (cardSelected is InvocationCard )
                 {
                     attacker = (InvocationCard) cardSelected;
-                    invocationMenu.SetActive(true);
-                    invocationMenu.transform.position = mousePosition;
-                    if (!attacker.hasAttack())
+                    if (!attacker.hasAttack() && ownPlayerCards.containsCardInInvocation(attacker))
                     {
+                        invocationMenu.SetActive(true);
+                        invocationMenu.transform.position = mousePosition;
                         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
                     }
                 }
@@ -289,6 +293,7 @@ public class GameLoop : MonoBehaviour
             if (opponent.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(opponent, false);
+                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
             }
             else
             {
@@ -301,6 +306,7 @@ public class GameLoop : MonoBehaviour
             if (opponent.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(opponent, true);
+                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
             }
             else
             {
@@ -321,6 +327,7 @@ public class GameLoop : MonoBehaviour
             if (attacker.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(attacker, true);
+                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
             }
             else
             {
@@ -333,6 +340,7 @@ public class GameLoop : MonoBehaviour
             if (attacker.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(attacker, false);
+                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
             }
             else
             {
@@ -350,6 +358,7 @@ public class GameLoop : MonoBehaviour
             if (attacker.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(attacker, true);
+                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
             }
             else
             {
@@ -359,6 +368,7 @@ public class GameLoop : MonoBehaviour
             if (opponent.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(opponent, false);
+                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
             }
             else
             {
@@ -370,6 +380,7 @@ public class GameLoop : MonoBehaviour
             if (attacker.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(attacker, false);
+                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
             }
             else
             {
@@ -379,6 +390,7 @@ public class GameLoop : MonoBehaviour
             if (opponent.GetInvocationDeathEffect() != null)
             {
                 DealWithDeathEffet(opponent, true);
+                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
             }
             else
             {
@@ -615,10 +627,12 @@ public class GameLoop : MonoBehaviour
             ChangePlayer.Invoke();
             if (isP1Turn)
             {
+                camera.transform.Rotate(cameraRotation);
                 playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 1";
             }
             else
             {
+                camera.transform.Rotate(cameraRotation);
                 playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 2";
             }
             phaseId = 0;
