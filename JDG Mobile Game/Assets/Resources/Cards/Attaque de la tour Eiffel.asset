@@ -20,3 +20,5 @@ MonoBehaviour:
     votre combinaison est d\xE9truite, toutes les cartes qui la composent le sont."
   type: effect
   materialCard: {fileID: 2100000, guid: 27dbb7b0e3619894394b5cda06b2668c, type: 2}
+  collector: 0
+  effectCardEffect: {fileID: 11400000, guid: 4f1ca83a9e0bb644ba0850e8f96566cd, type: 2}

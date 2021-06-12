@@ -18,3 +18,5 @@ MonoBehaviour:
     une carte TERRAIN pr\xE9sente sur le terrain."
   type: effect
   materialCard: {fileID: 2100000, guid: e5ee0dd927f6d5349a04784af3509ad3, type: 2}
+  collector: 0
+  effectCardEffect: {fileID: 11400000, guid: 04f4670dbb5bd5847927341e700940ae, type: 2}

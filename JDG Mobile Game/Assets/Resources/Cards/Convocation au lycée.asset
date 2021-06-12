@@ -23,3 +23,4 @@ MonoBehaviour:
   type: effect
   materialCard: {fileID: 2100000, guid: 735aa2c824e3a9f42b3368545a3b0e98, type: 2}
   collector: 1
+  effectCardEffect: {fileID: 11400000, guid: 73e5c525f966e93408f2ee4ae001097f, type: 2}

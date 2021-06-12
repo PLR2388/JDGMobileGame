@@ -18,3 +18,5 @@ MonoBehaviour:
     sont divis\xE9es par 2 pour ce tour."
   type: effect
   materialCard: {fileID: 2100000, guid: 72d3875769182c545a92ac6d1d8e1f17, type: 2}
+  collector: 0
+  effectCardEffect: {fileID: 11400000, guid: f2df4870dcf2c224f9bcb57bb7454eb2, type: 2}

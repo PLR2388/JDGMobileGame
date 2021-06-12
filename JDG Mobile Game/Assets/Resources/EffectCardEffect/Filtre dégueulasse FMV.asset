@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 397632609e4aadb4cbe5a28d12927727, type: 3}
   m_Name: "Filtre d\xE9gueulasse FMV"
   m_EditorClassIdentifier: 
-  keys: 
-  values: []
+  keys: 1b00000011000000
+  values:
+  - true
+  - 2

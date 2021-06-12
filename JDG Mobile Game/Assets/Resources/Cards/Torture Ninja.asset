@@ -18,3 +18,5 @@ MonoBehaviour:
     de sa main."
   type: effect
   materialCard: {fileID: 2100000, guid: 8b31b0d47749aa74683eede15fe83ab0, type: 2}
+  collector: 0
+  effectCardEffect: {fileID: 11400000, guid: 4b8823d6facedda409da64dd91f9a95e, type: 2}

@@ -10,7 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 397632609e4aadb4cbe5a28d12927727, type: 3}
-  m_Name: Attaque de la tour Eiffel$
+  m_Name: Attaque de la tour Eiffel
   m_EditorClassIdentifier: 
-  keys: 
-  values: []
+  keys: 100000001200000011000000
+  values:
+  - 2
+  - true
+  - onDestroy

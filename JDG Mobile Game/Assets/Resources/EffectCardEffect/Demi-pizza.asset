@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 397632609e4aadb4cbe5a28d12927727, type: 3}
   m_Name: Demi-pizza
   m_EditorClassIdentifier: 
-  keys: 
-  values: []
+  keys: 000000000100000005000000
+  values:
+  - 15
+  - false
+  - 3

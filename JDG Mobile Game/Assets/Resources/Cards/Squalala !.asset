@@ -18,3 +18,5 @@ MonoBehaviour:
     directement \xE0 la poubelle jaune."
   type: effect
   materialCard: {fileID: 2100000, guid: 7dfafefff1031264597d3868b5c7bf7e, type: 2}
+  collector: 0
+  effectCardEffect: {fileID: 11400000, guid: cdc7f28401de4074880a9932429f7a44, type: 2}
