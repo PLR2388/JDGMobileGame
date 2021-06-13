@@ -8,6 +8,7 @@ public class MessageBox : MonoBehaviour
 {
     public UnityAction positiveAction;
     public UnityAction negativeAction;
+    public UnityAction okAction = null;
     public String title;
     public String description;
     public Boolean isInformation = false;
@@ -48,10 +49,17 @@ public class MessageBox : MonoBehaviour
             okButton.SetActive(true);
 
             Button okBtn = okButton.GetComponent<Button>();
-            okBtn.onClick.AddListener(() =>
+            if (okAction != null)
             {
-                Destroy(gameObject);
-            });
+                okBtn.onClick.AddListener(okAction);
+            }
+            else
+            {
+                okBtn.onClick.AddListener(() =>
+                {
+                    Destroy(gameObject);
+                });
+            }
         }
         else
         {

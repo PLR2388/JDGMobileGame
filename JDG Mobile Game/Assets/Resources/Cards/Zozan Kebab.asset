@@ -18,3 +18,5 @@ MonoBehaviour:
     ce terrain obtiennent 1 \xE9toile de DEF suppl\xE9mentaires."
   type: field
   materialCard: {fileID: 2100000, guid: a97f23475120d2d4e8bd1ec2473247ca, type: 2}
+  collector: 0
+  family: spatial

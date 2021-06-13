@@ -18,3 +18,5 @@ MonoBehaviour:
     ce terrain obtiennent 1 \xE9toile d'ATQ suppl\xE9mentaire."
   type: field
   materialCard: {fileID: 2100000, guid: 5aef8d60f0a01c24b8e33715fc651396, type: 2}
+  collector: 0
+  family: japon

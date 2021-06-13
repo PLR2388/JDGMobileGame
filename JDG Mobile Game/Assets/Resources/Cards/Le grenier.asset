@@ -19,3 +19,4 @@ MonoBehaviour:
   type: field
   materialCard: {fileID: 2100000, guid: d6b1b09dd90d9384fae803c1af000d47, type: 2}
   collector: 1
+  family: humain

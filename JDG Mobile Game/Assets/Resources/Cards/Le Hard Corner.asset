@@ -20,3 +20,5 @@ MonoBehaviour:
     DEF."
   type: field
   materialCard: {fileID: 2100000, guid: 0169eed06f27ac64e8eba79ce9f3db05, type: 2}
+  collector: 0
+  family: hardcorner

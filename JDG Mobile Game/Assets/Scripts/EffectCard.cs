@@ -9,6 +9,10 @@ public class EffectCard : Card
     
     [SerializeField] private EffectCardEffect effectCardEffect;
     
+    public EffectCardEffect GetEffectCardEffect()
+    {
+        return effectCardEffect;
+    }
     private void Awake()
     {
         this.type = "effect";

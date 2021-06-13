@@ -18,3 +18,5 @@ MonoBehaviour:
     sur ce terrain gagnent 2 \xE9toiles d'ATQ et perdent 1 \xE9toile de DEF."
   type: field
   materialCard: {fileID: 2100000, guid: 8eeb76e794909b140bf6bf2e39df12fb, type: 2}
+  collector: 0
+  family: comics

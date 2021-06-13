@@ -111,7 +111,7 @@ public enum Effect
     RemoveHand,
     RemoveDeck,
     SpecialInvocation,
-    InvocationStat,
+    DividInvocation ,
     Duration,
     Combine,
     RevertStat,

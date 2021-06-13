@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 397632609e4aadb4cbe5a28d12927727, type: 3}
   m_Name: Mauvais doublage
   m_EditorClassIdentifier: 
-  keys: 100000001300000011000000
+  keys: 1300000011000000
   values:
-  - all
   - true
   - 1

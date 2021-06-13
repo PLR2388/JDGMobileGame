@@ -19,3 +19,5 @@ MonoBehaviour:
     \xE0 chaque fois que son tour commence."
   type: field
   materialCard: {fileID: 2100000, guid: dd7822175a32f5e4ca76952de6c1a6f9, type: 2}
+  collector: 0
+  family: sorcier

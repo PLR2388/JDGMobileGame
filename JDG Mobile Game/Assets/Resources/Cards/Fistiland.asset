@@ -19,3 +19,5 @@ MonoBehaviour:
     \xBB dans sa pioche ou sa poubelle jaune pour l'ajouter \xE0 sa main."
   type: field
   materialCard: {fileID: 2100000, guid: 84141635419287f4a941c9e747a99faa, type: 2}
+  collector: 0
+  family: fistiland

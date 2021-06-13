@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +22,7 @@ public class InvocationCard : Card
     [SerializeField] private InvocationDeathEffect invocationDeathEffect;
     [SerializeField] private float bonusAttack;
     [SerializeField] private float bonusDefense;
+    [SerializeField] private string bonusFamily = null;
     [SerializeField] private float numberTurnOnField;
     [SerializeField] private int numberDeaths;
     [SerializeField] private bool blockAttackNextTurn = false;
@@ -37,6 +37,11 @@ public class InvocationCard : Card
         this.numberDeaths = 0;
     }
 
+    public float getBonusDefense()
+    {
+        return bonusDefense;
+    }
+
     public void setBonusDefense(float bonus)
     {
         bonusDefense = bonus;
@@ -44,10 +49,7 @@ public class InvocationCard : Card
 
     public InvocationActionEffect InvocationActionEffect
     {
-        get
-        {
-            return invocationActionEffect;
-        }
+        get { return invocationActionEffect; }
     }
 
     public void blockAttack()
@@ -59,7 +61,12 @@ public class InvocationCard : Card
     {
         blockAttackNextTurn = false;
     }
-    
+
+    public float getBonusAttack()
+    {
+        return bonusAttack;
+    }
+
     public void setBonusAttack(float bonus)
     {
         bonusAttack = bonus;
@@ -79,6 +86,31 @@ public class InvocationCard : Card
     public String[] GetFamily()
     {
         return family;
+    }
+
+    /**
+     * Use it if we override the family
+     */
+    public string[] GetCurrentFamily()
+    {
+        if (bonusFamily != null)
+        {
+            return new[] {bonusFamily};
+        }
+        else
+        {
+            return family;
+        }
+    }
+
+    public void SetCurrentFamily(string familyString)
+    {
+        bonusFamily = familyString;
+    }
+
+    public void UnSetCurrentFamily()
+    {
+        bonusFamily = null;
     }
 
     public InvocationStartEffect GetInvocationStartEffect()
@@ -140,13 +172,11 @@ public class InvocationCard : Card
     {
         if (GameLoop.isP1Turn)
         {
-            return InvocationFonctions.isInvocationPossible(this.invocationConditions,"Player1");
+            return InvocationFonctions.isInvocationPossible(this.invocationConditions, "Player1");
         }
         else
         {
-            return InvocationFonctions.isInvocationPossible(this.invocationConditions,"Player2");
+            return InvocationFonctions.isInvocationPossible(this.invocationConditions, "Player2");
         }
     }
-    
-    
 }

@@ -21,3 +21,5 @@ MonoBehaviour:
     \xAB D\xE9veloppeur \xBB."
   type: field
   materialCard: {fileID: 2100000, guid: 5cfa96f2ed49284499d2fde7687e4821, type: 2}
+  collector: 0
+  family: "d\xE9veloppeur"

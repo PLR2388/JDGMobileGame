@@ -18,3 +18,5 @@ MonoBehaviour:
     terrain obtiennent 0,5 \xE9toiles d'ATQ et de DEF suppl\xE9mentaires."
   type: field
   materialCard: {fileID: 2100000, guid: a941b686e4ad5df47baed858ebf1f9b4, type: 2}
+  collector: 0
+  family: rpg

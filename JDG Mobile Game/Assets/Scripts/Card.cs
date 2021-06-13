@@ -42,4 +42,9 @@ public class Card : ScriptableObject
     {
         get => collector;
     }
+
+    public bool isValid()
+    {
+        return this != null && !string.IsNullOrEmpty(nom);
+    }
 }

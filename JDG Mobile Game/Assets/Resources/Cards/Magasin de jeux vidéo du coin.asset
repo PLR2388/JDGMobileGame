@@ -18,3 +18,5 @@ MonoBehaviour:
     \xBB sur ce terrain perdent 1 \xE9toile d'ATQ et gagnent 2 \xE9toiles de DEF."
   type: field
   materialCard: {fileID: 2100000, guid: 1d9e905d01aec214f941ebcfb7fa1ffb, type: 2}
+  collector: 0
+  family: incarnation
