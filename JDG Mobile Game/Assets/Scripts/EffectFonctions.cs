@@ -28,7 +28,7 @@ public class EffectFonctions : MonoBehaviour
 
     private int FindFirstEmptyEffectLocationCurrentPlayer()
     {
-        EffectCard[] effectCards = currentPlayerCard.EffectCards;
+        List<EffectCard> effectCards = currentPlayerCard.EffectCards;
         bool end = false;
         int i = 0;
         while (i < 4 && !end)
@@ -213,10 +213,10 @@ public class EffectFonctions : MonoBehaviour
                             {
                                 FieldCard fieldCard1 = currentPlayerCard.Field;
                                 FieldCard fieldCard2 = opponentPlayerCard.Field;
-                                EffectCard[] effectCards1 = currentPlayerCard.EffectCards;
-                                EffectCard[] effectCards2 = opponentPlayerCard.EffectCards;
-                                InvocationCard[] invocationCards1 = currentPlayerCard.InvocationCards;
-                                InvocationCard[] invocationCards2 = opponentPlayerCard.InvocationCards;
+                                List<EffectCard> effectCards1 = currentPlayerCard.EffectCards;
+                                List<EffectCard> effectCards2 = opponentPlayerCard.EffectCards;
+                                List<InvocationCard> invocationCards1 = currentPlayerCard.InvocationCards;
+                                List<InvocationCard> invocationCards2 = opponentPlayerCard.InvocationCards;
                                 if (fieldCard1.isValid())
                                 {
                                     currentPlayerCard.Field = null;
@@ -229,7 +229,7 @@ public class EffectFonctions : MonoBehaviour
                                     opponentPlayerCard.YellowTrash.Add(fieldCard2);
                                 }
 
-                                for (int j = 0; j < effectCards1.Length; j++)
+                                for (int j = 0; j < effectCards1.Count; j++)
                                 {
                                     EffectCard card = effectCards1[j];
                                     if (card.isValid())
@@ -239,7 +239,7 @@ public class EffectFonctions : MonoBehaviour
                                     }
                                 }
 
-                                for (int j = 0; j < effectCards2.Length; j++)
+                                for (int j = 0; j < effectCards2.Count; j++)
                                 {
                                     EffectCard card = effectCards2[j];
                                     if (card.isValid())
@@ -249,7 +249,7 @@ public class EffectFonctions : MonoBehaviour
                                     }
                                 }
 
-                                for (int j = 0; j < invocationCards1.Length; j++)
+                                for (int j = 0; j < invocationCards1.Count; j++)
                                 {
                                     InvocationCard card = invocationCards1[j];
                                     if (card.isValid())
@@ -259,7 +259,7 @@ public class EffectFonctions : MonoBehaviour
                                     }
                                 }
 
-                                for (int j = 0; j < invocationCards2.Length; j++)
+                                for (int j = 0; j < invocationCards2.Count; j++)
                                 {
                                     InvocationCard card = invocationCards2[j];
                                     if (card.isValid())
@@ -299,7 +299,7 @@ public class EffectFonctions : MonoBehaviour
                                         if (invocationCard.isValid())
                                         {
                                             opponentPlayerCard.YellowTrash.Add(invocationCard);
-                                            for (int j = 0; j < opponentPlayerCard.InvocationCards.Length; j++)
+                                            for (int j = 0; j < opponentPlayerCard.InvocationCards.Count; j++)
                                             {
                                                 InvocationCard currentCard = opponentPlayerCard.InvocationCards[j];
                                                 if (currentCard.isValid() && currentCard.Nom == invocationCard.Nom)
@@ -328,10 +328,10 @@ public class EffectFonctions : MonoBehaviour
                             {
                                 FieldCard fieldCard1 = currentPlayerCard.Field;
                                 FieldCard fieldCard2 = opponentPlayerCard.Field;
-                                EffectCard[] effectCards1 = currentPlayerCard.EffectCards;
-                                EffectCard[] effectCards2 = opponentPlayerCard.EffectCards;
-                                InvocationCard[] invocationCards1 = currentPlayerCard.InvocationCards;
-                                InvocationCard[] invocationCards2 = opponentPlayerCard.InvocationCards;
+                                List<EffectCard> effectCards1 = currentPlayerCard.EffectCards;
+                                List<EffectCard> effectCards2 = opponentPlayerCard.EffectCards;
+                                List<InvocationCard> invocationCards1 = currentPlayerCard.InvocationCards;
+                                List<InvocationCard> invocationCards2 = opponentPlayerCard.InvocationCards;
 
                                 List<Card> allCardsOnField = new List<Card>();
 
@@ -391,11 +391,11 @@ public class EffectFonctions : MonoBehaviour
                                     {
                                         if (card.Type == "invocation")
                                         {
-                                            FindCardInArrayAndSendItToTrash(invocationCards1, invocationCards2, card);
+                                          //  FindCardInArrayAndSendItToTrash(invocationCards1, invocationCards2, card);
                                         }
                                         else if (card.Type == "effect")
                                         {
-                                            FindCardInArrayAndSendItToTrash(effectCards1, effectCards2, card);
+                                         //   FindCardInArrayAndSendItToTrash(effectCards1, effectCards2, card);
                                         }
                                         else if (card.Type == "field")
                                         {
@@ -434,7 +434,7 @@ public class EffectFonctions : MonoBehaviour
                         {
                             case "true":
                             {
-                                InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                                List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
                                 List<Card> invocationCardsValid = new List<Card>();
 
                                 foreach (var invocationCard in invocationCards)
@@ -459,7 +459,7 @@ public class EffectFonctions : MonoBehaviour
                                 break;
                             case "5":
                             {
-                                InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                                List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
                                 List<Card> invocationCardsValid = new List<Card>();
 
                                 foreach (var invocationCard in invocationCards)
@@ -488,18 +488,15 @@ public class EffectFonctions : MonoBehaviour
                                 break;
                             case "3":
                             {
-                                InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                                List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
                                 List<Card> invocationCardsValid = new List<Card>();
 
                                 foreach (var invocationCard in invocationCards)
                                 {
-                                    if (invocationCard.isValid())
+                                    if (invocationCard.GetCurrentAttack() >= 3 ||
+                                        invocationCard.GetCurrentDefense() >= 3)
                                     {
-                                        if (invocationCard.GetCurrentAttack() >= 3 ||
-                                            invocationCard.GetCurrentDefense() >= 3)
-                                        {
-                                            invocationCardsValid.Add(invocationCard);
-                                        }
+                                        invocationCardsValid.Add(invocationCard);
                                     }
                                 }
 
@@ -743,7 +740,7 @@ public class EffectFonctions : MonoBehaviour
                         if (place < 4)
                         {
                             List<Card> yellowTrash = currentPlayerCard.YellowTrash;
-                            InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                            List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
 
                             List<Card> invocationFromYellowTrash = new List<Card>();
                             foreach (var card in yellowTrash)
@@ -801,7 +798,7 @@ public class EffectFonctions : MonoBehaviour
                         break;
                     case Effect.DividInvocation:
                     {
-                        InvocationCard[] opponentInvocationCard = opponentPlayerCard.InvocationCards;
+                        List<InvocationCard> opponentInvocationCard = opponentPlayerCard.InvocationCards;
                         foreach (var card in opponentInvocationCard)
                         {
                             if (card.isValid())
@@ -824,25 +821,57 @@ public class EffectFonctions : MonoBehaviour
                         break;
                     case Effect.RevertStat:
                     {
-                        InvocationCard[] invocationCards1 = currentPlayerCard.InvocationCards;
-                        InvocationCard[] invocationCards2 = opponentPlayerCard.InvocationCards;
+                        List<InvocationCard> invocationCards1 = currentPlayerCard.InvocationCards;
+                        List<InvocationCard> invocationCards2 = opponentPlayerCard.InvocationCards;
 
                         foreach (var card in invocationCards1)
                         {
-                            if (card.isValid())
-                            {
-                                // TODO Keep previous bonus
-                                float newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                                float newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                                card.setBonusDefense(newBonusDefense);
-                                card.setBonusAttack(newBonusAttack);
-                            }
+                            // TODO Keep previous bonus
+                            float newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                            float newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                            card.setBonusDefense(newBonusDefense);
+                            card.setBonusAttack(newBonusAttack);
                         }
-
                     }
                         break;
                     case Effect.TakeControl:
                     {
+                        List<Card> invocationCardOpponent = new List<Card>();
+                        foreach (var card in opponentPlayerCard.InvocationCards)
+                        {
+                            if (card.isValid())
+                            {
+                                invocationCardOpponent.Add(card);
+                            }
+                        }
+
+                        GameObject message = Instantiate(messageBox);
+                        message.GetComponent<MessageBox>().title = "Quel carte veux-tu contrôler pendant un tour ?";
+                        message.GetComponent<MessageBox>().description = "";
+                        message.GetComponent<MessageBox>().displayCardsScript.cardslist =
+                            invocationCardOpponent;
+                        message.GetComponent<MessageBox>().displayCards = true;
+
+                        message.GetComponent<MessageBox>().positiveAction = () =>
+                        {
+                            InvocationCard card =
+                                (InvocationCard) message.GetComponent<MessageBox>().getSelectedCard();
+                            if (card.isValid())
+                            {
+                            }
+                            else
+                            {
+                                cancelled = true;
+                            }
+
+                            Destroy(message);
+                        };
+
+                        message.GetComponent<MessageBox>().negativeAction = () =>
+                        {
+                            cancelled = true;
+                            Destroy(message);
+                        };
                     }
                         break;
                     case Effect.NumberAttacks:
@@ -890,7 +919,7 @@ public class EffectFonctions : MonoBehaviour
     }
 
     private bool GenerateSacrificeInvocationMessageBox(List<Card> invocationCardsValid,
-        InvocationCard[] invocationCards,
+        List<InvocationCard> invocationCards,
         float pvAffected)
     {
         bool cancelled = false;
@@ -906,23 +935,20 @@ public class EffectFonctions : MonoBehaviour
             Card card = message.GetComponent<MessageBox>().getSelectedCard();
             if (card.isValid())
             {
-                for (int j = 0; j < invocationCards.Length; j++)
+                for (int j = 0; j < invocationCards.Count; j++)
                 {
                     InvocationCard invocationCard = invocationCards[j];
-                    if (invocationCard.isValid())
+                    if (invocationCard.Nom == card.Nom)
                     {
-                        if (invocationCard.Nom == card.Nom)
+                        currentPlayerCard.YellowTrash.Add(card);
+                        currentPlayerCard.InvocationCards[j] = null;
+
+                        if (pvAffected > 0)
                         {
-                            currentPlayerCard.YellowTrash.Add(card);
-                            currentPlayerCard.InvocationCards[j] = null;
-
-                            if (pvAffected > 0)
-                            {
-                                currentPlayerStatus.changePV(pvAffected);
-                            }
-
-                            break;
+                            currentPlayerStatus.changePV(pvAffected);
                         }
+
+                        break;
                     }
                 }
             }
@@ -944,7 +970,7 @@ public class EffectFonctions : MonoBehaviour
 
     private int FindFirstEmptyInvocationLocationCurrentPlayer()
     {
-        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+        List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
         bool end = false;
         int i = 0;
         while (i < 4 && !end)
@@ -969,11 +995,11 @@ public class EffectFonctions : MonoBehaviour
         return i;
     }
 
-    private void FindCardInArrayAndSendItToTrash(Card[] cards1, Card[] cards2, Card card)
+    private void FindCardInArrayAndSendItToTrash(List<Card> cards1, List<Card> cards2, Card card)
     {
         bool found = false;
         int j = 0;
-        while (j < cards2.Length && !found)
+        while (j < cards2.Count && !found)
         {
             Card card2 = cards2[j];
             if (card2.isValid())
@@ -1004,7 +1030,7 @@ public class EffectFonctions : MonoBehaviour
         if (!found)
         {
             j = 0;
-            while (j < cards1.Length && !found)
+            while (j < cards1.Count && !found)
             {
                 Card card1 = cards1[j];
                 if (card1.isValid())
@@ -1036,16 +1062,16 @@ public class EffectFonctions : MonoBehaviour
 
     private void AffectOpponentNumberInvocation(float pvAffected)
     {
-        InvocationCard[] invocationCards = opponentPlayerCard.InvocationCards;
-        int size = FindSizeInvocationCard(invocationCards);
+        List<InvocationCard> invocationCards = opponentPlayerCard.InvocationCards;
+        int size = invocationCards.Count;
         float dammage = size * pvAffected;
         opponentPlayerStatus.changePV(dammage);
     }
 
     private void AffectCurrentNumberInvocation(float pvAffected)
     {
-        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
-        int size = FindSizeInvocationCard(invocationCards);
+        List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
+        int size = invocationCards.Count;
         float dammage = size * pvAffected;
         currentPlayerStatus.changePV(dammage);
     }

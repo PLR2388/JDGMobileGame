@@ -8,6 +8,7 @@ public class EffectCard : Card
 {
     
     [SerializeField] private EffectCardEffect effectCardEffect;
+    [SerializeField] private int lifeTime; // Time in laps before the effect stop
     
     public EffectCardEffect GetEffectCardEffect()
     {
@@ -16,5 +17,20 @@ public class EffectCard : Card
     private void Awake()
     {
         this.type = "effect";
+    }
+
+    public int GetLifeTime()
+    {
+        return lifeTime;
+    }
+
+    public void SetLifeTime(int life)
+    {
+        lifeTime = life;
+    }
+
+    public void DecrementLifeTime()
+    {
+        lifeTime -= 1;
     }
 }

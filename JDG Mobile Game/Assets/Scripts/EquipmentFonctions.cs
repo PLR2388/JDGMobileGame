@@ -33,7 +33,7 @@ public class EquipmentFonctions : MonoBehaviour
     public void displayEquipmentPopUp(EquipmentCard equipmentCard)
     {
         PlayerCards playerCards = CurrentPlayerCard;
-        InvocationCard[] invocationCards = playerCards.InvocationCards;
+        List<InvocationCard> invocationCards = playerCards.InvocationCards;
         GameObject message = DisplayEquipmentMessageBox(invocationCards);
 
         message.GetComponent<MessageBox>().positiveAction = () =>
@@ -58,9 +58,9 @@ public class EquipmentFonctions : MonoBehaviour
 
     }
 
-    private int indexInvocationCard(InvocationCard[] invocationCards,string nameInvocationCard)
+    private int indexInvocationCard(List<InvocationCard> invocationCards,string nameInvocationCard)
     {
-        for (int i = 0; i < invocationCards.Length; i++)
+        for (int i = 0; i < invocationCards.Count; i++)
         {
             if (invocationCards[i] != null)
             {
@@ -77,13 +77,13 @@ public class EquipmentFonctions : MonoBehaviour
         return -1;
     }
     
-    private GameObject DisplayEquipmentMessageBox( InvocationCard[] invocationCards)
+    private GameObject DisplayEquipmentMessageBox( List<InvocationCard> invocationCards)
     {
         GameObject message = Instantiate(messageBox);
         message.GetComponent<MessageBox>().title = "Choisis l'invocation auquelle associée l'équipement :";
 
         List<Card> cards = new List<Card>();
-        for (int i = 0; i < invocationCards.Length; i++)
+        for (int i = 0; i < invocationCards.Count; i++)
         {
             if (invocationCards[i] != null && invocationCards[i].Nom != null)
             {

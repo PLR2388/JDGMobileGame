@@ -181,20 +181,20 @@ public class GameLoop : MonoBehaviour
     {
         if (isP1Turn)
         {
-            InvocationCard[] opponentCards = P2.GetComponent<PlayerCards>().InvocationCards;
+            List<InvocationCard> opponentCards = P2.GetComponent<PlayerCards>().InvocationCards;
             DisplayCards(opponentCards);
         }
         else
         {
-            InvocationCard[] opponentCards = P1.GetComponent<PlayerCards>().InvocationCards;
+            List<InvocationCard> opponentCards = P1.GetComponent<PlayerCards>().InvocationCards;
             DisplayCards(opponentCards);
         }
     }
 
-    private void DisplayCards(InvocationCard[] invocationCards)
+    private void DisplayCards(List<InvocationCard> invocationCards)
     {
         List<Card> notEmptyOpponent = new List<Card>();
-        for (int i = 0; i < invocationCards.Length; i++)
+        for (int i = 0; i < invocationCards.Count; i++)
         {
             if (invocationCards[i] != null && invocationCards[i].Nom != null)
             {

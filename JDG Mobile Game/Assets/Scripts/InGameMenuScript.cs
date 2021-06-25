@@ -48,7 +48,7 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private Card currentSelectedCard;
     [SerializeField] private GameObject messageBox;
     [SerializeField] private GameObject invocationMenu;
-    
+
     public static CardEvent EventClick = new CardEvent();
     public static InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
     public static FieldCardEvent FieldCardEvent = new FieldCardEvent();
@@ -57,8 +57,9 @@ public class InGameMenuScript : MonoBehaviour
 
 
     private Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
-    private Vector3 padding = new Vector3(490,-350,0);
- private void Start()
+    private Vector3 padding = new Vector3(490, -350, 0);
+
+    private void Start()
     {
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
@@ -75,7 +76,7 @@ public class InGameMenuScript : MonoBehaviour
         switch (cardType)
         {
             case "invocation":
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Poser la carte";
+                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
                 InvocationCard invocationCard = (InvocationCard) card;
                 if (invocationCard.isInvocationPossible())
                 {
@@ -85,15 +86,16 @@ public class InGameMenuScript : MonoBehaviour
                 {
                     putCardButton.GetComponent<Button>().interactable = false;
                 }
+
                 break;
-            case "contre" :
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Contrer";
+            case "contre":
+                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Contrer";
                 break;
-            case "effect" :
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Poser la carte";
+            case "effect":
+                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
                 break;
-            case "equipment" :
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Équiper une invocation";
+            case "equipment":
+                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Équiper une invocation";
                 EquipmentCard equipmentCard = (EquipmentCard) card;
                 if (equipmentCard.isEquipmentPossible())
                 {
@@ -103,12 +105,13 @@ public class InGameMenuScript : MonoBehaviour
                 {
                     putCardButton.GetComponent<Button>().interactable = false;
                 }
+
                 break;
-            case "field" : 
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Poser la carte";
+            case "field":
+                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
                 break;
         }
-	    
+
         if (miniMenuCard.activeSelf)
         {
             miniMenuCard.transform.position = mousePosition + padding;
@@ -125,22 +128,25 @@ public class InGameMenuScript : MonoBehaviour
     {
         if (currentSelectedCard.Type == "invocation")
         {
-            InvocationCard invocationCard = (InvocationCard)currentSelectedCard;
+            InvocationCard invocationCard = (InvocationCard) currentSelectedCard;
             InvocationCardEvent.Invoke(invocationCard);
-        } else if (currentSelectedCard.Type == "field")
+        }
+        else if (currentSelectedCard.Type == "field")
         {
             FieldCard fieldCard = (FieldCard) currentSelectedCard;
             FieldCardEvent.Invoke(fieldCard);
-        } else if (currentSelectedCard.Type == "effect")
+        }
+        else if (currentSelectedCard.Type == "effect")
         {
             EffectCard effectCard = (EffectCard) currentSelectedCard;
             EffectCardEvent.Invoke(effectCard);
-        } else if (currentSelectedCard.Type == "equipment")
+        }
+        else if (currentSelectedCard.Type == "equipment")
         {
             EquipmentCard equipmentCard = (EquipmentCard) currentSelectedCard;
             EquipmentCardEvent.Invoke(equipmentCard);
         }
-        
+
         miniMenuCard.SetActive(false);
         if (detailCardPanel.activeSelf)
         {
@@ -155,24 +161,23 @@ public class InGameMenuScript : MonoBehaviour
     {
         if (detailCardPanel.activeSelf)
         {
-           detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Détails";
-           miniMenuCard.SetActive(false);
-           detailCardPanel.SetActive(false);
-           handScreen.SetActive(true);
-           inHandButton.SetActive(true);
+            detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Détails";
+            miniMenuCard.SetActive(false);
+            detailCardPanel.SetActive(false);
+            handScreen.SetActive(true);
+            inHandButton.SetActive(true);
         }
         else
         {
             handScreen.SetActive(false);
 
-            miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640,360);
-            
-            detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text="Retour";
+            miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
+
+            detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Retour";
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard;
             detailCardPanel.SetActive(true);
             inHandButton.SetActive(false);
         }
-
     }
 
     public void ClickHandCard()
@@ -192,7 +197,7 @@ public class InGameMenuScript : MonoBehaviour
     {
         handScreen.SetActive(true);
         backgroundInformations.SetActive(false);
-        buttonText.GetComponent<TMPro.TextMeshProUGUI>().text="Retour";
+        buttonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Retour";
     }
 
     private void HideHand()

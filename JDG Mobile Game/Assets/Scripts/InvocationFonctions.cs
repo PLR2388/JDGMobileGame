@@ -36,33 +36,6 @@ public class InvocationFonctions : MonoBehaviour
         }
     }
 
-    private int FindFirstEmptyInvocationLocationCurrentPlayer()
-    {
-        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
-        bool end = false;
-        int i = 0;
-        while (i < 4 && !end)
-        {
-            if (invocationCards[i] != null)
-            {
-                if (invocationCards[i].Nom == null)
-                {
-                    end = true;
-                }
-                else
-                {
-                    i++;
-                }
-            }
-            else
-            {
-                end = true;
-            }
-        }
-
-        return i;
-    }
-
     private int FindFirstEmptyInvocationLocation(InvocationCard[] invocationCards)
     {
         bool end = false;
@@ -172,7 +145,7 @@ public class InvocationFonctions : MonoBehaviour
                                 }
                             }
 
-                            int size = FindFirstEmptyInvocationLocationCurrentPlayer();
+                            int size = currentPlayerCard.InvocationCards.Count;
                             if (cardFound.Count > 0 && size < 4)
                             {
                                 if (cardFound.Count == 1)
@@ -317,11 +290,11 @@ public class InvocationFonctions : MonoBehaviour
                 case StartEffect.RemoveAllInvocationCards:
                 {
                     String dontRemoveCard = values[i];
-                    InvocationCard[] P1InvocationCards = this.P1.GetComponent<PlayerCards>().InvocationCards;
-                    InvocationCard[] P2InvocationCards = this.P2.GetComponent<PlayerCards>().InvocationCards;
+                    List<InvocationCard> P1InvocationCards = this.P1.GetComponent<PlayerCards>().InvocationCards;
+                    List<InvocationCard> P2InvocationCards = this.P2.GetComponent<PlayerCards>().InvocationCards;
 
 
-                    for (int j = 0; j < FindFirstEmptyInvocationLocation(P1InvocationCards); j++)
+                    for (int j = 0; j < P1InvocationCards.Count; j++)
                     {
                         if (P1InvocationCards[j].Nom != dontRemoveCard)
                         {
@@ -330,7 +303,7 @@ public class InvocationFonctions : MonoBehaviour
                         }
                     }
 
-                    for (int j = 0; j < FindFirstEmptyInvocationLocation(P2InvocationCards); j++)
+                    for (int j = 0; j < P2InvocationCards.Count; j++)
                     {
                         if (P2InvocationCards[j].Nom != dontRemoveCard)
                         {
@@ -489,9 +462,9 @@ public class InvocationFonctions : MonoBehaviour
                     if (GameLoop.isP1Turn)
                     {
                         opponentPlayerCards = P2.GetComponent<PlayerCards>();
-                        InvocationCard[] P2InvocationCards = opponentPlayerCards.InvocationCards;
+                        List<InvocationCard> P2InvocationCards = opponentPlayerCards.InvocationCards;
 
-                        for (int j = 0; j < P2InvocationCards.Length; j++)
+                        for (int j = 0; j < P2InvocationCards.Count; j++)
                         {
                             if (P2InvocationCards[j] != null && P2InvocationCards[j].Nom != null)
                             {
@@ -502,9 +475,9 @@ public class InvocationFonctions : MonoBehaviour
                     else
                     {
                         opponentPlayerCards = P1.GetComponent<PlayerCards>();
-                        InvocationCard[] P1InvocationCards = opponentPlayerCards.InvocationCards;
+                        List<InvocationCard> P1InvocationCards = opponentPlayerCards.InvocationCards;
 
-                        for (int j = 0; j < P1InvocationCards.Length; j++)
+                        for (int j = 0; j < P1InvocationCards.Count; j++)
                         {
                             if (P1InvocationCards[j] != null && P1InvocationCards[j].Nom != null)
                             {
@@ -523,10 +496,10 @@ public class InvocationFonctions : MonoBehaviour
                         InvocationCard invocationCardSelected = (InvocationCard)message.GetComponent<MessageBox>().getSelectedCard();
                         if (invocationCardSelected != null)
                         {
-                            InvocationCard[] invocationCards = opponentPlayerCards.InvocationCards;
+                            List<InvocationCard> invocationCards = opponentPlayerCards.InvocationCards;
                             int k = 0;
                             bool found = false;
-                            while (!found && k < invocationCards.Length)
+                            while (!found && k < invocationCards.Count)
                             {
                                 if (invocationCards[k] != null &&
                                     invocationCards[k].Nom == invocationCardSelected.Nom)
@@ -613,12 +586,11 @@ public class InvocationFonctions : MonoBehaviour
 
     public void PutInvocationCard(InvocationCard invocationCard)
     {
-        int size = FindFirstEmptyInvocationLocationCurrentPlayer();
+        int size = currentPlayerCard.InvocationCards.Count;
 
         if (size < 4)
         {
-            currentPlayerCard.InvocationCards[size] = invocationCard;
-
+            currentPlayerCard.InvocationCards.Add(invocationCard);
             currentPlayerCard.handCards.Remove(invocationCard);
 
             InvocationStartEffect invocationStartEffect = invocationCard.GetInvocationStartEffect();
@@ -665,14 +637,14 @@ public class InvocationFonctions : MonoBehaviour
                         bool isPossible = currentPlayerCard.Field.Nom == fieldName;
                         if (isPossible)
                         {
-                            InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                            List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
                             AskToSacrifice(invocationCard, invocationCards, cardName, valueStars);
                         }
 
                     }
                     else if (cardName != null)
                     {
-                        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+                        List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
                         AskToSacrifice(invocationCard, invocationCards, cardName, valueStars);
                     }
                 }
@@ -684,13 +656,13 @@ public class InvocationFonctions : MonoBehaviour
         }
     }
 
-    private void AskToSacrifice(InvocationCard invocationCard, InvocationCard[] invocationCards, string cardName,
+    private void AskToSacrifice(InvocationCard invocationCard, List<InvocationCard> invocationCards, string cardName,
         float valueStars)
     {
         int j = 0;
         bool cardFound = false;
         Card card = null;
-        while (j < invocationCards.Length && !cardFound)
+        while (j < invocationCards.Count && !cardFound)
         {
             if (invocationCards[j] != null && invocationCards[j].Nom == cardName)
             {
@@ -735,8 +707,8 @@ public class InvocationFonctions : MonoBehaviour
     private static InvocationCard CheckSpecificCardOnField(string cardName, PlayerCards currentPlayerCards)
     {
         bool found = false;
-        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-        int size = invocationCards.Length;
+        List<InvocationCard> invocationCards = currentPlayerCards.InvocationCards;
+        int size = invocationCards.Count;
         InvocationCard invocationCard = null;
 
         int j = 0;
@@ -758,8 +730,8 @@ public class InvocationFonctions : MonoBehaviour
     {
         InvocationCard foundCard = null;
         bool found = false;
-        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-        int size = invocationCards.Length;
+        List<InvocationCard> invocationCards = currentPlayerCards.InvocationCards;
+        int size = invocationCards.Count;
         int j = 0;
 
         while (j < size && !found)
@@ -806,8 +778,8 @@ public class InvocationFonctions : MonoBehaviour
     private static List<InvocationCard> CheckFamily(string familyName, PlayerCards currentPlayerCards)
     {
         List<InvocationCard> sameFamilyCards = new List<InvocationCard>();
-        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
-        for (int i = 0; i < invocationCards.Length; i++)
+        List<InvocationCard> invocationCards = currentPlayerCards.InvocationCards;
+        for (int i = 0; i < invocationCards.Count; i++)
         {
             if (invocationCards[i] != null)
             {
@@ -829,7 +801,7 @@ public class InvocationFonctions : MonoBehaviour
     private static List<InvocationCard> CheckThreshold(bool isAttack, float value, PlayerCards currentPlayerCards)
     {
         List<InvocationCard> Threshold = new List<InvocationCard>();
-        InvocationCard[] invocationCards = currentPlayerCards.InvocationCards;
+        List<InvocationCard> invocationCards = currentPlayerCards.InvocationCards;
         if (isAttack)
         {
             foreach (var invocationCard in invocationCards)

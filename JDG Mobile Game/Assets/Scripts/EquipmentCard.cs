@@ -32,15 +32,15 @@ public class EquipmentCard : Card
     {
         PlayerCards currentPlayerCard = player.GetComponent<PlayerCards>();
 
-        InvocationCard[] invocationCards = currentPlayerCard.InvocationCards;
+        List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
 
         return hasEnoughInvocationCard(invocationCards);
     }
 
-    private bool hasEnoughInvocationCard(InvocationCard[] invocationCards)
+    private bool hasEnoughInvocationCard(List<InvocationCard> invocationCards)
     {
         int count = 0;
-        for (int i = 0; i < invocationCards.Length; i++)
+        for (int i = 0; i < invocationCards.Count; i++)
         {
             if (invocationCards[i] != null && invocationCards[i].Nom != null)
             {
