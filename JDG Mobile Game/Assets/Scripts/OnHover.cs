@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class CardSelectedEvent : UnityEvent<Card>
@@ -21,29 +19,26 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public static CardSelectedEvent cardSelectedEvent = new CardSelectedEvent();
 
 
-    void Start()
+    private void Start()
     {
         image = GetComponent<Image>();
         card = gameObject.GetComponent<CardDisplay>().card;
     }
 
-    void Update()
+    private void Update()
     {
-        if (!bIsInGame)
+        if (bIsInGame) return;
+        if (bIsSelected)
         {
-            if (bIsSelected)
-            {
-                image.color = Color.green;
-          
-            }
-            else if (card.Collector)
-            {
-                image.color = Color.yellow;
-            }
-            else
-            {
-                image.color = Color.white;
-            }
+            image.color = Color.green;
+        }
+        else if (card.Collector)
+        {
+            image.color = Color.yellow;
+        }
+        else
+        {
+            image.color = Color.white;
         }
     }
 
@@ -63,17 +58,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         OnClick();
     }
 
-    void OnHoverEnter()
-    {
-        image.color = Color.gray;
-    }
-
-    /*void OnHoverExit()
-     {
-         image.color = Color.white;
-     }*/
-
-    void OnClick()
+    private void OnClick()
     {
         if (!bIsInGame)
         {
@@ -86,13 +71,13 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             {
                 image.color = Color.green;
                 bIsSelected = true;
-                Card card = gameObject.GetComponent<CardDisplay>().card;
-                cardSelectedEvent.Invoke(card);
+                var clickedCard = gameObject.GetComponent<CardDisplay>().card;
+                cardSelectedEvent.Invoke(clickedCard);
             }
         }
         else
         {
-            Card currentCard = GetComponent<CardDisplay>().card;
+            var currentCard = GetComponent<CardDisplay>().card;
             InGameMenuScript.EventClick.Invoke(currentCard);
         }
     }

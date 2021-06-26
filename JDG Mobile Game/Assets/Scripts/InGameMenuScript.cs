@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using UnityEngine.XR;
 
 [System.Serializable]
 public class CardEvent : UnityEvent<Card>
@@ -44,20 +40,23 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private GameObject putCardButtonText;
     [SerializeField] private GameObject putCardButton;
     [SerializeField] private GameObject inHandButton;
-    [SerializeField] private GameObject backgroundInformations;
+
+    [FormerlySerializedAs("backgroundInformations")] [SerializeField]
+    private GameObject backgroundInformation;
+
     [SerializeField] private Card currentSelectedCard;
     [SerializeField] private GameObject messageBox;
     [SerializeField] private GameObject invocationMenu;
 
-    public static CardEvent EventClick = new CardEvent();
-    public static InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
-    public static FieldCardEvent FieldCardEvent = new FieldCardEvent();
-    public static EffectCardEvent EffectCardEvent = new EffectCardEvent();
-    public static EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
+    public static readonly CardEvent EventClick = new CardEvent();
+    public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
+    public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
+    public static readonly EffectCardEvent EffectCardEvent = new EffectCardEvent();
+    public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
 
 
-    private Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
-    private Vector3 padding = new Vector3(490, -350, 0);
+    private readonly Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
+    private readonly Vector3 padding = new Vector3(490, -350, 0);
 
     private void Start()
     {
@@ -66,26 +65,19 @@ public class InGameMenuScript : MonoBehaviour
         EventClick.AddListener(ClickOnCard);
     }
 
-    public void ClickOnCard(Card card)
+    private void ClickOnCard(Card card)
     {
         currentSelectedCard = card;
 #if UNITY_EDITOR
-        Vector3 mousePosition = Input.mousePosition;
+        var mousePosition = Input.mousePosition;
 
-        string cardType = currentSelectedCard.Type;
+        var cardType = currentSelectedCard.Type;
         switch (cardType)
         {
             case "invocation":
                 putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
-                InvocationCard invocationCard = (InvocationCard) card;
-                if (invocationCard.isInvocationPossible())
-                {
-                    putCardButton.GetComponent<Button>().interactable = true;
-                }
-                else
-                {
-                    putCardButton.GetComponent<Button>().interactable = false;
-                }
+                var invocationCard = (InvocationCard) card;
+                putCardButton.GetComponent<Button>().interactable = invocationCard.IsInvocationPossible();
 
                 break;
             case "contre":
@@ -96,15 +88,8 @@ public class InGameMenuScript : MonoBehaviour
                 break;
             case "equipment":
                 putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Équiper une invocation";
-                EquipmentCard equipmentCard = (EquipmentCard) card;
-                if (equipmentCard.isEquipmentPossible())
-                {
-                    putCardButton.GetComponent<Button>().interactable = true;
-                }
-                else
-                {
-                    putCardButton.GetComponent<Button>().interactable = false;
-                }
+                var equipmentCard = (EquipmentCard) card;
+                putCardButton.GetComponent<Button>().interactable = equipmentCard.IsEquipmentPossible();
 
                 break;
             case "field":
@@ -126,35 +111,40 @@ public class InGameMenuScript : MonoBehaviour
 
     public void ClickPutCard()
     {
-        if (currentSelectedCard.Type == "invocation")
+        switch (currentSelectedCard.Type)
         {
-            InvocationCard invocationCard = (InvocationCard) currentSelectedCard;
-            InvocationCardEvent.Invoke(invocationCard);
-        }
-        else if (currentSelectedCard.Type == "field")
-        {
-            FieldCard fieldCard = (FieldCard) currentSelectedCard;
-            FieldCardEvent.Invoke(fieldCard);
-        }
-        else if (currentSelectedCard.Type == "effect")
-        {
-            EffectCard effectCard = (EffectCard) currentSelectedCard;
-            EffectCardEvent.Invoke(effectCard);
-        }
-        else if (currentSelectedCard.Type == "equipment")
-        {
-            EquipmentCard equipmentCard = (EquipmentCard) currentSelectedCard;
-            EquipmentCardEvent.Invoke(equipmentCard);
+            case "invocation":
+            {
+                var invocationCard = (InvocationCard) currentSelectedCard;
+                InvocationCardEvent.Invoke(invocationCard);
+                break;
+            }
+            case "field":
+            {
+                var fieldCard = (FieldCard) currentSelectedCard;
+                FieldCardEvent.Invoke(fieldCard);
+                break;
+            }
+            case "effect":
+            {
+                var effectCard = (EffectCard) currentSelectedCard;
+                EffectCardEvent.Invoke(effectCard);
+                break;
+            }
+            case "equipment":
+            {
+                var equipmentCard = (EquipmentCard) currentSelectedCard;
+                EquipmentCardEvent.Invoke(equipmentCard);
+                break;
+            }
         }
 
         miniMenuCard.SetActive(false);
-        if (detailCardPanel.activeSelf)
-        {
-            // The detail panel is visible. One must go back to card display
-            detailCardPanel.SetActive(false);
-            handScreen.SetActive(true);
-            inHandButton.SetActive(true);
-        }
+        if (!detailCardPanel.activeSelf) return;
+        // The detail panel is visible. One must go back to card display
+        detailCardPanel.SetActive(false);
+        handScreen.SetActive(true);
+        inHandButton.SetActive(true);
     }
 
     public void DetailCardClick()
@@ -196,7 +186,7 @@ public class InGameMenuScript : MonoBehaviour
     private void DisplayHand()
     {
         handScreen.SetActive(true);
-        backgroundInformations.SetActive(false);
+        backgroundInformation.SetActive(false);
         buttonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Retour";
     }
 
@@ -205,7 +195,7 @@ public class InGameMenuScript : MonoBehaviour
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
         handScreen.SetActive(false);
-        backgroundInformations.SetActive(true);
+        backgroundInformation.SetActive(true);
         buttonText.GetComponent<TextMeshProUGUI>().SetText("Cartes en main");
     }
 }

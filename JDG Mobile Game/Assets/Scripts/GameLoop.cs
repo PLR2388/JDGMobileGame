@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class GameLoop : MonoBehaviour
 {
-    public static bool isP1Turn;
+    public static bool IsP1Turn;
 
     public int phaseId;
 
@@ -15,42 +17,48 @@ public class GameLoop : MonoBehaviour
     [SerializeField] private GameObject roundText;
     [SerializeField] private TextMeshProUGUI healthP1Text;
     [SerializeField] private TextMeshProUGUI healthP2Text;
-    
+
     [SerializeField] private GameObject bigImageCard;
     [SerializeField] private GameObject invocationMenu;
     [SerializeField] private GameObject messageBox;
-    [SerializeField] private GameObject P1;
-    [SerializeField] private GameObject P2;
+
+    [FormerlySerializedAs("P1")] [SerializeField]
+    private GameObject p1;
+
+    [FormerlySerializedAs("P2")] [SerializeField]
+    private GameObject p2;
+
     [SerializeField] private Card player;
     [SerializeField] private GameObject inHandButton;
     [SerializeField] private GameObject camera;
-    
-    public static UnityEvent ChangePlayer = new UnityEvent();
-    
-    
-    private float ClickDuration = 2;
+
+    public static readonly UnityEvent ChangePlayer = new UnityEvent();
+
+
+    private readonly float ClickDuration = 2;
 
     private bool stopDetectClicking = false;
-    bool clicking = false;
-    float totalDownTime = 0;
+    private bool clicking = false;
+    private float totalDownTime = 0;
     private Card cardSelected;
     private InvocationCard attacker;
-    
-    private Vector3 cameraRotation = new Vector3(0,0,180);
+
+    private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        isP1Turn = true;
-        PlayerStatus.ChangePvEvent.AddListener(changeHealthText);
+        IsP1Turn = true;
+        PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         switch (phaseId)
         {
-            case 0: Draw();
+            case 0:
+                Draw();
                 break;
             case 1:
                 ChoosePhase();
@@ -63,65 +71,64 @@ public class GameLoop : MonoBehaviour
 
     private void ChoosePhase()
     {
-        if (isP1Turn)
+        if (IsP1Turn)
         {
             invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
-            P1.GetComponent<PlayerCards>().resetInvocationCardNewTurn();
+            p1.GetComponent<PlayerCards>().ResetInvocationCardNewTurn();
         }
         else
         {
             invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
-            P2.GetComponent<PlayerCards>().resetInvocationCardNewTurn();
+            p2.GetComponent<PlayerCards>().ResetInvocationCardNewTurn();
         }
     }
 
-    private void changeHealthText(float pv, bool isP1)
+    private void ChangeHealthText(float pv, bool isP1)
     {
         if (isP1)
         {
-            healthP1Text.SetText(pv+"/"+ PlayerStatus.maxPV);
+            healthP1Text.SetText(pv + "/" + PlayerStatus.MAXPv);
         }
         else
         {
-            healthP2Text.SetText(pv+"/"+ PlayerStatus.maxPV);
+            healthP2Text.SetText(pv + "/" + PlayerStatus.MAXPv);
         }
     }
 
     private void ChooseAttack()
     {
-        if (Input.GetMouseButton(0) && phaseId == 2 && !stopDetectClicking)
+        if (!Input.GetMouseButton(0) || phaseId != 2 || stopDetectClicking) return;
+        var hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitInfo);
+        if (hit)
         {
-            RaycastHit hitInfo = new RaycastHit();
-            bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
-            if (hit) 
-            {
-                HandleClick(hitInfo);
-            } else {
-                bigImageCard.SetActive(false);
-            }
-        } 
+            HandleClick(hitInfo);
+        }
+        else
+        {
+            bigImageCard.SetActive(false);
+        }
     }
 
     private void HandleClick(RaycastHit hitInfo)
     {
-        string tag = hitInfo.transform.gameObject.tag;
-        PlayerCards ownPlayerCards = isP1Turn ? P1.GetComponent<PlayerCards>() : P2.GetComponent<PlayerCards>();
-        string persoTag = isP1Turn ? P1.GetComponent<PlayerCards>().TAG : P2.GetComponent<PlayerCards>().TAG;
-        string opponentTag = isP1Turn ? P2.GetComponent<PlayerCards>().TAG : P1.GetComponent<PlayerCards>().TAG;
-        GameObject cardObject = hitInfo.transform.gameObject;
-        
-        if (tag == persoTag)
+        var objectTag = hitInfo.transform.gameObject.tag;
+        var ownPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var personTag = IsP1Turn ? p1.GetComponent<PlayerCards>().Tag : p2.GetComponent<PlayerCards>().Tag;
+        var opponentTag = IsP1Turn ? p2.GetComponent<PlayerCards>().Tag : p1.GetComponent<PlayerCards>().Tag;
+        var cardObject = hitInfo.transform.gameObject;
+
+        if (objectTag == personTag)
         {
             cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
             if (Input.GetMouseButtonDown(0))
             {
                 totalDownTime = 0;
                 clicking = true;
-                Vector3 mousePosition = Input.mousePosition;
-                if (cardSelected is InvocationCard )
+                var mousePosition = Input.mousePosition;
+                if (cardSelected is InvocationCard invocationCard)
                 {
-                    attacker = (InvocationCard) cardSelected;
-                    if (!attacker.hasAttack() && ownPlayerCards.containsCardInInvocation(attacker))
+                    attacker = invocationCard;
+                    if (!attacker.HasAttack() && ownPlayerCards.ContainsCardInInvocation(attacker))
                     {
                         invocationMenu.SetActive(true);
                         invocationMenu.transform.position = mousePosition;
@@ -129,6 +136,7 @@ public class GameLoop : MonoBehaviour
                     }
                 }
             }
+
             if (clicking && Input.GetMouseButton(0))
             {
                 totalDownTime += Time.deltaTime;
@@ -141,20 +149,20 @@ public class GameLoop : MonoBehaviour
                     DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
                 }
             }
-            
+
             if (clicking && Input.GetMouseButtonUp(0))
             {
                 clicking = false;
             }
         }
-        else if (tag == opponentTag)
+        else if (objectTag == opponentTag)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 totalDownTime = 0;
                 clicking = true;
             }
-            
+
             if (clicking && Input.GetMouseButton(0))
             {
                 totalDownTime += Time.deltaTime;
@@ -165,7 +173,7 @@ public class GameLoop : MonoBehaviour
                     DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
                 }
             }
-            
+
             if (clicking && Input.GetMouseButtonUp(0))
             {
                 clicking = false;
@@ -179,40 +187,33 @@ public class GameLoop : MonoBehaviour
 
     public void DisplayAvailableOpponent()
     {
-        if (isP1Turn)
+        if (IsP1Turn)
         {
-            List<InvocationCard> opponentCards = P2.GetComponent<PlayerCards>().InvocationCards;
+            var opponentCards = p2.GetComponent<PlayerCards>().invocationCards;
             DisplayCards(opponentCards);
         }
         else
         {
-            List<InvocationCard> opponentCards = P1.GetComponent<PlayerCards>().InvocationCards;
+            List<InvocationCard> opponentCards = p1.GetComponent<PlayerCards>().invocationCards;
             DisplayCards(opponentCards);
         }
     }
 
     private void DisplayCards(List<InvocationCard> invocationCards)
     {
-        List<Card> notEmptyOpponent = new List<Card>();
-        for (int i = 0; i < invocationCards.Count; i++)
-        {
-            if (invocationCards[i] != null && invocationCards[i].Nom != null)
-            {
-                notEmptyOpponent.Add(invocationCards[i]);
-            }
-        }
+        var notEmptyOpponent = invocationCards.Where(t => t != null && t.Nom != null).Cast<Card>().ToList();
 
         if (notEmptyOpponent.Count == 0)
         {
             notEmptyOpponent.Add(player);
         }
 
-        GameObject messageBox = DisplayOpponentMessageBox(notEmptyOpponent);
+        var opponentMessageBox = DisplayOpponentMessageBox(notEmptyOpponent);
         stopDetectClicking = true;
-        messageBox.GetComponent<MessageBox>().positiveAction = () =>
+        opponentMessageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
-            InvocationCard invocationCard =
-                (InvocationCard) messageBox.GetComponent<MessageBox>().getSelectedCard();
+            var invocationCard =
+                (InvocationCard) opponentMessageBox.GetComponent<MessageBox>().GETSelectedCard();
 
             if (invocationCard != null)
             {
@@ -220,22 +221,22 @@ public class GameLoop : MonoBehaviour
             }
 
             stopDetectClicking = false;
-            Destroy(messageBox);
+            Destroy(opponentMessageBox);
         };
-        messageBox.GetComponent<MessageBox>().negativeAction = () =>
+        opponentMessageBox.GetComponent<MessageBox>().NegativeAction = () =>
         {
-            Destroy(messageBox);
+            Destroy(opponentMessageBox);
             stopDetectClicking = false;
         };
     }
 
-    private GameObject DisplayOpponentMessageBox ( List<Card> invocationCards)
+    private GameObject DisplayOpponentMessageBox(List<Card> invocationCards)
     {
-        GameObject message = Instantiate(messageBox);
+        var message = Instantiate(messageBox);
         message.GetComponent<MessageBox>().title = "Choisis ton adversaire :";
 
-        
-        message.GetComponent<MessageBox>().displayCardsScript.cardslist = invocationCards;
+
+        message.GetComponent<MessageBox>().displayCardsScript.cardsList = invocationCards;
         message.GetComponent<MessageBox>().displayCards = true;
 
         return message;
@@ -243,24 +244,24 @@ public class GameLoop : MonoBehaviour
 
     private void ComputeAttack(InvocationCard opponent)
     {
-        float attack = attacker.GetCurrentAttack();
-        float defenseOpponent = opponent.GetCurrentDefense();
-        
-        float diff = defenseOpponent - attack;
-        
-        attacker.attackTurnDone();
+        var attack = attacker.GetCurrentAttack();
+        var defenseOpponent = opponent.GetCurrentDefense();
+
+        var diff = defenseOpponent - attack;
+
+        attacker.AttackTurnDone();
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = false;
 
         if (opponent.Nom == "Player")
         {
             // Directly attack the player
-            if (isP1Turn)
+            if (IsP1Turn)
             {
-                P2.GetComponent<PlayerStatus>().changePV(diff);
+                p2.GetComponent<PlayerStatus>().ChangePv(diff);
             }
             else
             {
-                P1.GetComponent<PlayerStatus>().changePV(diff);
+                p1.GetComponent<PlayerStatus>().ChangePv(diff);
             }
         }
         else
@@ -285,32 +286,32 @@ public class GameLoop : MonoBehaviour
      */
     private void DealWithGoodAttack(InvocationCard opponent, float diff)
     {
-        opponent.incrementNumberDeaths();
-        if (isP1Turn)
+        opponent.IncrementNumberDeaths();
+        if (IsP1Turn)
         {
-            P2.GetComponent<PlayerStatus>().changePV(diff);
+            p2.GetComponent<PlayerStatus>().ChangePv(diff);
 
             if (opponent.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(opponent, false);
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                DealWithDeathEffect(opponent, false);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
             else
             {
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
         }
         else
         {
-            P1.GetComponent<PlayerStatus>().changePV(diff);
+            p1.GetComponent<PlayerStatus>().ChangePv(diff);
             if (opponent.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(opponent, true);
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                DealWithDeathEffect(opponent, true);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
             else
             {
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
         }
     }
@@ -320,81 +321,81 @@ public class GameLoop : MonoBehaviour
      */
     private void DealWithHurtAttack(float diff)
     {
-        attacker.incrementNumberDeaths();
-        if (isP1Turn)
+        attacker.IncrementNumberDeaths();
+        if (IsP1Turn)
         {
-            P1.GetComponent<PlayerStatus>().changePV(-diff);
+            p1.GetComponent<PlayerStatus>().ChangePv(-diff);
             if (attacker.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(attacker, true);
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                DealWithDeathEffect(attacker, true);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
             }
             else
             {
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
             }
         }
         else
         {
-            P2.GetComponent<PlayerStatus>().changePV(-diff);
+            p2.GetComponent<PlayerStatus>().ChangePv(-diff);
             if (attacker.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(attacker, false);
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                DealWithDeathEffect(attacker, false);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
             }
             else
             {
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(cardSelected);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
             }
         }
     }
 
     private void DealWithEqualityAttack(InvocationCard opponent)
     {
-        attacker.incrementNumberDeaths();
-        opponent.incrementNumberDeaths();
-        if (isP1Turn)
+        attacker.IncrementNumberDeaths();
+        opponent.IncrementNumberDeaths();
+        if (IsP1Turn)
         {
             if (attacker.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(attacker, true);
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
+                DealWithDeathEffect(attacker, true);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
             }
             else
             {
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
             }
 
             if (opponent.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(opponent, false);
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                DealWithDeathEffect(opponent, false);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
             else
             {
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
         }
         else
         {
             if (attacker.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(attacker, false);
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
+                DealWithDeathEffect(attacker, false);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
             }
             else
             {
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
             }
 
             if (opponent.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffet(opponent, true);
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                DealWithDeathEffect(opponent, true);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
             else
             {
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(opponent);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
             }
         }
     }
@@ -403,14 +404,15 @@ public class GameLoop : MonoBehaviour
      * invocationCard = card that's going to die
      * attacker = the opponent
      */
-    private void DealWithDeathEffet(InvocationCard invocationCard,bool isP1Card, InvocationCard attacker = null)
+    private void DealWithDeathEffect(InvocationCard invocationCard, bool isP1Card,
+        InvocationCard attackerInvocationCard = null)
     {
-        InvocationDeathEffect invocationDeathEffect = invocationCard.GetInvocationDeathEffect();
-        List<DeathEffect> keys = invocationDeathEffect.Keys;
-        List<String> values = invocationDeathEffect.Values;
+        var invocationDeathEffect = invocationCard.GetInvocationDeathEffect();
+        var keys = invocationDeathEffect.Keys;
+        var values = invocationDeathEffect.Values;
 
-        string cardName = "";
-        for (int i = 0; i < keys.Count; i++)
+        var cardName = "";
+        for (var i = 0; i < keys.Count; i++)
         {
             switch (keys[i])
             {
@@ -424,54 +426,57 @@ public class GameLoop : MonoBehaviour
                     ComeBackToHandDeathEffect(invocationCard, isP1Card, values, i);
                     break;
                 case DeathEffect.KillAlsoOtherCard:
-                    KillAlsoOtherCardDeathEffect(invocationCard, attacker);
+                    KillAlsoOtherCardDeathEffect(invocationCard, attackerInvocationCard);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }
 
-    private void KillAlsoOtherCardDeathEffect(InvocationCard invocationCard, InvocationCard attacker)
+    private void KillAlsoOtherCardDeathEffect(Card invocationCard, Card attackerInvocationCard)
     {
-        if (attacker != null)
+        if (attackerInvocationCard != null)
         {
-            if (isP1Turn)
+            if (IsP1Turn)
             {
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(invocationCard);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attackerInvocationCard);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(invocationCard);
             }
             else
             {
-                P1.GetComponent<PlayerCards>().sendCardToYellowTrash(invocationCard);
-                P2.GetComponent<PlayerCards>().sendCardToYellowTrash(attacker);
+                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(invocationCard);
+                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attackerInvocationCard);
             }
         }
     }
 
-    private void ComeBackToHandDeathEffect(InvocationCard invocationCard, bool isP1Card, List<string> values, int i)
+    private void ComeBackToHandDeathEffect(InvocationCard invocationCard, bool isP1Card, IReadOnlyList<string> values,
+        int i)
     {
-        int number = int.Parse(values[i]);
+        var number = int.Parse(values[i]);
         if (number != 0)
         {
-            if (invocationCard.getNumberDeaths() > number)
+            if (invocationCard.GETNumberDeaths() > number)
             {
                 if (isP1Card)
                 {
-                    P1.GetComponent<PlayerCards>().sendCardToYellowTrash(invocationCard);
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(invocationCard);
                 }
                 else
                 {
-                    P2.GetComponent<PlayerCards>().sendCardToYellowTrash(invocationCard);
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(invocationCard);
                 }
             }
             else
             {
                 if (isP1Card)
                 {
-                    P1.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                    p1.GetComponent<PlayerCards>().SendCardToHand(invocationCard);
                 }
                 else
                 {
-                    P2.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                    p2.GetComponent<PlayerCards>().SendCardToHand(invocationCard);
                 }
             }
         }
@@ -479,93 +484,92 @@ public class GameLoop : MonoBehaviour
         {
             if (isP1Card)
             {
-                P1.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                p1.GetComponent<PlayerCards>().SendCardToHand(invocationCard);
             }
             else
             {
-                P2.GetComponent<PlayerCards>().sendCardToHand(invocationCard);
+                p2.GetComponent<PlayerCards>().SendCardToHand(invocationCard);
             }
         }
     }
 
-    private void GetCardSourceDeathEffect(InvocationCard invocationCard, bool isP1Card, List<string> values, int i, string cardName)
+    private void GetCardSourceDeathEffect(Card invocationCard, bool isP1Card, IReadOnlyList<string> values, int i,
+        string cardName)
     {
         Card cardFound = null;
-        String source = values[i];
+        var source = values[i];
         PlayerCards currentPlayerCard = null;
-        if (isP1Card)
-        {
-            currentPlayerCard = P1.GetComponent<PlayerCards>();
-        }
-        else
-        {
-            currentPlayerCard = P2.GetComponent<PlayerCards>();
-        }
+        currentPlayerCard = isP1Card ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
 
-        currentPlayerCard.sendCardToYellowTrash(invocationCard);
-        if (source == "deck")
+        currentPlayerCard.SendCardToYellowTrash(invocationCard);
+        switch (source)
         {
-            List<Card> deck = currentPlayerCard.Deck;
-            if (cardName != "")
+            case "deck":
             {
-                bool isFound = false;
-                int j = 0;
-                while (j < deck.Count && !isFound)
+                var deck = currentPlayerCard.deck;
+                if (cardName != "")
                 {
-                    if (deck[j].Nom == cardName)
+                    var isFound = false;
+                    var j = 0;
+                    while (j < deck.Count && !isFound)
                     {
-                        isFound = true;
-                        cardFound = deck[j];
+                        if (deck[j].Nom == cardName)
+                        {
+                            isFound = true;
+                            cardFound = deck[j];
+                        }
+
+                        j++;
                     }
 
-                    j++;
+                    AskUserToAddCardInHand(cardName, cardFound, isFound, currentPlayerCard);
                 }
 
-                AskUserToAddCardInHand(cardName, cardFound, isFound, currentPlayerCard);
+                break;
             }
-        }
-        else if (source == "trash")
-        {
-            List<Card> trash = currentPlayerCard.YellowTrash;
-            if (cardName != "")
+            case "trash":
             {
-                bool isFound = false;
-                int j = 0;
-                while (j < trash.Count && !isFound)
+                var trash = currentPlayerCard.yellowTrash;
+                if (cardName != "")
                 {
-                    if (trash[j].Nom == cardName)
+                    var isFound = false;
+                    var j = 0;
+                    while (j < trash.Count && !isFound)
                     {
-                        isFound = true;
-                        cardFound = trash[j];
+                        if (trash[j].Nom == cardName)
+                        {
+                            isFound = true;
+                            cardFound = trash[j];
+                        }
+
+                        j++;
                     }
 
-                    j++;
+                    AskUserToAddCardInHand(cardName, cardFound, isFound, currentPlayerCard);
                 }
-                
-                AskUserToAddCardInHand(cardName, cardFound, isFound, currentPlayerCard);
+
+                break;
             }
         }
     }
 
     private void AskUserToAddCardInHand(string cardName, Card cardFound, bool isFound, PlayerCards currentPlayerCard)
     {
-        if (isFound)
+        if (!isFound) return;
+        var message = Instantiate(messageBox);
+        message.GetComponent<MessageBox>().title = "Carte en main";
+
+        message.GetComponent<MessageBox>().description =
+            "Voulez-vous aussi ajouter " + cardName + " à votre main ?";
+        message.GetComponent<MessageBox>().PositiveAction = () =>
         {
-            GameObject message = Instantiate(messageBox);
-            message.GetComponent<MessageBox>().title = "Carte en main";
+            currentPlayerCard.handCards.Add(cardFound);
 
-            message.GetComponent<MessageBox>().description =
-                "Voulez-vous aussi ajouter " + cardName + " à votre main ?";
-            message.GetComponent<MessageBox>().positiveAction = () =>
-            {
-                currentPlayerCard.handCards.Add(cardFound);
+            currentPlayerCard.deck.Remove(cardFound);
 
-                currentPlayerCard.Deck.Remove(cardFound);
-
-                Destroy(message);
-            };
-            message.GetComponent<MessageBox>().negativeAction = () => { Destroy(message); };
-        }
+            Destroy(message);
+        };
+        message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
     }
 
     private void DisplayCurrentCard(Card card)
@@ -576,28 +580,27 @@ public class GameLoop : MonoBehaviour
 
     private void Draw()
     {
-        if (isP1Turn)
+        if (IsP1Turn)
         {
-            PlayerCards P1Cards = P1.GetComponent<PlayerCards>();
-            int size = P1Cards.Deck.Count;
+            var p1Cards = p1.GetComponent<PlayerCards>();
+            var size = p1Cards.deck.Count;
             if (size > 0)
             {
-                Card c = P1Cards.Deck[size-1];
-                P1Cards.handCards.Add(c);
-                P1Cards.Deck.RemoveAt(size-1);
+                var c = p1Cards.deck[size - 1];
+                p1Cards.handCards.Add(c);
+                p1Cards.deck.RemoveAt(size - 1);
             }
-
         }
         else
         {
-            PlayerCards P2Cards = P2.GetComponent<PlayerCards>();
-            int size = P2Cards.Deck.Count;
+            var P2Cards = p2.GetComponent<PlayerCards>();
+            var size = P2Cards.deck.Count;
             if (size > 0)
             {
-                Card c = P2Cards.Deck[size-1];
+                var c = P2Cards.deck[size - 1];
                 P2Cards.handCards.Add(c);
-                P2Cards.Deck.RemoveAt(size-1);
-            }      
+                P2Cards.deck.RemoveAt(size - 1);
+            }
         }
 
         phaseId += 1;
@@ -612,31 +615,32 @@ public class GameLoop : MonoBehaviour
         {
             case 3:
                 inHandButton.SetActive(true);
-                roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pioche";break;
+                roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pioche";
+                break;
             case 1:
                 inHandButton.SetActive(true);
-                roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";break;
+                roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";
+                break;
             case 2:
                 inHandButton.SetActive(false);
-                roundText.GetComponent<TextMeshProUGUI>().text = "Phase d'attaque";break;
+                roundText.GetComponent<TextMeshProUGUI>().text = "Phase d'attaque";
+                break;
         }
-    
-        if (phaseId == 3)
+
+        if (phaseId != 3) return;
+        IsP1Turn = !IsP1Turn;
+        ChangePlayer.Invoke();
+        if (IsP1Turn)
         {
-            isP1Turn = !isP1Turn;
-            ChangePlayer.Invoke();
-            if (isP1Turn)
-            {
-                camera.transform.Rotate(cameraRotation);
-                playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 1";
-            }
-            else
-            {
-                camera.transform.Rotate(cameraRotation);
-                playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 2";
-            }
-            phaseId = 0;
+            camera.transform.Rotate(cameraRotation);
+            playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 1";
         }
+        else
+        {
+            camera.transform.Rotate(cameraRotation);
+            playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 2";
+        }
+
+        phaseId = 0;
     }
-    
 }

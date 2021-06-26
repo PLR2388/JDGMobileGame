@@ -6,6 +6,7 @@ using UnityEngine;
 public class UseCard : MonoBehaviour
 {
     [SerializeField] private GameObject putCardButton;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,9 +18,7 @@ public class UseCard : MonoBehaviour
         string type = card.Type;
         switch (type)
         {
-            case "invocation" : break;
+            case "invocation": break;
         }
     }
-    
-    
 }

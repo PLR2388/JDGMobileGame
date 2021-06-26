@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PhysicalCardDisplay : MonoBehaviour
 {
@@ -23,15 +20,7 @@ public class PhysicalCardDisplay : MonoBehaviour
         }
         else
         {
-            if (card)
-            {
-                meshRenderer.material = card.MaterialCard;
-            }
-            else
-            {
-                meshRenderer.material = defaultMaterial;
-            }
+            meshRenderer.material = card ? card.MaterialCard : defaultMaterial;
         }
     }
-
 }

@@ -11,9 +11,9 @@ public enum Condition
     SacrificeFamily,
     SpecificFamilyOnField,
     NumberCard,
-    SacrificeThresholdATK,
-    SacrificeThresholdDEF,
-    NumberInvocationCardInYellowTrash, 
+    SacrificeThresholdAtk,
+    SacrificeThresholdDef,
+    NumberInvocationCardInYellowTrash,
     ComeFromYellowTrash //true or false
 }
 
@@ -27,8 +27,8 @@ public enum StartEffect
     InvokeSpecificCard,
     PutField,
     DestroyField,
-    Divide2ATK,
-    Divide2DEF,
+    Divide2Atk,
+    Divide2Def,
     SendToDeath,
     DrawXCards,
     Condition
@@ -38,8 +38,8 @@ public enum PermEffect
 {
     CanOnlyAttackIt,
     GiveStat,
-    IncreaseATK,
-    IncreaseDEF, //Increase ATK or DEF depending of the number of same family cards on field
+    IncreaseAtk,
+    IncreaseDef, //Increase ATK or DEF depending of the number of same family cards on field
     Family,
     PreventInvocationCards,
     ProtectBehind,
@@ -53,9 +53,9 @@ public enum ActionEffect
 {
     SacrificeInvocation,
     SpecificField,
-    IncreaseStarsATKAndDEF,
-    GiveATK,
-    GiveDEF,
+    IncreaseStarsAtkAndDef,
+    GiveAtk,
+    GiveDef,
     SpecificFamily,
     BackToLife,
     SkipOpponentAttack
@@ -72,22 +72,22 @@ public enum DeathEffect
 // Equipment
 public enum InstantEffect //Happen only at the beginning
 {
-    AddDEF,
-    AddATK,
-    MultiplyATK,
-    MultiplyDEF,
-    SetATK,
-    SetDEF,
-    BlockATK,
-    DirectATK, // Direct attack opponent stars
+    AddDef,
+    AddAtk,
+    MultiplyAtk,
+    MultiplyDef,
+    SetAtk,
+    SetDef,
+    BlockAtk,
+    DirectAtk, // Direct attack opponent stars
     SwitchEquipment, // Change previous equipmentCard by this one
     DisableBonus, // Remove native card bonus
 }
 
 public enum PermanentEffect //Must be frequently change
 {
-    AddATKBaseOnHandCards,
-    AddDEFBaseOnHandCards,
+    AddAtkBaseOnHandCards,
+    AddDefBaseOnHandCards,
     BlockOpponentDuringInvocation, // Prevent opponent's attack during invocation
     PreventAttackOnInvocation, // Prevent opponent to attack this card
 }
@@ -95,7 +95,7 @@ public enum PermanentEffect //Must be frequently change
 // Effect
 public enum Effect
 {
-    AffectPV, // Indicate unit numberofPv
+    AffectPv, // Indicate unit numberofPv
     AffectOpponent,
     NumberInvocationCard,
     NumberHandCard,
@@ -111,7 +111,7 @@ public enum Effect
     RemoveHand,
     RemoveDeck,
     SpecialInvocation,
-    DividInvocation ,
+    DivideInvocation,
     Duration,
     Combine,
     RevertStat,

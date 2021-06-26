@@ -1,40 +1,33 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InfiniteScroll : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
     [SerializeField] private GameObject messageBox;
 
-    public GameObject gameState;
-
     private int numberSelected = 0;
     private int numberRare = 0;
 
-    private const int maxSelectedCards = 30;
-    // Start is called before the first frame update
-    void Start()
-    {
-        List<Card> AllCards=gameState.GetComponent<GameState>().allCards;
-        foreach (var card in AllCards)
-        {
-            if (card.Type != "contre")
-            {
-                GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+    private const int MAXSelectedCards = 30;
 
-                newCard.GetComponent<OnHover>().bIsInGame = false;
-                newCard.transform.SetParent(transform,true);
-                newCard.GetComponent<CardDisplay>().card = card;
-            }
+    // Start is called before the first frame update
+    private void Start()
+    {
+        var allCards = FindObjectOfType<GameState>().allCards;
+        foreach (var card in allCards)
+        {
+            if (card.Type == "contre") continue;
+            var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+
+            newCard.GetComponent<OnHover>().bIsInGame = false;
+            newCard.transform.SetParent(transform, true);
+            newCard.GetComponent<CardDisplay>().card = card;
         }
     }
 
-    private void displayMessageBox(String msg)
+    private void DisplayMessageBox(string msg)
     {
-        GameObject message = Instantiate(messageBox);
+        var message = Instantiate(messageBox);
         message.GetComponent<MessageBox>().title = "Modifie ton deck";
         message.GetComponent<MessageBox>().isInformation = true;
         message.GetComponent<MessageBox>().description = msg;
@@ -44,40 +37,32 @@ public class InfiniteScroll : MonoBehaviour
     {
         numberSelected = 0;
         numberRare = 0;
-        Transform[] children = GetComponentsInChildren<Transform>();
-        for (int i = 0; i < children.Length; i++)
+        var children = GetComponentsInChildren<Transform>();
+        foreach (var child in children)
         {
-            GameObject gameObject = children[i].gameObject;
-            if(gameObject.GetComponent<OnHover>() != null)
+            var childGameObject = child.gameObject;
+            if (childGameObject.GetComponent<OnHover>() == null) continue;
+            var isSelected = childGameObject.GetComponent<OnHover>().bIsSelected;
+            if (!isSelected) continue;
+            if (numberSelected < GameState.maxDeckCards)
             {
-                bool isSelected = gameObject.GetComponent<OnHover>().bIsSelected;
-                if (isSelected)
+                numberSelected++;
+                if (!childGameObject.GetComponent<CardDisplay>().card.Collector) continue;
+                if (numberRare < GameState.maxRare)
                 {
-                    if (numberSelected < GameState.maxDeckCards)
-                    {
-                        numberSelected++;
-                        if (gameObject.GetComponent<CardDisplay>().card.Collector)
-                        {
-                            if (numberRare < GameState.maxRare)
-                            {
-                                numberRare++;
-                            }
-                            else
-                            {
-                                gameObject.GetComponent<OnHover>().bIsSelected = false;
-                                displayMessageBox("Tu ne peux pas avoir plus de 5 cartes brillantes !");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        gameObject.GetComponent<OnHover>().bIsSelected = false;
-                        displayMessageBox("Tu ne peux pas avoir plus de 30 cartes !");
-                    }
+                    numberRare++;
                 }
-
+                else
+                {
+                    childGameObject.GetComponent<OnHover>().bIsSelected = false;
+                    DisplayMessageBox("Tu ne peux pas avoir plus de 5 cartes brillantes !");
+                }
             }
-
+            else
+            {
+                childGameObject.GetComponent<OnHover>().bIsSelected = false;
+                DisplayMessageBox("Tu ne peux pas avoir plus de 30 cartes !");
+            }
         }
     }
 }

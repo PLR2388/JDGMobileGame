@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,14 +8,14 @@ using UnityEngine.UI;
 
 public class MessageBox : MonoBehaviour
 {
-    public UnityAction positiveAction;
-    public UnityAction negativeAction;
-    public UnityAction okAction = null;
-    public String title;
-    public String description;
-    public Boolean isInformation = false;
+    public UnityAction PositiveAction;
+    public UnityAction NegativeAction;
+    public UnityAction OkAction = null;
+    public string title;
+    public string description;
+    public bool isInformation = false;
     public DisplayCards displayCardsScript;
-    public Boolean displayCards = false;
+    public bool displayCards = false;
 
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
@@ -28,16 +30,16 @@ public class MessageBox : MonoBehaviour
     [SerializeField] private GameObject scrollCardDisplay;
     private Card currentSelectedCard;
 
-    public Card getSelectedCard()
+    public Card GETSelectedCard()
     {
         return currentSelectedCard;
     }
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        OnHover.cardSelectedEvent.AddListener(onCardSelected);
+        OnHover.cardSelectedEvent.AddListener(ONCardSelected);
         titleText.text = title;
         descriptionText.text = description;
 
@@ -48,17 +50,14 @@ public class MessageBox : MonoBehaviour
             negativeButton.SetActive(false);
             okButton.SetActive(true);
 
-            Button okBtn = okButton.GetComponent<Button>();
-            if (okAction != null)
+            var okBtn = okButton.GetComponent<Button>();
+            if (OkAction != null)
             {
-                okBtn.onClick.AddListener(okAction);
+                okBtn.onClick.AddListener(OkAction);
             }
             else
             {
-                okBtn.onClick.AddListener(() =>
-                {
-                    Destroy(gameObject);
-                });
+                okBtn.onClick.AddListener(() => { Destroy(gameObject); });
             }
         }
         else
@@ -67,10 +66,10 @@ public class MessageBox : MonoBehaviour
             negativeButtonText.text = "Non";
 
 
-            Button positiveBtn = positiveButton.GetComponent<Button>();
-            Button negativeBtn = negativeButton.GetComponent<Button>();
-            positiveBtn.onClick.AddListener(positiveAction);
-            negativeBtn.onClick.AddListener(negativeAction);
+            var positiveBtn = positiveButton.GetComponent<Button>();
+            var negativeBtn = negativeButton.GetComponent<Button>();
+            positiveBtn.onClick.AddListener(PositiveAction);
+            negativeBtn.onClick.AddListener(NegativeAction);
 
 
             positiveButton.SetActive(true);
@@ -78,45 +77,103 @@ public class MessageBox : MonoBehaviour
             okButton.SetActive(false);
         }
 
-        if (displayCards)
-        {
-            scrollCardDisplay.SetActive(true);
-        }
-        else
-        {
-            scrollCardDisplay.SetActive(false);
-        }
+        scrollCardDisplay.SetActive(displayCards);
     }
 
-    void onCardSelected(Card card)
+    private void ONCardSelected(Card card)
     {
         currentSelectedCard = card;
     }
 
-    void Update()
+    private void Update()
     {
-        if (currentSelectedCard != null)
+        if (currentSelectedCard == null) return;
+        var children = container.GetComponentsInChildren<Transform>();
+        foreach (var child in children)
         {
-            Transform[] children = container.GetComponentsInChildren<Transform>();
-            for (int i = 0; i < children.Length; i++)
-            {
-                GameObject gameObject = children[i].gameObject;
-                 if(gameObject.GetComponent<CardDisplay>() != null)
-                 {
-                     String name = gameObject.GetComponent<CardDisplay>().card.Nom;
-                     
-                     if (currentSelectedCard.Nom != name)
-                     {
-                         gameObject.GetComponent<OnHover>().bIsSelected = false;
-                     }
-                     else if(!gameObject.GetComponent<OnHover>().bIsSelected)
-                     {
-                         // if the card is unselected
-                         currentSelectedCard = null;
-                     }
-                 }
+            var childGameObject = child.gameObject;
+            if (childGameObject.GetComponent<CardDisplay>() == null) continue;
+            var cardNom = childGameObject.GetComponent<CardDisplay>().card.Nom;
 
+            if (!(currentSelectedCard is null) && currentSelectedCard.Nom != cardNom)
+            {
+                childGameObject.GetComponent<OnHover>().bIsSelected = false;
+            }
+            else if (!childGameObject.GetComponent<OnHover>().bIsSelected)
+            {
+                // if the card is unselected
+                currentSelectedCard = null;
             }
         }
+    }
+
+    public static GameObject CreateSimpleMessageBox(Transform canvas, string title, string description,
+        UnityAction positiveAction = null,
+        UnityAction negativeAction = null)
+    {
+        var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
+        var messageBoxGameObject = messageBox[0].gameObject;
+        var message = Instantiate(messageBoxGameObject);
+        Destroy(message.GetComponent<DDOL>());
+        message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
+        message.GetComponent<MessageBox>().title = title;
+        message.GetComponent<MessageBox>().description = description;
+        message.GetComponent<MessageBox>().PositiveAction = () =>
+        {
+            positiveAction?.Invoke();
+            Destroy(message);
+        };
+        message.GetComponent<MessageBox>().NegativeAction = () =>
+        {
+            negativeAction?.Invoke();
+            Destroy(message);
+        };
+        message.SetActive(true);
+        return message;
+    }
+
+    public static GameObject CreateOkMessageBox(Transform canvas, string title, string description,
+        UnityAction okAction = null)
+    {
+        var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
+        var messageBoxGameObject = messageBox[0].gameObject;
+        var message = Instantiate(messageBoxGameObject);
+        Destroy(message.GetComponent<DDOL>());
+        message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
+        message.GetComponent<MessageBox>().isInformation = true;
+        message.GetComponent<MessageBox>().title = title;
+        message.GetComponent<MessageBox>().description = description;
+        message.GetComponent<MessageBox>().OkAction = () =>
+        {
+            okAction?.Invoke();
+            Destroy(message);
+        };
+        message.SetActive(true);
+        return message;
+    }
+
+    public static GameObject CreateMessageBoxWithCardSelector(Transform canvas, string title, List<Card> cards,
+        UnityAction positiveAction = null, UnityAction negativeAction = null, bool okButton = false)
+    {
+        var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
+        var messageBoxGameObject = messageBox[0].gameObject;
+        var message = Instantiate(messageBoxGameObject);
+        Destroy(message.GetComponent<DDOL>());
+        message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
+        message.GetComponent<MessageBox>().title = title;
+        message.GetComponent<MessageBox>().displayCards = true;
+        message.GetComponent<MessageBox>().isInformation = okButton;
+        message.GetComponent<MessageBox>().PositiveAction = () =>
+        {
+            positiveAction?.Invoke();
+            Destroy(message);
+        };
+        message.GetComponent<MessageBox>().NegativeAction = () =>
+        {
+            negativeAction?.Invoke();
+            Destroy(message);
+        };
+        message.SetActive(true);
+        return message;
     }
 }

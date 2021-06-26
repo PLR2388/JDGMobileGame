@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class UpdateDescription : MonoBehaviour
 {
@@ -17,7 +14,7 @@ public class UpdateDescription : MonoBehaviour
     private Card card;
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         card = GetComponent<CardDisplay>().card;
         titleCardText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Nom;
@@ -28,9 +25,9 @@ public class UpdateDescription : MonoBehaviour
         {
             allInvocationOptions.SetActive(true);
             cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte INVOCATION";
-            InvocationCard invocationCard = (InvocationCard)card;
-            string[] families = invocationCard.GetFamily();
-            string familyFormatText = "";
+            var invocationCard = (InvocationCard) card;
+            var families = invocationCard.GetFamily();
+            var familyFormatText = "";
             if (families.Length == 2)
             {
                 familyFormatText = families[0] + ", " + families[1];
@@ -58,19 +55,12 @@ public class UpdateDescription : MonoBehaviour
                 case "equipment":
                     cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte ÉQUIPEMENT";
                     break;
-                case "field" :
+                case "field":
                     cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte TERRAIN";
                     break;
             }
         }
 
-        if (card.Collector)
-        {
-            collectorImage.SetActive(true);
-        }
-        else
-        {
-            collectorImage.SetActive(false);
-        }
+        collectorImage.SetActive(card.Collector);
     }
 }

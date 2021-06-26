@@ -2,52 +2,56 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class DisplayCards : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
-    public List<Card> cardslist;
+    [FormerlySerializedAs("cardslist")] public List<Card> cardsList;
+
     private List<GameObject> createdCards;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         createdCards = new List<GameObject>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (createdCards.Count < cardslist.Count)
+        if (createdCards.Count < cardsList.Count)
         {
-            for (int i = 0; i < cardslist.Count; i++)
+            foreach (var card in cardsList)
             {
-                GameObject newCard=Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-                newCard.transform.SetParent(transform,true);
-                newCard.GetComponent<CardDisplay>().card = cardslist[i];
+                var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+                newCard.transform.SetParent(transform, true);
+                newCard.GetComponent<CardDisplay>().card = card;
                 createdCards.Add(newCard);
             }
-            RectTransform rectTransform = GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(420 * cardslist.Count,rectTransform.sizeDelta.y);
+
+            var rectTransform = GetComponent<RectTransform>();
+            rectTransform.sizeDelta = new Vector2(420 * cardsList.Count, rectTransform.sizeDelta.y);
         }
-        else if (createdCards.Count > cardslist.Count)
+        else if (createdCards.Count > cardsList.Count)
         {
-            for (int i = 0; i < createdCards.Count; i++)
+            foreach (var createdCard in createdCards)
             {
-                Destroy(createdCards[i]);
+                Destroy(createdCard);
             }
+
             createdCards.Clear();
         }
     }
-    
+
     private void OnDisable()
     {
-        if (createdCards.Count > 0)
+        if (createdCards.Count <= 0) return;
+        foreach (var createdCard in createdCards)
         {
-            for (int i = 0; i < createdCards.Count; i++)
-            {
-                Destroy(createdCards[i]);
-            }
-            createdCards.Clear();
+            Destroy(createdCard);
         }
+
+        createdCards.Clear();
     }
 }

@@ -3,47 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[CreateAssetMenu(fileName="New Card",menuName="Card")]
+[CreateAssetMenu(fileName = "New Card", menuName = "Card")]
 public class Card : ScriptableObject
 {
-    [SerializeField] protected string nom="";
+    [SerializeField] protected string nom = "";
     [SerializeField] protected string description;
     [SerializeField] protected string descriptionDetaillee;
     [SerializeField] protected string type;
     [SerializeField] protected Material materialCard;
     [SerializeField] protected bool collector;
 
-    public string Nom
-    {
-        get => nom;
-    }
+    public string Nom => nom;
 
-    public string Description
-    {
-        get => description;
-    }
+    public string Description => description;
+    public string DetailedDescription => descriptionDetaillee;
 
-    public string DetailedDescription
-    {
-        get => descriptionDetaillee;
-    }
+    public string Type => type;
 
-    public string Type
-    {
-        get => type;
-    }
-    
-    public Material MaterialCard
-    {
-        get => materialCard;
-    }
-    
-    public bool Collector
-    {
-        get => collector;
-    }
+    public Material MaterialCard => materialCard;
 
-    public bool isValid()
+    public bool Collector => collector;
+
+    public bool IsValid()
     {
         return this != null && !string.IsNullOrEmpty(nom);
     }

@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+
 [CreateAssetMenu(fileName = "InvocationCondition", menuName = "InvocationPermEffect")]
 public class InvocationPermEffect : ScriptableObject
 {

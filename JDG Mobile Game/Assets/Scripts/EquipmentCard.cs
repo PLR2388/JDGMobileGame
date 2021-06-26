@@ -1,53 +1,44 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName="New Card",menuName="EquipmentCard")]
+[CreateAssetMenu(fileName = "New Card", menuName = "EquipmentCard")]
 public class EquipmentCard : Card
 {
-    
     [SerializeField] private EquipmentInstantEffect equipmentInstantEffect;
     [SerializeField] private EquipmentPermEffect equipmentPermEffect;
+
     private void Awake()
     {
-        this.type= "equipment";
+        this.type = "equipment";
     }
 
-    public bool isEquipmentPossible()
+    public bool IsEquipmentPossible()
     {
-        if (GameLoop.isP1Turn)
+        if (GameLoop.IsP1Turn)
         {
-            GameObject player = GameObject.Find("Player1");
+            var player = GameObject.Find("Player1");
             return HasEnoughInvocationCard(player);
         }
         else
         {
-            GameObject player = GameObject.Find("Player2");
+            var player = GameObject.Find("Player2");
             return HasEnoughInvocationCard(player);
         }
     }
 
     private bool HasEnoughInvocationCard(GameObject player)
     {
-        PlayerCards currentPlayerCard = player.GetComponent<PlayerCards>();
+        var currentPlayerCard = player.GetComponent<PlayerCards>();
 
-        List<InvocationCard> invocationCards = currentPlayerCard.InvocationCards;
+        var invocationCards = currentPlayerCard.invocationCards;
 
-        return hasEnoughInvocationCard(invocationCards);
+        return HasEnoughInvocationCard(invocationCards);
     }
 
-    private bool hasEnoughInvocationCard(List<InvocationCard> invocationCards)
+    private static bool HasEnoughInvocationCard(IReadOnlyList<InvocationCard> invocationCards)
     {
-        int count = 0;
-        for (int i = 0; i < invocationCards.Count; i++)
-        {
-            if (invocationCards[i] != null && invocationCards[i].Nom != null)
-            {
-                count++;
-            } 
-        }
-
+        var count = invocationCards.Count(t => t != null && t.Nom != null);
         return count > 0;
     }
 }

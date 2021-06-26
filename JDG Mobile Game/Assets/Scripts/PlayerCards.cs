@@ -1,20 +1,37 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerCards : MonoBehaviour
 {
-    [SerializeField] public List<Card> Deck;
-    [SerializeField] public List<Card> handCards;
-    [SerializeField] public List<Card> YellowTrash;
-    [SerializeField] public FieldCard Field;
-    [SerializeField] public List<InvocationCard> InvocationCards;
-    [SerializeField] public List<EffectCard> EffectCards;
-    [SerializeField] private bool IsPlayerOne;
-    [SerializeField] private GameObject PrefabCard;
-    [SerializeField] private List<GameObject> AllPhysicalCards;
+    [FormerlySerializedAs("Deck")] [SerializeField]
+    public List<Card> deck;
 
-    private Vector3[] invocationCardsLocationP1 =
+    [SerializeField] public List<Card> handCards;
+
+    [FormerlySerializedAs("YellowTrash")] [SerializeField]
+    public List<Card> yellowTrash;
+
+    [FormerlySerializedAs("Field")] [SerializeField]
+    public FieldCard field;
+
+    [FormerlySerializedAs("InvocationCards")] [SerializeField]
+    public List<InvocationCard> invocationCards;
+
+    [FormerlySerializedAs("EffectCards")] [SerializeField]
+    public List<EffectCard> effectCards;
+
+    [FormerlySerializedAs("IsPlayerOne")] [SerializeField]
+    private bool isPlayerOne;
+
+    [FormerlySerializedAs("PrefabCard")] [SerializeField]
+    private GameObject prefabCard;
+
+    [FormerlySerializedAs("AllPhysicalCards")] [SerializeField]
+    private List<GameObject> allPhysicalCards;
+
+    private readonly Vector3[] invocationCardsLocationP1 =
     {
         new Vector3(-53.5f, 0.5f, -21),
         new Vector3(-32, 0.5f, -21),
@@ -22,7 +39,7 @@ public class PlayerCards : MonoBehaviour
         new Vector3(10, 0.5f, -21),
     };
 
-    private Vector3[] equipmentCardsLocationP1 =
+    private readonly Vector3[] equipmentCardsLocationP1 =
     {
         new Vector3(-53.5f, 0.5f, -30),
         new Vector3(-32, 0.5f, -30),
@@ -30,7 +47,7 @@ public class PlayerCards : MonoBehaviour
         new Vector3(10, 0.5f, -30),
     };
 
-    private Vector3[] effectCardsLocationP1 =
+    private readonly Vector3[] effectCardsLocationP1 =
     {
         new Vector3(-53.5f, 0.5f, -46.7f),
         new Vector3(-32, 0.5f, -46.7f),
@@ -38,11 +55,11 @@ public class PlayerCards : MonoBehaviour
         new Vector3(10, 0.5f, -46.7f),
     };
 
-    private Vector3 FieldCardLocationP1 = new Vector3(31.5f, 0.5f, -21);
-    private Vector3 DeckLocationP1 = new Vector3(52, 0.5f, -33);
-    private Vector3 YellowTrashLocationP1 = new Vector3(31.5f, 0.5f, -46.7f);
+    private readonly Vector3 fieldCardLocationP1 = new Vector3(31.5f, 0.5f, -21);
+    private readonly Vector3 deckLocationP1 = new Vector3(52, 0.5f, -33);
+    private readonly Vector3 yellowTrashLocationP1 = new Vector3(31.5f, 0.5f, -46.7f);
 
-    private Vector3[] invocationCardsLocationP2 =
+    private readonly Vector3[] invocationCardsLocationP2 =
     {
         new Vector3(53.5f, 0.5f, 21),
         new Vector3(32, 0.5f, 21),
@@ -50,7 +67,7 @@ public class PlayerCards : MonoBehaviour
         new Vector3(-11, 0.5f, 21),
     };
 
-    private Vector3[] equipmentCardsLocationP2 =
+    private readonly Vector3[] equipmentCardsLocationP2 =
     {
         new Vector3(-53.5f, 0.5f, 30),
         new Vector3(-32, 0.5f, 30),
@@ -58,7 +75,7 @@ public class PlayerCards : MonoBehaviour
         new Vector3(10, 0.5f, 30),
     };
 
-    private Vector3[] effectCardsLocationP2 =
+    private readonly Vector3[] effectCardsLocationP2 =
     {
         new Vector3(53.5f, 0.5f, 46),
         new Vector3(32, 0.5f, 46),
@@ -66,333 +83,285 @@ public class PlayerCards : MonoBehaviour
         new Vector3(-11, 0.5f, 46),
     };
 
-    private Vector3 FieldCardLocationP2 = new Vector3(-32, 0.5f, 21);
-    private Vector3 DeckLocationP2 = new Vector3(-53, 0.5f, 34);
-    private Vector3 YellowTrashLocationP2 = new Vector3(-32, 0.5f, 46);
+    private readonly Vector3 fieldCardLocationP2 = new Vector3(-32, 0.5f, 21);
+    private readonly Vector3 deckLocationP2 = new Vector3(-53, 0.5f, 34);
+    private readonly Vector3 yellowTrashLocationP2 = new Vector3(-32, 0.5f, 46);
 
-    public string TAG
-    {
-        get
-        {
-            if (IsPlayerOne)
-            {
-                return "card1";
-            }
-            else
-            {
-                return "card2";
-            }
-        }
-    }
+    public string Tag => isPlayerOne ? "card1" : "card2";
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        InvocationCards = new List<InvocationCard>(4);
-        EffectCards = new List<EffectCard>(4);
-        GameObject gameObject = GameObject.Find("GameState");
-        GameState gameState = gameObject.GetComponent<GameState>();
-        if (IsPlayerOne)
+        invocationCards = new List<InvocationCard>(4);
+        effectCards = new List<EffectCard>(4);
+        var gameStateGameObject = GameObject.Find("GameState");
+        var gameState = gameStateGameObject.GetComponent<GameState>();
+        if (isPlayerOne)
         {
-            Deck = gameState.DeckP1;
-            for (int i = 0; i < Deck.Count; i++)
+            deck = gameState.deckP1;
+            for (var i = 0; i < deck.Count; i++)
             {
-                GameObject newPhysicalCard = Instantiate(PrefabCard, DeckLocationP1, Quaternion.identity);
+                var newPhysicalCard = Instantiate(prefabCard, deckLocationP1, Quaternion.identity);
                 newPhysicalCard.transform.rotation = Quaternion.Euler(0, 180, 0);
                 newPhysicalCard.transform.position =
-                    new Vector3(DeckLocationP1.x, DeckLocationP1.y + 0.1f * i, DeckLocationP1.z);
-                newPhysicalCard.name = Deck[i].Nom + "P1";
-                newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
-                AllPhysicalCards.Add(newPhysicalCard);
+                    new Vector3(deckLocationP1.x, deckLocationP1.y + 0.1f * i, deckLocationP1.z);
+                newPhysicalCard.name = deck[i].Nom + "P1";
+                newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
+                allPhysicalCards.Add(newPhysicalCard);
             }
         }
         else
         {
-            Deck = gameState.DeckP2;
-            for (int i = 0; i < Deck.Count; i++)
+            deck = gameState.deckP2;
+            for (var i = 0; i < deck.Count; i++)
             {
-                GameObject newPhysicalCard = Instantiate(PrefabCard, DeckLocationP2, Quaternion.identity);
+                var newPhysicalCard = Instantiate(prefabCard, deckLocationP2, Quaternion.identity);
                 newPhysicalCard.transform.position =
-                    new Vector3(DeckLocationP2.x, DeckLocationP2.y + 0.1f * i, DeckLocationP2.z);
-                newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = Deck[i];
-                newPhysicalCard.name = Deck[i].Nom + "P2";
-                AllPhysicalCards.Add(newPhysicalCard);
+                    new Vector3(deckLocationP2.x, deckLocationP2.y + 0.1f * i, deckLocationP2.z);
+                newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
+                newPhysicalCard.name = deck[i].Nom + "P2";
+                allPhysicalCards.Add(newPhysicalCard);
             }
         }
 
-        for (int i = Deck.Count - 5; i < Deck.Count; i++)
+        for (var i = deck.Count - 5; i < deck.Count; i++)
         {
-            handCards.Add(Deck[i]);
-            AllPhysicalCards[i].transform.position = new Vector3(999, 999);
+            handCards.Add(deck[i]);
+            allPhysicalCards[i].transform.position = new Vector3(999, 999);
         }
 
-        Deck.RemoveRange(Deck.Count - 5, 5);
+        deck.RemoveRange(deck.Count - 5, 5);
 
-        if (IsPlayerOne)
+        if (!isPlayerOne) return;
         {
-            for (int i = 0; i < Deck.Count; i++)
+            for (var i = 0; i < deck.Count; i++)
             {
-                if (Deck[i].Nom == "Le voisin")
-                {
-                    handCards.Add(Deck[i]);
-                    Deck.Remove(Deck[i]);
-                    break;
-                }
+                if (deck[i].Nom != "Le voisin") continue;
+                handCards.Add(deck[i]);
+                deck.Remove(deck[i]);
+                break;
             }
         }
     }
 
-    public void resetInvocationCardNewTurn()
+    public void ResetInvocationCardNewTurn()
     {
-        foreach (var invocationCard in InvocationCards)
+        foreach (var invocationCard in invocationCards.Where(invocationCard =>
+            invocationCard != null && invocationCard.Nom != null))
         {
-            if (invocationCard != null && invocationCard.Nom != null)
-            {
-                invocationCard.resetNewTurn();
-            }
+            invocationCard.ResetNewTurn();
         }
     }
 
-    public bool containsCardInInvocation(InvocationCard invocationCard)
+    public bool ContainsCardInInvocation(InvocationCard invocationCard)
     {
-        foreach (var invocation in InvocationCards)
-        {
-            if (invocation != null && invocation.Nom == invocationCard.Nom)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return invocationCards.Any(invocation => invocation != null && invocation.Nom == invocationCard.Nom);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (IsPlayerOne)
+        if (isPlayerOne)
         {
-            for (int i = 0; i < InvocationCards.Count; i++)
+            for (var i = 0; i < invocationCards.Count; i++)
             {
-                if (InvocationCards[i])
+                if (!invocationCards[i]) continue;
+                var invocationCard = invocationCards[i];
+                var index = FindCard(invocationCard);
+                allPhysicalCards[index].transform.position = invocationCardsLocationP1[i];
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
                 {
-                    InvocationCard invocationCard = InvocationCards[i];
-                    int index = FindCard(invocationCard);
-                    AllPhysicalCards[index].transform.position = invocationCardsLocationP1[i];
-                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                    {
-                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                    }
-                    AllPhysicalCards[index].tag = "card1";
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
 
-                    if (invocationCard.getEquipmentCard() != null)
-                    {
-                        EquipmentCard equipmentCard = invocationCard.getEquipmentCard();
-                        index = FindCard(equipmentCard);
-                        AllPhysicalCards[index].transform.position = equipmentCardsLocationP1[i];
-                        if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                        {
-                            AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                        }
+                allPhysicalCards[index].tag = "card1";
 
-                        AllPhysicalCards[index].tag = "card1";
-                    }
+                if (invocationCard.GETEquipmentCard() == null) continue;
+                var equipmentCard = invocationCard.GETEquipmentCard();
+                index = FindCard(equipmentCard);
+                allPhysicalCards[index].transform.position = equipmentCardsLocationP1[i];
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
+
+                allPhysicalCards[index].tag = "card1";
+            }
+
+            for (var i = 0; i < effectCards.Count; i++)
+            {
+                if (!effectCards[i]) continue;
+                var index = FindCard(effectCards[i]);
+                allPhysicalCards[index].transform.position = effectCardsLocationP1[i];
+
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
+
+                allPhysicalCards[index].tag = "card1";
+            }
+
+            for (var i = 0; i < deck.Count; i++)
+            {
+                if (!deck[i]) continue;
+                var index = FindCard(deck[i]);
+                allPhysicalCards[index].transform.position =
+                    new Vector3(deckLocationP1.x, deckLocationP1.y + 0.1f * i, deckLocationP1.z);
+            }
+
+            for (var i = 0; i < yellowTrash.Count; i++)
+            {
+                if (!yellowTrash[i]) continue;
+                var index = FindCard(yellowTrash[i]);
+                allPhysicalCards[index].transform.position =
+                    new Vector3(yellowTrashLocationP1.x, yellowTrashLocationP1.y + 0.1f * i, yellowTrashLocationP1.z);
+                if (!allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
                 }
             }
 
-            for (int i = 0; i < EffectCards.Count; i++)
+            if (!field) return;
             {
-                if (EffectCards[i])
+                var index = FindCard(field);
+                allPhysicalCards[index].transform.position = fieldCardLocationP1;
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
                 {
-                    int index = FindCard(EffectCards[i]);
-                    AllPhysicalCards[index].transform.position = effectCardsLocationP1[i];
-
-                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                    {
-                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                    }
-
-                    AllPhysicalCards[index].tag = "card1";
-                }
-            }
-
-            for (int i = 0; i < Deck.Count; i++)
-            {
-                if (Deck[i])
-                {
-                    int index = FindCard(Deck[i]);
-                    AllPhysicalCards[index].transform.position =
-                        new Vector3(DeckLocationP1.x, DeckLocationP1.y + 0.1f * i, DeckLocationP1.z);
-                }
-            }
-
-            for (int i = 0; i < YellowTrash.Count; i++)
-            {
-                if (YellowTrash[i])
-                {
-                    int index = FindCard(YellowTrash[i]);
-                    AllPhysicalCards[index].transform.position =
-                        new Vector3(YellowTrashLocationP1.x, YellowTrashLocationP1.y + 0.1f * i, YellowTrashLocationP1.z);
-                    if (!AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                    {
-                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
-                    }   
-                }
-            }
-
-            if (Field)
-            {
-                int index = FindCard(Field);
-                AllPhysicalCards[index].transform.position = FieldCardLocationP1;
-                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                 }
 
-                AllPhysicalCards[index].tag = "card1";
+                allPhysicalCards[index].tag = "card1";
             }
         }
         else
         {
-            for (int i = 0; i < InvocationCards.Count; i++)
+            for (var i = 0; i < invocationCards.Count; i++)
             {
-                if (InvocationCards[i])
+                if (!invocationCards[i]) continue;
+                var invocationCard = invocationCards[i];
+                var index = FindCard(invocationCards[i]);
+                allPhysicalCards[index].transform.position = invocationCardsLocationP2[i];
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
                 {
-                    InvocationCard invocationCard = InvocationCards[i];
-                    int index = FindCard(InvocationCards[i]);
-                    AllPhysicalCards[index].transform.position = invocationCardsLocationP2[i];
-                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                    {
-                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                    }
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
 
-                    AllPhysicalCards[index].tag = "card2"; 
-                    if (invocationCard.getEquipmentCard() != null)
-                    {
-                        EquipmentCard equipmentCard = invocationCard.getEquipmentCard();
-                        index = FindCard(equipmentCard);
-                        AllPhysicalCards[index].transform.position = equipmentCardsLocationP2[i];
-                        if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                        {
-                            AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                        }
+                allPhysicalCards[index].tag = "card2";
+                if (invocationCard.GETEquipmentCard() == null) continue;
+                var equipmentCard = invocationCard.GETEquipmentCard();
+                index = FindCard(equipmentCard);
+                allPhysicalCards[index].transform.position = equipmentCardsLocationP2[i];
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
 
-                        AllPhysicalCards[index].tag = "card2";
-                    }
+                allPhysicalCards[index].tag = "card2";
+            }
+
+            for (var i = 0; i < effectCards.Count; i++)
+            {
+                if (!effectCards[i]) continue;
+                var index = FindCard(effectCards[i]);
+                allPhysicalCards[index].transform.position = effectCardsLocationP2[i];
+
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
+
+                allPhysicalCards[index].tag = "card2";
+            }
+
+            for (var i = 0; i < deck.Count; i++)
+            {
+                if (!deck[i]) continue;
+                var index = FindCard(deck[i]);
+                allPhysicalCards[index].transform.position =
+                    new Vector3(deckLocationP2.x, deckLocationP2.y + 0.1f * i, deckLocationP2.z);
+            }
+
+            for (var i = 0; i < yellowTrash.Count; i++)
+            {
+                if (!yellowTrash[i]) continue;
+                var index = FindCard(yellowTrash[i]);
+                allPhysicalCards[index].transform.position =
+                    new Vector3(yellowTrashLocationP2.x, yellowTrashLocationP2.y + 0.1f * i, yellowTrashLocationP2.z);
+                if (!allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+                {
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
                 }
             }
 
-            for (int i = 0; i < EffectCards.Count; i++)
+            if (!field) return;
             {
-                if (EffectCards[i])
+                var index = FindCard(field);
+                allPhysicalCards[index].transform.position = fieldCardLocationP2;
+                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
                 {
-                    int index = FindCard(EffectCards[i]);
-                    AllPhysicalCards[index].transform.position = effectCardsLocationP2[i];
-
-                    if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                    {
-                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                    }
-
-                    AllPhysicalCards[index].tag = "card2";
-                }
-            }
-
-            for (int i = 0; i < Deck.Count; i++)
-            {
-                if (Deck[i])
-                {
-                    int index = FindCard(Deck[i]);
-                    AllPhysicalCards[index].transform.position =
-                        new Vector3(DeckLocationP2.x, DeckLocationP2.y + 0.1f * i, DeckLocationP2.z);
-                }
-            }
-
-            for (int i = 0; i < YellowTrash.Count; i++)
-            {
-                if (YellowTrash[i])
-                {
-                    int index = FindCard(YellowTrash[i]);
-                    AllPhysicalCards[index].transform.position =
-                        new Vector3(YellowTrashLocationP2.x, YellowTrashLocationP2.y + 0.1f * i, YellowTrashLocationP2.z);
-                    if (!AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                    {
-                        AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
-                    }
-                }
-            }
-
-            if (Field)
-            {
-                int index = FindCard(Field);
-                AllPhysicalCards[index].transform.position = FieldCardLocationP2;
-                if (AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                 }
 
-                AllPhysicalCards[index].tag = "card2";
+                allPhysicalCards[index].tag = "card2";
             }
         }
     }
 
-    public void sendCardToYellowTrash(Card card)
+    public void SendCardToYellowTrash(Card card)
     {
-        for (int i = 0; i < InvocationCards.Count; i++)
+        for (var i = 0; i < invocationCards.Count; i++)
         {
-            if (InvocationCards[i].Nom == card.Nom)
+            if (invocationCards[i].Nom != card.Nom) continue;
+            var invocationCard = card as InvocationCard;
+            if (invocationCard == null) continue;
+            if (invocationCard.GETEquipmentCard() != null)
             {
-                InvocationCard invocationCard = card as InvocationCard;
-                if (invocationCard != null)
-                {
-                    if (invocationCard.getEquipmentCard() != null)
-                    {
-                        EquipmentCard equipmentCard = invocationCard.getEquipmentCard();
-                        YellowTrash.Add(equipmentCard);
-                    }
-                    InvocationCards.Remove(card as InvocationCard);
-                }
- 
-                
+                var equipmentCard = invocationCard.GETEquipmentCard();
+                yellowTrash.Add(equipmentCard);
+                invocationCard.SetEquipmentCard(null);
+            }
+
+            invocationCards.Remove(card as InvocationCard);
+        }
+
+        for (var i = 0; i < effectCards.Count; i++)
+        {
+            if (effectCards[i].Nom == card.Nom)
+            {
+                effectCards.Remove(card as EffectCard);
             }
         }
 
-        for (int i = 0; i < EffectCards.Count; i++)
+        if (field != null && field.Nom == card.Nom)
         {
-            if (EffectCards[i].Nom == card.Nom)
-            {
-                EffectCards.Remove(card as EffectCard);
-            }
+            field = null;
         }
 
-        if (Field != null && Field.Nom == card.Nom)
-        {
-            Field = null;
-        }
-
-        YellowTrash.Add(card);
+        yellowTrash.Add(card);
     }
 
-    public void sendCardToHand(Card card)
+    public void SendCardToHand(Card card)
     {
-        for (int i = 0; i < InvocationCards.Count; i++)
+        for (var i = 0; i < invocationCards.Count; i++)
         {
-            if ( InvocationCards[i].Nom == card.Nom)
+            if (invocationCards[i].Nom == card.Nom)
             {
-                InvocationCards.Remove(card as InvocationCard);
+                invocationCards.Remove(card as InvocationCard);
             }
         }
 
         handCards.Add(card);
     }
 
-    int FindCard(Card card)
+    private int FindCard(Card card)
     {
-        string CardName = card.Nom;
-        if (IsPlayerOne)
+        var cardName = card.Nom;
+        if (isPlayerOne)
         {
-            for (int i = 0; i < AllPhysicalCards.Count; i++)
+            for (var i = 0; i < allPhysicalCards.Count; i++)
             {
-                if ((CardName + "P1") == AllPhysicalCards[i].name)
+                if ((cardName + "P1") == allPhysicalCards[i].name)
                 {
                     return i;
                 }
@@ -400,9 +369,9 @@ public class PlayerCards : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < AllPhysicalCards.Count; i++)
+            for (var i = 0; i < allPhysicalCards.Count; i++)
             {
-                if ((CardName + "P2") == (AllPhysicalCards[i].name))
+                if ((cardName + "P2") == (allPhysicalCards[i].name))
                 {
                     return i;
                 }

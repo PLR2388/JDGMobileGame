@@ -1,49 +1,35 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 [System.Serializable]
-public class changePVEvent : UnityEvent<float,bool>
+public class ChangePvEvent : UnityEvent<float, bool>
 {
 }
 
 public class PlayerStatus : MonoBehaviour
 {
+    public static readonly ChangePvEvent ChangePvEvent = new ChangePvEvent();
+    public const float MAXPv = 30f;
 
-    public static changePVEvent ChangePvEvent = new changePVEvent();
-     public static float maxPV = 30f;
-
-    [SerializeField] private float currentPV = 30f;
+    [FormerlySerializedAs("currentPV")] [SerializeField]
+    private float currentPv = 30f;
 
     [SerializeField] private bool isP1 = false;
 
-    public void changePV(float pv)
+    public void ChangePv(float pv)
     {
-        currentPV += pv;
-        if (currentPV > maxPV)
+        currentPv += pv;
+        if (currentPv > MAXPv)
         {
-            currentPV = maxPV;
+            currentPv = MAXPv;
         }
-        
-        ChangePvEvent.Invoke(currentPV,isP1);
+
+        ChangePvEvent.Invoke(currentPv, isP1);
     }
 
-    public float getCurrentPV()
+    public float GETCurrentPv()
     {
-        return currentPV;
-    }
-    
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return currentPv;
     }
 }

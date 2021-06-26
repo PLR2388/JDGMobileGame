@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Timeline;
-using Random = UnityEngine.Random;
 
 [CreateAssetMenu(fileName = "New Card", menuName = "InvocationCard")]
 public class InvocationCard : Card
@@ -37,53 +30,47 @@ public class InvocationCard : Card
         this.numberDeaths = 0;
     }
 
-    public float getBonusDefense()
-    {
-        return bonusDefense;
-    }
+    public float GETBonusDefense() => bonusDefense;
 
-    public void setBonusDefense(float bonus)
+    public void SetBonusDefense(float bonus)
     {
         bonusDefense = bonus;
     }
 
-    public InvocationActionEffect InvocationActionEffect
-    {
-        get { return invocationActionEffect; }
-    }
+    public InvocationActionEffect InvocationActionEffect => invocationActionEffect;
 
-    public void blockAttack()
+    public void BlockAttack()
     {
         blockAttackNextTurn = true;
     }
 
-    public void unblockAttack()
+    public void UnblockAttack()
     {
         blockAttackNextTurn = false;
     }
 
-    public float getBonusAttack()
+    public float GETBonusAttack()
     {
         return bonusAttack;
     }
 
-    public void setBonusAttack(float bonus)
+    public void SetBonusAttack(float bonus)
     {
         bonusAttack = bonus;
     }
 
-    public void incrementNumberDeaths()
+    public void IncrementNumberDeaths()
     {
         numberDeaths++;
     }
 
-    public void resetNumberDeaths()
+    public void ResetNumberDeaths()
     {
         numberDeaths = 0;
     }
 
 
-    public String[] GetFamily()
+    public string[] GetFamily()
     {
         return family;
     }
@@ -93,14 +80,7 @@ public class InvocationCard : Card
      */
     public string[] GetCurrentFamily()
     {
-        if (bonusFamily != null)
-        {
-            return new[] {bonusFamily};
-        }
-        else
-        {
-            return family;
-        }
+        return bonusFamily != null ? new[] {bonusFamily} : family;
     }
 
     public void SetCurrentFamily(string familyString)
@@ -133,17 +113,17 @@ public class InvocationCard : Card
         return defense;
     }
 
-    public bool hasAttack()
+    public bool HasAttack()
     {
         return hasAlreadyAttackThisTurn;
     }
 
-    public void attackTurnDone()
+    public void AttackTurnDone()
     {
         hasAlreadyAttackThisTurn = true;
     }
 
-    public void resetNewTurn()
+    public void ResetNewTurn()
     {
         hasAlreadyAttackThisTurn = false;
     }
@@ -158,25 +138,24 @@ public class InvocationCard : Card
         return attack + bonusAttack;
     }
 
-    public EquipmentCard getEquipmentCard()
+    public EquipmentCard GETEquipmentCard()
     {
         return equipmentCard;
     }
 
-    public int getNumberDeaths()
+    public void SetEquipmentCard(EquipmentCard card)
+    {
+        this.equipmentCard = card;
+    }
+
+    public int GETNumberDeaths()
     {
         return numberDeaths;
     }
 
-    public bool isInvocationPossible()
+    public bool IsInvocationPossible()
     {
-        if (GameLoop.isP1Turn)
-        {
-            return InvocationFonctions.isInvocationPossible(this.invocationConditions, "Player1");
-        }
-        else
-        {
-            return InvocationFonctions.isInvocationPossible(this.invocationConditions, "Player2");
-        }
+        return InvocationFunctions.IsInvocationPossible(this.invocationConditions,
+            GameLoop.IsP1Turn ? "Player1" : "Player2");
     }
 }
