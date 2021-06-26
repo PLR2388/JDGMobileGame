@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -25,32 +26,6 @@ public class InvocationFunctions : MonoBehaviour
     private void ChangePlayer()
     {
         currentPlayerCard = GameLoop.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-    }
-
-    private int FindFirstEmptyInvocationLocation(IReadOnlyList<InvocationCard> invocationCards)
-    {
-        var end = false;
-        var i = 0;
-        while (i < 4 && !end)
-        {
-            if (invocationCards[i] != null)
-            {
-                if (invocationCards[i].Nom == null)
-                {
-                    end = true;
-                }
-                else
-                {
-                    i++;
-                }
-            }
-            else
-            {
-                end = true;
-            }
-        }
-
-        return i;
     }
 
     private void DealWithStartEffect(InvocationCard currentInvocationCard, InvocationStartEffect invocationStartEffect)
@@ -114,8 +89,9 @@ public class InvocationFunctions : MonoBehaviour
                                         currentPlayerCard.handCards.Add(cardFound[0]);
                                         currentPlayerCard.deck.Remove(cardFound[0]);
                                     };
-                                    MessageBox.CreateSimpleMessageBox(canvas, "Carte en main",
-                                        "Voulez-vous aussi ajouter " + cardName + " à votre main ?", PositiveAction);
+                                    CreateMessageBoxSimple("Carte en main",
+                                        "Voulez-vous aussi ajouter " + cardName + " à votre main ?",
+                                        positiveAction: PositiveAction);
                                 }
                             }
                             else if (invokeCardNames.Count > 0)
@@ -136,18 +112,13 @@ public class InvocationFunctions : MonoBehaviour
                                             currentPlayerCard.invocationCards.Add(invocationCard);
                                             currentPlayerCard.deck.Remove(invocationCard);
                                         };
-                                        MessageBox.CreateSimpleMessageBox(canvas, "Invocation",
-                                            "Voulez-vous aussi invoquer " + cardFound[0].Nom + " ?", positiveAction,
-                                            null);
+                                        CreateMessageBoxSimple("Invocation",
+                                            "Voulez-vous aussi invoquer " + cardFound[0].Nom + " ?",
+                                            positiveAction: positiveAction);
                                     }
                                     else
                                     {
-                                        var message =
-                                            MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                                "Choix de l'invocation",
-                                                cardFound);
-
-
+                                        var message = CreateMessageBoxSelectorCard("Choix de l'invocation", cardFound);
                                         message.GetComponent<MessageBox>().PositiveAction = () =>
                                         {
                                             InvocationCard invocationCard =
@@ -262,9 +233,7 @@ public class InvocationFunctions : MonoBehaviour
                     {
                         if (currentPlayerCard.field == null)
                         {
-                            var message =
-                                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix du terrain à poser",
-                                    cardFound);
+                            var message = CreateMessageBoxSelectorCard("Choix du terrain à poser", cardFound);
 
                             message.GetComponent<MessageBox>().PositiveAction = () =>
                             {
@@ -278,15 +247,13 @@ public class InvocationFunctions : MonoBehaviour
                                 }
                                 else
                                 {
-                                    MessageBox.CreateOkMessageBox(canvas, "Information",
-                                        "Aucune carte n'a été choisie");
+                                    CreateMessageBoxNotChoosenCard();
                                 }
                             };
                         }
                         else
                         {
-                            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                "Choix du terrain à prendre en main", cardFound);
+                            var message = CreateMessageBoxSelectorCard("Choix du terrain à prendre en main", cardFound);
 
 
                             message.GetComponent<MessageBox>().PositiveAction = () =>
@@ -301,8 +268,7 @@ public class InvocationFunctions : MonoBehaviour
                                 }
                                 else
                                 {
-                                    MessageBox.CreateOkMessageBox(canvas, "Information",
-                                        "Aucune carte n'a été choisie");
+                                    CreateMessageBoxNotChoosenCard();
                                 }
                             };
                         }
@@ -326,9 +292,7 @@ public class InvocationFunctions : MonoBehaviour
 
                     if (cardFound.Count > 0)
                     {
-                        var message =
-                            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix du terrain à détruire",
-                                cardFound);
+                        var message = CreateMessageBoxSelectorCard("Choix du terrain à détruire", cardFound);
                         var attack = mustDivideAttack;
                         var defense = mustDivideDefense;
                         message.GetComponent<MessageBox>().PositiveAction = () =>
@@ -353,8 +317,7 @@ public class InvocationFunctions : MonoBehaviour
                             }
                             else
                             {
-                                MessageBox.CreateOkMessageBox(canvas, "Information",
-                                    "Aucune carte n'a été choisie");
+                                CreateMessageBoxNotChoosenCard();
                             }
                         };
                     }
@@ -393,8 +356,7 @@ public class InvocationFunctions : MonoBehaviour
                     }
 
 
-                    var message =
-                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte à tuer :", cardFound);
+                    var message = CreateMessageBoxSelectorCard("Choix de la carte à tuer :", cardFound);
                     message.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var invocationCardSelected =
@@ -439,8 +401,7 @@ public class InvocationFunctions : MonoBehaviour
                         }
                         else
                         {
-                            MessageBox.CreateOkMessageBox(canvas, "Information",
-                                "Aucune carte n'a été choisie");
+                            CreateMessageBoxSimple("Information", "Aucune carte n'a été choisie");
                         }
                     };
                 }
@@ -587,9 +548,11 @@ public class InvocationFunctions : MonoBehaviour
             invocationCard.SetBonusAttack(valueStars);
             invocationCard.SetBonusDefense(valueStars);
         };
-        var message = MessageBox.CreateSimpleMessageBox(canvas, "Amélioration", "Voulez-vous augmenter de " +
-            valueStars + " l'ATQ et la DEF de " + invocationCard.Nom + " en sacrifiant " +
-            cardName + " ?", positiveAction);
+        var message =
+            CreateMessageBoxSimple("Amélioration", "Voulez-vous augmenter de " +
+                                                   valueStars + " l'ATQ et la DEF de " + invocationCard.Nom +
+                                                   " en sacrifiant " +
+                                                   cardName + " ?", positiveAction: positiveAction);
     }
 
     public void Shuffle(List<Card> cards)
@@ -857,5 +820,26 @@ public class InvocationFunctions : MonoBehaviour
 
             return isInvocationPossible;
         }
+    }
+
+    private GameObject CreateMessageBoxSelectorCard(string title, List<Card> cards, UnityAction positiveAction = null,
+        UnityAction negativeAction = null, bool isInfo = false)
+    {
+        return MessageBox.CreateMessageBoxWithCardSelector(canvas, title, cards, positiveAction, negativeAction,
+            isInfo);
+    }
+
+    private GameObject CreateMessageBoxSimple(string title, string description, UnityAction positiveAction = null,
+        UnityAction negativeAction = null, UnityAction okAction = null, bool isInfo = false)
+    {
+        return isInfo
+            ? MessageBox.CreateOkMessageBox(canvas, title, description, okAction)
+            : MessageBox.CreateSimpleMessageBox(canvas, title, description, positiveAction, negativeAction);
+    }
+
+    private void CreateMessageBoxNotChoosenCard()
+    {
+        MessageBox.CreateOkMessageBox(canvas, "Information",
+            "Aucune carte n'a été choisie");
     }
 }
