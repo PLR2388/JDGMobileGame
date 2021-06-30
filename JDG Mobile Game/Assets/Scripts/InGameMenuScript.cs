@@ -187,7 +187,7 @@ public class InGameMenuScript : MonoBehaviour
     {
         handScreen.SetActive(true);
         backgroundInformation.SetActive(false);
-        buttonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Retour";
+        buttonText.GetComponent<TextMeshProUGUI>().text = "Retour";
     }
 
     private void HideHand()

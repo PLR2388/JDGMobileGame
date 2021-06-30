@@ -30,7 +30,7 @@ public class GameLoop : MonoBehaviour
 
     [SerializeField] private Card player;
     [SerializeField] private GameObject inHandButton;
-    [SerializeField] private GameObject camera;
+    [FormerlySerializedAs("camera")] [SerializeField] private GameObject playerCamera;
 
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
 
@@ -632,12 +632,12 @@ public class GameLoop : MonoBehaviour
         ChangePlayer.Invoke();
         if (IsP1Turn)
         {
-            camera.transform.Rotate(cameraRotation);
+            playerCamera.transform.Rotate(cameraRotation);
             playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 1";
         }
         else
         {
-            camera.transform.Rotate(cameraRotation);
+            playerCamera.transform.Rotate(cameraRotation);
             playerText.GetComponent<TextMeshProUGUI>().text = "Joueur 2";
         }
 

@@ -16,7 +16,7 @@ public class CardChoice : MonoBehaviour
 
     private bool isPlayerOneCardChosen = false;
 
-    private int CheckCard(List<Card> deck)
+    private int CheckCard(ICollection<Card> deck)
     {
         var numberSelected = 0;
         var children = container.GetComponentsInChildren<Transform>();

@@ -162,6 +162,7 @@ public class MessageBox : MonoBehaviour
         message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
         message.GetComponent<MessageBox>().title = title;
         message.GetComponent<MessageBox>().displayCards = true;
+        message.GetComponent<MessageBox>().displayCardsScript.cardsList = cards;
         message.GetComponent<MessageBox>().isInformation = okButton;
         message.GetComponent<MessageBox>().PositiveAction = () =>
         {

@@ -42,12 +42,12 @@ public class EquipmentFunctions : MonoBehaviour
         message.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var currentSelectedInvocationCard = (InvocationCard) message.GetComponent<MessageBox>().GETSelectedCard();
-            if (currentSelectedInvocationCard == null) return;
-            var index = IndexInvocationCard(invocationCards, currentSelectedInvocationCard.Nom);
-            miniCardMenu.SetActive(false);
-            currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
-            playerCards.handCards.Remove(equipmentCard);
-
+            if (currentSelectedInvocationCard != null)
+            {
+                miniCardMenu.SetActive(false);
+                currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
+                playerCards.handCards.Remove(equipmentCard);
+            }
             Destroy(message);
         };
         message.GetComponent<MessageBox>().NegativeAction = () =>
@@ -75,7 +75,7 @@ public class EquipmentFunctions : MonoBehaviour
 
     private GameObject DisplayEquipmentMessageBox(IReadOnlyList<InvocationCard> invocationCards)
     {
-        var cards = invocationCards.Where(t => t != null && t.Nom != null).Cast<Card>().ToList();
+        var cards = invocationCards.Cast<Card>().ToList();
         return MessageBox.CreateMessageBoxWithCardSelector(canvas,
             "Choisis l'invocation auquelle associée l'équipement :", cards);
     }
