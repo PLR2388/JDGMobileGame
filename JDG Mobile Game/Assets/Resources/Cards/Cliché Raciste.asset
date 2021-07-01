@@ -16,13 +16,12 @@ MonoBehaviour:
   description: "En plus elle est m\xEAme pas japonaise."
   descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'y invoquer
     \xE9galement la carte \xAB Tentacules \xBB depuis votre pioche."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 40af43125afbf424cb6b1c15f1c751d8, type: 2}
   collector: 0
   attack: 1
   defense: 1
-  family:
-  - japon
+  family: 06000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 11400000, guid: c34966f9469fc684583b687b1af254e3,
@@ -33,3 +32,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

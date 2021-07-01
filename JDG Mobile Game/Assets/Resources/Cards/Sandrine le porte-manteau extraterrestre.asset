@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Si cette carte est d\xE9truite lors d'une phase d'attaque
     contre une autre INVOCATION, apr\xE8s calcul de la diff\xE9rence d'\xE9toiles
     ce sont les deux cartes qui partent \xE0 la poubelle jaune."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 8cfc767c6f84a5d44a4d4c5961da1890, type: 2}
   collector: 0
   attack: 1
   defense: 1
-  family:
-  - spatial
+  family: 0a000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

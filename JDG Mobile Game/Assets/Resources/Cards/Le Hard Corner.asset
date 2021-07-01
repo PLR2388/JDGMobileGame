@@ -18,7 +18,7 @@ MonoBehaviour:
   descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB Hard Corner
     \xBB sur ce terrain gagnent 1.5 \xE9toiles d'ATQ et perdent 0.5 \xE9toile de
     DEF."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: 0169eed06f27ac64e8eba79ce9f3db05, type: 2}
   collector: 0
-  family: hardcorner
+  family: 3

@@ -16,13 +16,12 @@ MonoBehaviour:
   description: "Bient\xF4t un spin-off centr\xE9 sur ce personnage."
   descriptionDetaillee: "Invoquer cette carte vous permet d'ajouter \xE0 votre main
     la carte \xAB Zozan Kebab \xBB depuis votre pioche."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 88005f3e46940c6418b28d52b09268e7, type: 2}
   collector: 0
   attack: 1
   defense: 1
-  family:
-  - spatial
+  family: 0a000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 11400000, guid: 1d99c8a13fabdc94db92781cb55e6423,
@@ -33,3 +32,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

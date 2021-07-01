@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,17 +9,27 @@ public class UseCard : MonoBehaviour
     [SerializeField] private GameObject putCardButton;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         InGameMenuScript.EventClick.AddListener(LaunchCalculationCard);
     }
 
-    public void LaunchCalculationCard(Card card)
+    private static void LaunchCalculationCard(Card card)
     {
-        string type = card.Type;
+        var type = card.Type;
         switch (type)
         {
-            case "invocation": break;
+            case CardType.Invocation: break;
+            case CardType.Contre:
+                break;
+            case CardType.Effect:
+                break;
+            case CardType.Equipment:
+                break;
+            case CardType.Field:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 }

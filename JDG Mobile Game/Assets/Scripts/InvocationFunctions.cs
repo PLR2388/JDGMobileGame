@@ -121,7 +121,7 @@ public class InvocationFunctions : MonoBehaviour
                                         var message = CreateMessageBoxSelectorCard("Choix de l'invocation", cardFound);
                                         message.GetComponent<MessageBox>().PositiveAction = () =>
                                         {
-                                            InvocationCard invocationCard =
+                                            var invocationCard =
                                                 (InvocationCard) message.GetComponent<MessageBox>().GETSelectedCard();
                                             currentPlayerCard.invocationCards.Add(invocationCard);
                                             currentPlayerCard.deck.Remove(invocationCard);
@@ -129,24 +129,24 @@ public class InvocationFunctions : MonoBehaviour
                                     }
                                 }
                             }
-                            else if (typeCard != "")
+                            else if (Enum.TryParse(typeCard, out CardType type))
                             {
-                                cardFound.AddRange(deck.Where(t => t.Type == typeCard));
+                                cardFound.AddRange(deck.Where(t => t.Type == type));
 
                                 if (cardFound.Count > 0)
                                 {
                                 }
                             }
-                            else if (familyName != "")
+                            else if (Enum.TryParse(familyName, out CardFamily cardFamily))
                             {
                                 foreach (var card in deck)
                                 {
-                                    if (card.Type != "invocation") continue;
+                                    if (card.Type != CardType.Invocation) continue;
                                     var invocationCard = (InvocationCard) card;
 
                                     var listFamily = invocationCard.GetFamily();
                                     cardFound.AddRange((from family in listFamily
-                                        where family == familyName
+                                        where family == cardFamily
                                         select invocationCard));
                                 }
                             }
@@ -178,20 +178,20 @@ public class InvocationFunctions : MonoBehaviour
                                     where t.Nom == invokeCardName
                                     select t);
                             }
-                            else if (typeCard != "")
+                            else if (Enum.TryParse(typeCard, out CardType type))
                             {
-                                cardFound.AddRange(trash.Where(t => t.Type == typeCard));
+                                cardFound.AddRange(trash.Where(t => t.Type == type));
                             }
-                            else if (familyName != "")
+                            else if (Enum.TryParse(familyName, out CardFamily cardFamily))
                             {
                                 foreach (var card in trash)
                                 {
-                                    if (card.Type != "invocation") continue;
+                                    if (card.Type != CardType.Invocation) continue;
                                     var invocationCard = (InvocationCard) card;
 
                                     var listFamily = invocationCard.GetFamily();
                                     cardFound.AddRange(
-                                        (from t in listFamily where t == familyName select invocationCard));
+                                        (from t in listFamily where t == cardFamily select invocationCard));
                                 }
                             }
 
@@ -636,7 +636,7 @@ public class InvocationFunctions : MonoBehaviour
         return isCorrectField;
     }
 
-    private static List<InvocationCard> CheckFamily(string familyName, PlayerCards currentPlayerCards)
+    private static List<InvocationCard> CheckFamily(CardFamily cardFamily, PlayerCards currentPlayerCards)
     {
         var invocationCards = currentPlayerCards.invocationCards;
 
@@ -644,7 +644,7 @@ public class InvocationFunctions : MonoBehaviour
             where t != null
             let families = t.GetFamily()
             from family in families
-            where family == familyName
+            where family == cardFamily
             select t).ToList();
     }
 
@@ -664,7 +664,7 @@ public class InvocationFunctions : MonoBehaviour
     {
         var trashCards = currentPlayerCards.yellowTrash;
 
-        return trashCards.Count(card => card.Type == "invocation");
+        return trashCards.Count(card => card.Type == CardType.Invocation);
     }
 
     public static bool IsInvocationPossible(InvocationConditions conditions, string playerName)
@@ -723,15 +723,22 @@ public class InvocationFunctions : MonoBehaviour
                     case Condition.SacrificeFamily:
                     {
                         var familyName = cardExplanation[i];
-                        sacrificedCards = CheckFamily(familyName, currentPlayerCard);
-                        isInvocationPossible = sacrificedCards.Count > 0;
+                        if (Enum.TryParse(familyName, out CardFamily cardFamily))
+                        {
+                            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
+                            isInvocationPossible = sacrificedCards.Count > 0;
+                        }
+                
                     }
                         break;
                     case Condition.SpecificFamilyOnField:
                     {
                         var familyName = cardExplanation[i];
-                        sacrificedCards = CheckFamily(familyName, currentPlayerCard);
-                        isInvocationPossible = sacrificedCards.Count > 0;
+                        if (Enum.TryParse(familyName, out CardFamily cardFamily))
+                        {
+                            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
+                            isInvocationPossible = sacrificedCards.Count > 0;
+                        }
                     }
                         break;
                     case Condition.NumberCard:

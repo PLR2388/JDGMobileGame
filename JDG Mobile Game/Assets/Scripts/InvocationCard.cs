@@ -6,7 +6,7 @@ public class InvocationCard : Card
 {
     [SerializeField] private float attack;
     [SerializeField] private float defense;
-    [SerializeField] private string[] family;
+    [SerializeField] private CardFamily[] family;
     [SerializeField] private EquipmentCard equipmentCard;
     [SerializeField] private InvocationConditions invocationConditions;
     [SerializeField] private InvocationStartEffect invocationStartEffect;
@@ -15,7 +15,6 @@ public class InvocationCard : Card
     [SerializeField] private InvocationDeathEffect invocationDeathEffect;
     [SerializeField] private float bonusAttack;
     [SerializeField] private float bonusDefense;
-    [SerializeField] private string bonusFamily = null;
     [SerializeField] private float numberTurnOnField;
     [SerializeField] private int numberDeaths;
     [SerializeField] private bool blockAttackNextTurn = false;
@@ -23,7 +22,7 @@ public class InvocationCard : Card
 
     private void Awake()
     {
-        this.type = "invocation";
+        this.type = CardType.Invocation;
         this.bonusAttack = 0;
         this.bonusDefense = 0;
         this.numberTurnOnField = 0;
@@ -70,27 +69,9 @@ public class InvocationCard : Card
     }
 
 
-    public string[] GetFamily()
+    public CardFamily[] GetFamily()
     {
         return family;
-    }
-
-    /**
-     * Use it if we override the family
-     */
-    public string[] GetCurrentFamily()
-    {
-        return bonusFamily != null ? new[] {bonusFamily} : family;
-    }
-
-    public void SetCurrentFamily(string familyString)
-    {
-        bonusFamily = familyString;
-    }
-
-    public void UnSetCurrentFamily()
-    {
-        bonusFamily = null;
     }
 
     public InvocationStartEffect GetInvocationStartEffect()

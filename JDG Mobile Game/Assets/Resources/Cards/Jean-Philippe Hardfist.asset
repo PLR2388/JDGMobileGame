@@ -15,11 +15,20 @@ MonoBehaviour:
   nom: Jean-Philippe Hardfist
   description: Entre nous, on le surnomme 'Jean-Phile'.
   descriptionDetaillee: Pour l'effet bonus, tu peux  t'asseoir dessus.
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 43f22dba35751a04f99fc68bc5e2a122, type: 2}
+  collector: 0
   attack: 3
   defense: 2
-  family:
-  - "d\xE9veloppeur"
-  - fistiland
+  family: 0100000002000000
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

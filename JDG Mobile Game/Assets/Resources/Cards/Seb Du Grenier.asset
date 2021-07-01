@@ -16,13 +16,12 @@ MonoBehaviour:
   description: "En m\xE9tal \xE7a aurait eu la classe !"
   descriptionDetaillee: "Sa voix change parfois. Mais \xE7a n'apporte aucun effet
     sp\xE9cifique."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 14e84348342a2ea458bd11c3ae3c4e81, type: 2}
   collector: 0
   attack: 3
   defense: 3
-  family:
-  - humain
+  family: 04000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -33,3 +32,4 @@ MonoBehaviour:
   bonusDefense: 0
   numberTurnOnField: 0
   numberDeaths: 0
+  blockAttackNextTurn: 0

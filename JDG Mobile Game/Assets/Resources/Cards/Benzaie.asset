@@ -18,13 +18,12 @@ MonoBehaviour:
     terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre terrain
     une carte \xAB Benzaie jeune \xBB \xE9quip\xE9e d'une carte \xAB Cassette VHS
     \xBB."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 0a85140be21898743934ba4fd4208a18, type: 2}
   collector: 1
   attack: 5
   defense: 4
-  family:
-  - hardcorner
+  family: 03000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: eaab4f869d4d3964c8e848f96d4938cc,
     type: 2}
@@ -35,3 +34,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Si elle est cibl\xE9e par une attaque adverse, cette carte
     peut se prot\xE9ger automatiquement derri\xE8re une autre carte INVOCATION sur
     le terrain du joueur si celle-ci a une plus grande DEF."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 0b76724b87ba9c44c878b3f5412696ee, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - japon
+  family: 06000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

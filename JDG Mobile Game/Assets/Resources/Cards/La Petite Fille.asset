@@ -18,14 +18,12 @@ MonoBehaviour:
     le terrain que si s'y trouve une carte \xAB Joueur Du Grenier \xBB. Tant que
     cette carte reste sur le terrain, les cartes INVOCATION adverses ne peuvent pas
     attaquer d'autre carte que celle-ci."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 35a79b12db5510b48bb498f19a2bd1bd, type: 2}
   collector: 0
   attack: 4
   defense: 3.5
-  family:
-  - japon
-  - incarnation
+  family: 0600000005000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: 7df0b14b6f77b8d408ee2a2850246066,
     type: 2}
@@ -37,3 +35,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'aller
     chercher dans votre pioche ou votre poubelle jaune une carte \xAB Patron d'infogrammes
     \xBB pour l'ajouter \xE0 votre main."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 00e23f21ba271474899cbf37429139b5, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - monstre
+  family: 07000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 11400000, guid: e53cabda86edbb649bd6d322ef39493c,
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

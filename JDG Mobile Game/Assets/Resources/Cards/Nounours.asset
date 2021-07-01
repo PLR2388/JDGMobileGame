@@ -16,13 +16,12 @@ MonoBehaviour:
   description: "La rumeur veut qu'il ait couch\xE9 avec Benzaie pour r\xE9ussir."
   descriptionDetaillee: "Cette carte obtient les m\xEAmes statistiques d'ATQ et de
     DEF que la carte \xAB Benzaie jeune \xBB si celle-ci est sur terrain."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 1a15e34eed2f9f14295db40018e3d17d, type: 2}
   collector: 0
   attack: 1
   defense: 1
-  family:
-  - hardcorner
+  family: 03000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -33,3 +32,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

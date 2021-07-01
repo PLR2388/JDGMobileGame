@@ -16,11 +16,20 @@ MonoBehaviour:
   description: Attende, c'est pas Benzaie ?
   descriptionDetaillee: "Et si tu arrives \xE0 imiter sa voix en posant cette carte,
     eh bien super ! Mais tu ne gagnes rien de particulier..."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 37cbfe955d81b634c82532e61a3abc0a, type: 2}
+  collector: 0
   attack: 3
   defense: 2
-  family:
-  - japon
-  - incarnation
+  family: 0600000005000000
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

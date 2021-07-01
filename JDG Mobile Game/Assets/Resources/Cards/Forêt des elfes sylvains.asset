@@ -16,7 +16,7 @@ MonoBehaviour:
   description: Les arbres aussi s'appellent Sylvain.
   descriptionDetaillee: "Toutes les cartes INVOCATION de type \xAB RPG \xBB sur ce
     terrain obtiennent 0,5 \xE9toiles d'ATQ et de DEF suppl\xE9mentaires."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: a941b686e4ad5df47baed858ebf1f9b4, type: 2}
   collector: 0
-  family: rpg
+  family: 9

@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 
 public class DisplayCards : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
-    [FormerlySerializedAs("cardslist")] public List<Card> cardsList;
+    [SerializeField] public List<Card> cardsList;
 
     private List<GameObject> createdCards;
 

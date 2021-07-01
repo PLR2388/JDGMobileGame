@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Cette carte ne peut rester qu'un seul tour sur le terrain
     avant d'aller directement \xE0 la poubelle jaune. Le tour fini, vous pouvez ajouter
     \xE0 votre main une carte \xAB La Mort \xBB depuis votre pioche."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 6bbe4f31efd733e429cd67cfe07d2ebe, type: 2}
   collector: 0
   attack: 4
   defense: 2
-  family:
-  - humain
+  family: 04000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -35,3 +34,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

@@ -18,13 +18,12 @@ MonoBehaviour:
   descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
     le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant la carte \xAB
     Seb Du Grenier \xBB sur le TERRAIN \xAB For\xEAt des elfes sylvains \xBB."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 2434d98821f186d4b9811658b1daad4e, type: 2}
   collector: 1
   attack: 4
   defense: 5
-  family:
-  - rpg
+  family: 09000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: 86bf1a9cb03e052479e2cf007cdf9ee4,
     type: 2}
@@ -35,3 +34,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

@@ -19,7 +19,7 @@ MonoBehaviour:
     Si les cartes \xAB Jean-Michel Bruitages \xBB et/ou \xAB Le Patron d'infogrammes
     \xBB sont invoqu\xE9s sur ce terrain, leur famille de base est remplac\xE9e par
     \xAB D\xE9veloppeur \xBB."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: 5cfa96f2ed49284499d2fde7687e4821, type: 2}
   collector: 0
-  family: "d\xE9veloppeur"
+  family: 1

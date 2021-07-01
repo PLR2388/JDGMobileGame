@@ -16,7 +16,7 @@ MonoBehaviour:
   description: Construit sur les ruines d'un ancien restaurant indien.
   descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB Incarnation
     \xBB sur ce terrain perdent 1 \xE9toile d'ATQ et gagnent 2 \xE9toiles de DEF."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: 1d9e905d01aec214f941ebcfb7fa1ffb, type: 2}
   collector: 0
-  family: incarnation
+  family: 5

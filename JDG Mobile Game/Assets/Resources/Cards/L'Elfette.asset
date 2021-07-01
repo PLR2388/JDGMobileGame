@@ -18,13 +18,12 @@ MonoBehaviour:
     de DEF pour les additionner sur les m\xEAmes statistiques d'autres cartes INVOCATION
     de type \xAB RPG \xBB Les \xE9toiles distribu\xE9es sont annul\xE9es si cette
     carte est d\xE9truite."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 6048fb6c27d6dd24a930f340307b1eac, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - rpg
+  family: 09000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -35,3 +34,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

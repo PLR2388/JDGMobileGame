@@ -18,13 +18,12 @@ MonoBehaviour:
     le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant une carte
     \xAB Joueur du grenier \xBB sur le TERRAIN \xAB Lyc\xE9e magique Georges Pompidou
     \xBB."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 0c1a4d2a8fc143d4abe04893135a602d, type: 2}
   collector: 1
   attack: 4
   defense: 5
-  family:
-  - sorcier
+  family: 0b000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: a2320a9a2eefffd499a3d71d8cd98e5a,
     type: 2}
@@ -35,3 +34,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

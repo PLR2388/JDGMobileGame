@@ -16,13 +16,12 @@ MonoBehaviour:
   description: "L'esprit de no\xEBl, qui r\xE9chauffe les coeurs et les pieds."
   descriptionDetaillee: "Cette carte ne peut pas \xEAtre attaqu\xE9e ni d\xE9truite
     par une autre carte INVOCATION."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 4620a5528aa766b4ab6448bea169a259, type: 2}
   collector: 0
   attack: 1
   defense: 1
-  family:
-  - incarnation
+  family: 05000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -33,3 +32,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

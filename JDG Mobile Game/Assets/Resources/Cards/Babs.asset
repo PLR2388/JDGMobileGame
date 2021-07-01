@@ -18,14 +18,12 @@ MonoBehaviour:
     si sur le m\xEAme terrain qu'elle se trouve une autre INVOCATION de la famille
     \xAB Comics \xBB. De plus, elle fait gagner 0.5 \xE9toile d'ATQ et de DEF \xE0
     chaque autre carte INVOCATION de type \xAB Comics \xBB sur votre terrain."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 78bdfda30414e7146bd00b5c24c0370a, type: 2}
   collector: 0
   attack: 1
   defense: 1
-  family:
-  - comics
-  - police
+  family: 0000000008000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -36,3 +34,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

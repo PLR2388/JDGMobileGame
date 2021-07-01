@@ -18,14 +18,12 @@ MonoBehaviour:
     le terrain que si s'y trouve une carte \xAB Granolax \xBB ou \xAB Mecha-Granolax
     \xBB. Tant que cette carte reste sur le terrain, vous pouvez chaque tour faire
     sauter la phase d'attaque d'une carte INVOCATION du terrain de votre adversaire."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 67f8153bd872ea54097ac09ea0f77cea, type: 2}
   collector: 0
   attack: 3.5
   defense: 4
-  family:
-  - japon
-  - incarnation
+  family: 0600000005000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: fe61dc8ba28252d4492a84ce7e1369ec,
     type: 2}
@@ -37,3 +35,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

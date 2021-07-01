@@ -21,7 +21,7 @@ public class UpdateDescription : MonoBehaviour
         shortDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Description;
         descriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.DetailedDescription;
 
-        if (card.Type == "invocation")
+        if (card.Type == CardType.Invocation)
         {
             allInvocationOptions.SetActive(true);
             cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte INVOCATION";
@@ -34,7 +34,7 @@ public class UpdateDescription : MonoBehaviour
             }
             else
             {
-                familyFormatText = families[0];
+                familyFormatText = families[0].ToString();
             }
 
             familyText.GetComponent<TMPro.TextMeshProUGUI>().text = familyFormatText;
@@ -46,16 +46,16 @@ public class UpdateDescription : MonoBehaviour
             allInvocationOptions.SetActive(false);
             switch (card.Type)
             {
-                case "effect":
+                case CardType.Effect:
                     cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte EFFET";
                     break;
-                case "contre":
+                case CardType.Contre:
                     cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte CONTRE";
                     break;
-                case "equipment":
+                case CardType.Equipment:
                     cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte ÉQUIPEMENT";
                     break;
-                case "field":
+                case CardType.Field:
                     cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte TERRAIN";
                     break;
             }

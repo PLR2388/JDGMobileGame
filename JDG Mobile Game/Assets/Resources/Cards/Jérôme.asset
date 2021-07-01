@@ -17,10 +17,20 @@ MonoBehaviour:
     travail."
   descriptionDetaillee: "Si son mariage avec Jean-Claude avait \xE9t\xE9 possible,
     tu aurais eu un effet bonus. Malheureusement \xE7a n'est pas le cas..."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: e85c6a475c9126644a0c90b38a58734b, type: 2}
+  collector: 0
   attack: 2
   defense: 3
-  family:
-  - "d\xE9veloppeur"
+  family: 01000000
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

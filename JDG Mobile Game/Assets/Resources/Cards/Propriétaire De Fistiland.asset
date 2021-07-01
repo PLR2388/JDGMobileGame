@@ -16,13 +16,12 @@ MonoBehaviour:
   description: Vive l'argent !
   descriptionDetaillee: "Cette carte gagne 1 \xE9toile en ATQ et en DEF pour chaque
     carte INVOCATION de type \xAB Fistiland \xBB pr\xE9sente sur le terrain du joueur."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 84141635419287f4a941c9e747a99faa, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - fistiland
+  family: 02000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -33,3 +32,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

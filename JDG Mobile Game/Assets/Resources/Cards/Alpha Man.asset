@@ -18,14 +18,12 @@ MonoBehaviour:
     le terrain que si s'y trouve une carte \xAB Benzaie jeune \xBB ou \xAB Benzaie
     \xBB. Tant que cette carte reste sur le terrain, les cartes INVOCATION adverses
     ne peuvent pas attaquer d'autre carte que celle-ci."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: e425be3e0c6408542900e2bd7d9c3226, type: 2}
   collector: 0
   attack: 4
   defense: 3.5
-  family:
-  - incarnation
-  - hardcorner
+  family: 0500000003000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: e18178d1a83a0f345bc0832cde355dfe,
     type: 2}
@@ -37,3 +35,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

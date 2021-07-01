@@ -1,6 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿
+public enum CardType
+{
+    Contre,
+    Effect,
+    Equipment,
+    Field,
+    Invocation
+}
+
+public enum CardFamily
+{
+    Comics,
+    Developer,
+    Fistiland,
+    HardCorner,
+    Human,
+    Incarnation,
+    Japan,
+    Monster,
+    Police,
+    Rpg,
+    Spatial,
+    Wizard
+}
 
 public enum Condition
 {

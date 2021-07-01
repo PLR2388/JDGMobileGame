@@ -15,10 +15,20 @@ MonoBehaviour:
   nom: Jean-Michel Bruitages
   description: Artiste japonais authentique.
   descriptionDetaillee: Les bonus sont en japonais aussi.
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 42ee2c1b6dc437d47aeb13888ef5a5a3, type: 2}
+  collector: 0
   attack: 3
   defense: 2.5
-  family:
-  - humain
+  family: 04000000
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

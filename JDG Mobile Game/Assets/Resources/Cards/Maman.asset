@@ -17,13 +17,12 @@ MonoBehaviour:
     !"
   descriptionDetaillee: "Invoquer cette carte vous permet d'ajouter \xE0 votre main
     la carte \xAB Benzaie jeune \xBB depuis votre pioche."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 5affe114eb07cf84d93bf3b676a2983e, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - hardcorner
+  family: 03000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 11400000, guid: f77b1f38b4c90a842aec7b9425d0e0a3,
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

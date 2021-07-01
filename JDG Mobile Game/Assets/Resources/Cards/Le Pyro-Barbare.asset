@@ -16,10 +16,20 @@ MonoBehaviour:
   description: C'est comme L'Enfant De Juron, mais en moins bien.
   descriptionDetaillee: "Bisous Bob. Et pour la peine ta carte ne fait rien de sp\xE9cial
     !"
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 7a741dd0e8265aa469ae4dd3a617ac0f, type: 2}
+  collector: 0
   attack: 3
   defense: 2
-  family:
-  - rpg
+  family: 09000000
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

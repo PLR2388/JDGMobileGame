@@ -17,14 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Ajoutez 1 \xE9toile d'ATQ et de DEF \xE0 cette carte pour
     chaque autre carte de type \xAB Japon \xBB pr\xE9sente sur le terrain dont les
     statistiques d'ATQ et de DEF de base sont \xE9gales \xE0 2."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: a673de8f7c61df043adf0f1d3bf317f8, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - japon
-  - monstre
+  family: 0600000007000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -35,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

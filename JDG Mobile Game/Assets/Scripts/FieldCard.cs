@@ -3,14 +3,14 @@
 [CreateAssetMenu(fileName = "New Card", menuName = "FieldCard")]
 public class FieldCard : Card
 {
-    [SerializeField] private string family;
+    [SerializeField] private CardFamily family;
 
     private void Awake()
     {
-        this.type = "field";
+        this.type = CardType.Field;
     }
 
-    public string getFamily()
+    public CardFamily GETFamily()
     {
         return family;
     }

@@ -17,7 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "Permet au joueur ayant cette carte sur son terrain de sauter
     sa phase de pioche, aller chercher une carte INVOCATION de type \xAB Fistiland
     \xBB dans sa pioche ou sa poubelle jaune pour l'ajouter \xE0 sa main."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: 84141635419287f4a941c9e747a99faa, type: 2}
   collector: 0
-  family: fistiland
+  family: 2

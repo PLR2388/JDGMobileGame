@@ -9,7 +9,7 @@ public class Card : ScriptableObject
     [SerializeField] protected string nom = "";
     [SerializeField] protected string description;
     [SerializeField] protected string descriptionDetaillee;
-    [SerializeField] protected string type;
+    [SerializeField] protected CardType type;
     [SerializeField] protected Material materialCard;
     [SerializeField] protected bool collector;
 
@@ -18,7 +18,7 @@ public class Card : ScriptableObject
     public string Description => description;
     public string DetailedDescription => descriptionDetaillee;
 
-    public string Type => type;
+    public CardType Type => type;
 
     public Material MaterialCard => materialCard;
 

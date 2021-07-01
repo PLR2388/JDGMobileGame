@@ -5,6 +5,6 @@ public class ContreCard : Card
 {
     private void Awake()
     {
-        this.type = "contre";
+        this.type = CardType.Contre;
     }
 }

@@ -312,17 +312,17 @@ public class EffectFunctions : MonoBehaviour
                                     {
                                         switch (card.Type)
                                         {
-                                            case "invocation":
+                                            case CardType.Invocation:
                                                 //  FindCardInArrayAndSendItToTrash(invocationCards1, invocationCards2, card);
                                                 break;
-                                            case "effect":
+                                            case CardType.Effect:
                                                 //   FindCardInArrayAndSendItToTrash(effectCards1, effectCards2, card);
                                                 break;
-                                            case "field" when fieldCard1.Nom == card.Nom:
+                                            case CardType.Field when fieldCard1.Nom == card.Nom:
                                                 currentPlayerCard.yellowTrash.Add(card);
                                                 currentPlayerCard.field = null;
                                                 break;
-                                            case "field":
+                                            case CardType.Field:
                                             {
                                                 if (fieldCard2.Nom == card.Nom)
                                                 {
@@ -415,10 +415,11 @@ public class EffectFunctions : MonoBehaviour
                         if (fieldCard.IsValid())
                         {
                             // TODO Ask at the end of a turn if want to keep it
-                            var familyField = fieldCard.getFamily();
+                            var familyField = fieldCard.GETFamily();
                             foreach (var card in currentPlayerCard.invocationCards.Where(card => card.IsValid()))
                             {
-                                card.SetCurrentFamily(familyField);
+                                //TODO refactor
+                                //card.SetCurrentFamily(familyField);
                             }
                         }
                         else
@@ -602,7 +603,7 @@ public class EffectFunctions : MonoBehaviour
                             var invocationCards = currentPlayerCard.invocationCards;
 
                             var invocationFromYellowTrash =
-                                yellowTrash.Where(card => card.Type == "invocation").ToList();
+                                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
 
                             if (invocationFromYellowTrash.Count == 0)
                             {
@@ -843,12 +844,12 @@ public class EffectFunctions : MonoBehaviour
                     opponentPlayerCard.yellowTrash.Add(card);
                     switch (card.Type)
                     {
-                        case "invocation":
+                        case CardType.Invocation:
                         {
                             opponentPlayerCard.invocationCards[j] = null;
                         }
                             break;
-                        case "effect":
+                        case CardType.Effect:
                         {
                             opponentPlayerCard.effectCards[j] = null;
                         }
@@ -873,12 +874,12 @@ public class EffectFunctions : MonoBehaviour
                     currentPlayerCard.yellowTrash.Add(card);
                     switch (card.Type)
                     {
-                        case "invocation":
+                        case CardType.Invocation:
                         {
                             currentPlayerCard.invocationCards[j] = null;
                         }
                             break;
-                        case "effect":
+                        case CardType.Effect:
                         {
                             currentPlayerCard.effectCards[j] = null;
                         }

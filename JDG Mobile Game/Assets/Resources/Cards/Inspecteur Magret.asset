@@ -17,14 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'aller
     chercher dans votre pioche la carte \xAB Canard-signal \xBB pour l'ajouter \xE0
     votre main."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 51871a87da1812046919d4237280c02b, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - comics
-  - police
+  family: 0000000008000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 11400000, guid: a1a4f068ad2ef0b48a47a9808fc70a44,
@@ -35,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

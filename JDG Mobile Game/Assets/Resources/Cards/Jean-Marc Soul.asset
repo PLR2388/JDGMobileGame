@@ -16,14 +16,12 @@ MonoBehaviour:
   description: Je suis mort 34 fois pour traverser la rue. C'est la vie.
   descriptionDetaillee: "Chaque fois que cette carte est envoy\xE9e \xE0 la poubelle
     jaune, elle revient dans la main de son propri\xE9taire."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: bb984dd9e5cfb9a459ec79c5b4745298, type: 2}
   collector: 0
   attack: 1
   defense: 1
-  family:
-  - rpg
-  - hardcorner
+  family: 0900000003000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -34,3 +32,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

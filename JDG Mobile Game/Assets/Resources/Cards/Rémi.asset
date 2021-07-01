@@ -16,10 +16,20 @@ MonoBehaviour:
   description: 'Une suite pour LOL ? MDR '
   descriptionDetaillee: Sa casquette pourrait presque lui donner un malus, alors
     estime-toi heureux de ne simplement pas avoir de bonus !
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: ffebe219e7c7fe3499d059caa836ea21, type: 2}
+  collector: 0
   attack: 3
   defense: 2
-  family:
-  - "d\xE9veloppeur"
+  family: 01000000
   equipmentCard: {fileID: 0}
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  bonusAttack: 0
+  bonusDefense: 0
+  numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

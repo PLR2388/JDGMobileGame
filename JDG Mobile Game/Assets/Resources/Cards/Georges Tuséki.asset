@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
     le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre
     terrain une autre carte INVOCATION de la famille \xAB Sorcier \xBB."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 6ba3c6d322863914a92ff7c86e563154, type: 2}
   collector: 0
   attack: 4
   defense: 3
-  family:
-  - sorcier
+  family: 0b000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: 683516c6d5143504e8a65ada4311bf9c,
     type: 2}
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'aller
     chercher dans votre pioche une carte \xAB Petite portion de 'riz' \xBB pour l'ajouter
     \xE0 votre main."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 6620e2561fd073248a8f6d7c646350cd, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - "d\xE9veloppeur"
+  family: 01000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 11400000, guid: 71762ac49dfad284086dacbcb4159abc,
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

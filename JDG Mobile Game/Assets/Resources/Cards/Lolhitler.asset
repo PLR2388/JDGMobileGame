@@ -19,13 +19,12 @@ MonoBehaviour:
     terrain 2 cartes INVOCATION de la famille \xAB Incarnation \xBB. Cette carte
     a la capacit\xE9 de d\xE9truire une carte TERRAIN sur le terrain le tour de son
     invocation en sautant son tour d'attaque et en divisant sa DEF par 2."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 8bd316b65b1e8e74ba8d13d629385739, type: 2}
   collector: 0
   attack: 3.5
   defense: 4
-  family:
-  - incarnation
+  family: 05000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: 42006b0562dc6e3498552471cd616848,
     type: 2}
@@ -37,3 +36,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

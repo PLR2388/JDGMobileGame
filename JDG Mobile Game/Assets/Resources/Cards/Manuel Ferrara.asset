@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Au moment de l'invocation de cette carte sur votre terrain,
     vous pouvez faire sauter sa phase d'attaque pour ajouter une carte EQUIPEMENT
     de votre pioche \xE0 votre main, sauf en cas d'invocation sp\xE9ciale."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 61d2a27b53f64754ca444f677ac707a5, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - hardcorner
+  family: 03000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 11400000, guid: fb6ffdcb8d6d927469ec1c73f06b75a4,
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

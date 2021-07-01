@@ -18,13 +18,12 @@ MonoBehaviour:
     de DEF pour les additionner sur les m\xEAmes statistiques d'autres cartes INVOCATION
     de type \xAB Fistiland \xBB sur le terrain. Les \xE9toiles distribu\xE9es sont
     annul\xE9es si cette carte est d\xE9truite."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: d9388356848b23b4f85fb853bd28a149, type: 2}
   collector: 0
   attack: 2
   defense: 2
-  family:
-  - fistiland
+  family: 02000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
@@ -35,3 +34,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

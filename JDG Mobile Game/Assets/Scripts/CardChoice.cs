@@ -120,7 +120,7 @@ public class CardChoice : MonoBehaviour
     {
         var randomIndex = Random.Range(0, allCards.Count - 1);
         var card = allCards[randomIndex];
-        if (card.Type == "contre") return;
+        if (card.Type == CardType.Contre) return;
         deck.Add(card);
         allCards.Remove(card);
     }

@@ -17,13 +17,12 @@ MonoBehaviour:
   descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e et subsister sur
     votre terrain que si s'y trouve au moins une autre carte de type \xAB Humain
     \xBB."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: bf06fac9869aa004f97e89c7308f6e12, type: 2}
   collector: 0
   attack: 4
   defense: 2.5
-  family:
-  - incarnation
+  family: 05000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: d76bd398b170f0c418214aae7d05b35c,
     type: 2}
@@ -34,3 +33,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0

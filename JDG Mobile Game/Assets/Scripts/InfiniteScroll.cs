@@ -16,7 +16,7 @@ public class InfiniteScroll : MonoBehaviour
         var allCards = FindObjectOfType<GameState>().allCards;
         foreach (var card in allCards)
         {
-            if (card.Type == "contre") continue;
+            if (card.Type == CardType.Contre) continue;
             var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
 
             newCard.GetComponent<OnHover>().bIsInGame = false;

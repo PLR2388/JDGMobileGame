@@ -19,13 +19,12 @@ MonoBehaviour:
     terrain la carte \xAB Archibad Von Grenier \xBB sur le terrain \xAB Zozan Kebab
     \xBB. Invoquer cette carte vous permet d'ajouter \xE0 votre main une autre carte
     de type \xAB Spatial \xBB depuis votre pioche."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 1f86c511923a5d24486ca1da73e28204, type: 2}
   collector: 0
   attack: 4
   defense: 3
-  family:
-  - spatial
+  family: 0a000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: 43b2cc72fcac90f4e92dac9e987dcea7,
     type: 2}
@@ -37,3 +36,5 @@ MonoBehaviour:
   bonusAttack: 0
   bonusDefense: 0
   numberTurnOnField: 0
+  numberDeaths: 0
+  blockAttackNextTurn: 0
