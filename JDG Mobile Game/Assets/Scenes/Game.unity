@@ -672,7 +672,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 103, y: 67}
+  m_AnchoredPosition: {x: 103, y: 16}
   m_SizeDelta: {x: 438.4, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &159497397
@@ -1081,17 +1081,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a0078b40147bd249a996db68814eb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Deck: []
+  deck: []
   handCards: []
-  YellowTrash: []
-  Field: {fileID: 0}
-  InvocationCards: []
-  EffectCards: []
-  EquipmentCards: []
-  IsPlayerOne: 1
-  PrefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
+  yellowTrash: []
+  field: {fileID: 0}
+  invocationCards: []
+  effectCards: []
+  isPlayerOne: 1
+  prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
     type: 3}
-  AllPhysicalCards: []
+  allPhysicalCards: []
 --- !u!114 &230530445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1104,7 +1103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7f24280be368849ba08ad5676ce8bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPV: 30
+  currentPv: 30
   isP1: 1
 --- !u!1 &244790276
 GameObject:
@@ -1340,11 +1339,11 @@ MonoBehaviour:
   invocationMenu: {fileID: 1982540492}
   messageBox: {fileID: 435952082473488534, guid: ee6c28c42c106e24eb2886b9461ab3b4,
     type: 3}
-  P1: {fileID: 230530442}
-  P2: {fileID: 2017354827}
+  p1: {fileID: 230530442}
+  p2: {fileID: 2017354827}
   player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
   inHandButton: {fileID: 829748139}
-  camera: {fileID: 1233983595}
+  playerCamera: {fileID: 1233983595}
 --- !u!114 &397230405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1358,8 +1357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
-  messageBox: {fileID: 435952082473488534, guid: ee6c28c42c106e24eb2886b9461ab3b4,
-    type: 3}
+  canvas: {fileID: 0}
 --- !u!114 &397230406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1386,6 +1384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
+  canvas: {fileID: 0}
 --- !u!114 &397230408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1398,9 +1397,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abcec8b0e97cae24f82c293611afb001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  messageBox: {fileID: 435952082473488534, guid: ee6c28c42c106e24eb2886b9461ab3b4,
-    type: 3}
   miniCardMenu: {fileID: 1989458480}
+  canvas: {fileID: 0}
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0
@@ -4595,7 +4593,7 @@ MonoBehaviour:
   putCardButtonText: {fileID: 2122246937}
   putCardButton: {fileID: 1930089324}
   inHandButton: {fileID: 829748139}
-  backgroundInformations: {fileID: 1582983282}
+  backgroundInformation: {fileID: 1582983282}
   currentSelectedCard: {fileID: 0}
   messageBox: {fileID: 435952082473488534, guid: ee6c28c42c106e24eb2886b9461ab3b4,
     type: 3}
@@ -5111,17 +5109,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a0078b40147bd249a996db68814eb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Deck: []
+  deck: []
   handCards: []
-  YellowTrash: []
-  Field: {fileID: 0}
-  InvocationCards: []
-  EffectCards: []
-  EquipmentCards: []
-  IsPlayerOne: 0
-  PrefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
+  yellowTrash: []
+  field: {fileID: 0}
+  invocationCards: []
+  effectCards: []
+  isPlayerOne: 0
+  prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
     type: 3}
-  AllPhysicalCards: []
+  allPhysicalCards: []
 --- !u!114 &2017354830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5134,7 +5131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7f24280be368849ba08ad5676ce8bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPV: 30
+  currentPv: 30
   isP1: 0
 --- !u!1 &2094974137
 GameObject:
@@ -5322,8 +5319,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabCard: {fileID: 5528645795789417797, guid: 07baf689232351e4caa92a6fd2b8245e,
     type: 3}
-  Player1: {fileID: 230530442}
-  Player2: {fileID: 2017354827}
+  player1: {fileID: 230530442}
+  player2: {fileID: 2017354827}
 --- !u!114 &2118548143
 MonoBehaviour:
   m_ObjectHideFlags: 0
