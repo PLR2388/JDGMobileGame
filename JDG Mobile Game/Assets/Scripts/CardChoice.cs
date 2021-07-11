@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Lean.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,8 +8,10 @@ using Random = UnityEngine.Random;
 public class CardChoice : MonoBehaviour
 {
     [SerializeField] private GameObject container;
-    [SerializeField] private TextMeshProUGUI label;
-    [SerializeField] private TextMeshProUGUI buttonLabel;
+    [SerializeField] private LeanToken playerToken;
+    [SerializeField] private LeanLocalizedText buttonLabel;
+    [SerializeField] private LeanPhrase choiceText;
+    [SerializeField] private LeanPhrase playText;
     [SerializeField] private Transform canvas;
 
     [SerializeField] private GameObject choiceCardMenu;
@@ -61,8 +64,8 @@ public class CardChoice : MonoBehaviour
 
             if (numberSelected == GameState.maxDeckCards)
             {
-                label.text = "Choix de cartes pour le joueur 2";
-                buttonLabel.text = "Jouer";
+                playerToken.SetValue(2);
+                buttonLabel.TranslationName = playText.name;
                 isPlayerOneCardChosen = true;
                 FindObjectOfType<GameState>().deckP1 = deck;
                 DeselectAllCards();
@@ -81,8 +84,8 @@ public class CardChoice : MonoBehaviour
             if (numberSelected == GameState.maxDeckCards)
             {
                 SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
-                label.text = "Choix de cartes pour le joueur 1";
-                buttonLabel.text = "Choix joueur 2";
+                playerToken.SetValue(1);
+                buttonLabel.TranslationName = choiceText.name;
                 isPlayerOneCardChosen = false;
                 FindObjectOfType<GameState>().deckP2 = deck;
             }
@@ -129,8 +132,8 @@ public class CardChoice : MonoBehaviour
     {
         if (isPlayerOneCardChosen)
         {
-            label.text = "Choix de cartes pour le joueur 1";
-            buttonLabel.text = "Choix joueur 2";
+            playerToken.SetValue(1);
+            buttonLabel.TranslationName = choiceText.name;
             isPlayerOneCardChosen = false;
             FindObjectOfType<GameState>().deckP1 = new List<Card>();
             DeselectAllCards();
