@@ -30,7 +30,9 @@ public class GameLoop : MonoBehaviour
 
     [SerializeField] private Card player;
     [SerializeField] private GameObject inHandButton;
-    [FormerlySerializedAs("camera")] [SerializeField] private GameObject playerCamera;
+
+    [FormerlySerializedAs("camera")] [SerializeField]
+    private GameObject playerCamera;
 
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
 

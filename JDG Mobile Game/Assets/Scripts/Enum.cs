@@ -1,5 +1,4 @@
-﻿
-public enum CardType
+﻿public enum CardType
 {
     Contre,
     Effect,

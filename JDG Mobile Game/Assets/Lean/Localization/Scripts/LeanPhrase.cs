@@ -4,171 +4,176 @@ using Lean.Common;
 
 namespace Lean.Localization
 {
-	/// <summary>This contains data about each phrase, which is then translated into different languages.</summary>
-	[ExecuteInEditMode]
-	[DisallowMultipleComponent]
-	[HelpURL(LeanLocalization.HelpUrlPrefix + "LeanPhrase")]
-	[AddComponentMenu(LeanLocalization.ComponentPathPrefix + "Phrase")]
-	public class LeanPhrase : LeanSource
-	{
-		public enum DataType
-		{
-			Text,
-			Object,
-			Sprite
-		}
+    /// <summary>This contains data about each phrase, which is then translated into different languages.</summary>
+    [ExecuteInEditMode]
+    [DisallowMultipleComponent]
+    [HelpURL(LeanLocalization.HelpUrlPrefix + "LeanPhrase")]
+    [AddComponentMenu(LeanLocalization.ComponentPathPrefix + "Phrase")]
+    public class LeanPhrase : LeanSource
+    {
+        public enum DataType
+        {
+            Text,
+            Object,
+            Sprite
+        }
 
-		[System.Serializable]
-		public class Entry
-		{
-			/// <summary>The language of this translation.</summary>
-			public string Language;
+        [System.Serializable]
+        public class Entry
+        {
+            /// <summary>The language of this translation.</summary>
+            public string Language;
 
-			/// <summary>The translated text.</summary>
-			public string Text;
+            /// <summary>The translated text.</summary>
+            public string Text;
 
-			/// <summary>The translated object (e.g. language specific texture).</summary>
-			public Object Object;
-		}
+            /// <summary>The translated object (e.g. language specific texture).</summary>
+            public Object Object;
+        }
 
-		public DataType Data { set { data = value; } get { return data; } } [SerializeField] private DataType data;
+        public DataType Data
+        {
+            set { data = value; }
+            get { return data; }
+        }
 
-		/// <summary>This list stores all translations of this phrase in each language.</summary>
-		[SerializeField]
-		[UnityEngine.Serialization.FormerlySerializedAs("translations")]
-		private List<Entry> entries;
+        [SerializeField] private DataType data;
 
-		public List<Entry> Entries
-		{
-			get
-			{
-				if (entries == null)
-				{
-					entries = new List<Entry>();
-				}
+        /// <summary>This list stores all translations of this phrase in each language.</summary>
+        [SerializeField] [UnityEngine.Serialization.FormerlySerializedAs("translations")]
+        private List<Entry> entries;
 
-				return entries;
-			}
-		}
+        public List<Entry> Entries
+        {
+            get
+            {
+                if (entries == null)
+                {
+                    entries = new List<Entry>();
+                }
 
-		public void Clear()
-		{
-			if (entries != null)
-			{
-				entries.Clear();
-			}
-		}
+                return entries;
+            }
+        }
 
-		public override void Register(string primaryLanguage, string secondaryLanguage)
-		{
-			var translation = LeanLocalization.RegisterTranslation(name);
+        public void Clear()
+        {
+            if (entries != null)
+            {
+                entries.Clear();
+            }
+        }
 
-			if (entries != null)
-			{
-				for (var i = entries.Count - 1; i >= 0; i--)
-				{
-					var entry = entries[i];
+        public override void Register(string primaryLanguage, string secondaryLanguage)
+        {
+            var translation = LeanLocalization.RegisterTranslation(name);
 
-					translation.Register(entry.Language, this);
+            if (entries != null)
+            {
+                for (var i = entries.Count - 1; i >= 0; i--)
+                {
+                    var entry = entries[i];
 
-					if (entry.Language == primaryLanguage)
-					{
-						Compile(translation, entry, true);
-					}
-					else if (entry.Language == secondaryLanguage && translation.Primary == false)
-					{
-						Compile(translation, entry, false);
-					}
-				}
-			}
-		}
+                    translation.Register(entry.Language, this);
 
-		private void Compile(LeanTranslation translation, Entry entry, bool primary)
-		{
-			switch (data)
-			{
-				case DataType.Text:
-				{
-					Compile(translation, entry.Text, primary);
-				}
-				break;
-				case DataType.Object:
-				case DataType.Sprite:
-				{
-					Compile(translation, entry.Object, primary);
-				}
-				break;
-			}
-		}
+                    if (entry.Language == primaryLanguage)
+                    {
+                        Compile(translation, entry, true);
+                    }
+                    else if (entry.Language == secondaryLanguage && translation.Primary == false)
+                    {
+                        Compile(translation, entry, false);
+                    }
+                }
+            }
+        }
 
-		private void Compile(LeanTranslation translation, object data, bool primary)
-		{
-			translation.Data = data;
+        private void Compile(LeanTranslation translation, Entry entry, bool primary)
+        {
+            switch (data)
+            {
+                case DataType.Text:
+                {
+                    Compile(translation, entry.Text, primary);
+                }
+                    break;
+                case DataType.Object:
+                case DataType.Sprite:
+                {
+                    Compile(translation, entry.Object, primary);
+                }
+                    break;
+            }
+        }
 
-			if (primary == true)
-			{
-				translation.Primary = true;
-			}
-		}
+        private void Compile(LeanTranslation translation, object data, bool primary)
+        {
+            translation.Data = data;
 
-		/// <summary>This will return the translation of this phrase for the specified language.</summary>
-		public bool TryFindTranslation(string languageName, ref Entry entry)
-		{
-			if (entries != null)
-			{
-				for (var i = entries.Count - 1; i >= 0; i--)
-				{
-					entry = entries[i];
+            if (primary == true)
+            {
+                translation.Primary = true;
+            }
+        }
 
-					if (entry.Language == languageName)
-					{
-						return true;
-					}
-				}
-			}
+        /// <summary>This will return the translation of this phrase for the specified language.</summary>
+        public bool TryFindTranslation(string languageName, ref Entry entry)
+        {
+            if (entries != null)
+            {
+                for (var i = entries.Count - 1; i >= 0; i--)
+                {
+                    entry = entries[i];
 
-			return false;
-		}
+                    if (entry.Language == languageName)
+                    {
+                        return true;
+                    }
+                }
+            }
 
-		public void RemoveTranslation(string languageName)
-		{
-			if (entries != null)
-			{
-				for (var i = entries.Count - 1; i >= 0; i--)
-				{
-					if (entries[i].Language == languageName)
-					{
-						entries.RemoveAt(i);
+            return false;
+        }
 
-						return;
-					}
-				}
-			}
-		}
+        public void RemoveTranslation(string languageName)
+        {
+            if (entries != null)
+            {
+                for (var i = entries.Count - 1; i >= 0; i--)
+                {
+                    if (entries[i].Language == languageName)
+                    {
+                        entries.RemoveAt(i);
 
-		/// <summary>Add a new translation to this phrase for the specified language, or return the current one.</summary>
-		public Entry AddEntry(string languageName, string text = null, Object obj = null)
-		{
-			var translation = default(Entry);
+                        return;
+                    }
+                }
+            }
+        }
 
-			if (TryFindTranslation(languageName, ref translation) == false)
-			{
-				translation = new Entry();
+        /// <summary>Add a new translation to this phrase for the specified language, or return the current one.</summary>
+        public Entry AddEntry(string languageName, string text = null, Object obj = null)
+        {
+            var translation = default(Entry);
 
-				translation.Language = languageName;
+            if (TryFindTranslation(languageName, ref translation) == false)
+            {
+                translation = new Entry();
 
-				if (entries == null)
-				{
-					entries = new List<Entry>();
-				}
+                translation.Language = languageName;
 
-				entries.Add(translation);
-			}
+                if (entries == null)
+                {
+                    entries = new List<Entry>();
+                }
 
-			translation.Text   = text;
-			translation.Object = obj;
+                entries.Add(translation);
+            }
 
-			return translation;
-		}
-	}
+            translation.Text = text;
+            translation.Object = obj;
+
+            return translation;
+        }
+    }
 }

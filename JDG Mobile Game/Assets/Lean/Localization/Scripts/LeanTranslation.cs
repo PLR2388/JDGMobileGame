@@ -3,199 +3,214 @@ using System.Collections.Generic;
 
 namespace Lean.Localization
 {
-	/// <summary>This contains the translated value for the current language, and other associated data.</summary>
-	public class LeanTranslation
-	{
-		public struct Entry
-		{
-			public string Language;
+    /// <summary>This contains the translated value for the current language, and other associated data.</summary>
+    public class LeanTranslation
+    {
+        public struct Entry
+        {
+            public string Language;
 
-			public Object Owner;
-		}
+            public Object Owner;
+        }
 
-		/// <summary>The name of this translation.</summary>
-		public string Name { get { return name; } } [SerializeField] private string name;
+        /// <summary>The name of this translation.</summary>
+        public string Name
+        {
+            get { return name; }
+        }
 
-		/// <summary>The data of this translation (e.g. string or Object).
-		/// NOTE: This is a System.Object, so you must correctly cast it back before use.</summary>
-		public object Data;
+        [SerializeField] private string name;
 
-		/// <summary>If Data has been filled with data for the primary language, then this will be set to true.</summary>
-		public bool Primary;
+        /// <summary>The data of this translation (e.g. string or Object).
+        /// NOTE: This is a System.Object, so you must correctly cast it back before use.</summary>
+        public object Data;
 
-		/// <summary>This stores a list of all LeanSource instances that are currently managing the current value of this translation in the current language.
-		/// NOTE: If this is empty then no LeanSource of this name is localized for the current language.</summary>
-		public List<Entry> Entries { get { return entries; } } private List<Entry> entries = new List<Entry>();
+        /// <summary>If Data has been filled with data for the primary language, then this will be set to true.</summary>
+        public bool Primary;
 
-		private static bool buffering;
+        /// <summary>This stores a list of all LeanSource instances that are currently managing the current value of this translation in the current language.
+        /// NOTE: If this is empty then no LeanSource of this name is localized for the current language.</summary>
+        public List<Entry> Entries
+        {
+            get { return entries; }
+        }
 
-		private static System.Text.StringBuilder current = new System.Text.StringBuilder();
+        private List<Entry> entries = new List<Entry>();
 
-		private static System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+        private static bool buffering;
 
-		private static List<LeanToken> tokens = new List<LeanToken>();
+        private static System.Text.StringBuilder current = new System.Text.StringBuilder();
 
-		public LeanTranslation(string newName)
-		{
-			name = newName;
-		}
+        private static System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 
-		public void Register(string language, Object owner)
-		{
-			var entry = new Entry();
+        private static List<LeanToken> tokens = new List<LeanToken>();
 
-			entry.Language = language;
-			entry.Owner    = owner;
+        public LeanTranslation(string newName)
+        {
+            name = newName;
+        }
 
-			entries.Add(entry);
-		}
+        public void Register(string language, Object owner)
+        {
+            var entry = new Entry();
 
-		public void Clear()
-		{
-			Data    = null;
-			Primary = false;
+            entry.Language = language;
+            entry.Owner = owner;
 
-			entries.Clear();
-		}
+            entries.Add(entry);
+        }
 
-		public int LanguageCount(string language)
-		{
-			var total = 0;
+        public void Clear()
+        {
+            Data = null;
+            Primary = false;
 
-			for (var i = entries.Count - 1; i >= 0; i--)
-			{
-				if (entries[i].Language == language)
-				{
-					total += 1;
-				}
-			}
+            entries.Clear();
+        }
 
-			return total;
-		}
+        public int LanguageCount(string language)
+        {
+            var total = 0;
 
-		/// <summary>This returns Text with all tokens substituted using the LeanLocalization.Tokens list.
-		/// NOTE: If you want local tokens to work, then specify the localTokenRoot GameObject.</summary>
-		public static string FormatText(string rawText, string currentText = null, ILocalizationHandler handler = null, GameObject localTokenRoot = null)
-		{
-			if (string.IsNullOrEmpty(currentText) == true)
-			{
-				currentText = rawText;
-			}
+            for (var i = entries.Count - 1; i >= 0; i--)
+            {
+                if (entries[i].Language == language)
+                {
+                    total += 1;
+                }
+            }
 
-			if (rawText != null)
-			{
-				current.Length = 0;
-				buffer.Length = 0;
-				tokens.Clear();
+            return total;
+        }
 
-				for (var i = 0; i < rawText.Length; i++)
-				{
-					var rawChar = rawText[i];
+        /// <summary>This returns Text with all tokens substituted using the LeanLocalization.Tokens list.
+        /// NOTE: If you want local tokens to work, then specify the localTokenRoot GameObject.</summary>
+        public static string FormatText(string rawText, string currentText = null, ILocalizationHandler handler = null,
+            GameObject localTokenRoot = null)
+        {
+            if (string.IsNullOrEmpty(currentText) == true)
+            {
+                currentText = rawText;
+            }
 
-					if (rawChar == '{')
-					{
-						if (buffering == true)
-						{
-							buffering = false;
+            if (rawText != null)
+            {
+                current.Length = 0;
+                buffer.Length = 0;
+                tokens.Clear();
 
-							buffer.Length = 0;
-						}
-						else
-						{
-							buffering = true;
-						}
-					}
-					else if (rawChar == '}')
-					{
-						if (buffering == true)
-						{
-							if (buffer.Length > 0)
-							{
-								var token = default(LeanToken);
+                for (var i = 0; i < rawText.Length; i++)
+                {
+                    var rawChar = rawText[i];
 
-								// Try and replace local tokens first
-								if (buffer.Length > 0 && localTokenRoot != null && LeanLocalToken.TryGetLocalToken(localTokenRoot, buffer.ToString(), ref token) == true) // TODO: Avoid ToString here?
-								{
-									current.Append(token.Value);
+                    if (rawChar == '{')
+                    {
+                        if (buffering == true)
+                        {
+                            buffering = false;
 
-									tokens.Add(token);
-								}
-								// Try and replace global tokens second
-								else if (buffer.Length > 0 && LeanLocalization.CurrentTokens.TryGetValue(buffer.ToString(), out token) == true) // TODO: Avoid ToString here?
-								{
-									current.Append(token.Value);
+                            buffer.Length = 0;
+                        }
+                        else
+                        {
+                            buffering = true;
+                        }
+                    }
+                    else if (rawChar == '}')
+                    {
+                        if (buffering == true)
+                        {
+                            if (buffer.Length > 0)
+                            {
+                                var token = default(LeanToken);
 
-									tokens.Add(token);
-								}
-								// If none found, leave the token text as it was
-								else
-								{
-									current.Append('{').Append(buffer).Append('}');
-								}
+                                // Try and replace local tokens first
+                                if (buffer.Length > 0 && localTokenRoot != null &&
+                                    LeanLocalToken.TryGetLocalToken(localTokenRoot, buffer.ToString(), ref token) ==
+                                    true) // TODO: Avoid ToString here?
+                                {
+                                    current.Append(token.Value);
 
-								buffer.Length = 0;
-							}
+                                    tokens.Add(token);
+                                }
+                                // Try and replace global tokens second
+                                else if (buffer.Length > 0 &&
+                                         LeanLocalization.CurrentTokens.TryGetValue(buffer.ToString(), out token) ==
+                                         true) // TODO: Avoid ToString here?
+                                {
+                                    current.Append(token.Value);
 
-							buffering = false;
-						}
-					}
-					else
-					{
-						if (buffering == true)
-						{
-							buffer.Append(rawChar);
-						}
-						else
-						{
-							current.Append(rawChar);
-						}
-					}
-				}
+                                    tokens.Add(token);
+                                }
+                                // If none found, leave the token text as it was
+                                else
+                                {
+                                    current.Append('{').Append(buffer).Append('}');
+                                }
 
-				if (Match(currentText, current) == false)
-				{
-					if (handler != null)
-					{
-						handler.UnregisterAll();
+                                buffer.Length = 0;
+                            }
 
-						for (var i = tokens.Count - 1; i >= 0; i--)
-						{
-							var token = tokens[i];
+                            buffering = false;
+                        }
+                    }
+                    else
+                    {
+                        if (buffering == true)
+                        {
+                            buffer.Append(rawChar);
+                        }
+                        else
+                        {
+                            current.Append(rawChar);
+                        }
+                    }
+                }
 
-							token.Register(handler);
+                if (Match(currentText, current) == false)
+                {
+                    if (handler != null)
+                    {
+                        handler.UnregisterAll();
 
-							handler.Register(token);
-						}
-					}
+                        for (var i = tokens.Count - 1; i >= 0; i--)
+                        {
+                            var token = tokens[i];
 
-					return current.ToString();
-				}
-			}
+                            token.Register(handler);
 
-			return currentText;
-		}
+                            handler.Register(token);
+                        }
+                    }
 
-		private static bool Match(string a, System.Text.StringBuilder b)
-		{
-			if (a == null && b.Length > 0)
-			{
-				return false;
-			}
+                    return current.ToString();
+                }
+            }
 
-			if (a.Length != b.Length)
-			{
-				return false;
-			}
+            return currentText;
+        }
 
-			for (var i = 0; i < a.Length; i++)
-			{
-				if (a[i] != b[i])
-				{
-					return false;
-				}
-			}
+        private static bool Match(string a, System.Text.StringBuilder b)
+        {
+            if (a == null && b.Length > 0)
+            {
+                return false;
+            }
 
-			return true;
-		}
-	}
+            if (a.Length != b.Length)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
 }

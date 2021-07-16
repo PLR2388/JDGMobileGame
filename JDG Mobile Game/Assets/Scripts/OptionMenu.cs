@@ -40,7 +40,7 @@ public class OptionMenu : MonoBehaviour
         }
 
         languageDropdown.SetValueWithoutNotify(0);
-        
+
         languageDropdown.onValueChanged.AddListener(delegate { LanguageDropDownItemSelected(languageDropdown); });
         languageDropdown.RefreshShownValue();
     }

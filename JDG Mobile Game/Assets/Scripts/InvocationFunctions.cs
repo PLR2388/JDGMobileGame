@@ -431,7 +431,27 @@ public class InvocationFunctions : MonoBehaviour
                     {
                         case "skipAttack":
                         {
-                            currentInvocationCard.BlockAttack();
+                            var m = CreateMessageBoxSimple("Action possible",
+                                "Voulez-vous sauter la phase d'attaque de la carte pour ajouter une carte equipement de votre pioche à votre main ?");
+                            m.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                m.GetComponent<MessageBox>().description = "";
+                                List<Card> deck = currentPlayerCard.deck;
+                                var equipmentCards = deck.Where(card => card.Type == CardType.Equipment).ToList();
+                                GameObject messageBox1 =
+                                    CreateMessageBoxSelectorCard("Choix de la carte équipement", equipmentCards);
+                                messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
+                                {
+                                    var selectedCard = messageBox1.GetComponent<MessageBox>().GETSelectedCard();
+                                    if (selectedCard != null)
+                                    {
+                                        currentPlayerCard.handCards.Add(selectedCard);
+                                        currentInvocationCard.BlockAttack();
+                                    }
+                                    Destroy(messageBox1);
+                                };
+                                Destroy(m);
+                            };
                         }
                             break;
                     }
@@ -728,7 +748,6 @@ public class InvocationFunctions : MonoBehaviour
                             sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
                             isInvocationPossible = sacrificedCards.Count > 0;
                         }
-                
                     }
                         break;
                     case Condition.SpecificFamilyOnField:

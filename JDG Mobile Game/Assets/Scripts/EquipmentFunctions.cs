@@ -48,6 +48,7 @@ public class EquipmentFunctions : MonoBehaviour
                 currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
                 playerCards.handCards.Remove(equipmentCard);
             }
+
             Destroy(message);
         };
         message.GetComponent<MessageBox>().NegativeAction = () =>

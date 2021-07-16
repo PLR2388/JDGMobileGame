@@ -5,247 +5,291 @@ using FSA = UnityEngine.Serialization.FormerlySerializedAsAttribute;
 
 namespace Lean.Common
 {
-	/// <summary>This component allows you make the current GameObject selectable.</summary>
-	[HelpURL(LeanHelper.HelpUrlPrefix + "LeanSelectable")]
-	public class LeanSelectable : MonoBehaviour
-	{
-		[System.Serializable] public class LeanSelectEvent : UnityEvent<LeanSelect> {}
+    /// <summary>This component allows you make the current GameObject selectable.</summary>
+    [HelpURL(LeanHelper.HelpUrlPrefix + "LeanSelectable")]
+    public class LeanSelectable : MonoBehaviour
+    {
+        [System.Serializable]
+        public class LeanSelectEvent : UnityEvent<LeanSelect>
+        {
+        }
 
-		public static LinkedList<LeanSelectable> Instances = new LinkedList<LeanSelectable>(); [System.NonSerialized] private LinkedListNode<LeanSelectable> instancesNode;
+        public static LinkedList<LeanSelectable> Instances = new LinkedList<LeanSelectable>();
+        [System.NonSerialized] private LinkedListNode<LeanSelectable> instancesNode;
 
-		public bool SelfSelected { set { if (selfSelected != value) { selfSelected = value; if (value == true) InvokeOnSelected(null); else InvokeOnDeslected(null); } } get { return selfSelected; } } [SerializeField] private bool selfSelected;
+        public bool SelfSelected
+        {
+            set
+            {
+                if (selfSelected != value)
+                {
+                    selfSelected = value;
+                    if (value == true) InvokeOnSelected(null);
+                    else InvokeOnDeslected(null);
+                }
+            }
+            get { return selfSelected; }
+        }
 
-		/// <summary>This is invoked every time this object is selected.
-		/// NOTE: This may occur multiple times.</summary>
-		public UnityEvent OnSelected { get { if (onSelected == null) onSelected = new UnityEvent(); return onSelected; } } [SerializeField] private UnityEvent onSelected;
+        [SerializeField] private bool selfSelected;
 
-		/// <summary>This is invoked every time this object is deselected.
-		/// NOTE: This may occur multiple times.</summary>
-		public UnityEvent OnDeselected { get { if (onDeselected == null) onDeselected = new UnityEvent(); return onDeselected; } } [FSA("OnDeselect")] [SerializeField] private UnityEvent onDeselected;
+        /// <summary>This is invoked every time this object is selected.
+        /// NOTE: This may occur multiple times.</summary>
+        public UnityEvent OnSelected
+        {
+            get
+            {
+                if (onSelected == null) onSelected = new UnityEvent();
+                return onSelected;
+            }
+        }
 
-		public static event System.Action<LeanSelectable> OnAnyEnabled;
+        [SerializeField] private UnityEvent onSelected;
 
-		public static event System.Action<LeanSelectable> OnAnyDisabled;
+        /// <summary>This is invoked every time this object is deselected.
+        /// NOTE: This may occur multiple times.</summary>
+        public UnityEvent OnDeselected
+        {
+            get
+            {
+                if (onDeselected == null) onDeselected = new UnityEvent();
+                return onDeselected;
+            }
+        }
 
-		public static event System.Action<LeanSelect, LeanSelectable> OnAnySelected;
+        [FSA("OnDeselect")] [SerializeField] private UnityEvent onDeselected;
 
-		public static event System.Action<LeanSelect, LeanSelectable> OnAnyDeselected;
+        public static event System.Action<LeanSelectable> OnAnyEnabled;
 
-		protected static List<LeanSelectable> tempSelectables = new List<LeanSelectable>();
+        public static event System.Action<LeanSelectable> OnAnyDisabled;
 
-		/// <summary>This will tell you how many <b>LeanSelect</b> components in the scene currently have this object selected.</summary>
-		public int SelectedCount
-		{
-			get
-			{
-				var count = 0;
+        public static event System.Action<LeanSelect, LeanSelectable> OnAnySelected;
 
-				if (selfSelected == true)
-				{
-					count += 1;
-				}
+        public static event System.Action<LeanSelect, LeanSelectable> OnAnyDeselected;
 
-				foreach (var select in LeanSelect.Instances)
-				{
-					if (select.IsSelected(this) == true)
-					{
-						count += 1;
-					}
-				}
+        protected static List<LeanSelectable> tempSelectables = new List<LeanSelectable>();
 
-				return count;
-			}
-		}
+        /// <summary>This will tell you how many <b>LeanSelect</b> components in the scene currently have this object selected.</summary>
+        public int SelectedCount
+        {
+            get
+            {
+                var count = 0;
 
-		/// <summary>This will tell you if this object is self selected, or selected by any <b>LeanSelect</b> components in the scene.</summary>
-		public bool IsSelected
-		{
-			get
-			{
-				if (selfSelected == true)
-				{
-					return true;
-				}
+                if (selfSelected == true)
+                {
+                    count += 1;
+                }
 
-				foreach (var select in LeanSelect.Instances)
-				{
-					if (select.IsSelected(this) == true)
-					{
-						return true;
-					}
-				}
+                foreach (var select in LeanSelect.Instances)
+                {
+                    if (select.IsSelected(this) == true)
+                    {
+                        count += 1;
+                    }
+                }
 
-				return false;
-			}
-		}
+                return count;
+            }
+        }
 
-		public static int IsSelectedCount
-		{
-			get
-			{
-				var count = 0;
+        /// <summary>This will tell you if this object is self selected, or selected by any <b>LeanSelect</b> components in the scene.</summary>
+        public bool IsSelected
+        {
+            get
+            {
+                if (selfSelected == true)
+                {
+                    return true;
+                }
 
-				foreach (var selectable in Instances)
-				{
-					if (selectable.IsSelected == true)
-					{
-						count += 1;
-					}
-				}
+                foreach (var select in LeanSelect.Instances)
+                {
+                    if (select.IsSelected(this) == true)
+                    {
+                        return true;
+                    }
+                }
 
-				return count;
-			}
-		}
+                return false;
+            }
+        }
 
-		[ContextMenu("Deselect")]
-		public void Deselect()
-		{
-			SelfSelected = false;
+        public static int IsSelectedCount
+        {
+            get
+            {
+                var count = 0;
 
-			foreach (var select in LeanSelect.Instances)
-			{
-				select.Deselect(this);
-			}
-		}
+                foreach (var selectable in Instances)
+                {
+                    if (selectable.IsSelected == true)
+                    {
+                        count += 1;
+                    }
+                }
 
-		/// <summary>This deselects all objects in the scene.</summary>
-		public static void DeselectAll()
-		{
-			foreach (var select in LeanSelect.Instances)
-			{
-				select.DeselectAll();
-			}
+                return count;
+            }
+        }
 
-			foreach (var selectable in LeanSelectable.Instances)
-			{
-				selectable.SelfSelected = false;
-			}
-		}
+        [ContextMenu("Deselect")]
+        public void Deselect()
+        {
+            SelfSelected = false;
 
-		public void InvokeOnSelected(LeanSelect select)
-		{
-			if (onSelected != null)
-			{
-				onSelected.Invoke();
-			}
+            foreach (var select in LeanSelect.Instances)
+            {
+                select.Deselect(this);
+            }
+        }
 
-			if (OnAnySelected != null)
-			{
-				OnAnySelected.Invoke(select, this);
-			}
-		}
+        /// <summary>This deselects all objects in the scene.</summary>
+        public static void DeselectAll()
+        {
+            foreach (var select in LeanSelect.Instances)
+            {
+                select.DeselectAll();
+            }
 
-		public void InvokeOnDeslected(LeanSelect select)
-		{
-			if (onDeselected != null)
-			{
-				onDeselected.Invoke();
-			}
+            foreach (var selectable in LeanSelectable.Instances)
+            {
+                selectable.SelfSelected = false;
+            }
+        }
 
-			if (OnAnyDeselected != null)
-			{
-				OnAnyDeselected.Invoke(select, this);
-			}
-		}
+        public void InvokeOnSelected(LeanSelect select)
+        {
+            if (onSelected != null)
+            {
+                onSelected.Invoke();
+            }
 
-		protected virtual void OnEnable()
-		{
-			instancesNode = Instances.AddLast(this);
+            if (OnAnySelected != null)
+            {
+                OnAnySelected.Invoke(select, this);
+            }
+        }
 
-			if (OnAnyEnabled != null)
-			{
-				OnAnyEnabled.Invoke(this);
-			}
-		}
+        public void InvokeOnDeslected(LeanSelect select)
+        {
+            if (onDeselected != null)
+            {
+                onDeselected.Invoke();
+            }
 
-		protected virtual void OnDisable()
-		{
-			Instances.Remove(instancesNode); instancesNode = null;
+            if (OnAnyDeselected != null)
+            {
+                OnAnyDeselected.Invoke(select, this);
+            }
+        }
 
-			if (OnAnyDisabled != null)
-			{
-				OnAnyDisabled.Invoke(this);
-			}
-		}
+        protected virtual void OnEnable()
+        {
+            instancesNode = Instances.AddLast(this);
 
-		protected virtual void OnDestroy()
-		{
-			Deselect();
-		}
-	}
+            if (OnAnyEnabled != null)
+            {
+                OnAnyEnabled.Invoke(this);
+            }
+        }
+
+        protected virtual void OnDisable()
+        {
+            Instances.Remove(instancesNode);
+            instancesNode = null;
+
+            if (OnAnyDisabled != null)
+            {
+                OnAnyDisabled.Invoke(this);
+            }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            Deselect();
+        }
+    }
 }
 
 #if UNITY_EDITOR
 namespace Lean.Common.Editor
 {
-	using TARGET = LeanSelectable;
+    using TARGET = LeanSelectable;
 
-	[UnityEditor.CanEditMultipleObjects]
-	[UnityEditor.CustomEditor(typeof(TARGET))]
-	public class LeanSelectable_Editor : LeanEditor
-	{
-		[System.NonSerialized] TARGET tgt; [System.NonSerialized] TARGET[] tgts;
+    [UnityEditor.CanEditMultipleObjects]
+    [UnityEditor.CustomEditor(typeof(TARGET))]
+    public class LeanSelectable_Editor : LeanEditor
+    {
+        [System.NonSerialized] TARGET tgt;
+        [System.NonSerialized] TARGET[] tgts;
 
-		protected override void OnInspector()
-		{
-			GetTargets(out tgt, out tgts);
+        protected override void OnInspector()
+        {
+            GetTargets(out tgt, out tgts);
 
-			DrawSelected();
+            DrawSelected();
 
-			Separator();
+            Separator();
 
-			var showUnusedEvents = DrawFoldout("Show Unused Events", "Show all events?");
+            var showUnusedEvents = DrawFoldout("Show Unused Events", "Show all events?");
 
-			DrawEvents(showUnusedEvents);
-		}
+            DrawEvents(showUnusedEvents);
+        }
 
-		private void DrawSelected()
-		{
-			BeginDisabled();
-				UnityEditor.EditorGUILayout.Toggle(new GUIContent("Is Selected", "This will tell you if this object is self selected, or selected by any LeanSelect components in the scene."), tgt.IsSelected);
-			EndDisabled();
-			BeginIndent();
-				if (Draw("selfSelected") == true)
-				{
-					Each(tgts, t => t.SelfSelected = serializedObject.FindProperty("selfSelected").boolValue, true);
-				}
-				BeginDisabled();
-					foreach (var select in LeanSelect.Instances)
-					{
-						if (IsSelectedByAnyTgt(select) == true)
-						{
-							UnityEditor.EditorGUILayout.ObjectField(new GUIContent("selectedBy"), select, typeof(LeanSelect), true);
-						}
-					}
-				EndDisabled();
-			EndIndent();
-		}
+        private void DrawSelected()
+        {
+            BeginDisabled();
+            UnityEditor.EditorGUILayout.Toggle(
+                new GUIContent("Is Selected",
+                    "This will tell you if this object is self selected, or selected by any LeanSelect components in the scene."),
+                tgt.IsSelected);
+            EndDisabled();
+            BeginIndent();
+            if (Draw("selfSelected") == true)
+            {
+                Each(tgts, t => t.SelfSelected = serializedObject.FindProperty("selfSelected").boolValue, true);
+            }
 
-		private bool IsSelectedByAnyTgt(LeanSelect select)
-		{
-			foreach (var tgt in tgts)
-			{
-				if (select.IsSelected(tgt) == true)
-				{
-					return true;
-				}
-			}
+            BeginDisabled();
+            foreach (var select in LeanSelect.Instances)
+            {
+                if (IsSelectedByAnyTgt(select) == true)
+                {
+                    UnityEditor.EditorGUILayout.ObjectField(new GUIContent("selectedBy"), select, typeof(LeanSelect),
+                        true);
+                }
+            }
 
-			return false;
-		}
+            EndDisabled();
+            EndIndent();
+        }
 
-		protected virtual void DrawEvents(bool showUnusedEvents)
-		{
-			if (showUnusedEvents == true || Any(tgts, t => t.OnSelected.GetPersistentEventCount() > 0))
-			{
-				Draw("onSelected");
-			}
+        private bool IsSelectedByAnyTgt(LeanSelect select)
+        {
+            foreach (var tgt in tgts)
+            {
+                if (select.IsSelected(tgt) == true)
+                {
+                    return true;
+                }
+            }
 
-			if (showUnusedEvents == true || Any(tgts, t => t.OnDeselected.GetPersistentEventCount() > 0))
-			{
-				Draw("onDeselected");
-			}
-		}
-	}
+            return false;
+        }
+
+        protected virtual void DrawEvents(bool showUnusedEvents)
+        {
+            if (showUnusedEvents == true || Any(tgts, t => t.OnSelected.GetPersistentEventCount() > 0))
+            {
+                Draw("onSelected");
+            }
+
+            if (showUnusedEvents == true || Any(tgts, t => t.OnDeselected.GetPersistentEventCount() > 0))
+            {
+                Draw("onDeselected");
+            }
+        }
+    }
 }
 #endif

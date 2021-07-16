@@ -4,74 +4,90 @@ using Lean.Common;
 
 namespace Lean.Localization
 {
-	/// <summary>This contains information about a language, and any of its optional cultures.</summary>
-	[System.Serializable]
-	[ExecuteInEditMode]
-	[DisallowMultipleComponent]
-	[HelpURL(LeanLocalization.HelpUrlPrefix + "LeanLanguage")]
-	[AddComponentMenu(LeanLocalization.ComponentPathPrefix + "Language")]
-	public class LeanLanguage : LeanSource
-	{
-		/// <summary>The language code used for auto translation.</summary>
-		public string TranslationCode { set { translationCode = value; } get { return translationCode; } } [SerializeField] private string translationCode;
+    /// <summary>This contains information about a language, and any of its optional cultures.</summary>
+    [System.Serializable]
+    [ExecuteInEditMode]
+    [DisallowMultipleComponent]
+    [HelpURL(LeanLocalization.HelpUrlPrefix + "LeanLanguage")]
+    [AddComponentMenu(LeanLocalization.ComponentPathPrefix + "Language")]
+    public class LeanLanguage : LeanSource
+    {
+        /// <summary>The language code used for auto translation.</summary>
+        public string TranslationCode
+        {
+            set { translationCode = value; }
+            get { return translationCode; }
+        }
 
-		/// <summary>This culture names for this language (e.g. en-GB, en-US).</summary>
-		public List<string> Cultures { get { if (cultures == null) cultures = new List<string>(); return cultures; } } [SerializeField] private List<string> cultures;
+        [SerializeField] private string translationCode;
 
-		public override void Register()
-		{
-			if (LeanLocalization.CurrentLanguages.ContainsKey(name) == false)
-			{
-				LeanLocalization.CurrentLanguages.Add(name, this);
-			}
+        /// <summary>This culture names for this language (e.g. en-GB, en-US).</summary>
+        public List<string> Cultures
+        {
+            get
+            {
+                if (cultures == null) cultures = new List<string>();
+                return cultures;
+            }
+        }
 
-			TryAddAlias(name, name);
+        [SerializeField] private List<string> cultures;
 
-			if (cultures != null)
-			{
-				foreach (var culture in cultures)
-				{
-					TryAddAlias(culture, name);
-				}
+        public override void Register()
+        {
+            if (LeanLocalization.CurrentLanguages.ContainsKey(name) == false)
+            {
+                LeanLocalization.CurrentLanguages.Add(name, this);
+            }
 
-			}
-		}
+            TryAddAlias(name, name);
 
-		private void TryAddAlias(string key, string value)
-		{
-			if (LeanLocalization.CurrentAliases.ContainsKey(key) == false)
-			{
-				LeanLocalization.CurrentAliases.Add(key, value);
-			}
-		}
-	}
+            if (cultures != null)
+            {
+                foreach (var culture in cultures)
+                {
+                    TryAddAlias(culture, name);
+                }
+            }
+        }
+
+        private void TryAddAlias(string key, string value)
+        {
+            if (LeanLocalization.CurrentAliases.ContainsKey(key) == false)
+            {
+                LeanLocalization.CurrentAliases.Add(key, value);
+            }
+        }
+    }
 }
 
 #if UNITY_EDITOR
 namespace Lean.Localization.Editor
 {
-	using TARGET = LeanLanguage;
+    using TARGET = LeanLanguage;
 
-	[UnityEditor.CanEditMultipleObjects]
-	[UnityEditor.CustomEditor(typeof(TARGET))]
-	public class LeanLanguage_Editor : LeanEditor
-	{
-		protected override void OnInspector()
-		{
-			TARGET tgt; TARGET[] tgts; GetTargets(out tgt, out tgts);
+    [UnityEditor.CanEditMultipleObjects]
+    [UnityEditor.CustomEditor(typeof(TARGET))]
+    public class LeanLanguage_Editor : LeanEditor
+    {
+        protected override void OnInspector()
+        {
+            TARGET tgt;
+            TARGET[] tgts;
+            GetTargets(out tgt, out tgts);
 
-			Draw("translationCode", "The language code used for auto translation.");
+            Draw("translationCode", "The language code used for auto translation.");
 
-			Separator();
+            Separator();
 
-			Draw("cultures", "This culture names for this language (e.g. en-GB, en-US).");
-		}
+            Draw("cultures", "This culture names for this language (e.g. en-GB, en-US).");
+        }
 
-		[UnityEditor.MenuItem("Assets/Create/Lean/Localization/Lean Language")]
-		private static void CreateLanguage()
-		{
-			LeanHelper.CreateAsset("New Language").AddComponent<LeanLanguage>();
-		}
-	}
+        [UnityEditor.MenuItem("Assets/Create/Lean/Localization/Lean Language")]
+        private static void CreateLanguage()
+        {
+            LeanHelper.CreateAsset("New Language").AddComponent<LeanLanguage>();
+        }
+    }
 }
 #endif

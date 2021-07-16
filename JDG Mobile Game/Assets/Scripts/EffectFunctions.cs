@@ -485,7 +485,8 @@ public class EffectFunctions : MonoBehaviour
                     case Effect.SeeOpponentHand:
                     {
                         var handCardOpponent = opponentPlayerCard.handCards;
-                        var message = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Voici les cartes de l'adversaire",handCardOpponent, okButton: true );
+                        var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                            "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
 
                         message.GetComponent<MessageBox>().OkAction = () =>
                         {

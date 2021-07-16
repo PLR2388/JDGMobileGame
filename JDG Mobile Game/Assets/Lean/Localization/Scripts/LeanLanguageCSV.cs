@@ -4,477 +4,508 @@ using Lean.Common;
 
 namespace Lean.Localization
 {
-	/// <summary>This component will load localizations from a CSV file. By default they should be in the format:
-	/// Phrase Name Here = Translation Here // Optional Comment Here
-	/// NOTE: This component only handles loading one CSV file from one language. If you have multiple languages, then you must make multiple CSV files for each, and a matching <b>LeanLanguageCSV</b> component to load each.</summary>
-	[ExecuteInEditMode]
-	[HelpURL(LeanLocalization.HelpUrlPrefix + "LeanLanguageCSV")]
-	[AddComponentMenu(LeanLocalization.ComponentPathPrefix + "Language CSV")]
-	public class LeanLanguageCSV : LeanSource
-	{
-		[System.Serializable]
-		public class Entry
-		{
-			public string Name;
-			public string Text;
-		}
+    /// <summary>This component will load localizations from a CSV file. By default they should be in the format:
+    /// Phrase Name Here = Translation Here // Optional Comment Here
+    /// NOTE: This component only handles loading one CSV file from one language. If you have multiple languages, then you must make multiple CSV files for each, and a matching <b>LeanLanguageCSV</b> component to load each.</summary>
+    [ExecuteInEditMode]
+    [HelpURL(LeanLocalization.HelpUrlPrefix + "LeanLanguageCSV")]
+    [AddComponentMenu(LeanLocalization.ComponentPathPrefix + "Language CSV")]
+    public class LeanLanguageCSV : LeanSource
+    {
+        [System.Serializable]
+        public class Entry
+        {
+            public string Name;
+            public string Text;
+        }
 
-		public enum FormatType
-		{
-			Legacy,
-			Comma,
-			Semicolon
-		}
+        public enum FormatType
+        {
+            Legacy,
+            Comma,
+            Semicolon
+        }
 
-		public enum CacheType
-		{
-			LoadImmediately,
-			LazyLoad,
-			LazyLoadAndUnload,
-			LazyLoadAndUnloadPrimaryOnly
-		}
+        public enum CacheType
+        {
+            LoadImmediately,
+            LazyLoad,
+            LazyLoadAndUnload,
+            LazyLoadAndUnloadPrimaryOnly
+        }
 
-		/// <summary>The text asset that contains all the translations.</summary>
-		public TextAsset Source;
+        /// <summary>The text asset that contains all the translations.</summary>
+        public TextAsset Source;
 
-		/// <summary>The format of the CSV data.
-		/// See the inspector for examples of what the different formats look like.</summary>
-		public FormatType Format = FormatType.Comma;
+        /// <summary>The format of the CSV data.
+        /// See the inspector for examples of what the different formats look like.</summary>
+        public FormatType Format = FormatType.Comma;
 
-		/// <summary>The language of the translations in the source file.</summary>
-		[LeanLanguageName]
-		public string Language;
+        /// <summary>The language of the translations in the source file.</summary>
+        [LeanLanguageName] public string Language;
 
-		/// <summary>This allows you to control when the CSV file is loaded or unloaded. The lower down you set this, the lower your app's memory usage will be. However, setting it too low means you can miss translations if you haven't translated absolutely every phrase in every language, so I recommend you use <b>LoadImmediately</b> unless you have LOTS of translations.
-		/// LoadImmediately = Regardless of the language, the CSV will load when this component activates, and then it will be kept in memory until this component is destroyed.
-		/// LazyLoad = The CSV file will only load when the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> matches the CSV language, and then it will be kept in memory until this component is destroyed.
-		/// LazyLoadAndUnload = Like <b>LazyLoad</b>, but translations will be unloaded if the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> differs from the CSV language.
-		/// LazyLoadAndUnloadPrimaryOnly = Like <b>LazyLoadAndUnload</b>, but only the <b>CurrentLanguage</b> will be used, the <b>DefaultLanguage</b> will be ignored.</summary>
-		public CacheType Cache;
+        /// <summary>This allows you to control when the CSV file is loaded or unloaded. The lower down you set this, the lower your app's memory usage will be. However, setting it too low means you can miss translations if you haven't translated absolutely every phrase in every language, so I recommend you use <b>LoadImmediately</b> unless you have LOTS of translations.
+        /// LoadImmediately = Regardless of the language, the CSV will load when this component activates, and then it will be kept in memory until this component is destroyed.
+        /// LazyLoad = The CSV file will only load when the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> matches the CSV language, and then it will be kept in memory until this component is destroyed.
+        /// LazyLoadAndUnload = Like <b>LazyLoad</b>, but translations will be unloaded if the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> differs from the CSV language.
+        /// LazyLoadAndUnloadPrimaryOnly = Like <b>LazyLoadAndUnload</b>, but only the <b>CurrentLanguage</b> will be used, the <b>DefaultLanguage</b> will be ignored.</summary>
+        public CacheType Cache;
 
-		/// <summary>This stores all currently loaded translations from this CSV file.</summary>
-		public List<Entry> Entries { get { if (entries == null) entries = new List<Entry>(); return entries; } } [SerializeField] private List<Entry> entries;
+        /// <summary>This stores all currently loaded translations from this CSV file.</summary>
+        public List<Entry> Entries
+        {
+            get
+            {
+                if (entries == null) entries = new List<Entry>();
+                return entries;
+            }
+        }
 
-		/// <summary>The characters used to separate each translation.</summary>
-		private static readonly char[] newlineCharacters = new char[] { '\r', '\n' };
+        [SerializeField] private List<Entry> entries;
 
-		private static Stack<Entry> entryPool = new Stack<Entry>();
+        /// <summary>The characters used to separate each translation.</summary>
+        private static readonly char[] newlineCharacters = new char[] {'\r', '\n'};
 
-		public override void Register(string primaryLanguage, string defaultLanguage)
-		{
-			// Lazy load only?
-			switch (Cache)
-			{
-				case CacheType.LazyLoad:
-				{
-					if (Language != primaryLanguage && Language != defaultLanguage)
-					{
-						return;
-					}
-				}
-				break;
+        private static Stack<Entry> entryPool = new Stack<Entry>();
 
-				case CacheType.LazyLoadAndUnload:
-				{
-					if (Language != primaryLanguage && Language != defaultLanguage)
-					{
-						DoClear();
+        public override void Register(string primaryLanguage, string defaultLanguage)
+        {
+            // Lazy load only?
+            switch (Cache)
+            {
+                case CacheType.LazyLoad:
+                {
+                    if (Language != primaryLanguage && Language != defaultLanguage)
+                    {
+                        return;
+                    }
+                }
+                    break;
 
-						return;
-					}
-				}
-				break;
+                case CacheType.LazyLoadAndUnload:
+                {
+                    if (Language != primaryLanguage && Language != defaultLanguage)
+                    {
+                        DoClear();
 
-				case CacheType.LazyLoadAndUnloadPrimaryOnly:
-				{
-					if (Language != primaryLanguage)
-					{
-						DoClear();
+                        return;
+                    }
+                }
+                    break;
 
-						return;
-					}
-				}
-				break;
-			}
+                case CacheType.LazyLoadAndUnloadPrimaryOnly:
+                {
+                    if (Language != primaryLanguage)
+                    {
+                        DoClear();
 
-			if (entries == null || entries.Count == 0)
-			{
-				if (Application.isPlaying == true)
-				{
-					DoLoadFromSource();
-				}
-			}
+                        return;
+                    }
+                }
+                    break;
+            }
 
-			if (entries != null)
-			{
-				for (var i = entries.Count - 1; i >= 0; i--)
-				{
-					var entry       = entries[i];
-					var translation = LeanLocalization.RegisterTranslation(entry.Name);
+            if (entries == null || entries.Count == 0)
+            {
+                if (Application.isPlaying == true)
+                {
+                    DoLoadFromSource();
+                }
+            }
 
-					translation.Register(Language, this);
+            if (entries != null)
+            {
+                for (var i = entries.Count - 1; i >= 0; i--)
+                {
+                    var entry = entries[i];
+                    var translation = LeanLocalization.RegisterTranslation(entry.Name);
 
-					if (Language == primaryLanguage)
-					{
-						translation.Data    = entry.Text;
-						translation.Primary = true;
-					}
-					else if (Language == defaultLanguage && translation.Primary == false)
-					{
-						translation.Data = entry.Text;
-					}
-				}
-			}
-		}
+                    translation.Register(Language, this);
 
-		/// <summary>This will unload all translations from this component.</summary>
-		[ContextMenu("Clear")]
-		public void Clear()
-		{
-			if (entries != null)
-			{
-				DoClear();
+                    if (Language == primaryLanguage)
+                    {
+                        translation.Data = entry.Text;
+                        translation.Primary = true;
+                    }
+                    else if (Language == defaultLanguage && translation.Primary == false)
+                    {
+                        translation.Data = entry.Text;
+                    }
+                }
+            }
+        }
 
-				// Update translations?
-				foreach (var localization in LeanLocalization.Instances)
-				{
-					if (localization.CurrentLanguage == Language)
-					{
-						LeanLocalization.UpdateTranslations();
+        /// <summary>This will unload all translations from this component.</summary>
+        [ContextMenu("Clear")]
+        public void Clear()
+        {
+            if (entries != null)
+            {
+                DoClear();
 
-						break;
-					}
-				}
-			}
-		}
+                // Update translations?
+                foreach (var localization in LeanLocalization.Instances)
+                {
+                    if (localization.CurrentLanguage == Language)
+                    {
+                        LeanLocalization.UpdateTranslations();
 
-		/// <summary>This will load all translations from the CSV file into this component.</summary>
-		[ContextMenu("Load From Source")]
-		public void LoadFromSource()
-		{
-			if (Source != null && string.IsNullOrEmpty(Language) == false)
-			{
-				DoLoadFromSource();
+                        break;
+                    }
+                }
+            }
+        }
 
-				// Update translations?
-				foreach (var localization in LeanLocalization.Instances)
-				{
-					if (localization.CurrentLanguage == Language)
-					{
-						LeanLocalization.UpdateTranslations();
+        /// <summary>This will load all translations from the CSV file into this component.</summary>
+        [ContextMenu("Load From Source")]
+        public void LoadFromSource()
+        {
+            if (Source != null && string.IsNullOrEmpty(Language) == false)
+            {
+                DoLoadFromSource();
 
-						break;
-					}
-				}
-			}
-		}
+                // Update translations?
+                foreach (var localization in LeanLocalization.Instances)
+                {
+                    if (localization.CurrentLanguage == Language)
+                    {
+                        LeanLocalization.UpdateTranslations();
 
-		private void DoClear()
-		{
-			if (entries != null)
-			{
-				entries.Clear();
-			}
-		}
+                        break;
+                    }
+                }
+            }
+        }
 
-		private void DoLoadFromSource()
-		{
-			if (Source != null && string.IsNullOrEmpty(Language) == false)
-			{
-				for (var i = Entries.Count - 1; i >= 0; i--) // NOTE: Property
-				{
-					entryPool.Push(entries[i]);
-				}
+        private void DoClear()
+        {
+            if (entries != null)
+            {
+                entries.Clear();
+            }
+        }
 
-				entries.Clear();
+        private void DoLoadFromSource()
+        {
+            if (Source != null && string.IsNullOrEmpty(Language) == false)
+            {
+                for (var i = Entries.Count - 1; i >= 0; i--) // NOTE: Property
+                {
+                    entryPool.Push(entries[i]);
+                }
 
-				switch (Format)
-				{
-					case FormatType.Legacy: LoadLegacy(); break;
-					case FormatType.Comma: LoadSeparated(","); break;
-					case FormatType.Semicolon: LoadSeparated(";"); break;
-				}
-			}
-		}
+                entries.Clear();
 
-		private void LoadLegacy()
-		{
-			// Split file into lines, and loop through them all
-			var lines = Source.text.Split(newlineCharacters, System.StringSplitOptions.RemoveEmptyEntries);
+                switch (Format)
+                {
+                    case FormatType.Legacy:
+                        LoadLegacy();
+                        break;
+                    case FormatType.Comma:
+                        LoadSeparated(",");
+                        break;
+                    case FormatType.Semicolon:
+                        LoadSeparated(";");
+                        break;
+                }
+            }
+        }
 
-			for (var i = 0; i < lines.Length; i++)
-			{
-				var line        = lines[i];
-				var equalsIndex = line.IndexOf(" = ");
+        private void LoadLegacy()
+        {
+            // Split file into lines, and loop through them all
+            var lines = Source.text.Split(newlineCharacters, System.StringSplitOptions.RemoveEmptyEntries);
 
-				// Only consider lines with the Separator character
-				if (equalsIndex != -1)
-				{
-					var name = line.Substring(0, equalsIndex).Trim();
-					var text = line.Substring(equalsIndex + " = ".Length).Trim();
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                var equalsIndex = line.IndexOf(" = ");
 
-					// Does this entry have a comment?
-					if (string.IsNullOrEmpty(" // ") == false)
-					{
-						var commentIndex = text.LastIndexOf(" // ");
+                // Only consider lines with the Separator character
+                if (equalsIndex != -1)
+                {
+                    var name = line.Substring(0, equalsIndex).Trim();
+                    var text = line.Substring(equalsIndex + " = ".Length).Trim();
 
-						if (commentIndex != -1)
-						{
-							text = text.Substring(0, commentIndex).Trim();
-						}
-					}
+                    // Does this entry have a comment?
+                    if (string.IsNullOrEmpty(" // ") == false)
+                    {
+                        var commentIndex = text.LastIndexOf(" // ");
 
-					// Replace newline markers with actual newlines
-					if (string.IsNullOrEmpty("\\n") == false)
-					{
-						text = text.Replace("\\n", System.Environment.NewLine);
-					}
+                        if (commentIndex != -1)
+                        {
+                            text = text.Substring(0, commentIndex).Trim();
+                        }
+                    }
 
-					var entry = entryPool.Count > 0 ? entryPool.Pop() : new Entry();
+                    // Replace newline markers with actual newlines
+                    if (string.IsNullOrEmpty("\\n") == false)
+                    {
+                        text = text.Replace("\\n", System.Environment.NewLine);
+                    }
 
-					entry.Name = name;
-					entry.Text = text;
+                    var entry = entryPool.Count > 0 ? entryPool.Pop() : new Entry();
 
-					entries.Add(entry);
-				}
-			}
-		}
+                    entry.Name = name;
+                    entry.Text = text;
 
-		private void LoadSeparated(string delimeter)
-		{
-			var text = Source.text;
+                    entries.Add(entry);
+                }
+            }
+        }
 
-			text = text.Replace("\r\n", "\n");
-			text = text.Replace("\n\r", "\n");
-			text = text.Replace("\r", "\n");
+        private void LoadSeparated(string delimeter)
+        {
+            var text = Source.text;
 
-			// Split file into lines, and loop through them all
-			var lines = text.Split(newlineCharacters);
-			var entry = default(Entry);
+            text = text.Replace("\r\n", "\n");
+            text = text.Replace("\n\r", "\n");
+            text = text.Replace("\r", "\n");
 
-			for (var i = 0; i < lines.Length; i++)
-			{
-				var line = lines[i];
+            // Split file into lines, and loop through them all
+            var lines = text.Split(newlineCharacters);
+            var entry = default(Entry);
 
-				if (entry == null)
-				{
-					var delimIndex = line.IndexOf(delimeter);
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
 
-					if (delimIndex == -1)
-					{
-						throw new System.InvalidOperationException("The specified CSV file contained an invalid entry on line " + i);
-					}
+                if (entry == null)
+                {
+                    var delimIndex = line.IndexOf(delimeter);
 
-					entry = entryPool.Count > 0 ? entryPool.Pop() : new Entry();
+                    if (delimIndex == -1)
+                    {
+                        throw new System.InvalidOperationException(
+                            "The specified CSV file contained an invalid entry on line " + i);
+                    }
 
-					entry.Name = line.Substring(0, delimIndex);
-					entry.Text = line.Substring(delimIndex + 1);
+                    entry = entryPool.Count > 0 ? entryPool.Pop() : new Entry();
 
-					entries.Add(entry);
-				}
-				else
-				{
-					entry.Text += "\n" + line;
-				}
+                    entry.Name = line.Substring(0, delimIndex);
+                    entry.Text = line.Substring(delimIndex + 1);
 
-				if (entry != null)
-				{
-					var count = QuoteCount(entry.Text);
+                    entries.Add(entry);
+                }
+                else
+                {
+                    entry.Text += "\n" + line;
+                }
 
-					if (count == 0)
-					{
-						entry = null;
-					}
-					else if (count % 2 == 0)
-					{
-						if (entry.Text.StartsWith("\"") == true && entry.Text.EndsWith("\"") == true)
-						{
-							entry.Text = entry.Text.Substring(1, entry.Text.Length - 2).Replace("\"\"", "\"");
+                if (entry != null)
+                {
+                    var count = QuoteCount(entry.Text);
 
-							entry = null;
-						}
-						else
-						{
-							throw new System.InvalidOperationException("The specified CSV file contained an invalid entry on line " + i);
-						}
-					}
-				}
-			}
-		}
+                    if (count == 0)
+                    {
+                        entry = null;
+                    }
+                    else if (count % 2 == 0)
+                    {
+                        if (entry.Text.StartsWith("\"") == true && entry.Text.EndsWith("\"") == true)
+                        {
+                            entry.Text = entry.Text.Substring(1, entry.Text.Length - 2).Replace("\"\"", "\"");
 
-		private static int QuoteCount(string s)
-		{
-			var count = 0;
+                            entry = null;
+                        }
+                        else
+                        {
+                            throw new System.InvalidOperationException(
+                                "The specified CSV file contained an invalid entry on line " + i);
+                        }
+                    }
+                }
+            }
+        }
 
-			foreach (var c in s)
-			{
-				if (c == '\"')
-				{
-					count += 1;
-				}
-			}
+        private static int QuoteCount(string s)
+        {
+            var count = 0;
 
-			return count;
-		}
+            foreach (var c in s)
+            {
+                if (c == '\"')
+                {
+                    count += 1;
+                }
+            }
+
+            return count;
+        }
 
 #if UNITY_EDITOR
-		/*
-		/// <summary>This exports all text phrases in the LeanLocalization component for the Language specified by this component.</summary>
-		[ContextMenu("Export Text Asset")]
-		public void ExportTextAsset()
-		{
-			if (string.IsNullOrEmpty(Language) == false)
-			{
-				// Find where we want to save the file
-				var path = UnityEditor.EditorUtility.SaveFilePanelInProject("Export Text Asset for " + Language, Language, "txt", "");
+        /*
+        /// <summary>This exports all text phrases in the LeanLocalization component for the Language specified by this component.</summary>
+        [ContextMenu("Export Text Asset")]
+        public void ExportTextAsset()
+        {
+            if (string.IsNullOrEmpty(Language) == false)
+            {
+                // Find where we want to save the file
+                var path = UnityEditor.EditorUtility.SaveFilePanelInProject("Export Text Asset for " + Language, Language, "txt", "");
 
-				// Make sure we didn't cancel the panel
-				if (string.IsNullOrEmpty(path) == false)
-				{
-					if (LeanLocalization.CurrentLanguage == Language)
-					{
-						DoExportTextAsset(path);
-					}
-					else
-					{
-						var oldLanguage = LeanLocalization.CurrentLanguage;
+                // Make sure we didn't cancel the panel
+                if (string.IsNullOrEmpty(path) == false)
+                {
+                    if (LeanLocalization.CurrentLanguage == Language)
+                    {
+                        DoExportTextAsset(path);
+                    }
+                    else
+                    {
+                        var oldLanguage = LeanLocalization.CurrentLanguage;
 
-						LeanLocalization.CurrentLanguage = Language;
+                        LeanLocalization.CurrentLanguage = Language;
 
-						DoExportTextAsset(path);
+                        DoExportTextAsset(path);
 
-						LeanLocalization.CurrentLanguage = oldLanguage;
-					}
-				}
-			}
-		}
-		*/
+                        LeanLocalization.CurrentLanguage = oldLanguage;
+                    }
+                }
+            }
+        }
+        */
 
-		private void DoExportTextAsset(string path)
-		{
-			var data = "";
-			var gaps = false;
+        private void DoExportTextAsset(string path)
+        {
+            var data = "";
+            var gaps = false;
 
-			// Add all phrase names and existing translations to lines
-			foreach (var pair in LeanLocalization.CurrentTranslations)
-			{
-				var translation = pair.Value;
+            // Add all phrase names and existing translations to lines
+            foreach (var pair in LeanLocalization.CurrentTranslations)
+            {
+                var translation = pair.Value;
 
-				if (gaps == true)
-				{
-					data += System.Environment.NewLine;
-				}
+                if (gaps == true)
+                {
+                    data += System.Environment.NewLine;
+                }
 
-				data += pair.Key + " = ";
-				gaps  = true;
+                data += pair.Key + " = ";
+                gaps = true;
 
-				if (translation.Data is string)
-				{
-					var text = (string)translation.Data;
+                if (translation.Data is string)
+                {
+                    var text = (string) translation.Data;
 
-					// Replace all new line permutations with the new line token
-					text = text.Replace("\r\n", "\n");
-					text = text.Replace("\n\r", "\n");
-					text = text.Replace("\r", "\n");
+                    // Replace all new line permutations with the new line token
+                    text = text.Replace("\r\n", "\n");
+                    text = text.Replace("\n\r", "\n");
+                    text = text.Replace("\r", "\n");
 
-					data += text;
-				}
-			}
+                    data += text;
+                }
+            }
 
-			// Write text to file
-			using (var file = System.IO.File.OpenWrite(path))
-			{
-				var encoding = new System.Text.UTF8Encoding();
-				var bytes    = encoding.GetBytes(data);
+            // Write text to file
+            using (var file = System.IO.File.OpenWrite(path))
+            {
+                var encoding = new System.Text.UTF8Encoding();
+                var bytes = encoding.GetBytes(data);
 
-				file.Write(bytes, 0, bytes.Length);
-			}
+                file.Write(bytes, 0, bytes.Length);
+            }
 
-			// Import asset into project
-			UnityEditor.AssetDatabase.ImportAsset(path);
+            // Import asset into project
+            UnityEditor.AssetDatabase.ImportAsset(path);
 
-			// Replace Source with new Text Asset?
-			var textAsset = (TextAsset)UnityEditor.AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset));
+            // Replace Source with new Text Asset?
+            var textAsset = (TextAsset) UnityEditor.AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset));
 
-			if (textAsset != null)
-			{
-				Source = textAsset;
+            if (textAsset != null)
+            {
+                Source = textAsset;
 
-				UnityEditor.EditorGUIUtility.PingObject(textAsset);
+                UnityEditor.EditorGUIUtility.PingObject(textAsset);
 
-				UnityEditor.EditorUtility.SetDirty(this);
-			}
-		}
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+        }
 #endif
-	}
+    }
 }
 
 #if UNITY_EDITOR
 namespace Lean.Localization.Editor
 {
-	using TARGET = LeanLanguageCSV;
+    using TARGET = LeanLanguageCSV;
 
-	[UnityEditor.CanEditMultipleObjects]
-	[UnityEditor.CustomEditor(typeof(LeanLanguageCSV), true)]
-	public class LeanLanguageCSV_Editor : LeanEditor
-	{
-		protected override void OnInspector()
-		{
-			TARGET tgt; TARGET[] tgts; GetTargets(out tgt, out tgts);
+    [UnityEditor.CanEditMultipleObjects]
+    [UnityEditor.CustomEditor(typeof(LeanLanguageCSV), true)]
+    public class LeanLanguageCSV_Editor : LeanEditor
+    {
+        protected override void OnInspector()
+        {
+            TARGET tgt;
+            TARGET[] tgts;
+            GetTargets(out tgt, out tgts);
 
-			Draw("Source", "The text asset that contains all the translations.");
-			Draw("Format", "The format of the CSV data.\n\nSee the inspector for examples of what the different formats look like.");
-			Draw("Language", "The language of the translations in the source file.");
-			Draw("Cache", "This allows you to control when the CSV file is loaded or unloaded. The lower down you set this, the lower your app's memory usage will be. However, setting it too low means you can miss translations if you haven't translated absolutely every phrase in every language, so I recommend you use <b>LoadImmediately</b> unless you have LOTS of translations.\n\nLoadImmediately = Regardless of the language, the CSV will load when this component activates, and then it will be kept in memory until this component is destroyed.\n\nLazyLoad = The CSV file will only load when the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> matches the CSV language, and then it will be kept in memory until this component is destroyed.\n\nLazyLoadAndUnload = Like <b>LazyLoad</b>, but translations will be unloaded if the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> differs from the CSV language.\n\nLazyLoadAndUnloadPrimaryOnly = Like <b>LazyLoadAndUnload</b>, but only the <b>CurrentLanguage</b> will be used, the <b>DefaultLanguage</b> will be ignored.");
+            Draw("Source", "The text asset that contains all the translations.");
+            Draw("Format",
+                "The format of the CSV data.\n\nSee the inspector for examples of what the different formats look like.");
+            Draw("Language", "The language of the translations in the source file.");
+            Draw("Cache",
+                "This allows you to control when the CSV file is loaded or unloaded. The lower down you set this, the lower your app's memory usage will be. However, setting it too low means you can miss translations if you haven't translated absolutely every phrase in every language, so I recommend you use <b>LoadImmediately</b> unless you have LOTS of translations.\n\nLoadImmediately = Regardless of the language, the CSV will load when this component activates, and then it will be kept in memory until this component is destroyed.\n\nLazyLoad = The CSV file will only load when the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> matches the CSV language, and then it will be kept in memory until this component is destroyed.\n\nLazyLoadAndUnload = Like <b>LazyLoad</b>, but translations will be unloaded if the <b>CurrentLanguage</b> or <b>DefaultLanguage</b> differs from the CSV language.\n\nLazyLoadAndUnloadPrimaryOnly = Like <b>LazyLoadAndUnload</b>, but only the <b>CurrentLanguage</b> will be used, the <b>DefaultLanguage</b> will be ignored.");
 
-			Separator();
+            Separator();
 
-			BeginDisabled(true);
-				switch (tgt.Format)
-				{
-					case LeanLanguageCSV.FormatType.Legacy: UnityEditor.EditorGUILayout.TextArea("Hello = こんにちは // Comment\nCollectItem = アイテム \\n 集めました // Comment here", GUILayout.Height(50)); break;
-					case LeanLanguageCSV.FormatType.Comma: UnityEditor.EditorGUILayout.TextArea("Hello,こんにちは\nCollectItem,\"アイテム\n集めました\""); break;
-					case LeanLanguageCSV.FormatType.Semicolon: UnityEditor.EditorGUILayout.TextArea("Hello;こんにちは\nCollectItem;\"アイテム\n集めました\""); break;
-				}
-			EndDisabled();
+            BeginDisabled(true);
+            switch (tgt.Format)
+            {
+                case LeanLanguageCSV.FormatType.Legacy:
+                    UnityEditor.EditorGUILayout.TextArea(
+                        "Hello = こんにちは // Comment\nCollectItem = アイテム \\n 集めました // Comment here", GUILayout.Height(50));
+                    break;
+                case LeanLanguageCSV.FormatType.Comma:
+                    UnityEditor.EditorGUILayout.TextArea("Hello,こんにちは\nCollectItem,\"アイテム\n集めました\"");
+                    break;
+                case LeanLanguageCSV.FormatType.Semicolon:
+                    UnityEditor.EditorGUILayout.TextArea("Hello;こんにちは\nCollectItem;\"アイテム\n集めました\"");
+                    break;
+            }
 
-			Separator();
+            EndDisabled();
 
-			UnityEditor.EditorGUILayout.BeginHorizontal();
-				if (Any(tgts, t => t.Entries.Count > 0))
-				{
-					if (GUILayout.Button("Clear") == true)
-					{
-						Each(tgts, t => t.Clear(), true);
-					}
-				}
-				if (GUILayout.Button("Load Now") == true)
-				{
-					Each(tgts, t => t.LoadFromSource(), true);
-				}
-				//if (GUILayout.Button("Export") == true)
-				//{
-				//	Each(tgts, t => t.ExportTextAsset());
-				//}
-			UnityEditor.EditorGUILayout.EndHorizontal();
+            Separator();
 
-			if (tgts.Length == 1)
-			{
-				var entries = tgt.Entries;
+            UnityEditor.EditorGUILayout.BeginHorizontal();
+            if (Any(tgts, t => t.Entries.Count > 0))
+            {
+                if (GUILayout.Button("Clear") == true)
+                {
+                    Each(tgts, t => t.Clear(), true);
+                }
+            }
 
-				if (entries.Count > 0)
-				{
-					Separator();
+            if (GUILayout.Button("Load Now") == true)
+            {
+                Each(tgts, t => t.LoadFromSource(), true);
+            }
 
-					BeginDisabled(true);
-						foreach (var entry in entries)
-						{
-							UnityEditor.EditorGUILayout.TextField(entry.Name, entry.Text);
-						}
-					EndDisabled();
-				}
-			}
-		}
-	}
+            //if (GUILayout.Button("Export") == true)
+            //{
+            //	Each(tgts, t => t.ExportTextAsset());
+            //}
+            UnityEditor.EditorGUILayout.EndHorizontal();
+
+            if (tgts.Length == 1)
+            {
+                var entries = tgt.Entries;
+
+                if (entries.Count > 0)
+                {
+                    Separator();
+
+                    BeginDisabled(true);
+                    foreach (var entry in entries)
+                    {
+                        UnityEditor.EditorGUILayout.TextField(entry.Name, entry.Text);
+                    }
+
+                    EndDisabled();
+                }
+            }
+        }
+    }
 }
 #endif
