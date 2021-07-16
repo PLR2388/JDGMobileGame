@@ -94,9 +94,9 @@ public class InvocationCard : Card
         return defense;
     }
 
-    public bool HasAttack()
+    public bool CanAttack()
     {
-        return hasAlreadyAttackThisTurn;
+        return !hasAlreadyAttackThisTurn && !blockAttackNextTurn;
     }
 
     public void AttackTurnDone()

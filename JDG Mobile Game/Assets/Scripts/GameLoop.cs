@@ -130,7 +130,7 @@ public class GameLoop : MonoBehaviour
                 if (cardSelected is InvocationCard invocationCard)
                 {
                     attacker = invocationCard;
-                    if (!attacker.HasAttack() && ownPlayerCards.ContainsCardInInvocation(attacker))
+                    if (attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker))
                     {
                         invocationMenu.SetActive(true);
                         invocationMenu.transform.position = mousePosition;
@@ -592,16 +592,27 @@ public class GameLoop : MonoBehaviour
                 p1Cards.handCards.Add(c);
                 p1Cards.deck.RemoveAt(size - 1);
             }
+
+            var invocationCards = p1Cards.invocationCards;
+            foreach (var invocationCard in invocationCards)
+            {
+                invocationCard.UnblockAttack();
+            }
         }
         else
         {
-            var P2Cards = p2.GetComponent<PlayerCards>();
-            var size = P2Cards.deck.Count;
+            var p2Cards = p2.GetComponent<PlayerCards>();
+            var size = p2Cards.deck.Count;
             if (size > 0)
             {
-                var c = P2Cards.deck[size - 1];
-                P2Cards.handCards.Add(c);
-                P2Cards.deck.RemoveAt(size - 1);
+                var c = p2Cards.deck[size - 1];
+                p2Cards.handCards.Add(c);
+                p2Cards.deck.RemoveAt(size - 1);
+            }
+            var invocationCards = p2Cards.invocationCards;
+            foreach (var invocationCard in invocationCards)
+            {
+                invocationCard.UnblockAttack();
             }
         }
 

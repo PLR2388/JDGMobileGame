@@ -380,4 +380,17 @@ public class PlayerCards : MonoBehaviour
 
         return -1;
     }
+
+    public int GetIndexInvocationCard(string nameCard)
+    {
+        for (var i = 0; i < invocationCards.Count; i++)
+        {
+            if (invocationCards[i].Nom == nameCard)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }

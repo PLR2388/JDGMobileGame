@@ -446,6 +446,9 @@ public class InvocationFunctions : MonoBehaviour
                                     if (selectedCard != null)
                                     {
                                         currentPlayerCard.handCards.Add(selectedCard);
+                                        currentPlayerCard.deck.Remove(selectedCard);
+                                        var index = currentPlayerCard.GetIndexInvocationCard(currentInvocationCard.Nom);
+                                        currentPlayerCard.invocationCards[index].BlockAttack();
                                         currentInvocationCard.BlockAttack();
                                     }
                                     Destroy(messageBox1);
