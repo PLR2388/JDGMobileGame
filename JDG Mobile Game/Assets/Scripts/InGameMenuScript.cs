@@ -77,7 +77,10 @@ public class InGameMenuScript : MonoBehaviour
             case CardType.Invocation:
                 putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
                 var invocationCard = (InvocationCard) card;
-                putCardButton.GetComponent<Button>().interactable = invocationCard.IsInvocationPossible();
+                var playerCard = GameLoop.IsP1Turn
+                    ? GameObject.Find("Player1").GetComponent<PlayerCards>()
+                    : GameObject.Find("Player2").GetComponent<PlayerCards>();
+                putCardButton.GetComponent<Button>().interactable = invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
 
                 break;
             case CardType.Contre:
