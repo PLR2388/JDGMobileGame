@@ -20,7 +20,8 @@ public class GameLoop : MonoBehaviour
 
     [SerializeField] private GameObject bigImageCard;
     [SerializeField] private GameObject invocationMenu;
-    [SerializeField] private GameObject messageBox;
+    [SerializeField] private GameObject nextPhaseButton;
+    [SerializeField] private Transform canvas;
 
     [FormerlySerializedAs("P1")] [SerializeField]
     private GameObject p1;
@@ -218,10 +219,27 @@ public class GameLoop : MonoBehaviour
 
         var opponentMessageBox = DisplayOpponentMessageBox(notEmptyOpponent);
         stopDetectClicking = true;
-        opponentMessageBox.GetComponent<MessageBox>().PositiveAction = () =>
+    }
+
+    private GameObject DisplayOpponentMessageBox(List<Card> invocationCards)
+    {
+        /*var message = Instantiate(messageBox);
+        message.GetComponent<MessageBox>().title = "Choisis ton adversaire :";
+
+
+        message.GetComponent<MessageBox>().displayCardsScript.cardsList = invocationCards;
+        message.GetComponent<MessageBox>().displayCards = true;
+        
+        nextPhaseButton.SetActive(false);
+
+        return message;*/
+        nextPhaseButton.SetActive(false);
+
+        var message = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis ton adversaire :", invocationCards);
+        message.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var invocationCard =
-                (InvocationCard) opponentMessageBox.GetComponent<MessageBox>().GETSelectedCard();
+                (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
 
             if (invocationCard != null)
             {
@@ -229,24 +247,15 @@ public class GameLoop : MonoBehaviour
             }
 
             stopDetectClicking = false;
-            Destroy(opponentMessageBox);
+            nextPhaseButton.SetActive(true);
+            Destroy(message);
         };
-        opponentMessageBox.GetComponent<MessageBox>().NegativeAction = () =>
+        message.GetComponent<MessageBox>().NegativeAction = () =>
         {
-            Destroy(opponentMessageBox);
+            nextPhaseButton.SetActive(true);
             stopDetectClicking = false;
+            Destroy(message);
         };
-    }
-
-    private GameObject DisplayOpponentMessageBox(List<Card> invocationCards)
-    {
-        var message = Instantiate(messageBox);
-        message.GetComponent<MessageBox>().title = "Choisis ton adversaire :";
-
-
-        message.GetComponent<MessageBox>().displayCardsScript.cardsList = invocationCards;
-        message.GetComponent<MessageBox>().displayCards = true;
-
         return message;
     }
 
@@ -564,7 +573,27 @@ public class GameLoop : MonoBehaviour
     private void AskUserToAddCardInHand(string cardName, Card cardFound, bool isFound, PlayerCards currentPlayerCard)
     {
         if (!isFound) return;
-        var message = Instantiate(messageBox);
+        
+        nextPhaseButton.SetActive(false);
+        inHandButton.SetActive(false);
+
+        UnityAction positiveAction = () =>
+        {
+            currentPlayerCard.handCards.Add(cardFound);
+            currentPlayerCard.deck.Remove(cardFound);
+            nextPhaseButton.SetActive(true);
+            inHandButton.SetActive(true);
+        };
+
+        UnityAction negativeAction = () =>
+        {
+            nextPhaseButton.SetActive(true);
+            inHandButton.SetActive(true);
+        };
+
+        MessageBox.CreateSimpleMessageBox(canvas, "Carte en main",
+            "Voulez-vous aussi ajouter " + cardName + " à votre main ?", positiveAction, negativeAction);
+        /*var message = Instantiate(messageBox);
         message.GetComponent<MessageBox>().title = "Carte en main";
 
         message.GetComponent<MessageBox>().description =
@@ -577,7 +606,7 @@ public class GameLoop : MonoBehaviour
 
             Destroy(message);
         };
-        message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
+        message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };*/
     }
 
     private void DisplayCurrentCard(Card card)
@@ -617,6 +646,7 @@ public class GameLoop : MonoBehaviour
                 p2Cards.handCards.Add(c);
                 p2Cards.deck.RemoveAt(size - 1);
             }
+
             var invocationCards = p2Cards.invocationCards;
             foreach (var invocationCard in invocationCards)
             {

@@ -10,7 +10,7 @@ public class InvocationFunctions : MonoBehaviour
     private PlayerCards currentPlayerCard;
     private GameObject p1;
     private GameObject p2;
-    [SerializeField] private GameObject miniCardMenu;
+    [SerializeField] private GameObject inHandButton;
     [SerializeField] private Transform canvas;
 
     private void Start()
@@ -87,10 +87,12 @@ public class InvocationFunctions : MonoBehaviour
                                     {
                                         currentPlayerCard.handCards.Add(cardFound[0]);
                                         currentPlayerCard.deck.Remove(cardFound[0]);
+                                        inHandButton.SetActive(true);
                                     };
+                                    UnityAction negativeAction = () => { inHandButton.SetActive(true); };
                                     CreateMessageBoxSimple("Carte en main",
                                         "Voulez-vous aussi ajouter " + cardName + " à votre main ?",
-                                        positiveAction: PositiveAction);
+                                        positiveAction: PositiveAction, negativeAction);
                                 }
                             }
                             else if (invokeCardNames.Count > 0)
@@ -107,13 +109,15 @@ public class InvocationFunctions : MonoBehaviour
                                     {
                                         UnityAction positiveAction = () =>
                                         {
-                                            var invocationCard = (InvocationCard) cardFound[cardFound.Count - 1];
+                                            var invocationCard = (InvocationCard)cardFound[cardFound.Count - 1];
                                             currentPlayerCard.invocationCards.Add(invocationCard);
                                             currentPlayerCard.deck.Remove(invocationCard);
+                                            inHandButton.SetActive(true);
                                         };
+                                        UnityAction negativeAction = () => { inHandButton.SetActive(true); };
                                         CreateMessageBoxSimple("Invocation",
                                             "Voulez-vous aussi invoquer " + cardFound[0].Nom + " ?",
-                                            positiveAction: positiveAction);
+                                            positiveAction: positiveAction, negativeAction);
                                     }
                                     else
                                     {
@@ -121,9 +125,16 @@ public class InvocationFunctions : MonoBehaviour
                                         message.GetComponent<MessageBox>().PositiveAction = () =>
                                         {
                                             var invocationCard =
-                                                (InvocationCard) message.GetComponent<MessageBox>().GETSelectedCard();
+                                                (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
                                             currentPlayerCard.invocationCards.Add(invocationCard);
                                             currentPlayerCard.deck.Remove(invocationCard);
+                                            inHandButton.SetActive(true);
+                                            Destroy(message);
+                                        };
+                                        message.GetComponent<MessageBox>().NegativeAction = () =>
+                                        {
+                                            inHandButton.SetActive(true);
+                                            Destroy(message);
                                         };
                                     }
                                 }
@@ -141,7 +152,7 @@ public class InvocationFunctions : MonoBehaviour
                                 foreach (var card in deck)
                                 {
                                     if (card.Type != CardType.Invocation) continue;
-                                    var invocationCard = (InvocationCard) card;
+                                    var invocationCard = (InvocationCard)card;
 
                                     var listFamily = invocationCard.GetFamily();
                                     cardFound.AddRange((from family in listFamily
@@ -186,7 +197,7 @@ public class InvocationFunctions : MonoBehaviour
                                 foreach (var card in trash)
                                 {
                                     if (card.Type != CardType.Invocation) continue;
-                                    var invocationCard = (InvocationCard) card;
+                                    var invocationCard = (InvocationCard)card;
 
                                     var listFamily = invocationCard.GetFamily();
                                     cardFound.AddRange(
@@ -237,7 +248,7 @@ public class InvocationFunctions : MonoBehaviour
                             message.GetComponent<MessageBox>().PositiveAction = () =>
                             {
                                 var fieldCard =
-                                    (FieldCard) message.GetComponent<MessageBox>().GETSelectedCard();
+                                    (FieldCard)message.GetComponent<MessageBox>().GETSelectedCard();
 
                                 if (fieldCard != null)
                                 {
@@ -248,6 +259,14 @@ public class InvocationFunctions : MonoBehaviour
                                 {
                                     CreateMessageBoxNotChoosenCard();
                                 }
+
+                                inHandButton.SetActive(true);
+                                Destroy(message);
+                            };
+                            message.GetComponent<MessageBox>().NegativeAction = () =>
+                            {
+                                inHandButton.SetActive(true);
+                                Destroy(message);
                             };
                         }
                         else
@@ -258,7 +277,7 @@ public class InvocationFunctions : MonoBehaviour
                             message.GetComponent<MessageBox>().PositiveAction = () =>
                             {
                                 var fieldCard =
-                                    (FieldCard) message.GetComponent<MessageBox>().GETSelectedCard();
+                                    (FieldCard)message.GetComponent<MessageBox>().GETSelectedCard();
 
                                 if (fieldCard != null)
                                 {
@@ -269,6 +288,14 @@ public class InvocationFunctions : MonoBehaviour
                                 {
                                     CreateMessageBoxNotChoosenCard();
                                 }
+
+                                inHandButton.SetActive(true);
+                                Destroy(message);
+                            };
+                            message.GetComponent<MessageBox>().NegativeAction = () =>
+                            {
+                                inHandButton.SetActive(true);
+                                Destroy(message);
                             };
                         }
                     }
@@ -297,7 +324,7 @@ public class InvocationFunctions : MonoBehaviour
                         message.GetComponent<MessageBox>().PositiveAction = () =>
                         {
                             var fieldCard =
-                                (FieldCard) message.GetComponent<MessageBox>().GETSelectedCard();
+                                (FieldCard)message.GetComponent<MessageBox>().GETSelectedCard();
 
                             if (fieldCard != null)
                             {
@@ -318,6 +345,14 @@ public class InvocationFunctions : MonoBehaviour
                             {
                                 CreateMessageBoxNotChoosenCard();
                             }
+
+                            inHandButton.SetActive(true);
+                            Destroy(message);
+                        };
+                        message.GetComponent<MessageBox>().NegativeAction = () =>
+                        {
+                            inHandButton.SetActive(true);
+                            Destroy(message);
                         };
                     }
                 }
@@ -359,7 +394,7 @@ public class InvocationFunctions : MonoBehaviour
                     message.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var invocationCardSelected =
-                            (InvocationCard) message.GetComponent<MessageBox>().GETSelectedCard();
+                            (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
                         if (invocationCardSelected != null)
                         {
                             var invocationCards = opponentPlayerCards.invocationCards;
@@ -400,8 +435,14 @@ public class InvocationFunctions : MonoBehaviour
                         }
                         else
                         {
-                            CreateMessageBoxSimple("Information", "Aucune carte n'a été choisie");
+                            CreateMessageBoxNotChoosenCard();
                         }
+                        Destroy(message);
+                    };
+                    message.GetComponent<MessageBox>().NegativeAction = () =>
+                    {
+                        inHandButton.SetActive(true);
+                        Destroy(message);
                     };
                 }
                     break;
@@ -450,8 +491,20 @@ public class InvocationFunctions : MonoBehaviour
                                         currentPlayerCard.invocationCards[index].BlockAttack();
                                         currentInvocationCard.BlockAttack();
                                     }
+
+                                    inHandButton.SetActive(true);
                                     Destroy(messageBox1);
                                 };
+                                messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
+                                {
+                                    inHandButton.SetActive(true);
+                                    Destroy(messageBox1);
+                                };
+                                Destroy(m);
+                            };
+                            m.GetComponent<MessageBox>().NegativeAction = () =>
+                            {
+                                inHandButton.SetActive(true);
                                 Destroy(m);
                             };
                         }
@@ -569,12 +622,14 @@ public class InvocationFunctions : MonoBehaviour
             currentPlayerCard.SendCardToYellowTrash(card);
             invocationCard.SetBonusAttack(valueStars);
             invocationCard.SetBonusDefense(valueStars);
+            inHandButton.SetActive(true);
         };
-        var message =
-            CreateMessageBoxSimple("Amélioration", "Voulez-vous augmenter de " +
-                                                   valueStars + " l'ATQ et la DEF de " + invocationCard.Nom +
-                                                   " en sacrifiant " +
-                                                   cardName + " ?", positiveAction: positiveAction);
+        UnityAction negativeAction = () => { inHandButton.SetActive(true); };
+        CreateMessageBoxSimple("Amélioration", "Voulez-vous augmenter de " +
+                                               valueStars + " l'ATQ et la DEF de " + invocationCard.Nom +
+                                               " en sacrifiant " +
+                                               cardName + " ?", positiveAction: positiveAction,
+                negativeAction: negativeAction);
     }
 
     public void Shuffle(List<Card> cards)
@@ -853,6 +908,7 @@ public class InvocationFunctions : MonoBehaviour
     private GameObject CreateMessageBoxSelectorCard(string title, List<Card> cards, UnityAction positiveAction = null,
         UnityAction negativeAction = null, bool isInfo = false)
     {
+        inHandButton.SetActive(false);
         return MessageBox.CreateMessageBoxWithCardSelector(canvas, title, cards, positiveAction, negativeAction,
             isInfo);
     }
@@ -860,6 +916,7 @@ public class InvocationFunctions : MonoBehaviour
     private GameObject CreateMessageBoxSimple(string title, string description, UnityAction positiveAction = null,
         UnityAction negativeAction = null, UnityAction okAction = null, bool isInfo = false)
     {
+        inHandButton.SetActive(false);
         return isInfo
             ? MessageBox.CreateOkMessageBox(canvas, title, description, okAction)
             : MessageBox.CreateSimpleMessageBox(canvas, title, description, positiveAction, negativeAction);
