@@ -68,9 +68,6 @@ public class InGameMenuScript : MonoBehaviour
     private void ClickOnCard(Card card)
     {
         currentSelectedCard = card;
-#if UNITY_EDITOR
-        var mousePosition = Input.mousePosition;
-
         var cardType = currentSelectedCard.Type;
         switch (cardType)
         {
@@ -99,7 +96,18 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
                 break;
         }
+        
+#if UNITY_EDITOR
+        var mousePosition = Input.mousePosition;
+        DisplayMiniMenuCardAtPosition(mousePosition);
+#elif UNITY_ANDROID
+        var touch = Input.GetTouch(0);
+        DisplayMiniMenuCardAtPosition(touch.position);
+#endif
+    }
 
+    private void DisplayMiniMenuCardAtPosition(Vector3 mousePosition)
+    {
         if (miniMenuCard.activeSelf)
         {
             miniMenuCard.transform.position = mousePosition + padding;
@@ -109,7 +117,6 @@ public class InGameMenuScript : MonoBehaviour
             miniMenuCard.SetActive(true);
             miniMenuCard.transform.position = mousePosition + padding;
         }
-#endif
     }
 
     public void ClickPutCard()

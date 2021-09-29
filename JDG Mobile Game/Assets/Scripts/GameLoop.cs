@@ -44,6 +44,7 @@ public class GameLoop : MonoBehaviour
     private float totalDownTime = 0;
     private Card cardSelected;
     private InvocationCard attacker;
+    private int numberOfTurn = 0;
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
@@ -100,7 +101,12 @@ public class GameLoop : MonoBehaviour
     private void ChooseAttack()
     {
         if (!Input.GetMouseButton(0) || phaseId != 2 || stopDetectClicking) return;
-        var hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitInfo);
+#if UNITY_EDITOR
+        var position = Input.mousePosition;
+#elif UNITY_ANDROID
+        var position = Input.GetTouch(0).position;
+#endif
+        var hit = Physics.Raycast(Camera.main.ScreenPointToRay(position), out var hitInfo);
         if (hit)
         {
             HandleClick(hitInfo);
@@ -598,6 +604,8 @@ public class GameLoop : MonoBehaviour
             {
                 invocationCard.UnblockAttack();
             }
+
+            numberOfTurn++;
         }
         else
         {
@@ -623,7 +631,15 @@ public class GameLoop : MonoBehaviour
     public void NextRound()
     {
         invocationMenu.SetActive(false);
-        phaseId += 1;
+        if (numberOfTurn == 1 && IsP1Turn)
+        {
+            phaseId = 3;
+        }
+        else
+        {
+            phaseId += 1;
+        }
+
         switch (phaseId)
         {
             case 3:

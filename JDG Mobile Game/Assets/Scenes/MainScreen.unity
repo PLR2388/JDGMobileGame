@@ -337,7 +337,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Choice of cards for player 1
+  m_Text: Choix de cartes pour le joueur 1
 --- !u!1 &98377513
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,7 +720,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Choice player 2
+  m_Text: Choix joueur 2
 --- !u!1 &227781770
 GameObject:
   m_ObjectHideFlags: 0
@@ -1384,7 +1384,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Two players
+  m_Text: Deux joueurs
 --- !u!222 &398525853
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1880,7 +1880,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Back
+  m_Text: Retour
 --- !u!1 &663974739
 GameObject:
   m_ObjectHideFlags: 0
@@ -3182,7 +3182,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 0
-  orthographic size: 0.375
+  orthographic size: 0.23076922
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4493,7 +4493,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Back
+  m_Text: Retour
 --- !u!1 &1480686848
 GameObject:
   m_ObjectHideFlags: 0
@@ -4615,7 +4615,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: GameMode
+  m_Text: Mode de jeu
 --- !u!222 &1535426782
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5148,7 +5148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 806f0696300aeac44a0e17efee222854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLanguage: English
+  currentLanguage: French
   detectLanguage: 1
   defaultLanguage: English
   saveLoad: 1
@@ -5520,7 +5520,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1977311402
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5730,7 +5730,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Back
+  m_Text: Retour
 --- !u!1 &2003630708
 GameObject:
   m_ObjectHideFlags: 0
@@ -6353,7 +6353,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Random
+  m_Text: "Al\xE9atoire"
 --- !u!1 &2056577973
 GameObject:
   m_ObjectHideFlags: 0
@@ -6372,7 +6372,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2056577974
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6438,7 +6438,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Language
+  m_Text: Langage
 --- !u!222 &2056577977
 CanvasRenderer:
   m_ObjectHideFlags: 0
