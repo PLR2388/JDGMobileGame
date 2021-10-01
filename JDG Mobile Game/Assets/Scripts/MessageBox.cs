@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
@@ -109,11 +110,13 @@ public class MessageBox : MonoBehaviour
 
     public static GameObject CreateSimpleMessageBox(Transform canvas, string title, string description,
         UnityAction positiveAction = null,
-        UnityAction negativeAction = null)
+        UnityAction negativeAction = null,
+        List<GameObject> gameObjectsToHide = null)
     {
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
         var messageBoxGameObject = messageBox[0].gameObject;
         var message = Instantiate(messageBoxGameObject);
+        message.SetActive(true);
         Destroy(message.GetComponent<DDOL>());
         message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
         message.GetComponent<MessageBox>().title = title;
@@ -128,7 +131,7 @@ public class MessageBox : MonoBehaviour
             negativeAction?.Invoke();
             Destroy(message);
         };
-        message.SetActive(true);
+
         return message;
     }
 
@@ -138,6 +141,7 @@ public class MessageBox : MonoBehaviour
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
         var messageBoxGameObject = messageBox[0].gameObject;
         var message = Instantiate(messageBoxGameObject);
+        message.SetActive(true);
         Destroy(message.GetComponent<DDOL>());
         message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
         message.GetComponent<MessageBox>().isInformation = true;
@@ -148,7 +152,6 @@ public class MessageBox : MonoBehaviour
             okAction?.Invoke();
             Destroy(message);
         };
-        message.SetActive(true);
         return message;
     }
 
@@ -158,6 +161,7 @@ public class MessageBox : MonoBehaviour
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
         var messageBoxGameObject = messageBox[0].gameObject;
         var message = Instantiate(messageBoxGameObject);
+        message.SetActive(true);
         Destroy(message.GetComponent<DDOL>());
         message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
         message.GetComponent<MessageBox>().title = title;
@@ -174,7 +178,6 @@ public class MessageBox : MonoBehaviour
             negativeAction?.Invoke();
             Destroy(message);
         };
-        message.SetActive(true);
         return message;
     }
 }

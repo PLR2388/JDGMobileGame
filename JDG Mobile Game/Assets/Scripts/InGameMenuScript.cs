@@ -45,7 +45,6 @@ public class InGameMenuScript : MonoBehaviour
     private GameObject backgroundInformation;
 
     [SerializeField] private Card currentSelectedCard;
-    [SerializeField] private GameObject messageBox;
     [SerializeField] private GameObject invocationMenu;
 
     public static readonly CardEvent EventClick = new CardEvent();

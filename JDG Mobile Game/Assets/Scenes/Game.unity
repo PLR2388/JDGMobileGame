@@ -1337,8 +1337,6 @@ MonoBehaviour:
   healthP2Text: {fileID: 1349726584}
   bigImageCard: {fileID: 793464781}
   invocationMenu: {fileID: 1982540492}
-  messageBox: {fileID: 435952082473488534, guid: ee6c28c42c106e24eb2886b9461ab3b4,
-    type: 3}
   nextPhaseButton: {fileID: 1957640249}
   canvas: {fileID: 0}
   p1: {fileID: 230530442}
@@ -1358,7 +1356,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e55e582599c6fac40bd81be5ff9fe264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miniCardMenu: {fileID: 1989458480}
+  inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
 --- !u!114 &397230406
 MonoBehaviour:
