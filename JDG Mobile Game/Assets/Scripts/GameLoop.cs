@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -46,6 +47,7 @@ public class GameLoop : MonoBehaviour
     private Card cardSelected;
     private InvocationCard attacker;
     private int numberOfTurn = 0;
+    private string endGameReason = "";
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
@@ -53,6 +55,8 @@ public class GameLoop : MonoBehaviour
     private void Start()
     {
         IsP1Turn = true;
+        ChangeHealthText(PlayerStatus.MAXPv,true);
+        ChangeHealthText(PlayerStatus.MAXPv,false);
         PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
     }
 
@@ -70,6 +74,9 @@ public class GameLoop : MonoBehaviour
             case 2:
                 ChooseAttack();
                 break;
+            case 5:
+                GameOver();
+                break;
         }
     }
 
@@ -84,6 +91,20 @@ public class GameLoop : MonoBehaviour
         {
             invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
             p2.GetComponent<PlayerCards>().ResetInvocationCardNewTurn();
+        }
+    }
+
+    private void GameOver()
+    {
+        MessageBox[] components = FindObjectsOfType<MessageBox>();
+        if (components.Length == 0)
+        {
+            var messageBox = MessageBox.CreateOkMessageBox(canvas, "Fin de partie", endGameReason);
+            messageBox.GetComponent<MessageBox>().OkAction =() =>
+            {
+                Destroy(messageBox);
+                SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
+            };
         }
     }
 
@@ -223,16 +244,6 @@ public class GameLoop : MonoBehaviour
 
     private GameObject DisplayOpponentMessageBox(List<Card> invocationCards)
     {
-        /*var message = Instantiate(messageBox);
-        message.GetComponent<MessageBox>().title = "Choisis ton adversaire :";
-
-
-        message.GetComponent<MessageBox>().displayCardsScript.cardsList = invocationCards;
-        message.GetComponent<MessageBox>().displayCards = true;
-        
-        nextPhaseButton.SetActive(false);
-
-        return message;*/
         nextPhaseButton.SetActive(false);
 
         var message = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis ton adversaire :", invocationCards);
@@ -295,6 +306,21 @@ public class GameLoop : MonoBehaviour
             {
                 DealWithGoodAttack(opponent, diff);
             }
+        }
+
+        // Check if one player die
+        var p1Pv = p1.GetComponent<PlayerStatus>().GETCurrentPv();
+        var p2Pv = p2.GetComponent<PlayerStatus>().GETCurrentPv();
+
+        if (p1Pv <= 0)
+        {
+            endGameReason = "Joueur 2 a gagné la partie";
+            phaseId = 5;
+        }
+        else if (p2Pv <= 0)
+        {
+            endGameReason = "Joueur 1 a gagné la partie";
+            phaseId = 5;
         }
     }
 
@@ -573,7 +599,7 @@ public class GameLoop : MonoBehaviour
     private void AskUserToAddCardInHand(string cardName, Card cardFound, bool isFound, PlayerCards currentPlayerCard)
     {
         if (!isFound) return;
-        
+
         nextPhaseButton.SetActive(false);
         inHandButton.SetActive(false);
 
@@ -627,6 +653,21 @@ public class GameLoop : MonoBehaviour
                 p1Cards.handCards.Add(c);
                 p1Cards.deck.RemoveAt(size - 1);
             }
+            else
+            {
+                var p1Pv = p1.GetComponent<PlayerStatus>().GETCurrentPv();
+                var p2Pv = p2.GetComponent<PlayerStatus>().GETCurrentPv();
+                if (p1Pv > p2Pv)
+                {
+                    endGameReason = "Joueur 1 n'a plus de cartes. Joueur 1 gagne la partie !";
+                }
+                else
+                {
+                    endGameReason = "Joueur 1 n'a plus de cartes. Joueur 2 gagne la partie !";
+                }
+
+                phaseId = 5;
+            }
 
             var invocationCards = p1Cards.invocationCards;
             foreach (var invocationCard in invocationCards)
@@ -645,6 +686,21 @@ public class GameLoop : MonoBehaviour
                 var c = p2Cards.deck[size - 1];
                 p2Cards.handCards.Add(c);
                 p2Cards.deck.RemoveAt(size - 1);
+            }
+            else
+            {
+                var p1Pv = p1.GetComponent<PlayerStatus>().GETCurrentPv();
+                var p2Pv = p2.GetComponent<PlayerStatus>().GETCurrentPv();
+                if (p1Pv > p2Pv)
+                {
+                    endGameReason = "Joueur 2 n'a plus de cartes. Joueur 1 gagne la partie !";
+                }
+                else
+                {
+                    endGameReason = "Joueur 2 n'a plus de cartes. Joueur 2 gagne la partie !";
+                }
+
+                phaseId = 5;
             }
 
             var invocationCards = p2Cards.invocationCards;
