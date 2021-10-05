@@ -71,7 +71,7 @@ public class InGameMenuScript : MonoBehaviour
         switch (cardType)
         {
             case CardType.Invocation:
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 var invocationCard = (InvocationCard) card;
                 var playerCard = GameLoop.IsP1Turn
                     ? GameObject.Find("Player1").GetComponent<PlayerCards>()
@@ -80,19 +80,19 @@ public class InGameMenuScript : MonoBehaviour
 
                 break;
             case CardType.Contre:
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Contrer";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Contrer";
                 break;
             case CardType.Effect:
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 break;
             case CardType.Equipment:
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Équiper une invocation";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
                 var equipmentCard = (EquipmentCard) card;
                 putCardButton.GetComponent<Button>().interactable = equipmentCard.IsEquipmentPossible();
 
                 break;
             case CardType.Field:
-                putCardButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Poser la carte";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 break;
         }
         
@@ -160,7 +160,7 @@ public class InGameMenuScript : MonoBehaviour
     {
         if (detailCardPanel.activeSelf)
         {
-            detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Détails";
+            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Détails";
             miniMenuCard.SetActive(false);
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
@@ -172,7 +172,7 @@ public class InGameMenuScript : MonoBehaviour
 
             miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
 
-            detailButtonText.GetComponent<TMPro.TextMeshProUGUI>().text = "Retour";
+            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Retour";
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard;
             detailCardPanel.SetActive(true);
             inHandButton.SetActive(false);

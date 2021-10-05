@@ -437,6 +437,7 @@ public class InvocationFunctions : MonoBehaviour
                         {
                             CreateMessageBoxNotChoosenCard();
                         }
+
                         Destroy(message);
                     };
                     message.GetComponent<MessageBox>().NegativeAction = () =>
@@ -512,6 +513,49 @@ public class InvocationFunctions : MonoBehaviour
                     }
                 }
                     break;
+                case StartEffect.SacrificeFieldIncrement:
+                {
+                    var elements = values[i].Split(';');
+                    var sacrifice = elements[0];
+                    var field = elements[1];
+                    var incrementStat = float.Parse(elements[2]);
+
+                    var currentField = currentPlayerCard.field;
+                    if (currentField != null && field == currentField.Nom)
+                    {
+                        var invocationCardOnField = currentPlayerCard.invocationCards;
+                        var k = 0;
+                        var found = false;
+                        while (!found && k < invocationCardOnField.Count)
+                        {
+                            if (invocationCardOnField[k] != null &&
+                                invocationCardOnField[k].Nom == sacrifice)
+                            {
+                                found = true;
+                            }
+                            else
+                            {
+                                k++;
+                            }
+                        }
+
+                        if (found)
+                        {
+                            UnityAction positiveAction = () =>
+                            {
+                                currentPlayerCard.invocationCards.Remove(invocationCardOnField[k]);
+                                currentPlayerCard.yellowTrash.Add(invocationCardOnField[k]);
+                                currentInvocationCard.SetBonusAttack(incrementStat);
+                                currentInvocationCard.SetBonusDefense(incrementStat);
+                                currentPlayerCard.invocationCards.Add(currentInvocationCard);
+                            };
+                            MessageBox.CreateSimpleMessageBox(canvas, "Choix",
+                                "Voulez-vous sacrifier " + sacrifice + " pour gagner " + incrementStat +
+                                " en ATK et DEF ?", positiveAction);
+                        }
+                    }
+                }
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -533,25 +577,17 @@ public class InvocationFunctions : MonoBehaviour
         {
             DealWithStartEffect(invocationCard, invocationStartEffect);
         }
-
-        if (invocationActionEffect != null && CheckIfContainsSacrificeInvocation(invocationActionEffect))
-        {
-            AskIfUserWantToUseActionEffect(invocationCard, invocationActionEffect);
-        }
     }
 
-    private static bool CheckIfContainsSacrificeInvocation(InvocationActionEffect invocationActionEffect)
-    {
-        return invocationActionEffect.Keys[0] == ActionEffect.SacrificeInvocation;
-    }
-
-    private void AskIfUserWantToUseActionEffect(InvocationCard invocationCard,
+    public void AskIfUserWantToUseActionEffect(InvocationCard currentInvocationCard,
         InvocationActionEffect invocationActionEffect)
     {
         var keys = invocationActionEffect.Keys;
         var values = invocationActionEffect.Values;
         string cardName = null;
-        string fieldName = null;
+        string familyName = null;
+        float atk = 0.0f;
+        float def = 0.0f;
         for (var i = 0; i < keys.Count; i++)
         {
             switch (keys[i])
@@ -559,36 +595,147 @@ public class InvocationFunctions : MonoBehaviour
                 case ActionEffect.SacrificeInvocation:
                     cardName = values[i];
                     break;
-                case ActionEffect.SpecificField:
-                    fieldName = values[i];
-                    break;
-                case ActionEffect.IncreaseStarsAtkAndDef:
+                case ActionEffect.BackToLife:
                 {
-                    float valueStars = float.Parse(values[i]);
-                    if (fieldName != null && cardName != null)
+                    var trash = currentPlayerCard.yellowTrash;
+
+                    List<Card> invocationCardDead = new List<Card>();
+                    for (int j = 0; j < trash.Count; j++)
                     {
-                        bool isPossible = currentPlayerCard.field.Nom == fieldName;
-                        if (isPossible)
+                        var card = trash[j];
+                        if (card is InvocationCard && !card.Collector)
                         {
-                            List<InvocationCard> invocationCards = currentPlayerCard.invocationCards;
-                            AskToSacrifice(invocationCard, invocationCards, cardName, valueStars);
+                            invocationCardDead.Add(card);
                         }
                     }
-                    else if (cardName != null)
+
+                    if (invocationCardDead.Count > 0)
                     {
-                        List<InvocationCard> invocationCards = currentPlayerCard.invocationCards;
-                        AskToSacrifice(invocationCard, invocationCards, cardName, valueStars);
+                        var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
+                            "Voulez-vous sacrifier " + cardName +
+                            " pour ramener à la vie une carte invocation de la poubelle jaune ?");
+                        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                        {
+                            var message =
+                                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte à ressusciter",
+                                    invocationCardDead);
+                            message.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                var invocationCards = currentPlayerCard.invocationCards;
+                                var found = false;
+                                var k = 0;
+                                while (!found && k < invocationCards.Count)
+                                {
+                                    if (invocationCards[k] != null && invocationCards[k].Nom == cardName)
+                                    {
+                                        found = true;
+                                    }
+                                    else
+                                    {
+                                        k++;
+                                    }
+                                }
+
+
+                                var invocationCardSelected =
+                                    (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
+                                if (invocationCardSelected != null)
+                                {
+                                    currentPlayerCard.invocationCards.Remove(invocationCards[k]);
+                                    currentPlayerCard.yellowTrash.Remove(invocationCardSelected);
+                                    currentPlayerCard.invocationCards.Add(invocationCardSelected);
+                                }
+                                else
+                                {
+                                    CreateMessageBoxNotChoosenCard();
+                                }
+
+                                Destroy(message);
+                            };
+                            message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
+                        };
                     }
                 }
                     break;
-                case ActionEffect.BackToLife:
-                    break;
-
                 case ActionEffect.GiveAtk:
+                    atk = float.Parse(values[i]);
                     break;
                 case ActionEffect.GiveDef:
+                    def = float.Parse(values[i]);
                     break;
                 case ActionEffect.SpecificFamily:
+                {
+                    familyName = values[i];
+                    CardFamily family = (CardFamily)Enum.Parse(typeof(CardFamily), familyName);
+
+                    var invocationsOnField = currentPlayerCard.invocationCards;
+                    var indexCurrent = 0;
+
+                    List<Card> invocationCardSameFamily = new List<Card>();
+                    for (int j = 0; j < invocationsOnField.Count; j++)
+                    {
+                        var card = invocationsOnField[j];
+                        if (card != null)
+                        {
+                            if (card.Nom == currentInvocationCard.Nom)
+                            {
+                                indexCurrent = j;
+                            }
+                            else
+                            {
+                                var currentFamilies = card.GetFamily();
+                                for (int k = 0; k < currentFamilies.Length; k++)
+                                {
+                                    if (currentFamilies[k] == family)
+                                    {
+                                        invocationCardSameFamily.Add(card);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (invocationCardSameFamily.Count > 0)
+                    {
+                        var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
+                            "Voulez-vous augmenter les stats d'une carte de la même famille en diminuant les stats de la carte ?");
+                        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                        {
+                            var message =
+                                MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                    "Choix de la carte à augmenter les stats", invocationCardSameFamily);
+                            message.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                var invocationCardSelected =
+                                    (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
+                                if (invocationCardSelected != null)
+                                {
+                                    for (int j = 0; j < invocationsOnField.Count; j++)
+                                    {
+                                        var card = invocationsOnField[j];
+                                        if (card != null && card.Nom == invocationCardSelected.Nom)
+                                        {
+                                            currentPlayerCard.invocationCards[j].SetBonusAttack(atk);
+                                            currentPlayerCard.invocationCards[j].SetBonusDefense(def);
+                                            currentPlayerCard.invocationCards[indexCurrent].SetBonusAttack(-atk);
+                                            currentPlayerCard.invocationCards[indexCurrent].SetBonusDefense(-def);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    CreateMessageBoxNotChoosenCard();
+                                }
+
+                                Destroy(message);
+                            };
+                            message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
+                            Destroy(messageBox);
+                        };
+                        messageBox.GetComponent<MessageBox>().NegativeAction = () => { Destroy(messageBox); };
+                    }
+                }
                     break;
                 case ActionEffect.SkipOpponentAttack:
                     break;
@@ -629,7 +776,7 @@ public class InvocationFunctions : MonoBehaviour
                                                valueStars + " l'ATQ et la DEF de " + invocationCard.Nom +
                                                " en sacrifiant " +
                                                cardName + " ?", positiveAction: positiveAction,
-                negativeAction: negativeAction);
+            negativeAction: negativeAction);
     }
 
     public void Shuffle(List<Card> cards)

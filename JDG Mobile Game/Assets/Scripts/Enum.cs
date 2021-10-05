@@ -38,6 +38,7 @@ public enum Condition
     ComeFromYellowTrash //true or false
 }
 
+// Executed when player put invocation card on field
 public enum StartEffect
 {
     GetSpecificCard,
@@ -52,8 +53,10 @@ public enum StartEffect
     Divide2Def,
     SendToDeath,
     DrawXCards,
-    Condition
+    Condition,
+    SacrificeFieldIncrement
 }
+
 
 public enum PermEffect
 {
@@ -70,11 +73,10 @@ public enum PermEffect
     NumberTurn
 }
 
+// Call when user click on an invocation card during put card phase
 public enum ActionEffect
 {
     SacrificeInvocation,
-    SpecificField,
-    IncreaseStarsAtkAndDef,
     GiveAtk,
     GiveDef,
     SpecificFamily,

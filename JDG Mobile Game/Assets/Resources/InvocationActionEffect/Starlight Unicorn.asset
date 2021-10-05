@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3cffaa8773cde545bf1d6275d3b1989, type: 3}
   m_Name: Starlight Unicorn
   m_EditorClassIdentifier: 
-  keys: 07000000
+  keys: 05000000
   values:
   - true

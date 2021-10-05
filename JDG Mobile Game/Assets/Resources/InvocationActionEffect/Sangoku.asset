@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3cffaa8773cde545bf1d6275d3b1989, type: 3}
   m_Name: Sangoku
   m_EditorClassIdentifier: 
-  keys: 030000000400000005000000
+  keys: 010000000200000003000000
   values:
   - 2
   - 2
-  - fistiland
+  - Fistiland

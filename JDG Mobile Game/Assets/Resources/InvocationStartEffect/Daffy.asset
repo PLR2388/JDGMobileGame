@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3cffaa8773cde545bf1d6275d3b1989, type: 3}
+  m_Script: {fileID: 11500000, guid: 29fc04c6ed918d340a494d6278f09e43, type: 3}
   m_Name: Daffy
   m_EditorClassIdentifier: 
-  keys: 000000000100000002000000
+  keys: 0d000000
   values:
-  - Seb du grenier
-  - hardcorner
-  - 2.5
+  - Seb Du Grenier;Le Hard Corner;2.5
