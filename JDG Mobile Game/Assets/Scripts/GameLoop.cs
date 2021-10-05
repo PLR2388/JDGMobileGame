@@ -38,6 +38,8 @@ public class GameLoop : MonoBehaviour
 
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
 
+    private InvocationFunctions invocationFunctions;
+
 
     private readonly float ClickDuration = 2;
 
@@ -54,6 +56,7 @@ public class GameLoop : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        invocationFunctions = GetComponent<InvocationFunctions>();
         IsP1Turn = true;
         ChangeHealthText(PlayerStatus.MAXPv,true);
         ChangeHealthText(PlayerStatus.MAXPv,false);
@@ -158,11 +161,14 @@ public class GameLoop : MonoBehaviour
                 if (cardSelected is InvocationCard invocationCard)
                 {
                     attacker = invocationCard;
-                    if (attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker))
+                    var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
+                    var hasAction = attacker.InvocationActionEffect != null;
+                    if (canAttack || hasAction)
                     {
                         invocationMenu.SetActive(true);
                         invocationMenu.transform.position = mousePosition;
-                        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
+                        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
+                        invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = hasAction;
                     }
                 }
             }
@@ -227,6 +233,11 @@ public class GameLoop : MonoBehaviour
             List<InvocationCard> opponentCards = p1.GetComponent<PlayerCards>().invocationCards;
             DisplayCards(opponentCards);
         }
+    }
+
+    public void UseSpecialAction()
+    {
+        invocationFunctions.AskIfUserWantToUseActionEffect(attacker, attacker.InvocationActionEffect);
     }
 
     private void DisplayCards(List<InvocationCard> invocationCards)
