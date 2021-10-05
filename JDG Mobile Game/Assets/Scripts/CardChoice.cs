@@ -148,6 +148,9 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Poignée de porte", allCards));
         deck1.Add(GetSpecificCard("Spaghetti", allCards));
         deck1.Add(GetSpecificCard("Théodule", allCards));
+        deck1.Add(GetSpecificCard("Sangoku", allCards));
+        deck1.Add(GetSpecificCard("Sheik Point", allCards));
+        deck1.Add(GetSpecificCard("Starlight Unicorn", allCards));
 
 
         while (deck2.Count != 30)
