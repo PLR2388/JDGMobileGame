@@ -168,7 +168,7 @@ public class GameLoop : MonoBehaviour
                         invocationMenu.SetActive(true);
                         invocationMenu.transform.position = mousePosition;
                         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
-                        invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = hasAction;
+                        invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = IsSpecialActionPossible();
                     }
                 }
             }
@@ -233,6 +233,10 @@ public class GameLoop : MonoBehaviour
             List<InvocationCard> opponentCards = p1.GetComponent<PlayerCards>().invocationCards;
             DisplayCards(opponentCards);
         }
+    }
+
+    private bool IsSpecialActionPossible() {
+        return invocationFunctions.IsSpecialActionPossible(attacker, attacker.InvocationActionEffect);
     }
 
     public void UseSpecialAction()

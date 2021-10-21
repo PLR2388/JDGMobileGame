@@ -451,17 +451,26 @@ public class InvocationFunctions : MonoBehaviour
                 {
                     var x = int.Parse(values[i]);
                     var size = currentPlayerCard.deck.Count;
-                    if (size >= 0)
+                    if (size > 0)
                     {
-                        var j = size - 1;
-                        while (j >= 0 && x != 0)
-                        {
-                            var c = currentPlayerCard.deck[j];
-                            currentPlayerCard.handCards.Add(c);
-                            currentPlayerCard.deck.RemoveAt(j);
-                            j--;
-                            x--;
+                        int maxCardDraw = 0;
+                        if ((size - x) >=0) {
+                            maxCardDraw = x;
+                        } else {
+                            maxCardDraw = size % x;
                         }
+                        UnityAction positiveAction = () => {
+                            for(int j = size - 1; j >= size - 1 - maxCardDraw; j--) {
+                                var c = currentPlayerCard.deck[j];
+                                currentPlayerCard.handCards.Add(c);
+                                currentPlayerCard.deck.Remove(c);
+                            }
+                            inHandButton.SetActive(true);
+                        };
+                        UnityAction negativeAction = () => {
+                            inHandButton.SetActive(true);
+                        };
+                        CreateMessageBoxSimple("Action possible", "Voulez-vous piocher "+ maxCardDraw+ " cartes ?", positiveAction);
                     }
                 }
                     break;
@@ -577,6 +586,101 @@ public class InvocationFunctions : MonoBehaviour
         {
             DealWithStartEffect(invocationCard, invocationStartEffect);
         }
+    }
+
+        public bool IsSpecialActionPossible(InvocationCard currentInvocationCard,
+        InvocationActionEffect invocationActionEffect)
+    {
+        var isPossible = false;
+        if (invocationActionEffect != null) {
+            var keys = invocationActionEffect.Keys;
+            var values = invocationActionEffect.Values;
+            string cardName = null;
+            string familyName = null;
+            float atk = 0.0f;
+            float def = 0.0f;
+            for (var i = 0; i < keys.Count; i++)
+            {
+                switch (keys[i])
+                {
+                    case ActionEffect.SacrificeInvocation:
+                        cardName = values[i];
+                        break;
+                    case ActionEffect.BackToLife:
+                    {
+                        var trash = currentPlayerCard.yellowTrash;
+
+                        List<Card> invocationCardDead = new List<Card>();
+                        for (int j = 0; j < trash.Count; j++)
+                        {
+                            var card = trash[j];
+                            if (card is InvocationCard && !card.Collector)
+                            {
+                                invocationCardDead.Add(card);
+                            }
+                        }
+
+                        if (invocationCardDead.Count > 0)
+                        {
+                            isPossible = true;
+                        }
+                    }
+                        break;
+                    case ActionEffect.GiveAtk:
+                        atk = float.Parse(values[i]);
+                        break;
+                    case ActionEffect.GiveDef:
+                        def = float.Parse(values[i]);
+                        break;
+                    case ActionEffect.SpecificFamily:
+                    {
+                        familyName = values[i];
+                        CardFamily family = (CardFamily)Enum.Parse(typeof(CardFamily), familyName);
+
+                        var invocationsOnField = currentPlayerCard.invocationCards;
+                        var indexCurrent = 0;
+
+                        List<Card> invocationCardSameFamily = new List<Card>();
+                        for (int j = 0; j < invocationsOnField.Count; j++)
+                        {
+                            var card = invocationsOnField[j];
+                            if (card != null)
+                            {
+                                if (card.Nom == currentInvocationCard.Nom)
+                                {
+                                    indexCurrent = j;
+                                }
+                                else
+                                {
+                                    var currentFamilies = card.GetFamily();
+                                    for (int k = 0; k < currentFamilies.Length; k++)
+                                    {
+                                        if (currentFamilies[k] == family)
+                                        {
+                                            invocationCardSameFamily.Add(card);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (invocationCardSameFamily.Count > 0)
+                        {
+                            isPossible = true;
+                        }
+                    }
+                        break;
+                    case ActionEffect.SkipOpponentAttack:
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+    
+        return isPossible;
     }
 
     public void AskIfUserWantToUseActionEffect(InvocationCard currentInvocationCard,
@@ -738,6 +842,39 @@ public class InvocationFunctions : MonoBehaviour
                 }
                     break;
                 case ActionEffect.SkipOpponentAttack:
+                {
+                    var currentOpponentCard = GameLoop.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+                    
+                    var invocationCards =  currentOpponentCard.invocationCards;
+            
+                    if(invocationCards.Count > 0) {
+                        List<Card> validList = new List<Card>();
+                        foreach(Card invocationCard in invocationCards) {
+                            validList.Add(invocationCard);
+                        }
+                        var message =
+                                MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                    "Choix de la carte qui ne pourra pas attaquer le prochain tour", validList);
+                            message.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                var invocationCardSelected =
+                                    (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
+                                if (invocationCardSelected != null)
+                                {
+                                    invocationCardSelected.BlockAttack();
+                                }
+                                else
+                                {
+                                    CreateMessageBoxNotChoosenCard();
+                                }
+
+                                Destroy(message);
+                            };
+                            message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
+                    }
+                }
+                
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
