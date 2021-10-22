@@ -168,7 +168,13 @@ public class GameLoop : MonoBehaviour
                         invocationMenu.SetActive(true);
                         invocationMenu.transform.position = mousePosition;
                         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
-                        invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = IsSpecialActionPossible();
+                        if (hasAction) {
+                                invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
+                            invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = IsSpecialActionPossible();
+                        } else {
+                            invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
+                        }
+                       
                     }
                 }
             }
