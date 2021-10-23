@@ -16,7 +16,8 @@ MonoBehaviour:
   description: ... with pepperoni.
   descriptionDetaillee: "Sacrifiez une INVOCATION de votre terrain ayant au moins
     3 \xE9toiles d'ATQ ou de DEF pour r\xE9cup\xE9rer 15 \xE9toiles de vie."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 8ddebfb581ba2614192d2c5dffd6d668, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: ae7bcdcf636ba18408b8c708d2742ce3, type: 2}
+  lifeTime: 1

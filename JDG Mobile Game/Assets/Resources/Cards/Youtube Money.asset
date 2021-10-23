@@ -17,7 +17,8 @@ MonoBehaviour:
   descriptionDetaillee: "Transf\xE9rez une INVOCATION du terrain de votre adversaire
     \xE0 votre propre main, ce qui vous permet d'en prendre le contr\xF4le pendant
     ce tour."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 3614a6f84bc8df248a966208e5d56615, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 3422f9bf54305784d995f4eae8d0a7f4, type: 2}
+  lifeTime: 1

@@ -16,7 +16,8 @@ MonoBehaviour:
   description: Une carte de merde qui va vous faire mal au cul.
   descriptionDetaillee: "Votre adversaire perd 1 \xE9toile de vie pour chaque carte
     de sa main."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 8b31b0d47749aa74683eede15fe83ab0, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 4b8823d6facedda409da64dd91f9a95e, type: 2}
+  lifeTime: 1

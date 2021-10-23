@@ -16,7 +16,8 @@ MonoBehaviour:
   description: Attention, une feuille !
   descriptionDetaillee: "D\xE9faussez-vous d'une carte de votre main pour d\xE9truire
     n'importe quelle carte sur votre terrain ou celui de votre adversaire."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 7160e52962ceeb9468bd287634713f17, type: 2}
   collector: 1
   effectCardEffect: {fileID: 11400000, guid: 750ee37fcddadc343a24d3c42d78bc13, type: 2}
+  lifeTime: 1

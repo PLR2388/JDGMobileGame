@@ -47,6 +47,8 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private Card currentSelectedCard;
     [SerializeField] private GameObject invocationMenu;
 
+    [SerializeField] private GameObject gameLoop;
+
     public static readonly CardEvent EventClick = new CardEvent();
     public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
     public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
@@ -57,8 +59,11 @@ public class InGameMenuScript : MonoBehaviour
     private readonly Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
     private readonly Vector3 padding = new Vector3(490, -350, 0);
 
+    private EffectFunctions effectFunctions;
+
     private void Start()
     {
+        effectFunctions = gameLoop.GetComponent<EffectFunctions>();
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
         EventClick.AddListener(ClickOnCard);
@@ -83,7 +88,9 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Contrer";
                 break;
             case CardType.Effect:
+                var effectCard = (EffectCard) card;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                putCardButton.GetComponent<Button>().interactable = effectFunctions.CanUseEffectCard(effectCard.GetEffectCardEffect());
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";

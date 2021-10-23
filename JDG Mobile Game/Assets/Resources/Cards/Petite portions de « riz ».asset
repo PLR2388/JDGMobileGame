@@ -16,7 +16,8 @@ MonoBehaviour:
   description: "Plot twist : c'\xE9tait pas du riz."
   descriptionDetaillee: Vos cartes INVOCATION peuvent attaquer 2 fois chacune pendant
     ce tour.
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 43a7874d82e344c4fa54730fd25fef3c, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 5f3b270a2359dc44faa287d7fd84e0aa, type: 2}
+  lifeTime: 1

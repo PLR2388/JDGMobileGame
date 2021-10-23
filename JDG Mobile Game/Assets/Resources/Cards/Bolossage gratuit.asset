@@ -16,5 +16,8 @@ MonoBehaviour:
   description: Mange tes mangemorts !
   descriptionDetaillee: "Votre adversaire perd 2.5 \xE9toiles de vie pour chaque
     carte INVOCATION pr\xE9sente sur votre terrain."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 06547fa6071e30b40ac96e5275b14276, type: 2}
+  collector: 0
+  effectCardEffect: {fileID: 0}
+  lifeTime: 1

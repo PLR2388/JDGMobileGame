@@ -149,3 +149,12 @@ public enum Effect
     ChangeField,
     SkipContre
 }
+
+public enum FieldEffect {
+    ATK,
+    DEF,
+    GetCard,
+    DrawCard,
+    Life,
+    Change
+}

@@ -16,5 +16,8 @@ MonoBehaviour:
   description: "C'est qu'une petite carte. Y'a 150 endroits o\xF9 elle pourrait se
     la mettre !"
   descriptionDetaillee: "D\xE9truit une carte EQUIPEMENT pr\xE9sente sur le terrain."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 957f0da8efb28854e90237c6b316f754, type: 2}
+  collector: 0
+  effectCardEffect: {fileID: 0}
+  lifeTime: 1

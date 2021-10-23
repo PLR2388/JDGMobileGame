@@ -16,7 +16,8 @@ MonoBehaviour:
   description: "Ok mec ! \xC7a va ! J'suis plus mort !"
   descriptionDetaillee: "Permet au joueur de ramener par invocation sp\xE9ciale une
     carte INVOCATION de sa poubelle jaune \xE0 son terrain."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: faef272229ae506449faa37107683524, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: a0bd0e48f8623f341a72f624d1b67493, type: 2}
+  lifeTime: 1

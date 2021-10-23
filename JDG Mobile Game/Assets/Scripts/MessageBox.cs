@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -17,6 +17,8 @@ public class MessageBox : MonoBehaviour
     public bool isInformation = false;
     public DisplayCards displayCardsScript;
     public bool displayCards = false;
+    public bool multipleCardSelection = false;
+    public int numberCardInSelection = 2;
 
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
@@ -30,10 +32,15 @@ public class MessageBox : MonoBehaviour
 
     [SerializeField] private GameObject scrollCardDisplay;
     private Card currentSelectedCard;
+    private List<Card> multipleSelectedCards = new List<Card>();
 
     public Card GETSelectedCard()
     {
         return currentSelectedCard;
+    }
+
+    public List<Card> GETMultipleSelectedCards() {
+        return multipleSelectedCards;
     }
 
 
@@ -83,12 +90,22 @@ public class MessageBox : MonoBehaviour
 
     private void ONCardSelected(Card card)
     {
-        currentSelectedCard = card;
+        if (multipleCardSelection) {
+            if (!multipleSelectedCards.Contains(card))  {
+                if (numberCardInSelection == multipleSelectedCards.Count) {
+                    multipleSelectedCards.RemoveAt(0);
+                }
+                multipleSelectedCards.Add(card);
+            }
+        } else {
+            currentSelectedCard = card;
+        }
+   
     }
 
     private void Update()
     {
-        if (currentSelectedCard == null) return;
+        if (currentSelectedCard == null && multipleSelectedCards.Count == 0) return;
         var children = container.GetComponentsInChildren<Transform>();
         foreach (var child in children)
         {
@@ -96,14 +113,29 @@ public class MessageBox : MonoBehaviour
             if (childGameObject.GetComponent<CardDisplay>() == null) continue;
             var cardNom = childGameObject.GetComponent<CardDisplay>().card.Nom;
 
-            if (!(currentSelectedCard is null) && currentSelectedCard.Nom != cardNom)
-            {
-                childGameObject.GetComponent<OnHover>().bIsSelected = false;
-            }
-            else if (!childGameObject.GetComponent<OnHover>().bIsSelected)
-            {
-                // if the card is unselected
-                currentSelectedCard = null;
+            if (multipleCardSelection) {
+                if (multipleSelectedCards.Count > 0 && multipleSelectedCards.Find(card => card.Nom == cardNom) == null)
+                {
+                    childGameObject.GetComponent<OnHover>().bIsSelected = false;
+                }
+                else if (!childGameObject.GetComponent<OnHover>().bIsSelected)
+                {
+                    // if the card is unselected
+                    var index = multipleSelectedCards.FindIndex(0, multipleSelectedCards.Count, card => card.Nom == cardNom);
+                    if (index > -1) {
+                        multipleSelectedCards.RemoveAt(index);
+                    }
+                }
+            } else {
+                if (!(currentSelectedCard is null) && currentSelectedCard.Nom != cardNom)
+                {
+                    childGameObject.GetComponent<OnHover>().bIsSelected = false;
+                }
+                else if (!childGameObject.GetComponent<OnHover>().bIsSelected)
+                {
+                    // if the card is unselected
+                    currentSelectedCard = null;
+                }
             }
         }
     }
@@ -156,7 +188,7 @@ public class MessageBox : MonoBehaviour
     }
 
     public static GameObject CreateMessageBoxWithCardSelector(Transform canvas, string title, List<Card> cards,
-        UnityAction positiveAction = null, UnityAction negativeAction = null, bool okButton = false)
+        UnityAction positiveAction = null, UnityAction negativeAction = null, bool okButton = false, bool multipleCardSelection = false, int numberCardInSelection = 2)
     {
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
         var messageBoxGameObject = messageBox[0].gameObject;
@@ -166,6 +198,8 @@ public class MessageBox : MonoBehaviour
         message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
         message.GetComponent<MessageBox>().title = title;
         message.GetComponent<MessageBox>().displayCards = true;
+        message.GetComponent<MessageBox>().multipleCardSelection = multipleCardSelection;
+        message.GetComponent<MessageBox>().numberCardInSelection = numberCardInSelection;
         message.GetComponent<MessageBox>().displayCardsScript.cardsList = cards;
         message.GetComponent<MessageBox>().isInformation = okButton;
         message.GetComponent<MessageBox>().PositiveAction = () =>

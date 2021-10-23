@@ -4,8 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Card", menuName = "InvocationCard")]
 public class InvocationCard : Card
 {
-    [SerializeField] private float attack;
-    [SerializeField] private float defense;
+    [SerializeField] protected float attack;
+    [SerializeField] protected float defense;
     [SerializeField] private CardFamily[] family;
     [SerializeField] private EquipmentCard equipmentCard;
     [SerializeField] private InvocationConditions invocationConditions;

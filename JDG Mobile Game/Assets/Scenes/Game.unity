@@ -4854,6 +4854,7 @@ MonoBehaviour:
   backgroundInformation: {fileID: 1582983282}
   currentSelectedCard: {fileID: 0}
   invocationMenu: {fileID: 1982540492}
+  gameLoop: {fileID: 397230402}
 --- !u!114 &1809721688
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,7 +16,8 @@ MonoBehaviour:
   description: "Ouai, alors forc\xE9ment, \xE7a rend moins bien sur une image."
   descriptionDetaillee: "Pour la dur\xE9e du tour, les statistiques d'ATQ et de DEF
     de toutes les cartes INVOCATION pr\xE9sentes sur le terrain sont interverties."
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: fe5240f4446a2e84d93108f685a5553d, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 43fca8b84d56f114d86c3009eea8f0c9, type: 2}
+  lifeTime: 1

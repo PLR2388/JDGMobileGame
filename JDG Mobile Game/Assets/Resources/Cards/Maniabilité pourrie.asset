@@ -16,7 +16,8 @@ MonoBehaviour:
   description: Des fois, c'est aussi la faute de la manette.
   descriptionDetaillee: Fait sauter la phase d'attaque des cartes INVOCATION adverses
     lors du prochain tour de votre adversaire.
-  type: effect
+  type: 1
   materialCard: {fileID: 2100000, guid: 8ad725d463e1b6c4498e0385792ad61c, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 9db65152c089fb74f93dffa072563e43, type: 2}
+  lifeTime: 1

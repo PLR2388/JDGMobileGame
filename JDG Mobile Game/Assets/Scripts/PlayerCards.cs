@@ -144,6 +144,13 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    public void AddPhysicalCard(Card card, string playerName) {
+            var newPhysicalCard = Instantiate(prefabCard, deckLocationP2, Quaternion.identity);
+            newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = card;
+            newPhysicalCard.name = card.Nom + playerName;
+            allPhysicalCards.Add(newPhysicalCard);
+    }
+
     public void ResetInvocationCardNewTurn()
     {
         foreach (var invocationCard in invocationCards.Where(invocationCard =>

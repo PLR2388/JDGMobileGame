@@ -41,6 +41,7 @@ public class GameLoop : MonoBehaviour
     private InvocationFunctions invocationFunctions;
 
 
+
     private readonly float ClickDuration = 2;
 
     private bool stopDetectClicking = false;
@@ -764,6 +765,18 @@ public class GameLoop : MonoBehaviour
         }
 
         if (phaseId != 3) return;
+        PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        List<EffectCard> effectCards = currentPlayerCard.effectCards;
+        foreach(EffectCard effectCard in effectCards) {
+            if (effectCard.GetLifeTime() == 1) {
+                currentPlayerCard.yellowTrash.Add(effectCard);
+                currentPlayerCard.effectCards.Remove(effectCard);
+            } else if(effectCard.GetLifeTime() > 1) {
+                effectCard.DecrementLifeTime();
+            }
+        }
+
+
         IsP1Turn = !IsP1Turn;
         ChangePlayer.Invoke();
         if (IsP1Turn)

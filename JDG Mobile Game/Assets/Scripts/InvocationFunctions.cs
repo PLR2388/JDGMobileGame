@@ -470,7 +470,7 @@ public class InvocationFunctions : MonoBehaviour
                         UnityAction negativeAction = () => {
                             inHandButton.SetActive(true);
                         };
-                        CreateMessageBoxSimple("Action possible", "Voulez-vous piocher "+ maxCardDraw+ " cartes ?", positiveAction);
+                        CreateMessageBoxSimple("Action possible", "Voulez-vous piocher "+ maxCardDraw+ " cartes ?", positiveAction, negativeAction);
                     }
                 }
                     break;

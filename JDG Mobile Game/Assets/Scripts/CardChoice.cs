@@ -126,6 +126,7 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
+     
         deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
         deck1.Add(GetSpecificCard("Benzaie jeune", allCards));
         deck1.Add(GetSpecificCard("Bébé Terreur-Nocturne", allCards));
@@ -151,6 +152,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Sangoku", allCards));
         deck1.Add(GetSpecificCard("Sheik Point", allCards));
         deck1.Add(GetSpecificCard("Starlight Unicorn", allCards));
+        deck1.Add(GetSpecificCard("Attaque de la tour Eiffel", allCards));
 
 
         while (deck2.Count != 30)
