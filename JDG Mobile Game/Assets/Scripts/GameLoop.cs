@@ -351,34 +351,86 @@ public class GameLoop : MonoBehaviour
      */
     private void DealWithGoodAttack(InvocationCard opponent, float diff)
     {
-        opponent.IncrementNumberDeaths();
-        if (IsP1Turn)
+        if (opponent is SuperInvocationCard)
         {
-            p2.GetComponent<PlayerStatus>().ChangePv(diff);
+            var superOpponent = opponent as SuperInvocationCard;
 
-            if (opponent.GetInvocationDeathEffect() != null)
+  
+          
+            if (IsP1Turn)
             {
-                DealWithDeathEffect(opponent, false);
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                p2.GetComponent<PlayerStatus>().ChangePv(diff);
+                
+                foreach (var combineCard in superOpponent.invocationCards)
+                {
+                    combineCard.IncrementNumberDeaths();
+                    if (combineCard.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(combineCard, true);
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                    else
+                    {
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                }
+                
+                p2.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
+
+            
             }
             else
             {
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                p1.GetComponent<PlayerStatus>().ChangePv(diff);
+                
+                foreach (var combineCard in superOpponent.invocationCards)
+                {
+                    combineCard.IncrementNumberDeaths();
+                    if (combineCard.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(combineCard, true);
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                    else
+                    {
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                }
+                p1.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
             }
         }
         else
         {
-            p1.GetComponent<PlayerStatus>().ChangePv(diff);
-            if (opponent.GetInvocationDeathEffect() != null)
+            opponent.IncrementNumberDeaths();
+            if (IsP1Turn)
             {
-                DealWithDeathEffect(opponent, true);
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                p2.GetComponent<PlayerStatus>().ChangePv(diff);
+
+                if (opponent.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(opponent, false);
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
+                else
+                {
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
             }
             else
             {
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                p1.GetComponent<PlayerStatus>().ChangePv(diff);
+                if (opponent.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(opponent, true);
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
+                else
+                {
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
             }
         }
+      
     }
 
     /**
@@ -386,83 +438,292 @@ public class GameLoop : MonoBehaviour
      */
     private void DealWithHurtAttack(float diff)
     {
-        attacker.IncrementNumberDeaths();
-        if (IsP1Turn)
+        if (attacker is SuperInvocationCard)
         {
-            p1.GetComponent<PlayerStatus>().ChangePv(-diff);
-            if (attacker.GetInvocationDeathEffect() != null)
+            var superAttacker = attacker as SuperInvocationCard;
+
+  
+          
+            if (IsP1Turn)
             {
-                DealWithDeathEffect(attacker, true);
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                p1.GetComponent<PlayerStatus>().ChangePv(-diff);
+                
+                foreach (var combineCard in superAttacker.invocationCards)
+                {
+                    combineCard.IncrementNumberDeaths();
+                    if (combineCard.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(combineCard, true);
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                    else
+                    {
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                }
+                p1.GetComponent<PlayerCards>().RemoveSuperInvocation(superAttacker);
+
             }
             else
             {
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                p2.GetComponent<PlayerStatus>().ChangePv(-diff);
+                
+                foreach (var combineCard in superAttacker.invocationCards)
+                {
+                    combineCard.IncrementNumberDeaths();
+                    if (combineCard.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(combineCard, true);
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                    else
+                    {
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                    }
+                }
+                
+                p2.GetComponent<PlayerCards>().RemoveSuperInvocation(superAttacker);
             }
         }
         else
         {
-            p2.GetComponent<PlayerStatus>().ChangePv(-diff);
-            if (attacker.GetInvocationDeathEffect() != null)
+            attacker.IncrementNumberDeaths();
+            if (IsP1Turn)
             {
-                DealWithDeathEffect(attacker, false);
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                p1.GetComponent<PlayerStatus>().ChangePv(-diff);
+                if (attacker.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(attacker, true);
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                }
+                else
+                {
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                }
             }
             else
             {
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                p2.GetComponent<PlayerStatus>().ChangePv(-diff);
+                if (attacker.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(attacker, false);
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                }
+                else
+                {
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                }
             }
         }
+
     }
 
     private void DealWithEqualityAttack(InvocationCard opponent)
     {
-        attacker.IncrementNumberDeaths();
-        opponent.IncrementNumberDeaths();
-        if (IsP1Turn)
+
+
+        if (attacker is SuperInvocationCard || opponent is SuperInvocationCard)
         {
-            if (attacker.GetInvocationDeathEffect() != null)
+            var superAttacker = attacker as SuperInvocationCard;
+            var superOpponent = opponent as SuperInvocationCard;
+            if (superAttacker)
             {
-                DealWithDeathEffect(attacker, true);
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                foreach (var combineCard in superAttacker.invocationCards)
+                {
+                    combineCard.IncrementNumberDeaths();
+
+                    if (IsP1Turn)
+                    {
+                        if (combineCard.GetInvocationDeathEffect() != null)
+                        {
+                            DealWithDeathEffect(combineCard, true);
+                            p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                        else
+                        {
+                            p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                    }
+                    else
+                    {
+                        if (combineCard.GetInvocationDeathEffect() != null)
+                        {
+                            DealWithDeathEffect(combineCard, true);
+                            p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                        else
+                        {
+                            p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                    }
+                }
+
+                if (IsP1Turn)
+                {
+                    p1.GetComponent<PlayerCards>().RemoveSuperInvocation(superAttacker);
+                }
+                else
+                {
+                    p2.GetComponent<PlayerCards>().RemoveSuperInvocation(superAttacker);
+                }
             }
             else
             {
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                attacker.IncrementNumberDeaths();
+
+                if (IsP1Turn)
+                {
+                    if (attacker.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(attacker, true);
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    }
+                    else
+                    {
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    }
+                    
+                }
+                else
+                {
+                    if (attacker.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(attacker, false);
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    }
+                    else
+                    {
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    }
+                }
             }
 
-            if (opponent.GetInvocationDeathEffect() != null)
+            if (superOpponent)
             {
-                DealWithDeathEffect(opponent, false);
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                foreach (var combineCard in superOpponent.invocationCards)
+                {
+                    combineCard.IncrementNumberDeaths();
+
+                    if (IsP1Turn)
+                    {
+                        if (combineCard.GetInvocationDeathEffect() != null)
+                        {
+                            DealWithDeathEffect(combineCard, true);
+                            p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                        else
+                        {
+                            p1.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                    }
+                    else
+                    {
+                        if (combineCard.GetInvocationDeathEffect() != null)
+                        {
+                            DealWithDeathEffect(combineCard, true);
+                            p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                        else
+                        {
+                            p2.GetComponent<PlayerCards>().SendCardToYellowTrash(combineCard);
+                        }
+                    }
+                }
+                
+                if (IsP1Turn)
+                {
+                    p2.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
+                }
+                else
+                {
+                    p1.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
+                }
             }
             else
             {
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                opponent.IncrementNumberDeaths();
+            
+                if (IsP1Turn)
+                {
+          
+
+                    if (opponent.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(opponent, false);
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    }
+                    else
+                    {
+                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    }
+                }
+                else
+                {
+                    if (opponent.GetInvocationDeathEffect() != null)
+                    {
+                        DealWithDeathEffect(opponent, true);
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    }
+                    else
+                    {
+                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    }
+                }
             }
+         
         }
         else
         {
-            if (attacker.GetInvocationDeathEffect() != null)
+            attacker.IncrementNumberDeaths();
+            opponent.IncrementNumberDeaths();
+            
+            if (IsP1Turn)
             {
-                DealWithDeathEffect(attacker, false);
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
-            }
-            else
-            {
-                p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
-            }
+                if (attacker.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(attacker, true);
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                }
+                else
+                {
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                }
 
-            if (opponent.GetInvocationDeathEffect() != null)
-            {
-                DealWithDeathEffect(opponent, true);
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                if (opponent.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(opponent, false);
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
+                else
+                {
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
             }
             else
             {
-                p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                if (attacker.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(attacker, false);
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                }
+                else
+                {
+                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                }
+
+                if (opponent.GetInvocationDeathEffect() != null)
+                {
+                    DealWithDeathEffect(opponent, true);
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
+                else
+                {
+                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                }
             }
         }
+        
+
     }
 
     /**

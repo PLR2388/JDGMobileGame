@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -31,6 +32,7 @@ public class PlayerCards : MonoBehaviour
     [FormerlySerializedAs("AllPhysicalCards")] [SerializeField]
     private List<GameObject> allPhysicalCards;
 
+    private List<Card> secretCards = new List<Card>(); // Where combine card go
     private readonly Vector3[] invocationCardsLocationP1 =
     {
         new Vector3(-53.5f, 0.5f, -21),
@@ -82,6 +84,8 @@ public class PlayerCards : MonoBehaviour
         new Vector3(10.5f, 0.5f, 46),
         new Vector3(-11, 0.5f, 46),
     };
+
+    private readonly Vector3 secretHide = new Vector3(1000.0f,1000.0f,1000.0f);
 
     private readonly Vector3 fieldCardLocationP2 = new Vector3(-32, 0.5f, 21);
     private readonly Vector3 deckLocationP2 = new Vector3(-53, 0.5f, 34);
@@ -149,6 +153,17 @@ public class PlayerCards : MonoBehaviour
             newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = card;
             newPhysicalCard.name = card.Nom + playerName;
             allPhysicalCards.Add(newPhysicalCard);
+    }
+
+    public void RemoveSuperInvocation(Card superInvocationCard)
+    {
+        var index = FindCard(superInvocationCard);
+        if (index > -1)
+        {
+            invocationCards.Remove(superInvocationCard as InvocationCard);
+            var gameobject = allPhysicalCards[index];
+            Destroy(gameobject);
+        }
     }
 
     public void ResetInvocationCardNewTurn()
@@ -229,7 +244,7 @@ public class PlayerCards : MonoBehaviour
                 }
             }
 
-            if (!field) return;
+            if (field)
             {
                 var index = FindCard(field);
                 allPhysicalCards[index].transform.position = fieldCardLocationP1;
@@ -238,6 +253,17 @@ public class PlayerCards : MonoBehaviour
                     allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                 }
 
+                allPhysicalCards[index].tag = "card1";
+            }
+            for ( var i = 0; i < secretCards.Count; i++) {
+                var index = FindCard(secretCards[i]);
+                allPhysicalCards[index].transform.position = secretHide;
+                allPhysicalCards[index].tag = "card1";
+            }
+            
+            for ( var i = 0; i < handCards.Count; i++) {
+                var index = FindCard(handCards[i]);
+                allPhysicalCards[index].transform.position = secretHide;
                 allPhysicalCards[index].tag = "card1";
             }
         }
@@ -301,7 +327,7 @@ public class PlayerCards : MonoBehaviour
                 }
             }
 
-            if (!field) return;
+            if (field)
             {
                 var index = FindCard(field);
                 allPhysicalCards[index].transform.position = fieldCardLocationP2;
@@ -312,7 +338,22 @@ public class PlayerCards : MonoBehaviour
 
                 allPhysicalCards[index].tag = "card2";
             }
+            for( var i = 0; i<secretCards.Count; i++) {
+                var index = FindCard(secretCards[i]);
+                allPhysicalCards[index].transform.position = secretHide;
+                allPhysicalCards[index].tag = "card2";
+            }
+            
+            for ( var i = 0; i < handCards.Count; i++) {
+                var index = FindCard(handCards[i]);
+                allPhysicalCards[index].transform.position = secretHide;
+                allPhysicalCards[index].tag = "card2";
+            }
         }
+    }
+
+    public void SendToSecretHide(Card card) {
+        secretCards.Add(card);
     }
 
     public void SendCardToYellowTrash(Card card)
@@ -322,14 +363,31 @@ public class PlayerCards : MonoBehaviour
             if (invocationCards[i].Nom != card.Nom) continue;
             var invocationCard = card as InvocationCard;
             if (invocationCard == null) continue;
-            if (invocationCard.GETEquipmentCard() != null)
+            if (invocationCard is SuperInvocationCard)
             {
-                var equipmentCard = invocationCard.GETEquipmentCard();
-                yellowTrash.Add(equipmentCard);
-                invocationCard.SetEquipmentCard(null);
-            }
+                var superInvocationCard = invocationCard as SuperInvocationCard;
+                var invocationListCards = superInvocationCard.invocationCards;
+                foreach (var cardFromList in invocationListCards)
+                {
+                    secretCards.Remove(cardFromList);
+                    yellowTrash.Add(cardFromList);
+                }
 
-            invocationCards.Remove(card as InvocationCard);
+                invocationCards.Remove(invocationCard);
+
+            }
+            else
+            {
+                if (invocationCard.GETEquipmentCard() != null)
+                {
+                    var equipmentCard = invocationCard.GETEquipmentCard();
+                    yellowTrash.Add(equipmentCard);
+                    invocationCard.SetEquipmentCard(null);
+                }
+
+                invocationCards.Remove(card as InvocationCard);
+                yellowTrash.Add(card);
+            }
         }
 
         for (var i = 0; i < effectCards.Count; i++)
@@ -337,15 +395,17 @@ public class PlayerCards : MonoBehaviour
             if (effectCards[i].Nom == card.Nom)
             {
                 effectCards.Remove(card as EffectCard);
+                yellowTrash.Add(card);
             }
         }
 
         if (field != null && field.Nom == card.Nom)
         {
             field = null;
+            yellowTrash.Add(card);
         }
 
-        yellowTrash.Add(card);
+
     }
 
     public void SendCardToHand(Card card)

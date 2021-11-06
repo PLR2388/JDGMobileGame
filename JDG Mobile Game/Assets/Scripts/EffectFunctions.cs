@@ -936,30 +936,38 @@ public class EffectFunctions : MonoBehaviour
 
                                 if(currentCards != null && currentCards.Count > 0) {
                                     List<InvocationCard> invocationCards = new List<InvocationCard>();
-                                    foreach(InvocationCard invocationCard in currentCards) {
+                                    foreach(var card in currentCards)
+                                    {
+                                        var invocationCard = (InvocationCard)card;
                                         invocationCards.Add(invocationCard);
                                     }
-                                    SuperInvocationCard superInvocationCard = ScriptableObject.CreateInstance("SuperInvocationCard") as SuperInvocationCard;
+                                    SuperInvocationCard superInvocationCard = ScriptableObject.CreateInstance<SuperInvocationCard>();
                                     superInvocationCard.init(invocationCards);
-                                    var index = currentInvocationCards.FindIndex(0, currentInvocationCards.Count, card => card.Nom == currentCards[0].Nom);
-                                    if (index > -1) {
-                                        var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
+
+                                    var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
                                         currentPlayerCard.AddPhysicalCard(superInvocationCard, playerName);
-                                        currentInvocationCards[index] = superInvocationCard;
-                                        for(int j = 0; j < invocationCards.Count; j++) {
-                                            currentPlayerCard.invocationCards.Remove(invocationCards[j]);
+                                        foreach(InvocationCard invocationCard in invocationCards){
+                                            var index1 = currentInvocationCards.FindIndex(0, currentInvocationCards.Count, card => card.Nom == invocationCard.Nom);
+                                            if (index1 > -1) {
+                                                currentPlayerCard.SendToSecretHide(invocationCard);
+                                                currentPlayerCard.invocationCards.RemoveAt(index1);
+                                            }
                                         }
-                                    }
+                                        currentInvocationCards.Add(superInvocationCard);
+                                    
                                    Destroy(messageBox);
                                 } else {
                                     MessageBox.CreateOkMessageBox(canvas, "Information", "Vous n'avez pas choisi le nombre de carte adéquat");
+                                    currentPlayerCard.effectCards.Remove(effectCard);
+                                    currentPlayerCard.handCards.Add(effectCard);
                                     Destroy(messageBox);
                                 }
                           
 
                             };
                             messageBox.GetComponent<MessageBox>().NegativeAction = () => {
-                                cancelled = true;
+                                currentPlayerCard.effectCards.Remove(effectCard);
+                                currentPlayerCard.handCards.Add(effectCard);
                                 Destroy(messageBox);  
                             };
                         }
