@@ -1028,13 +1028,19 @@ public class GameLoop : MonoBehaviour
         if (phaseId != 3) return;
         PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         List<EffectCard> effectCards = currentPlayerCard.effectCards;
+        List<EffectCard> effectCardsToDelete = new List<EffectCard>();
         foreach(EffectCard effectCard in effectCards) {
             if (effectCard.GetLifeTime() == 1) {
                 currentPlayerCard.yellowTrash.Add(effectCard);
-                currentPlayerCard.effectCards.Remove(effectCard);
+                effectCardsToDelete.Add(effectCard);
             } else if(effectCard.GetLifeTime() > 1) {
                 effectCard.DecrementLifeTime();
             }
+        }
+
+        foreach (var effectCard in effectCardsToDelete)
+        {
+            effectCards.Remove(effectCard);
         }
 
 

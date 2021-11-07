@@ -152,7 +152,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Sangoku", allCards));
         deck1.Add(GetSpecificCard("Sheik Point", allCards));
         deck1.Add(GetSpecificCard("Starlight Unicorn", allCards));
-        deck1.Add(GetSpecificCard("Attaque de la tour Eiffel", allCards));
+        deck1.Add(GetSpecificCard("Bloue touche", allCards));
 
 
         while (deck2.Count != 30)

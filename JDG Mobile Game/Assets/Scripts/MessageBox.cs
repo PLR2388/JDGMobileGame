@@ -146,7 +146,7 @@ public class MessageBox : MonoBehaviour
         List<GameObject> gameObjectsToHide = null)
     {
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
-        var messageBoxGameObject = messageBox[0].gameObject;
+        var messageBoxGameObject = messageBox[messageBox.Length - 1].gameObject;
         var message = Instantiate(messageBoxGameObject);
         message.SetActive(true);
         Destroy(message.GetComponent<DDOL>());
@@ -171,7 +171,7 @@ public class MessageBox : MonoBehaviour
         UnityAction okAction = null)
     {
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
-        var messageBoxGameObject = messageBox[0].gameObject;
+        var messageBoxGameObject = messageBox[messageBox.Length - 1].gameObject;
         var message = Instantiate(messageBoxGameObject);
         message.SetActive(true);
         Destroy(message.GetComponent<DDOL>());
@@ -188,10 +188,12 @@ public class MessageBox : MonoBehaviour
     }
 
     public static GameObject CreateMessageBoxWithCardSelector(Transform canvas, string title, List<Card> cards,
-        UnityAction positiveAction = null, UnityAction negativeAction = null, bool okButton = false, bool multipleCardSelection = false, int numberCardInSelection = 2)
+        UnityAction positiveAction = null, UnityAction negativeAction = null, bool okButton = false,
+        bool multipleCardSelection = false, int numberCardInSelection = 2)
+
     {
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
-        var messageBoxGameObject = messageBox[0].gameObject;
+        var messageBoxGameObject = messageBox[messageBox.Length - 1].gameObject;
         var message = Instantiate(messageBoxGameObject);
         message.SetActive(true);
         Destroy(message.GetComponent<DDOL>());
@@ -212,6 +214,7 @@ public class MessageBox : MonoBehaviour
             negativeAction?.Invoke();
             Destroy(message);
         };
+
         return message;
     }
 }
