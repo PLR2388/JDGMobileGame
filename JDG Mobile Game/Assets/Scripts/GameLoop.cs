@@ -958,6 +958,31 @@ public class GameLoop : MonoBehaviour
                 invocationCard.UnblockAttack();
             }
 
+            var effectCards = p1Cards.effectCards;
+            foreach (var effectCard in effectCards)
+            {
+                if (effectCard.checkTurn)
+                {
+                    UnityAction positiveAction = () =>
+                    {
+                        p1.GetComponent<PlayerStatus>().ChangePv(effectCard.affectPV);
+                    };
+                    
+                    UnityAction negativeAction = () =>
+                    {
+                        foreach (var invocationCard in invocationCards)
+                        {
+                            invocationCard.SetCurrentFamily(null);
+                        }
+                        p1Cards.yellowTrash.Add(effectCard);
+                        p1Cards.effectCards.Remove(effectCard);
+                    };
+                    MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
+                        "Veux-tu prolonger l'effet de " + effectCard.Nom + " pour 1 tour pour " + effectCard.affectPV +
+                        " points de vie ?", positiveAction, negativeAction);
+                }
+            }
+
             numberOfTurn++;
         }
         else
@@ -990,6 +1015,31 @@ public class GameLoop : MonoBehaviour
             foreach (var invocationCard in invocationCards)
             {
                 invocationCard.UnblockAttack();
+            }
+            
+            var effectCards = p2Cards.effectCards;
+            foreach (var effectCard in effectCards)
+            {
+                if (effectCard.checkTurn)
+                {
+                    UnityAction positiveAction = () =>
+                    {
+                        p2.GetComponent<PlayerStatus>().ChangePv(effectCard.affectPV);
+                    };
+                    
+                    UnityAction negativeAction = () =>
+                    {
+                        foreach (var invocationCard in invocationCards)
+                        {
+                            invocationCard.SetCurrentFamily(null);
+                        }
+                        p2Cards.yellowTrash.Add(effectCard);
+                        p2Cards.effectCards.Remove(effectCard);
+                    };
+                    MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
+                        "Veux-tu prolonger l'effet de " + effectCard.Nom + " pour 1 tour pour " + effectCard.affectPV +
+                        " points de vie ?", positiveAction, negativeAction);
+                }
             }
         }
 

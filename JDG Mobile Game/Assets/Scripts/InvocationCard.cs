@@ -19,6 +19,7 @@ public class InvocationCard : Card
     [SerializeField] private int numberDeaths;
     [SerializeField] private bool blockAttackNextTurn = false;
     private bool hasAlreadyAttackThisTurn = false;
+    private CardFamily? currentFamily = null;
 
     private void Awake()
     {
@@ -27,6 +28,11 @@ public class InvocationCard : Card
         this.bonusDefense = 0;
         this.numberTurnOnField = 0;
         this.numberDeaths = 0;
+    }
+
+    public void SetCurrentFamily(CardFamily? family)
+    {
+        currentFamily = family;
     }
 
     public float GETBonusDefense() => bonusDefense;
@@ -71,7 +77,17 @@ public class InvocationCard : Card
 
     public CardFamily[] GetFamily()
     {
-        return family;
+        if (currentFamily.HasValue)
+        {
+            return new CardFamily[]
+            {
+                currentFamily.Value
+            };
+        }
+        else
+        {
+            return family;
+        }
     }
 
     public InvocationStartEffect GetInvocationStartEffect()

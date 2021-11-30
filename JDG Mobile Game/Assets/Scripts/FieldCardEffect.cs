@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FieldCardEffect")]
 public class FieldCardEffect : MonoBehaviour
 {
     [SerializeField] private List<FieldEffect> keys;

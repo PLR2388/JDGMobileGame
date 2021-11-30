@@ -212,13 +212,27 @@ public class PlayerCards : MonoBehaviour
 
             for (var i = 0; i < effectCards.Count; i++)
             {
-                if (!effectCards[i]) continue;
+                var effectCard = effectCards[i];
+                if (!effectCard) continue;
                 var index = FindCard(effectCards[i]);
                 allPhysicalCards[index].transform.position = effectCardsLocationP1[i];
 
                 if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
                 {
                     allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+                }
+
+                if (effectCard.GetEffectCardEffect().Keys.Contains(Effect.SameFamily))
+                {
+                    for (var j = 0; j < invocationCards.Count; j++)
+                    {
+                        var invocationCard = invocationCards[i];
+                        if (!invocationCard) continue;
+                        if (field != null)
+                        {
+                            invocationCard.SetCurrentFamily(field.GETFamily());
+                        }
+                    }
                 }
 
                 allPhysicalCards[index].tag = "card1";

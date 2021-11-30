@@ -26,6 +26,6 @@ public class Card : ScriptableObject
 
     public bool IsValid()
     {
-        return this != null && !string.IsNullOrEmpty(nom);
+        return !string.IsNullOrEmpty(nom);
     }
 }

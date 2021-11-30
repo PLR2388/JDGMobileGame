@@ -8,6 +8,8 @@ public class EffectCard : Card
 {
     [SerializeField] private EffectCardEffect effectCardEffect;
     [SerializeField] private int lifeTime; // Time in laps before the effect stop
+    [SerializeField] public bool checkTurn = false;
+    [SerializeField] public float affectPV = 0f;
 
     public EffectCardEffect GetEffectCardEffect()
     {

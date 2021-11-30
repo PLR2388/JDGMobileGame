@@ -57,31 +57,12 @@ public class CardChoice : MonoBehaviour
 
     public void CheckPlayerCards()
     {
-        if (!isPlayerOneCardChosen)
+        var deck = new List<Card>();
+        var numberSelected = CheckCard(deck);
+        
+        if (numberSelected == GameState.maxDeckCards)
         {
-            var deck = new List<Card>();
-            var numberSelected = CheckCard(deck);
-
-            if (numberSelected == GameState.maxDeckCards)
-            {
-                playerToken.SetValue(2);
-                buttonLabel.TranslationName = playText.name;
-                isPlayerOneCardChosen = true;
-                FindObjectOfType<GameState>().deckP1 = deck;
-                DeselectAllCards();
-            }
-            else
-            {
-                var remainedCards = GameState.maxDeckCards - numberSelected;
-                DisplayMessageBox(remainedCards);
-            }
-        }
-        else
-        {
-            var deck = new List<Card>();
-            var numberSelected = CheckCard(deck);
-
-            if (numberSelected == GameState.maxDeckCards)
+            if (isPlayerOneCardChosen)
             {
                 SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
                 playerToken.SetValue(1);
@@ -91,10 +72,19 @@ public class CardChoice : MonoBehaviour
             }
             else
             {
-                var remainedCards = GameState.maxDeckCards - numberSelected;
-                DisplayMessageBox(remainedCards);
+                playerToken.SetValue(2);
+                buttonLabel.TranslationName = playText.name;
+                isPlayerOneCardChosen = true;
+                FindObjectOfType<GameState>().deckP1 = deck;
+                DeselectAllCards();
             }
         }
+        else
+        {
+            var remainedCards = GameState.maxDeckCards - numberSelected;
+            DisplayMessageBox(remainedCards);
+        }
+        
     }
 
     public void RandomDeck()
@@ -145,14 +135,14 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Le voisin", allCards));
         deck1.Add(GetSpecificCard("Lolhitler", allCards));
         deck1.Add(GetSpecificCard("Maman", allCards));
-        deck1.Add(GetSpecificCard("Manuel Ferrara", allCards));
+        deck1.Add(GetSpecificCard("Attaque de la tour Eiffel", allCards));
         deck1.Add(GetSpecificCard("Poignée de porte", allCards));
         deck1.Add(GetSpecificCard("Spaghetti", allCards));
         deck1.Add(GetSpecificCard("Théodule", allCards));
-        deck1.Add(GetSpecificCard("Sangoku", allCards));
-        deck1.Add(GetSpecificCard("Sheik Point", allCards));
-        deck1.Add(GetSpecificCard("Starlight Unicorn", allCards));
+        deck1.Add(GetSpecificCard("Croisement des effluves", allCards));
         deck1.Add(GetSpecificCard("Bloue touche", allCards));
+        deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
+        deck1.Add(GetSpecificCard("Convocation au lycée", allCards));
 
 
         while (deck2.Count != 30)
