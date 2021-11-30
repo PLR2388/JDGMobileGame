@@ -9,20 +9,20 @@ public class SuperInvocationCard : InvocationCard
 {
     public List<InvocationCard> invocationCards;
 
-    public void init(List<InvocationCard> invocationCards) {
-        this.invocationCards = invocationCards;
-        var attack = 0.0f;
-        var defense = 0.0f;
-        var name = "";
+    public void Init(List<InvocationCard> invocationCardsList) {
+        invocationCards = invocationCardsList;
+        var totalAttack = 0.0f;
+        var totalDefense = 0.0f;
+        var newName = "";
         Material material;
-        foreach(InvocationCard invocationCard in invocationCards) {
-            attack += invocationCard.GetAttack();
-            defense += invocationCard.GetDefense();
-            name += invocationCard.Nom;
+        foreach(var invocationCard in invocationCardsList) {
+            totalAttack += invocationCard.GetAttack();
+            totalDefense += invocationCard.GetDefense();
+            newName += invocationCard.Nom;
         }
-        this.attack = attack;
-        this.defense = defense;
-        this.nom = name;
+        attack = totalAttack;
+        defense = totalDefense;
+        nom = newName;
 
         // TODO Study this to create a text
         var perCharacterKernings = new PerCharacterKerning[]

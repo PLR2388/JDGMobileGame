@@ -10,7 +10,7 @@ public class EquipmentCard : Card
 
     private void Awake()
     {
-        this.type = CardType.Equipment;
+        type = CardType.Equipment;
     }
 
     public bool IsEquipmentPossible()

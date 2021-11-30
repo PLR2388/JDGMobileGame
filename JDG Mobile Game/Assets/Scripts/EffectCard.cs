@@ -18,7 +18,7 @@ public class EffectCard : Card
 
     private void Awake()
     {
-        this.type = CardType.Effect;
+        type = CardType.Effect;
     }
 
     public int GetLifeTime()

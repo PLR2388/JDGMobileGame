@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Lean.Localization;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -155,7 +154,7 @@ public class CardChoice : MonoBehaviour
         SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
     }
 
-    private Card GetSpecificCard(string nameCard, List<Card> cards)
+    private static Card GetSpecificCard(string nameCard, List<Card> cards)
     {
         return cards.Find(x => x.Nom == nameCard);
     }

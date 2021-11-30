@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -35,12 +34,6 @@ public class EffectFunctions : MonoBehaviour
     {
         var effectCards = currentPlayerCard.effectCards;
         return effectCards.Count;
-    }
-
-    private int FindSizeInvocationCard(IEnumerable<InvocationCard> invocationCards)
-    {
-        return invocationCards.Where(invocationCard => invocationCard != null)
-            .Count(invocationCard => invocationCard.Nom != null);
     }
 
     private void PutEffectCard(EffectCard effectCard)
@@ -597,7 +590,7 @@ public class EffectFunctions : MonoBehaviour
 
                     SuperInvocationCard superInvocationCard =
                         ScriptableObject.CreateInstance<SuperInvocationCard>();
-                    superInvocationCard.init(invocationCards);
+                    superInvocationCard.Init(invocationCards);
 
                     var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
                     currentPlayerCard.AddPhysicalCard(superInvocationCard, playerName);
