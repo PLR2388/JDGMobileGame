@@ -43,6 +43,7 @@ public class InvocationCard : Card
     }
 
     public InvocationActionEffect InvocationActionEffect => invocationActionEffect;
+    public InvocationConditions InvocationConditions => invocationConditions;
 
     public void BlockAttack()
     {

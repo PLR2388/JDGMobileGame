@@ -581,6 +581,12 @@ public class InvocationFunctions : MonoBehaviour
 
         var invocationStartEffect = invocationCard.GetInvocationStartEffect();
         var invocationActionEffect = invocationCard.InvocationActionEffect;
+        var invocationConditionEffect = invocationCard.InvocationConditions;
+
+        if (invocationConditionEffect != null)
+        {
+            DealWithConditionInvocation(invocationConditionEffect);
+        }
 
         if (invocationStartEffect != null)
         {
@@ -1027,6 +1033,170 @@ public class InvocationFunctions : MonoBehaviour
 
         return trashCards.Count(card => card.Type == CardType.Invocation);
     }
+    
+    public void DealWithConditionInvocation(InvocationConditions conditions)
+    {
+        var cardConditions = conditions.Keys;
+            var cardExplanation = conditions.Values;
+
+            InvocationCard specificCardFound = null;
+
+            var sacrificedCards = new List<InvocationCard>();
+
+            var invocationCardsOnField = new List<InvocationCard>();
+
+            var i = 0;
+            while (i < cardConditions.Count)
+            {
+                switch (cardConditions[i])
+                {
+                    case Condition.SpecificCardOnField:
+                    {
+                        var cardName = cardExplanation[i];
+                        var invocationCard = CheckSpecificCardOnField(cardName, currentPlayerCard);
+                        if (invocationCard != null)
+                        {
+                            invocationCardsOnField.Add(invocationCard);
+                        }
+                    }
+                        break;
+                    case Condition.SacrificeSpecificCard:
+                    {
+                        var cardName = cardExplanation[i];
+                        if (!specificCardFound)
+                        {
+                            specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
+                            if (i == (cardConditions.Count - 1))
+                            {
+                                
+                            } 
+                        }
+                    }
+                        break;
+                    case Condition.SpecificEquipmentAttached:
+                    {
+                        var equipmentName = cardExplanation[i];
+                        if (specificCardFound)
+                        {
+                            var equipmentCard = specificCardFound.GETEquipmentCard();
+                            if (equipmentCard != null && equipmentCard.Nom == equipmentName)
+                            {
+                                specificCardFound.SetEquipmentCard(null);
+                                currentPlayerCard.invocationCards.Remove(specificCardFound);
+                                currentPlayerCard.yellowTrash.Add(specificCardFound);
+                                currentPlayerCard.yellowTrash.Add(equipmentCard);
+                            }
+                        }
+                       
+                    }
+                        break;
+                    case Condition.SpecificField:
+                    {
+                        var fieldName = cardExplanation[i];
+                    }
+                        break;
+                    case Condition.SacrificeFamily:
+                    {
+                        var familyName = cardExplanation[i];
+                        if (Enum.TryParse(familyName, out CardFamily cardFamily))
+                        {
+                            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
+                        }
+                    }
+                        break;
+                    case Condition.SpecificFamilyOnField:
+                    {
+                        var familyName = cardExplanation[i];
+                        if (Enum.TryParse(familyName, out CardFamily cardFamily))
+                        {
+                            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
+                        }
+                    }
+                        break;
+                    case Condition.NumberCard:
+                    {
+                        var numberCard = int.Parse(cardExplanation[i]);
+                        if (invocationCardsOnField.Count > 0)
+                        {
+                            
+                        }
+                        else if (sacrificedCards.Count > 0)
+                        {
+                           
+                        }
+                    }
+                        break;
+                    case Condition.SacrificeThresholdAtk:
+                    {
+                        var threshold = float.Parse(cardExplanation[i]);
+                        if (sacrificedCards.Count > 0)
+                        {
+                            var j = 0;
+                            while (j < sacrificedCards.Count)
+                            {
+                                if (sacrificedCards[j].GetAttack() < threshold)
+                                {
+                                    sacrificedCards.RemoveAt(j);
+                                }
+                                else
+                                {
+                                    j++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            sacrificedCards = CheckThreshold(true, threshold, currentPlayerCard);
+                        }
+                    }
+                        break;
+                    case Condition.SacrificeThresholdDef:
+                    {
+                        var threshold = int.Parse(cardExplanation[i]);
+                        if (sacrificedCards.Count > 0)
+                        {
+                            var j = 0;
+                            while (j < sacrificedCards.Count)
+                            {
+                                if (sacrificedCards[j].GetDefense() < threshold)
+                                {
+                                    sacrificedCards.RemoveAt(j);
+                                }
+                                else
+                                {
+                                    j++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            sacrificedCards = CheckThreshold(false, threshold, currentPlayerCard);
+                        }
+                    }
+                        break;
+                    case Condition.NumberInvocationCardInYellowTrash:
+                    {
+                        var numberCardToHave = int.Parse(cardExplanation[i]);
+                        var realNumber = CheckNumberInvocationCardInYellowTrash(currentPlayerCard);
+
+                        //isInvocationPossible = (realNumber >= numberCardToHave);
+                    }
+                        break;
+                    case Condition.ComeFromYellowTrash:
+                    {
+                        if (specificCardFound != null)
+                        {
+                          //  isInvocationPossible = (specificCardFound.GETNumberDeaths() > 0);
+                        }
+                    }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                i++;
+            }
+    }
 
     public static bool IsInvocationPossible(InvocationConditions conditions, string playerName)
     {
@@ -1045,6 +1215,8 @@ public class InvocationFunctions : MonoBehaviour
 
             var sacrificedCards = new List<InvocationCard>();
 
+            var invocationCardsOnField = new List<InvocationCard>();
+
             var isInvocationPossible = true;
 
             var i = 0;
@@ -1056,7 +1228,11 @@ public class InvocationFunctions : MonoBehaviour
                     {
                         var cardName = cardExplanation[i];
                         var invocationCard = CheckSpecificCardOnField(cardName, currentPlayerCard);
-                        isInvocationPossible = (invocationCard != null);
+                        if (invocationCard != null)
+                        {
+                            invocationCardsOnField.Add(invocationCard);
+                        }
+                        //isInvocationPossible = (invocationCard != null);
                     }
                         break;
                     case Condition.SacrificeSpecificCard:
@@ -1104,7 +1280,11 @@ public class InvocationFunctions : MonoBehaviour
                     case Condition.NumberCard:
                     {
                         var numberCard = int.Parse(cardExplanation[i]);
-                        if (sacrificedCards.Count > 0)
+                        if (invocationCardsOnField.Count > 0)
+                        {
+                            isInvocationPossible = invocationCardsOnField.Count >= numberCard;
+                        }
+                        else if (sacrificedCards.Count > 0)
                         {
                             isInvocationPossible = sacrificedCards.Count >= numberCard;
                         }

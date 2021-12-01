@@ -117,7 +117,6 @@ public class CardChoice : MonoBehaviour
 
      
         deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
-        deck1.Add(GetSpecificCard("Benzaie jeune", allCards));
         deck1.Add(GetSpecificCard("Bébé Terreur-Nocturne", allCards));
         deck1.Add(GetSpecificCard("Carole du service marketing", allCards));
         deck1.Add(GetSpecificCard("Cliché Raciste", allCards));
@@ -138,10 +137,10 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Poignée de porte", allCards));
         deck1.Add(GetSpecificCard("Spaghetti", allCards));
         deck1.Add(GetSpecificCard("Théodule", allCards));
-        deck1.Add(GetSpecificCard("Croisement des effluves", allCards));
-        deck1.Add(GetSpecificCard("Bloue touche", allCards));
+        deck1.Add(GetSpecificCard("Cassette VHS", allCards));
+        deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
         deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
-        deck1.Add(GetSpecificCard("Convocation au lycée", allCards));
+        deck1.Add(GetSpecificCard("Archibad Von Grenier", allCards));
 
 
         while (deck2.Count != 30)
