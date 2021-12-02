@@ -114,33 +114,13 @@ public class CardChoice : MonoBehaviour
         var deck2 = new List<Card>();
 
         var allCards = FindObjectOfType<GameState>().allCards;
-
-     
-        deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
-        deck1.Add(GetSpecificCard("Bébé Terreur-Nocturne", allCards));
-        deck1.Add(GetSpecificCard("Carole du service marketing", allCards));
-        deck1.Add(GetSpecificCard("Cliché Raciste", allCards));
-        deck1.Add(GetSpecificCard("Clodo du coin", allCards));
-        deck1.Add(GetSpecificCard("Dictateur Sympa", allCards));
-        deck1.Add(GetSpecificCard("Fourchette", allCards));
-        deck1.Add(GetSpecificCard("Frangipanus", allCards));
-        deck1.Add(GetSpecificCard("Armure trop lourde", allCards));
-        deck1.Add(GetSpecificCard("Gérard Choixpeau", allCards));
-        deck1.Add(GetSpecificCard("Inspecteur Magret", allCards));
-        deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", allCards));
-        deck1.Add(GetSpecificCard("La Mort", allCards));
-        deck1.Add(GetSpecificCard("Le Hobbit", allCards));
-        deck1.Add(GetSpecificCard("Le voisin", allCards));
-        deck1.Add(GetSpecificCard("Lolhitler", allCards));
-        deck1.Add(GetSpecificCard("Maman", allCards));
-        deck1.Add(GetSpecificCard("Attaque de la tour Eiffel", allCards));
-        deck1.Add(GetSpecificCard("Poignée de porte", allCards));
-        deck1.Add(GetSpecificCard("Spaghetti", allCards));
-        deck1.Add(GetSpecificCard("Théodule", allCards));
-        deck1.Add(GetSpecificCard("Cassette VHS", allCards));
+        while (deck1.Count != 27)
+        {
+            GetRandomCards(allCards, deck1);
+        }
         deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
         deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
-        deck1.Add(GetSpecificCard("Archibad Von Grenier", allCards));
+        deck1.Add(GetSpecificCard("Archibald Von Grenier", allCards));
 
 
         while (deck2.Count != 30)

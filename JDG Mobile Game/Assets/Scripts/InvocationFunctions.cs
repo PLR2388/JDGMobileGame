@@ -1093,6 +1093,21 @@ public class InvocationFunctions : MonoBehaviour
                     case Condition.SpecificField:
                     {
                         var fieldName = cardExplanation[i];
+                        if (specificCardFound)
+                        {
+                            var fieldCard = currentPlayerCard.field;
+                            if (fieldCard != null && fieldCard.Nom == fieldName)
+                            {
+                                var equipmentCard = specificCardFound.GETEquipmentCard();
+                                specificCardFound.SetEquipmentCard(null);
+                                currentPlayerCard.invocationCards.Remove(specificCardFound);
+                                currentPlayerCard.yellowTrash.Add(specificCardFound);
+                                if (equipmentCard != null)
+                                {
+                                    currentPlayerCard.yellowTrash.Add(equipmentCard);
+                                }
+                            }
+                        }
                     }
                         break;
                     case Condition.SacrificeFamily:

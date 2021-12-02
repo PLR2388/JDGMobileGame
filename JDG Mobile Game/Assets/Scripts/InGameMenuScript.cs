@@ -86,6 +86,7 @@ public class InGameMenuScript : MonoBehaviour
                 break;
             case CardType.Contre:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Contrer";
+                putCardButton.GetComponent<Button>().interactable = true;
                 break;
             case CardType.Effect:
                 var effectCard = (EffectCard) card;
@@ -100,6 +101,7 @@ public class InGameMenuScript : MonoBehaviour
                 break;
             case CardType.Field:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                putCardButton.GetComponent<Button>().interactable = true;
                 break;
         }
         
