@@ -576,9 +576,7 @@ public class InvocationFunctions : MonoBehaviour
         var size = currentPlayerCard.invocationCards.Count;
 
         if (size >= 4) return;
-        currentPlayerCard.invocationCards.Add(invocationCard);
-        currentPlayerCard.handCards.Remove(invocationCard);
-
+        
         var invocationStartEffect = invocationCard.GetInvocationStartEffect();
         var invocationActionEffect = invocationCard.InvocationActionEffect;
         var invocationConditionEffect = invocationCard.InvocationConditions;
@@ -586,6 +584,13 @@ public class InvocationFunctions : MonoBehaviour
         if (invocationConditionEffect != null)
         {
             DealWithConditionInvocation(invocationConditionEffect);
+            currentPlayerCard.invocationCards.Add(invocationCard);
+            currentPlayerCard.handCards.Remove(invocationCard);
+        }
+        else
+        {
+            currentPlayerCard.invocationCards.Add(invocationCard);
+            currentPlayerCard.handCards.Remove(invocationCard);
         }
 
         if (invocationStartEffect != null)
@@ -1034,7 +1039,7 @@ public class InvocationFunctions : MonoBehaviour
         return trashCards.Count(card => card.Type == CardType.Invocation);
     }
     
-    public void DealWithConditionInvocation(InvocationConditions conditions)
+    private void DealWithConditionInvocation(InvocationConditions conditions)
     {
         var cardConditions = conditions.Keys;
             var cardExplanation = conditions.Values;
@@ -1137,7 +1142,66 @@ public class InvocationFunctions : MonoBehaviour
                         }
                         else if (sacrificedCards.Count > 0)
                         {
-                           
+                            if (sacrificedCards.Count == 1)
+                            {
+                                if (numberCard == 1)
+                                {
+                                    var invocationCardToKill = sacrificedCards[0];
+                                    var equipmentCard = invocationCardToKill.GETEquipmentCard();
+                                    if (equipmentCard != null)
+                                    {
+                                        invocationCardToKill.SetEquipmentCard(null);
+                                        currentPlayerCard.yellowTrash.Add(equipmentCard);
+                                    }
+                                    currentPlayerCard.yellowTrash.Add(invocationCardToKill);
+                                    currentPlayerCard.invocationCards.Remove(invocationCardToKill);
+                                }
+                            }
+                            else
+                            {
+                                if (numberCard == 1)
+                                {
+                                    var listCard = sacrificedCards.Cast<Card>().ToList();
+                                    var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                        "Choix de la carte à sacrifier", listCard);
+                                    messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                                    {
+                                        var cardSelected = messageBox.GetComponent<MessageBox>().GETSelectedCard();
+                                        if (cardSelected.IsValid())
+                                        {
+                                            var invocationCardToKill = (InvocationCard)cardSelected;
+                                            var equipmentCard = invocationCardToKill.GETEquipmentCard();
+                                            if (equipmentCard != null)
+                                            {
+                                                invocationCardToKill.SetEquipmentCard(null);
+                                                currentPlayerCard.yellowTrash.Add(equipmentCard);
+                                            }
+                                            currentPlayerCard.yellowTrash.Add(invocationCardToKill);
+                                            currentPlayerCard.invocationCards.Remove(invocationCardToKill);
+                                            Destroy(messageBox);
+                                        }
+                                        else
+                                        {
+                                            messageBox.SetActive(false);
+                                            UnityAction okAction = () =>
+                                            {
+                                                messageBox.SetActive(true);
+                                            };
+                                            MessageBox.CreateOkMessageBox(canvas, "Information",
+                                                "Tu dois sélectionner une carte", okAction);
+                                        }
+                                    };
+                                    messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                                    {
+                                        UnityAction okAction = () =>
+                                        {
+                                            messageBox.SetActive(true);
+                                        };
+                                        MessageBox.CreateOkMessageBox(canvas, "Information",
+                                            "Tu dois sélectionner une carte", okAction);
+                                    };
+                                }
+                            }
                         }
                     }
                         break;
@@ -1161,7 +1225,11 @@ public class InvocationFunctions : MonoBehaviour
                         }
                         else
                         {
-                            sacrificedCards = CheckThreshold(true, threshold, currentPlayerCard);
+                            var attackOK = CheckThreshold(true, threshold, currentPlayerCard);
+                            foreach (var invocationCard in attackOK.Where(invocationCard => !sacrificedCards.Contains(invocationCard)))
+                            {
+                                sacrificedCards.Add(invocationCard);
+                            }
                         }
                     }
                         break;
@@ -1185,7 +1253,11 @@ public class InvocationFunctions : MonoBehaviour
                         }
                         else
                         {
-                            sacrificedCards = CheckThreshold(false, threshold, currentPlayerCard);
+                            var defenseOK = CheckThreshold(false, threshold, currentPlayerCard);
+                            foreach (var invocationCard in defenseOK.Where(invocationCard => !sacrificedCards.Contains(invocationCard)))
+                            {
+                                sacrificedCards.Add(invocationCard);
+                            }
                         }
                     }
                         break;

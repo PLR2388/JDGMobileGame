@@ -114,13 +114,14 @@ public class CardChoice : MonoBehaviour
         var deck2 = new List<Card>();
 
         var allCards = FindObjectOfType<GameState>().allCards;
-        while (deck1.Count != 27)
+        while (deck1.Count != 26)
         {
             GetRandomCards(allCards, deck1);
         }
-        deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
-        deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
-        deck1.Add(GetSpecificCard("Archibald Von Grenier", allCards));
+        deck1.Add(GetSpecificCard("Dictateur Sympa", allCards));
+        deck1.Add(GetSpecificCard("Canarang", allCards));
+        deck1.Add(GetSpecificCard("Canardman", allCards));
+        deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
 
 
         while (deck2.Count != 30)
