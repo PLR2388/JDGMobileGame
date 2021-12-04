@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 01000000030000000c000000
   values:
-  - equipment
+  - Equipment
   - deck
   - skipAttack
