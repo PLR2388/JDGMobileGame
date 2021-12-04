@@ -120,7 +120,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("La Petite Fille", allCards));
         deck1.Add(GetSpecificCard("Le chevalier noir", allCards));
         deck1.Add(GetSpecificCard("Babs", allCards));
-        deck1.Add(GetSpecificCard("L'homme-banane", allCards));
+        deck1.Add(GetSpecificCard("La Mort", allCards));
         
         while (deck1.Count != 30)
         {

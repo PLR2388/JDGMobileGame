@@ -1268,10 +1268,6 @@ public class InvocationFunctions : MonoBehaviour
                     break;
                 case Condition.NumberInvocationCardInYellowTrash:
                 {
-                    var numberCardToHave = int.Parse(cardExplanation[i]);
-                    var realNumber = CheckNumberInvocationCardInYellowTrash(currentPlayerCard);
-
-                    //isInvocationPossible = (realNumber >= numberCardToHave);
                 }
                     break;
                 case Condition.ComeFromYellowTrash:
