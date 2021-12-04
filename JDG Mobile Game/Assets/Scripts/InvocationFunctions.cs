@@ -422,19 +422,15 @@ public class InvocationFunctions : MonoBehaviour
                     {
                         opponentPlayerCards = p2.GetComponent<PlayerCards>();
                         var p2InvocationCards = opponentPlayerCards.invocationCards;
-
-                        cardFound.AddRange((from t in p2InvocationCards
-                            where t != null && t.Nom != null
-                            select p2InvocationCards[i]));
+                        
+                        cardFound.AddRange(p2InvocationCards);
                     }
                     else
                     {
                         opponentPlayerCards = p1.GetComponent<PlayerCards>();
                         var p1InvocationCards = opponentPlayerCards.invocationCards;
 
-                        cardFound.AddRange((from t in p1InvocationCards
-                            where t != null && t.Nom != null
-                            select p1InvocationCards[i]));
+                        cardFound.AddRange(p1InvocationCards);
                     }
 
 
@@ -485,7 +481,7 @@ public class InvocationFunctions : MonoBehaviour
                         {
                             CreateMessageBoxNotChoosenCard();
                         }
-
+                        inHandButton.SetActive(true);
                         Destroy(message);
                     };
                     message.GetComponent<MessageBox>().NegativeAction = () =>

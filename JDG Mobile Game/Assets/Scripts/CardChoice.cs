@@ -115,7 +115,7 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
-        deck1.Add(GetSpecificCard("Le Hard Corner",allCards));
+        deck1.Add(GetSpecificCard("La Mort",allCards));
         deck1.Add(GetSpecificCard("Fourchette", allCards));
         deck1.Add(GetSpecificCard("Dresseur de Bidulmon", allCards));
         deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", allCards));
