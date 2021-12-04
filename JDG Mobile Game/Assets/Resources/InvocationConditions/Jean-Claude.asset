@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 04000000070000000800000006000000
   values:
-  - "d\xE9veloppeur"
+  - Developer
   - 3
   - 3
   - 2

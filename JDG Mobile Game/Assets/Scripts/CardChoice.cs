@@ -115,10 +115,11 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
-        deck1.Add(GetSpecificCard("Clodo du coin", allCards));
-        deck1.Add(GetSpecificCard("Henry Potdebeurre", allCards));
-        deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
-        deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
+        deck1.Add(GetSpecificCard("Daffy",allCards));
+        deck1.Add(GetSpecificCard("Benzaie jeune", allCards));
+        deck1.Add(GetSpecificCard("Cassette VHS", allCards));
+        deck1.Add(GetSpecificCard("Benzaie", allCards));
+        deck1.Add(GetSpecificCard("Jean-Claude", allCards));
         
         while (deck1.Count != 30)
         {
