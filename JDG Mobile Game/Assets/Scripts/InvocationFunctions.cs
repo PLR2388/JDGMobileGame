@@ -39,6 +39,7 @@ public class InvocationFunctions : MonoBehaviour
         var cardFound = new List<Card>();
         var mustDivideAttack = false;
         var mustDivideDefense = false;
+        var cantAttack = false;
         for (var i = 0; i < keys.Count; i++)
         {
             switch (keys[i])
@@ -376,8 +377,16 @@ public class InvocationFunctions : MonoBehaviour
                                     currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetDefense() / 2);
                                 }
 
-                                currentPlayerCard.deck.Add(fieldCard);
-                                currentPlayerCard.deck.Remove(fieldCard);
+                                if (fieldCard.Nom == fieldCardP1.Nom)
+                                {
+                                    p1.GetComponent<PlayerCards>().field = null;
+                                    p1.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
+                                }
+                                else
+                                {
+                                    p2.GetComponent<PlayerCards>().field = null;
+                                    p2.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
+                                }
                             }
                             else
                             {
@@ -390,6 +399,7 @@ public class InvocationFunctions : MonoBehaviour
                         message.GetComponent<MessageBox>().NegativeAction = () =>
                         {
                             inHandButton.SetActive(true);
+                            currentInvocationCard.UnblockAttack();
                             Destroy(message);
                         };
                     }
@@ -555,6 +565,12 @@ public class InvocationFunctions : MonoBehaviour
                                 inHandButton.SetActive(true);
                                 Destroy(m);
                             };
+                        }
+                            break;
+                        case "cantAttack":
+                        {
+                            currentInvocationCard.BlockAttack();
+                            cantAttack = true;
                         }
                             break;
                     }

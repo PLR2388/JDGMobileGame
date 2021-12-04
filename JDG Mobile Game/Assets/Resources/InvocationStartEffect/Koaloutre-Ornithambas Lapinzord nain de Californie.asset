@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 0c0000000800000007000000
   values:
-  - skipAttack
+  - cantAttack
   - true
   - true
