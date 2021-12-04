@@ -118,9 +118,9 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Daffy",allCards));
         deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
         deck1.Add(GetSpecificCard("La Petite Fille", allCards));
-        deck1.Add(GetSpecificCard("Le mot de passe", allCards));
-        deck1.Add(GetSpecificCard("Papy Grenier", allCards));
-        deck1.Add(GetSpecificCard("Moïse, le plus grand de tous les hébreux", allCards));
+        deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
+        deck1.Add(GetSpecificCard("Seb Du Grenier", allCards));
+        deck1.Add(GetSpecificCard("Professeur Humblebundledore", allCards));
         
         while (deck1.Count != 30)
         {
