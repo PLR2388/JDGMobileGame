@@ -118,9 +118,9 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Daffy",allCards));
         deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
         deck1.Add(GetSpecificCard("La Petite Fille", allCards));
-        deck1.Add(GetSpecificCard("Le chevalier noir", allCards));
-        deck1.Add(GetSpecificCard("Archibald Von Grenier", allCards));
-        deck1.Add(GetSpecificCard("Lolhitler", allCards));
+        deck1.Add(GetSpecificCard("Le mot de passe", allCards));
+        deck1.Add(GetSpecificCard("Mecha-Granolax", allCards));
+        deck1.Add(GetSpecificCard("Granolax", allCards));
         
         while (deck1.Count != 30)
         {

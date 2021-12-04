@@ -1274,7 +1274,7 @@ public class InvocationFunctions : MonoBehaviour
                 {
                     if (specificCardFound != null)
                     {
-                      //  isInvocationPossible = (specificCardFound.GETNumberDeaths() > 0);
+                        currentPlayerCard.sendInvocationCardToYellowTrash(specificCardFound);
                     }
                 }
                     break;

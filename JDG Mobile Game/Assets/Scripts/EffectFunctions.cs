@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -416,6 +417,53 @@ public class EffectFunctions : MonoBehaviour
                     case Effect.Sources:
                     {
                         sources = ApplySources(value);
+                        if (handCardsNumber > 0)
+                        {
+                            if (sources.Contains("deck") && sources.Contains("yellow"))
+                            {
+                                List<Card> cards = new List<Card>(currentPlayerCard.deck);
+                                cards.AddRange(currentPlayerCard.yellowTrash);
+                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                    "Choisis 1 carte à rajouter dans ta main", cards);
+                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                                {
+                                    var card = messageBox.GetComponent<MessageBox>().GETSelectedCard();
+                                    if (card != null)
+                                    {
+                                        currentPlayerCard.handCards.Add(card);
+                                        if (currentPlayerCard.yellowTrash.Contains(card))
+                                        {
+                                            currentPlayerCard.yellowTrash.Remove(card);
+                                        }
+                                        else
+                                        {
+                                            currentPlayerCard.deck.Remove(card);
+                                        }
+                                        Destroy(messageBox);
+                                    }
+                                    else
+                                    {
+                                        messageBox.SetActive(false);
+                                        UnityAction okAction = () =>
+                                        {
+                                            messageBox.SetActive(true);
+                                        };
+                                        MessageBox.CreateOkMessageBox(canvas, "Information",
+                                            "Tu dois choisir une carte", okAction);
+                                    }
+                                };
+                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                                {
+                                    messageBox.SetActive(false);
+                                    UnityAction okAction = () =>
+                                    {
+                                        messageBox.SetActive(true);
+                                    };
+                                    MessageBox.CreateOkMessageBox(canvas, "Information",
+                                        "Tu dois choisir une carte", okAction);
+                                };
+                            }
+                        }
                     }
                         break;
                     case Effect.HandMax:
