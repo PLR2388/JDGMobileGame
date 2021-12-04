@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 0400000006000000
   values:
-  - incarnation
+  - Incarnation
   - 2
