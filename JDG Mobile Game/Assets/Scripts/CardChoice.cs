@@ -120,7 +120,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Le mot de passe", allCards));
         deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
         deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
-        deck1.Add(GetSpecificCard("Benzaie jeune", allCards));
+        deck1.Add(GetSpecificCard("Cliché Raciste", allCards));
         
         while (deck1.Count != 30)
         {

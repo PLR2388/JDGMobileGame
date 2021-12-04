@@ -253,18 +253,20 @@ public class InvocationFunctions : MonoBehaviour
                     var p2InvocationCards = this.p2.GetComponent<PlayerCards>().invocationCards;
 
 
-                    for (var j = 0; j < p1InvocationCards.Count; j++)
+                    for (var j = p1InvocationCards.Count - 1; j >= 0; j--)
                     {
                         if (p1InvocationCards[j].Nom == dontRemoveCard) continue;
                         p1.GetComponent<PlayerCards>().handCards.Add(p1InvocationCards[j]);
-                        p1.GetComponent<PlayerCards>().invocationCards[j] = null;
+                        p1.GetComponent<PlayerCards>().invocationCards
+                            .Remove(p1InvocationCards[j]);
                     }
 
-                    for (var j = 0; j < p2InvocationCards.Count; j++)
+                    for (var j = p2InvocationCards.Count - 1; j >= 0; j--)
                     {
                         if (p2InvocationCards[j].Nom == dontRemoveCard) continue;
                         p2.GetComponent<PlayerCards>().handCards.Add(p2InvocationCards[j]);
-                        p2.GetComponent<PlayerCards>().invocationCards[j] = null;
+                        p2.GetComponent<PlayerCards>().invocationCards
+                            .Remove(p2InvocationCards[j]);
                     }
                 }
                     break;
