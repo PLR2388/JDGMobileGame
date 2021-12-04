@@ -118,9 +118,9 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Clodo du coin", allCards));
         deck1.Add(GetSpecificCard("Henry Potdebeurre", allCards));
         deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
-        deck1.Add(GetSpecificCard("Joueur du grenier", allCards));
+        deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
         
-        while (deck1.Count != 26)
+        while (deck1.Count != 30)
         {
             GetRandomCards(allCards, deck1);
         }
