@@ -118,9 +118,9 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Daffy",allCards));
         deck1.Add(GetSpecificCard("Fourchette", allCards));
         deck1.Add(GetSpecificCard("Le mot de passe", allCards));
-        deck1.Add(GetSpecificCard("Mecha-Granolax", allCards));
-        deck1.Add(GetSpecificCard("Granolax", allCards));
-        deck1.Add(GetSpecificCard("Tentacules", allCards));
+        deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
+        deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
+        deck1.Add(GetSpecificCard("Benzaie jeune", allCards));
         
         while (deck1.Count != 30)
         {

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 0200000003000000
   values:
-  - spatial
+  - Spatial
   - deck

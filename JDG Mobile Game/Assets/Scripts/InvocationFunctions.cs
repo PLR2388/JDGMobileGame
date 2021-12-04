@@ -159,6 +159,42 @@ public class InvocationFunctions : MonoBehaviour
                                         where family == cardFamily
                                         select invocationCard));
                                 }
+
+                                if (cardFound.Count > 0)
+                                {
+                                    var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                        "Choisis une carte à ajouter à ta main", cardFound);
+                                    messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                                    {
+                                        var card = messageBox.GetComponent<MessageBox>().GETSelectedCard();
+                                        if (card != null)
+                                        {
+                                            currentPlayerCard.deck.Remove(card);
+                                            currentPlayerCard.handCards.Add(card);
+                                            Destroy(messageBox);
+                                        }
+                                        else
+                                        {
+                                            messageBox.SetActive(false);
+                                            UnityAction okAction = () =>
+                                            {
+                                                messageBox.SetActive(true);
+                                                Destroy(messageBox);
+                                            };
+                                            MessageBox.CreateOkMessageBox(canvas, "Information", "Tu n'as pris aucune carte", okAction);
+                                        }
+                                    };
+                                    messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                                    {
+                                        messageBox.SetActive(false);
+                                        UnityAction okAction = () =>
+                                        {
+                                            messageBox.SetActive(true);
+                                            Destroy(messageBox);
+                                        };
+                                        MessageBox.CreateOkMessageBox(canvas, "Information", "Tu n'as pris aucune carte", okAction);
+                                    };
+                                }
                             }
 
                             break;
