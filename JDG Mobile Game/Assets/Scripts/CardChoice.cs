@@ -119,7 +119,8 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Benzaie jeune", allCards));
         deck1.Add(GetSpecificCard("Cassette VHS", allCards));
         deck1.Add(GetSpecificCard("Benzaie", allCards));
-        deck1.Add(GetSpecificCard("Jean-Claude", allCards));
+        deck1.Add(GetSpecificCard("Jean-Guy", allCards));
+        deck1.Add(GetSpecificCard("Merde magique en plastique rose", allCards));
         
         while (deck1.Count != 30)
         {

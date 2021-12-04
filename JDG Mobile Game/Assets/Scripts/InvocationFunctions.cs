@@ -1026,8 +1026,8 @@ public class InvocationFunctions : MonoBehaviour
         var invocationCards = currentPlayerCards.invocationCards;
         threshold.AddRange(isAttack
             ? invocationCards.Where(invocationCard =>
-                invocationCard != null && invocationCard.Nom != null && invocationCard.GetAttack() >= value)
-            : invocationCards.Where(invocationCard => invocationCard.GetDefense() >= value));
+                invocationCard != null && invocationCard.Nom != null && invocationCard.GetCurrentAttack() >= value)
+            : invocationCards.Where(invocationCard => invocationCard.GetCurrentDefense() >= value));
 
         return threshold;
     }

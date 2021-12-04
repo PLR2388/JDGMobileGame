@@ -8,6 +8,8 @@ public class EquipmentCard : Card
     [SerializeField] private EquipmentInstantEffect equipmentInstantEffect;
     [SerializeField] private EquipmentPermEffect equipmentPermEffect;
 
+    public EquipmentInstantEffect EquipmentInstantEffect => equipmentInstantEffect;
+
     private void Awake()
     {
         type = CardType.Equipment;

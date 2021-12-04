@@ -7,7 +7,7 @@ public class EquipmentInstantEffect : ScriptableObject
     [SerializeField] private List<InstantEffect> keys;
     [SerializeField] private List<string> values;
 
-    public IEnumerable<InstantEffect> Keys => keys;
+    public List<InstantEffect> Keys => keys;
 
-    public IEnumerable<string> Values => values;
+    public List<string> Values => values;
 }

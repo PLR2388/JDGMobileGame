@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Card", menuName = "InvocationCard")]
@@ -143,7 +145,27 @@ public class InvocationCard : Card
 
     public void SetEquipmentCard(EquipmentCard card)
     {
-        this.equipmentCard = card;
+        if (card == null)
+        {
+            if (equipmentCard != null)
+            {
+                var equipmentInstantEffect = equipmentCard.EquipmentInstantEffect;
+                if (equipmentInstantEffect != null)
+                {
+                    DealWithEndEquipmentInstantEffect(equipmentInstantEffect);
+                }
+            }
+      
+        }
+        else
+        {
+            var equipmentInstantEffect = card.EquipmentInstantEffect;
+            if (equipmentInstantEffect != null)
+            {
+                DealWithStartEquipmentInstantEffect(equipmentInstantEffect);
+            }
+        }
+        equipmentCard = card;
     }
 
     public int GETNumberDeaths()
@@ -155,5 +177,61 @@ public class InvocationCard : Card
     {
         return InvocationFunctions.IsInvocationPossible(invocationConditions,
             GameLoop.IsP1Turn ? "Player1" : "Player2");
+    }
+
+    private void DealWithStartEquipmentInstantEffect(EquipmentInstantEffect equipmentInstantEffect)
+    {
+        var keys = equipmentInstantEffect.Keys;
+        var values = equipmentInstantEffect.Values;
+
+        for (var i=0; i<keys.Count; i++)
+        {
+            var value = values[i];
+            switch (keys[i])
+            {
+                case InstantEffect.AddAtk:
+                {
+                    var attack = float.Parse(value);
+                    bonusAttack += attack;
+                }
+                    break;
+                case InstantEffect.AddDef:
+                {
+                    var defense = float.Parse(value);
+                    bonusDefense += defense;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    private void DealWithEndEquipmentInstantEffect(EquipmentInstantEffect equipmentInstantEffect)
+    {
+        var keys = equipmentInstantEffect.Keys;
+        var values = equipmentInstantEffect.Values;
+
+        for (var i=0; i<keys.Count; i++)
+        {
+            var value = values[i];
+            switch (keys[i])
+            {
+                case InstantEffect.AddAtk:
+                {
+                    var attack = float.Parse(value);
+                    bonusAttack -= attack;
+                }
+                    break;
+                case InstantEffect.AddDef:
+                {
+                    var defense = float.Parse(value);
+                    bonusDefense -= defense;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
