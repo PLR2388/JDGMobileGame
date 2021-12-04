@@ -116,11 +116,11 @@ public class CardChoice : MonoBehaviour
         var allCards = FindObjectOfType<GameState>().allCards;
 
         deck1.Add(GetSpecificCard("Daffy",allCards));
-        deck1.Add(GetSpecificCard("Benzaie jeune", allCards));
-        deck1.Add(GetSpecificCard("Cassette VHS", allCards));
-        deck1.Add(GetSpecificCard("Benzaie", allCards));
-        deck1.Add(GetSpecificCard("Jean-Guy", allCards));
-        deck1.Add(GetSpecificCard("Merde magique en plastique rose", allCards));
+        deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
+        deck1.Add(GetSpecificCard("La Petite Fille", allCards));
+        deck1.Add(GetSpecificCard("Dresseur de Bidulmon", allCards));
+        deck1.Add(GetSpecificCard("Cliché Raciste", allCards));
+        deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", allCards));
         
         while (deck1.Count != 30)
         {
