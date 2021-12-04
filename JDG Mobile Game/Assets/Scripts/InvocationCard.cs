@@ -153,7 +153,7 @@ public class InvocationCard : Card
 
     public bool IsInvocationPossible()
     {
-        return InvocationFunctions.IsInvocationPossible(this.invocationConditions,
+        return InvocationFunctions.IsInvocationPossible(invocationConditions,
             GameLoop.IsP1Turn ? "Player1" : "Player2");
     }
 }

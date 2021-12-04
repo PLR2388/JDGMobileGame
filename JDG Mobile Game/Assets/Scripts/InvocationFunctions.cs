@@ -1103,14 +1103,7 @@ public class InvocationFunctions : MonoBehaviour
                             var fieldCard = currentPlayerCard.field;
                             if (fieldCard != null && fieldCard.Nom == fieldName)
                             {
-                                var equipmentCard = specificCardFound.GETEquipmentCard();
-                                specificCardFound.SetEquipmentCard(null);
-                                currentPlayerCard.invocationCards.Remove(specificCardFound);
-                                currentPlayerCard.yellowTrash.Add(specificCardFound);
-                                if (equipmentCard != null)
-                                {
-                                    currentPlayerCard.yellowTrash.Add(equipmentCard);
-                                }
+                                currentPlayerCard.sendInvocationCardToYellowTrash(specificCardFound);
                             }
                         }
                     }
@@ -1147,14 +1140,7 @@ public class InvocationFunctions : MonoBehaviour
                                 if (numberCard == 1)
                                 {
                                     var invocationCardToKill = sacrificedCards[0];
-                                    var equipmentCard = invocationCardToKill.GETEquipmentCard();
-                                    if (equipmentCard != null)
-                                    {
-                                        invocationCardToKill.SetEquipmentCard(null);
-                                        currentPlayerCard.yellowTrash.Add(equipmentCard);
-                                    }
-                                    currentPlayerCard.yellowTrash.Add(invocationCardToKill);
-                                    currentPlayerCard.invocationCards.Remove(invocationCardToKill);
+                                    currentPlayerCard.sendInvocationCardToYellowTrash(invocationCardToKill);
                                 }
                             }
                             else
@@ -1170,14 +1156,7 @@ public class InvocationFunctions : MonoBehaviour
                                         if (cardSelected.IsValid())
                                         {
                                             var invocationCardToKill = (InvocationCard)cardSelected;
-                                            var equipmentCard = invocationCardToKill.GETEquipmentCard();
-                                            if (equipmentCard != null)
-                                            {
-                                                invocationCardToKill.SetEquipmentCard(null);
-                                                currentPlayerCard.yellowTrash.Add(equipmentCard);
-                                            }
-                                            currentPlayerCard.yellowTrash.Add(invocationCardToKill);
-                                            currentPlayerCard.invocationCards.Remove(invocationCardToKill);
+                                            currentPlayerCard.sendInvocationCardToYellowTrash(invocationCardToKill);
                                             Destroy(messageBox);
                                         }
                                         else
@@ -1193,6 +1172,7 @@ public class InvocationFunctions : MonoBehaviour
                                     };
                                     messageBox.GetComponent<MessageBox>().NegativeAction = () =>
                                     {
+                                        messageBox.SetActive(false);
                                         UnityAction okAction = () =>
                                         {
                                             messageBox.SetActive(true);

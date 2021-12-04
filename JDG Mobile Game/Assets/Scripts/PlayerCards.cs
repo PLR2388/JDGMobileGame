@@ -242,8 +242,15 @@ public class PlayerCards : MonoBehaviour
             {
                 if (!deck[i]) continue;
                 var index = FindCard(deck[i]);
-                allPhysicalCards[index].transform.position =
-                    new Vector3(deckLocationP1.x, deckLocationP1.y + 0.1f * i, deckLocationP1.z);
+                if (index == -1)
+                {
+                    print("Cannot find card "+deck[i].Nom);
+                }
+                else
+                {
+                    allPhysicalCards[index].transform.position =
+                        new Vector3(deckLocationP1.x, deckLocationP1.y + 0.1f * i, deckLocationP1.z);
+                }
             }
 
             for (var i = 0; i < yellowTrash.Count; i++)
@@ -277,8 +284,15 @@ public class PlayerCards : MonoBehaviour
             
             for ( var i = 0; i < handCards.Count; i++) {
                 var index = FindCard(handCards[i]);
-                allPhysicalCards[index].transform.position = secretHide;
-                allPhysicalCards[index].tag = "card1";
+                if (index == -1)
+                {
+                    print("Cannot find Card " + handCards[i].Nom);
+                }
+                else
+                {
+                    allPhysicalCards[index].transform.position = secretHide;
+                    allPhysicalCards[index].tag = "card1";
+                }
             }
         }
         else
@@ -418,8 +432,18 @@ public class PlayerCards : MonoBehaviour
             field = null;
             yellowTrash.Add(card);
         }
-
-
+    }
+    
+    public void sendInvocationCardToYellowTrash(InvocationCard specificCardFound)
+    {
+        var equipmentCard = specificCardFound.GETEquipmentCard();
+        specificCardFound.SetEquipmentCard(null);
+        invocationCards.Remove(specificCardFound);
+        yellowTrash.Add(specificCardFound);
+        if (equipmentCard != null)
+        {
+            yellowTrash.Add(equipmentCard);
+        }
     }
 
     public void SendCardToHand(Card card)

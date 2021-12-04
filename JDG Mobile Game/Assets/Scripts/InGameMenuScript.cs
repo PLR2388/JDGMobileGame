@@ -73,14 +73,14 @@ public class InGameMenuScript : MonoBehaviour
     {
         currentSelectedCard = card;
         var cardType = currentSelectedCard.Type;
+        var playerCard = GameLoop.IsP1Turn
+            ? GameObject.Find("Player1").GetComponent<PlayerCards>()
+            : GameObject.Find("Player2").GetComponent<PlayerCards>();
         switch (cardType)
         {
             case CardType.Invocation:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 var invocationCard = (InvocationCard) card;
-                var playerCard = GameLoop.IsP1Turn
-                    ? GameObject.Find("Player1").GetComponent<PlayerCards>()
-                    : GameObject.Find("Player2").GetComponent<PlayerCards>();
                 putCardButton.GetComponent<Button>().interactable = invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
 
                 break;
@@ -101,7 +101,7 @@ public class InGameMenuScript : MonoBehaviour
                 break;
             case CardType.Field:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                putCardButton.GetComponent<Button>().interactable = true;
+                putCardButton.GetComponent<Button>().interactable = playerCard.field == null;
                 break;
         }
         

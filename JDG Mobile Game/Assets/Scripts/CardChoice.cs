@@ -114,15 +114,18 @@ public class CardChoice : MonoBehaviour
         var deck2 = new List<Card>();
 
         var allCards = FindObjectOfType<GameState>().allCards;
+
+        deck1.Add(GetSpecificCard("Clodo du coin", allCards));
+        deck1.Add(GetSpecificCard("Henry Potdebeurre", allCards));
+        deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
+        deck1.Add(GetSpecificCard("Joueur du grenier", allCards));
+        
         while (deck1.Count != 26)
         {
             GetRandomCards(allCards, deck1);
         }
-        deck1.Add(GetSpecificCard("Dictateur Sympa", allCards));
-        deck1.Add(GetSpecificCard("Canarang", allCards));
-        deck1.Add(GetSpecificCard("Canardman", allCards));
-        deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
-
+        
+        deck1.Reverse();
 
         while (deck2.Count != 30)
         {
@@ -136,7 +139,13 @@ public class CardChoice : MonoBehaviour
 
     private static Card GetSpecificCard(string nameCard, List<Card> cards)
     {
-        return cards.Find(x => x.Nom == nameCard);
+        var card = cards.Find(x => x.Nom == nameCard);
+        if (card != null)
+        {
+            cards.Remove(card);
+        }
+
+        return card;
     }
 
     private static void GetRandomCards(IList<Card> allCards, ICollection<Card> deck)
@@ -144,6 +153,7 @@ public class CardChoice : MonoBehaviour
         var randomIndex = Random.Range(0, allCards.Count - 1);
         var card = allCards[randomIndex];
         if (card.Type == CardType.Contre) return;
+        if (card == null) return;
         deck.Add(card);
         allCards.Remove(card);
     }
