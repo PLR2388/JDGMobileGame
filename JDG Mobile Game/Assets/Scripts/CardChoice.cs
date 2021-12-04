@@ -115,10 +115,10 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
-        deck1.Add(GetSpecificCard("La Mort",allCards));
-        deck1.Add(GetSpecificCard("Fourchette", allCards));
-        deck1.Add(GetSpecificCard("Dresseur de Bidulmon", allCards));
-        deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", allCards));
+        deck1.Add(GetSpecificCard("Fantôme De Japonaise",allCards));
+        deck1.Add(GetSpecificCard("Archibald Von Grenier", allCards));
+        deck1.Add(GetSpecificCard("Magasin de jeux vidéo du coin",allCards));
+        deck1.Add(GetSpecificCard("Lolhitler", allCards));
         
         while (deck1.Count != 30)
         {
