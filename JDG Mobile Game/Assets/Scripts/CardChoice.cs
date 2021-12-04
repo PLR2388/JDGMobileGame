@@ -118,9 +118,9 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Daffy",allCards));
         deck1.Add(GetSpecificCard("Joueur Du Grenier", allCards));
         deck1.Add(GetSpecificCard("La Petite Fille", allCards));
-        deck1.Add(GetSpecificCard("Dresseur de Bidulmon", allCards));
-        deck1.Add(GetSpecificCard("Cliché Raciste", allCards));
-        deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", allCards));
+        deck1.Add(GetSpecificCard("Le chevalier noir", allCards));
+        deck1.Add(GetSpecificCard("Babs", allCards));
+        deck1.Add(GetSpecificCard("L'homme-banane", allCards));
         
         while (deck1.Count != 30)
         {

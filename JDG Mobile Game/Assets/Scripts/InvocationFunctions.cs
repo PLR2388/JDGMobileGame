@@ -1119,7 +1119,7 @@ public class InvocationFunctions : MonoBehaviour
                     var familyName = cardExplanation[i];
                     if (Enum.TryParse(familyName, out CardFamily cardFamily))
                     {
-                        sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
+                        invocationCardsOnField = CheckFamily(cardFamily, currentPlayerCard);
                     }
                 }
                     break;
