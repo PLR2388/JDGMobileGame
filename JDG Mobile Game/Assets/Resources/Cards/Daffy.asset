@@ -26,13 +26,13 @@ MonoBehaviour:
   family: 03000000
   equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 11400000, guid: 64ebef5e1248ec84f8c77f3b94392704,
+  invocationStartEffect: {fileID: 11400000, guid: ff990b6cdb815374e9b0d755ba140d40,
     type: 2}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
   invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
+  bonusAttack: 1
+  bonusDefense: 1
   numberTurnOnField: 0
   numberDeaths: 0
   blockAttackNextTurn: 0

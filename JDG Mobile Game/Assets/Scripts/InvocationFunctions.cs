@@ -565,7 +565,7 @@ public class InvocationFunctions : MonoBehaviour
                     var elements = values[i].Split(';');
                     var sacrifice = elements[0];
                     var field = elements[1];
-                    var incrementStat = float.Parse(elements[2]);
+                    float incrementStat = float.Parse(elements[2]);
 
                     var currentField = currentPlayerCard.field;
                     if (currentField != null && field == currentField.Nom)
@@ -588,13 +588,13 @@ public class InvocationFunctions : MonoBehaviour
 
                         if (found)
                         {
+                            var cardToSacrifice = invocationCardOnField[k];
                             UnityAction positiveAction = () =>
                             {
-                                currentPlayerCard.invocationCards.Remove(invocationCardOnField[k]);
-                                currentPlayerCard.yellowTrash.Add(invocationCardOnField[k]);
+                                currentPlayerCard.invocationCards.Remove(cardToSacrifice);
+                                currentPlayerCard.yellowTrash.Add(cardToSacrifice);
                                 currentInvocationCard.SetBonusAttack(incrementStat);
                                 currentInvocationCard.SetBonusDefense(incrementStat);
-                                currentPlayerCard.invocationCards.Add(currentInvocationCard);
                             };
                             MessageBox.CreateSimpleMessageBox(canvas, "Choix",
                                 "Voulez-vous sacrifier " + sacrifice + " pour gagner " + incrementStat +

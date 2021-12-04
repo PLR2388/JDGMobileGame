@@ -118,9 +118,9 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Daffy",allCards));
         deck1.Add(GetSpecificCard("Fourchette", allCards));
         deck1.Add(GetSpecificCard("Le mot de passe", allCards));
-        deck1.Add(GetSpecificCard("Alpha V De Gelganech", allCards));
-        deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
-        deck1.Add(GetSpecificCard("Cliché Raciste", allCards));
+        deck1.Add(GetSpecificCard("Le Hard Corner", allCards));
+        deck1.Add(GetSpecificCard("Seb Du Grenier", allCards));
+        deck1.Add(GetSpecificCard("Clodo du coin", allCards));
         
         while (deck1.Count != 30)
         {
