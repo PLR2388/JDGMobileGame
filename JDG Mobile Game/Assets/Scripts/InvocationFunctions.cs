@@ -1320,7 +1320,6 @@ public class InvocationFunctions : MonoBehaviour
                         {
                             invocationCardsOnField.Add(invocationCard);
                         }
-                        //isInvocationPossible = (invocationCard != null);
                     }
                         break;
                     case Condition.SacrificeSpecificCard:

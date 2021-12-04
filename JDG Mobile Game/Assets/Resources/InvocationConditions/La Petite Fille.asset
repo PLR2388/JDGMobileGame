@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbba6e19d2e78a743bbc852856862028, type: 3}
   m_Name: La Petite Fille
   m_EditorClassIdentifier: 
-  keys: 00000000
+  keys: 0000000006000000
   values:
   - Joueur Du Grenier
+  - 1
