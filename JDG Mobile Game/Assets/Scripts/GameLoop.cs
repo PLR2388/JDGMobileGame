@@ -1127,6 +1127,7 @@ public class GameLoop : MonoBehaviour
 
         if (phaseId != 3) return;
         PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        PlayerCards opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         List<EffectCard> effectCards = currentPlayerCard.effectCards;
         List<EffectCard> effectCardsToDelete = new List<EffectCard>();
         foreach(EffectCard effectCard in effectCards) {
@@ -1141,6 +1142,88 @@ public class GameLoop : MonoBehaviour
         foreach (var effectCard in effectCardsToDelete)
         {
             effectCards.Remove(effectCard);
+        }
+        
+        // Check if preventInvocationCards is there
+        for(int k = currentPlayerCard.invocationCards.Count -1; k>=0; k--)
+        {
+            var invocationCard = currentPlayerCard.invocationCards[k];
+            var permEffect = invocationCard.InvocationPermEffect;
+            if (permEffect != null)
+            {
+                var keys = permEffect.Keys;
+                var values = permEffect.Values;
+                for (int i = 0; i < keys.Count; i++)
+                {
+                    switch (keys[i])
+                    {
+                        case PermEffect.PreventInvocationCards:
+                        {
+                            for (int j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
+                            {
+                                var checkInvocationCard = currentPlayerCard.invocationCards[j];
+                                if (checkInvocationCard.Nom != invocationCard.Nom)
+                                {
+                                    currentPlayerCard.invocationCards.Remove(checkInvocationCard);
+                                    currentPlayerCard.handCards.Add(checkInvocationCard);
+                                }
+                            }
+                            for (int j = opponentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
+                            {
+                                var checkInvocationCard = opponentPlayerCard.invocationCards[j];
+                                if (checkInvocationCard.Nom != invocationCard.Nom)
+                                {
+                                    opponentPlayerCard.invocationCards.Remove(checkInvocationCard);
+                                    opponentPlayerCard.handCards.Add(checkInvocationCard);
+                                }
+                            }
+                        }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        for(int k = opponentPlayerCard.invocationCards.Count -1; k>=0; k--)
+        {
+            var invocationCard = opponentPlayerCard.invocationCards[k];
+            var permEffect = invocationCard.InvocationPermEffect;
+            if (permEffect != null)
+            {
+                var keys = permEffect.Keys;
+                var values = permEffect.Values;
+                for (int i = 0; i < keys.Count; i++)
+                {
+                    switch (keys[i])
+                    {
+                        case PermEffect.PreventInvocationCards:
+                        {
+                            for (int j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
+                            {
+                                var checkInvocationCard = currentPlayerCard.invocationCards[j];
+                                if (checkInvocationCard.Nom != invocationCard.Nom)
+                                {
+                                    currentPlayerCard.invocationCards.Remove(checkInvocationCard);
+                                    currentPlayerCard.handCards.Add(checkInvocationCard);
+                                }
+                            }
+                            for (int j = opponentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
+                            {
+                                var checkInvocationCard = opponentPlayerCard.invocationCards[j];
+                                if (checkInvocationCard.Nom != invocationCard.Nom)
+                                {
+                                    opponentPlayerCard.invocationCards.Remove(checkInvocationCard);
+                                    opponentPlayerCard.handCards.Add(checkInvocationCard);
+                                }
+                            }
+                        }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
 
 

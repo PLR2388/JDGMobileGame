@@ -119,7 +119,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Benzaie",allCards));
         deck1.Add(GetSpecificCard("Inspecteur Magret", allCards));
         deck1.Add(GetSpecificCard("Captain URSSAF",allCards));
-        deck1.Add(GetSpecificCard("Babs", allCards));
+        deck1.Add(GetSpecificCard("Bébé Terreur-Nocturne", allCards));
 
         while (deck1.Count != 30)
         {
