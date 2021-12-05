@@ -39,9 +39,7 @@ public class GameLoop : MonoBehaviour
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
 
     private InvocationFunctions invocationFunctions;
-
-
-
+    
     private readonly float ClickDuration = 2;
 
     private bool stopDetectClicking = false;
@@ -298,6 +296,15 @@ public class GameLoop : MonoBehaviour
                                         {
                                             notEmptyOpponent.Remove(invocationCard);
                                         }
+                                    }
+                                }
+                                    break;
+                                case PermEffect.ProtectBehind:
+                                {
+                                    var name = values[i];
+                                    if (notEmptyOpponent.Any(invocationCardToCheck => invocationCardToCheck.Nom == name))
+                                    {
+                                        notEmptyOpponent.Remove(invocationCard);
                                     }
                                 }
                                     break;
