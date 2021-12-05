@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 public class PlayerCards : MonoBehaviour
@@ -17,7 +18,7 @@ public class PlayerCards : MonoBehaviour
     [FormerlySerializedAs("Field")] [SerializeField]
     public FieldCard field;
 
-    [FormerlySerializedAs("InvocationCards")] [SerializeField]
+    [SerializeField]
     public List<InvocationCard> invocationCards;
 
     [FormerlySerializedAs("EffectCards")] [SerializeField]
@@ -93,9 +94,13 @@ public class PlayerCards : MonoBehaviour
 
     public string Tag => isPlayerOne ? "card1" : "card2";
 
+    private readonly UnityEvent changeInvocationList = new UnityEvent();
+    private int oldInvocationSize = 0;
+
     // Start is called before the first frame update
     private void Start()
     {
+        changeInvocationList.AddListener(OnInvocationCardsChanged);
         invocationCards = new List<InvocationCard>(4);
         effectCards = new List<EffectCard>(4);
         var gameStateGameObject = GameObject.Find("GameState");
@@ -183,6 +188,12 @@ public class PlayerCards : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (invocationCards.Count != oldInvocationSize)
+        {
+            oldInvocationSize = invocationCards.Count;
+            changeInvocationList.Invoke();
+        }
+        
         if (isPlayerOne)
         {
             for (var i = 0; i < invocationCards.Count; i++)
@@ -497,5 +508,48 @@ public class PlayerCards : MonoBehaviour
         }
 
         return -1;
+    }
+    
+    private void OnInvocationCardsChanged() {
+        for(var j=invocationCards.Count -1; j >=0; j--)
+        {
+            var invocationCard = invocationCards[j];
+            var permEffect = invocationCard.InvocationPermEffect;
+            if (permEffect != null)
+            {
+                var keys = permEffect.Keys;
+                var values = permEffect.Values;
+
+                for (var i = 0; i < keys.Count; i++)
+                {
+                    switch (keys[i])
+                    {
+                        case PermEffect.checkCardsOnField:
+                        {
+                            var cards = values[i].Split(';');
+                            var isFound = false;
+                            foreach (var otherInvocationCard in invocationCards)
+                            {
+                                if (otherInvocationCard.Nom != invocationCard.Nom)
+                                {
+                                    if (cards.Contains(otherInvocationCard.Nom))
+                                    {
+                                        isFound = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!isFound)
+                            {
+                                sendInvocationCardToYellowTrash(invocationCard);
+                            }
+                        } break;
+                        default:
+                            break;
+                    }   
+                }
+            }
+        }
     }
 }

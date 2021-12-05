@@ -126,12 +126,12 @@ public class EffectFunctions : MonoBehaviour
 
                             var allCardsOnField = new List<Card>();
 
-                            if (fieldCard1.IsValid())
+                            if (fieldCard1 != null)
                             {
                                 allCardsOnField.Add(fieldCard1);
                             }
 
-                            if (fieldCard2.IsValid())
+                            if (fieldCard2 != null)
                             {
                                 allCardsOnField.Add(fieldCard2);
                             }
@@ -483,7 +483,7 @@ public class EffectFunctions : MonoBehaviour
                         break;
                     case Effect.RemoveHand:
                     {
-                        cancelled = ApplyRemoveHand();
+                        cancelled = ApplyRemoveHand(effectCard);
                     }
                         break;
                     case Effect.RemoveDeck:
@@ -765,17 +765,18 @@ public class EffectFunctions : MonoBehaviour
         return cancelled;
     }
 
-    private bool ApplyRemoveHand()
+    private bool ApplyRemoveHand(EffectCard effectCard)
     {
         bool cancelled = false;
-        var handCardPlayer = currentPlayerCard.handCards;
+        var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
+        handCardPlayer.Remove(effectCard);
         var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
             "Quel carte veux-tu te défausser?", handCardPlayer);
 
         message.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var card = message.GetComponent<MessageBox>().GETSelectedCard();
-            if (card.IsValid())
+            if (card != null)
             {
                 currentPlayerCard.yellowTrash.Add(card);
                 currentPlayerCard.handCards.Remove(card);
@@ -1194,12 +1195,12 @@ public class EffectFunctions : MonoBehaviour
 
                 var allCardsOnField = new List<Card>();
 
-                if (fieldCard1.IsValid())
+                if (fieldCard1 != null)
                 {
                     allCardsOnField.Add(fieldCard1);
                 }
 
-                if (fieldCard2.IsValid())
+                if (fieldCard2 != null)
                 {
                     allCardsOnField.Add(fieldCard2);
                 }
@@ -1211,22 +1212,22 @@ public class EffectFunctions : MonoBehaviour
                 allCardsOnField.AddRange(invocationCards1.Where(card => card.IsValid()).Cast<Card>());
 
                 allCardsOnField.AddRange(invocationCards2.Where(card => card.IsValid()).Cast<Card>());
-                UnityAction negativeAction = () => { cancelled = true; };
+  
                 var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                    "Choix de la carte à détruire", allCardsOnField, negativeAction: negativeAction);
+                    "Choix de la carte à détruire", allCardsOnField);
 
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var card = message.GetComponent<MessageBox>().GETSelectedCard();
-                    if (card.IsValid())
+                    if (card != null)
                     {
                         switch (card.Type)
                         {
                             case CardType.Invocation:
-                                //  FindCardInArrayAndSendItToTrash(invocationCards1, invocationCards2, card);
+                                FindCardInArrayAndSendItToTrash(invocationCards1, invocationCards2, card);
                                 break;
                             case CardType.Effect:
-                                //   FindCardInArrayAndSendItToTrash(effectCards1, effectCards2, card);
+                                FindCardInArrayAndSendItToTrash(effectCards1, effectCards2, card);
                                 break;
                             case CardType.Field when fieldCard1.Nom == card.Nom:
                                 currentPlayerCard.yellowTrash.Add(card);
@@ -1248,6 +1249,12 @@ public class EffectFunctions : MonoBehaviour
                     {
                         cancelled = true;
                     }
+                    Destroy(message);
+                };
+                message.GetComponent<MessageBox>().NegativeAction = () =>
+                {
+                    cancelled = true;
+                    Destroy(message);
                 };
             }
                 break;
@@ -1389,22 +1396,22 @@ public class EffectFunctions : MonoBehaviour
         while (j < cards2.Count && !found)
         {
             var card2 = cards2[j];
-            if (card2.IsValid())
+            if (card2 != null)
             {
                 if (card2.Nom == card.Nom)
                 {
                     found = true;
-                    opponentPlayerCard.yellowTrash.Add(card);
                     switch (card.Type)
                     {
                         case CardType.Invocation:
                         {
-                            opponentPlayerCard.invocationCards[j] = null;
+                            opponentPlayerCard.sendInvocationCardToYellowTrash(card as InvocationCard);
                         }
                             break;
                         case CardType.Effect:
                         {
-                            opponentPlayerCard.effectCards[j] = null;
+                            opponentPlayerCard.effectCards.Remove(card as EffectCard);
+                            opponentPlayerCard.yellowTrash.Add(card);
                         }
                             break;
                     }
@@ -1419,22 +1426,22 @@ public class EffectFunctions : MonoBehaviour
         while (j < cards1.Count && !found)
         {
             var card1 = cards1[j];
-            if (card1.IsValid())
+            if (card1 != null)
             {
                 if (card1.Nom == card.Nom)
                 {
                     found = true;
-                    currentPlayerCard.yellowTrash.Add(card);
                     switch (card.Type)
                     {
                         case CardType.Invocation:
                         {
-                            currentPlayerCard.invocationCards[j] = null;
+                            currentPlayerCard.sendInvocationCardToYellowTrash(card as InvocationCard);
                         }
                             break;
                         case CardType.Effect:
                         {
-                            currentPlayerCard.effectCards[j] = null;
+                            currentPlayerCard.yellowTrash.Add(card);
+                            currentPlayerCard.effectCards.Remove(card as EffectCard);
                         }
                             break;
                     }

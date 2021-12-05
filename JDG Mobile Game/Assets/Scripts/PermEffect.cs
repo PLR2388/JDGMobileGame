@@ -10,5 +10,6 @@
     ImpossibleAttackByInvocation,
     ImpossibleToBeAffectedByEffect,
     Condition,
-    NumberTurn
+    NumberTurn,
+    checkCardsOnField
 }

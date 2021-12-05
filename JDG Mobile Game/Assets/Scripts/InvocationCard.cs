@@ -46,6 +46,8 @@ public class InvocationCard : Card
 
     public InvocationActionEffect InvocationActionEffect => invocationActionEffect;
     public InvocationConditions InvocationConditions => invocationConditions;
+    
+    public InvocationPermEffect InvocationPermEffect => invocationPermEffect;
 
     public void BlockAttack()
     {

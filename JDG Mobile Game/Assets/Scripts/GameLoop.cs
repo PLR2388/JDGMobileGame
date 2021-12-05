@@ -259,6 +259,30 @@ public class GameLoop : MonoBehaviour
         {
             notEmptyOpponent.Add(player);
         }
+        else
+        {
+            var newList = new List<Card>();
+            foreach (var card in notEmptyOpponent)
+            {
+                var invocationCard = (InvocationCard)card;
+                var permEffect = invocationCard.InvocationPermEffect;
+                if (permEffect != null)
+                {
+                    foreach (var effect in permEffect.Keys)
+                    {
+                        if (effect == PermEffect.CanOnlyAttackIt)
+                        {
+                            newList.Add(card);
+                        }
+                    }
+                }
+            }
+
+            if (newList.Count > 0)
+            {
+                notEmptyOpponent = newList;
+            }
+        }
 
         var opponentMessageBox = DisplayOpponentMessageBox(notEmptyOpponent);
         stopDetectClicking = true;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Lean.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -115,11 +116,13 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
-        deck1.Add(GetSpecificCard("Patron D'Infogrames",allCards));
-        deck1.Add(GetSpecificCard("Merde tournoyante en plastique bleu", allCards));
-        deck1.Add(GetSpecificCard("Seb Du Grenier",allCards));
-        deck1.Add(GetSpecificCard("Théodule", allCards));
+        deck1.Add(GetSpecificCard("Benzaie",allCards));
+        deck1.Add(GetSpecificCard("Cassette VHS", allCards));
+        deck1.Add(GetSpecificCard("Benzaie jeune",allCards));
+        deck1.Add(GetSpecificCard("Alpha Man", allCards));
         
+        deck2.Add(GetSpecificCard("Feuille", allCards));
+
         while (deck1.Count != 30)
         {
             GetRandomCards(allCards, deck1);
@@ -131,6 +134,8 @@ public class CardChoice : MonoBehaviour
         {
             GetRandomCards(allCards, deck2);
         }
+
+        deck2.Reverse();
 
         FindObjectOfType<GameState>().deckP1 = deck1;
         FindObjectOfType<GameState>().deckP2 = deck2;
