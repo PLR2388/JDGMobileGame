@@ -217,6 +217,20 @@ public class InvocationFunctions : MonoBehaviour
 
                                     j++;
                                 }
+                                
+                                if (isFound)
+                                {
+                                    UnityAction PositiveAction = () =>
+                                    {
+                                        currentPlayerCard.handCards.Add(cardFound[0]);
+                                        currentPlayerCard.yellowTrash.Remove(cardFound[0]);
+                                        inHandButton.SetActive(true);
+                                    };
+                                    UnityAction negativeAction = () => { inHandButton.SetActive(true); };
+                                    CreateMessageBoxSimple("Carte en main",
+                                        "Voulez-vous aussi ajouter " + cardName + " à votre main ?",
+                                        positiveAction: PositiveAction, negativeAction);
+                                }
                             }
                             else if (invokeCardNames.Count > 0)
                             {

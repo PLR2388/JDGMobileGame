@@ -115,10 +115,10 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
-        deck1.Add(GetSpecificCard("Joueur Du Grenier",allCards));
-        deck1.Add(GetSpecificCard("Studio de développement", allCards));
-        deck1.Add(GetSpecificCard("Mohammad",allCards));
-        deck1.Add(GetSpecificCard("Manuel Ferrara", allCards));
+        deck1.Add(GetSpecificCard("Patron D'Infogrames",allCards));
+        deck1.Add(GetSpecificCard("Merde tournoyante en plastique bleu", allCards));
+        deck1.Add(GetSpecificCard("Seb Du Grenier",allCards));
+        deck1.Add(GetSpecificCard("Théodule", allCards));
         
         while (deck1.Count != 30)
         {
