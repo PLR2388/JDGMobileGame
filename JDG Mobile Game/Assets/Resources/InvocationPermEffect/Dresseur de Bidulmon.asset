@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6831a31d3f83684795af97c60149c7e, type: 3}
   m_Name: Dresseur de Bidulmon
   m_EditorClassIdentifier: 
-  keys: 02000000030000000400000009000000
+  keys: 04000000090000000200000003000000
   values:
-  - 1
-  - 1
-  - japon
+  - Japan
   - 2 ATK 2 DEF
+  - 1
+  - 1

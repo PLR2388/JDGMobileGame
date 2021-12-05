@@ -95,7 +95,7 @@ public class PlayerCards : MonoBehaviour
 
     public string Tag => isPlayerOne ? "card1" : "card2";
 
-    private int oldInvocationSize = 0;
+    private List<InvocationCard> oldInvocationCards = new List<InvocationCard>();
 
     // Start is called before the first frame update
     private void Start()
@@ -188,14 +188,19 @@ public class PlayerCards : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (invocationCards.Count != oldInvocationSize)
+        if (invocationCards.Count != oldInvocationCards.Count)
         {
-            if (invocationCards.Count > oldInvocationSize)
+            if (invocationCards.Count > oldInvocationCards.Count)
             {
                 OnInvocationCardAdded(invocationCards.Last());
             }
+            else
+            {
+                var removedInvocationCard = oldInvocationCards.Except(invocationCards).First();
+                OnInvocationCardsRemoved(removedInvocationCard);
+            }
 
-            oldInvocationSize = invocationCards.Count;
+            oldInvocationCards = new List<InvocationCard>(invocationCards);
             OnInvocationCardsChanged();
         }
 
@@ -533,7 +538,7 @@ public class PlayerCards : MonoBehaviour
                 var values = permEffect.Values;
 
                 List<InvocationCard> invocationCardsToChange = new List<InvocationCard>();
-                int sameFamilyCardNumber = 0;
+                List<InvocationCard> sameFamilyInvocationCards = new List<InvocationCard>();
 
                 for (var i = 0; i < keys.Count; i++)
                 {
@@ -578,15 +583,37 @@ public class PlayerCards : MonoBehaviour
                                         {
                                             if (invocationCardToCheck.GetFamily().Contains(cardFamily))
                                             {
-                                                sameFamilyCardNumber++;
+                                                sameFamilyInvocationCards.Add(invocationCardToCheck);
                                             }
                                         }
                                     }
                                 }
                                 else if (newInvocationCard.GetFamily().Contains(cardFamily))
                                 {
-                                    sameFamilyCardNumber = 1;
+                                    sameFamilyInvocationCards.Add(newInvocationCard);
                                 }
+                            }
+                        }
+                            break;
+                        case PermEffect.Condition:
+                        {
+                            switch (values[i])
+                            {
+                                case "2 ATK 2 DEF":
+                                {
+                                    for (var k = sameFamilyInvocationCards.Count - 1; k >= 0; k--)
+                                    {
+                                        var invocationCardToCheck = sameFamilyInvocationCards[k];
+                                        if (invocationCardToCheck.GetAttack() != 2f ||
+                                            invocationCardToCheck.GetDefense() != 2f)
+                                        {
+                                            sameFamilyInvocationCards.Remove(invocationCardToCheck);
+                                        }
+                                    }
+                                }
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                             break;
@@ -599,10 +626,10 @@ public class PlayerCards : MonoBehaviour
                                     var value = invocationCardToChange.GETBonusAttack() + float.Parse(values[i]);
                                     invocationCardToChange.SetBonusAttack(value);
                                 }
-                            } else if (sameFamilyCardNumber > 0)
+                            } else if (sameFamilyInvocationCards.Count > 0)
                             {
                                 var newValue = invocationCard.GETBonusAttack() +
-                                               float.Parse(values[i]) * sameFamilyCardNumber;
+                                               float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusAttack(newValue);
                             }
                         }
@@ -616,10 +643,139 @@ public class PlayerCards : MonoBehaviour
                                     var value = invocationCardToChange.GetBonusDefense() + float.Parse(values[i]);
                                     invocationCardToChange.SetBonusDefense(value);
                                 }
-                            } else if (sameFamilyCardNumber > 0)
+                            } else if (sameFamilyInvocationCards.Count > 0)
                             {
                                 var newValue = invocationCard.GetBonusDefense() +
-                                               float.Parse(values[i]) * sameFamilyCardNumber;
+                                               float.Parse(values[i]) * sameFamilyInvocationCards.Count;
+                                invocationCard.SetBonusDefense(newValue);
+                            }
+                        }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void OnInvocationCardsRemoved(InvocationCard removedInvocationCard)
+    {
+        for (var j = invocationCards.Count - 1; j >= 0; j--)
+        {
+            var invocationCard = invocationCards[j];
+            var permEffect = invocationCard.InvocationPermEffect;
+            if (permEffect != null)
+            {
+                var keys = permEffect.Keys;
+                var values = permEffect.Values;
+
+                List<InvocationCard> invocationCardsToChange = new List<InvocationCard>();
+                List<InvocationCard> sameFamilyInvocationCards = new List<InvocationCard>();
+
+                for (var i = 0; i < keys.Count; i++)
+                {
+                    switch (keys[i])
+                    {
+                        case PermEffect.GiveStat:
+                        {
+                            if (Enum.TryParse(values[i], out CardFamily cardFamily))
+                            {
+                                if (removedInvocationCard.Nom == invocationCard.Nom)
+                                {
+                                    // Delete itself everybody lose advantage
+                                    foreach (var invocationCardToCheck in invocationCards)
+                                    {
+                                        if (invocationCardToCheck.Nom != removedInvocationCard.Nom)
+                                        {
+                                            if (invocationCardToCheck.GetFamily().Contains(cardFamily))
+                                            {
+                                                invocationCardsToChange.Add(invocationCardToCheck);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                            break;
+                        case PermEffect.Family:
+                        {
+                            if (Enum.TryParse(values[i], out CardFamily cardFamily))
+                            {
+                                if (removedInvocationCard.Nom == invocationCard.Nom)
+                                {
+                                    // Delete itself so loose all advantage to itself
+                                    foreach (var invocationCardToCheck in invocationCards)
+                                    {
+                                        if (invocationCardToCheck.Nom != removedInvocationCard.Nom)
+                                        {
+                                            if (invocationCardToCheck.GetFamily().Contains(cardFamily))
+                                            {
+                                                sameFamilyInvocationCards.Add(invocationCardToCheck);
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (removedInvocationCard.GetFamily().Contains(cardFamily))
+                                {
+                                    // Just loose 1 element
+                                    sameFamilyInvocationCards.Add(removedInvocationCard);
+                                }
+                            }
+                        }
+                            break;
+                        case PermEffect.Condition:
+                        {
+                            switch (values[i])
+                            {
+                                case "2 ATK 2 DEF":
+                                {
+                                    for (var k = sameFamilyInvocationCards.Count - 1; k >= 0; k--)
+                                    {
+                                        var invocationCardToCheck = sameFamilyInvocationCards[k];
+                                        if (invocationCardToCheck.GetAttack() != 2f ||
+                                            invocationCardToCheck.GetDefense() != 2f)
+                                        {
+                                            sameFamilyInvocationCards.Remove(invocationCardToCheck);
+                                        }
+                                    }
+                                }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                            break;
+                        case PermEffect.IncreaseAtk:
+                        {
+                            if (invocationCardsToChange.Count > 0)
+                            {
+                                foreach (var invocationCardToChange in invocationCardsToChange)
+                                {
+                                    var value = invocationCardToChange.GETBonusAttack() - float.Parse(values[i]);
+                                    invocationCardToChange.SetBonusAttack(value);
+                                }
+                            } else if (sameFamilyInvocationCards.Count > 0)
+                            {
+                                var newValue = invocationCard.GETBonusAttack() -
+                                               float.Parse(values[i]) * sameFamilyInvocationCards.Count;
+                                invocationCard.SetBonusAttack(newValue);
+                            }
+                        }
+                            break;
+                        case PermEffect.IncreaseDef:
+                        {
+                            if (invocationCardsToChange.Count > 0)
+                            {
+                                foreach (var invocationCardToChange in invocationCardsToChange)
+                                {
+                                    var value = invocationCardToChange.GetBonusDefense() - float.Parse(values[i]);
+                                    invocationCardToChange.SetBonusDefense(value);
+                                }
+                            } else if (sameFamilyInvocationCards.Count > 0)
+                            {
+                                var newValue = invocationCard.GetBonusDefense() -
+                                               float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusDefense(newValue);
                             }
                         }
