@@ -297,6 +297,10 @@ public class GameLoop : MonoBehaviour
                                             notEmptyOpponent.Remove(invocationCard);
                                         }
                                     }
+                                    else if(bool.Parse(values[i]))
+                                    {
+                                        notEmptyOpponent.Remove(invocationCard);
+                                    }
                                 }
                                     break;
                                 case PermEffect.ProtectBehind:
@@ -313,6 +317,11 @@ public class GameLoop : MonoBehaviour
                             }
                         }
                     }
+                }
+
+                if (notEmptyOpponent.Count == 0)
+                {
+                    notEmptyOpponent.Add(player);
                 }
             }
         }

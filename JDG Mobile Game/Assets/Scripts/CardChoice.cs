@@ -119,7 +119,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Patate",allCards));
         deck1.Add(GetSpecificCard("Mohammad", allCards));
         deck1.Add(GetSpecificCard("Starlight Unicorn",allCards));
-        deck1.Add(GetSpecificCard("Granolax", allCards));
+        deck1.Add(GetSpecificCard("Jean-Louis La Chaussette", allCards));
 
         while (deck1.Count != 30)
         {
