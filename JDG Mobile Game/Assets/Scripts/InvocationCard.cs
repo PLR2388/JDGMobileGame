@@ -139,6 +139,16 @@ public class InvocationCard : Card
     {
         return attack + bonusAttack;
     }
+    
+    public float GetBonusDefense()
+    {
+        return bonusDefense;
+    }
+
+    public float GetBonusAttack()
+    {
+        return bonusAttack;
+    }
 
     public EquipmentCard GETEquipmentCard()
     {

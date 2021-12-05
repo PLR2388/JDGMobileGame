@@ -268,19 +268,45 @@ public class GameLoop : MonoBehaviour
                 var permEffect = invocationCard.InvocationPermEffect;
                 if (permEffect != null)
                 {
-                    foreach (var effect in permEffect.Keys)
-                    {
-                        if (effect == PermEffect.CanOnlyAttackIt)
-                        {
-                            newList.Add(card);
-                        }
-                    }
+                    newList.AddRange(from effect in permEffect.Keys where effect == PermEffect.CanOnlyAttackIt select card);
                 }
             }
 
             if (newList.Count > 0)
             {
                 notEmptyOpponent = newList;
+            }
+            else
+            {
+                for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
+                {
+                    var invocationCard = (InvocationCard)notEmptyOpponent[j];
+                    var permEffect = invocationCard.InvocationPermEffect;
+                    if (permEffect != null)
+                    {
+                        var keys = permEffect.Keys;
+                        var values = permEffect.Values;
+                        for (var i = 0; i < keys.Count; i++)
+                        {
+                            switch (keys[i])
+                            {
+                                case PermEffect.ImpossibleAttackByInvocation:
+                                {
+                                    if (Enum.TryParse(values[i], out CardFamily family))
+                                    {
+                                        if ((from cardToCheck in notEmptyOpponent where cardToCheck.Nom != invocationCard.Nom select (InvocationCard)cardToCheck).Any(invocationCardToCheck => invocationCardToCheck.GetFamily().Contains(family)))
+                                        {
+                                            notEmptyOpponent.Remove(invocationCard);
+                                        }
+                                    }
+                                }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
             }
         }
 

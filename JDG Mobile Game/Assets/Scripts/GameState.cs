@@ -33,8 +33,23 @@ public class GameState : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void InitCards()
+    {
+        foreach (var card in allCards)
+        {
+            if (card.Type == CardType.Invocation)
+            {
+                var invocationCard = (InvocationCard)card;
+                invocationCard.SetBonusAttack(0);
+                invocationCard.SetBonusDefense(0);
+                invocationCard.SetEquipmentCard(null);
+            }
+        }
+    }
+
     private void Start()
     {
+        InitCards();
         foreach (var t in allCards)
         {
             deckP1.Add(t);

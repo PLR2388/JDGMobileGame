@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 07000000010000000200000003000000
   values:
-  - comics
-  - comics
-  - 0.5
-  - 0.5
+  - Comics
+  - Comics
+  - 0,5
+  - 0,5
