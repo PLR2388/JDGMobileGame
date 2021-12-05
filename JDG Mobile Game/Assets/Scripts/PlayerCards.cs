@@ -533,6 +533,7 @@ public class PlayerCards : MonoBehaviour
                 var values = permEffect.Values;
 
                 List<InvocationCard> invocationCardsToChange = new List<InvocationCard>();
+                int sameFamilyCardNumber = 0;
 
                 for (var i = 0; i < keys.Count; i++)
                 {
@@ -564,6 +565,31 @@ public class PlayerCards : MonoBehaviour
                             }
                         }
                             break;
+                        case PermEffect.Family:
+                        {
+                            if (Enum.TryParse(values[i], out CardFamily cardFamily))
+                            {
+                                if (newInvocationCard.Nom == invocationCard.Nom)
+                                {
+                                    // Must catch up old cards
+                                    foreach (var invocationCardToCheck in invocationCards)
+                                    {
+                                        if (invocationCardToCheck.Nom != newInvocationCard.Nom)
+                                        {
+                                            if (invocationCardToCheck.GetFamily().Contains(cardFamily))
+                                            {
+                                                sameFamilyCardNumber++;
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (newInvocationCard.GetFamily().Contains(cardFamily))
+                                {
+                                    sameFamilyCardNumber = 1;
+                                }
+                            }
+                        }
+                            break;
                         case PermEffect.IncreaseAtk:
                         {
                             if (invocationCardsToChange.Count > 0)
@@ -573,6 +599,11 @@ public class PlayerCards : MonoBehaviour
                                     var value = invocationCardToChange.GETBonusAttack() + float.Parse(values[i]);
                                     invocationCardToChange.SetBonusAttack(value);
                                 }
+                            } else if (sameFamilyCardNumber > 0)
+                            {
+                                var newValue = invocationCard.GETBonusAttack() +
+                                               float.Parse(values[i]) * sameFamilyCardNumber;
+                                invocationCard.SetBonusAttack(newValue);
                             }
                         }
                             break;
@@ -585,6 +616,11 @@ public class PlayerCards : MonoBehaviour
                                     var value = invocationCardToChange.GetBonusDefense() + float.Parse(values[i]);
                                     invocationCardToChange.SetBonusDefense(value);
                                 }
+                            } else if (sameFamilyCardNumber > 0)
+                            {
+                                var newValue = invocationCard.GetBonusDefense() +
+                                               float.Parse(values[i]) * sameFamilyCardNumber;
+                                invocationCard.SetBonusDefense(newValue);
                             }
                         }
                             break;
@@ -632,37 +668,6 @@ public class PlayerCards : MonoBehaviour
                             if (!isFound)
                             {
                                 sendInvocationCardToYellowTrash(invocationCard);
-                            }
-                        }
-                            break;
-                        case PermEffect.GiveStat:
-                        {
-                            if (Enum.TryParse(values[i], out CardFamily cardFamily))
-                            {
-                                foreach (var invocationCardToCheck in invocationCards)
-                                {
-                                    if (invocationCardToCheck.Nom != invocationCard.Nom)
-                                    {
-                                        if (invocationCardToCheck.GetFamily().Contains(cardFamily))
-                                        {
-                                            invocationCardsToChange.Add(invocationCardToCheck);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                            break;
-                        case PermEffect.IncreaseAtk:
-                        {
-                            if (invocationCardsToChange.Count > 0)
-                            {
-                            }
-                        }
-                            break;
-                        case PermEffect.IncreaseDef:
-                        {
-                            if (invocationCardsToChange.Count > 0)
-                            {
                             }
                         }
                             break;
