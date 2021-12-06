@@ -539,6 +539,7 @@ public class PlayerCards : MonoBehaviour
 
                 List<InvocationCard> invocationCardsToChange = new List<InvocationCard>();
                 List<InvocationCard> sameFamilyInvocationCards = new List<InvocationCard>();
+                bool mustHaveMiminumATKDEF = false;
 
                 for (var i = 0; i < keys.Count; i++)
                 {
@@ -612,6 +613,14 @@ public class PlayerCards : MonoBehaviour
                                     }
                                 }
                                     break;
+                                case "Benzaie jeune":
+                                {
+                                    if (invocationCards.Any(invocationCardToCheck => invocationCardToCheck.Nom == values[i]))
+                                    {
+                                        mustHaveMiminumATKDEF = true;
+                                    }
+                                }
+                                    break;
                                 default:
                                     break;
                             }
@@ -631,6 +640,14 @@ public class PlayerCards : MonoBehaviour
                                 var newValue = invocationCard.GETBonusAttack() +
                                                float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusAttack(newValue);
+                            } else if (mustHaveMiminumATKDEF)
+                            {
+                                var minValue = float.Parse(values[i]);
+                                if (invocationCard.GetCurrentAttack() < minValue)
+                                {
+                                    var value = minValue - invocationCard.GetCurrentAttack();
+                                    invocationCard.SetBonusAttack(value);
+                                }
                             }
                         }
                             break;
@@ -648,6 +665,14 @@ public class PlayerCards : MonoBehaviour
                                 var newValue = invocationCard.GetBonusDefense() +
                                                float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusDefense(newValue);
+                            } else if (mustHaveMiminumATKDEF)
+                            {
+                                var minValue = float.Parse(values[i]);
+                                if (invocationCard.GetCurrentDefense() < minValue)
+                                {
+                                    var value = minValue - invocationCard.GetCurrentDefense();
+                                    invocationCard.SetBonusDefense(value);
+                                }
                             }
                         }
                             break;
@@ -672,6 +697,8 @@ public class PlayerCards : MonoBehaviour
 
                 List<InvocationCard> invocationCardsToChange = new List<InvocationCard>();
                 List<InvocationCard> sameFamilyInvocationCards = new List<InvocationCard>();
+                
+                bool mustHaveMiminumATKDEF = false;
 
                 for (var i = 0; i < keys.Count; i++)
                 {
@@ -741,6 +768,14 @@ public class PlayerCards : MonoBehaviour
                                     }
                                 }
                                     break;
+                                case "Benzaie jeune":
+                                {
+                                    if (removedInvocationCard.Nom == invocationCard.Nom)
+                                    {
+                                        mustHaveMiminumATKDEF = true;
+                                    }
+                                }
+                                    break;
                                 default:
                                     break;
                             }
@@ -760,6 +795,9 @@ public class PlayerCards : MonoBehaviour
                                 var newValue = invocationCard.GETBonusAttack() -
                                                float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusAttack(newValue);
+                            } else if (mustHaveMiminumATKDEF)
+                            {
+                                invocationCard.SetBonusAttack(0);
                             }
                         }
                             break;
@@ -777,6 +815,9 @@ public class PlayerCards : MonoBehaviour
                                 var newValue = invocationCard.GetBonusDefense() -
                                                float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusDefense(newValue);
+                            } else if (mustHaveMiminumATKDEF)
+                            {
+                                invocationCard.SetBonusDefense(0);
                             }
                         }
                             break;

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6831a31d3f83684795af97c60149c7e, type: 3}
   m_Name: Nounours
   m_EditorClassIdentifier: 
-  keys: 020000000300000009000000
+  keys: 090000000200000003000000
   values:
   - Benzaie jeune
-  - Benzaie jeune
-  - onfield
+  - 1,5
+  - 1,5

@@ -17,9 +17,10 @@ public class InvocationCard : Card
     [SerializeField] private InvocationDeathEffect invocationDeathEffect;
     [SerializeField] private float bonusAttack;
     [SerializeField] private float bonusDefense;
-    [SerializeField] private float numberTurnOnField;
+    [SerializeField] private int numberTurnOnField;
     [SerializeField] private int numberDeaths;
     [SerializeField] private bool blockAttackNextTurn = false;
+    [SerializeField] private bool affectedByEffect = true;
     private bool hasAlreadyAttackThisTurn = false;
     private CardFamily? currentFamily = null;
 
@@ -30,6 +31,21 @@ public class InvocationCard : Card
         this.bonusDefense = 0;
         this.numberTurnOnField = 0;
         this.numberDeaths = 0;
+    }
+
+    public int NumberTurnOnField => numberTurnOnField;
+
+    public void incrementNumberTurnOnField()
+    {
+        numberTurnOnField++;
+    }
+
+    public void Init()
+    {
+        numberTurnOnField = 0;
+        SetBonusAttack(0);
+        SetBonusDefense(0);
+        SetEquipmentCard(null);
     }
 
     public void SetCurrentFamily(CardFamily? family)

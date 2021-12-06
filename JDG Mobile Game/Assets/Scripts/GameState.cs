@@ -40,9 +40,7 @@ public class GameState : MonoBehaviour
             if (card.Type == CardType.Invocation)
             {
                 var invocationCard = (InvocationCard)card;
-                invocationCard.SetBonusAttack(0);
-                invocationCard.SetBonusDefense(0);
-                invocationCard.SetEquipmentCard(null);
+                invocationCard.Init();
             }
         }
     }

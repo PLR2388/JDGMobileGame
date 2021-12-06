@@ -28,8 +28,7 @@ MonoBehaviour:
   invocationConditions: {fileID: 11400000, guid: 6fed3c8a06585f745920a42fa2883af5,
     type: 2}
   invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: a742d3f727d4acc48ae82d1733b90f34,
-    type: 2}
+  invocationPermEffect: {fileID: 0}
   invocationActionEffect: {fileID: 0}
   invocationDeathEffect: {fileID: 0}
   bonusAttack: 0
@@ -37,3 +36,4 @@ MonoBehaviour:
   numberTurnOnField: 0
   numberDeaths: 0
   blockAttackNextTurn: 0
+  affectedByEffect: 0

@@ -1159,8 +1159,18 @@ public class GameLoop : MonoBehaviour
         {
             effectCards.Remove(effectCard);
         }
+
+        foreach (var invocationCard in currentPlayerCard.invocationCards)
+        {
+            invocationCard.incrementNumberTurnOnField();
+        }
+
+        foreach (var invocationCard in opponentPlayerCard.invocationCards)
+        {
+            invocationCard.incrementNumberTurnOnField();
+        }
         
-        // Check if preventInvocationCards is there
+        // Check if preventInvocationCards/NumberTurn is there
         for(int k = currentPlayerCard.invocationCards.Count -1; k>=0; k--)
         {
             var invocationCard = currentPlayerCard.invocationCards[k];
@@ -1192,6 +1202,15 @@ public class GameLoop : MonoBehaviour
                                     opponentPlayerCard.invocationCards.Remove(checkInvocationCard);
                                     opponentPlayerCard.handCards.Add(checkInvocationCard);
                                 }
+                            }
+                        }
+                            break;
+                        case PermEffect.NumberTurn:
+                        {
+                            var maxTurn = int.Parse(values[i]);
+                            if (invocationCard.NumberTurnOnField >= maxTurn)
+                            {
+                                currentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
                             }
                         }
                             break;
@@ -1232,6 +1251,15 @@ public class GameLoop : MonoBehaviour
                                     opponentPlayerCard.invocationCards.Remove(checkInvocationCard);
                                     opponentPlayerCard.handCards.Add(checkInvocationCard);
                                 }
+                            }
+                        }
+                            break;
+                        case PermEffect.NumberTurn:
+                        {
+                            var maxTurn = int.Parse(values[i]);
+                            if (invocationCard.NumberTurnOnField >= maxTurn)
+                            {
+                                opponentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
                             }
                         }
                             break;
