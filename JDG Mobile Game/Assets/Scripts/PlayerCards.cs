@@ -848,24 +848,28 @@ public class PlayerCards : MonoBehaviour
                     {
                         case PermEffect.checkCardsOnField:
                         {
-                            var cards = values[i].Split(';');
                             var isFound = false;
-                            foreach (var otherInvocationCard in invocationCards)
+                            if (Enum.TryParse(values[i], out CardFamily cardFamily))
                             {
-                                if (otherInvocationCard.Nom != invocationCard.Nom)
+                                if (invocationCards.Where(otherInvocationCard => otherInvocationCard.Nom != invocationCard.Nom).Any(otherInvocationCard => otherInvocationCard.GetFamily().Contains(cardFamily)))
                                 {
-                                    if (cards.Contains(otherInvocationCard.Nom))
-                                    {
-                                        isFound = true;
-                                        break;
-                                    }
+                                    isFound = true;
                                 }
                             }
+                            else
+                            {
+                                var cards = values[i].Split(';');
 
+                                if (invocationCards.Where(otherInvocationCard => otherInvocationCard.Nom != invocationCard.Nom).Any(otherInvocationCard => cards.Contains(otherInvocationCard.Nom)))
+                                {
+                                    isFound = true;
+                                }
+                            }
                             if (!isFound)
                             {
                                 sendInvocationCardToYellowTrash(invocationCard);
                             }
+              
                         }
                             break;
                         default:
