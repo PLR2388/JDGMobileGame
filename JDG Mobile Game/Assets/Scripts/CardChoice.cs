@@ -116,10 +116,10 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
-        deck1.Add(GetSpecificCard("Patate",allCards));
-        deck1.Add(GetSpecificCard("Mohammad", allCards));
-        deck1.Add(GetSpecificCard("Benzaie jeune",allCards));
-        deck1.Add(GetSpecificCard("Papy Grenier", allCards));
+        deck1.Add(GetSpecificCard("Sangoku",allCards));
+        deck1.Add(GetSpecificCard("Fisti", allCards));
+        deck1.Add(GetSpecificCard("Jean-Philippe Hardfist",allCards));
+        deck1.Add(GetSpecificCard("Propriétaire De Fistiland", allCards));
 
         while (deck1.Count != 30)
         {

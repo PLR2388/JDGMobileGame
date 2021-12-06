@@ -17,7 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "Cette carte gagne 1 \xE9toile en ATQ et en DEF pour chaque
     carte INVOCATION de type \xAB Fistiland \xBB pr\xE9sente sur le terrain du joueur."
   type: 4
-  materialCard: {fileID: 2100000, guid: 84141635419287f4a941c9e747a99faa, type: 2}
+  materialCard: {fileID: 2100000, guid: 238d861caa2841c4a97372d3e7c8d98b, type: 2}
   collector: 0
   attack: 2
   defense: 2
@@ -34,3 +34,4 @@ MonoBehaviour:
   numberTurnOnField: 0
   numberDeaths: 0
   blockAttackNextTurn: 0
+  affectedByEffect: 1
