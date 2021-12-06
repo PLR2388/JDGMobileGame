@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6831a31d3f83684795af97c60149c7e, type: 3}
   m_Name: Patate
   m_EditorClassIdentifier: 
-  keys: 06000000
+  keys: 0900000006000000
   values:
+  - More DEF
   - any

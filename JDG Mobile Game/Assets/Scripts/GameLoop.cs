@@ -284,6 +284,9 @@ public class GameLoop : MonoBehaviour
                     {
                         var keys = permEffect.Keys;
                         var values = permEffect.Values;
+
+                        List<InvocationCard> moreDefInvocationCards = new List<InvocationCard>();
+
                         for (var i = 0; i < keys.Count; i++)
                         {
                             switch (keys[i])
@@ -303,12 +306,43 @@ public class GameLoop : MonoBehaviour
                                     }
                                 }
                                     break;
+                                case PermEffect.Condition:
+                                {
+                                    switch (values[i])
+                                    {
+                                        case "More DEF":
+                                        {
+                                            foreach (var card in notEmptyOpponent)
+                                            {
+                                                var invocationCardToCheck = (InvocationCard)card;
+                                                if (invocationCardToCheck.Nom != invocationCard.Nom)
+                                                {
+                                                    if (invocationCardToCheck.GetCurrentDefense() >
+                                                        invocationCard.GetCurrentDefense())
+                                                    {
+                                                        moreDefInvocationCards.Add(invocationCardToCheck);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                    break;
                                 case PermEffect.ProtectBehind:
                                 {
                                     var name = values[i];
                                     if (notEmptyOpponent.Any(invocationCardToCheck => invocationCardToCheck.Nom == name))
                                     {
                                         notEmptyOpponent.Remove(invocationCard);
+                                    } else if (name == "any")
+                                    {
+                                        if (moreDefInvocationCards.Count > 0)
+                                        {
+                                            notEmptyOpponent.Remove(invocationCard);
+                                        }
                                     }
                                 }
                                     break;
