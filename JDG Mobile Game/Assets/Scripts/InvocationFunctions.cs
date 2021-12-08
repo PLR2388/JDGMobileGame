@@ -833,7 +833,7 @@ public class InvocationFunctions : MonoBehaviour
                                     (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
                                 if (invocationCardSelected != null)
                                 {
-                                    currentPlayerCard.invocationCards.Remove(invocationCards[k]);
+                                    currentPlayerCard.sendInvocationCardToYellowTrash(invocationCards[k]);
                                     currentPlayerCard.yellowTrash.Remove(invocationCardSelected);
                                     currentPlayerCard.invocationCards.Add(invocationCardSelected);
                                 }
@@ -843,6 +843,7 @@ public class InvocationFunctions : MonoBehaviour
                                 }
 
                                 Destroy(message);
+                                Destroy(messageBox);
                             };
                             message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
                         };

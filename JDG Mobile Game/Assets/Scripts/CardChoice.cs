@@ -117,7 +117,7 @@ public class CardChoice : MonoBehaviour
         var allCards = FindObjectOfType<GameState>().allCards;
 
         deck1.Add(GetSpecificCard("Sangoku",allCards));
-        deck1.Add(GetSpecificCard("Jean-Marc Soul", allCards));
+        deck1.Add(GetSpecificCard("Sheik Point", allCards));
         deck1.Add(GetSpecificCard("Jean-Cule",allCards));
         deck1.Add(GetSpecificCard("Fisti", allCards));
 
