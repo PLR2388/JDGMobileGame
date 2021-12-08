@@ -7,7 +7,26 @@ public class InvocationActionEffect : ScriptableObject
     [SerializeField] private List<ActionEffect> keys;
     [SerializeField] private List<string> values;
 
-    public List<ActionEffect> Keys => keys;
+    public List<ActionEffect> Keys
+    {
+        get
+        {
+            return keys;
+        }
+        set
+        {
+            keys = value;
+        }
+    } 
 
-    public List<string> Values => values;
+    public List<string> Values {
+        get
+        {
+            return values;
+        }
+        set
+        {
+            values = value;
+        }
+    }
 }

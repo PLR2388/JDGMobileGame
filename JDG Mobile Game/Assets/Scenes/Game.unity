@@ -1621,6 +1621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
+  invocationMenu: {fileID: 1982540492}
 --- !u!114 &397230406
 MonoBehaviour:
   m_ObjectHideFlags: 0

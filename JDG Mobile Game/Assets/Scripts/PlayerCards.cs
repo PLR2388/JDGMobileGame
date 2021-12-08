@@ -465,6 +465,8 @@ public class PlayerCards : MonoBehaviour
     {
         var equipmentCard = specificCardFound.GETEquipmentCard();
         specificCardFound.SetEquipmentCard(null);
+        specificCardFound.SetBonusAttack(0);
+        specificCardFound.SetBonusDefense(0);
         invocationCards.Remove(specificCardFound);
         yellowTrash.Add(specificCardFound);
         if (equipmentCard != null)
@@ -686,10 +688,11 @@ public class PlayerCards : MonoBehaviour
 
     private void OnInvocationCardsRemoved(InvocationCard removedInvocationCard)
     {
-        for (var j = invocationCards.Count - 1; j >= 0; j--)
+        for (var j = oldInvocationCards.Count - 1; j >= 0; j--)
         {
-            var invocationCard = invocationCards[j];
+            var invocationCard = oldInvocationCards[j];
             var permEffect = invocationCard.InvocationPermEffect;
+            var actionEffect = invocationCard.InvocationActionEffect;
             if (permEffect != null)
             {
                 var keys = permEffect.Keys;
@@ -825,6 +828,63 @@ public class PlayerCards : MonoBehaviour
                             break;
                     }
                 }
+            } else if (actionEffect != null)
+            {
+                var keys = actionEffect.Keys;
+                var values = actionEffect.Values;
+
+                float atk = 0;
+                float def = 0;
+                List<int> indexToDelete = new List<int>();
+
+                for (var i = 0; i < keys.Count; i++)
+                {
+                    switch (keys[i])
+                    {
+                        case ActionEffect.GiveAtk:
+                        {
+                            atk = float.Parse(values[i]);
+                        }
+                            break;
+                        case ActionEffect.GiveDef:
+                        {
+                            def = float.Parse(values[i]);
+                        }
+                            break;
+                        case ActionEffect.Beneficiary:
+                        {
+                            if (removedInvocationCard.Nom == invocationCard.Nom)
+                            {
+                                var beneficiary = values[i];
+                                foreach (var invocationCardToCheck in invocationCards)
+                                {
+                                    if (invocationCardToCheck.Nom != beneficiary) continue;
+                                    var newBonusAttack = invocationCardToCheck.GetBonusAttack() - atk;
+                                    var newBonusDef = invocationCardToCheck.GETBonusDefense() - def;
+                                    invocationCardToCheck.SetBonusAttack(newBonusAttack);
+                                    invocationCardToCheck.SetBonusDefense(newBonusDef);
+                                    indexToDelete.Add(i);
+                                    break;
+                                }
+                            }
+                        }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (indexToDelete.Count > 0)
+                {
+                    indexToDelete.Reverse();
+                    foreach (var index in indexToDelete)
+                    {
+                        actionEffect.Keys.RemoveAt(index);
+                        actionEffect.Values.RemoveAt(index);
+                    }
+                }
+
+         
             }
         }
     }

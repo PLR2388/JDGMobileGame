@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class InvocationFunctions : MonoBehaviour
@@ -12,6 +13,7 @@ public class InvocationFunctions : MonoBehaviour
     private GameObject p2;
     [SerializeField] private GameObject inHandButton;
     [SerializeField] private Transform canvas;
+    [SerializeField] private GameObject invocationMenu;
 
     private void Start()
     {
@@ -742,7 +744,18 @@ public class InvocationFunctions : MonoBehaviour
 
                         if (invocationCardSameFamily.Count > 0)
                         {
-                            isPossible = true;
+                            if (def > 0 && atk > 0)
+                            {
+                                if (currentInvocationCard.GetBonusDefense() > -def)
+                                {
+                                    isPossible = true;
+                                }
+                                if (currentInvocationCard.GETBonusAttack() > -atk)
+                                {
+                                    isPossible = true;
+                                }
+                            }
+
                         }
                     }
                         break;
@@ -750,7 +763,7 @@ public class InvocationFunctions : MonoBehaviour
 
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        break;
                 }
             }
         }
@@ -895,10 +908,28 @@ public class InvocationFunctions : MonoBehaviour
                                         var card = invocationsOnField[j];
                                         if (card != null && card.Nom == invocationCardSelected.Nom)
                                         {
-                                            currentPlayerCard.invocationCards[j].SetBonusAttack(atk);
-                                            currentPlayerCard.invocationCards[j].SetBonusDefense(def);
-                                            currentPlayerCard.invocationCards[indexCurrent].SetBonusAttack(-atk);
-                                            currentPlayerCard.invocationCards[indexCurrent].SetBonusDefense(-def);
+                                            var beneficiary = currentPlayerCard.invocationCards[j];
+                                            var currentInvocation = currentPlayerCard.invocationCards[indexCurrent];
+                                            var newBonusAttack = beneficiary.GETBonusAttack() + atk;
+                                            var newBonusDef = beneficiary.GETBonusDefense() + def;
+
+                                            var newMalusAttack = currentInvocation.GETBonusAttack() - atk;
+                                            var newMalusDef = currentInvocation.GETBonusDefense() - def;
+                                            
+                                            currentPlayerCard.invocationCards[j].SetBonusAttack(newBonusAttack);
+                                            currentPlayerCard.invocationCards[j].SetBonusDefense(newBonusDef);
+                                            currentPlayerCard.invocationCards[indexCurrent].SetBonusAttack(newMalusAttack);
+                                            currentPlayerCard.invocationCards[indexCurrent].SetBonusDefense(newMalusDef);
+                                            
+                                            invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable =
+                                                false;
+                                            
+                                            keys.Add(ActionEffect.Beneficiary);
+                                            values.Add(card.Nom);
+                                            invocationActionEffect.Keys = keys;
+                                            invocationActionEffect.Values = values;
+                                            currentPlayerCard.invocationCards[indexCurrent].InvocationActionEffect =
+                                                invocationActionEffect;
                                         }
                                     }
                                 }
@@ -952,7 +983,7 @@ public class InvocationFunctions : MonoBehaviour
 
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    break;
             }
         }
     }

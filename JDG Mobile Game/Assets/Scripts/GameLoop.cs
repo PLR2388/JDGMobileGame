@@ -509,11 +509,11 @@ public class GameLoop : MonoBehaviour
                 if (opponent.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(opponent, false);
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
                 else
                 {
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
             }
             else
@@ -522,11 +522,11 @@ public class GameLoop : MonoBehaviour
                 if (opponent.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(opponent, true);
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
                 else
                 {
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
             }
         }
@@ -594,11 +594,11 @@ public class GameLoop : MonoBehaviour
                 if (attacker.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(attacker, true);
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(cardSelected as InvocationCard);
                 }
                 else
                 {
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(cardSelected as InvocationCard);
                 }
             }
             else
@@ -607,11 +607,11 @@ public class GameLoop : MonoBehaviour
                 if (attacker.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(attacker, false);
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(cardSelected as InvocationCard);
                 }
                 else
                 {
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(cardSelected);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(cardSelected as InvocationCard);
                 }
             }
         }
@@ -620,8 +620,6 @@ public class GameLoop : MonoBehaviour
 
     private void DealWithEqualityAttack(InvocationCard opponent)
     {
-
-
         if (attacker is SuperInvocationCard || opponent is SuperInvocationCard)
         {
             var superAttacker = attacker as SuperInvocationCard;
@@ -676,11 +674,11 @@ public class GameLoop : MonoBehaviour
                     if (attacker.GetInvocationDeathEffect() != null)
                     {
                         DealWithDeathEffect(attacker, true);
-                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                        p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                     }
                     else
                     {
-                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                        p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                     }
                     
                 }
@@ -689,11 +687,11 @@ public class GameLoop : MonoBehaviour
                     if (attacker.GetInvocationDeathEffect() != null)
                     {
                         DealWithDeathEffect(attacker, false);
-                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                        p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                     }
                     else
                     {
-                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                        p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                     }
                 }
             }
@@ -745,16 +743,14 @@ public class GameLoop : MonoBehaviour
             
                 if (IsP1Turn)
                 {
-          
-
                     if (opponent.GetInvocationDeathEffect() != null)
                     {
                         DealWithDeathEffect(opponent, false);
-                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                        p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                     }
                     else
                     {
-                        p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                        p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                     }
                 }
                 else
@@ -762,11 +758,11 @@ public class GameLoop : MonoBehaviour
                     if (opponent.GetInvocationDeathEffect() != null)
                     {
                         DealWithDeathEffect(opponent, true);
-                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                        p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                     }
                     else
                     {
-                        p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                        p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                     }
                 }
             }
@@ -782,21 +778,21 @@ public class GameLoop : MonoBehaviour
                 if (attacker.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(attacker, true);
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                 }
                 else
                 {
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                 }
 
                 if (opponent.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(opponent, false);
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
                 else
                 {
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
             }
             else
@@ -804,21 +800,21 @@ public class GameLoop : MonoBehaviour
                 if (attacker.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(attacker, false);
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                 }
                 else
                 {
-                    p2.GetComponent<PlayerCards>().SendCardToYellowTrash(attacker);
+                    p2.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(attacker);
                 }
 
                 if (opponent.GetInvocationDeathEffect() != null)
                 {
                     DealWithDeathEffect(opponent, true);
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
                 else
                 {
-                    p1.GetComponent<PlayerCards>().SendCardToYellowTrash(opponent);
+                    p1.GetComponent<PlayerCards>().sendInvocationCardToYellowTrash(opponent);
                 }
             }
         }

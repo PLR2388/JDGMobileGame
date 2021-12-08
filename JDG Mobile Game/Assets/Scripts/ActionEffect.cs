@@ -6,5 +6,6 @@ public enum ActionEffect
     GiveDef,
     SpecificFamily,
     BackToLife,
-    SkipOpponentAttack
+    SkipOpponentAttack,
+    Beneficiary
 }

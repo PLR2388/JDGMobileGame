@@ -46,6 +46,17 @@ public class InvocationCard : Card
         SetBonusAttack(0);
         SetBonusDefense(0);
         SetEquipmentCard(null);
+        if (invocationActionEffect != null)
+        {
+            var keys = invocationActionEffect.Keys;
+            var values = invocationActionEffect.Values;
+            for (var i = keys.Count - 1; i >= 0; i--)
+            {
+                if (keys[i] != ActionEffect.Beneficiary) continue;
+                keys.Remove(keys[i]);
+                values.Remove(values[i]);
+            }
+        }
     }
 
     public void SetCurrentFamily(CardFamily? family)
@@ -60,7 +71,15 @@ public class InvocationCard : Card
         bonusDefense = bonus;
     }
 
-    public InvocationActionEffect InvocationActionEffect => invocationActionEffect;
+    public InvocationActionEffect InvocationActionEffect
+    {
+        get { return invocationActionEffect; }
+        set
+        {
+            invocationActionEffect = value;
+        }
+    }
+
     public InvocationConditions InvocationConditions => invocationConditions;
     
     public InvocationPermEffect InvocationPermEffect => invocationPermEffect;
