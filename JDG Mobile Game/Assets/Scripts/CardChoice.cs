@@ -116,10 +116,10 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
 
-        deck1.Add(GetSpecificCard("Sangoku",allCards));
-        deck1.Add(GetSpecificCard("Sheik Point", allCards));
-        deck1.Add(GetSpecificCard("Granolax",allCards));
-        deck1.Add(GetSpecificCard("Starlight Unicorn", allCards));
+        deck1.Add(GetSpecificCard("Studio de scénaristes Canadien",allCards));
+        deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", allCards));
+        deck1.Add(GetSpecificCard("Papy Grenier",allCards));
+        deck1.Add(GetSpecificCard("Jean-Marc Soul", allCards));
 
         while (deck1.Count != 30)
         {

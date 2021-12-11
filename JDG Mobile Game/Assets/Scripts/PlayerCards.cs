@@ -33,6 +33,11 @@ public class PlayerCards : MonoBehaviour
     [FormerlySerializedAs("AllPhysicalCards")] [SerializeField]
     private List<GameObject> allPhysicalCards;
 
+    [SerializeField] private GameObject nextPhaseButton;
+    [SerializeField] private GameObject inHandButton;
+    [SerializeField] private Transform canvas;
+
+
     private List<Card> secretCards = new List<Card>(); // Where combine card go
 
     private readonly Vector3[] invocationCardsLocationP1 =
@@ -472,6 +477,111 @@ public class PlayerCards : MonoBehaviour
         if (equipmentCard != null)
         {
             yellowTrash.Add(equipmentCard);
+        }
+
+        if (specificCardFound.GetInvocationDeathEffect() != null)
+        {
+            var invocationDeathEffect = specificCardFound.GetInvocationDeathEffect();
+            var keys = invocationDeathEffect.Keys;
+            var values = invocationDeathEffect.Values;
+
+            var cardName = "";
+            for (var i = 0; i < keys.Count; i++)
+            {
+                switch (keys[i])
+                {
+                    case DeathEffect.GetSpecificCard:
+                        cardName = values[i];
+                        break;
+                    case DeathEffect.GetCardSource:
+                        GetCardSourceDeathEffect(specificCardFound, isPlayerOne, values, i, cardName);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+    }
+    
+    private void AskUserToAddCardInHand(string cardName, Card cardFound, bool isFound)
+    {
+        if (!isFound) return;
+
+        nextPhaseButton.SetActive(false);
+        inHandButton.SetActive(false);
+
+        UnityAction positiveAction = () =>
+        {
+            handCards.Add(cardFound);
+            deck.Remove(cardFound);
+            nextPhaseButton.SetActive(true);
+            inHandButton.SetActive(true);
+        };
+
+        UnityAction negativeAction = () =>
+        {
+            nextPhaseButton.SetActive(true);
+            inHandButton.SetActive(true);
+        };
+
+        MessageBox.CreateSimpleMessageBox(canvas, "Carte en main",
+            "Voulez-vous aussi ajouter " + cardName + " à votre main ?", positiveAction, negativeAction);
+    }
+    
+    private void GetCardSourceDeathEffect(Card invocationCard, bool isP1Card, IReadOnlyList<string> values, int i,
+        string cardName)
+    {
+        Card cardFound = null;
+        var source = values[i];
+
+        SendCardToYellowTrash(invocationCard);
+        switch (source)
+        {
+            case "deck":
+            {
+                if (cardName != "")
+                {
+                    var isFound = false;
+                    var j = 0;
+                    while (j < deck.Count && !isFound)
+                    {
+                        if (deck[j].Nom == cardName)
+                        {
+                            isFound = true;
+                            cardFound = deck[j];
+                        }
+
+                        j++;
+                    }
+
+                    AskUserToAddCardInHand(cardName, cardFound, isFound);
+                }
+
+                break;
+            }
+            case "trash":
+            {
+                var trash = yellowTrash;
+                if (cardName != "")
+                {
+                    var isFound = false;
+                    var j = 0;
+                    while (j < trash.Count && !isFound)
+                    {
+                        if (trash[j].Nom == cardName)
+                        {
+                            isFound = true;
+                            cardFound = trash[j];
+                        }
+
+                        j++;
+                    }
+
+                    AskUserToAddCardInHand(cardName, cardFound, isFound);
+                }
+
+                break;
+            }
         }
     }
 

@@ -43,6 +43,7 @@ public class InvocationCard : Card
     public void Init()
     {
         numberTurnOnField = 0;
+        numberDeaths = 0;
         SetBonusAttack(0);
         SetBonusDefense(0);
         SetEquipmentCard(null);

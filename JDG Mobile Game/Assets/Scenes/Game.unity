@@ -1354,6 +1354,9 @@ MonoBehaviour:
   prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
     type: 3}
   allPhysicalCards: []
+  nextPhaseButton: {fileID: 1957640249}
+  inHandButton: {fileID: 829748139}
+  canvas: {fileID: 244790280}
 --- !u!114 &230530445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5378,6 +5381,9 @@ MonoBehaviour:
   prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
     type: 3}
   allPhysicalCards: []
+  nextPhaseButton: {fileID: 0}
+  inHandButton: {fileID: 0}
+  canvas: {fileID: 0}
 --- !u!114 &2017354830
 MonoBehaviour:
   m_ObjectHideFlags: 0

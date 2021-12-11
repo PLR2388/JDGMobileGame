@@ -647,7 +647,6 @@ public class InvocationFunctions : MonoBehaviour
         if (size >= 4) return;
         
         var invocationStartEffect = invocationCard.GetInvocationStartEffect();
-        var invocationActionEffect = invocationCard.InvocationActionEffect;
         var invocationConditionEffect = invocationCard.InvocationConditions;
 
         if (invocationConditionEffect != null)
