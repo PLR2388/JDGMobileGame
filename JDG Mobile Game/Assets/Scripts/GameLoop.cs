@@ -454,6 +454,16 @@ public class GameLoop : MonoBehaviour
         }
     }
 
+    private void RemoveCombineEffectCard(List<EffectCard> effectCards, List<Card> yellowCards)
+    {
+        foreach (var effectCard in effectCards.Where(effectCard => effectCard.Nom == "Attaque de la tour Eiffel"))
+        {
+            effectCards.Remove(effectCard);
+            yellowCards.Add(effectCard);
+            break;
+        }
+    }
+
     /**
      * Attack that kill the opponent
      */
@@ -462,10 +472,11 @@ public class GameLoop : MonoBehaviour
         if (opponent is SuperInvocationCard)
         {
             var superOpponent = opponent as SuperInvocationCard;
-
+            
             if (IsP1Turn)
             {
                 p2.GetComponent<PlayerStatus>().ChangePv(diff);
+                RemoveCombineEffectCard(p2.GetComponent<PlayerCards>().effectCards, p2.GetComponent<PlayerCards>().yellowTrash);
 
                 foreach (var combineCard in superOpponent.invocationCards)
                 {
@@ -489,6 +500,7 @@ public class GameLoop : MonoBehaviour
             else
             {
                 p1.GetComponent<PlayerStatus>().ChangePv(diff);
+                RemoveCombineEffectCard(p1.GetComponent<PlayerCards>().effectCards, p1.GetComponent<PlayerCards>().yellowTrash);
 
                 foreach (var combineCard in superOpponent.invocationCards)
                 {
@@ -561,6 +573,7 @@ public class GameLoop : MonoBehaviour
 
             if (IsP1Turn)
             {
+                RemoveCombineEffectCard(p1.GetComponent<PlayerCards>().effectCards, p1.GetComponent<PlayerCards>().yellowTrash);
                 p1.GetComponent<PlayerStatus>().ChangePv(-diff);
 
                 foreach (var combineCard in superAttacker.invocationCards)
@@ -584,6 +597,7 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
+                RemoveCombineEffectCard(p2.GetComponent<PlayerCards>().effectCards, p2.GetComponent<PlayerCards>().yellowTrash);
                 p2.GetComponent<PlayerStatus>().ChangePv(-diff);
 
                 foreach (var combineCard in superAttacker.invocationCards)
@@ -658,6 +672,7 @@ public class GameLoop : MonoBehaviour
 
                     if (IsP1Turn)
                     {
+                        RemoveCombineEffectCard(p1.GetComponent<PlayerCards>().effectCards, p1.GetComponent<PlayerCards>().yellowTrash);
                         if (combineCard.GetInvocationDeathEffect() != null)
                         {
                             DealWithDeathEffect(combineCard, true);
@@ -673,6 +688,7 @@ public class GameLoop : MonoBehaviour
                     }
                     else
                     {
+                        RemoveCombineEffectCard(p2.GetComponent<PlayerCards>().effectCards, p2.GetComponent<PlayerCards>().yellowTrash);
                         if (combineCard.GetInvocationDeathEffect() != null)
                         {
                             DealWithDeathEffect(combineCard, true);
@@ -741,6 +757,7 @@ public class GameLoop : MonoBehaviour
 
                     if (IsP1Turn)
                     {
+                        RemoveCombineEffectCard(p2.GetComponent<PlayerCards>().effectCards, p2.GetComponent<PlayerCards>().yellowTrash);
                         if (combineCard.GetInvocationDeathEffect() != null)
                         {
                             DealWithDeathEffect(combineCard, true);
@@ -756,6 +773,7 @@ public class GameLoop : MonoBehaviour
                     }
                     else
                     {
+                        RemoveCombineEffectCard(p1.GetComponent<PlayerCards>().effectCards, p1.GetComponent<PlayerCards>().yellowTrash);
                         if (combineCard.GetInvocationDeathEffect() != null)
                         {
                             DealWithDeathEffect(combineCard, true);
