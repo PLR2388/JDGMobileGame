@@ -119,7 +119,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Studio de scénaristes Canadien",allCards));
         deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", allCards));
         deck1.Add(GetSpecificCard("Joueur Du Grenier",allCards));
-        deck1.Add(GetSpecificCard("Demi-pizza", allCards));
+        deck1.Add(GetSpecificCard("Fatalité", allCards));
 
         while (deck1.Count != 30)
         {

@@ -246,6 +246,8 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.AttackDirectly:
                 {
+                    var minValue = float.Parse(value);
+                    isValid &= opponentPlayerStatus.GETCurrentPv() < minValue;
                 }
                     break;
                 case Effect.ProtectAttack:
@@ -542,10 +544,6 @@ public class EffectFunctions : MonoBehaviour
                     }
                         break;
                     case Effect.ChangeOrder:
-                    {
-                    }
-                        break;
-                    case Effect.AttackDirectly:
                     {
                     }
                         break;
