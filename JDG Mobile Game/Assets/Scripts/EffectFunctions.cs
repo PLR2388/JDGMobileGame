@@ -43,9 +43,8 @@ public class EffectFunctions : MonoBehaviour
 
         if (size < 4)
         {
-            var cancelled = ApplyEffectCard(effectCard, effectCard.GetEffectCardEffect());
-
-            if (cancelled) return;
+            ApplyEffectCard(effectCard, effectCard.GetEffectCardEffect());
+            
             miniCardMenu.SetActive(false);
             currentPlayerCard.handCards.Remove(effectCard);
             currentPlayerCard.effectCards.Add(effectCard);
@@ -111,7 +110,7 @@ public class EffectFunctions : MonoBehaviour
                             {
                                 var invocationOpponentValid = opponentPlayerCard.invocationCards
                                     .Where(card => card.IsValid()).Cast<Card>().ToList();
-                                isValid = invocationOpponentValid.Count > 0;
+                                isValid &= invocationOpponentValid.Count > 0;
                             }
                         }
                             break;
@@ -144,7 +143,7 @@ public class EffectFunctions : MonoBehaviour
 
                             allCardsOnField.AddRange(invocationCards2.Where(card => card.IsValid()).Cast<Card>());
 
-                            isValid = allCardsOnField.Count > 0;
+                            isValid &= allCardsOnField.Count > 0;
                         }
                             break;
                     }
@@ -160,7 +159,7 @@ public class EffectFunctions : MonoBehaviour
                             var invocationCardsValid = invocationCards
                                 .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
 
-                            isValid = invocationCardsValid.Count > 0;
+                            isValid &= invocationCardsValid.Count > 0;
                         }
                             break;
                         case "5":
@@ -170,7 +169,7 @@ public class EffectFunctions : MonoBehaviour
                                 .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
                                     invocationCard.GetCurrentAttack() >= 5 ||
                                     invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
-                            isValid = invocationCardsValid.Count > 0;
+                            isValid &= invocationCardsValid.Count > 0;
                         }
                             break;
                         case "3":
@@ -180,7 +179,7 @@ public class EffectFunctions : MonoBehaviour
                                     invocationCard.GetCurrentAttack() >= 3 ||
                                     invocationCard.GetCurrentDefense() >= 3)
                                 .Cast<Card>().ToList();
-                            isValid = invocationCardsValid.Count > 0;
+                            isValid &= invocationCardsValid.Count > 0;
                         }
                             break;
                     }
@@ -189,13 +188,13 @@ public class EffectFunctions : MonoBehaviour
                 case Effect.SameFamily:
                 {
                     var fieldCard = currentPlayerCard.field;
-                    isValid = fieldCard != null && fieldCard.IsValid();
+                    isValid &= fieldCard != null && fieldCard.IsValid();
                 }
                     break;
                 case Effect.RemoveDeck:
                 {
                     var size = currentPlayerCard.deck.Count;
-                    isValid = size > 0;
+                    isValid &= size > 0;
                 }
                     break;
                 case Effect.SpecialInvocation:
@@ -206,7 +205,7 @@ public class EffectFunctions : MonoBehaviour
 
                     var invocationFromYellowTrash =
                         yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
-                    isValid = place < 4 && invocationFromYellowTrash.Count > 0;
+                    isValid &= place < 4 && invocationFromYellowTrash.Count > 0;
                 }
                     break;
                 case Effect.Duration:
@@ -218,7 +217,7 @@ public class EffectFunctions : MonoBehaviour
                 {
                     var numberCombine = Int32.Parse(value);
                     var currentInvocationCards = currentPlayerCard.invocationCards;
-                    isValid = currentInvocationCards.Count >= numberCombine;
+                    isValid &= currentInvocationCards.Count >= numberCombine;
                 }
                     break;
                 case Effect.TakeControl:
@@ -226,7 +225,7 @@ public class EffectFunctions : MonoBehaviour
                     var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
                         .Cast<Card>().ToList();
 
-                    isValid = invocationCardOpponent.Count > 0;
+                    isValid &= invocationCardOpponent.Count > 0;
                 }
                     break;
                 case Effect.NumberAttacks:
@@ -267,6 +266,13 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.CheckTurn:
                 {
+                }
+                    break;
+                case Effect.RemoveHand:
+                {
+                    var numberCardToRemove = int.Parse(values[i]);
+                    // This card + number to remove
+                    isValid &= currentPlayerCard.handCards.Count >  numberCardToRemove;
                 }
                     break;
             }
@@ -349,7 +355,7 @@ public class EffectFunctions : MonoBehaviour
         }
     }
 
-    private bool ApplyEffectCard(EffectCard effectCard, EffectCardEffect effectCardEffect)
+    private void ApplyEffectCard(EffectCard effectCard, EffectCardEffect effectCardEffect)
     {
         var keys = effectCardEffect.Keys;
         var values = effectCardEffect.Values;
@@ -357,14 +363,12 @@ public class EffectFunctions : MonoBehaviour
         var pvAffected = 0f;
         var handCardsNumber = 0;
         var affectOpponent = false;
-        var cancelled = false;
         string[] sources = null;
         var canDisplayRemoveOption = false;
 
-        for (var i = 0; i < keys.Count && !cancelled; i++)
+        for (var i = 0; i < keys.Count; i++)
         {
-            if (!cancelled)
-            {
+           
                 var effect = keys[i];
                 var value = values[i];
                 switch (effect)
@@ -389,19 +393,22 @@ public class EffectFunctions : MonoBehaviour
                         ApplyNumberHandCard(affectOpponent, pvAffected);
                     }
                         break;
-                    case Effect.DestroyCards:
-                    {
-                        cancelled = ApplyDestroyCards(value, pvAffected, affectOpponent);
-                    }
-                        break;
                     case Effect.SacrificeInvocation:
                     {
-                        cancelled = ApplySacrificeInvocation(value, cancelled, pvAffected);
+                        UnityAction destroyCardAction = () =>
+                        {
+                            var index = keys.FindIndex(effect1 => effect1 == Effect.DestroyCards);
+                            if (index > -1)
+                            {
+                                ApplyDestroyCards(values[index], pvAffected, affectOpponent);
+                            }
+                        };
+                        ApplySacrificeInvocation(value, pvAffected, destroyCardAction);
                     }
                         break;
                     case Effect.SameFamily:
                     {
-                        cancelled = ApplySameFamily(cancelled);
+                        ApplySameFamily();
                     }
                         break;
                     case Effect.CheckTurn:
@@ -478,22 +485,22 @@ public class EffectFunctions : MonoBehaviour
                         break;
                     case Effect.RemoveCardOption:
                     {
-                        cancelled = ApplyRemoveCardOption(canDisplayRemoveOption);
+                        ApplyRemoveCardOption(canDisplayRemoveOption);
                     }
                         break;
                     case Effect.RemoveHand:
                     {
-                        cancelled = ApplyRemoveHand(effectCard);
+                        ApplyRemoveHand(effectCard);
                     }
                         break;
                     case Effect.RemoveDeck:
                     {
-                        cancelled = ApplyRemoveDeck(cancelled);
+                        ApplyRemoveDeck();
                     }
                         break;
                     case Effect.SpecialInvocation:
                     {
-                        cancelled = ApplySpecialInvocation(cancelled);
+                        ApplySpecialInvocation();
                     }
                         break;
                     case Effect.DivideInvocation:
@@ -514,7 +521,7 @@ public class EffectFunctions : MonoBehaviour
                         break;
                     case Effect.TakeControl:
                     {
-                        cancelled = ApplyTakeControl();
+                        ApplyTakeControl();
                     }
                         break;
                     case Effect.NumberAttacks:
@@ -554,13 +561,12 @@ public class EffectFunctions : MonoBehaviour
                     }
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        break;
                 }
-            }
+            
         }
 
         //TODO Add effectCard to yellow trash if necessary
-        return cancelled;
     }
 
     private bool ApplyTakeControl()
@@ -694,7 +700,7 @@ public class EffectFunctions : MonoBehaviour
         }
     }
 
-    private bool ApplySpecialInvocation(bool cancelled)
+    private void ApplySpecialInvocation()
     {
         var place = FindFirstEmptyInvocationLocationCurrentPlayer();
         if (place < 4)
@@ -707,7 +713,6 @@ public class EffectFunctions : MonoBehaviour
 
             if (invocationFromYellowTrash.Count == 0)
             {
-                cancelled = true;
                 // TODO MessageBox
             }
             else
@@ -726,7 +731,7 @@ public class EffectFunctions : MonoBehaviour
                     }
                     else
                     {
-                        cancelled = true;
+                        
                     }
 
                     Destroy(message);
@@ -734,40 +739,28 @@ public class EffectFunctions : MonoBehaviour
 
                 message.GetComponent<MessageBox>().NegativeAction = () =>
                 {
-                    cancelled = true;
+                    
                     Destroy(message);
                 };
             }
         }
         else
         {
-            cancelled = true;
             // TODO MessageBox
         }
-
-        return cancelled;
     }
 
-    private bool ApplyRemoveDeck(bool cancelled)
+    private void ApplyRemoveDeck()
     {
         var size = currentPlayerCard.deck.Count;
-        if (size > 0)
-        {
-            Card c = currentPlayerCard.deck[size - 1];
-            currentPlayerCard.yellowTrash.Add(c);
-            currentPlayerCard.deck.RemoveAt(size - 1);
-        }
-        else
-        {
-            cancelled = true;
-        }
-
-        return cancelled;
+        if (size <= 0) return;
+        Card c = currentPlayerCard.deck[size - 1];
+        currentPlayerCard.yellowTrash.Add(c);
+        currentPlayerCard.deck.RemoveAt(size - 1);
     }
 
-    private bool ApplyRemoveHand(EffectCard effectCard)
+    private void ApplyRemoveHand(EffectCard effectCard)
     {
-        bool cancelled = false;
         var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
         handCardPlayer.Remove(effectCard);
         var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
@@ -780,21 +773,32 @@ public class EffectFunctions : MonoBehaviour
             {
                 currentPlayerCard.yellowTrash.Add(card);
                 currentPlayerCard.handCards.Remove(card);
+                Destroy(message);
             }
             else
             {
-                cancelled = true;
+                message.SetActive(false);
+                UnityAction okAction = () =>
+                {
+                    message.SetActive(true);
+                };
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
+                    okAction);
             }
 
-            Destroy(message);
+         
         };
 
         message.GetComponent<MessageBox>().NegativeAction = () =>
         {
-            cancelled = true;
-            Destroy(message);
+            message.SetActive(false);
+            UnityAction okAction = () =>
+            {
+                message.SetActive(true);
+            };
+            MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
+                okAction);
         };
-        return cancelled;
     }
 
     private bool ApplyRemoveCardOption(bool canDisplayRemoveOption)
@@ -962,7 +966,7 @@ public class EffectFunctions : MonoBehaviour
         effectCard.checkTurn = true;
     }
 
-    private bool ApplySameFamily(bool cancelled)
+    private void ApplySameFamily()
     {
         var fieldCard = currentPlayerCard.field;
         if (fieldCard.IsValid())
@@ -975,13 +979,10 @@ public class EffectFunctions : MonoBehaviour
         }
         else
         {
-            cancelled = true;
         }
-
-        return cancelled;
     }
 
-    private bool ApplySacrificeInvocation(string value, bool cancelled, float pvAffected)
+    private void ApplySacrificeInvocation(string value, float pvAffected, UnityAction completion)
     {
         switch (value)
         {
@@ -990,17 +991,7 @@ public class EffectFunctions : MonoBehaviour
                 var invocationCards = currentPlayerCard.invocationCards;
                 var invocationCardsValid = invocationCards
                     .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
-
-                if (invocationCardsValid.Count == 0)
-                {
-                    cancelled = true;
-                    // TODO MESSAGE BOX
-                }
-                else
-                {
-                    cancelled =  GenerateSacrificeInvocationMessageBox(invocationCardsValid,
-                        invocationCards, pvAffected);
-                }
+                GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
             }
                 break;
             case "5":
@@ -1013,13 +1004,11 @@ public class EffectFunctions : MonoBehaviour
 
                 if (invocationCardsValid.Count == 0)
                 {
-                    cancelled = true;
                     // TODO MESSAGE BOX
                 }
                 else
                 {
-                    cancelled = GenerateSacrificeInvocationMessageBox(invocationCardsValid,
-                        invocationCards, pvAffected);
+                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
                 }
             }
                 break;
@@ -1033,24 +1022,19 @@ public class EffectFunctions : MonoBehaviour
 
                 if (invocationCardsValid.Count == 0)
                 {
-                    cancelled = true;
                     // TODO MESSAGE BOX
                 }
                 else
                 {
-                    cancelled = GenerateSacrificeInvocationMessageBox(invocationCardsValid,
-                        invocationCards, pvAffected);
+                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected,completion);
                 }
             }
                 break;
         }
-
-        return cancelled;
     }
 
-    private bool ApplyDestroyCards(string value, float pvAffected, bool affectOpponent)
+    private void ApplyDestroyCards(string value, float pvAffected, bool affectOpponent)
     {
-        var cancelled = false;
         switch (value)
         {
             case "field":
@@ -1072,9 +1056,8 @@ public class EffectFunctions : MonoBehaviour
                 {
                     if (pvAffected < 0)
                     {
-                        UnityAction negativeAction = () => { cancelled = true; };
                         var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                            "Choix du terrain à détruire", fieldCards, negativeAction: negativeAction);
+                            "Choix du terrain à détruire", fieldCards);
                         var affected = pvAffected;
                         message.GetComponent<MessageBox>().PositiveAction = () =>
                         {
@@ -1098,68 +1081,51 @@ public class EffectFunctions : MonoBehaviour
             }
                 break;
             case "all":
-            {
-                var fieldCard1 = currentPlayerCard.field;
-                var fieldCard2 = opponentPlayerCard.field;
-                var effectCards1 = currentPlayerCard.effectCards;
-                var effectCards2 = opponentPlayerCard.effectCards;
-                var invocationCards1 = currentPlayerCard.invocationCards;
-                var invocationCards2 = opponentPlayerCard.invocationCards;
-                if (fieldCard1.IsValid())
                 {
-                    currentPlayerCard.field = null;
-                    currentPlayerCard.yellowTrash.Add(fieldCard1);
-                }
+                    for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
+                    {
+                        var invocationCard = currentPlayerCard.invocationCards[j];
+                        currentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                    }
 
-                if (fieldCard2.IsValid())
-                {
-                    opponentPlayerCard.field = null;
-                    opponentPlayerCard.yellowTrash.Add(fieldCard2);
-                }
+                    for (var j = currentPlayerCard.effectCards.Count - 1; j >= 0; j--)
+                    {
+                        var effectCard = currentPlayerCard.effectCards[j];
+                        currentPlayerCard.SendCardToYellowTrash(effectCard);
+                    }
 
-                for (var j = 0; j < effectCards1.Count; j++)
-                {
-                    var card = effectCards1[j];
-                    if (!card.IsValid()) continue;
-                    currentPlayerCard.yellowTrash.Add(card);
-                    currentPlayerCard.effectCards[j] = null;
-                }
+                    if (currentPlayerCard.field != null)
+                    {
+                        currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
+                    }
+                            
+                    for (var j = opponentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
+                    {
+                        var invocationCard = opponentPlayerCard.invocationCards[j];
+                        opponentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                    }
 
-                for (var j = 0; j < effectCards2.Count; j++)
-                {
-                    var card = effectCards2[j];
-                    if (!card.IsValid()) continue;
-                    opponentPlayerCard.yellowTrash.Add(card);
-                    opponentPlayerCard.effectCards[j] = null;
-                }
+                    for (var j = opponentPlayerCard.effectCards.Count - 1; j >= 0; j--)
+                    {
+                        var effectCard = opponentPlayerCard.effectCards[j];
+                        opponentPlayerCard.SendCardToYellowTrash(effectCard);
+                    }
 
-                for (var j = 0; j < invocationCards1.Count; j++)
-                {
-                    var card = invocationCards1[j];
-                    if (!card.IsValid()) continue;
-                    currentPlayerCard.yellowTrash.Add(card);
-                    currentPlayerCard.invocationCards[j] = null;
+                    if (opponentPlayerCard.field != null)
+                    {
+                        opponentPlayerCard.SendCardToYellowTrash(opponentPlayerCard.field);
+                    }
+                            
                 }
-
-                for (var j = 0; j < invocationCards2.Count; j++)
-                {
-                    var card = invocationCards2[j];
-                    if (!card.IsValid()) continue;
-                    opponentPlayerCard.yellowTrash.Add(card);
-                    opponentPlayerCard.invocationCards[j] = null;
-                }
-            }
                 break;
-            case "invocation":
+                case "invocation":
             {
                 if (affectOpponent)
                 {
                     var invocationOpponentValid = opponentPlayerCard.invocationCards
                         .Where(card => card.IsValid()).Cast<Card>().ToList();
-                    UnityAction negativeAction = () => { cancelled = true; };
                     var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                        "Choix de l'invocation à détruire", invocationOpponentValid,
-                        negativeAction: negativeAction);
+                        "Choix de l'invocation à détruire", invocationOpponentValid);
                     message.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var invocationCard =
@@ -1178,7 +1144,6 @@ public class EffectFunctions : MonoBehaviour
                         }
                         else
                         {
-                            cancelled = true;
                         }
                     };
                 }
@@ -1247,20 +1212,17 @@ public class EffectFunctions : MonoBehaviour
                     }
                     else
                     {
-                        cancelled = true;
+                     
                     }
                     Destroy(message);
                 };
                 message.GetComponent<MessageBox>().NegativeAction = () =>
                 {
-                    cancelled = true;
                     Destroy(message);
                 };
             }
                 break;
         }
-
-        return cancelled;
     }
 
     private void ApplyNumberHandCard(bool affectOpponent, float pvAffected)
@@ -1309,12 +1271,9 @@ public class EffectFunctions : MonoBehaviour
         return pvAffected;
     }
 
-    private bool GenerateSacrificeInvocationMessageBox(List<Card> invocationCardsValid,
-        IReadOnlyList<InvocationCard> invocationCards,
-        float pvAffected)
+    private void GenerateSacrificeInvocationMessageBox(List<Card> invocationCardsValid,
+        float pvAffected, UnityAction completion)
     {
-        var isDone = false;
-        var cancelled = false;
         var message =
             MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de l'invocation à sacrifier",
                 invocationCardsValid);
@@ -1325,40 +1284,35 @@ public class EffectFunctions : MonoBehaviour
             var card = message.GetComponent<MessageBox>().GETSelectedCard();
             if (card.IsValid())
             {
-                for (var j = 0; j < invocationCards.Count; j++)
+                currentPlayerCard.sendInvocationCardToYellowTrash(card as InvocationCard);
+                if (pvAffected > 0)
                 {
-                    var invocationCard = invocationCards[j];
-                    if (invocationCard.Nom != card.Nom) continue;
-                    currentPlayerCard.yellowTrash.Add(card);
-                    currentPlayerCard.invocationCards[j] = null;
-
-                    if (pvAffected > 0)
-                    {
-                        currentPlayerStatus.ChangePv(pvAffected);
-                    }
-
-                    break;
+                    currentPlayerStatus.ChangePv(pvAffected);
                 }
-                
+
+                completion();
+                Destroy(message);
             }
             else
             {
-                cancelled = true;
+                message.SetActive(false);
+                UnityAction okAction = () =>
+                {
+                    message.SetActive(true);
+                };
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier", okAction);
             }
-            isDone = true;
-            Destroy(message);
         };
         message.GetComponent<MessageBox>().NegativeAction = () =>
         {
-            isDone = true;
-            cancelled = true;
-            Destroy(message);
+            message.SetActive(false);
+            UnityAction okAction = () =>
+            {
+                message.SetActive(true);
+            };
+            MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier", okAction);
         };
-        while (!isDone)
-        {
-        }
 
-        return cancelled;
     }
 
 

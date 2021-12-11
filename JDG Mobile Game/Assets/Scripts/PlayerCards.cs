@@ -535,10 +535,35 @@ public class PlayerCards : MonoBehaviour
                     case DeathEffect.GetCardSource:
                         GetCardSourceDeathEffect(specificCardFound, isPlayerOne, values, i, cardName);
                         break;
+                    case DeathEffect.ComeBackToHand:
+                        ComeBackToHandDeathEffect(specificCardFound, values[i]);
+                        break;
+                    case DeathEffect.KillAlsoOtherCard:
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
+        }
+    }
+    
+    private void ComeBackToHandDeathEffect(InvocationCard invocationCard, string value)
+    {
+        var isParsed = int.TryParse(value, out var number);
+        if (isParsed)
+        {
+            if (invocationCard.GETNumberDeaths() > number)
+            {
+                sendInvocationCardToYellowTrash(invocationCard);
+            }
+            else
+            {
+                SendCardToHand(invocationCard);
+            }
+        }
+        else
+        {
+            SendCardToHand(invocationCard);
         }
     }
     
