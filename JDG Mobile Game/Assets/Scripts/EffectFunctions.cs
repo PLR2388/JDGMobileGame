@@ -76,7 +76,7 @@ public class EffectFunctions : MonoBehaviour
             {
                 case Effect.AffectOpponent:
                 {
-                    affectOpponent = Boolean.Parse(value);
+                    affectOpponent = bool.Parse(value);
                 }
                     break;
                 case Effect.DestroyCards:
@@ -273,6 +273,11 @@ public class EffectFunctions : MonoBehaviour
                     var numberCardToRemove = int.Parse(values[i]);
                     // This card + number to remove
                     isValid &= currentPlayerCard.handCards.Count >  numberCardToRemove;
+                }
+                    break;
+                case Effect.AffectPv:
+                {
+                    pvAffected = float.Parse(values[i]);
                 }
                     break;
             }
@@ -1001,15 +1006,7 @@ public class EffectFunctions : MonoBehaviour
                     .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
                         invocationCard.GetCurrentAttack() >= 5 ||
                         invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
-
-                if (invocationCardsValid.Count == 0)
-                {
-                    // TODO MESSAGE BOX
-                }
-                else
-                {
-                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
-                }
+                GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
             }
                 break;
             case "3":
@@ -1019,15 +1016,7 @@ public class EffectFunctions : MonoBehaviour
                         invocationCard.GetCurrentAttack() >= 3 ||
                         invocationCard.GetCurrentDefense() >= 3)
                     .Cast<Card>().ToList();
-
-                if (invocationCardsValid.Count == 0)
-                {
-                    // TODO MESSAGE BOX
-                }
-                else
-                {
-                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected,completion);
-                }
+                GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected,completion);
             }
                 break;
         }
@@ -1285,7 +1274,7 @@ public class EffectFunctions : MonoBehaviour
             if (card.IsValid())
             {
                 currentPlayerCard.sendInvocationCardToYellowTrash(card as InvocationCard);
-                if (pvAffected > 0)
+                if (pvAffected != 0)
                 {
                     currentPlayerStatus.ChangePv(pvAffected);
                 }
