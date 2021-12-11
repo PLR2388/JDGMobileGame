@@ -67,6 +67,7 @@ public class EffectFunctions : MonoBehaviour
         var affectOpponent = false;
         string[] sources = null;
         var canDisplayRemoveOption = false;
+        var changeField = false;
 
         for (var i = 0; i < keys.Count; i++)
         {
@@ -77,6 +78,10 @@ public class EffectFunctions : MonoBehaviour
                 case Effect.AffectOpponent:
                 {
                     affectOpponent = bool.Parse(value);
+                    if (pvAffected != 0 && !affectOpponent)
+                    {
+                        isValid &= (currentPlayerStatus.GETCurrentPv() + pvAffected) > 0;
+                    }
                 }
                     break;
                 case Effect.DestroyCards:
@@ -88,20 +93,17 @@ public class EffectFunctions : MonoBehaviour
                             var fieldCards = new List<Card>();
                             var fieldCard1 = currentPlayerCard.field;
                             var fieldCard2 = opponentPlayerCard.field;
-                            if (fieldCard1.IsValid())
+                            if (fieldCard1 != null)
                             {
                                 fieldCards.Add(fieldCard1);
                             }
 
-                            if (fieldCard2.IsValid())
+                            if (fieldCard2 != null)
                             {
                                 fieldCards.Add(fieldCard2);
                             }
 
-                            if (fieldCards.Count == 0)
-                            {
-                                isValid = false;
-                            }
+                            isValid &= fieldCards.Count > 0;
                         }
                             break;
                         case "invocation":
@@ -256,10 +258,12 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.SkipFieldsEffect:
                 {
+                    isValid = currentPlayerCard.field != null || opponentPlayerCard.field != null;
                 }
                     break;
                 case Effect.ChangeField:
                 {
+                    changeField = true;
                 }
                     break;
                 case Effect.HandMax:
@@ -280,6 +284,19 @@ public class EffectFunctions : MonoBehaviour
                 case Effect.AffectPv:
                 {
                     pvAffected = float.Parse(values[i]);
+                }
+                    break;
+                case Effect.Sources:
+                {
+                    if (changeField)
+                    {
+                        if (value == "deck")
+                        {
+                            List<Card> fieldCardsInDeck =
+                                currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
+                            isValid &= fieldCardsInDeck.Count > 0;
+                        }
+                    }
                 }
                     break;
             }
@@ -372,6 +389,7 @@ public class EffectFunctions : MonoBehaviour
         var affectOpponent = false;
         string[] sources = null;
         var canDisplayRemoveOption = false;
+        var changeField = false;
 
         for (var i = 0; i < keys.Count; i++)
         {
@@ -388,6 +406,13 @@ public class EffectFunctions : MonoBehaviour
                     case Effect.AffectOpponent:
                     {
                         affectOpponent = ApplyAffectOpponent(value);
+                        if (i < keys.Count - 1)
+                        {
+                            if (keys[i + 1] == Effect.DestroyCards)
+                            {
+                                ApplyDestroyCards(values[i+1], pvAffected, affectOpponent);
+                            }
+                        }
                     }
                         break;
                     case Effect.NumberInvocationCard:
@@ -477,6 +502,52 @@ public class EffectFunctions : MonoBehaviour
                                         "Tu dois choisir une carte", okAction);
                                 };
                             }
+                        } else if (changeField)
+                        {
+                            if (value == "deck")
+                            {
+                                List<Card> fieldCardInDeck =
+                                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
+                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                    "Choix du nouveau terrain", fieldCardInDeck);
+                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                                {
+                                    var fieldCard = (FieldCard)messageBox.GetComponent<MessageBox>().GETSelectedCard();
+                                    if (fieldCard != null)
+                                    {
+                                        if (currentPlayerCard.field != null)
+                                        {
+                                            currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
+                                            currentPlayerCard.field = null;
+                                        }
+
+                                        currentPlayerCard.field = fieldCard;
+                                        Destroy(messageBox);
+                                    }
+                                    else
+                                    {
+                                        messageBox.SetActive(false);
+                                        UnityAction okAction = () =>
+                                        {
+                                            messageBox.SetActive(true);
+                                        };
+                                        MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois chosir un terrain",
+                                            okAction);
+                                    }
+
+                                };
+                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                                {
+                                    messageBox.SetActive(false);
+                                    UnityAction okAction = () =>
+                                    {
+                                        messageBox.SetActive(true);
+                                    };
+                                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois chosir un terrain",
+                                        okAction);
+                                };
+                            }
+                      
                         }
                     }
                         break;
@@ -498,6 +569,13 @@ public class EffectFunctions : MonoBehaviour
                     case Effect.RemoveHand:
                     {
                         ApplyRemoveHand(effectCard);
+                        if (keys.Count - 1 > i)
+                        {
+                            if (keys[i + 1] == Effect.DestroyCards)
+                            {
+                                ApplyDestroyCards(values[i+1],0,false);
+                            }
+                        }
                     }
                         break;
                     case Effect.RemoveDeck:
@@ -557,6 +635,7 @@ public class EffectFunctions : MonoBehaviour
                         break;
                     case Effect.ChangeField:
                     {
+                        changeField = true;
                     }
                         break;
                     case Effect.SkipContre:
@@ -1029,12 +1108,12 @@ public class EffectFunctions : MonoBehaviour
                 var fieldCards = new List<Card>();
                 var fieldCard1 = currentPlayerCard.field;
                 var fieldCard2 = opponentPlayerCard.field;
-                if (fieldCard1.IsValid())
+                if (fieldCard1 != null)
                 {
                     fieldCards.Add(fieldCard1);
                 }
 
-                if (fieldCard2.IsValid())
+                if (fieldCard2 != null)
                 {
                     fieldCards.Add(fieldCard2);
                 }
@@ -1050,18 +1129,41 @@ public class EffectFunctions : MonoBehaviour
                         {
                             var fieldCard =
                                 (FieldCard)message.GetComponent<MessageBox>().GETSelectedCard();
-                            if (fieldCard.Nom == fieldCard1.Nom)
+                            if (fieldCard != null)
                             {
-                                currentPlayerCard.yellowTrash.Add(fieldCard);
-                                currentPlayerCard.field = null;
+                                if (fieldCard.Nom == fieldCard1.Nom)
+                                {
+                                    currentPlayerCard.yellowTrash.Add(fieldCard);
+                                    currentPlayerCard.field = null;
+                                }
+                                else
+                                {
+                                    opponentPlayerCard.yellowTrash.Add(fieldCard);
+                                    opponentPlayerCard.field = null;
+                                }
+                                currentPlayerStatus.ChangePv(affected);
+                                Destroy(message);
                             }
                             else
                             {
-                                opponentPlayerCard.yellowTrash.Add(fieldCard);
-                                opponentPlayerCard.field = null;
+                                message.SetActive(false);
+                                UnityAction okAction = () =>
+                                {
+                                    message.SetActive(true);
+                                };
+                                MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                    "Tu dois choisir un terrain à détruire", okAction);
                             }
-
-                            currentPlayerStatus.ChangePv(affected);
+                        };
+                        message.GetComponent<MessageBox>().NegativeAction = () =>
+                        {
+                            message.SetActive(false);
+                            UnityAction okAction = () =>
+                            {
+                                message.SetActive(true);
+                            };
+                            MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                "Tu dois choisir un terrain à détruire", okAction);
                         };
                     }
                 }
@@ -1250,7 +1352,7 @@ public class EffectFunctions : MonoBehaviour
         }
         else
         {
-            pvAffected = float.Parse(value, CultureInfo.InvariantCulture);
+            pvAffected = float.Parse(value);
         }
 
         effectCard.affectPV = pvAffected;

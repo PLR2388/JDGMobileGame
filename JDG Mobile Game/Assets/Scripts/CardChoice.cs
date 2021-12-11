@@ -118,8 +118,8 @@ public class CardChoice : MonoBehaviour
 
         deck1.Add(GetSpecificCard("Studio de scénaristes Canadien",allCards));
         deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", allCards));
-        deck1.Add(GetSpecificCard("Joueur Du Grenier",allCards));
-        deck1.Add(GetSpecificCard("Fatalité", allCards));
+        deck1.Add(GetSpecificCard("Zozan Kebab",allCards));
+        deck1.Add(GetSpecificCard("Incendie", allCards));
 
         while (deck1.Count != 30)
         {
