@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 public class InvocationFunctions : MonoBehaviour
 {
     private PlayerCards currentPlayerCard;
+    private PlayerCards opponentPlayerCards;
     private GameObject p1;
     private GameObject p2;
     [SerializeField] private GameObject inHandButton;
@@ -22,11 +23,13 @@ public class InvocationFunctions : MonoBehaviour
         p1 = GameObject.Find("Player1");
         p2 = GameObject.Find("Player2");
         currentPlayerCard = p1.GetComponent<PlayerCards>();
+        opponentPlayerCards = p2.GetComponent<PlayerCards>();
     }
 
     private void ChangePlayer()
     {
         currentPlayerCard = GameLoop.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        opponentPlayerCards = GameLoop.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
     }
 
     private void DealWithStartEffect(InvocationCard currentInvocationCard, InvocationStartEffect invocationStartEffect)
@@ -760,7 +763,7 @@ public class InvocationFunctions : MonoBehaviour
                     }
                         break;
                     case ActionEffect.SkipOpponentAttack:
-
+                        isPossible = opponentPlayerCards.invocationCards.Count > 0;
                         break;
                     default:
                         break;
@@ -955,10 +958,7 @@ public class InvocationFunctions : MonoBehaviour
                     var invocationCards =  currentOpponentCard.invocationCards;
             
                     if(invocationCards.Count > 0) {
-                        List<Card> validList = new List<Card>();
-                        foreach(Card invocationCard in invocationCards) {
-                            validList.Add(invocationCard);
-                        }
+                        List<Card> validList = invocationCards.Cast<Card>().ToList();
                         var message =
                                 MessageBox.CreateMessageBoxWithCardSelector(canvas,
                                     "Choix de la carte qui ne pourra pas attaquer le prochain tour", validList);
@@ -969,6 +969,7 @@ public class InvocationFunctions : MonoBehaviour
                                 if (invocationCardSelected != null)
                                 {
                                     invocationCardSelected.BlockAttack();
+                                    invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = false;
                                 }
                                 else
                                 {

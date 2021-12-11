@@ -118,8 +118,8 @@ public class CardChoice : MonoBehaviour
 
         deck1.Add(GetSpecificCard("Sangoku",allCards));
         deck1.Add(GetSpecificCard("Sheik Point", allCards));
-        deck1.Add(GetSpecificCard("Jean-Cule",allCards));
-        deck1.Add(GetSpecificCard("Fisti", allCards));
+        deck1.Add(GetSpecificCard("Granolax",allCards));
+        deck1.Add(GetSpecificCard("Starlight Unicorn", allCards));
 
         while (deck1.Count != 30)
         {

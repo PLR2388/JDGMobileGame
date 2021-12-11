@@ -34,3 +34,4 @@ MonoBehaviour:
   numberTurnOnField: 0
   numberDeaths: 0
   blockAttackNextTurn: 0
+  affectedByEffect: 1

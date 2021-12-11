@@ -162,18 +162,17 @@ public class GameLoop : MonoBehaviour
                     attacker = invocationCard;
                     var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
                     var hasAction = attacker.InvocationActionEffect != null;
-                    if (canAttack || hasAction)
+                    invocationMenu.SetActive(true);
+                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
+                    invocationMenu.transform.position = mousePosition;
+                    if (hasAction)
+                    { 
+                        invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
+                        invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = IsSpecialActionPossible();
+                    }
+                    else
                     {
-                        invocationMenu.SetActive(true);
-                        invocationMenu.transform.position = mousePosition;
-                        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
-                        if (hasAction) {
-                                invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
-                            invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable = IsSpecialActionPossible();
-                        } else {
-                            invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
-                        }
-                       
+                        invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
                     }
                 }
             }
@@ -1049,12 +1048,8 @@ public class GameLoop : MonoBehaviour
             }
 
             var invocationCards = p1Cards.invocationCards;
-            foreach (var invocationCard in invocationCards)
-            {
-                invocationCard.UnblockAttack();
-            }
-
             var effectCards = p1Cards.effectCards;
+            
             foreach (var effectCard in effectCards)
             {
                 if (effectCard.checkTurn)
@@ -1108,11 +1103,7 @@ public class GameLoop : MonoBehaviour
             }
 
             var invocationCards = p2Cards.invocationCards;
-            foreach (var invocationCard in invocationCards)
-            {
-                invocationCard.UnblockAttack();
-            }
-            
+
             var effectCards = p2Cards.effectCards;
             foreach (var effectCard in effectCards)
             {
@@ -1297,6 +1288,23 @@ public class GameLoop : MonoBehaviour
                             break;
                     }
                 }
+            }
+        }
+
+        if (IsP1Turn)
+        {
+            var invocationCards = p1.GetComponent<PlayerCards>().invocationCards;
+            foreach (var invocationCard in invocationCards)
+            {
+                invocationCard.UnblockAttack();
+            }
+        }
+        else
+        {
+            var invocationCards = p2.GetComponent<PlayerCards>().invocationCards;
+            foreach (var invocationCard in invocationCards)
+            {
+                invocationCard.UnblockAttack();
             }
         }
 
