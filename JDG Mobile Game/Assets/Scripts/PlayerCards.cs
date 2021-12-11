@@ -101,6 +101,8 @@ public class PlayerCards : MonoBehaviour
     public string Tag => isPlayerOne ? "card1" : "card2";
 
     private List<InvocationCard> oldInvocationCards = new List<InvocationCard>();
+    private FieldCard oldField = null;
+    private List<EffectCard> oldEffectCards = new List<EffectCard>();
 
     // Start is called before the first frame update
     private void Start()
@@ -207,6 +209,43 @@ public class PlayerCards : MonoBehaviour
 
             oldInvocationCards = new List<InvocationCard>(invocationCards);
             OnInvocationCardsChanged();
+        }
+
+        if (effectCards.Count != oldEffectCards.Count)
+        {
+            if (effectCards.Count > oldEffectCards.Count)
+            {
+                OnEffectCardsAdded(effectCards.Last());
+            }
+            oldEffectCards = new List<EffectCard>(effectCards);
+        }
+
+        if (field != oldField)
+        {
+            for (var i = effectCards.Count - 1; i >= 0; i--)
+            {
+                var effectCard = effectCards[i];
+                var effectCardEffect = effectCard.GetEffectCardEffect();
+                if (effectCardEffect != null)
+                {
+                    if (effectCardEffect.Keys.Contains(Effect.SameFamily))
+                    {
+                        if (field != null)
+                        {
+                            foreach (var invocationCard in invocationCards)
+                            {
+                                invocationCard.SetCurrentFamily(field.GETFamily());
+                            }
+                        }
+                        else
+                        {
+                            effectCards.Remove(effectCard);
+                            yellowTrash.Add(effectCard);
+                        }
+                    }
+                }
+            }
+            oldField = field;
         }
 
         if (isPlayerOne)
@@ -794,6 +833,22 @@ public class PlayerCards : MonoBehaviour
                 }
             }
         }
+
+        for (var i = effectCards.Count - 1; i >= 0; i--)
+        {
+            var effectCard = effectCards[i];
+            var effectCardEffect = effectCard.GetEffectCardEffect();
+            if (effectCardEffect != null)
+            {
+                if (effectCardEffect.Keys.Contains(Effect.SameFamily))
+                {
+                    if (field != null)
+                    {
+                        newInvocationCard.SetCurrentFamily(field.GETFamily());
+                    }
+                }
+            }
+        }
     }
 
     private void OnInvocationCardsRemoved(InvocationCard removedInvocationCard)
@@ -997,6 +1052,22 @@ public class PlayerCards : MonoBehaviour
          
             }
         }
+        
+        for (var i = effectCards.Count - 1; i >= 0; i--)
+        {
+            var effectCard = effectCards[i];
+            var effectCardEffect = effectCard.GetEffectCardEffect();
+            if (effectCardEffect != null)
+            {
+                if (effectCardEffect.Keys.Contains(Effect.SameFamily))
+                {
+                    if (field != null)
+                    {
+                        removedInvocationCard.SetCurrentFamily(null);
+                    }
+                }
+            }
+        }
     }
 
     private void OnInvocationCardsChanged()
@@ -1049,4 +1120,9 @@ public class PlayerCards : MonoBehaviour
             }
         }
     }
+
+    private void OnEffectCardsAdded(EffectCard newEffectCard)
+    {
+    }
+    
 }

@@ -118,8 +118,8 @@ public class CardChoice : MonoBehaviour
 
         deck1.Add(GetSpecificCard("Studio de scénaristes Canadien",allCards));
         deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", allCards));
-        deck1.Add(GetSpecificCard("Papy Grenier",allCards));
-        deck1.Add(GetSpecificCard("Bloue touche", allCards));
+        deck1.Add(GetSpecificCard("Canardcity",allCards));
+        deck1.Add(GetSpecificCard("Convocation au lycée", allCards));
 
         while (deck1.Count != 30)
         {

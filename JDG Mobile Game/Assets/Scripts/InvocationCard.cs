@@ -47,6 +47,7 @@ public class InvocationCard : Card
         SetBonusAttack(0);
         SetBonusDefense(0);
         SetEquipmentCard(null);
+        SetCurrentFamily(null);
         if (invocationActionEffect != null)
         {
             var keys = invocationActionEffect.Keys;
@@ -120,7 +121,7 @@ public class InvocationCard : Card
     {
         if (currentFamily.HasValue)
         {
-            return new CardFamily[]
+            return new []
             {
                 currentFamily.Value
             };
