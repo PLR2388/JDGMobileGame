@@ -1118,9 +1118,8 @@ public class GameLoop : MonoBehaviour
                             if (familyCards.Count > 0)
                             {
                                 canSkipDraw = true;
-                            }
-
-                            UnityAction positiveAction = () =>
+                                
+                                 UnityAction positiveAction = () =>
                             {
                                 var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                                     "Choix de la carte à récupérer", familyCards);
@@ -1187,6 +1186,7 @@ public class GameLoop : MonoBehaviour
                             MessageBox.CreateSimpleMessageBox(canvas, "Proposition",
                                 "Veux-tu sauter ta phase de pioche pour aller directement chercher une carte de la famille " +
                                 values[i] + " dans ton deck ou ta poubelle jaune ?", positiveAction, negativeAction);
+                            }
                         }
                     }
                         break;
