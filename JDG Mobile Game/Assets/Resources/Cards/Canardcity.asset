@@ -16,7 +16,8 @@ MonoBehaviour:
   description: "\xC0 poser avec une voix exag\xE9r\xE9ment grave."
   descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB Comics \xBB
     sur ce terrain gagnent 2 \xE9toiles d'ATQ et perdent 1 \xE9toile de DEF."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: 8eeb76e794909b140bf6bf2e39df12fb, type: 2}
   collector: 0
-  family: comics
+  family: 0
+  fieldCardEffect: {fileID: 11400000, guid: 06cc355649fb0894b8266c51fdd3e50d, type: 2}

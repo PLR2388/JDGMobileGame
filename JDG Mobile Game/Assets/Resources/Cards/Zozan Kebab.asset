@@ -20,3 +20,4 @@ MonoBehaviour:
   materialCard: {fileID: 2100000, guid: a97f23475120d2d4e8bd1ec2473247ca, type: 2}
   collector: 0
   family: 10
+  fieldCardEffect: {fileID: 11400000, guid: 2f1ec6777a41f9449b6f0a2c8813b31f, type: 2}

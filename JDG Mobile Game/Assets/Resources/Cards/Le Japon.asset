@@ -16,7 +16,8 @@ MonoBehaviour:
   description: Weirdest place on earth.
   descriptionDetaillee: "Toutes les cartes INVOCATION de type \xAB Japon \xBB sur
     ce terrain obtiennent 1 \xE9toile d'ATQ suppl\xE9mentaire."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: 5aef8d60f0a01c24b8e33715fc651396, type: 2}
   collector: 0
-  family: japon
+  family: 6
+  fieldCardEffect: {fileID: 11400000, guid: d59a963dbe695774ea1ec142b8245e86, type: 2}

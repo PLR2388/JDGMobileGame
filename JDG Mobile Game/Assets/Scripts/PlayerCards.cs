@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -245,6 +245,7 @@ public class PlayerCards : MonoBehaviour
                     }
                 }
             }
+            OnFieldCardChanged(oldField);
             oldField = field;
         }
 
@@ -743,7 +744,7 @@ public class PlayerCards : MonoBehaviour
                                 {
                                     invocationCardsToChange.Add(newInvocationCard);
                                 }
-                               
+
                             }
                         }
                             break;
@@ -791,7 +792,8 @@ public class PlayerCards : MonoBehaviour
                                     break;
                                 case "Benzaie jeune":
                                 {
-                                    if (invocationCards.Any(invocationCardToCheck => invocationCardToCheck.Nom == values[i]))
+                                    if (invocationCards.Any(invocationCardToCheck =>
+                                            invocationCardToCheck.Nom == values[i]))
                                     {
                                         mustHaveMiminumATKDEF = true;
                                     }
@@ -811,12 +813,14 @@ public class PlayerCards : MonoBehaviour
                                     var value = invocationCardToChange.GETBonusAttack() + float.Parse(values[i]);
                                     invocationCardToChange.SetBonusAttack(value);
                                 }
-                            } else if (sameFamilyInvocationCards.Count > 0)
+                            }
+                            else if (sameFamilyInvocationCards.Count > 0)
                             {
                                 var newValue = invocationCard.GETBonusAttack() +
                                                float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusAttack(newValue);
-                            } else if (mustHaveMiminumATKDEF)
+                            }
+                            else if (mustHaveMiminumATKDEF)
                             {
                                 var minValue = float.Parse(values[i]);
                                 if (invocationCard.GetCurrentAttack() < minValue)
@@ -836,12 +840,14 @@ public class PlayerCards : MonoBehaviour
                                     var value = invocationCardToChange.GetBonusDefense() + float.Parse(values[i]);
                                     invocationCardToChange.SetBonusDefense(value);
                                 }
-                            } else if (sameFamilyInvocationCards.Count > 0)
+                            }
+                            else if (sameFamilyInvocationCards.Count > 0)
                             {
                                 var newValue = invocationCard.GetBonusDefense() +
                                                float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusDefense(newValue);
-                            } else if (mustHaveMiminumATKDEF)
+                            }
+                            else if (mustHaveMiminumATKDEF)
                             {
                                 var minValue = float.Parse(values[i]);
                                 if (invocationCard.GetCurrentDefense() < minValue)
@@ -871,6 +877,52 @@ public class PlayerCards : MonoBehaviour
                     {
                         newInvocationCard.SetCurrentFamily(field.GETFamily());
                     }
+                }
+            }
+        }
+
+        if (field != null)
+        {
+            var fieldCardEffect = field.FieldCardEffect;
+
+            var fieldKeys = fieldCardEffect.Keys;
+            var fieldValues = fieldCardEffect.Values;
+
+            var family = field.GETFamily();
+            for (var i = 0; i < fieldKeys.Count; i++)
+            {
+                switch (fieldKeys[i])
+                {
+                    case FieldEffect.ATK:
+                    {
+                        var atk = float.Parse(fieldValues[i]);
+                        if (newInvocationCard.GetFamily().Contains(family))
+                        {
+                            var newBonusAttack = newInvocationCard.GetBonusAttack() + atk;
+                            newInvocationCard.SetBonusAttack(newBonusAttack);
+                        }
+                    }
+                   
+                        break;
+                    case FieldEffect.DEF:
+                    {
+                        var def = float.Parse(fieldValues[i]);
+                        if (newInvocationCard.GetFamily().Contains(family))
+                        {
+                            var newBonusDefense = newInvocationCard.GetBonusDefense() + def;
+                            newInvocationCard.SetBonusDefense(newBonusDefense);
+                        }
+                    }
+                        break;
+                    case FieldEffect.Change:
+                    {
+                        var names = fieldValues[i].Split(';');
+                        if (names.Contains(newInvocationCard.Nom))
+                        {
+                            newInvocationCard.SetCurrentFamily(family);
+                        }
+                    }
+                        break;
                 }
             }
         }
@@ -1093,6 +1145,52 @@ public class PlayerCards : MonoBehaviour
                 }
             }
         }
+        
+        if (field != null)
+        {
+            var fieldCardEffect = field.FieldCardEffect;
+
+            var fieldKeys = fieldCardEffect.Keys;
+            var fieldValues = fieldCardEffect.Values;
+
+            var family = field.GETFamily();
+            for (var i = 0; i < fieldKeys.Count; i++)
+            {
+                switch (fieldKeys[i])
+                {
+                    /*case FieldEffect.ATK:
+                    {
+                        var atk = float.Parse(fieldValues[i]);
+                        if (removedInvocationCard.GetFamily().Contains(family))
+                        {
+                            var newBonusAttack = removedInvocationCard.GetBonusAttack() - atk;
+                            removedInvocationCard.SetBonusAttack(newBonusAttack);
+                        }
+                    }
+                   
+                        break;
+                    case FieldEffect.DEF:
+                    {
+                        var def = float.Parse(fieldValues[i]);
+                        if (removedInvocationCard.GetFamily().Contains(family))
+                        {
+                            var newBonusDefense = removedInvocationCard.GetBonusDefense() - def;
+                            removedInvocationCard.SetBonusDefense(newBonusDefense);
+                        }
+                    }
+                        break;*/
+                    case FieldEffect.Change:
+                    {
+                        var names = fieldValues[i].Split(';');
+                        if (names.Contains(removedInvocationCard.Nom))
+                        {
+                            removedInvocationCard.SetCurrentFamily(null);
+                        }
+                    }
+                        break;
+                }
+            }
+        }
     }
 
     private void OnInvocationCardsChanged()
@@ -1148,6 +1246,60 @@ public class PlayerCards : MonoBehaviour
 
     private void OnEffectCardsAdded(EffectCard newEffectCard)
     {
+    }
+
+    private void OnFieldCardChanged(FieldCard oldFieldCard)
+    {
+        if (oldFieldCard != null)
+        {
+            var fieldCardEffect = oldFieldCard.FieldCardEffect;
+
+            var fieldKeys = fieldCardEffect.Keys;
+            var fieldValues = fieldCardEffect.Values;
+
+            var family = field.GETFamily();
+            for (var i = 0; i < fieldKeys.Count; i++)
+            {
+                switch (fieldKeys[i])
+                {
+                    case FieldEffect.ATK:
+                    {
+                        var atk = float.Parse(fieldValues[i]);
+                        foreach (var invocationCard in invocationCards)
+                        {
+                            if (!invocationCard.GetFamily().Contains(family)) continue;
+                            var newBonusAttack = invocationCard.GetBonusAttack() - atk;
+                            invocationCard.SetBonusAttack(newBonusAttack);
+                        }
+                    }
+                        break;
+                    case FieldEffect.DEF:
+                    {
+                        var def = float.Parse(fieldValues[i]);
+                        foreach (var invocationCard in invocationCards)
+                        {
+                            if (!invocationCard.GetFamily().Contains(family)) continue;
+                            var newBonusDefense = invocationCard.GetBonusDefense() - def;
+                            invocationCard.SetBonusDefense(newBonusDefense);
+                        }
+              
+                    }
+                        break;
+                    case FieldEffect.Change:
+                    {
+                        var names = fieldValues[i].Split(';');
+                        foreach (var invocationCard in invocationCards)
+                        {
+                            if (names.Contains(invocationCard.Nom))
+                            {
+                                invocationCard.SetCurrentFamily(null);
+                            }
+                        }
+                    }
+                        break;
+                }
+            }
+        }
     }
     
 }

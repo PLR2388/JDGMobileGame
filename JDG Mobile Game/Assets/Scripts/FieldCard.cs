@@ -4,6 +4,9 @@
 public class FieldCard : Card
 {
     [SerializeField] private CardFamily family;
+    [SerializeField] private FieldCardEffect fieldCardEffect;
+
+    public FieldCardEffect FieldCardEffect => fieldCardEffect;
 
     private void Awake()
     {

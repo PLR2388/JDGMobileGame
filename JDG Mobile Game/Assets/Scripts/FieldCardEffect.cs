@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FieldCardEffect : MonoBehaviour
+[CreateAssetMenu(fileName = "FieldCardEffect", menuName = "FieldCardEffect")]
+public class FieldCardEffect : ScriptableObject
 {
     [SerializeField] private List<FieldEffect> keys;
     [SerializeField] private List<string> values;

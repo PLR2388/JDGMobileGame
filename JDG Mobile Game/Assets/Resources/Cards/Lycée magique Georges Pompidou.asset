@@ -17,7 +17,8 @@ MonoBehaviour:
   descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB Sorcier
     \xBB sur ce terrain font gagner 0.5 \xE9toile de vie chacune \xE0 son propri\xE9taire
     \xE0 chaque fois que son tour commence."
-  type: field
+  type: 3
   materialCard: {fileID: 2100000, guid: dd7822175a32f5e4ca76952de6c1a6f9, type: 2}
   collector: 0
-  family: sorcier
+  family: 11
+  fieldCardEffect: {fileID: 11400000, guid: 2266dd33354ad56448f27c58cc3c9d32, type: 2}
