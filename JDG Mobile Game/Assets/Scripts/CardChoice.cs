@@ -115,11 +115,12 @@ public class CardChoice : MonoBehaviour
         var deck2 = new List<Card>();
 
         var allCards = FindObjectOfType<GameState>().allCards;
-
-        deck1.Add(GetSpecificCard("Studio de scénaristes Canadien",allCards));
-        deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", allCards));
-        deck1.Add(GetSpecificCard("Babs",allCards));
-        deck1.Add(GetSpecificCard("Fistiland", allCards));
+        
+        deck1.Add(GetSpecificCard("Patron D'Infogrames", allCards));
+        deck1.Add(GetSpecificCard("Jean-Michel Bruitages", allCards));
+        deck1.Add(GetSpecificCard("Studio de développement", allCards));
+        deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
+        deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
 
         while (deck1.Count != 30)
         {
