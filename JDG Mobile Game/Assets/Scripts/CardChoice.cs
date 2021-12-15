@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Lean.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -120,7 +119,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("La drooogue !", allCards));
         deck1.Add(GetSpecificCard("Petite culotte", allCards));
         deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
-        deck1.Add(GetSpecificCard("Cicatrice maudite", allCards));
+        deck1.Add(GetSpecificCard("Hypno-boobs", allCards));
 
         while (deck1.Count != 30)
         {

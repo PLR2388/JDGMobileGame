@@ -309,6 +309,7 @@ public class GameLoop : MonoBehaviour
                 {
                     var invocationCard = (InvocationCard)notEmptyOpponent[j];
                     var permEffect = invocationCard.InvocationPermEffect;
+                    var equipmentCard = invocationCard.GETEquipmentCard();
                     if (permEffect != null)
                     {
                         var keys = permEffect.Keys;
@@ -382,6 +383,21 @@ public class GameLoop : MonoBehaviour
                                     break;
                                 default:
                                     break;
+                            }
+                        }
+                    }
+
+                    if (equipmentCard != null)
+                    {
+                        var permEquipmentEffect = equipmentCard.EquipmentPermEffect;
+                        if (permEquipmentEffect != null)
+                        {
+                            if (permEquipmentEffect.Keys.Contains(PermanentEffect.PreventAttackOnInvocation))
+                            {
+                                if (notEmptyOpponent.Contains(invocationCard))
+                                {
+                                    notEmptyOpponent.Remove(invocationCard);
+                                }
                             }
                         }
                     }
