@@ -119,7 +119,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("La drooogue !", allCards));
         deck1.Add(GetSpecificCard("Petite culotte", allCards));
         deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
-        deck1.Add(GetSpecificCard("Hypno-boobs", allCards));
+        deck1.Add(GetSpecificCard("Kebab magique", allCards));
 
         while (deck1.Count != 30)
         {

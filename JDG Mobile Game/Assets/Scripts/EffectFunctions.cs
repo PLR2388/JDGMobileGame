@@ -594,7 +594,7 @@ public class EffectFunctions : MonoBehaviour
                     }
                         break;
                     case Effect.Duration:
-                        ApplyDuration();
+                        ApplyDuration(effectCard);
                         break;
                     case Effect.Combine:
                     {
@@ -763,11 +763,9 @@ public class EffectFunctions : MonoBehaviour
         }
     }
 
-    private static void ApplyDuration()
+    private static void ApplyDuration(EffectCard effectCard)
     {
-        {
-            //TODO Do something with it
-        }
+        effectCard.SetLifeTime(2);
     }
 
     private void ApplyDivideInvocation()
