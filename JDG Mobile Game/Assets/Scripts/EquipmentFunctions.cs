@@ -216,6 +216,13 @@ public class EquipmentFunctions : MonoBehaviour
                     invocationCard.SetBonusAttack(newBonusAttack);
                 }
                     break;
+                case PermanentEffect.AddDefBaseOnHandCards:
+                {
+                    var value = float.Parse(values[i]);
+                    var newBonusDefense = value * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusDefense();
+                    invocationCard.SetBonusDefense(newBonusDefense);
+                }
+                    break;
             }
         }
     }
