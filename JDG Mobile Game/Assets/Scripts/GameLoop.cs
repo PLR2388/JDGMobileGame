@@ -135,6 +135,28 @@ public class GameLoop : MonoBehaviour
         }
     }
 
+    private void BlockCardJustInvokeIfNeeded()
+    {
+        var ownInvocations = IsP1Turn
+            ? p1.GetComponent<PlayerCards>().invocationCards
+            : p2.GetComponent<PlayerCards>().invocationCards;
+        var invocationsOpponent = IsP1Turn
+            ? p2.GetComponent<PlayerCards>().invocationCards
+            : p1.GetComponent<PlayerCards>().invocationCards;
+        foreach (var ownInvocationCard in from invocationCard in invocationsOpponent
+                 where invocationCard.GETEquipmentCard() != null
+                 select invocationCard.GETEquipmentCard()
+                 into equipment
+                 where equipment.EquipmentPermEffect != null &&
+                       equipment.EquipmentPermEffect.Keys.Contains(PermanentEffect.BlockOpponentDuringInvocation)
+                 from ownInvocationCard in ownInvocations.Where(ownInvocationCard =>
+                     ownInvocationCard.NumberTurnOnField == 0)
+                 select ownInvocationCard)
+        {
+            ownInvocationCard.BlockAttack();
+        }
+    }
+
     private void HandleClick(RaycastHit hitInfo)
     {
         var objectTag = hitInfo.transform.gameObject.tag;
@@ -253,8 +275,9 @@ public class GameLoop : MonoBehaviour
         if (notEmptyOpponent.Count == 0)
         {
             notEmptyOpponent.Add(player);
-        } else if (attacker.GETEquipmentCard() != null && attacker.GETEquipmentCard().EquipmentInstantEffect != null &&
-                   attacker.GETEquipmentCard().EquipmentInstantEffect.Keys.Contains(InstantEffect.DirectAtk))
+        }
+        else if (attacker.GETEquipmentCard() != null && attacker.GETEquipmentCard().EquipmentInstantEffect != null &&
+                 attacker.GETEquipmentCard().EquipmentInstantEffect.Keys.Contains(InstantEffect.DirectAtk))
         {
             notEmptyOpponent = new List<Card>
             {
@@ -1154,7 +1177,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             var p2Cards = p2.GetComponent<PlayerCards>();
-            
+
             DrawPlayerCard(p2Cards);
 
             var invocationCards = p2Cards.invocationCards;
@@ -1225,74 +1248,75 @@ public class GameLoop : MonoBehaviour
                             if (familyCards.Count > 0)
                             {
                                 canSkipDraw = true;
-                                
-                                 UnityAction positiveAction = () =>
-                            {
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                    "Choix de la carte à récupérer", familyCards);
-                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+
+                                UnityAction positiveAction = () =>
                                 {
-                                    var cardSelected =
-                                        (InvocationCard)messageBox.GetComponent<MessageBox>().GETSelectedCard();
-                                    if (cardSelected != null)
+                                    var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                        "Choix de la carte à récupérer", familyCards);
+                                    messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                                     {
-                                        if (playerCards.deck.Contains(cardSelected))
+                                        var cardSelected =
+                                            (InvocationCard)messageBox.GetComponent<MessageBox>().GETSelectedCard();
+                                        if (cardSelected != null)
                                         {
-                                            playerCards.handCards.Add(cardSelected);
-                                            playerCards.deck.Remove(cardSelected);
+                                            if (playerCards.deck.Contains(cardSelected))
+                                            {
+                                                playerCards.handCards.Add(cardSelected);
+                                                playerCards.deck.Remove(cardSelected);
+                                            }
+                                            else
+                                            {
+                                                playerCards.handCards.Add(cardSelected);
+                                                playerCards.yellowTrash.Remove(cardSelected);
+                                            }
+
+                                            Destroy(messageBox);
                                         }
                                         else
                                         {
-                                            playerCards.handCards.Add(cardSelected);
-                                            playerCards.yellowTrash.Remove(cardSelected);
+                                            messageBox.SetActive(false);
+                                            UnityAction okAction = () => { messageBox.SetActive(true); };
+                                            MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                                "Tu dois prendre une carte maintenant", okAction);
                                         }
-
-                                        Destroy(messageBox);
-                                    }
-                                    else
+                                    };
+                                    messageBox.GetComponent<MessageBox>().NegativeAction = () =>
                                     {
                                         messageBox.SetActive(false);
                                         UnityAction okAction = () => { messageBox.SetActive(true); };
                                         MessageBox.CreateOkMessageBox(canvas, "Action requise",
                                             "Tu dois prendre une carte maintenant", okAction);
-                                    }
+                                    };
                                 };
-                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                                UnityAction negativeAction = () =>
                                 {
-                                    messageBox.SetActive(false);
-                                    UnityAction okAction = () => { messageBox.SetActive(true); };
-                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                        "Tu dois prendre une carte maintenant", okAction);
-                                };
-                            };
-                            UnityAction negativeAction = () =>
-                            {
-                                var size = playerCards.deck.Count;
-                                if (size > 0)
-                                {
-                                    var c = playerCards.deck[size - 1];
-                                    playerCards.handCards.Add(c);
-                                    playerCards.deck.RemoveAt(size - 1);
-                                }
-                                else
-                                {
-                                    var p1Pv = p1.GetComponent<PlayerStatus>().GETCurrentPv();
-                                    var p2Pv = p2.GetComponent<PlayerStatus>().GETCurrentPv();
-                                    if (p1Pv > p2Pv)
+                                    var size = playerCards.deck.Count;
+                                    if (size > 0)
                                     {
-                                        endGameReason = "Joueur 1 n'a plus de cartes. Joueur 1 gagne la partie !";
+                                        var c = playerCards.deck[size - 1];
+                                        playerCards.handCards.Add(c);
+                                        playerCards.deck.RemoveAt(size - 1);
                                     }
                                     else
                                     {
-                                        endGameReason = "Joueur 1 n'a plus de cartes. Joueur 2 gagne la partie !";
-                                    }
+                                        var p1Pv = p1.GetComponent<PlayerStatus>().GETCurrentPv();
+                                        var p2Pv = p2.GetComponent<PlayerStatus>().GETCurrentPv();
+                                        if (p1Pv > p2Pv)
+                                        {
+                                            endGameReason = "Joueur 1 n'a plus de cartes. Joueur 1 gagne la partie !";
+                                        }
+                                        else
+                                        {
+                                            endGameReason = "Joueur 1 n'a plus de cartes. Joueur 2 gagne la partie !";
+                                        }
 
-                                    phaseId = 5;
-                                }
-                            };
-                            MessageBox.CreateSimpleMessageBox(canvas, "Proposition",
-                                "Veux-tu sauter ta phase de pioche pour aller directement chercher une carte de la famille " +
-                                values[i] + " dans ton deck ou ta poubelle jaune ?", positiveAction, negativeAction);
+                                        phaseId = 5;
+                                    }
+                                };
+                                MessageBox.CreateSimpleMessageBox(canvas, "Proposition",
+                                    "Veux-tu sauter ta phase de pioche pour aller directement chercher une carte de la famille " +
+                                    values[i] + " dans ton deck ou ta poubelle jaune ?", positiveAction,
+                                    negativeAction);
                             }
                         }
                     }
@@ -1304,7 +1328,7 @@ public class GameLoop : MonoBehaviour
                         var size = playerCards.deck.Count;
                         if (size >= numberCardToTake)
                         {
-                            for (int j = size - 1; j>=0 && j > (size -1 - numberCardToTake); j--)
+                            for (int j = size - 1; j >= 0 && j > (size - 1 - numberCardToTake); j--)
                             {
                                 playerCards.handCards.Add(playerCards.deck[j]);
                                 playerCards.deck.RemoveAt(j);
@@ -1333,7 +1357,8 @@ public class GameLoop : MonoBehaviour
                         var pvPerAlly = float.Parse(values[i]);
                         var family = playerCards.field.GETFamily();
                         var numberFamilyOnField =
-                            playerCards.invocationCards.Count(invocationCard => invocationCard.GetFamily().Contains(family));
+                            playerCards.invocationCards.Count(invocationCard =>
+                                invocationCard.GetFamily().Contains(family));
                         p1.GetComponent<PlayerStatus>().ChangePv(pvPerAlly * numberFamilyOnField);
                     }
                         break;
@@ -1387,6 +1412,7 @@ public class GameLoop : MonoBehaviour
                 break;
             case 2:
                 inHandButton.SetActive(false);
+                BlockCardJustInvokeIfNeeded();
                 roundText.GetComponent<TextMeshProUGUI>().text = "Phase d'attaque";
                 break;
         }
