@@ -103,6 +103,7 @@ public class PlayerCards : MonoBehaviour
     private List<InvocationCard> oldInvocationCards = new List<InvocationCard>();
     private FieldCard oldField = null;
     private List<EffectCard> oldEffectCards = new List<EffectCard>();
+    private List<Card> oldHandCards = new List<Card>();
 
     // Start is called before the first frame update
     private void Start()
@@ -247,6 +248,49 @@ public class PlayerCards : MonoBehaviour
             }
             OnFieldCardChanged(oldField);
             oldField = field;
+        }
+
+        if (oldHandCards.Count != handCards.Count)
+        {
+            if (oldHandCards.Count < handCards.Count)
+            {
+                foreach (var invocationCard in invocationCards)
+                {
+                    if (invocationCard.GETEquipmentCard() != null &&
+                        invocationCard.GETEquipmentCard().EquipmentPermEffect != null)
+                    {
+                        var permEffect = invocationCard.GETEquipmentCard().EquipmentPermEffect;
+                        if (permEffect.Keys.Contains(PermanentEffect.AddAtkBaseOnHandCards))
+                        {
+                            var value = float.Parse(permEffect.Values[
+                                permEffect.Keys.FindIndex(key => key == PermanentEffect.AddAtkBaseOnHandCards)]);
+                            var newBonusAttack = invocationCard.GetBonusAttack() +
+                                                 (handCards.Count - oldHandCards.Count) * value;
+                            invocationCard.SetBonusAttack(newBonusAttack);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (var invocationCard in invocationCards)
+                {
+                    if (invocationCard.GETEquipmentCard() != null &&
+                        invocationCard.GETEquipmentCard().EquipmentPermEffect != null)
+                    {
+                        var permEffect = invocationCard.GETEquipmentCard().EquipmentPermEffect;
+                        if (permEffect.Keys.Contains(PermanentEffect.AddAtkBaseOnHandCards))
+                        {
+                            var value = float.Parse(permEffect.Values[
+                                permEffect.Keys.FindIndex(key => key == PermanentEffect.AddAtkBaseOnHandCards)]);
+                            var newBonusAttack = invocationCard.GetBonusAttack() +
+                                                 (handCards.Count - oldHandCards.Count) * value;
+                            invocationCard.SetBonusAttack(newBonusAttack);
+                        }
+                    }
+                }
+            }
+            oldHandCards = new List<Card>(handCards);
         }
 
         if (isPlayerOne)

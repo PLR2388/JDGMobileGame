@@ -40,13 +40,17 @@ public class InvocationCard : Card
         numberTurnOnField++;
     }
 
+    public void DeactivateEffect()
+    {
+    }
+
     public void Init()
     {
         numberTurnOnField = 0;
         numberDeaths = 0;
+        SetEquipmentCard(null);
         SetBonusAttack(0);
         SetBonusDefense(0);
-        SetEquipmentCard(null);
         SetCurrentFamily(null);
         if (invocationActionEffect != null)
         {
@@ -71,6 +75,19 @@ public class InvocationCard : Card
     public void SetBonusDefense(float bonus)
     {
         bonusDefense = bonus;
+        if (equipmentCard != null)
+        {
+            var instantEffect = equipmentCard.EquipmentInstantEffect;
+            if (instantEffect != null)
+            {
+                if (instantEffect.Keys.Contains(InstantEffect.SetDef))
+                {
+                    var index = instantEffect.Keys.IndexOf(InstantEffect.SetDef);
+                    var def = float.Parse(instantEffect.Values[index]);
+                    bonusDefense = def - GetDefense();
+                }
+            }
+        }
     }
 
     public InvocationActionEffect InvocationActionEffect
@@ -104,6 +121,19 @@ public class InvocationCard : Card
     public void SetBonusAttack(float bonus)
     {
         bonusAttack = bonus;
+        if (equipmentCard != null)
+        {
+            var instantEffect = equipmentCard.EquipmentInstantEffect;
+            if (instantEffect != null)
+            {
+                if (instantEffect.Keys.Contains(InstantEffect.SetAtk))
+                {
+                    var index = instantEffect.Keys.IndexOf(InstantEffect.SetAtk);
+                    var atk = float.Parse(instantEffect.Values[index]);
+                    bonusAttack = atk - GetAttack();
+                }
+            }
+        }
     }
 
     public void IncrementNumberDeaths()
@@ -154,7 +184,14 @@ public class InvocationCard : Card
 
     public bool CanAttack()
     {
-        return !hasAlreadyAttackThisTurn && !blockAttackNextTurn;
+        if (equipmentCard == null) return !hasAlreadyAttackThisTurn && !blockAttackNextTurn;
+        var instantEffect = equipmentCard.EquipmentInstantEffect;
+        var equipmentBlockedAttack = false;
+        if (instantEffect != null)
+        {
+            equipmentBlockedAttack = instantEffect.Keys.Contains(InstantEffect.BlockAtk);
+        }
+        return !hasAlreadyAttackThisTurn && !blockAttackNextTurn & !equipmentBlockedAttack;
     }
 
     public void AttackTurnDone()
@@ -194,27 +231,92 @@ public class InvocationCard : Card
 
     public void SetEquipmentCard(EquipmentCard card)
     {
-        if (card == null)
+        if (equipmentCard != null && card == null)
         {
-            if (equipmentCard != null)
-            {
-                var equipmentInstantEffect = equipmentCard.EquipmentInstantEffect;
-                if (equipmentInstantEffect != null)
-                {
-                    DealWithEndEquipmentInstantEffect(equipmentInstantEffect);
-                }
-            }
-      
-        }
-        else
-        {
-            var equipmentInstantEffect = card.EquipmentInstantEffect;
-            if (equipmentInstantEffect != null)
-            {
-                DealWithStartEquipmentInstantEffect(equipmentInstantEffect);
-            }
+            RemoveEquipmentCardEffect(equipmentCard.EquipmentInstantEffect);
         }
         equipmentCard = card;
+    }
+
+    private void RemoveEquipmentCardEffect(EquipmentInstantEffect equipmentCardEquipmentInstantEffect)
+    {
+        if (equipmentCardEquipmentInstantEffect != null)
+        {
+            var keys = equipmentCardEquipmentInstantEffect.Keys;
+            var values = equipmentCardEquipmentInstantEffect.Values;
+            for (var i = 0; i < keys.Count; i++)
+            {
+                 switch (keys[i])
+            {
+                case InstantEffect.AddAtk:
+                {
+                    var newBonusAttack = -float.Parse(values[i]) + GetBonusAttack();
+                    SetBonusAttack(newBonusAttack);
+                }
+                    break;
+                case InstantEffect.AddDef:
+                {
+                    var newBonusDefense = -float.Parse(values[i]) + GetBonusDefense();
+                    SetBonusDefense(newBonusDefense);
+                }
+                    break;
+                case InstantEffect.MultiplyAtk:
+                {
+                    var multiplicator = int.Parse(values[i]);
+                    if (multiplicator > 1)
+                    {
+                        var newBonusAttack = -(multiplicator - 1) * GetAttack() + GetBonusAttack();
+                        SetBonusAttack(newBonusAttack);
+                    }
+                }
+                    break;
+                case InstantEffect.MultiplyDef:
+                {
+                    var multiplicator = int.Parse(values[i]);
+                    if (multiplicator > 1)
+                    {
+                        var newBonusDefense = -(multiplicator - 1) * GetDefense() + GetBonusDefense();
+                        SetBonusDefense(newBonusDefense);
+                    } else if (multiplicator < 0)
+                    {
+                        var newBonusDefense = -(GetDefense() / multiplicator) + GetBonusDefense();
+                        SetBonusDefense(newBonusDefense);
+                    }
+               
+                }
+                    break;
+                case InstantEffect.SetAtk:
+                {
+                    SetBonusAttack(0);
+                }
+                    break;
+                case InstantEffect.SetDef:
+                {
+                    SetBonusDefense(0);
+                }
+                    break;
+                case InstantEffect.BlockAtk:
+                {
+                    UnblockAttack();
+                }
+                    break;
+                case InstantEffect.DirectAtk:
+                {
+                }
+                    break;
+                case InstantEffect.SwitchEquipment:
+                {
+                }
+                    break;
+                case InstantEffect.DisableBonus:
+                {
+                }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            }
+        }
     }
 
     public int GETNumberDeaths()

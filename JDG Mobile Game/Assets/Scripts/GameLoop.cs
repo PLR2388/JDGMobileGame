@@ -253,6 +253,13 @@ public class GameLoop : MonoBehaviour
         if (notEmptyOpponent.Count == 0)
         {
             notEmptyOpponent.Add(player);
+        } else if (attacker.GETEquipmentCard() != null && attacker.GETEquipmentCard().EquipmentInstantEffect != null &&
+                   attacker.GETEquipmentCard().EquipmentInstantEffect.Keys.Contains(InstantEffect.DirectAtk))
+        {
+            notEmptyOpponent = new List<Card>
+            {
+                player
+            };
         }
         else
         {

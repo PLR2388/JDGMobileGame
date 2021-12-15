@@ -9,6 +9,7 @@ public class EquipmentCard : Card
     [SerializeField] private EquipmentPermEffect equipmentPermEffect;
 
     public EquipmentInstantEffect EquipmentInstantEffect => equipmentInstantEffect;
+    public EquipmentPermEffect EquipmentPermEffect => equipmentPermEffect;
 
     private void Awake()
     {
@@ -38,9 +39,9 @@ public class EquipmentCard : Card
         return HasEnoughInvocationCard(invocationCards);
     }
 
-    private static bool HasEnoughInvocationCard(IReadOnlyList<InvocationCard> invocationCards)
+    private bool HasEnoughInvocationCard(IReadOnlyList<InvocationCard> invocationCards)
     {
-        var count = invocationCards.Count(t => t != null && t.Nom != null);
+        var count = invocationCards.Count(t => t != null && t.Nom != null && (t.GETEquipmentCard() == null || (equipmentInstantEffect!= null && equipmentInstantEffect.Keys.Contains(InstantEffect.SwitchEquipment)) ));
         return count > 0;
     }
 }

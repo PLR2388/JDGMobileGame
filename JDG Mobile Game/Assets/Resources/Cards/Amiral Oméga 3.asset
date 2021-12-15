@@ -22,14 +22,15 @@ MonoBehaviour:
   attack: 3
   defense: 2
   family: 0a000000
-  equipmentCard: {fileID: 0}
+  equipmentCard: {fileID: 11400000, guid: 824b945d80a26344eaefdbde3bd31267, type: 2}
   invocationConditions: {fileID: 0}
   invocationStartEffect: {fileID: 0}
   invocationPermEffect: {fileID: 0}
   invocationActionEffect: {fileID: 0}
   invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
+  bonusAttack: 2
   bonusDefense: 0
   numberTurnOnField: 0
   numberDeaths: 0
   blockAttackNextTurn: 0
+  affectedByEffect: 1
