@@ -68,6 +68,7 @@ public class EffectFunctions : MonoBehaviour
         string[] sources = null;
         var canDisplayRemoveOption = false;
         var changeField = false;
+        var handCard = 0;
 
         for (var i = 0; i < keys.Count; i++)
         {
@@ -296,7 +297,18 @@ public class EffectFunctions : MonoBehaviour
                                 currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
                             isValid &= fieldCardsInDeck.Count > 0;
                         }
+                    } else if (handCard > 0)
+                    {
+                        if (value == "deck;yellow")
+                        {
+                            isValid &= (currentPlayerCard.deck.Count + currentPlayerCard.yellowTrash.Count) >= handCard;
+                        }
                     }
+                }
+                    break;
+                case Effect.ChangeHandCards:
+                {
+                    handCard = int.Parse(value);
                 }
                     break;
             }
@@ -1036,8 +1048,7 @@ public class EffectFunctions : MonoBehaviour
 
     private static int ApplyChangeHandCards(string value)
     {
-        int handCardsNumber;
-        handCardsNumber = int.Parse(value);
+        int handCardsNumber = int.Parse(value);
         return handCardsNumber;
     }
 
