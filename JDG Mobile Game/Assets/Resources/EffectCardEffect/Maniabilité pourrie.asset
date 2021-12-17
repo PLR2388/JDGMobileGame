@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 397632609e4aadb4cbe5a28d12927727, type: 3}
   m_Name: "Maniabilit\xE9 pourrie"
   m_EditorClassIdentifier: 
-  keys: 160000000100000011000000
+  keys: 010000001100000016000000
   values:
   - true
-  - true
   - 1
+  - true

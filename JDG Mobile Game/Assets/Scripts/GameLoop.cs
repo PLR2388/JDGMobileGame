@@ -1437,13 +1437,53 @@ public class GameLoop : MonoBehaviour
         PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         PlayerCards opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         List<EffectCard> effectCards = currentPlayerCard.effectCards;
+        List<EffectCard> opponentEffectCards = opponentPlayerCard.effectCards;
         List<EffectCard> effectCardsToDelete = new List<EffectCard>();
+        List<EffectCard> opponentEffectCardsToDelete = new List<EffectCard>();
+
         foreach (EffectCard effectCard in effectCards)
         {
             if (effectCard.GetLifeTime() == 1)
             {
+                effectCard.DecrementLifeTime();
                 currentPlayerCard.yellowTrash.Add(effectCard);
                 effectCardsToDelete.Add(effectCard);
+
+                var effectCardEffect = effectCard.GetEffectCardEffect();
+                if (effectCardEffect != null)
+                {
+                    var keys = effectCardEffect.Keys;
+                    var values = effectCardEffect.Values;
+
+                    for (var i = 0; i < keys.Count; i++)
+                    {
+                        switch (keys[i])
+                        {
+                            case Effect.RevertStat:
+                            {
+                                var invocationCards1 = currentPlayerCard.invocationCards;
+                                var invocationCards2 = opponentPlayerCard.invocationCards;
+
+                                foreach (var card in invocationCards1)
+                                {
+                                    var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                                    var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                                    card.SetBonusDefense(newBonusDefense);
+                                    card.SetBonusAttack(newBonusAttack);
+                                }
+
+                                foreach (var card in invocationCards2)
+                                {
+                                    var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                                    var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                                    card.SetBonusDefense(newBonusDefense);
+                                    card.SetBonusAttack(newBonusAttack);
+                                }
+                            }
+                                break;
+                        }
+                    }
+                }
             }
             else if (effectCard.GetLifeTime() > 1)
             {
@@ -1454,6 +1494,61 @@ public class GameLoop : MonoBehaviour
         foreach (var effectCard in effectCardsToDelete)
         {
             effectCards.Remove(effectCard);
+        }
+
+        foreach (EffectCard effectCard in opponentEffectCards)
+        {
+            if (effectCard.GetLifeTime() == 1)
+            {
+                effectCard.DecrementLifeTime();
+                opponentPlayerCard.yellowTrash.Add(effectCard);
+                opponentEffectCardsToDelete.Add(effectCard);
+
+                var effectCardEffect = effectCard.GetEffectCardEffect();
+                if (effectCardEffect != null)
+                {
+                    var keys = effectCardEffect.Keys;
+                    var values = effectCardEffect.Values;
+
+                    for (var i = 0; i < keys.Count; i++)
+                    {
+                        switch (keys[i])
+                        {
+                            case Effect.RevertStat:
+                            {
+                                var invocationCards1 = currentPlayerCard.invocationCards;
+                                var invocationCards2 = opponentPlayerCard.invocationCards;
+
+                                foreach (var card in invocationCards1)
+                                {
+                                    var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                                    var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                                    card.SetBonusDefense(newBonusDefense);
+                                    card.SetBonusAttack(newBonusAttack);
+                                }
+
+                                foreach (var card in invocationCards2)
+                                {
+                                    var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                                    var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                                    card.SetBonusDefense(newBonusDefense);
+                                    card.SetBonusAttack(newBonusAttack);
+                                }
+                            }
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (effectCard.GetLifeTime() > 1)
+            {
+                effectCard.DecrementLifeTime();
+            }
+        }
+
+        foreach (var effectCard in opponentEffectCardsToDelete)
+        {
+            opponentEffectCards.Remove(effectCard);
         }
 
         foreach (var invocationCard in currentPlayerCard.invocationCards)

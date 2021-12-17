@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Events;
@@ -44,7 +45,7 @@ public class EffectFunctions : MonoBehaviour
         if (size < 4)
         {
             ApplyEffectCard(effectCard, effectCard.GetEffectCardEffect());
-            
+
             miniCardMenu.SetActive(false);
             currentPlayerCard.handCards.Remove(effectCard);
             currentPlayerCard.effectCards.Add(effectCard);
@@ -279,7 +280,7 @@ public class EffectFunctions : MonoBehaviour
                 {
                     var numberCardToRemove = int.Parse(values[i]);
                     // This card + number to remove
-                    isValid &= currentPlayerCard.handCards.Count >  numberCardToRemove;
+                    isValid &= currentPlayerCard.handCards.Count > numberCardToRemove;
                 }
                     break;
                 case Effect.AffectPv:
@@ -297,7 +298,8 @@ public class EffectFunctions : MonoBehaviour
                                 currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
                             isValid &= fieldCardsInDeck.Count > 0;
                         }
-                    } else if (handCard > 0)
+                    }
+                    else if (handCard > 0)
                     {
                         if (value == "deck;yellow")
                         {
@@ -402,262 +404,375 @@ public class EffectFunctions : MonoBehaviour
         string[] sources = null;
         var canDisplayRemoveOption = false;
         var changeField = false;
+        var cardsToSee = 0;
 
         for (var i = 0; i < keys.Count; i++)
         {
-           
-                var effect = keys[i];
-                var value = values[i];
-                switch (effect)
+            var effect = keys[i];
+            var value = values[i];
+            switch (effect)
+            {
+                case Effect.AffectPv:
                 {
-                    case Effect.AffectPv:
+                    pvAffected = ApplyAffectPv(effectCard, value);
+                }
+                    break;
+                case Effect.AffectOpponent:
+                {
+                    affectOpponent = ApplyAffectOpponent(value);
+                    if (i < keys.Count - 1)
                     {
-                        pvAffected = ApplyAffectPv(effectCard, value);
-                    }
-                        break;
-                    case Effect.AffectOpponent:
-                    {
-                        affectOpponent = ApplyAffectOpponent(value);
-                        if (i < keys.Count - 1)
+                        if (keys[i + 1] == Effect.DestroyCards)
                         {
-                            if (keys[i + 1] == Effect.DestroyCards)
-                            {
-                                ApplyDestroyCards(values[i+1], pvAffected, affectOpponent);
-                            }
+                            ApplyDestroyCards(values[i + 1], pvAffected, affectOpponent);
                         }
                     }
-                        break;
-                    case Effect.NumberInvocationCard:
+                }
+                    break;
+                case Effect.NumberInvocationCard:
+                {
+                    ApplyNumberInvocationCard(affectOpponent, pvAffected);
+                }
+                    break;
+                case Effect.NumberHandCard:
+                {
+                    ApplyNumberHandCard(affectOpponent, pvAffected);
+                }
+                    break;
+                case Effect.SacrificeInvocation:
+                {
+                    UnityAction destroyCardAction = () =>
                     {
-                        ApplyNumberInvocationCard(affectOpponent, pvAffected);
-                    }
-                        break;
-                    case Effect.NumberHandCard:
-                    {
-                        ApplyNumberHandCard(affectOpponent, pvAffected);
-                    }
-                        break;
-                    case Effect.SacrificeInvocation:
-                    {
-                        UnityAction destroyCardAction = () =>
+                        var index = keys.FindIndex(effect1 => effect1 == Effect.DestroyCards);
+                        if (index > -1)
                         {
-                            var index = keys.FindIndex(effect1 => effect1 == Effect.DestroyCards);
-                            if (index > -1)
-                            {
-                                ApplyDestroyCards(values[index], pvAffected, affectOpponent);
-                            }
-                        };
-                        ApplySacrificeInvocation(value, pvAffected, destroyCardAction);
-                    }
-                        break;
-                    case Effect.SameFamily:
+                            ApplyDestroyCards(values[index], pvAffected, affectOpponent);
+                        }
+                    };
+                    ApplySacrificeInvocation(value, pvAffected, destroyCardAction);
+                }
+                    break;
+                case Effect.SameFamily:
+                {
+                    ApplySameFamily();
+                }
+                    break;
+                case Effect.CheckTurn:
+                {
+                    ApplyCheckTurn(effectCard);
+                }
+                    break;
+                case Effect.ChangeHandCards:
+                {
+                    handCardsNumber = ApplyChangeHandCards(value);
+                }
+                    break;
+                case Effect.Sources:
+                {
+                    sources = ApplySources(value);
+                    if (handCardsNumber > 0)
                     {
-                        ApplySameFamily();
-                    }
-                        break;
-                    case Effect.CheckTurn:
-                    {
-                        ApplyCheckTurn(effectCard);
-                    }
-                        break;
-                    case Effect.ChangeHandCards:
-                    {
-                        handCardsNumber = ApplyChangeHandCards(value);
-                    }
-                        break;
-                    case Effect.Sources:
-                    {
-                        sources = ApplySources(value);
-                        if (handCardsNumber > 0)
+                        if (sources.Contains("deck") && sources.Contains("yellow"))
                         {
-                            if (sources.Contains("deck") && sources.Contains("yellow"))
+                            List<Card> cards = new List<Card>(currentPlayerCard.deck);
+                            cards.AddRange(currentPlayerCard.yellowTrash);
+                            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                "Choisis 1 carte à rajouter dans ta main", cards);
+                            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                             {
-                                List<Card> cards = new List<Card>(currentPlayerCard.deck);
-                                cards.AddRange(currentPlayerCard.yellowTrash);
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                    "Choisis 1 carte à rajouter dans ta main", cards);
-                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                                var card = messageBox.GetComponent<MessageBox>().GETSelectedCard();
+                                if (card != null)
                                 {
-                                    var card = messageBox.GetComponent<MessageBox>().GETSelectedCard();
-                                    if (card != null)
+                                    currentPlayerCard.handCards.Add(card);
+                                    if (currentPlayerCard.yellowTrash.Contains(card))
                                     {
-                                        currentPlayerCard.handCards.Add(card);
-                                        if (currentPlayerCard.yellowTrash.Contains(card))
-                                        {
-                                            currentPlayerCard.yellowTrash.Remove(card);
-                                        }
-                                        else
-                                        {
-                                            currentPlayerCard.deck.Remove(card);
-                                        }
-                                        Destroy(messageBox);
+                                        currentPlayerCard.yellowTrash.Remove(card);
                                     }
                                     else
                                     {
-                                        messageBox.SetActive(false);
-                                        UnityAction okAction = () =>
-                                        {
-                                            messageBox.SetActive(true);
-                                        };
-                                        MessageBox.CreateOkMessageBox(canvas, "Information",
-                                            "Tu dois choisir une carte", okAction);
+                                        currentPlayerCard.deck.Remove(card);
                                     }
-                                };
-                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+
+                                    Destroy(messageBox);
+                                }
+                                else
                                 {
                                     messageBox.SetActive(false);
-                                    UnityAction okAction = () =>
-                                    {
-                                        messageBox.SetActive(true);
-                                    };
+                                    UnityAction okAction = () => { messageBox.SetActive(true); };
                                     MessageBox.CreateOkMessageBox(canvas, "Information",
                                         "Tu dois choisir une carte", okAction);
-                                };
-                            }
-                        } else if (changeField)
-                        {
-                            if (value == "deck")
+                                }
+                            };
+                            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
                             {
-                                List<Card> fieldCardInDeck =
-                                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                    "Choix du nouveau terrain", fieldCardInDeck);
-                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                                messageBox.SetActive(false);
+                                UnityAction okAction = () => { messageBox.SetActive(true); };
+                                MessageBox.CreateOkMessageBox(canvas, "Information",
+                                    "Tu dois choisir une carte", okAction);
+                            };
+                        }
+                    }
+                    else if (changeField)
+                    {
+                        if (value == "deck")
+                        {
+                            List<Card> fieldCardInDeck =
+                                currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
+                            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                "Choix du nouveau terrain", fieldCardInDeck);
+                            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                var fieldCard = (FieldCard)messageBox.GetComponent<MessageBox>().GETSelectedCard();
+                                if (fieldCard != null)
                                 {
-                                    var fieldCard = (FieldCard)messageBox.GetComponent<MessageBox>().GETSelectedCard();
-                                    if (fieldCard != null)
+                                    if (currentPlayerCard.field != null)
                                     {
-                                        if (currentPlayerCard.field != null)
-                                        {
-                                            currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
-                                            currentPlayerCard.field = null;
-                                        }
-
-                                        currentPlayerCard.field = fieldCard;
-                                        Destroy(messageBox);
-                                    }
-                                    else
-                                    {
-                                        messageBox.SetActive(false);
-                                        UnityAction okAction = () =>
-                                        {
-                                            messageBox.SetActive(true);
-                                        };
-                                        MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois chosir un terrain",
-                                            okAction);
+                                        currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
+                                        currentPlayerCard.field = null;
                                     }
 
-                                };
-                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                                    currentPlayerCard.field = fieldCard;
+                                    Destroy(messageBox);
+                                }
+                                else
                                 {
                                     messageBox.SetActive(false);
-                                    UnityAction okAction = () =>
-                                    {
-                                        messageBox.SetActive(true);
-                                    };
+                                    UnityAction okAction = () => { messageBox.SetActive(true); };
                                     MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois chosir un terrain",
                                         okAction);
-                                };
-                            }
-                      
-                        }
-                    }
-                        break;
-                    case Effect.HandMax:
-                    {
-                        ApplyHandMax(handCardsNumber);
-                    }
-                        break;
-                    case Effect.SeeOpponentHand:
-                    {
-                        canDisplayRemoveOption = ApplySeeOpponentHand();
-                    }
-                        break;
-                    case Effect.RemoveCardOption:
-                    {
-                        ApplyRemoveCardOption(canDisplayRemoveOption);
-                    }
-                        break;
-                    case Effect.RemoveHand:
-                    {
-                        ApplyRemoveHand(effectCard);
-                        if (keys.Count - 1 > i)
-                        {
-                            if (keys[i + 1] == Effect.DestroyCards)
+                                }
+                            };
+                            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
                             {
-                                ApplyDestroyCards(values[i+1],0,false);
-                            }
+                                messageBox.SetActive(false);
+                                UnityAction okAction = () => { messageBox.SetActive(true); };
+                                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois chosir un terrain",
+                                    okAction);
+                            };
                         }
                     }
-                        break;
-                    case Effect.RemoveDeck:
-                    {
-                        ApplyRemoveDeck();
-                    }
-                        break;
-                    case Effect.SpecialInvocation:
-                    {
-                        ApplySpecialInvocation();
-                    }
-                        break;
-                    case Effect.DivideInvocation:
-                    {
-                        ApplyDivideInvocation();
-                    }
-                        break;
-                    case Effect.Duration:
-                        ApplyDuration(effectCard);
-                        break;
-                    case Effect.Combine:
-                    {
-                        ApplyCombine(effectCard, value);
-                    }
-                        break;
-                    case Effect.RevertStat:
-                        ApplyRevertStat();
-                        break;
-                    case Effect.TakeControl:
-                    {
-                        ApplyTakeControl();
-                    }
-                        break;
-                    case Effect.NumberAttacks:
-                    {
-                    }
-                        break;
-                    case Effect.SkipAttack:
-                    {
-                    }
-                        break;
-                    case Effect.SeeCards:
-                    {
-                    }
-                        break;
-                    case Effect.ChangeOrder:
-                    {
-                    }
-                        break;
-                    case Effect.ProtectAttack:
-                    {
-                    }
-                        break;
-                    case Effect.SkipFieldsEffect:
-                    {
-                    }
-                        break;
-                    case Effect.ChangeField:
-                    {
-                        changeField = true;
-                    }
-                        break;
-                    case Effect.SkipContre:
-                    {
-                    }
-                        break;
-                    default:
-                        break;
                 }
-            
+                    break;
+                case Effect.HandMax:
+                {
+                    ApplyHandMax(handCardsNumber);
+                }
+                    break;
+                case Effect.SeeOpponentHand:
+                {
+                    canDisplayRemoveOption = ApplySeeOpponentHand();
+                }
+                    break;
+                case Effect.RemoveCardOption:
+                {
+                    ApplyRemoveCardOption(canDisplayRemoveOption);
+                }
+                    break;
+                case Effect.RemoveHand:
+                {
+                    ApplyRemoveHand(effectCard);
+                    if (keys.Count - 1 > i)
+                    {
+                        if (keys[i + 1] == Effect.DestroyCards)
+                        {
+                            ApplyDestroyCards(values[i + 1], 0, false);
+                        }
+                    }
+                }
+                    break;
+                case Effect.RemoveDeck:
+                {
+                    ApplyRemoveDeck();
+                }
+                    break;
+                case Effect.SpecialInvocation:
+                {
+                    ApplySpecialInvocation();
+                }
+                    break;
+                case Effect.DivideInvocation:
+                {
+                    ApplyDivideInvocation();
+                }
+                    break;
+                case Effect.Duration:
+                    ApplyDuration(effectCard, value);
+                    break;
+                case Effect.Combine:
+                {
+                    ApplyCombine(effectCard, value);
+                }
+                    break;
+                case Effect.RevertStat:
+                    ApplyRevertStat();
+                    break;
+                case Effect.TakeControl:
+                {
+                    ApplyTakeControl();
+                }
+                    break;
+                case Effect.NumberAttacks:
+                {
+                }
+                    break;
+                case Effect.SkipAttack:
+                {
+                    if (affectOpponent)
+                    {
+                        foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards)
+                        {
+                            opponentInvocationCard.BlockAttack();
+                        }
+                    }
+                }
+                    break;
+                case Effect.SeeCards:
+                {
+                    cardsToSee = int.Parse(value);
+                }
+                    break;
+                case Effect.ChangeOrder:
+                {
+                    UnityAction positiveAction = () =>
+                    {
+                        List<Card> cardsDeckToSee = new List<Card>();
+                        if (opponentPlayerCard.deck.Count >= cardsToSee)
+                        {
+                            for (var j = opponentPlayerCard.deck.Count - 1;
+                                 j > (opponentPlayerCard.deck.Count - 1 - cardsToSee);
+                                 j--)
+                            {
+                                cardsDeckToSee.Add(opponentPlayerCard.deck[j]);
+                            }
+                        }
+                        else
+                        {
+                            cardsDeckToSee.AddRange(opponentPlayerCard.invocationCards);
+                        }
+
+                        UnityAction positiveActionCardSelector = () =>
+                        {
+                            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
+                                multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count);
+                            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                var selectedCards =
+                                    messageBox.GetComponent<MessageBox>().GETMultipleSelectedCards();
+                                if (selectedCards.Count == cardsDeckToSee.Count)
+                                {
+                                    foreach (var card in cardsDeckToSee)
+                                    {
+                                        opponentPlayerCard.deck.Remove(card);
+                                    }
+
+                                    selectedCards.Reverse();
+                                    opponentPlayerCard.deck.AddRange(selectedCards);
+                                    Destroy(messageBox);
+                                }
+                                else
+                                {
+                                    messageBox.SetActive(false);
+                                    UnityAction okAction = () => { messageBox.SetActive(true); };
+                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                        "Tu dois choisir l'ordre des cartes");
+                                }
+                            };
+                            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                            {
+                                messageBox.SetActive(false);
+                                UnityAction okAction = () => { messageBox.SetActive(true); };
+                                MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                    "Tu dois choisir l'ordre des cartes");
+                            };
+                        };
+
+                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
+                            cardsDeckToSee, positiveActionCardSelector);
+                    };
+                    UnityAction negativeAction = () =>
+                    {
+                        List<Card> cardsDeckToSee = new List<Card>();
+                        if (currentPlayerCard.deck.Count >= cardsToSee)
+                        {
+                            for (var j = currentPlayerCard.deck.Count - 1;
+                                 j > (currentPlayerCard.deck.Count - 1 - cardsToSee);
+                                 j--)
+                            {
+                                cardsDeckToSee.Add(currentPlayerCard.deck[j]);
+                            }
+                        }
+                        else
+                        {
+                            cardsDeckToSee.AddRange(currentPlayerCard.invocationCards);
+                        }
+
+                        UnityAction positiveActionCardSelector = () =>
+                        {
+                            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
+                                multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count);
+                            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                var selectedCards =
+                                    messageBox.GetComponent<MessageBox>().GETMultipleSelectedCards();
+                                if (selectedCards.Count == cardsDeckToSee.Count)
+                                {
+                                    foreach (var card in cardsDeckToSee)
+                                    {
+                                        currentPlayerCard.deck.Remove(card);
+                                    }
+
+                                    selectedCards.Reverse();
+                                    currentPlayerCard.deck.AddRange(selectedCards);
+                                    Destroy(messageBox);
+                                }
+                                else
+                                {
+                                    messageBox.SetActive(false);
+                                    UnityAction okAction = () => { messageBox.SetActive(true); };
+                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                        "Tu dois choisir l'ordre des cartes");
+                                }
+                            };
+                            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                            {
+                                messageBox.SetActive(false);
+                                UnityAction okAction = () => { messageBox.SetActive(true); };
+                                MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                    "Tu dois choisir l'ordre des cartes");
+                            };
+                        };
+
+                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
+                            cardsDeckToSee, positiveActionCardSelector);
+                    };
+                    MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
+                        "Veux-tu regarder dans le deck de l'adversaire ou du tien ?",
+                        labelPositiveButton: "De l'adversaire", labelNegativeButton: "Du mien",
+                        positiveAction: positiveAction, negativeAction: negativeAction);
+                }
+                    break;
+                case Effect.ProtectAttack:
+                {
+                }
+                    break;
+                case Effect.SkipFieldsEffect:
+                {
+                }
+                    break;
+                case Effect.ChangeField:
+                {
+                    changeField = true;
+                }
+                    break;
+                case Effect.SkipContre:
+                {
+                }
+                    break;
+                default:
+                    break;
+            }
         }
 
         //TODO Add effectCard to yellow trash if necessary
@@ -700,7 +815,14 @@ public class EffectFunctions : MonoBehaviour
 
         foreach (var card in invocationCards1)
         {
-            // TODO Keep previous bonus
+            var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+            var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+            card.SetBonusDefense(newBonusDefense);
+            card.SetBonusAttack(newBonusAttack);
+        }
+
+        foreach (var card in invocationCards2)
+        {
             var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
             var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
             card.SetBonusDefense(newBonusDefense);
@@ -775,9 +897,10 @@ public class EffectFunctions : MonoBehaviour
         }
     }
 
-    private static void ApplyDuration(EffectCard effectCard)
+    private static void ApplyDuration(EffectCard effectCard, string value)
     {
-        effectCard.SetLifeTime(2);
+        var duration = int.Parse(value);
+        effectCard.SetLifeTime(duration);
     }
 
     private void ApplyDivideInvocation()
@@ -823,17 +946,12 @@ public class EffectFunctions : MonoBehaviour
                     }
                     else
                     {
-                        
                     }
 
                     Destroy(message);
                 };
 
-                message.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    
-                    Destroy(message);
-                };
+                message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
             }
         }
         else
@@ -870,24 +988,16 @@ public class EffectFunctions : MonoBehaviour
             else
             {
                 message.SetActive(false);
-                UnityAction okAction = () =>
-                {
-                    message.SetActive(true);
-                };
+                UnityAction okAction = () => { message.SetActive(true); };
                 MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
                     okAction);
             }
-
-         
         };
 
         message.GetComponent<MessageBox>().NegativeAction = () =>
         {
             message.SetActive(false);
-            UnityAction okAction = () =>
-            {
-                message.SetActive(true);
-            };
+            UnityAction okAction = () => { message.SetActive(true); };
             MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
                 okAction);
         };
@@ -1102,7 +1212,7 @@ public class EffectFunctions : MonoBehaviour
                         invocationCard.GetCurrentAttack() >= 3 ||
                         invocationCard.GetCurrentDefense() >= 3)
                     .Cast<Card>().ToList();
-                GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected,completion);
+                GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
             }
                 break;
         }
@@ -1150,16 +1260,14 @@ public class EffectFunctions : MonoBehaviour
                                     opponentPlayerCard.yellowTrash.Add(fieldCard);
                                     opponentPlayerCard.field = null;
                                 }
+
                                 currentPlayerStatus.ChangePv(affected);
                                 Destroy(message);
                             }
                             else
                             {
                                 message.SetActive(false);
-                                UnityAction okAction = () =>
-                                {
-                                    message.SetActive(true);
-                                };
+                                UnityAction okAction = () => { message.SetActive(true); };
                                 MessageBox.CreateOkMessageBox(canvas, "Action requise",
                                     "Tu dois choisir un terrain à détruire", okAction);
                             }
@@ -1167,10 +1275,7 @@ public class EffectFunctions : MonoBehaviour
                         message.GetComponent<MessageBox>().NegativeAction = () =>
                         {
                             message.SetActive(false);
-                            UnityAction okAction = () =>
-                            {
-                                message.SetActive(true);
-                            };
+                            UnityAction okAction = () => { message.SetActive(true); };
                             MessageBox.CreateOkMessageBox(canvas, "Action requise",
                                 "Tu dois choisir un terrain à détruire", okAction);
                         };
@@ -1179,44 +1284,43 @@ public class EffectFunctions : MonoBehaviour
             }
                 break;
             case "all":
+            {
+                for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
                 {
-                    for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
-                    {
-                        var invocationCard = currentPlayerCard.invocationCards[j];
-                        currentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
-                    }
-
-                    for (var j = currentPlayerCard.effectCards.Count - 1; j >= 0; j--)
-                    {
-                        var effectCard = currentPlayerCard.effectCards[j];
-                        currentPlayerCard.SendCardToYellowTrash(effectCard);
-                    }
-
-                    if (currentPlayerCard.field != null)
-                    {
-                        currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
-                    }
-                            
-                    for (var j = opponentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
-                    {
-                        var invocationCard = opponentPlayerCard.invocationCards[j];
-                        opponentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
-                    }
-
-                    for (var j = opponentPlayerCard.effectCards.Count - 1; j >= 0; j--)
-                    {
-                        var effectCard = opponentPlayerCard.effectCards[j];
-                        opponentPlayerCard.SendCardToYellowTrash(effectCard);
-                    }
-
-                    if (opponentPlayerCard.field != null)
-                    {
-                        opponentPlayerCard.SendCardToYellowTrash(opponentPlayerCard.field);
-                    }
-                            
+                    var invocationCard = currentPlayerCard.invocationCards[j];
+                    currentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
                 }
+
+                for (var j = currentPlayerCard.effectCards.Count - 1; j >= 0; j--)
+                {
+                    var effectCard = currentPlayerCard.effectCards[j];
+                    currentPlayerCard.SendCardToYellowTrash(effectCard);
+                }
+
+                if (currentPlayerCard.field != null)
+                {
+                    currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
+                }
+
+                for (var j = opponentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
+                {
+                    var invocationCard = opponentPlayerCard.invocationCards[j];
+                    opponentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                }
+
+                for (var j = opponentPlayerCard.effectCards.Count - 1; j >= 0; j--)
+                {
+                    var effectCard = opponentPlayerCard.effectCards[j];
+                    opponentPlayerCard.SendCardToYellowTrash(effectCard);
+                }
+
+                if (opponentPlayerCard.field != null)
+                {
+                    opponentPlayerCard.SendCardToYellowTrash(opponentPlayerCard.field);
+                }
+            }
                 break;
-                case "invocation":
+            case "invocation":
             {
                 if (affectOpponent)
                 {
@@ -1275,7 +1379,7 @@ public class EffectFunctions : MonoBehaviour
                 allCardsOnField.AddRange(invocationCards1.Where(card => card.IsValid()).Cast<Card>());
 
                 allCardsOnField.AddRange(invocationCards2.Where(card => card.IsValid()).Cast<Card>());
-  
+
                 var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                     "Choix de la carte à détruire", allCardsOnField);
 
@@ -1310,14 +1414,11 @@ public class EffectFunctions : MonoBehaviour
                     }
                     else
                     {
-                     
                     }
+
                     Destroy(message);
                 };
-                message.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    Destroy(message);
-                };
+                message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
             }
                 break;
         }
@@ -1394,23 +1495,17 @@ public class EffectFunctions : MonoBehaviour
             else
             {
                 message.SetActive(false);
-                UnityAction okAction = () =>
-                {
-                    message.SetActive(true);
-                };
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier", okAction);
+                UnityAction okAction = () => { message.SetActive(true); };
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier",
+                    okAction);
             }
         };
         message.GetComponent<MessageBox>().NegativeAction = () =>
         {
             message.SetActive(false);
-            UnityAction okAction = () =>
-            {
-                message.SetActive(true);
-            };
+            UnityAction okAction = () => { message.SetActive(true); };
             MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier", okAction);
         };
-
     }
 
 
