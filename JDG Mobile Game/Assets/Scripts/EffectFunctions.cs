@@ -311,6 +311,7 @@ public class EffectFunctions : MonoBehaviour
                 case Effect.ChangeHandCards:
                 {
                     handCard = int.Parse(value);
+                    isValid &= currentPlayerCard.handCards.Count > handCard;
                 }
                     break;
             }
@@ -560,12 +561,12 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.SeeOpponentHand:
                 {
-                    canDisplayRemoveOption = ApplySeeOpponentHand();
+                    ApplySeeOpponentHand();
                 }
                     break;
                 case Effect.RemoveCardOption:
                 {
-                    ApplyRemoveCardOption(canDisplayRemoveOption);
+                    ApplyRemoveCardOption();
                 }
                     break;
                 case Effect.RemoveHand:
@@ -1003,17 +1004,15 @@ public class EffectFunctions : MonoBehaviour
         };
     }
 
-    private bool ApplyRemoveCardOption(bool canDisplayRemoveOption)
+    private void ApplyRemoveCardOption()
     {
-        bool cancelled = false;
-
         var message = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
             "Veux-tu te défausser d'une carte pour en défausser une à l'adversaire ?");
 
 
         message.GetComponent<MessageBox>().PositiveAction = () =>
         {
-            canDisplayRemoveOption = true;
+            Destroy(message);
             var handCardOpponent = opponentPlayerCard.handCards;
             var message1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Quel carte veux-tu enlever à l'adversaire ?", handCardOpponent);
@@ -1037,40 +1036,24 @@ public class EffectFunctions : MonoBehaviour
                             currentPlayerCard.handCards.Remove(cardPlayer);
                             opponentPlayerCard.handCards.Remove(cardOpponent);
                         }
-                        else
-                        {
-                            cancelled = true;
-                        }
+                        Destroy(message2);
                     };
-
-                    message2.GetComponent<MessageBox>().NegativeAction = () => { cancelled = true; };
-                }
-                else
-                {
-                    cancelled = true;
                 }
             };
-
-            message1.GetComponent<MessageBox>().NegativeAction = () => { cancelled = true; };
+            message1.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                Destroy(message1);
+            };
         };
 
-        message.GetComponent<MessageBox>().NegativeAction = () => { cancelled = true; };
-        return cancelled;
+        message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
     }
 
-    private bool ApplySeeOpponentHand()
+    private void ApplySeeOpponentHand()
     {
-        bool canDisplayRemoveOption = false;
         var handCardOpponent = opponentPlayerCard.handCards;
-        var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+        MessageBox.CreateMessageBoxWithCardSelector(canvas,
             "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
-
-        message.GetComponent<MessageBox>().OkAction = () =>
-        {
-            canDisplayRemoveOption = true;
-            Destroy(message);
-        };
-        return canDisplayRemoveOption;
     }
 
     private void ApplyHandMax(int handCardsNumber)

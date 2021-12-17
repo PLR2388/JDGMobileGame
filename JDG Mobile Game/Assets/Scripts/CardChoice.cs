@@ -119,7 +119,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("La drooogue !", allCards));
         deck1.Add(GetSpecificCard("Petite culotte", allCards));
         deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
-        deck1.Add(GetSpecificCard("Musique de Mega Drive", allCards));
+        deck1.Add(GetSpecificCard("Passage secret dans le mur du voisin", allCards));
 
         while (deck1.Count != 30)
         {
