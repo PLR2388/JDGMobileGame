@@ -21,3 +21,5 @@ MonoBehaviour:
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 49d293dd0d2ba6042a0ffa08ab147069, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPV: -2.5
