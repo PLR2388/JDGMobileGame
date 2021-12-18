@@ -116,10 +116,10 @@ public class CardChoice : MonoBehaviour
         var allCards = FindObjectOfType<GameState>().allCards;
         
         deck1.Add(GetSpecificCard("Patron D'Infogrames", allCards));
-        deck1.Add(GetSpecificCard("La drooogue !", allCards));
-        deck1.Add(GetSpecificCard("Petite culotte", allCards));
-        deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
-        deck1.Add(GetSpecificCard("Torture Ninja", allCards));
+        deck1.Add(GetSpecificCard("Vieux Sage", allCards));
+        deck1.Add(GetSpecificCard("Forêt des elfes sylvains", allCards));
+        deck1.Add(GetSpecificCard("Seb Du Grenier", allCards));
+        deck1.Add(GetSpecificCard("Un délicieux risotto", allCards));
 
         while (deck1.Count != 30)
         {

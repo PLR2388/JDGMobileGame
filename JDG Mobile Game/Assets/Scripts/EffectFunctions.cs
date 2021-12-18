@@ -287,7 +287,13 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.AffectPv:
                 {
-                    pvAffected = float.Parse(values[i]);
+                    if(!float.TryParse(value, out pvAffected))
+                    {
+                        if (value == "all")
+                        {
+                            pvAffected = 999;
+                        }
+                    }
                 }
                     break;
                 case Effect.Sources:
@@ -1457,7 +1463,7 @@ public class EffectFunctions : MonoBehaviour
     private static float ApplyAffectPv(EffectCard effectCard, string value)
     {
         float pvAffected;
-        if (value == "ALL")
+        if (value == "all")
         {
             pvAffected = 100.0f;
         }
@@ -1482,7 +1488,7 @@ public class EffectFunctions : MonoBehaviour
         message.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var card = message.GetComponent<MessageBox>().GETSelectedCard();
-            if (card.IsValid())
+            if (card != null)
             {
                 currentPlayerCard.sendInvocationCardToYellowTrash(card as InvocationCard);
                 if (pvAffected != 0)

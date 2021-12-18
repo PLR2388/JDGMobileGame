@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 397632609e4aadb4cbe5a28d12927727, type: 3}
   m_Name: "Un d\xE9licieux risotto"
   m_EditorClassIdentifier: 
-  keys: 000000000100000005000000
+  keys: 00000000010000000500000011000000
   values:
   - all
   - false
   - 5
+  - 1

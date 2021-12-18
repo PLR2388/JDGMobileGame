@@ -1466,7 +1466,6 @@ public class GameLoop : MonoBehaviour
             if (effectCard.GetLifeTime() == 1)
             {
                 effectCard.DecrementLifeTime();
-                currentPlayerCard.yellowTrash.Add(effectCard);
                 effectCardsToDelete.Add(effectCard);
 
                 var effectCardEffect = effectCard.GetEffectCardEffect();
@@ -1555,7 +1554,6 @@ public class GameLoop : MonoBehaviour
             if (effectCard.GetLifeTime() == 1)
             {
                 effectCard.DecrementLifeTime();
-                opponentPlayerCard.yellowTrash.Add(effectCard);
                 opponentEffectCardsToDelete.Add(effectCard);
 
                 var effectCardEffect = effectCard.GetEffectCardEffect();
