@@ -1300,7 +1300,7 @@ public class PlayerCards : MonoBehaviour
             var fieldKeys = fieldCardEffect.Keys;
             var fieldValues = fieldCardEffect.Values;
 
-            var family = field.GETFamily();
+            var family = oldFieldCard.GETFamily();
             for (var i = 0; i < fieldKeys.Count; i++)
             {
                 switch (fieldKeys[i])

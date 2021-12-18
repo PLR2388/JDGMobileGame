@@ -564,7 +564,7 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.HandMax:
                 {
-                    ApplyHandMax(handCardsNumber);
+                    ApplyHandMax(handCardsNumber, effectCard);
                 }
                     break;
                 case Effect.SeeOpponentHand:
@@ -1070,10 +1070,12 @@ public class EffectFunctions : MonoBehaviour
             "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
     }
 
-    private void ApplyHandMax(int handCardsNumber)
+    private void ApplyHandMax(int handCardsNumber, EffectCard effectCard)
     {
         var handCard1 = currentPlayerCard.handCards;
+        handCard1.Remove(effectCard);
         var handCard2 = opponentPlayerCard.handCards;
+        
 
         if (handCard1.Count < handCardsNumber)
         {
