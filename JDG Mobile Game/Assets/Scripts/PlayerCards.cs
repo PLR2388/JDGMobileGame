@@ -543,6 +543,7 @@ public class PlayerCards : MonoBehaviour
         specificCardFound.SetEquipmentCard(null);
         specificCardFound.SetBonusAttack(0);
         specificCardFound.SetBonusDefense(0);
+        specificCardFound.SetRemainedAttackThisTurn(1);
         invocationCards.Remove(specificCardFound);
         yellowTrash.Add(specificCardFound);
         if (equipmentCard != null)
@@ -907,6 +908,12 @@ public class PlayerCards : MonoBehaviour
                     {
                         newInvocationCard.SetCurrentFamily(field.GETFamily());
                     }
+                } else if (effectCardEffect.Keys.Contains(Effect.NumberAttacks))
+                {
+                    var value = int.Parse(
+                        effectCardEffect.Values[
+                            effectCardEffect.Keys.FindIndex(effect => effect == Effect.NumberAttacks)]);
+                    newInvocationCard.SetRemainedAttackThisTurn(value);
                 }
             }
         }

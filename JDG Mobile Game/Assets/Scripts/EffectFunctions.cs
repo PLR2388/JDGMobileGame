@@ -203,9 +203,9 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.SpecialInvocation:
                 {
-                    var place = FindFirstEmptyInvocationLocationCurrentPlayer();
                     var yellowTrash = currentPlayerCard.yellowTrash;
                     var invocationCards = currentPlayerCard.invocationCards;
+                    var place = invocationCards.Count;
 
                     var invocationFromYellowTrash =
                         yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
@@ -234,6 +234,7 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.NumberAttacks:
                 {
+                    isValid &= currentPlayerCard.invocationCards.Count > 0;
                 }
                     break;
                 case Effect.SkipAttack:
@@ -614,6 +615,11 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.NumberAttacks:
                 {
+                    var number = int.Parse(value);
+                    for (var j = 0; j < currentPlayerCard.invocationCards.Count; j++)
+                    {
+                        currentPlayerCard.invocationCards[j].SetRemainedAttackThisTurn(number);
+                    }
                 }
                     break;
                 case Effect.SkipAttack:
@@ -909,8 +915,6 @@ public class EffectFunctions : MonoBehaviour
         var opponentInvocationCard = opponentPlayerCard.invocationCards;
         foreach (var card in opponentInvocationCard)
         {
-            if (!card.IsValid()) continue;
-            // TODO Keep previous bonus
             var newBonusDefense = card.GETBonusDefense() - card.GetCurrentDefense() / 2;
             card.SetBonusDefense(newBonusDefense);
         }
@@ -918,47 +922,50 @@ public class EffectFunctions : MonoBehaviour
 
     private void ApplySpecialInvocation()
     {
-        var place = FindFirstEmptyInvocationLocationCurrentPlayer();
-        if (place < 4)
-        {
+ 
             var yellowTrash = currentPlayerCard.yellowTrash;
             var invocationCards = currentPlayerCard.invocationCards;
 
             var invocationFromYellowTrash =
                 yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
 
-            if (invocationFromYellowTrash.Count == 0)
-            {
-                // TODO MessageBox
-            }
-            else
-            {
-                var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                    "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
+            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
 
-                message.GetComponent<MessageBox>().PositiveAction = () =>
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var card =
+                    (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
+                if (card != null)
                 {
-                    var card =
-                        (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
-                    if (card.IsValid())
-                    {
-                        currentPlayerCard.yellowTrash.Remove(card);
-                        currentPlayerCard.invocationCards[place] = card;
-                    }
-                    else
-                    {
-                    }
-
+                    currentPlayerCard.yellowTrash.Remove(card);
+                    card.DeactivateEffect();
+                    invocationCards.Add(card);
                     Destroy(message);
-                };
+                }
+                else
+                {
+                    message.SetActive(false);
+                    UnityAction okAction = () =>
+                    {
+                        message.SetActive(true);
+                    };
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                        okAction);
+                }
+            };
 
-                message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
-            }
-        }
-        else
-        {
-            // TODO MessageBox
-        }
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                message.SetActive(false);
+                UnityAction okAction = () =>
+                {
+                    message.SetActive(true);
+                };
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                    okAction);
+            };
+        
     }
 
     private void ApplyRemoveDeck()
@@ -1036,14 +1043,12 @@ public class EffectFunctions : MonoBehaviour
                             currentPlayerCard.handCards.Remove(cardPlayer);
                             opponentPlayerCard.handCards.Remove(cardOpponent);
                         }
+
                         Destroy(message2);
                     };
                 }
             };
-            message1.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Destroy(message1);
-            };
+            message1.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message1); };
         };
 
         message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };

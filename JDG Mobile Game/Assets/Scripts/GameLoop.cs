@@ -87,12 +87,10 @@ public class GameLoop : MonoBehaviour
         if (IsP1Turn)
         {
             invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
-            p1.GetComponent<PlayerCards>().ResetInvocationCardNewTurn();
         }
         else
         {
             invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
-            p2.GetComponent<PlayerCards>().ResetInvocationCardNewTurn();
         }
     }
 
@@ -463,7 +461,7 @@ public class GameLoop : MonoBehaviour
         var diff = defenseOpponent - attack;
 
         attacker.AttackTurnDone();
-        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = false;
+        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = attacker.CanAttack();
 
         if (opponent.Nom == "Player")
         {
@@ -1157,6 +1155,7 @@ public class GameLoop : MonoBehaviour
         if (IsP1Turn)
         {
             var p1Cards = p1.GetComponent<PlayerCards>();
+            p1Cards.ResetInvocationCardNewTurn();
 
             DrawPlayerCard(p1Cards);
 
@@ -1193,7 +1192,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             var p2Cards = p2.GetComponent<PlayerCards>();
-
+            p2Cards.ResetInvocationCardNewTurn();
             DrawPlayerCard(p2Cards);
 
             var invocationCards = p2Cards.invocationCards;
@@ -1481,6 +1480,16 @@ public class GameLoop : MonoBehaviour
                                 }
                             }
                                 break;
+                            case Effect.DivideInvocation:
+                            {
+                                foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards)
+                                {
+                                    var newBonusDef = opponentInvocationCard.GetBonusDefense() +
+                                                      opponentInvocationCard.GetCurrentDefense();
+                                    opponentInvocationCard.SetBonusDefense(newBonusDef);
+                                }
+                            }
+                                break;
                         }
                     }
                 }
@@ -1533,6 +1542,16 @@ public class GameLoop : MonoBehaviour
                                     var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
                                     card.SetBonusDefense(newBonusDefense);
                                     card.SetBonusAttack(newBonusAttack);
+                                }
+                            }
+                                break;
+                            case Effect.DivideInvocation:
+                            {
+                                foreach (var opponentInvocationCard in currentPlayerCard.invocationCards)
+                                {
+                                    var newBonusDef = opponentInvocationCard.GetBonusDefense() +
+                                                      opponentInvocationCard.GetCurrentDefense();
+                                    opponentInvocationCard.SetBonusDefense(newBonusDef);
                                 }
                             }
                                 break;

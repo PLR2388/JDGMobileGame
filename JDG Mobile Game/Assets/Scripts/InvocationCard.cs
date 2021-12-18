@@ -21,7 +21,7 @@ public class InvocationCard : Card
     [SerializeField] private int numberDeaths;
     [SerializeField] private bool blockAttackNextTurn = false;
     [SerializeField] private bool affectedByEffect = true;
-    private bool hasAlreadyAttackThisTurn = false;
+    [SerializeField] private int remainedAttackThisTurn;
     private CardFamily? currentFamily = null;
 
     private void Awake()
@@ -31,9 +31,15 @@ public class InvocationCard : Card
         this.bonusDefense = 0;
         this.numberTurnOnField = 0;
         this.numberDeaths = 0;
+        remainedAttackThisTurn = 1;
     }
 
     public int NumberTurnOnField => numberTurnOnField;
+
+    public void SetRemainedAttackThisTurn(int number)
+    {
+        remainedAttackThisTurn = number;
+    }
 
     public void incrementNumberTurnOnField()
     {
@@ -52,6 +58,7 @@ public class InvocationCard : Card
         SetBonusAttack(0);
         SetBonusDefense(0);
         SetCurrentFamily(null);
+        SetRemainedAttackThisTurn(1);
         if (invocationActionEffect != null)
         {
             var keys = invocationActionEffect.Keys;
@@ -184,24 +191,24 @@ public class InvocationCard : Card
 
     public bool CanAttack()
     {
-        if (equipmentCard == null) return !hasAlreadyAttackThisTurn && !blockAttackNextTurn;
+        if (equipmentCard == null) return remainedAttackThisTurn > 0 && !blockAttackNextTurn;
         var instantEffect = equipmentCard.EquipmentInstantEffect;
         var equipmentBlockedAttack = false;
         if (instantEffect != null)
         {
             equipmentBlockedAttack = instantEffect.Keys.Contains(InstantEffect.BlockAtk);
         }
-        return !hasAlreadyAttackThisTurn && !blockAttackNextTurn & !equipmentBlockedAttack;
+        return remainedAttackThisTurn > 0 && !blockAttackNextTurn & !equipmentBlockedAttack;
     }
 
     public void AttackTurnDone()
     {
-        hasAlreadyAttackThisTurn = true;
+        remainedAttackThisTurn--;
     }
 
     public void ResetNewTurn()
     {
-        hasAlreadyAttackThisTurn = false;
+        remainedAttackThisTurn = 1;
     }
 
     public float GetCurrentDefense()
