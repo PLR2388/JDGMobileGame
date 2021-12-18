@@ -25,12 +25,12 @@ public class FieldFunctions : MonoBehaviour
         miniCardMenu.SetActive(false);
         currentPlayerCard.field = fieldCard;
         currentPlayerCard.handCards.Remove(fieldCard);
-        ApplyFieldCardEffect(fieldCard);
+        ApplyFieldCardEffect(fieldCard, currentPlayerCard);
     }
 
-    private void ApplyFieldCardEffect(FieldCard fieldCard)
+    public static void ApplyFieldCardEffect(FieldCard fieldCard, PlayerCards playerCards)
     {
-        var fieldCardEffect = fieldCard.FieldCardEffect;
+         var fieldCardEffect = fieldCard.FieldCardEffect;
 
         var keys = fieldCardEffect.Keys;
         var values = fieldCardEffect.Values;
@@ -43,7 +43,7 @@ public class FieldFunctions : MonoBehaviour
                 case FieldEffect.ATK:
                     // Must be called also when invocationCards change
                     var atk = float.Parse(values[i]);
-                    foreach (var invocationCard in currentPlayerCard.invocationCards)
+                    foreach (var invocationCard in playerCards.invocationCards)
                     {
                         if (!invocationCard.GetFamily().Contains(family)) continue;
                         var newBonusAttack = invocationCard.GetBonusAttack() + atk;
@@ -53,7 +53,7 @@ public class FieldFunctions : MonoBehaviour
                 case FieldEffect.DEF:
                     // Must be called also when invocationCards change
                     var def = float.Parse(values[i]);
-                    foreach (var invocationCard in currentPlayerCard.invocationCards)
+                    foreach (var invocationCard in playerCards.invocationCards)
                     {
                         if (!invocationCard.GetFamily().Contains(family)) continue;
                         var newBonusAttack = invocationCard.GetBonusDefense() + def;
@@ -72,7 +72,7 @@ public class FieldFunctions : MonoBehaviour
                 case FieldEffect.Change:
                     // Must be called also when invocationCards change
                     var names = values[i].Split(';');
-                    foreach (var invocationCard in currentPlayerCard.invocationCards)
+                    foreach (var invocationCard in playerCards.invocationCards)
                     {
                         if (names.Contains(invocationCard.Nom))
                         {

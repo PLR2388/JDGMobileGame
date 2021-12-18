@@ -143,9 +143,7 @@ public class MessageBox : MonoBehaviour
     public static GameObject CreateSimpleMessageBox(Transform canvas, string title, string description,
         UnityAction positiveAction = null,
         UnityAction negativeAction = null,
-        List<GameObject> gameObjectsToHide = null,
-        string labelPositiveButton = "Oui",
-        string labelNegativeButton = "Non")
+        List<GameObject> gameObjectsToHide = null)
     {
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
         var messageBoxGameObject = messageBox[messageBox.Length - 1].gameObject;
@@ -155,11 +153,6 @@ public class MessageBox : MonoBehaviour
         message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
         message.GetComponent<MessageBox>().title = title;
         message.GetComponent<MessageBox>().description = description;
-        
-        // TODO: Look why it doesn't work
-        var textMeshPros = message.GetComponentsInChildren<TextMeshProUGUI>();
-        textMeshPros[2].text = labelPositiveButton;
-        textMeshPros[3].text = labelNegativeButton;
 
         message.GetComponent<MessageBox>().PositiveAction = () =>
         {

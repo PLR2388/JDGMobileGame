@@ -115,11 +115,11 @@ public class CardChoice : MonoBehaviour
 
         var allCards = FindObjectOfType<GameState>().allCards;
         
-        deck1.Add(GetSpecificCard("Patron D'Infogrames", allCards));
-        deck1.Add(GetSpecificCard("Vieux Sage", allCards));
+        deck2.Add(GetSpecificCard("Frangipanus", allCards));
+        deck2.Add(GetSpecificCard("Zozan Kebab", allCards));
         deck1.Add(GetSpecificCard("Forêt des elfes sylvains", allCards));
-        deck1.Add(GetSpecificCard("Seb Du Grenier", allCards));
-        deck1.Add(GetSpecificCard("Croisement des effluves", allCards));
+        deck1.Add(GetSpecificCard("L'Elfette", allCards));
+        deck1.Add(GetSpecificCard("Maniabilité pourrie", allCards));
 
         while (deck1.Count != 30)
         {

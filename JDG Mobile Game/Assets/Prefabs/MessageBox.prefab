@@ -1219,6 +1219,8 @@ MonoBehaviour:
   isInformation: 0
   displayCardsScript: {fileID: 2575410864514399939}
   displayCards: 0
+  multipleCardSelection: 0
+  numberCardInSelection: 2
   titleText: {fileID: 435952080825071656}
   descriptionText: {fileID: 435952082315272875}
   positiveButtonText: {fileID: 435952082400223243}
@@ -1343,7 +1345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabCard: {fileID: 5528645795789417797, guid: 07baf689232351e4caa92a6fd2b8245e,
     type: 3}
-  cardslist: []
+  cardsList: []
 --- !u!1 &1917826928150291131
 GameObject:
   m_ObjectHideFlags: 0

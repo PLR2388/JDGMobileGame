@@ -1280,7 +1280,7 @@ public class GameLoop : MonoBehaviour
     {
         var canSkipDraw = false;
 
-        if (playerCards.field != null)
+        if (playerCards.field != null && !playerCards.IsFieldDesactivate)
         {
             var fieldCardEffect = playerCards.field.FieldCardEffect;
 
@@ -1540,6 +1540,12 @@ public class GameLoop : MonoBehaviour
                                 }
                             }
                                 break;
+                            case Effect.SkipFieldsEffect:
+                            {
+                                currentPlayerCard.ActivateFieldCardEffect();
+                                opponentPlayerCard.ActivateFieldCardEffect();
+                            }
+                                break;
                         }
                     }
                 }
@@ -1626,6 +1632,12 @@ public class GameLoop : MonoBehaviour
                                                       opponentInvocationCard.GetCurrentDefense();
                                     opponentInvocationCard.SetBonusDefense(newBonusDef);
                                 }
+                            }
+                                break;
+                            case Effect.SkipFieldsEffect:
+                            {
+                                currentPlayerCard.ActivateFieldCardEffect();
+                                opponentPlayerCard.ActivateFieldCardEffect();
                             }
                                 break;
                         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Card", menuName = "InvocationCard")]
@@ -24,6 +22,8 @@ public class InvocationCard : Card
     [SerializeField] private int remainedAttackThisTurn;
     private CardFamily? currentFamily = null;
     [SerializeField] private bool isControlled = false;
+
+    public bool IsAffectedByEffectCard => affectedByEffect;
 
     private void Awake()
     {

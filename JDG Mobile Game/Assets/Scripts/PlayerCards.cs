@@ -102,8 +102,11 @@ public class PlayerCards : MonoBehaviour
 
     private List<InvocationCard> oldInvocationCards = new List<InvocationCard>();
     private FieldCard oldField = null;
-    private List<EffectCard> oldEffectCards = new List<EffectCard>();
+    
     private List<Card> oldHandCards = new List<Card>();
+
+    private bool isFieldDesactivate = false;
+    public bool IsFieldDesactivate => isFieldDesactivate;
 
     // Start is called before the first frame update
     private void Start()
@@ -160,6 +163,24 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    public void DesactivateFieldCardEffect()
+    {
+        if (field != null)
+        {
+            OnFieldCardChanged(field);
+        }
+        isFieldDesactivate = true;
+    }
+
+    public void ActivateFieldCardEffect()
+    {
+        isFieldDesactivate = false;
+        if (field != null)
+        {
+            FieldFunctions.ApplyFieldCardEffect(field, this);
+        }
+    }
+
     public void AddPhysicalCard(Card card, string playerName)
     {
         var newPhysicalCard = Instantiate(prefabCard, deckLocationP2, Quaternion.identity);
@@ -212,16 +233,6 @@ public class PlayerCards : MonoBehaviour
             OnInvocationCardsChanged();
         }
 
-        if (effectCards.Count != oldEffectCards.Count)
-        {
-            if (effectCards.Count > oldEffectCards.Count)
-            {
-                OnEffectCardsAdded(effectCards.Last());
-            }
-
-            oldEffectCards = new List<EffectCard>(effectCards);
-        }
-
         if (field != oldField)
         {
             for (var i = effectCards.Count - 1; i >= 0; i--)
@@ -232,7 +243,7 @@ public class PlayerCards : MonoBehaviour
                 {
                     if (effectCardEffect.Keys.Contains(Effect.SameFamily))
                     {
-                        if (field != null)
+                        if (field != null && !isFieldDesactivate)
                         {
                             foreach (var invocationCard in invocationCards)
                             {
@@ -325,7 +336,7 @@ public class PlayerCards : MonoBehaviour
                     {
                         var invocationCard = invocationCards[i];
                         if (!invocationCard) continue;
-                        if (field != null)
+                        if (field != null && !isFieldDesactivate)
                         {
                             invocationCard.SetCurrentFamily(field.GETFamily());
                         }
@@ -902,7 +913,7 @@ public class PlayerCards : MonoBehaviour
             {
                 if (effectCardEffect.Keys.Contains(Effect.SameFamily))
                 {
-                    if (field != null)
+                    if (field != null && !isFieldDesactivate)
                     {
                         newInvocationCard.SetCurrentFamily(field.GETFamily());
                     }
@@ -917,7 +928,7 @@ public class PlayerCards : MonoBehaviour
             }
         }
 
-        if (field != null)
+        if (field != null && !isFieldDesactivate)
         {
             var fieldCardEffect = field.FieldCardEffect;
 
@@ -1286,14 +1297,11 @@ public class PlayerCards : MonoBehaviour
             }
         }
     }
-
-    private void OnEffectCardsAdded(EffectCard newEffectCard)
-    {
-    }
+    
 
     private void OnFieldCardChanged(FieldCard oldFieldCard)
     {
-        if (oldFieldCard != null)
+        if (oldFieldCard != null && !isFieldDesactivate)
         {
             var fieldCardEffect = oldFieldCard.FieldCardEffect;
 

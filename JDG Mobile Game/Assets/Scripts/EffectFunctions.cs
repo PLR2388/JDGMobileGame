@@ -633,7 +633,8 @@ public class EffectFunctions : MonoBehaviour
                 {
                     if (affectOpponent)
                     {
-                        foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards)
+                        foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards
+                                     .Where(card => card.IsAffectedByEffectCard).ToList())
                         {
                             opponentInvocationCard.BlockAttack();
                         }
@@ -763,8 +764,7 @@ public class EffectFunctions : MonoBehaviour
                     };
                     MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
                         "Veux-tu regarder dans le deck de l'adversaire ou du tien ?",
-                        labelPositiveButton: "De l'adversaire", labelNegativeButton: "Du mien",
-                        positiveAction: positiveAction, negativeAction: negativeAction);
+                        positiveAction, negativeAction);
                 }
                     break;
                 case Effect.ProtectAttack:
@@ -775,6 +775,8 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.SkipFieldsEffect:
                 {
+                   currentPlayerCard.DesactivateFieldCardEffect();
+                   opponentPlayerCard.DesactivateFieldCardEffect();
                 }
                     break;
                 case Effect.ChangeField:
@@ -796,7 +798,7 @@ public class EffectFunctions : MonoBehaviour
 
     private void ApplyTakeControl()
     {
-        var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
+        var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
             .Cast<Card>().ToList();
 
         var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
@@ -835,7 +837,7 @@ public class EffectFunctions : MonoBehaviour
     private void ApplyRevertStat()
     {
         var invocationCards1 = currentPlayerCard.invocationCards;
-        var invocationCards2 = opponentPlayerCard.invocationCards;
+        var invocationCards2 = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
 
         foreach (var card in invocationCards1)
         {
@@ -923,13 +925,16 @@ public class EffectFunctions : MonoBehaviour
 
     private static void ApplyDuration(EffectCard effectCard, string value)
     {
-        var duration = int.Parse(value);
-        effectCard.SetLifeTime(duration);
+        if (int.TryParse(value, out var duration))
+        {
+            effectCard.SetLifeTime(duration);
+        }
     }
 
     private void ApplyDivideInvocation()
     {
-        var opponentInvocationCard = opponentPlayerCard.invocationCards;
+        var opponentInvocationCard =
+            opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
         foreach (var card in opponentInvocationCard)
         {
             var newBonusDefense = card.GETBonusDefense() - card.GetCurrentDefense() / 2;
@@ -1075,7 +1080,7 @@ public class EffectFunctions : MonoBehaviour
         var handCard1 = currentPlayerCard.handCards;
         handCard1.Remove(effectCard);
         var handCard2 = opponentPlayerCard.handCards;
-        
+
 
         if (handCard1.Count < handCardsNumber)
         {
@@ -1287,7 +1292,10 @@ public class EffectFunctions : MonoBehaviour
                 for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
                 {
                     var invocationCard = currentPlayerCard.invocationCards[j];
-                    currentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                    if (invocationCard.IsAffectedByEffectCard)
+                    {
+                        currentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                    }
                 }
 
                 for (var j = currentPlayerCard.effectCards.Count - 1; j >= 0; j--)
@@ -1304,7 +1312,10 @@ public class EffectFunctions : MonoBehaviour
                 for (var j = opponentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
                 {
                     var invocationCard = opponentPlayerCard.invocationCards[j];
-                    opponentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                    if (invocationCard.IsAffectedByEffectCard)
+                    {
+                        opponentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                    }
                 }
 
                 for (var j = opponentPlayerCard.effectCards.Count - 1; j >= 0; j--)
@@ -1324,7 +1335,7 @@ public class EffectFunctions : MonoBehaviour
                 if (affectOpponent)
                 {
                     var invocationOpponentValid = opponentPlayerCard.invocationCards
-                        .Where(card => card.IsValid()).Cast<Card>().ToList();
+                        .Where(card => card.IsAffectedByEffectCard).Cast<Card>().ToList();
                     var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                         "Choix de l'invocation à détruire", invocationOpponentValid);
                     message.GetComponent<MessageBox>().PositiveAction = () =>
@@ -1360,8 +1371,10 @@ public class EffectFunctions : MonoBehaviour
                 var fieldCard2 = opponentPlayerCard.field;
                 var effectCards1 = currentPlayerCard.effectCards;
                 var effectCards2 = opponentPlayerCard.effectCards;
-                var invocationCards1 = currentPlayerCard.invocationCards;
-                var invocationCards2 = opponentPlayerCard.invocationCards;
+                var invocationCards1 = currentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
+                    .Cast<Card>().ToList();
+                var invocationCards2 = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
+                    .Cast<Card>().ToList();
 
                 var allCardsOnField = new List<Card>();
 

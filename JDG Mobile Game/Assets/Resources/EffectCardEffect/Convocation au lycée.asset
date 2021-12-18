@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 00000000010000000600000007000000
   values:
-  - -0.5
+  - -0,5
   - false
   - true
   - true
