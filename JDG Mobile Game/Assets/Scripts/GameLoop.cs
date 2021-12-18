@@ -59,6 +59,8 @@ public class GameLoop : MonoBehaviour
         IsP1Turn = true;
         ChangeHealthText(PlayerStatus.MAXPv, true);
         ChangeHealthText(PlayerStatus.MAXPv, false);
+        p1.GetComponent<PlayerStatus>().SetNumberShield(0);
+        p2.GetComponent<PlayerStatus>().SetNumberShield(0);
         PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
     }
 
@@ -468,11 +470,27 @@ public class GameLoop : MonoBehaviour
             // Directly attack the player
             if (IsP1Turn)
             {
-                p2.GetComponent<PlayerStatus>().ChangePv(diff);
+                var playerStatus = p2.GetComponent<PlayerStatus>();
+                if (playerStatus.NumberShield > 0)
+                {
+                    playerStatus.DecrementShield();
+                }
+                else
+                {
+                    playerStatus.ChangePv(diff);
+                }
             }
             else
             {
-                p1.GetComponent<PlayerStatus>().ChangePv(diff);
+                var playerStatus = p1.GetComponent<PlayerStatus>();
+                if (playerStatus.NumberShield > 0)
+                {
+                    playerStatus.DecrementShield();
+                }
+                else
+                {
+                    playerStatus.ChangePv(diff);
+                }
             }
         }
         else
@@ -1435,6 +1453,9 @@ public class GameLoop : MonoBehaviour
         if (phaseId != 3) return;
         PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         PlayerCards opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        PlayerStatus currentPlayerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+        PlayerStatus opponentPlayerStatus =
+            IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
         List<EffectCard> effectCards = currentPlayerCard.effectCards;
         List<EffectCard> opponentEffectCards = opponentPlayerCard.effectCards;
         List<EffectCard> effectCardsToDelete = new List<EffectCard>();
@@ -1498,11 +1519,35 @@ public class GameLoop : MonoBehaviour
             {
                 effectCard.DecrementLifeTime();
             }
+            else
+            {
+                var effectCardEffect = effectCard.GetEffectCardEffect();
+                if (effectCardEffect != null)
+                {
+                    var keys = effectCardEffect.Keys;
+                    var values = effectCardEffect.Values;
+
+                    for (var i = 0; i < keys.Count; i++)
+                    {
+                        switch (keys[i])
+                        {
+                            case Effect.ProtectAttack:
+                            {
+                                if (currentPlayerStatus.NumberShield == 0)
+                                {
+                                    effectCardsToDelete.Add(effectCard);
+                                }
+                            }
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
         foreach (var effectCard in effectCardsToDelete)
         {
-            effectCards.Remove(effectCard);
+            currentPlayerCard.SendCardToYellowTrash(effectCard);
         }
 
         foreach (EffectCard effectCard in opponentEffectCards)
@@ -1563,11 +1608,35 @@ public class GameLoop : MonoBehaviour
             {
                 effectCard.DecrementLifeTime();
             }
+            else
+            {
+                var effectCardEffect = effectCard.GetEffectCardEffect();
+                if (effectCardEffect != null)
+                {
+                    var keys = effectCardEffect.Keys;
+                    var values = effectCardEffect.Values;
+
+                    for (var i = 0; i < keys.Count; i++)
+                    {
+                        switch (keys[i])
+                        {
+                            case Effect.ProtectAttack:
+                            {
+                                if (opponentPlayerStatus.NumberShield == 0)
+                                {
+                                    opponentEffectCardsToDelete.Add(effectCard);
+                                }
+                            }
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
         foreach (var effectCard in opponentEffectCardsToDelete)
         {
-            opponentEffectCards.Remove(effectCard);
+            opponentPlayerCard.SendCardToYellowTrash(effectCard);
         }
 
         foreach (var invocationCard in currentPlayerCard.invocationCards)

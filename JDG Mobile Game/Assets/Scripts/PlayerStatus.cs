@@ -17,6 +17,10 @@ public class PlayerStatus : MonoBehaviour
 
     [SerializeField] private bool isP1 = false;
 
+    [SerializeField] private int numberShield = 0;
+
+    public int NumberShield => numberShield;
+
     public void ChangePv(float pv)
     {
         currentPv += pv;
@@ -31,5 +35,15 @@ public class PlayerStatus : MonoBehaviour
     public float GETCurrentPv()
     {
         return currentPv;
+    }
+
+    public void SetNumberShield(int number)
+    {
+        numberShield = number;
+    }
+
+    public void DecrementShield()
+    {
+        numberShield--;
     }
 }

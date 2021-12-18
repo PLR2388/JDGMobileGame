@@ -257,11 +257,12 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.ProtectAttack:
                 {
+                    isValid &= currentPlayerCard.invocationCards.Count == 0;
                 }
                     break;
                 case Effect.SkipFieldsEffect:
                 {
-                    isValid = currentPlayerCard.field != null || opponentPlayerCard.field != null;
+                    isValid &= currentPlayerCard.field != null || opponentPlayerCard.field != null;
                 }
                     break;
                 case Effect.ChangeField:
@@ -762,6 +763,8 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.ProtectAttack:
                 {
+                    var numberShield = int.Parse(value);
+                    currentPlayerStatus.SetNumberShield(numberShield);
                 }
                     break;
                 case Effect.SkipFieldsEffect:
@@ -1320,21 +1323,31 @@ public class EffectFunctions : MonoBehaviour
                     {
                         var invocationCard =
                             (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
-                        if (invocationCard.IsValid())
+                        if (invocationCard != null)
                         {
-                            opponentPlayerCard.yellowTrash.Add(invocationCard);
-                            for (var j = 0; j < opponentPlayerCard.invocationCards.Count; j++)
-                            {
-                                var currentCard = opponentPlayerCard.invocationCards[j];
-                                if (!currentCard.IsValid() || currentCard.Nom != invocationCard.Nom)
-                                    continue;
-                                opponentPlayerCard.invocationCards[j] = null;
-                                break;
-                            }
+                            opponentPlayerCard.sendInvocationCardToYellowTrash(invocationCard);
+                            Destroy(message);
                         }
                         else
                         {
+                            message.SetActive(false);
+                            UnityAction okAction = () =>
+                            {
+                                message.SetActive(true);
+                            };
+                            MessageBox.CreateOkMessageBox(canvas, "Action requise", "Choisis une carte à détruire",
+                                okAction);
                         }
+                    };
+                    message.GetComponent<MessageBox>().NegativeAction = () =>
+                    {
+                        message.SetActive(false);
+                        UnityAction okAction = () =>
+                        {
+                            message.SetActive(true);
+                        };
+                        MessageBox.CreateOkMessageBox(canvas, "Action requise", "Choisis une carte à détruire",
+                            okAction);
                     };
                 }
             }
