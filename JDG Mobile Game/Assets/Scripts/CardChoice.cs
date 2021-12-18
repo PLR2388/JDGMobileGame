@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Lean.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -58,7 +59,7 @@ public class CardChoice : MonoBehaviour
     {
         var deck = new List<Card>();
         var numberSelected = CheckCard(deck);
-        
+
         if (numberSelected == GameState.maxDeckCards)
         {
             if (isPlayerOneCardChosen)
@@ -83,7 +84,6 @@ public class CardChoice : MonoBehaviour
             var remainedCards = GameState.maxDeckCards - numberSelected;
             DisplayMessageBox(remainedCards);
         }
-        
     }
 
     public void RandomDeck()
@@ -91,7 +91,9 @@ public class CardChoice : MonoBehaviour
         var deck1 = new List<Card>();
         var deck2 = new List<Card>();
 
-        var allCards = FindObjectOfType<GameState>().allCards;
+        var allCards = FindObjectOfType<GameState>().allCards.Where(card =>
+            card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" && card.Nom != "Blague interdite" &&
+            card.Nom != "Un bon tuyau").ToList();
 
         while (deck1.Count != 30)
         {
@@ -114,7 +116,7 @@ public class CardChoice : MonoBehaviour
         var deck2 = new List<Card>();
 
         var allCards = FindObjectOfType<GameState>().allCards;
-        
+
         deck2.Add(GetSpecificCard("Frangipanus", allCards));
         deck2.Add(GetSpecificCard("Zozan Kebab", allCards));
         deck1.Add(GetSpecificCard("Forêt des elfes sylvains", allCards));
@@ -125,7 +127,7 @@ public class CardChoice : MonoBehaviour
         {
             GetRandomCards(allCards, deck1);
         }
-        
+
         deck1.Reverse();
 
         while (deck2.Count != 30)

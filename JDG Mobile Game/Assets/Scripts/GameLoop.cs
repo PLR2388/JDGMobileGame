@@ -82,6 +82,17 @@ public class GameLoop : MonoBehaviour
                 GameOver();
                 break;
         }
+
+        // Make sure user is on Android platform
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            // Check if Back was pressed this frame
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                UnityAction positiveAction = () => { SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single); };
+                MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", positiveAction);
+            }
+        }
     }
 
     private void ChoosePhase()
@@ -98,10 +109,7 @@ public class GameLoop : MonoBehaviour
 
     private void GameOver()
     {
-        MessageBox[] components = FindObjectsOfType<MessageBox>();
-        if (components.Length != 0) return;
-        UnityAction okAction = () => { SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single); };
-        MessageBox.CreateOkMessageBox(canvas, "Fin de partie", endGameReason, okAction);
+        SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
     }
 
     private void ChangeHealthText(float pv, bool isP1)
