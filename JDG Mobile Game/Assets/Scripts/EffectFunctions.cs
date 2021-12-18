@@ -229,7 +229,7 @@ public class EffectFunctions : MonoBehaviour
                     var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
                         .Cast<Card>().ToList();
 
-                    isValid &= invocationCardOpponent.Count > 0;
+                    isValid &= invocationCardOpponent.Count > 0 && currentPlayerCard.invocationCards.Count < 4;
                 }
                     break;
                 case Effect.NumberAttacks:
@@ -287,7 +287,7 @@ public class EffectFunctions : MonoBehaviour
                     break;
                 case Effect.AffectPv:
                 {
-                    if(!float.TryParse(value, out pvAffected))
+                    if (!float.TryParse(value, out pvAffected))
                     {
                         if (value == "all")
                         {
@@ -794,9 +794,8 @@ public class EffectFunctions : MonoBehaviour
         //TODO Add effectCard to yellow trash if necessary
     }
 
-    private bool ApplyTakeControl()
+    private void ApplyTakeControl()
     {
-        bool cancelled = false;
         var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
             .Cast<Card>().ToList();
 
@@ -807,21 +806,30 @@ public class EffectFunctions : MonoBehaviour
         {
             var card =
                 (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
-            if (card.IsValid())
+            if (card != null)
             {
+                card.ControlCard();
+                opponentPlayerCard.invocationCards.Remove(card);
+                opponentPlayerCard.SendToSecretHide(card);
+                currentPlayerCard.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
+                currentPlayerCard.invocationCards.Add(card);
+                Destroy(message);
             }
             else
             {
-                cancelled = true;
+                message.SetActive(false);
+                UnityAction okAction = () => { message.SetActive(true); };
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à controller",
+                    okAction);
             }
         };
 
         message.GetComponent<MessageBox>().NegativeAction = () =>
         {
-            cancelled = true;
-            Destroy(message);
+            message.SetActive(false);
+            UnityAction okAction = () => { message.SetActive(true); };
+            MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à contrôler", okAction);
         };
-        return cancelled;
     }
 
     private void ApplyRevertStat()
@@ -931,50 +939,42 @@ public class EffectFunctions : MonoBehaviour
 
     private void ApplySpecialInvocation()
     {
- 
-            var yellowTrash = currentPlayerCard.yellowTrash;
-            var invocationCards = currentPlayerCard.invocationCards;
+        var yellowTrash = currentPlayerCard.yellowTrash;
+        var invocationCards = currentPlayerCard.invocationCards;
 
-            var invocationFromYellowTrash =
-                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
+        var invocationFromYellowTrash =
+            yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
 
-            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
+        var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+            "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
 
-            message.GetComponent<MessageBox>().PositiveAction = () =>
+        message.GetComponent<MessageBox>().PositiveAction = () =>
+        {
+            var card =
+                (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
+            if (card != null)
             {
-                var card =
-                    (InvocationCard)message.GetComponent<MessageBox>().GETSelectedCard();
-                if (card != null)
-                {
-                    currentPlayerCard.yellowTrash.Remove(card);
-                    card.DeactivateEffect();
-                    invocationCards.Add(card);
-                    Destroy(message);
-                }
-                else
-                {
-                    message.SetActive(false);
-                    UnityAction okAction = () =>
-                    {
-                        message.SetActive(true);
-                    };
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
-                        okAction);
-                }
-            };
-
-            message.GetComponent<MessageBox>().NegativeAction = () =>
+                currentPlayerCard.yellowTrash.Remove(card);
+                card.DeactivateEffect();
+                invocationCards.Add(card);
+                Destroy(message);
+            }
+            else
             {
                 message.SetActive(false);
-                UnityAction okAction = () =>
-                {
-                    message.SetActive(true);
-                };
+                UnityAction okAction = () => { message.SetActive(true); };
                 MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
                     okAction);
-            };
-        
+            }
+        };
+
+        message.GetComponent<MessageBox>().NegativeAction = () =>
+        {
+            message.SetActive(false);
+            UnityAction okAction = () => { message.SetActive(true); };
+            MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                okAction);
+        };
     }
 
     private void ApplyRemoveDeck()
@@ -1337,10 +1337,7 @@ public class EffectFunctions : MonoBehaviour
                         else
                         {
                             message.SetActive(false);
-                            UnityAction okAction = () =>
-                            {
-                                message.SetActive(true);
-                            };
+                            UnityAction okAction = () => { message.SetActive(true); };
                             MessageBox.CreateOkMessageBox(canvas, "Action requise", "Choisis une carte à détruire",
                                 okAction);
                         }
@@ -1348,10 +1345,7 @@ public class EffectFunctions : MonoBehaviour
                     message.GetComponent<MessageBox>().NegativeAction = () =>
                     {
                         message.SetActive(false);
-                        UnityAction okAction = () =>
-                        {
-                            message.SetActive(true);
-                        };
+                        UnityAction okAction = () => { message.SetActive(true); };
                         MessageBox.CreateOkMessageBox(canvas, "Action requise", "Choisis une carte à détruire",
                             okAction);
                     };

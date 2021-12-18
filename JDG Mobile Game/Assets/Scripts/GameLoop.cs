@@ -172,7 +172,11 @@ public class GameLoop : MonoBehaviour
             {
                 totalDownTime = 0;
                 clicking = true;
+#if UNITY_EDITOR
                 var mousePosition = Input.mousePosition;
+#elif UNITY_ANDROID
+                            var mousePosition = Input.GetTouch(0).position;
+#endif
                 if (cardSelected is InvocationCard invocationCard)
                 {
                     attacker = invocationCard;
@@ -218,6 +222,32 @@ public class GameLoop : MonoBehaviour
             {
                 totalDownTime = 0;
                 clicking = true;
+                InvocationCard opponentInvocationCard =
+                    (InvocationCard)cardObject.GetComponent<PhysicalCardDisplay>().card;
+                if (opponentInvocationCard != null && opponentInvocationCard.IsControlled)
+                {
+#if UNITY_EDITOR
+                    var mousePosition = Input.mousePosition;
+#elif UNITY_ANDROID
+                            var mousePosition = Input.GetTouch(0).position;
+#endif
+                    attacker = opponentInvocationCard;
+                    var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
+                    var hasAction = attacker.InvocationActionEffect != null;
+                    invocationMenu.SetActive(true);
+                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
+                    invocationMenu.transform.position = mousePosition;
+                    if (hasAction)
+                    {
+                        invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
+                        invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable =
+                            IsSpecialActionPossible();
+                    }
+                    else
+                    {
+                        invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
+                    }
+                }
             }
 
             if (clicking && Input.GetMouseButton(0))
@@ -1697,6 +1727,15 @@ public class GameLoop : MonoBehaviour
                     }
                 }
             }
+
+            if (invocationCard.IsControlled)
+            {
+                invocationCard.FreeCard();
+                opponentPlayerCard.invocationCards.Add(invocationCard);
+                opponentPlayerCard.RemoveFromSecretHide(invocationCard);
+                currentPlayerCard.invocationCards.Remove(invocationCard);
+                currentPlayerCard.SendToSecretHide(invocationCard);
+            }
         }
 
         for (int k = opponentPlayerCard.invocationCards.Count - 1; k >= 0; k--)
@@ -1747,6 +1786,15 @@ public class GameLoop : MonoBehaviour
                             break;
                     }
                 }
+            }
+
+            if (invocationCard.IsControlled)
+            {
+                invocationCard.FreeCard();
+                opponentPlayerCard.invocationCards.Remove(invocationCard);
+                currentPlayerCard.RemoveFromSecretHide(invocationCard);
+                currentPlayerCard.invocationCards.Add(invocationCard);
+                opponentPlayerCard.SendToSecretHide(invocationCard);
             }
         }
 

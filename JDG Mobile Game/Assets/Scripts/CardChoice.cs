@@ -119,7 +119,7 @@ public class CardChoice : MonoBehaviour
         deck1.Add(GetSpecificCard("Vieux Sage", allCards));
         deck1.Add(GetSpecificCard("Forêt des elfes sylvains", allCards));
         deck1.Add(GetSpecificCard("Seb Du Grenier", allCards));
-        deck1.Add(GetSpecificCard("Un délicieux risotto", allCards));
+        deck1.Add(GetSpecificCard("Youtube Money", allCards));
 
         while (deck1.Count != 30)
         {

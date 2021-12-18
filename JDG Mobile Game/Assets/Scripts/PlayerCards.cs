@@ -488,6 +488,11 @@ public class PlayerCards : MonoBehaviour
         secretCards.Add(card);
     }
 
+    public void RemoveFromSecretHide(Card card)
+    {
+        secretCards.Remove(card);
+    }
+
     public void SendCardToYellowTrash(Card card)
     {
         for (var i = 0; i < invocationCards.Count; i++)
@@ -516,7 +521,7 @@ public class PlayerCards : MonoBehaviour
                     invocationCard.SetEquipmentCard(null);
                 }
 
-                invocationCards.Remove(card as InvocationCard);
+                invocationCards.Remove((InvocationCard)card);
                 yellowTrash.Add(card);
             }
         }
@@ -698,26 +703,19 @@ public class PlayerCards : MonoBehaviour
     private int FindCard(Card card)
     {
         var cardName = card.Nom;
-        if (isPlayerOne)
+
+        for (var i = 0; i < allPhysicalCards.Count; i++)
         {
-            for (var i = 0; i < allPhysicalCards.Count; i++)
+            if ((cardName + "P1") == allPhysicalCards[i].name)
             {
-                if ((cardName + "P1") == allPhysicalCards[i].name)
-                {
-                    return i;
-                }
+                return i;
+            }
+            else if ((cardName + "P2") == allPhysicalCards[i].name)
+            {
+                return i;
             }
         }
-        else
-        {
-            for (var i = 0; i < allPhysicalCards.Count; i++)
-            {
-                if ((cardName + "P2") == (allPhysicalCards[i].name))
-                {
-                    return i;
-                }
-            }
-        }
+
 
         return -1;
     }
@@ -908,7 +906,8 @@ public class PlayerCards : MonoBehaviour
                     {
                         newInvocationCard.SetCurrentFamily(field.GETFamily());
                     }
-                } else if (effectCardEffect.Keys.Contains(Effect.NumberAttacks))
+                }
+                else if (effectCardEffect.Keys.Contains(Effect.NumberAttacks))
                 {
                     var value = int.Parse(
                         effectCardEffect.Values[

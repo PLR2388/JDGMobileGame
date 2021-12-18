@@ -23,6 +23,7 @@ public class InvocationCard : Card
     [SerializeField] private bool affectedByEffect = true;
     [SerializeField] private int remainedAttackThisTurn;
     private CardFamily? currentFamily = null;
+    [SerializeField] private bool isControlled = false;
 
     private void Awake()
     {
@@ -50,6 +51,18 @@ public class InvocationCard : Card
     {
     }
 
+    public void ControlCard()
+    {
+        isControlled = true;
+    }
+
+    public void FreeCard()
+    {
+        isControlled = false;
+    }
+
+    public bool IsControlled => isControlled;
+
     public void Init()
     {
         numberTurnOnField = 0;
@@ -59,6 +72,7 @@ public class InvocationCard : Card
         SetBonusDefense(0);
         SetCurrentFamily(null);
         SetRemainedAttackThisTurn(1);
+        isControlled = false;
         if (invocationActionEffect != null)
         {
             var keys = invocationActionEffect.Keys;
