@@ -811,6 +811,7 @@ public class EffectFunctions : MonoBehaviour
             if (card != null)
             {
                 card.ControlCard();
+                card.UnblockAttack();
                 opponentPlayerCard.invocationCards.Remove(card);
                 opponentPlayerCard.SendToSecretHide(card);
                 currentPlayerCard.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
