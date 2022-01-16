@@ -1,7 +1,10 @@
-﻿public enum PermanentEffect //Must be frequently change
+﻿namespace Cards.EquipmentCards
 {
-    AddAtkBaseOnHandCards,
-    AddDefBaseOnHandCards,
-    BlockOpponentDuringInvocation, // Prevent opponent's attack during invocation
-    PreventAttackOnInvocation, // Prevent opponent to attack this card
+    public enum PermanentEffect //Must be frequently change
+    {
+        AddAtkBaseOnHandCards,
+        AddDefBaseOnHandCards,
+        BlockOpponentDuringInvocation, // Prevent opponent's attack during invocation
+        PreventAttackOnInvocation, // Prevent opponent to attack this card
+    }
 }

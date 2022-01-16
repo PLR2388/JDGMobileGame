@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Card", menuName = "ContreCard")]
-public class ContreCard : Card
+namespace Cards.ContreCards
 {
-    private void Awake()
+    [CreateAssetMenu(fileName = "New Card", menuName = "ContreCard")]
+    public class ContreCard : Card
     {
-        type = CardType.Contre;
+        private void Awake()
+        {
+            type = CardType.Contre;
+        }
     }
 }

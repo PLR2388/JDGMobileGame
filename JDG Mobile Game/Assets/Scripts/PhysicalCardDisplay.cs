@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cards;
+using UnityEngine;
 
 public class PhysicalCardDisplay : MonoBehaviour
 {

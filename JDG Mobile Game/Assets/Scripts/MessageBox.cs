@@ -1,7 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using Cards;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,13 +9,13 @@ public class MessageBox : MonoBehaviour
 {
     public UnityAction PositiveAction;
     public UnityAction NegativeAction;
-    public UnityAction OkAction = null;
+    public UnityAction OkAction;
     public string title;
     public string description;
-    public bool isInformation = false;
+    public bool isInformation;
     public DisplayCards displayCardsScript;
-    public bool displayCards = false;
-    public bool multipleCardSelection = false;
+    public bool displayCards;
+    public bool multipleCardSelection;
     public int numberCardInSelection = 2;
 
     [SerializeField] private TextMeshProUGUI titleText;
@@ -32,14 +30,14 @@ public class MessageBox : MonoBehaviour
 
     [SerializeField] private GameObject scrollCardDisplay;
     private Card currentSelectedCard;
-    private List<Card> multipleSelectedCards = new List<Card>();
+    private readonly List<Card> multipleSelectedCards = new List<Card>();
 
-    public Card GETSelectedCard()
+    public Card GetSelectedCard()
     {
         return currentSelectedCard;
     }
 
-    public List<Card> GETMultipleSelectedCards() {
+    public List<Card> GetMultipleSelectedCards() {
         return multipleSelectedCards;
     }
 
@@ -47,7 +45,7 @@ public class MessageBox : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        OnHover.cardSelectedEvent.AddListener(ONCardSelected);
+        OnHover.CardSelectedEvent.AddListener(OnCardSelected);
         titleText.text = title;
         descriptionText.text = description;
 
@@ -59,14 +57,7 @@ public class MessageBox : MonoBehaviour
             okButton.SetActive(true);
 
             var okBtn = okButton.GetComponent<Button>();
-            if (OkAction != null)
-            {
-                okBtn.onClick.AddListener(OkAction);
-            }
-            else
-            {
-                okBtn.onClick.AddListener(() => { Destroy(gameObject); });
-            }
+            okBtn.onClick.AddListener(OkAction ?? (() => { Destroy(gameObject); }));
         }
         else
         {
@@ -88,15 +79,15 @@ public class MessageBox : MonoBehaviour
         scrollCardDisplay.SetActive(displayCards);
     }
 
-    private void ONCardSelected(Card card)
+    private void OnCardSelected(Card card)
     {
-        if (multipleCardSelection) {
-            if (!multipleSelectedCards.Contains(card))  {
-                if (numberCardInSelection == multipleSelectedCards.Count) {
-                    multipleSelectedCards.RemoveAt(0);
-                }
-                multipleSelectedCards.Add(card);
+        if (multipleCardSelection)
+        {
+            if (multipleSelectedCards.Contains(card)) return;
+            if (numberCardInSelection == multipleSelectedCards.Count) {
+                multipleSelectedCards.RemoveAt(0);
             }
+            multipleSelectedCards.Add(card);
         } else {
             currentSelectedCard = card;
         }

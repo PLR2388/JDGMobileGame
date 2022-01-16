@@ -1,14 +1,13 @@
-﻿using UnityEngine;
+﻿using Cards;
+using UnityEngine;
 
 public class InfiniteScroll : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
     [SerializeField] private GameObject messageBox;
 
-    private int numberSelected = 0;
-    private int numberRare = 0;
-
-    private const int MAXSelectedCards = 30;
+    private int numberSelected;
+    private int numberRare;
 
     // Start is called before the first frame update
     private void Start()
@@ -45,11 +44,11 @@ public class InfiniteScroll : MonoBehaviour
             if (childGameObject.GetComponent<OnHover>() == null) continue;
             var isSelected = childGameObject.GetComponent<OnHover>().bIsSelected;
             if (!isSelected) continue;
-            if (numberSelected < GameState.maxDeckCards)
+            if (numberSelected < GameState.MaxDeckCards)
             {
                 numberSelected++;
                 if (!childGameObject.GetComponent<CardDisplay>().card.Collector) continue;
-                if (numberRare < GameState.maxRare)
+                if (numberRare < GameState.MaxRare)
                 {
                     numberRare++;
                 }

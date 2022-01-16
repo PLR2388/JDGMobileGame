@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Cards;
+using Cards.EquipmentCards;
+using Cards.InvocationCards;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Card", menuName = "EquipmentCard")]

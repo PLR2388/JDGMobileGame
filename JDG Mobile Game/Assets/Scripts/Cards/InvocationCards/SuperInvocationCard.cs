@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cards.InvocatonCards
+namespace Cards.InvocationCards
 {
     [CreateAssetMenu(fileName = "New Card", menuName = "SuperInvocationCard")]
     public class SuperInvocationCard : InvocationCard

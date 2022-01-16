@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
+using Cards;
+using Cards.InvocationCards;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,22 +12,22 @@ public class GameState : MonoBehaviour
     [FormerlySerializedAs("DeckP1")] public List<Card> deckP1;
     [FormerlySerializedAs("DeckP2")] public List<Card> deckP2;
 
-    private static GameState _instance;
+    private static GameState instance;
 
-    public static readonly int maxDeckCards = 30;
-    public static readonly int maxRare = 5;
+    public const int MaxDeckCards = 30;
+    public const int MaxRare = 5;
 
 
     public static GameState Instance
     {
         get
         {
-            if (_instance == null)
+            if (instance == null)
             {
-                _instance = GameObject.FindObjectOfType<GameState>();
+                instance = FindObjectOfType<GameState>();
             }
 
-            return _instance;
+            return instance;
         }
     }
 
@@ -35,13 +38,9 @@ public class GameState : MonoBehaviour
 
     private void InitCards()
     {
-        foreach (var card in allCards)
+        foreach (var invocationCard in allCards.Where(card => card.Type == CardType.Invocation).Cast<InvocationCard>())
         {
-            if (card.Type == CardType.Invocation)
-            {
-                var invocationCard = (InvocationCard)card;
-                invocationCard.Init();
-            }
+            invocationCard.Init();
         }
     }
 

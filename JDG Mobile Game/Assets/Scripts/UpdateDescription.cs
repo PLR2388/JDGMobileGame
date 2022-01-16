@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Globalization;
+using Cards;
+using Cards.InvocationCards;
+using UnityEngine;
 
 public class UpdateDescription : MonoBehaviour
 {
@@ -38,27 +41,20 @@ public class UpdateDescription : MonoBehaviour
             }
 
             familyText.GetComponent<TMPro.TextMeshProUGUI>().text = familyFormatText;
-            attackText.GetComponent<TMPro.TextMeshProUGUI>().text = invocationCard.GetAttack().ToString();
-            defenseText.GetComponent<TMPro.TextMeshProUGUI>().text = invocationCard.GetDefense().ToString();
+            attackText.GetComponent<TMPro.TextMeshProUGUI>().text = invocationCard.GetAttack().ToString(CultureInfo.InvariantCulture);
+            defenseText.GetComponent<TMPro.TextMeshProUGUI>().text = invocationCard.GetDefense().ToString(CultureInfo.InvariantCulture);
         }
         else
         {
             allInvocationOptions.SetActive(false);
-            switch (card.Type)
+            cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Type switch
             {
-                case CardType.Effect:
-                    cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte EFFET";
-                    break;
-                case CardType.Contre:
-                    cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte CONTRE";
-                    break;
-                case CardType.Equipment:
-                    cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte ÉQUIPEMENT";
-                    break;
-                case CardType.Field:
-                    cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte TERRAIN";
-                    break;
-            }
+                CardType.Effect => "Carte EFFET",
+                CardType.Contre => "Carte CONTRE",
+                CardType.Equipment => "Carte ÉQUIPEMENT",
+                CardType.Field => "Carte TERRAIN",
+                _ => cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text
+            };
         }
 
         collectorImage.SetActive(card.Collector);

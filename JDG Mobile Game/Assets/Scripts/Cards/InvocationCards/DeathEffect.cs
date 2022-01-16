@@ -1,7 +1,10 @@
-﻿public enum DeathEffect
+﻿namespace Cards.InvocationCards
 {
-    ComeBackToHand,
-    GetSpecificCard,
-    GetCardSource,
-    KillAlsoOtherCard
+    public enum DeathEffect
+    {
+        ComeBackToHand,
+        GetSpecificCard,
+        GetCardSource,
+        KillAlsoOtherCard
+    }
 }

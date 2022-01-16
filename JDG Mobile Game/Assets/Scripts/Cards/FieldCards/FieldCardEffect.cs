@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "FieldCardEffect", menuName = "FieldCardEffect")]
-public class FieldCardEffect : ScriptableObject
+namespace Cards.FieldCards
 {
-    [SerializeField] private List<FieldEffect> keys;
-    [SerializeField] private List<string> values;
+    [CreateAssetMenu(fileName = "FieldCardEffect", menuName = "FieldCardEffect")]
+    public class FieldCardEffect : ScriptableObject
+    {
+        [SerializeField] private List<FieldEffect> keys;
+        [SerializeField] private List<string> values;
 
-    public List<FieldEffect> Keys => keys;
+        public List<FieldEffect> Keys => keys;
 
-    public List<string> Values => values;
+        public List<string> Values => values;
+    }
 }

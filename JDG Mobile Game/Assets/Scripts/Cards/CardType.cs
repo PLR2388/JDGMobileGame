@@ -1,8 +1,11 @@
-﻿public enum CardType
+﻿namespace Cards
 {
-    Contre,
-    Effect,
-    Equipment,
-    Field,
-    Invocation
+    public enum CardType
+    {
+        Contre,
+        Effect,
+        Equipment,
+        Field,
+        Invocation
+    }
 }

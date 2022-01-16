@@ -1,20 +1,23 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Card", menuName = "FieldCard")]
-public class FieldCard : Card
+namespace Cards.FieldCards
 {
-    [SerializeField] private CardFamily family;
-    [SerializeField] private FieldCardEffect fieldCardEffect;
-
-    public FieldCardEffect FieldCardEffect => fieldCardEffect;
-
-    private void Awake()
+    [CreateAssetMenu(fileName = "New Card", menuName = "FieldCard")]
+    public class FieldCard : Card
     {
-        this.type = CardType.Field;
-    }
+        [SerializeField] private CardFamily family;
+        [SerializeField] private FieldCardEffect fieldCardEffect;
 
-    public CardFamily GETFamily()
-    {
-        return family;
+        public FieldCardEffect FieldCardEffect => fieldCardEffect;
+
+        private void Awake()
+        {
+            this.type = CardType.Field;
+        }
+
+        public CardFamily GetFamily()
+        {
+            return family;
+        }
     }
 }

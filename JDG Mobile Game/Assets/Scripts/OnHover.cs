@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cards;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -16,7 +17,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public bool bIsInGame = false;
     private Card card;
 
-    public static CardSelectedEvent cardSelectedEvent = new CardSelectedEvent();
+    public static readonly CardSelectedEvent CardSelectedEvent = new CardSelectedEvent();
 
 
     private void Start()
@@ -72,7 +73,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
                 image.color = Color.green;
                 bIsSelected = true;
                 var clickedCard = gameObject.GetComponent<CardDisplay>().card;
-                cardSelectedEvent.Invoke(clickedCard);
+                CardSelectedEvent.Invoke(clickedCard);
             }
         }
         else

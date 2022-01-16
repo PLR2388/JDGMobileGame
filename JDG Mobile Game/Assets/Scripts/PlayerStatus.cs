@@ -10,7 +10,7 @@ public class ChangePvEvent : UnityEvent<float, bool>
 public class PlayerStatus : MonoBehaviour
 {
     public static readonly ChangePvEvent ChangePvEvent = new ChangePvEvent();
-    public const float MAXPv = 30f;
+    public const float MaxPv = 30f;
 
     [FormerlySerializedAs("currentPV")] [SerializeField]
     private float currentPv = 30f;
@@ -24,15 +24,15 @@ public class PlayerStatus : MonoBehaviour
     public void ChangePv(float pv)
     {
         currentPv += pv;
-        if (currentPv > MAXPv)
+        if (currentPv > MaxPv)
         {
-            currentPv = MAXPv;
+            currentPv = MaxPv;
         }
 
         ChangePvEvent.Invoke(currentPv, isP1);
     }
 
-    public float GETCurrentPv()
+    public float GetCurrentPv()
     {
         return currentPv;
     }

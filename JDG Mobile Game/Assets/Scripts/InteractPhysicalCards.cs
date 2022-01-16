@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cards;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class InteractPhysicalCards : MonoBehaviour
@@ -24,6 +25,7 @@ public class InteractPhysicalCards : MonoBehaviour
     {
         if (startTime > 1f)
         {
+            if (Camera.main == null) return;
             var hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitInfo);
             if (hit)
             {

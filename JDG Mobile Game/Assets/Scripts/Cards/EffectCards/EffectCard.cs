@@ -1,38 +1,39 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Serialization;
 
-[CreateAssetMenu(fileName = "New Card", menuName = "EffectCard")]
-public class EffectCard : Card
+namespace Cards.EffectCards
 {
-    [SerializeField] private EffectCardEffect effectCardEffect;
-    [SerializeField] private int lifeTime; // Time in laps before the effect stop
-    [SerializeField] public bool checkTurn = false;
-    [SerializeField] public float affectPV = 0f;
-
-    public EffectCardEffect GetEffectCardEffect()
+    [CreateAssetMenu(fileName = "New Card", menuName = "EffectCard")]
+    public class EffectCard : Card
     {
-        return effectCardEffect;
-    }
+        [SerializeField] private EffectCardEffect effectCardEffect;
+        [SerializeField] private int lifeTime; // Time in laps before the effect stop
+        [SerializeField] public bool checkTurn;
+        [FormerlySerializedAs("affectPV")] [SerializeField] public float affectPv;
 
-    private void Awake()
-    {
-        type = CardType.Effect;
-    }
+        public EffectCardEffect GetEffectCardEffect()
+        {
+            return effectCardEffect;
+        }
 
-    public int GetLifeTime()
-    {
-        return lifeTime;
-    }
+        private void Awake()
+        {
+            type = CardType.Effect;
+        }
 
-    public void SetLifeTime(int life)
-    {
-        lifeTime = life;
-    }
+        public int GetLifeTime()
+        {
+            return lifeTime;
+        }
 
-    public void DecrementLifeTime()
-    {
-        lifeTime -= 1;
+        public void SetLifeTime(int life)
+        {
+            lifeTime = life;
+        }
+
+        public void DecrementLifeTime()
+        {
+            lifeTime -= 1;
+        }
     }
 }

@@ -1,4 +1,8 @@
-﻿using TMPro;
+﻿using Cards;
+using Cards.EffectCards;
+using Cards.FieldCards;
+using Cards.InvocationCards;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;

@@ -10,13 +10,11 @@ public class HandCardDisplay : MonoBehaviour
 
     [FormerlySerializedAs("Player2")] public GameObject player2;
 
-    private GameLoop gameLoop;
-
     private List<GameObject> createdCards;
 
     private void Awake()
     {
-        gameLoop = GameObject.Find("GameLoop").GetComponent<GameLoop>();
+        GameObject.Find("GameLoop").GetComponent<GameLoop>();
         createdCards = new List<GameObject>();
     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cards;
 using UnityEngine;
 
 public class DisplayCards : MonoBehaviour

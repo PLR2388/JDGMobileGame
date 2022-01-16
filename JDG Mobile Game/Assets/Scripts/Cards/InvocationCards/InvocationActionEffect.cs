@@ -1,32 +1,23 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "InvocationCondition", menuName = "InvocationActionEffect")]
-public class InvocationActionEffect : ScriptableObject
+namespace Cards.InvocationCards
 {
-    [SerializeField] private List<ActionEffect> keys;
-    [SerializeField] private List<string> values;
-
-    public List<ActionEffect> Keys
+    [CreateAssetMenu(fileName = "InvocationCondition", menuName = "InvocationActionEffect")]
+    public class InvocationActionEffect : ScriptableObject
     {
-        get
-        {
-            return keys;
-        }
-        set
-        {
-            keys = value;
-        }
-    } 
+        [SerializeField] private List<ActionEffect> keys;
+        [SerializeField] private List<string> values;
 
-    public List<string> Values {
-        get
+        public List<ActionEffect> Keys
         {
-            return values;
-        }
-        set
-        {
-            values = value;
+            get => keys;
+            set => keys = value;
+        } 
+
+        public List<string> Values {
+            get => values;
+            set => values = value;
         }
     }
 }

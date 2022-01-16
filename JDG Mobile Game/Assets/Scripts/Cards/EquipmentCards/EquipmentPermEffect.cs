@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EquipmentCondition", menuName = "EquipmentPermEffect")]
-public class EquipmentPermEffect : ScriptableObject
+namespace Cards.EquipmentCards
 {
-    [SerializeField] private List<PermanentEffect> keys;
-    [SerializeField] private List<string> values;
+    [CreateAssetMenu(fileName = "EquipmentCondition", menuName = "EquipmentPermEffect")]
+    public class EquipmentPermEffect : ScriptableObject
+    {
+        [SerializeField] private List<PermanentEffect> keys;
+        [SerializeField] private List<string> values;
 
-    public List<PermanentEffect> Keys => keys;
+        public List<PermanentEffect> Keys => keys;
 
-    public List<string> Values => values;
+        public List<string> Values => values;
+    }
 }
