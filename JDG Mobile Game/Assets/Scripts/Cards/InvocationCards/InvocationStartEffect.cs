@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cards.InvocationCards;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "InvocationCondition", menuName = "InvocationStartEffect")]
