@@ -77,7 +77,7 @@ namespace Cards.EffectCards
                 {
                     case Effect.AffectOpponent:
                     {
-                        isValid = CanUseAffectOpponent(value, pvAffected, isValid);
+                        isValid = CanUseAffectOpponent(value, pvAffected, isValid, out affectOpponent);
                     }
                         break;
                     case Effect.DestroyCards:
@@ -112,17 +112,12 @@ namespace Cards.EffectCards
                         break;
                     case Effect.Combine:
                     {
-                        var numberCombine = Int32.Parse(value);
-                        var currentInvocationCards = currentPlayerCard.invocationCards;
-                        isValid &= currentInvocationCards.Count >= numberCombine;
+                        isValid = CanUseCombine(value, isValid);
                     }
                         break;
                     case Effect.TakeControl:
                     {
-                        var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
-                            .Cast<Card>().ToList();
-
-                        isValid &= invocationCardOpponent.Count > 0 && currentPlayerCard.invocationCards.Count < 4;
+                        isValid = CanUseTakeControl(isValid);
                     }
                         break;
                     case Effect.NumberAttacks:
@@ -144,18 +139,17 @@ namespace Cards.EffectCards
                         break;
                     case Effect.AttackDirectly:
                     {
-                        var minValue = float.Parse(value);
-                        isValid &= opponentPlayerStatus.GetCurrentPv() < minValue;
+                        isValid = CanUseAttackDirectly(value, isValid);
                     }
                         break;
                     case Effect.ProtectAttack:
                     {
-                        isValid &= currentPlayerCard.invocationCards.Count == 0;
+                        isValid = CanUseProtectAttack(isValid);
                     }
                         break;
                     case Effect.SkipFieldsEffect:
                     {
-                        isValid &= currentPlayerCard.field != null || opponentPlayerCard.field != null;
+                        isValid = CanUseSkipFieldsEffect(isValid);
                     }
                         break;
                     case Effect.ChangeField:
@@ -173,47 +167,22 @@ namespace Cards.EffectCards
                         break;
                     case Effect.RemoveHand:
                     {
-                        var numberCardToRemove = int.Parse(values[i]);
-                        // This card + number to remove
-                        isValid &= currentPlayerCard.handCards.Count > numberCardToRemove;
+                        isValid = CanUseRemoveHand(values, i, isValid);
                     }
                         break;
                     case Effect.AffectPv:
                     {
-                        if (!float.TryParse(value, out pvAffected))
-                        {
-                            if (value == "all")
-                            {
-                                pvAffected = 999;
-                            }
-                        }
+                        CanUseAffectPv(value,out pvAffected);
                     }
                         break;
                     case Effect.Sources:
                     {
-                        if (changeField)
-                        {
-                            if (value == "deck")
-                            {
-                                List<Card> fieldCardsInDeck =
-                                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
-                                isValid &= fieldCardsInDeck.Count > 0;
-                            }
-                        }
-                        else if (handCard > 0)
-                        {
-                            if (value == "deck;yellow")
-                            {
-                                isValid &= (currentPlayerCard.deck.Count + currentPlayerCard.yellowTrash.Count) >=
-                                           handCard;
-                            }
-                        }
+                        isValid = CanUseSources(changeField, value, isValid, handCard);
                     }
                         break;
                     case Effect.ChangeHandCards:
                     {
-                        handCard = int.Parse(value);
-                        isValid &= currentPlayerCard.handCards.Count > handCard;
+                        isValid = CanUseChangeHandCards(value, isValid,out handCard);
                     }
                         break;
                     case Effect.NumberInvocationCard:
@@ -235,6 +204,87 @@ namespace Cards.EffectCards
                 }
             }
 
+            return isValid;
+        }
+
+        private bool CanUseChangeHandCards(string value, bool isValid,out int handCard)
+        {
+            handCard = int.Parse(value);
+            isValid &= currentPlayerCard.handCards.Count > handCard;
+            return isValid;
+        }
+
+        private bool CanUseSources(bool changeField, string value, bool isValid, int handCard)
+        {
+            if (changeField)
+            {
+                if (value != "deck") return isValid;
+                var fieldCardsInDeck =
+                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
+                isValid &= fieldCardsInDeck.Count > 0;
+            }
+            else if (handCard > 0)
+            {
+                if (value == "deck;yellow")
+                {
+                    isValid &= (currentPlayerCard.deck.Count + currentPlayerCard.yellowTrash.Count) >=
+                               handCard;
+                }
+            }
+
+            return isValid;
+        }
+
+        private static void CanUseAffectPv(string value, out float pvAffected)
+        {
+            if (float.TryParse(value, out pvAffected)) return;
+            if (value == "all")
+            {
+                pvAffected = 999;
+            }
+        }
+
+        private bool CanUseRemoveHand(IReadOnlyList<string> values, int i, bool isValid)
+        {
+            var numberCardToRemove = int.Parse(values[i]);
+            // This card + number to remove
+            isValid &= currentPlayerCard.handCards.Count > numberCardToRemove;
+            return isValid;
+        }
+
+        private bool CanUseSkipFieldsEffect(bool isValid)
+        {
+            isValid &= currentPlayerCard.field != null || opponentPlayerCard.field != null;
+            return isValid;
+        }
+
+        private bool CanUseProtectAttack(bool isValid)
+        {
+            isValid &= currentPlayerCard.invocationCards.Count == 0;
+            return isValid;
+        }
+
+        private bool CanUseAttackDirectly(string value, bool isValid)
+        {
+            var minValue = float.Parse(value);
+            isValid &= opponentPlayerStatus.GetCurrentPv() < minValue;
+            return isValid;
+        }
+
+        private bool CanUseTakeControl(bool isValid)
+        {
+            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
+                .Cast<Card>().ToList();
+
+            isValid &= invocationCardOpponent.Count > 0 && currentPlayerCard.invocationCards.Count < 4;
+            return isValid;
+        }
+
+        private bool CanUseCombine(string value, bool isValid)
+        {
+            var numberCombine = int.Parse(value);
+            var currentInvocationCards = currentPlayerCard.invocationCards;
+            isValid &= currentInvocationCards.Count >= numberCombine;
             return isValid;
         }
 
@@ -371,9 +421,8 @@ namespace Cards.EffectCards
             return isValid;
         }
 
-        private bool CanUseAffectOpponent(string value, float pvAffected, bool isValid)
+        private bool CanUseAffectOpponent(string value, float pvAffected, bool isValid,out bool affectOpponent)
         {
-            bool affectOpponent;
             affectOpponent = bool.Parse(value);
             if (pvAffected != 0 && !affectOpponent)
             {
@@ -887,6 +936,12 @@ namespace Cards.EffectCards
                     {
                     }
                         break;
+                    case Effect.DestroyCards:
+                        break;
+                    case Effect.AttackDirectly:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
@@ -968,7 +1023,7 @@ namespace Cards.EffectCards
 
         private void ApplyCombine(EffectCard effectCard, string value)
         {
-            var numberCombine = Int32.Parse(value);
+            var numberCombine = int.Parse(value);
             var currentInvocationCards = currentPlayerCard.invocationCards;
             if (currentInvocationCards.Count < numberCombine) return;
             var cards = currentInvocationCards.Cast<Card>().ToList();
@@ -1093,12 +1148,12 @@ namespace Cards.EffectCards
         {
             var size = currentPlayerCard.deck.Count;
             if (size <= 0) return;
-            Card c = currentPlayerCard.deck[size - 1];
+            var c = currentPlayerCard.deck[size - 1];
             currentPlayerCard.yellowTrash.Add(c);
             currentPlayerCard.deck.RemoveAt(size - 1);
         }
 
-        private void ApplyRemoveHand(EffectCard effectCard)
+        private void ApplyRemoveHand(Card effectCard)
         {
             var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
             handCardPlayer.Remove(effectCard);
@@ -1157,27 +1212,25 @@ namespace Cards.EffectCards
                 message1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var cardOpponent = message1.GetComponent<MessageBox>().GetSelectedCard();
-                    if (cardOpponent.IsValid())
+                    if (!cardOpponent.IsValid()) return;
+                    Destroy(message1);
+                    var handCardPlayer = currentPlayerCard.handCards;
+                    var message2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                        "Quel carte veux-tu te défausser?", handCardPlayer);
+
+                    message2.GetComponent<MessageBox>().PositiveAction = () =>
                     {
-                        Destroy(message1);
-                        var handCardPlayer = currentPlayerCard.handCards;
-                        var message2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                            "Quel carte veux-tu te défausser?", handCardPlayer);
-
-                        message2.GetComponent<MessageBox>().PositiveAction = () =>
+                        var cardPlayer = message2.GetComponent<MessageBox>().GetSelectedCard();
+                        if (cardPlayer.IsValid())
                         {
-                            var cardPlayer = message2.GetComponent<MessageBox>().GetSelectedCard();
-                            if (cardPlayer.IsValid())
-                            {
-                                currentPlayerCard.yellowTrash.Add(cardPlayer);
-                                opponentPlayerCard.yellowTrash.Add(cardOpponent);
-                                currentPlayerCard.handCards.Remove(cardPlayer);
-                                opponentPlayerCard.handCards.Remove(cardOpponent);
-                            }
+                            currentPlayerCard.yellowTrash.Add(cardPlayer);
+                            opponentPlayerCard.yellowTrash.Add(cardOpponent);
+                            currentPlayerCard.handCards.Remove(cardPlayer);
+                            opponentPlayerCard.handCards.Remove(cardOpponent);
+                        }
 
-                            Destroy(message2);
-                        };
-                    }
+                        Destroy(message2);
+                    };
                 };
                 message1.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message1); };
             };
@@ -1279,7 +1332,7 @@ namespace Cards.EffectCards
 
         private static int ApplyChangeHandCards(string value)
         {
-            int handCardsNumber = int.Parse(value);
+            var handCardsNumber = int.Parse(value);
             return handCardsNumber;
         }
 

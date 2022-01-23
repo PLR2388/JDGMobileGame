@@ -112,53 +112,32 @@ namespace Cards.EquipmentCards
                 {
                     case InstantEffect.AddAtk:
                     {
-                        var newBonusAttack = float.Parse(values[i]) + invocationCard.GetBonusAttack();
-                        invocationCard.SetBonusAttack(newBonusAttack);
+                        DealWithInstantEffectAddAtk(invocationCard, values[i]);
                     }
                         break;
                     case InstantEffect.AddDef:
                     {
-                        var newBonusDefense = float.Parse(values[i]) + invocationCard.GetBonusDefense();
-                        invocationCard.SetBonusDefense(newBonusDefense);
+                        DealWithInstantEffectAddDef(invocationCard, values[i]);
                     }
                         break;
                     case InstantEffect.MultiplyAtk:
                     {
-                        var multiplicator = int.Parse(values[i]);
-                        if (multiplicator > 1)
-                        {
-                            var newBonusAttack = (multiplicator - 1) * invocationCard.GetAttack() + invocationCard.GetBonusAttack();
-                            invocationCard.SetBonusAttack(newBonusAttack);
-                        }
+                        DealWithInstantEffectMultiplyAtk(invocationCard, values[i]);
                     }
                         break;
                     case InstantEffect.MultiplyDef:
                     {
-                        var multiplicator = int.Parse(values[i]);
-                        if (multiplicator > 1)
-                        {
-                            var newBonusDefense = (multiplicator - 1) * invocationCard.GetDefense() + invocationCard.GetBonusDefense();
-                            invocationCard.SetBonusDefense(newBonusDefense);
-                        } else if (multiplicator < 0)
-                        {
-                            var newBonusDefense = (invocationCard.GetDefense() / multiplicator) + invocationCard.GetBonusDefense();
-                            invocationCard.SetBonusDefense(newBonusDefense);
-                        }
-               
+                        DealWithInstantEffectMultiplyDef(invocationCard, values[i]);
                     }
                         break;
                     case InstantEffect.SetAtk:
                     {
-                        var specificAtk = float.Parse(values[i]);
-                        var newBonusAttack = specificAtk - invocationCard.GetAttack();
-                        invocationCard.SetBonusAttack(newBonusAttack);
+                        DealWithInstantEffectSetAtk(invocationCard, values[i]);
                     }
                         break;
                     case InstantEffect.SetDef:
                     {
-                        var specificDef = float.Parse(values[i]);
-                        var newBonusDefense = specificDef - invocationCard.GetDefense();
-                        invocationCard.SetBonusDefense(newBonusDefense);
+                        DealWithInstantEffectSetDef(invocationCard, values[i]);
                     }
                         break;
                     case InstantEffect.BlockAtk:
@@ -168,11 +147,7 @@ namespace Cards.EquipmentCards
                         break;
                     case InstantEffect.SwitchEquipment:
                     {
-                        if (invocationCard.GETEquipmentCard() != null)
-                        {
-                            CurrentPlayerCard.yellowTrash.Add(invocationCard.GETEquipmentCard());
-                            invocationCard.SetEquipmentCard(null);
-                        }
+                        DealWithInstantEffectSwitchEquipment(invocationCard);
                     }
                         break;
                     case InstantEffect.DisableBonus:
@@ -187,6 +162,64 @@ namespace Cards.EquipmentCards
             }
         }
 
+        private static void DealWithInstantEffectSwitchEquipment(InvocationCard invocationCard)
+        {
+            if (invocationCard.GETEquipmentCard() == null) return;
+            CurrentPlayerCard.yellowTrash.Add(invocationCard.GETEquipmentCard());
+            invocationCard.SetEquipmentCard(null);
+        }
+
+        private static void DealWithInstantEffectSetDef(InvocationCard invocationCard, string value)
+        {
+            var specificDef = float.Parse(value);
+            var newBonusDefense = specificDef - invocationCard.GetDefense();
+            invocationCard.SetBonusDefense(newBonusDefense);
+        }
+
+        private static void DealWithInstantEffectSetAtk(InvocationCard invocationCard, string value)
+        {
+            var specificAtk = float.Parse(value);
+            var newBonusAttack = specificAtk - invocationCard.GetAttack();
+            invocationCard.SetBonusAttack(newBonusAttack);
+        }
+
+        private static void DealWithInstantEffectMultiplyDef(InvocationCard invocationCard, string value)
+        {
+            var multiplicator = int.Parse(value);
+            if (multiplicator > 1)
+            {
+                var newBonusDefense = (multiplicator - 1) * invocationCard.GetDefense() + invocationCard.GetBonusDefense();
+                invocationCard.SetBonusDefense(newBonusDefense);
+            }
+            else if (multiplicator < 0)
+            {
+                var newBonusDefense = (invocationCard.GetDefense() / multiplicator) + invocationCard.GetBonusDefense();
+                invocationCard.SetBonusDefense(newBonusDefense);
+            }
+        }
+
+        private static void DealWithInstantEffectMultiplyAtk(InvocationCard invocationCard, string value)
+        {
+            var multiplicator = int.Parse(value);
+            if (multiplicator > 1)
+            {
+                var newBonusAttack = (multiplicator - 1) * invocationCard.GetAttack() + invocationCard.GetBonusAttack();
+                invocationCard.SetBonusAttack(newBonusAttack);
+            }
+        }
+
+        private static void DealWithInstantEffectAddDef(InvocationCard invocationCard, string value)
+        {
+            var newBonusDefense = float.Parse(value) + invocationCard.GetBonusDefense();
+            invocationCard.SetBonusDefense(newBonusDefense);
+        }
+
+        private static void DealWithInstantEffectAddAtk(InvocationCard invocationCard, string value)
+        {
+            var newBonusAttack = float.Parse(value) + invocationCard.GetBonusAttack();
+            invocationCard.SetBonusAttack(newBonusAttack);
+        }
+
         private static void DealWithPermEffect(InvocationCard invocationCard, EquipmentPermEffect equipmentPermEffect)
         {
             var keys = equipmentPermEffect.Keys;
@@ -198,20 +231,36 @@ namespace Cards.EquipmentCards
                 {
                     case PermanentEffect.AddAtkBaseOnHandCards:
                     {
-                        var value = float.Parse(values[i]);
-                        var newBonusAttack = value * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusAttack();
-                        invocationCard.SetBonusAttack(newBonusAttack);
+                        DealWithPermEffectAddAtkBaseOnHandCards(invocationCard, values[i]);
                     }
                         break;
                     case PermanentEffect.AddDefBaseOnHandCards:
                     {
-                        var value = float.Parse(values[i]);
-                        var newBonusDefense = value * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusDefense();
-                        invocationCard.SetBonusDefense(newBonusDefense);
+                        DealWithPermEffectAddDefBaseOnHandCards(invocationCard, values[i]);
                     }
                         break;
+                    case PermanentEffect.BlockOpponentDuringInvocation:
+                        break;
+                    case PermanentEffect.PreventAttackOnInvocation:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
+        }
+
+        private static void DealWithPermEffectAddDefBaseOnHandCards(InvocationCard invocationCard, string value)
+        {
+            var floatValue = float.Parse(value);
+            var newBonusDefense = floatValue * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusDefense();
+            invocationCard.SetBonusDefense(newBonusDefense);
+        }
+
+        private static void DealWithPermEffectAddAtkBaseOnHandCards(InvocationCard invocationCard, string value)
+        {
+            var floatValue = float.Parse(value);
+            var newBonusAttack = floatValue * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusAttack();
+            invocationCard.SetBonusAttack(newBonusAttack);
         }
     }
 }

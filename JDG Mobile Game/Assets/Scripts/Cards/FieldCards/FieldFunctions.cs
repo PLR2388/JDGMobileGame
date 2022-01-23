@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Cards.FieldCards
@@ -43,24 +45,10 @@ namespace Cards.FieldCards
                 switch (keys[i])
                 {
                     case FieldEffect.ATK:
-                        // Must be called also when invocationCards change
-                        var atk = float.Parse(values[i]);
-                        foreach (var invocationCard in playerCards.invocationCards)
-                        {
-                            if (!invocationCard.GetFamily().Contains(family)) continue;
-                            var newBonusAttack = invocationCard.GetBonusAttack() + atk;
-                            invocationCard.SetBonusAttack(newBonusAttack);
-                        }
+                        ApplyATK(playerCards, values, i, family);
                         break;
                     case FieldEffect.DEF:
-                        // Must be called also when invocationCards change
-                        var def = float.Parse(values[i]);
-                        foreach (var invocationCard in playerCards.invocationCards)
-                        {
-                            if (!invocationCard.GetFamily().Contains(family)) continue;
-                            var newBonusAttack = invocationCard.GetBonusDefense() + def;
-                            invocationCard.SetBonusDefense(newBonusAttack);
-                        }
+                        ApplyDEF(playerCards, values, i, family);
                         break;
                     case FieldEffect.GetCard:
                         // Move to Draw phase
@@ -72,17 +60,48 @@ namespace Cards.FieldCards
                         // Move to Draw phase
                         break;
                     case FieldEffect.Change:
-                        // Must be called also when invocationCards change
-                        var names = values[i].Split(';');
-                        foreach (var invocationCard in playerCards.invocationCards)
-                        {
-                            if (names.Contains(invocationCard.Nom))
-                            {
-                                invocationCard.SetCurrentFamily(family);
-                            }
-                        }
+                        ApplyChange(playerCards, values, i, family);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
+            }
+        }
+
+        private static void ApplyChange(PlayerCards playerCards, List<string> values, int i, CardFamily family)
+        {
+            // Must be called also when invocationCards change
+            var names = values[i].Split(';');
+            foreach (var invocationCard in playerCards.invocationCards)
+            {
+                if (names.Contains(invocationCard.Nom))
+                {
+                    invocationCard.SetCurrentFamily(family);
+                }
+            }
+        }
+
+        private static void ApplyDEF(PlayerCards playerCards, List<string> values, int i, CardFamily family)
+        {
+            // Must be called also when invocationCards change
+            var def = float.Parse(values[i]);
+            foreach (var invocationCard in playerCards.invocationCards)
+            {
+                if (!invocationCard.GetFamily().Contains(family)) continue;
+                var newBonusAttack = invocationCard.GetBonusDefense() + def;
+                invocationCard.SetBonusDefense(newBonusAttack);
+            }
+        }
+
+        private static void ApplyATK(PlayerCards playerCards, List<string> values, int i, CardFamily family)
+        {
+            // Must be called also when invocationCards change
+            var atk = float.Parse(values[i]);
+            foreach (var invocationCard in playerCards.invocationCards)
+            {
+                if (!invocationCard.GetFamily().Contains(family)) continue;
+                var newBonusAttack = invocationCard.GetBonusAttack() + atk;
+                invocationCard.SetBonusAttack(newBonusAttack);
             }
         }
 
