@@ -42,13 +42,14 @@ namespace Cards.FieldCards
             var family = fieldCard.GetFamily();
             for (var i = 0; i < keys.Count; i++)
             {
+                var value = values[i];
                 switch (keys[i])
                 {
                     case FieldEffect.ATK:
-                        ApplyATK(playerCards, values, i, family);
+                        ApplyAtk(playerCards, value, family);
                         break;
                     case FieldEffect.DEF:
-                        ApplyDEF(playerCards, values, i, family);
+                        ApplyDef(playerCards, value, family);
                         break;
                     case FieldEffect.GetCard:
                         // Move to Draw phase
@@ -60,7 +61,7 @@ namespace Cards.FieldCards
                         // Move to Draw phase
                         break;
                     case FieldEffect.Change:
-                        ApplyChange(playerCards, values, i, family);
+                        ApplyChange(playerCards, value, family);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -68,23 +69,20 @@ namespace Cards.FieldCards
             }
         }
 
-        private static void ApplyChange(PlayerCards playerCards, List<string> values, int i, CardFamily family)
+        private static void ApplyChange(PlayerCards playerCards, string value, CardFamily family)
         {
             // Must be called also when invocationCards change
-            var names = values[i].Split(';');
-            foreach (var invocationCard in playerCards.invocationCards)
+            var names = value.Split(';');
+            foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard => names.Contains(invocationCard.Nom)))
             {
-                if (names.Contains(invocationCard.Nom))
-                {
-                    invocationCard.SetCurrentFamily(family);
-                }
+                invocationCard.SetCurrentFamily(family);
             }
         }
 
-        private static void ApplyDEF(PlayerCards playerCards, List<string> values, int i, CardFamily family)
+        private static void ApplyDef(PlayerCards playerCards, string value, CardFamily family)
         {
             // Must be called also when invocationCards change
-            var def = float.Parse(values[i]);
+            var def = float.Parse(value);
             foreach (var invocationCard in playerCards.invocationCards)
             {
                 if (!invocationCard.GetFamily().Contains(family)) continue;
@@ -93,10 +91,10 @@ namespace Cards.FieldCards
             }
         }
 
-        private static void ApplyATK(PlayerCards playerCards, List<string> values, int i, CardFamily family)
+        private static void ApplyAtk(PlayerCards playerCards, string value, CardFamily family)
         {
             // Must be called also when invocationCards change
-            var atk = float.Parse(values[i]);
+            var atk = float.Parse(value);
             foreach (var invocationCard in playerCards.invocationCards)
             {
                 if (!invocationCard.GetFamily().Contains(family)) continue;
