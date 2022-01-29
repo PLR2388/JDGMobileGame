@@ -1,6 +1,7 @@
 ﻿namespace Cards.FieldCards
 {
-    public enum FieldEffect {
+    public enum FieldEffect
+    {
         ATK,
         DEF,
         GetCard,

@@ -105,7 +105,7 @@ public class PlayerCards : MonoBehaviour
 
     private List<InvocationCard> oldInvocationCards = new List<InvocationCard>();
     private FieldCard oldField;
-    
+
     private List<Card> oldHandCards = new List<Card>();
 
     public bool IsFieldDesactivate { get; private set; }
@@ -171,6 +171,7 @@ public class PlayerCards : MonoBehaviour
         {
             OnFieldCardChanged(field);
         }
+
         IsFieldDesactivate = true;
     }
 
@@ -269,9 +270,9 @@ public class PlayerCards : MonoBehaviour
         {
             foreach (var invocationCard in invocationCards)
             {
-                if (invocationCard.GETEquipmentCard() == null ||
-                    invocationCard.GETEquipmentCard().EquipmentPermEffect == null) continue;
-                var permEffect = invocationCard.GETEquipmentCard().EquipmentPermEffect;
+                if (invocationCard.GetEquipmentCard() == null ||
+                    invocationCard.GetEquipmentCard().EquipmentPermEffect == null) continue;
+                var permEffect = invocationCard.GetEquipmentCard().EquipmentPermEffect;
                 if (permEffect.Keys.Contains(PermanentEffect.AddAtkBaseOnHandCards))
                 {
                     var value = float.Parse(permEffect.Values[
@@ -308,8 +309,8 @@ public class PlayerCards : MonoBehaviour
 
                 allPhysicalCards[index].tag = "card1";
 
-                if (invocationCard.GETEquipmentCard() == null) continue;
-                var equipmentCard = invocationCard.GETEquipmentCard();
+                if (invocationCard.GetEquipmentCard() == null) continue;
+                var equipmentCard = invocationCard.GetEquipmentCard();
                 index = FindCard(equipmentCard);
                 allPhysicalCards[index].transform.position = equipmentCardsLocationP1[i];
                 if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
@@ -334,7 +335,8 @@ public class PlayerCards : MonoBehaviour
 
                 if (effectCard.GetEffectCardEffect().Keys.Contains(Effect.SameFamily))
                 {
-                    foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard).Where(invocationCard => field != null && !IsFieldDesactivate))
+                    foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard)
+                                 .Where(invocationCard => field != null && !IsFieldDesactivate))
                     {
                         invocationCard.SetCurrentFamily(field.GetFamily());
                     }
@@ -416,8 +418,8 @@ public class PlayerCards : MonoBehaviour
                 }
 
                 allPhysicalCards[index].tag = "card2";
-                if (invocationCard.GETEquipmentCard() == null) continue;
-                var equipmentCard = invocationCard.GETEquipmentCard();
+                if (invocationCard.GetEquipmentCard() == null) continue;
+                var equipmentCard = invocationCard.GetEquipmentCard();
                 index = FindCard(equipmentCard);
                 allPhysicalCards[index].transform.position = equipmentCardsLocationP2[i];
                 if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
@@ -518,9 +520,9 @@ public class PlayerCards : MonoBehaviour
             }
             else
             {
-                if (invocationCard.GETEquipmentCard() != null)
+                if (invocationCard.GetEquipmentCard() != null)
                 {
-                    var equipmentCard = invocationCard.GETEquipmentCard();
+                    var equipmentCard = invocationCard.GetEquipmentCard();
                     yellowTrash.Add(equipmentCard);
                     invocationCard.SetEquipmentCard(null);
                 }
@@ -548,7 +550,7 @@ public class PlayerCards : MonoBehaviour
 
     public void SendInvocationCardToYellowTrash(InvocationCard specificCardFound)
     {
-        var equipmentCard = specificCardFound.GETEquipmentCard();
+        var equipmentCard = specificCardFound.GetEquipmentCard();
         specificCardFound.SetEquipmentCard(null);
         specificCardFound.SetBonusAttack(0);
         specificCardFound.SetBonusDefense(0);
@@ -760,7 +762,10 @@ public class PlayerCards : MonoBehaviour
                             if (newInvocationCard.Nom == invocationCard.Nom)
                             {
                                 // Must catch up old cards
-                                invocationCardsToChange.AddRange(invocationCards.Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom).Where(invocationCardToCheck => invocationCardToCheck.GetFamily().Contains(cardFamily)));
+                                invocationCardsToChange.AddRange(invocationCards
+                                    .Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom)
+                                    .Where(invocationCardToCheck =>
+                                        invocationCardToCheck.GetFamily().Contains(cardFamily)));
                             }
                             else if (newInvocationCard.GetFamily().Contains(cardFamily))
                             {
@@ -776,7 +781,10 @@ public class PlayerCards : MonoBehaviour
                             if (newInvocationCard.Nom == invocationCard.Nom)
                             {
                                 // Must catch up old cards
-                                sameFamilyInvocationCards.AddRange(invocationCards.Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom).Where(invocationCardToCheck => invocationCardToCheck.GetFamily().Contains(cardFamily)));
+                                sameFamilyInvocationCards.AddRange(invocationCards
+                                    .Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom)
+                                    .Where(invocationCardToCheck =>
+                                        invocationCardToCheck.GetFamily().Contains(cardFamily)));
                             }
                             else if (newInvocationCard.GetFamily().Contains(cardFamily))
                             {
@@ -820,13 +828,13 @@ public class PlayerCards : MonoBehaviour
                         {
                             foreach (var invocationCardToChange in invocationCardsToChange)
                             {
-                                var value = invocationCardToChange.GETBonusAttack() + float.Parse(values[i]);
+                                var value = invocationCardToChange.GetBonusAttack() + float.Parse(values[i]);
                                 invocationCardToChange.SetBonusAttack(value);
                             }
                         }
                         else if (sameFamilyInvocationCards.Count > 0)
                         {
-                            var newValue = invocationCard.GETBonusAttack() +
+                            var newValue = invocationCard.GetBonusAttack() +
                                            float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                             invocationCard.SetBonusAttack(newValue);
                         }
@@ -1053,13 +1061,13 @@ public class PlayerCards : MonoBehaviour
                             {
                                 foreach (var invocationCardToChange in invocationCardsToChange)
                                 {
-                                    var value = invocationCardToChange.GETBonusAttack() - float.Parse(values[i]);
+                                    var value = invocationCardToChange.GetBonusAttack() - float.Parse(values[i]);
                                     invocationCardToChange.SetBonusAttack(value);
                                 }
                             }
                             else if (sameFamilyInvocationCards.Count > 0)
                             {
-                                var newValue = invocationCard.GETBonusAttack() -
+                                var newValue = invocationCard.GetBonusAttack() -
                                                float.Parse(values[i]) * sameFamilyInvocationCards.Count;
                                 invocationCard.SetBonusAttack(newValue);
                             }
@@ -1126,7 +1134,7 @@ public class PlayerCards : MonoBehaviour
                                 {
                                     if (invocationCardToCheck.Nom != beneficiary) continue;
                                     var newBonusAttack = invocationCardToCheck.GetBonusAttack() - atk;
-                                    var newBonusDef = invocationCardToCheck.GETBonusDefense() - def;
+                                    var newBonusDef = invocationCardToCheck.GetBonusDefense() - def;
                                     invocationCardToCheck.SetBonusAttack(newBonusAttack);
                                     invocationCardToCheck.SetBonusDefense(newBonusDef);
                                     indexToDelete.Add(i);
@@ -1172,7 +1180,7 @@ public class PlayerCards : MonoBehaviour
 
             var fieldKeys = fieldCardEffect.Keys;
             var fieldValues = fieldCardEffect.Values;
-            
+
             for (var i = 0; i < fieldKeys.Count; i++)
             {
                 switch (fieldKeys[i])
@@ -1264,7 +1272,7 @@ public class PlayerCards : MonoBehaviour
             }
         }
     }
-    
+
 
     private void OnFieldCardChanged(FieldCard oldFieldCard)
     {
@@ -1304,7 +1312,8 @@ public class PlayerCards : MonoBehaviour
                 case FieldEffect.Change:
                 {
                     var names = fieldValues[i].Split(';');
-                    foreach (var invocationCard in invocationCards.Where(invocationCard => names.Contains(invocationCard.Nom)))
+                    foreach (var invocationCard in invocationCards.Where(invocationCard =>
+                                 names.Contains(invocationCard.Nom)))
                     {
                         invocationCard.SetCurrentFamily(null);
                     }

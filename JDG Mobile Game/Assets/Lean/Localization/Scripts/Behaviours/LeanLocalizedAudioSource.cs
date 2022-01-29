@@ -22,7 +22,7 @@ namespace Lean.Localization
             // Use translation?
             if (translation != null && translation.Data is AudioClip)
             {
-                audioSource.clip = (AudioClip) translation.Data;
+                audioSource.clip = (AudioClip)translation.Data;
             }
             // Use fallback?
             else

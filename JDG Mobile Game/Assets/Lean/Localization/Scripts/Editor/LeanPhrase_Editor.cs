@@ -27,8 +27,8 @@ namespace Lean.Localization.Editor
             languageNames.Clear();
             languageNames.AddRange(LeanLocalization.CurrentLanguages.Keys);
 
-            tgt.Data = (LeanPhrase.DataType) GUILayout.Toolbar((int) tgt.Data,
-                new string[] {"Text", "Object", "Sprite"});
+            tgt.Data = (LeanPhrase.DataType)GUILayout.Toolbar((int)tgt.Data,
+                new string[] { "Text", "Object", "Sprite" });
 
             Separator();
 
@@ -100,7 +100,7 @@ namespace Lean.Localization.Editor
                                 var textOutput = default(string);
 
                                 if (TryAutoTranslate(languageCodeInput, languageCodeOutput, textInput,
-                                    ref textOutput) == true)
+                                        ref textOutput) == true)
                                 {
                                     Undo.RecordObject(tgt, "Auto Translate");
 
@@ -188,7 +188,7 @@ namespace Lean.Localization.Editor
                 var url = string.Format(
                     "https://translate.googleapis.com/translate_a/single?client=gtx&sl={0}&tl={1}&dt=t&q={2}",
                     languageCodeInput, languageCodeOutput, System.Web.HttpUtility.UrlEncode(wordInput));
-                var webClient = new System.Net.WebClient {Encoding = System.Text.Encoding.UTF8};
+                var webClient = new System.Net.WebClient { Encoding = System.Text.Encoding.UTF8 };
                 var result = webClient.DownloadString(url);
 
                 wordOutput = result.Substring(4, result.IndexOf("\",\"", 4, System.StringComparison.Ordinal) - 4);

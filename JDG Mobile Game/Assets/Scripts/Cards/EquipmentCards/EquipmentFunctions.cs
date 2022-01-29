@@ -44,24 +44,25 @@ namespace Cards.EquipmentCards
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var currentSelectedInvocationCard = (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                var currentSelectedInvocationCard =
+                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (currentSelectedInvocationCard != null)
                 {
                     miniCardMenu.SetActive(false);
 
                     var instantEffect = equipmentCard.EquipmentInstantEffect;
                     var permEffect = equipmentCard.EquipmentPermEffect;
-                
+
                     if (instantEffect != null)
                     {
                         DealWithInstantEffect(currentSelectedInvocationCard, instantEffect);
                     }
-                
+
                     if (permEffect != null)
                     {
                         DealWithPermEffect(currentSelectedInvocationCard, permEffect);
                     }
-                
+
                     currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
                     playerCards.handCards.Remove(equipmentCard);
                 }
@@ -75,17 +76,19 @@ namespace Cards.EquipmentCards
             };
         }
 
-        private GameObject DisplayEquipmentMessageBox(IEnumerable<InvocationCard> invocationCards, EquipmentInstantEffect equipmentInstantEffect)
+        private GameObject DisplayEquipmentMessageBox(IEnumerable<InvocationCard> invocationCards,
+            EquipmentInstantEffect equipmentInstantEffect)
         {
             var cards = new List<Card>();
             if (equipmentInstantEffect != null)
             {
                 foreach (var invocationCard in invocationCards)
                 {
-                    if (invocationCard.GETEquipmentCard() == null)
+                    if (invocationCard.GetEquipmentCard() == null)
                     {
                         cards.Add(invocationCard);
-                    } else if (equipmentInstantEffect.Keys.Contains(InstantEffect.SwitchEquipment))
+                    }
+                    else if (equipmentInstantEffect.Keys.Contains(InstantEffect.SwitchEquipment))
                     {
                         cards.Add(invocationCard);
                     }
@@ -95,13 +98,14 @@ namespace Cards.EquipmentCards
             {
                 cards = invocationCards.Cast<Card>().ToList();
             }
-        
-        
+
+
             return MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Choisis l'invocation auquelle associée l'équipement :", cards);
         }
 
-        private static void DealWithInstantEffect(InvocationCard invocationCard, EquipmentInstantEffect equipmentInstantEffect)
+        private static void DealWithInstantEffect(InvocationCard invocationCard,
+            EquipmentInstantEffect equipmentInstantEffect)
         {
             var keys = equipmentInstantEffect.Keys;
             var values = equipmentInstantEffect.Values;
@@ -164,8 +168,8 @@ namespace Cards.EquipmentCards
 
         private static void DealWithInstantEffectSwitchEquipment(InvocationCard invocationCard)
         {
-            if (invocationCard.GETEquipmentCard() == null) return;
-            CurrentPlayerCard.yellowTrash.Add(invocationCard.GETEquipmentCard());
+            if (invocationCard.GetEquipmentCard() == null) return;
+            CurrentPlayerCard.yellowTrash.Add(invocationCard.GetEquipmentCard());
             invocationCard.SetEquipmentCard(null);
         }
 
@@ -188,7 +192,8 @@ namespace Cards.EquipmentCards
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
-                var newBonusDefense = (multiplicator - 1) * invocationCard.GetDefense() + invocationCard.GetBonusDefense();
+                var newBonusDefense =
+                    (multiplicator - 1) * invocationCard.GetDefense() + invocationCard.GetBonusDefense();
                 invocationCard.SetBonusDefense(newBonusDefense);
             }
             else if (multiplicator < 0)

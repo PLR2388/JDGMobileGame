@@ -38,7 +38,7 @@ namespace Cards.FieldCards
 
             var keys = fieldCardEffect.Keys;
             var values = fieldCardEffect.Values;
-        
+
             var family = fieldCard.GetFamily();
             for (var i = 0; i < keys.Count; i++)
             {
@@ -73,7 +73,8 @@ namespace Cards.FieldCards
         {
             // Must be called also when invocationCards change
             var names = value.Split(';');
-            foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard => names.Contains(invocationCard.Nom)))
+            foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard =>
+                         names.Contains(invocationCard.Nom)))
             {
                 invocationCard.SetCurrentFamily(family);
             }

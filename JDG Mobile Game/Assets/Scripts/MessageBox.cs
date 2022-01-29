@@ -37,7 +37,8 @@ public class MessageBox : MonoBehaviour
         return currentSelectedCard;
     }
 
-    public List<Card> GetMultipleSelectedCards() {
+    public List<Card> GetMultipleSelectedCards()
+    {
         return multipleSelectedCards;
     }
 
@@ -84,14 +85,17 @@ public class MessageBox : MonoBehaviour
         if (multipleCardSelection)
         {
             if (multipleSelectedCards.Contains(card)) return;
-            if (numberCardInSelection == multipleSelectedCards.Count) {
+            if (numberCardInSelection == multipleSelectedCards.Count)
+            {
                 multipleSelectedCards.RemoveAt(0);
             }
+
             multipleSelectedCards.Add(card);
-        } else {
+        }
+        else
+        {
             currentSelectedCard = card;
         }
-   
     }
 
     private void Update()
@@ -104,7 +108,8 @@ public class MessageBox : MonoBehaviour
             if (childGameObject.GetComponent<CardDisplay>() == null) continue;
             var cardNom = childGameObject.GetComponent<CardDisplay>().card.Nom;
 
-            if (multipleCardSelection) {
+            if (multipleCardSelection)
+            {
                 if (multipleSelectedCards.Count > 0 && multipleSelectedCards.Find(card => card.Nom == cardNom) == null)
                 {
                     childGameObject.GetComponent<OnHover>().bIsSelected = false;
@@ -112,12 +117,16 @@ public class MessageBox : MonoBehaviour
                 else if (!childGameObject.GetComponent<OnHover>().bIsSelected)
                 {
                     // if the card is unselected
-                    var index = multipleSelectedCards.FindIndex(0, multipleSelectedCards.Count, card => card.Nom == cardNom);
-                    if (index > -1) {
+                    var index = multipleSelectedCards.FindIndex(0, multipleSelectedCards.Count,
+                        card => card.Nom == cardNom);
+                    if (index > -1)
+                    {
                         multipleSelectedCards.RemoveAt(index);
                     }
                 }
-            } else {
+            }
+            else
+            {
                 if (!(currentSelectedCard is null) && currentSelectedCard.Nom != cardNom)
                 {
                     childGameObject.GetComponent<OnHover>().bIsSelected = false;

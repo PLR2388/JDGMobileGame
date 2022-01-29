@@ -377,7 +377,7 @@ namespace Lean.Localization
             if (string.IsNullOrEmpty(name) == false && CurrentTranslations.TryGetValue(name, out translation) == true &&
                 translation.Data is string)
             {
-                fallback = (string) translation.Data;
+                fallback = (string)translation.Data;
             }
 
             if (replaceTokens == true)
@@ -397,7 +397,7 @@ namespace Lean.Localization
             if (string.IsNullOrEmpty(name) == false && CurrentTranslations.TryGetValue(name, out translation) == true &&
                 translation.Data is T)
             {
-                return (T) translation.Data;
+                return (T)translation.Data;
             }
 
             return fallback;
@@ -792,7 +792,7 @@ namespace Lean.Localization.Editor
                     var name = pair.Key;
 
                     if (string.IsNullOrEmpty(translationFilter) == true || name.IndexOf(translationFilter,
-                        System.StringComparison.InvariantCultureIgnoreCase) >= 0)
+                            System.StringComparison.InvariantCultureIgnoreCase) >= 0)
                     {
                         var translation = pair.Value;
                         var rectT = Reserve();
@@ -818,7 +818,7 @@ namespace Lean.Localization.Editor
                         BeginError(missing.Count > 0 || clashes.Count > 0);
                         if (data is Object)
                         {
-                            EditorGUI.ObjectField(rectT, name, (Object) data, typeof(Object), true);
+                            EditorGUI.ObjectField(rectT, name, (Object)data, typeof(Object), true);
                         }
                         else
                         {
@@ -934,7 +934,7 @@ namespace Lean.Localization.Editor
                 foreach (var pair in LeanLocalization.CurrentLanguages)
                 {
                     if (string.IsNullOrEmpty(languagesFilter) == true || pair.Key.IndexOf(languagesFilter,
-                        System.StringComparison.InvariantCultureIgnoreCase) >= 0)
+                            System.StringComparison.InvariantCultureIgnoreCase) >= 0)
                     {
                         EditorGUILayout.ObjectField(pair.Key, pair.Value, typeof(Object), true);
                         total++;
@@ -988,7 +988,7 @@ namespace Lean.Localization.Editor
                 foreach (var pair in LeanLocalization.CurrentTokens)
                 {
                     if (string.IsNullOrEmpty(tokensFilter) == true || pair.Key.IndexOf(tokensFilter,
-                        System.StringComparison.InvariantCultureIgnoreCase) >= 0)
+                            System.StringComparison.InvariantCultureIgnoreCase) >= 0)
                     {
                         EditorGUILayout.ObjectField(pair.Key, pair.Value, typeof(Object), true);
                         total++;

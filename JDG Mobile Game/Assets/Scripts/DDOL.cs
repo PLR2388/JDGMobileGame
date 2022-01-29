@@ -10,6 +10,7 @@ public class DDOL : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
+
         var currentScene = SceneManager.GetActiveScene();
         if (currentScene.name == "_preload")
         {

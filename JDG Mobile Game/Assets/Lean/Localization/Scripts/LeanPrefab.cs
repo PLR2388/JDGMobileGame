@@ -45,7 +45,7 @@ namespace Lean.Localization
                     buildingCount = 0;
                     buildingModified = false;
 
-                    AddSource((LeanSource) Root);
+                    AddSource((LeanSource)Root);
 
                     return FinalizeBuild();
                 }
@@ -54,7 +54,7 @@ namespace Lean.Localization
                     buildingCount = 0;
                     buildingModified = false;
 
-                    FindFromGameObject(((GameObject) Root).transform);
+                    FindFromGameObject(((GameObject)Root).transform);
 
                     return FinalizeBuild();
                 }

@@ -111,8 +111,8 @@ namespace Lean.Common.Editor
             Draw("execute",
                 "This allows you to control when the <b>Target</b> GameObject will be destroyed.\n\nOnFirstFrame = As soon as Update runs (this component must be enabled).\n\nAfterDelay = After the specified amount of <b>Seconds</b> has elapsed.\n\nAfterDelayUnscaled = The same as AfterDelay, but using unscaledDeltaTime.\n\nManually = You must manually call the <b>DestroyNow</b> method.");
             if (Any(tgts,
-                t => t.Execute == LeanDestroy.ExecuteType.AfterDelay ||
-                     t.Execute == LeanDestroy.ExecuteType.AfterDelayUnscaled))
+                    t => t.Execute == LeanDestroy.ExecuteType.AfterDelay ||
+                         t.Execute == LeanDestroy.ExecuteType.AfterDelayUnscaled))
             {
                 BeginIndent();
                 Draw("seconds", "The amount of seconds remaining until the GameObject is destroyed.");

@@ -44,7 +44,10 @@ public class EquipmentCard : Card
 
     private bool HasEnoughInvocationCard(IReadOnlyList<InvocationCard> invocationCards)
     {
-        var count = invocationCards.Count(t => t != null && t.Nom != null && (t.GETEquipmentCard() == null || (equipmentInstantEffect!= null && equipmentInstantEffect.Keys.Contains(InstantEffect.SwitchEquipment)) ));
+        var count = invocationCards.Count(t => t != null && t.Nom != null && (t.GetEquipmentCard() == null ||
+                                                                              (equipmentInstantEffect != null &&
+                                                                               equipmentInstantEffect.Keys.Contains(
+                                                                                   InstantEffect.SwitchEquipment))));
         return count > 0;
     }
 }

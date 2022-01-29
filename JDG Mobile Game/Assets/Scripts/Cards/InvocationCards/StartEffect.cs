@@ -1,4 +1,5 @@
 ﻿// Executed when player put invocation card on field
+
 namespace Cards.InvocationCards
 {
     public enum StartEffect

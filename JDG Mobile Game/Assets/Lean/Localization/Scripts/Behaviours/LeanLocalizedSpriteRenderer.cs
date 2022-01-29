@@ -22,7 +22,7 @@ namespace Lean.Localization
             // Use translation?
             if (translation != null && translation.Data is Sprite)
             {
-                spriteRenderer.sprite = (Sprite) translation.Data;
+                spriteRenderer.sprite = (Sprite)translation.Data;
             }
             // Use fallback?
             else

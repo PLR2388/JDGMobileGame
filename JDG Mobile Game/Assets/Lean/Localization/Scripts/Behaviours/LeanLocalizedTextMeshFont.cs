@@ -21,7 +21,7 @@ namespace Lean.Localization
             // Use translation?
             if (translation != null && translation.Data is Font)
             {
-                text.font = (Font) translation.Data;
+                text.font = (Font)translation.Data;
             }
             // Use fallback?
             else

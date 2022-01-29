@@ -21,7 +21,7 @@ namespace Lean.Localization
             // Use translation?
             if (translation != null && translation.Data is string)
             {
-                text.text = LeanTranslation.FormatText((string) translation.Data, text.text, this);
+                text.text = LeanTranslation.FormatText((string)translation.Data, text.text, this);
             }
             // Use fallback?
             else

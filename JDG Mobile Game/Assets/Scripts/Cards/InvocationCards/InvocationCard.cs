@@ -26,8 +26,6 @@ namespace Cards.InvocationCards
         private CardFamily? currentFamily;
         [SerializeField] private bool isControlled;
 
-        public bool IsAffectedByEffectCard => affectedByEffect;
-
         private void Awake()
         {
             type = CardType.Invocation;
@@ -37,34 +35,6 @@ namespace Cards.InvocationCards
             numberDeaths = 0;
             remainedAttackThisTurn = 1;
         }
-
-        public int NumberTurnOnField => numberTurnOnField;
-
-        public void SetRemainedAttackThisTurn(int number)
-        {
-            remainedAttackThisTurn = number;
-        }
-
-        public void incrementNumberTurnOnField()
-        {
-            numberTurnOnField++;
-        }
-
-        public void DeactivateEffect()
-        {
-        }
-
-        public void ControlCard()
-        {
-            isControlled = true;
-        }
-
-        public void FreeCard()
-        {
-            isControlled = false;
-        }
-
-        public bool IsControlled => isControlled;
 
         public void Init()
         {
@@ -89,30 +59,26 @@ namespace Cards.InvocationCards
             }
         }
 
-        public void SetCurrentFamily(CardFamily? family)
-        {
-            currentFamily = family;
-        }
+        public float GetAttack() => attack;
+        public float GetDefense() => defense;
 
-        public float GETBonusDefense() => bonusDefense;
-
-        public void SetBonusDefense(float bonus)
+        public CardFamily[] GetFamily()
         {
-            bonusDefense = bonus;
-            if (equipmentCard != null)
+            if (currentFamily.HasValue)
             {
-                var instantEffect = equipmentCard.EquipmentInstantEffect;
-                if (instantEffect != null)
+                return new[]
                 {
-                    if (instantEffect.Keys.Contains(InstantEffect.SetDef))
-                    {
-                        var index = instantEffect.Keys.IndexOf(InstantEffect.SetDef);
-                        var def = float.Parse(instantEffect.Values[index]);
-                        bonusDefense = def - GetDefense();
-                    }
-                }
+                    currentFamily.Value
+                };
             }
+
+            return family;
         }
+
+        public EquipmentCard GetEquipmentCard() => equipmentCard;
+        public InvocationConditions InvocationConditions => invocationConditions;
+        public InvocationStartEffect GetInvocationStartEffect() => invocationStartEffect;
+        public InvocationPermEffect InvocationPermEffect => invocationPermEffect;
 
         public InvocationActionEffect InvocationActionEffect
         {
@@ -120,9 +86,11 @@ namespace Cards.InvocationCards
             set => invocationActionEffect = value;
         }
 
-        public InvocationConditions InvocationConditions => invocationConditions;
-    
-        public InvocationPermEffect InvocationPermEffect => invocationPermEffect;
+        public InvocationDeathEffect GetInvocationDeathEffect() => invocationDeathEffect;
+        public float GetBonusAttack() => bonusAttack;
+        public float GetBonusDefense() => bonusDefense;
+        public int NumberTurnOnField => numberTurnOnField;
+        public int GetNumberDeaths() => numberDeaths;
 
         public void BlockAttack()
         {
@@ -134,9 +102,59 @@ namespace Cards.InvocationCards
             blockAttackNextTurn = false;
         }
 
-        public float GETBonusAttack()
+        public bool IsAffectedByEffectCard => affectedByEffect;
+
+        public void SetRemainedAttackThisTurn(int number)
         {
-            return bonusAttack;
+            remainedAttackThisTurn = number;
+        }
+
+        public void SetCurrentFamily(CardFamily? family)
+        {
+            currentFamily = family;
+        }
+
+        public bool IsControlled => isControlled;
+
+        public void ControlCard()
+        {
+            isControlled = true;
+        }
+
+        public void FreeCard()
+        {
+            isControlled = false;
+        }
+
+        public float GetCurrentDefense()
+        {
+            return defense + bonusDefense;
+        }
+
+        public float GetCurrentAttack()
+        {
+            return attack + bonusAttack;
+        }
+
+        public void incrementNumberTurnOnField()
+        {
+            numberTurnOnField++;
+        }
+
+        public void DeactivateEffect()
+        {
+        }
+
+        public void SetBonusDefense(float bonus)
+        {
+            bonusDefense = bonus;
+            if (equipmentCard == null) return;
+            var instantEffect = equipmentCard.EquipmentInstantEffect;
+            if (instantEffect == null) return;
+            if (!instantEffect.Keys.Contains(InstantEffect.SetDef)) return;
+            var index = instantEffect.Keys.IndexOf(InstantEffect.SetDef);
+            var def = float.Parse(instantEffect.Values[index]);
+            bonusDefense = def - GetDefense();
         }
 
         public void SetBonusAttack(float bonus)
@@ -156,47 +174,6 @@ namespace Cards.InvocationCards
             numberDeaths++;
         }
 
-        public void ResetNumberDeaths()
-        {
-            numberDeaths = 0;
-        }
-
-
-        public CardFamily[] GetFamily()
-        {
-            if (currentFamily.HasValue)
-            {
-                return new []
-                {
-                    currentFamily.Value
-                };
-            }
-            else
-            {
-                return family;
-            }
-        }
-
-        public InvocationStartEffect GetInvocationStartEffect()
-        {
-            return invocationStartEffect;
-        }
-
-        public InvocationDeathEffect GetInvocationDeathEffect()
-        {
-            return invocationDeathEffect;
-        }
-
-        public float GetAttack()
-        {
-            return attack;
-        }
-
-        public float GetDefense()
-        {
-            return defense;
-        }
-
         public bool CanAttack()
         {
             if (equipmentCard == null) return remainedAttackThisTurn > 0 && !blockAttackNextTurn;
@@ -206,6 +183,7 @@ namespace Cards.InvocationCards
             {
                 equipmentBlockedAttack = instantEffect.Keys.Contains(InstantEffect.BlockAtk);
             }
+
             return remainedAttackThisTurn > 0 && !blockAttackNextTurn & !equipmentBlockedAttack;
         }
 
@@ -219,124 +197,93 @@ namespace Cards.InvocationCards
             remainedAttackThisTurn = 1;
         }
 
-        public float GetCurrentDefense()
-        {
-            return defense + bonusDefense;
-        }
-
-        public float GetCurrentAttack()
-        {
-            return attack + bonusAttack;
-        }
-    
-        public float GetBonusDefense()
-        {
-            return bonusDefense;
-        }
-
-        public float GetBonusAttack()
-        {
-            return bonusAttack;
-        }
-
-        public EquipmentCard GETEquipmentCard()
-        {
-            return equipmentCard;
-        }
-
         public void SetEquipmentCard(EquipmentCard card)
         {
             if (equipmentCard != null && card == null)
             {
                 RemoveEquipmentCardEffect(equipmentCard.EquipmentInstantEffect);
             }
+
             equipmentCard = card;
         }
 
         private void RemoveEquipmentCardEffect(EquipmentInstantEffect equipmentCardEquipmentInstantEffect)
         {
-            if (equipmentCardEquipmentInstantEffect != null)
+            if (equipmentCardEquipmentInstantEffect == null) return;
+            var keys = equipmentCardEquipmentInstantEffect.Keys;
+            var values = equipmentCardEquipmentInstantEffect.Values;
+            for (var i = 0; i < keys.Count; i++)
             {
-                var keys = equipmentCardEquipmentInstantEffect.Keys;
-                var values = equipmentCardEquipmentInstantEffect.Values;
-                for (var i = 0; i < keys.Count; i++)
+                switch (keys[i])
                 {
-                    switch (keys[i])
+                    case InstantEffect.AddAtk:
                     {
-                        case InstantEffect.AddAtk:
+                        var newBonusAttack = -float.Parse(values[i]) + GetBonusAttack();
+                        SetBonusAttack(newBonusAttack);
+                    }
+                        break;
+                    case InstantEffect.AddDef:
+                    {
+                        var newBonusDefense = -float.Parse(values[i]) + GetBonusDefense();
+                        SetBonusDefense(newBonusDefense);
+                    }
+                        break;
+                    case InstantEffect.MultiplyAtk:
+                    {
+                        var multiplicator = int.Parse(values[i]);
+                        if (multiplicator > 1)
                         {
-                            var newBonusAttack = -float.Parse(values[i]) + GetBonusAttack();
+                            var newBonusAttack = -(multiplicator - 1) * GetAttack() + GetBonusAttack();
                             SetBonusAttack(newBonusAttack);
                         }
-                            break;
-                        case InstantEffect.AddDef:
+                    }
+                        break;
+                    case InstantEffect.MultiplyDef:
+                    {
+                        var multiplicator = int.Parse(values[i]);
+                        if (multiplicator > 1)
                         {
-                            var newBonusDefense = -float.Parse(values[i]) + GetBonusDefense();
+                            var newBonusDefense = -(multiplicator - 1) * GetDefense() + GetBonusDefense();
                             SetBonusDefense(newBonusDefense);
                         }
-                            break;
-                        case InstantEffect.MultiplyAtk:
+                        else if (multiplicator < 0)
                         {
-                            var multiplicator = int.Parse(values[i]);
-                            if (multiplicator > 1)
-                            {
-                                var newBonusAttack = -(multiplicator - 1) * GetAttack() + GetBonusAttack();
-                                SetBonusAttack(newBonusAttack);
-                            }
+                            var newBonusDefense = -(GetDefense() / multiplicator) + GetBonusDefense();
+                            SetBonusDefense(newBonusDefense);
                         }
-                            break;
-                        case InstantEffect.MultiplyDef:
-                        {
-                            var multiplicator = int.Parse(values[i]);
-                            if (multiplicator > 1)
-                            {
-                                var newBonusDefense = -(multiplicator - 1) * GetDefense() + GetBonusDefense();
-                                SetBonusDefense(newBonusDefense);
-                            } else if (multiplicator < 0)
-                            {
-                                var newBonusDefense = -(GetDefense() / multiplicator) + GetBonusDefense();
-                                SetBonusDefense(newBonusDefense);
-                            }
-               
-                        }
-                            break;
-                        case InstantEffect.SetAtk:
-                        {
-                            SetBonusAttack(0);
-                        }
-                            break;
-                        case InstantEffect.SetDef:
-                        {
-                            SetBonusDefense(0);
-                        }
-                            break;
-                        case InstantEffect.BlockAtk:
-                        {
-                            UnblockAttack();
-                        }
-                            break;
-                        case InstantEffect.DirectAtk:
-                        {
-                        }
-                            break;
-                        case InstantEffect.SwitchEquipment:
-                        {
-                        }
-                            break;
-                        case InstantEffect.DisableBonus:
-                        {
-                        }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
                     }
+                        break;
+                    case InstantEffect.SetAtk:
+                    {
+                        SetBonusAttack(0);
+                    }
+                        break;
+                    case InstantEffect.SetDef:
+                    {
+                        SetBonusDefense(0);
+                    }
+                        break;
+                    case InstantEffect.BlockAtk:
+                    {
+                        UnblockAttack();
+                    }
+                        break;
+                    case InstantEffect.DirectAtk:
+                    {
+                    }
+                        break;
+                    case InstantEffect.SwitchEquipment:
+                    {
+                    }
+                        break;
+                    case InstantEffect.DisableBonus:
+                    {
+                    }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        public int GetNumberDeaths()
-        {
-            return numberDeaths;
         }
 
         public bool IsInvocationPossible()

@@ -23,7 +23,7 @@ namespace Lean.Localization
             // Use translation?
             if (translation != null && translation.Data is Sprite)
             {
-                image.sprite = (Sprite) translation.Data;
+                image.sprite = (Sprite)translation.Data;
             }
             // Use fallback?
             else

@@ -1,4 +1,5 @@
 ﻿// Equipment
+
 namespace Cards.InvocationCards
 {
     public enum InstantEffect //Happen only at the beginning

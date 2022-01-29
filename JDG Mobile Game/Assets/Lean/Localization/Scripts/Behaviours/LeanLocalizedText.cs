@@ -23,7 +23,7 @@ namespace Lean.Localization
             // Use translation?
             if (translation != null && translation.Data is string)
             {
-                text.text = LeanTranslation.FormatText((string) translation.Data, text.text, this, gameObject);
+                text.text = LeanTranslation.FormatText((string)translation.Data, text.text, this, gameObject);
             }
             // Use fallback?
             else

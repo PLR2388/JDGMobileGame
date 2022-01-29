@@ -28,7 +28,7 @@ namespace Lean.Localization
             // Use translation?
             if (translation != null && translation.Data is Material)
             {
-                sharedMaterials[Index] = (Material) translation.Data;
+                sharedMaterials[Index] = (Material)translation.Data;
             }
             // Use fallback?
             else

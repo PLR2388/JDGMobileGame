@@ -21,8 +21,8 @@ namespace Lean.Common
         public void GetTargets<T>(out T tgt, out T[] tgts)
             where T : Object
         {
-            tgt = (T) target;
-            tgts = System.Array.ConvertAll(targets, item => (T) item);
+            tgt = (T)target;
+            tgts = System.Array.ConvertAll(targets, item => (T)item);
         }
 
         public static void SetData(SerializedObject newData)

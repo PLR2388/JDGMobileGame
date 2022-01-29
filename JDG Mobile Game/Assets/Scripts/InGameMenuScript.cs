@@ -84,8 +84,9 @@ public class InGameMenuScript : MonoBehaviour
         {
             case CardType.Invocation:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                var invocationCard = (InvocationCard) card;
-                putCardButton.GetComponent<Button>().interactable = invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
+                var invocationCard = (InvocationCard)card;
+                putCardButton.GetComponent<Button>().interactable =
+                    invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
 
                 break;
             case CardType.Contre:
@@ -93,13 +94,14 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButton.GetComponent<Button>().interactable = true;
                 break;
             case CardType.Effect:
-                var effectCard = (EffectCard) card;
+                var effectCard = (EffectCard)card;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                putCardButton.GetComponent<Button>().interactable = effectFunctions.CanUseEffectCard(effectCard.GetEffectCardEffect());
+                putCardButton.GetComponent<Button>().interactable =
+                    effectFunctions.CanUseEffectCard(effectCard.GetEffectCardEffect());
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
-                var equipmentCard = (EquipmentCard) card;
+                var equipmentCard = (EquipmentCard)card;
                 putCardButton.GetComponent<Button>().interactable = equipmentCard.IsEquipmentPossible();
 
                 break;
@@ -108,7 +110,7 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButton.GetComponent<Button>().interactable = playerCard.field == null;
                 break;
         }
-        
+
 #if UNITY_EDITOR
         var mousePosition = Input.mousePosition;
         DisplayMiniMenuCardAtPosition(mousePosition);
@@ -137,25 +139,25 @@ public class InGameMenuScript : MonoBehaviour
         {
             case CardType.Invocation:
             {
-                var invocationCard = (InvocationCard) currentSelectedCard;
+                var invocationCard = (InvocationCard)currentSelectedCard;
                 InvocationCardEvent.Invoke(invocationCard);
                 break;
             }
             case CardType.Field:
             {
-                var fieldCard = (FieldCard) currentSelectedCard;
+                var fieldCard = (FieldCard)currentSelectedCard;
                 FieldCardEvent.Invoke(fieldCard);
                 break;
             }
             case CardType.Effect:
             {
-                var effectCard = (EffectCard) currentSelectedCard;
+                var effectCard = (EffectCard)currentSelectedCard;
                 EffectCardEvent.Invoke(effectCard);
                 break;
             }
             case CardType.Equipment:
             {
-                var equipmentCard = (EquipmentCard) currentSelectedCard;
+                var equipmentCard = (EquipmentCard)currentSelectedCard;
                 EquipmentCardEvent.Invoke(equipmentCard);
                 break;
             }

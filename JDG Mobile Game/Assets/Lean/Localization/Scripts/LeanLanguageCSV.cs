@@ -64,7 +64,7 @@ namespace Lean.Localization
         [SerializeField] private List<Entry> entries;
 
         /// <summary>The characters used to separate each translation.</summary>
-        private static readonly char[] newlineCharacters = new char[] {'\r', '\n'};
+        private static readonly char[] newlineCharacters = new char[] { '\r', '\n' };
 
         private static Stack<Entry> entryPool = new Stack<Entry>();
 
@@ -386,7 +386,7 @@ namespace Lean.Localization
 
                 if (translation.Data is string)
                 {
-                    var text = (string) translation.Data;
+                    var text = (string)translation.Data;
 
                     // Replace all new line permutations with the new line token
                     text = text.Replace("\r\n", "\n");
@@ -410,7 +410,7 @@ namespace Lean.Localization
             UnityEditor.AssetDatabase.ImportAsset(path);
 
             // Replace Source with new Text Asset?
-            var textAsset = (TextAsset) UnityEditor.AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset));
+            var textAsset = (TextAsset)UnityEditor.AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset));
 
             if (textAsset != null)
             {

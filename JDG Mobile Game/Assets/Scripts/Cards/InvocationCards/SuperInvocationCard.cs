@@ -8,16 +8,19 @@ namespace Cards.InvocationCards
     {
         public List<InvocationCard> invocationCards;
 
-        public void Init(List<InvocationCard> invocationCardsList) {
+        public void Init(List<InvocationCard> invocationCardsList)
+        {
             invocationCards = invocationCardsList;
             var totalAttack = 0.0f;
             var totalDefense = 0.0f;
             var newName = "";
-            foreach(var invocationCard in invocationCardsList) {
+            foreach (var invocationCard in invocationCardsList)
+            {
                 totalAttack += invocationCard.GetAttack();
                 totalDefense += invocationCard.GetDefense();
                 newName += invocationCard.Nom;
             }
+
             attack = totalAttack;
             defense = totalDefense;
             nom = newName;

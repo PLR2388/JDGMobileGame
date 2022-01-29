@@ -151,8 +151,8 @@ public class GameLoop : MonoBehaviour
             ? p2.GetComponent<PlayerCards>().invocationCards
             : p1.GetComponent<PlayerCards>().invocationCards;
         foreach (var ownInvocationCard in from invocationCard in invocationsOpponent
-                 where invocationCard.GETEquipmentCard() != null
-                 select invocationCard.GETEquipmentCard()
+                 where invocationCard.GetEquipmentCard() != null
+                 select invocationCard.GetEquipmentCard()
                  into equipment
                  where equipment.EquipmentPermEffect != null &&
                        equipment.EquipmentPermEffect.Keys.Contains(PermanentEffect.BlockOpponentDuringInvocation)
@@ -313,8 +313,8 @@ public class GameLoop : MonoBehaviour
         {
             notEmptyOpponent.Add(player);
         }
-        else if (attacker.GETEquipmentCard() != null && attacker.GETEquipmentCard().EquipmentInstantEffect != null &&
-                 attacker.GETEquipmentCard().EquipmentInstantEffect.Keys.Contains(InstantEffect.DirectAtk))
+        else if (attacker.GetEquipmentCard() != null && attacker.GetEquipmentCard().EquipmentInstantEffect != null &&
+                 attacker.GetEquipmentCard().EquipmentInstantEffect.Keys.Contains(InstantEffect.DirectAtk))
         {
             notEmptyOpponent = new List<Card>
             {
@@ -346,7 +346,7 @@ public class GameLoop : MonoBehaviour
                 {
                     var invocationCard = (InvocationCard)notEmptyOpponent[j];
                     var permEffect = invocationCard.InvocationPermEffect;
-                    var equipmentCard = invocationCard.GETEquipmentCard();
+                    var equipmentCard = invocationCard.GetEquipmentCard();
                     if (permEffect != null)
                     {
                         var keys = permEffect.Keys;

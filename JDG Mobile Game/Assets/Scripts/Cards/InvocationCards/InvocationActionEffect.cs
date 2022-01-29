@@ -13,9 +13,10 @@ namespace Cards.InvocationCards
         {
             get => keys;
             set => keys = value;
-        } 
+        }
 
-        public List<string> Values {
+        public List<string> Values
+        {
             get => values;
             set => values = value;
         }

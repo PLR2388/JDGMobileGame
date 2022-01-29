@@ -98,7 +98,7 @@ namespace Lean.Common
             }
 
             // Get int and fractional part of float index
-            var i = (int) index;
+            var i = (int)index;
             var t = Mathf.Abs(index - i);
 
             // Get 4 control points
@@ -143,7 +143,7 @@ namespace Lean.Common
 
             if (smoothing > 0)
             {
-                return GetSmoothedPoint(index / (float) smoothing);
+                return GetSmoothedPoint(index / (float)smoothing);
             }
 
             return GetPointRaw(index, count);

@@ -95,7 +95,8 @@ namespace Menu
             var deck2 = new List<Card>();
 
             var allCards = FindObjectOfType<GameState>().allCards.Where(card =>
-                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" && card.Nom != "Blague interdite" &&
+                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
+                card.Nom != "Blague interdite" &&
                 card.Nom != "Un bon tuyau").ToList();
 
             while (deck1.Count != 30)

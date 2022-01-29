@@ -164,7 +164,7 @@ namespace Lean.Common
 
                 if (target is IList)
                 {
-                    var list = (IList) target;
+                    var list = (IList)target;
                     var index = int.Parse(token.Substring(1, token.Length - 2));
 
                     target = list[index];
@@ -189,7 +189,7 @@ namespace Lean.Common
                 }
             }
 
-            return (T) target;
+            return (T)target;
         }
 #endif
 

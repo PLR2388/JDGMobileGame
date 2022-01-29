@@ -172,7 +172,7 @@ namespace Cards.EffectCards
                         break;
                     case Effect.AffectPv:
                     {
-                        CanUseAffectPv(value,out pvAffected);
+                        CanUseAffectPv(value, out pvAffected);
                     }
                         break;
                     case Effect.Sources:
@@ -182,7 +182,7 @@ namespace Cards.EffectCards
                         break;
                     case Effect.ChangeHandCards:
                     {
-                        isValid = CanUseChangeHandCards(value, isValid,out handCard);
+                        isValid = CanUseChangeHandCards(value, isValid, out handCard);
                     }
                         break;
                     case Effect.NumberInvocationCard:
@@ -207,7 +207,7 @@ namespace Cards.EffectCards
             return isValid;
         }
 
-        private bool CanUseChangeHandCards(string value, bool isValid,out int handCard)
+        private bool CanUseChangeHandCards(string value, bool isValid, out int handCard)
         {
             handCard = int.Parse(value);
             isValid &= currentPlayerCard.handCards.Count > handCard;
@@ -421,7 +421,7 @@ namespace Cards.EffectCards
             return isValid;
         }
 
-        private bool CanUseAffectOpponent(string value, float pvAffected, bool isValid,out bool affectOpponent)
+        private bool CanUseAffectOpponent(string value, float pvAffected, bool isValid, out bool affectOpponent)
         {
             affectOpponent = bool.Parse(value);
             if (pvAffected != 0 && !affectOpponent)
@@ -682,7 +682,8 @@ namespace Cards.EffectCards
                                         messageBox.SetActive(true);
                                     }
 
-                                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir un terrain",
+                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                        "Tu dois choisir un terrain",
                                         OkAction);
                                 };
                             }
@@ -796,10 +797,13 @@ namespace Cards.EffectCards
 
                             void PositiveActionCardSelector()
                             {
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee, multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count);
+                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                    "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
+                                    multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count);
                                 messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                                 {
-                                    var selectedCards = messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
+                                    var selectedCards =
+                                        messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
                                     if (selectedCards.Count == cardsDeckToSee.Count)
                                     {
                                         foreach (var card in cardsDeckToSee)
@@ -820,7 +824,8 @@ namespace Cards.EffectCards
                                             messageBox.SetActive(true);
                                         }
 
-                                        MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir l'ordre des cartes", OkAction);
+                                        MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                            "Tu dois choisir l'ordre des cartes", OkAction);
                                     }
                                 };
                                 messageBox.GetComponent<MessageBox>().NegativeAction = () =>
@@ -832,7 +837,8 @@ namespace Cards.EffectCards
                                         messageBox.SetActive(true);
                                     }
 
-                                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir l'ordre des cartes", OkAction);
+                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                        "Tu dois choisir l'ordre des cartes", OkAction);
                                 };
                             }
 
@@ -1089,7 +1095,7 @@ namespace Cards.EffectCards
                 opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
             foreach (var card in opponentInvocationCard)
             {
-                var newBonusDefense = card.GETBonusDefense() - card.GetCurrentDefense() / 2;
+                var newBonusDefense = card.GetBonusDefense() - card.GetCurrentDefense() / 2;
                 card.SetBonusDefense(newBonusDefense);
             }
         }

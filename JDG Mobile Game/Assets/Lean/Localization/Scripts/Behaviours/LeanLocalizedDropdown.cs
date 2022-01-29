@@ -107,7 +107,7 @@ namespace Lean.Localization
                     // Use translation?
                     if (stringTranslation != null && stringTranslation.Data is string)
                     {
-                        dOption.text = LeanTranslation.FormatText((string) stringTranslation.Data, dOption.text, this);
+                        dOption.text = LeanTranslation.FormatText((string)stringTranslation.Data, dOption.text, this);
                     }
                     // Use fallback?
                     else
@@ -120,7 +120,7 @@ namespace Lean.Localization
                     // Use translation?
                     if (spriteTranslation != null && spriteTranslation.Data is Sprite)
                     {
-                        dOption.image = (Sprite) spriteTranslation.Data;
+                        dOption.image = (Sprite)spriteTranslation.Data;
                     }
                     // Use fallback?
                     else
