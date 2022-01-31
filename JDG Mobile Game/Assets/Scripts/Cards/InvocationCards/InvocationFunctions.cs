@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cards.FieldCards;
@@ -69,7 +70,7 @@ namespace Cards.InvocationCards
                         break;
                     case StartEffect.GetCardSource:
                     {
-                        StartEffectGetCardSource(value, cardName, cardFound, invokeCardNames, typeCard, familyName);
+                        StartEffectGetCardSource(value, cardName, ref cardFound, invokeCardNames, typeCard, familyName);
                     }
                         break;
                     case StartEffect.RemoveAllInvocationCards:
@@ -89,7 +90,7 @@ namespace Cards.InvocationCards
                         break;
                     case StartEffect.DestroyField:
                     {
-                        StartEffectDestroyField(currentInvocationCard, cardFound, mustDivideAttack, mustDivideDefense);
+                        StartEffectDestroyField(currentInvocationCard, ref cardFound, mustDivideAttack, mustDivideDefense);
                     }
                         break;
                     case StartEffect.Divide2Atk:
@@ -104,7 +105,7 @@ namespace Cards.InvocationCards
                         break;
                     case StartEffect.SendToDeath:
                     {
-                        StartEffectSendToDeath(currentInvocationCard, cardFound);
+                        StartEffectSendToDeath(currentInvocationCard, ref cardFound);
                     }
                         break;
                     case StartEffect.DrawXCards:
@@ -258,7 +259,7 @@ namespace Cards.InvocationCards
                 "Voulez-vous piocher " + maxCardDraw + " cartes ?", PositiveAction, NegativeAction);
         }
 
-        private void StartEffectSendToDeath(InvocationCard currentInvocationCard, List<Card> cardFound)
+        private void StartEffectSendToDeath(InvocationCard currentInvocationCard, ref List<Card> cardFound)
         {
             if (GameLoop.IsP1Turn)
             {
@@ -332,7 +333,7 @@ namespace Cards.InvocationCards
             };
         }
 
-        private void StartEffectDestroyField(InvocationCard currentInvocationCard, List<Card> cardFound,
+        private void StartEffectDestroyField(InvocationCard currentInvocationCard,ref List<Card> cardFound,
             bool mustDivideAttack,
             bool mustDivideDefense)
         {
@@ -483,8 +484,8 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void StartEffectGetCardSource(string value, string cardName, List<Card> cardFound,
-            List<string> invokeCardNames,
+        private void StartEffectGetCardSource(string value, string cardName, ref List<Card> cardFound,
+            IReadOnlyCollection<string> invokeCardNames,
             string typeCard, string familyName)
         {
             switch (value)
@@ -509,10 +510,11 @@ namespace Cards.InvocationCards
 
                         if (isFound)
                         {
+                            var cards = new List<Card>(cardFound);
                             void PositiveAction()
                             {
-                                currentPlayerCard.handCards.Add(cardFound[0]);
-                                currentPlayerCard.deck.Remove(cardFound[0]);
+                                currentPlayerCard.handCards.Add(cards[0]);
+                                currentPlayerCard.deck.Remove(cards[0]);
                                 inHandButton.SetActive(true);
                             }
 
@@ -538,9 +540,10 @@ namespace Cards.InvocationCards
                         {
                             if (cardFound.Count == 1)
                             {
+                                var cards = new List<Card>(cardFound);
                                 void PositiveAction()
                                 {
-                                    var invocationCard = (InvocationCard)cardFound[cardFound.Count - 1];
+                                    var invocationCard = (InvocationCard)cards[cards.Count - 1];
                                     currentPlayerCard.invocationCards.Add(invocationCard);
                                     currentPlayerCard.deck.Remove(invocationCard);
                                     inHandButton.SetActive(true);
@@ -663,10 +666,11 @@ namespace Cards.InvocationCards
 
                         if (isFound)
                         {
+                            var cards = new List<Card>(cardFound);
                             void PositiveAction()
                             {
-                                currentPlayerCard.handCards.Add(cardFound[0]);
-                                currentPlayerCard.yellowTrash.Remove(cardFound[0]);
+                                currentPlayerCard.handCards.Add(cards[0]);
+                                currentPlayerCard.yellowTrash.Remove(cards[0]);
                                 inHandButton.SetActive(true);
                             }
 
@@ -1170,12 +1174,12 @@ namespace Cards.InvocationCards
                 {
                     case Condition.SpecificCardOnField:
                     {
-                        ConditionSpecificCardOnField(value,ref invocationCardsOnField);
+                        ConditionSpecificCardOnField(value,currentPlayerCard,ref invocationCardsOnField);
                     }
                         break;
                     case Condition.SacrificeSpecificCard:
                     {
-                        ConditionSacrificeSpecificCard(cardExplanation, i, ref specificCardFound, cardConditions);
+                        ConditionSacrificeSpecificCard(value, ref specificCardFound);
                     }
                         break;
                     case Condition.SpecificEquipmentAttached:
@@ -1421,20 +1425,15 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void ConditionSacrificeSpecificCard(List<string> cardExplanation, int i, ref InvocationCard specificCardFound,
-            List<Condition> cardConditions)
+        private void ConditionSacrificeSpecificCard(string cardName, ref InvocationCard specificCardFound)
         {
-            var cardName = cardExplanation[i];
             if (specificCardFound) return;
             specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
-            if (i == (cardConditions.Count - 1))
-            {
-            }
         }
 
-        private void ConditionSpecificCardOnField(string value,ref List<InvocationCard> invocationCardsOnField)
+        private static void ConditionSpecificCardOnField(string value, PlayerCards playerCards, ref List<InvocationCard> invocationCardsOnField)
         {
-            var invocationCard = CheckSpecificCardOnField(value, currentPlayerCard);
+            var invocationCard = CheckSpecificCardOnField(value, playerCards);
             if (invocationCard != null)
             {
                 invocationCardsOnField.Add(invocationCard);
@@ -1469,128 +1468,57 @@ namespace Cards.InvocationCards
                 {
                     case Condition.SpecificCardOnField:
                     {
-                        ConditionSpecificCardOnField(value, ref invocationCardsOnField);
-                        var cardName = cardExplanation[i];
-                        var invocationCard = CheckSpecificCardOnField(cardName, currentPlayerCard);
-                        if (invocationCard != null)
-                        {
-                            invocationCardsOnField.Add(invocationCard);
-                        }
+                        ConditionSpecificCardOnField(value, currentPlayerCard, ref invocationCardsOnField);
                     }
                         break;
                     case Condition.SacrificeSpecificCard:
                     {
-                        var cardName = cardExplanation[i];
-                        if (!specificCardFound)
-                        {
-                            specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
-                            isInvocationPossible = specificCardFound != null;
-                        }
+                        isInvocationPossible = ConditionSacrificeSpecificCardIsPossible(value, ref specificCardFound, currentPlayerCard);
                     }
                         break;
                     case Condition.SpecificEquipmentAttached:
                     {
-                        var equipmentName = cardExplanation[i];
-                        isInvocationPossible = CheckSpecificEquipmentAttached(specificCardFound, equipmentName);
+                        isInvocationPossible = CheckSpecificEquipmentAttached(specificCardFound, value);
                     }
                         break;
                     case Condition.SpecificField:
                     {
-                        var fieldName = cardExplanation[i];
-                        isInvocationPossible = CheckSpecificField(fieldName, currentPlayerCard);
+                        isInvocationPossible = CheckSpecificField(value, currentPlayerCard);
                     }
                         break;
                     case Condition.SacrificeFamily:
                     {
-                        var familyName = cardExplanation[i];
-                        if (Enum.TryParse(familyName, out CardFamily cardFamily))
-                        {
-                            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
-                            isInvocationPossible = sacrificedCards.Count > 0;
-                        }
+                        isInvocationPossible = ConditionSacrificeFamilyIsPossible(value, currentPlayerCard, ref sacrificedCards);
                     }
                         break;
                     case Condition.SpecificFamilyOnField:
                     {
-                        var familyName = cardExplanation[i];
-                        if (Enum.TryParse(familyName, out CardFamily cardFamily))
-                        {
-                            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
-                            isInvocationPossible = sacrificedCards.Count > 0;
-                        }
+                        isInvocationPossible = ConditionSpecificFamilyOnFieldIsPossible(value, currentPlayerCard, ref sacrificedCards);
                     }
                         break;
                     case Condition.NumberCard:
                     {
-                        var numberCard = int.Parse(cardExplanation[i]);
-                        if (invocationCardsOnField.Count > 0)
-                        {
-                            isInvocationPossible = invocationCardsOnField.Count >= numberCard;
-                        }
-                        else if (sacrificedCards.Count > 0)
-                        {
-                            isInvocationPossible = sacrificedCards.Count >= numberCard;
-                        }
-                        else
-                        {
-                            isInvocationPossible = false;
-                        }
+                        isInvocationPossible = ConditionNumberCardIsPossible(value, invocationCardsOnField, sacrificedCards);
                     }
                         break;
                     case Condition.SacrificeThresholdAtk:
                     {
-                        var threshold = float.Parse(cardExplanation[i]);
-                        if (sacrificedCards.Count > 0)
-                        {
-                            var validCards = CheckThreshold(true, threshold, currentPlayerCard);
-                            foreach (var validCard in validCards)
-                            {
-                                if (!sacrificedCards.Contains(validCard))
-                                {
-                                    sacrificedCards.Add(validCard);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            sacrificedCards = CheckThreshold(true, threshold, currentPlayerCard);
-                        }
+                        ConditionSacrificeThresholdAtkIsPossible(value,ref sacrificedCards, currentPlayerCard);
                     }
                         break;
                     case Condition.SacrificeThresholdDef:
                     {
-                        var threshold = int.Parse(cardExplanation[i]);
-                        if (sacrificedCards.Count > 0)
-                        {
-                            var validCards = CheckThreshold(false, threshold, currentPlayerCard);
-                            foreach (var validCard in validCards)
-                            {
-                                if (!sacrificedCards.Contains(validCard))
-                                {
-                                    sacrificedCards.Add(validCard);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            sacrificedCards = CheckThreshold(false, threshold, currentPlayerCard);
-                        }
+                        ConditionSacrificeThresholdDefIsPossible(value,ref sacrificedCards, currentPlayerCard);
                     }
                         break;
                     case Condition.NumberInvocationCardInYellowTrash:
                     {
-                        var numberCardToHave = int.Parse(cardExplanation[i]);
-                        var realNumber = CheckNumberInvocationCardInYellowTrash(currentPlayerCard);
-
-                        isInvocationPossible = (realNumber >= numberCardToHave);
+                        isInvocationPossible = ConditionNumberInvocationCardInYellowTrashIsPossible(value, currentPlayerCard);
                     }
                         break;
                     case Condition.ComeFromYellowTrash:
                     {
-                        if (specificCardFound != null)
-                        {
-                            isInvocationPossible = (specificCardFound.GetNumberDeaths() > 0);
-                        }
+                        isInvocationPossible = ConditionComeFromYellowTrashIsPossible(specificCardFound);
                     }
                         break;
                     default:
@@ -1601,6 +1529,108 @@ namespace Cards.InvocationCards
             }
 
             return isInvocationPossible;
+        }
+
+        private static bool ConditionComeFromYellowTrashIsPossible(InvocationCard specificCardFound)
+        {
+            if (specificCardFound != null)
+            {
+                return specificCardFound.GetNumberDeaths() > 0;
+            }
+
+            return false;
+        }
+
+        private static bool ConditionNumberInvocationCardInYellowTrashIsPossible(string value, PlayerCards currentPlayerCard)
+        {
+            var numberCardToHave = int.Parse(value);
+            var realNumber = CheckNumberInvocationCardInYellowTrash(currentPlayerCard);
+
+            return realNumber >= numberCardToHave;
+        }
+
+        private static void ConditionSacrificeThresholdDefIsPossible(string value,ref List<InvocationCard> sacrificedCards,
+            PlayerCards currentPlayerCard)
+        {
+            var threshold = int.Parse(value);
+            if (sacrificedCards.Count > 0)
+            {
+                var validCards = CheckThreshold(false, threshold, currentPlayerCard);
+                foreach (var validCard in validCards)
+                {
+                    if (!sacrificedCards.Contains(validCard))
+                    {
+                        sacrificedCards.Add(validCard);
+                    }
+                }
+            }
+            else
+            {
+                sacrificedCards = CheckThreshold(false, threshold, currentPlayerCard);
+            }
+        }
+
+        private static void ConditionSacrificeThresholdAtkIsPossible(string value, ref List<InvocationCard> sacrificedCards,
+            PlayerCards currentPlayerCard)
+        {
+            var threshold = float.Parse(value);
+            if (sacrificedCards.Count > 0)
+            {
+                var validCards = CheckThreshold(true, threshold, currentPlayerCard);
+                foreach (var validCard in validCards)
+                {
+                    if (!sacrificedCards.Contains(validCard))
+                    {
+                        sacrificedCards.Add(validCard);
+                    }
+                }
+            }
+            else
+            {
+                sacrificedCards = CheckThreshold(true, threshold, currentPlayerCard);
+            }
+        }
+
+        private static bool ConditionNumberCardIsPossible(string value, ICollection invocationCardsOnField, ICollection sacrificedCards)
+        {
+            bool isInvocationPossible;
+            var numberCard = int.Parse(value);
+            if (invocationCardsOnField.Count > 0)
+            {
+                isInvocationPossible = invocationCardsOnField.Count >= numberCard;
+            }
+            else if (sacrificedCards.Count > 0)
+            {
+                isInvocationPossible = sacrificedCards.Count >= numberCard;
+            }
+            else
+            {
+                isInvocationPossible = false;
+            }
+
+            return isInvocationPossible;
+        }
+
+        private static bool ConditionSpecificFamilyOnFieldIsPossible(string value, PlayerCards currentPlayerCard, ref List<InvocationCard> sacrificedCards)
+        {
+            if (!Enum.TryParse(value, out CardFamily cardFamily)) return false;
+            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
+            return sacrificedCards.Count > 0;
+        }
+
+        private static bool ConditionSacrificeFamilyIsPossible(string value, PlayerCards currentPlayerCard, ref List<InvocationCard> sacrificedCards)
+        {
+            if (!Enum.TryParse(value, out CardFamily cardFamily)) return false;
+            sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
+            return sacrificedCards.Count > 0;
+        }
+
+        private static bool ConditionSacrificeSpecificCardIsPossible(string cardName,
+            ref InvocationCard specificCardFound, PlayerCards currentPlayerCard)
+        {
+            if (specificCardFound) return true;
+            specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
+            return specificCardFound != null;
         }
 
         private GameObject CreateMessageBoxSelectorCard(string title, List<Card> cards,
