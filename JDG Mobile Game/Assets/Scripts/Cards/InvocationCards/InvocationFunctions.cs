@@ -371,7 +371,7 @@ namespace Cards.InvocationCards
                         currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetDefense() / 2);
                     }
 
-                    if (fieldCard.Nom == fieldCardP1.Nom)
+                    if (fieldCardP1 && fieldCard.Nom == fieldCardP1.Nom)
                     {
                         p1.GetComponent<PlayerCards>().field = null;
                         p1.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);

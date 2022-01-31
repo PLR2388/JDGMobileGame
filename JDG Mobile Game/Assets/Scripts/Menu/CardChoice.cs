@@ -123,9 +123,9 @@ namespace Menu
 
             deck2.Add(GetSpecificCard("Frangipanus", allCards));
             deck2.Add(GetSpecificCard("Zozan Kebab", allCards));
-            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", allCards));
-            deck1.Add(GetSpecificCard("L'Elfette", allCards));
-            deck1.Add(GetSpecificCard("Maniabilité pourrie", allCards));
+            deck1.Add(GetSpecificCard("Poignée de porte", allCards));
+            deck1.Add(GetSpecificCard("Patate", allCards));
+            deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", allCards));
 
             while (deck1.Count != 30)
             {
