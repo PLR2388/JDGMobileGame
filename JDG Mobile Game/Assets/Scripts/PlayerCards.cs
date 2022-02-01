@@ -117,33 +117,7 @@ public class PlayerCards : MonoBehaviour
         effectCards = new List<EffectCard>(4);
         var gameStateGameObject = GameObject.Find("GameState");
         var gameState = gameStateGameObject.GetComponent<GameState>();
-        if (isPlayerOne)
-        {
-            deck = gameState.deckP1;
-            for (var i = 0; i < deck.Count; i++)
-            {
-                var newPhysicalCard = Instantiate(prefabCard, deckLocationP1, Quaternion.identity);
-                newPhysicalCard.transform.rotation = Quaternion.Euler(0, 180, 0);
-                newPhysicalCard.transform.position =
-                    new Vector3(deckLocationP1.x, deckLocationP1.y + 0.1f * i, deckLocationP1.z);
-                newPhysicalCard.name = deck[i].Nom + "P1";
-                newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
-                allPhysicalCards.Add(newPhysicalCard);
-            }
-        }
-        else
-        {
-            deck = gameState.deckP2;
-            for (var i = 0; i < deck.Count; i++)
-            {
-                var newPhysicalCard = Instantiate(prefabCard, deckLocationP2, Quaternion.identity);
-                newPhysicalCard.transform.position =
-                    new Vector3(deckLocationP2.x, deckLocationP2.y + 0.1f * i, deckLocationP2.z);
-                newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
-                newPhysicalCard.name = deck[i].Nom + "P2";
-                allPhysicalCards.Add(newPhysicalCard);
-            }
-        }
+        InitPhysicalCards(gameState);
 
         for (var i = deck.Count - 5; i < deck.Count; i++)
         {
@@ -152,16 +126,25 @@ public class PlayerCards : MonoBehaviour
         }
 
         deck.RemoveRange(deck.Count - 5, 5);
+    }
 
-        if (!isPlayerOne) return;
+    private void InitPhysicalCards(GameState gameState)
+    {
+        deck = isPlayerOne ? gameState.deckP1 : gameState.deckP2;
+        for (var i = 0; i < deck.Count; i++)
         {
-            for (var i = 0; i < deck.Count; i++)
+            var deckLocation = isPlayerOne ? deckLocationP1 : deckLocationP2;
+            var newPhysicalCard = Instantiate(prefabCard, deckLocation, Quaternion.identity);
+            if (isPlayerOne)
             {
-                if (deck[i].Nom != "Le voisin") continue;
-                handCards.Add(deck[i]);
-                deck.Remove(deck[i]);
-                break;
+                newPhysicalCard.transform.rotation = Quaternion.Euler(0, 180, 0);
             }
+
+            newPhysicalCard.transform.position =
+                new Vector3(deckLocation.x, deckLocation.y + 0.1f * i, deckLocation.z);
+            newPhysicalCard.name = deck[i].Nom + (isPlayerOne ? "P1" : "P2");
+            newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
+            allPhysicalCards.Add(newPhysicalCard);
         }
     }
 
@@ -186,7 +169,8 @@ public class PlayerCards : MonoBehaviour
 
     public void AddPhysicalCard(Card card, string playerName)
     {
-        var newPhysicalCard = Instantiate(prefabCard, deckLocationP2, Quaternion.identity);
+        var newPhysicalCard = Instantiate(prefabCard, playerName == "P1" ? deckLocationP1 : deckLocationP2,
+            Quaternion.identity);
         newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = card;
         newPhysicalCard.name = card.Nom + playerName;
         allPhysicalCards.Add(newPhysicalCard);
@@ -195,12 +179,10 @@ public class PlayerCards : MonoBehaviour
     public void RemoveSuperInvocation(Card superInvocationCard)
     {
         var index = FindCard(superInvocationCard);
-        if (index > -1)
-        {
-            invocationCards.Remove(superInvocationCard as InvocationCard);
-            var gameobject = allPhysicalCards[index];
-            Destroy(gameobject);
-        }
+        if (index <= -1) return;
+        invocationCards.Remove(superInvocationCard as InvocationCard);
+        var gameobject = allPhysicalCards[index];
+        Destroy(gameobject);
     }
 
     public void ResetInvocationCardNewTurn()
@@ -242,23 +224,19 @@ public class PlayerCards : MonoBehaviour
             {
                 var effectCard = effectCards[i];
                 var effectCardEffect = effectCard.GetEffectCardEffect();
-                if (effectCardEffect != null)
+                if (effectCardEffect == null) continue;
+                if (!effectCardEffect.Keys.Contains(Effect.SameFamily)) continue;
+                if (field != null && !IsFieldDesactivate)
                 {
-                    if (effectCardEffect.Keys.Contains(Effect.SameFamily))
+                    foreach (var invocationCard in invocationCards)
                     {
-                        if (field != null && !IsFieldDesactivate)
-                        {
-                            foreach (var invocationCard in invocationCards)
-                            {
-                                invocationCard.SetCurrentFamily(field.GetFamily());
-                            }
-                        }
-                        else
-                        {
-                            effectCards.Remove(effectCard);
-                            yellowTrash.Add(effectCard);
-                        }
+                        invocationCard.SetCurrentFamily(field.GetFamily());
                     }
+                }
+                else
+                {
+                    effectCards.Remove(effectCard);
+                    yellowTrash.Add(effectCard);
                 }
             }
 
@@ -294,198 +272,123 @@ public class PlayerCards : MonoBehaviour
             oldHandCards = new List<Card>(handCards);
         }
 
-        if (isPlayerOne)
+        DisplayCardsInPosition();
+    }
+
+    private void DisplayCardsInPosition()
+    {
+        var cardTag = isPlayerOne ? "card1" : "card2";
+        for (var i = 0; i < invocationCards.Count; i++)
         {
-            for (var i = 0; i < invocationCards.Count; i++)
+            if (!invocationCards[i]) continue;
+            var invocationCard = invocationCards[i];
+            var index = FindCard(invocationCard);
+            var invocationCardsLocation = isPlayerOne ? invocationCardsLocationP1[i] : invocationCardsLocationP2[i];
+            allPhysicalCards[index].transform.position = invocationCardsLocation;
+            if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
             {
-                if (!invocationCards[i]) continue;
-                var invocationCard = invocationCards[i];
-                var index = FindCard(invocationCard);
-                allPhysicalCards[index].transform.position = invocationCardsLocationP1[i];
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
-
-                allPhysicalCards[index].tag = "card1";
-
-                if (invocationCard.GetEquipmentCard() == null) continue;
-                var equipmentCard = invocationCard.GetEquipmentCard();
-                index = FindCard(equipmentCard);
-                allPhysicalCards[index].transform.position = equipmentCardsLocationP1[i];
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
-
-                allPhysicalCards[index].tag = "card1";
+                allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
             }
 
-            for (var i = 0; i < effectCards.Count; i++)
+            allPhysicalCards[index].tag = cardTag;
+
+            if (invocationCard.GetEquipmentCard() == null) continue;
+            var equipmentCard = invocationCard.GetEquipmentCard();
+            index = FindCard(equipmentCard);
+            var equipmentCardsLocation = isPlayerOne ? equipmentCardsLocationP1[i] : equipmentCardsLocationP2[i];
+            allPhysicalCards[index].transform.position = equipmentCardsLocation;
+            if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
             {
-                var effectCard = effectCards[i];
-                if (!effectCard) continue;
-                var index = FindCard(effectCards[i]);
-                allPhysicalCards[index].transform.position = effectCardsLocationP1[i];
-
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
-
-                if (effectCard.GetEffectCardEffect().Keys.Contains(Effect.SameFamily))
-                {
-                    foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard)
-                                 .Where(invocationCard => field != null && !IsFieldDesactivate))
-                    {
-                        invocationCard.SetCurrentFamily(field.GetFamily());
-                    }
-                }
-
-                allPhysicalCards[index].tag = "card1";
+                allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
             }
 
-            for (var i = 0; i < deck.Count; i++)
+            allPhysicalCards[index].tag = cardTag;
+        }
+
+        for (var i = 0; i < effectCards.Count; i++)
+        {
+            var effectCard = effectCards[i];
+            if (!effectCard) continue;
+            var index = FindCard(effectCards[i]);
+            var effectCardsLocation = isPlayerOne ? effectCardsLocationP1[i] : effectCardsLocationP2[i];
+            allPhysicalCards[index].transform.position = effectCardsLocation;
+
+            if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
             {
-                if (!deck[i]) continue;
-                var index = FindCard(deck[i]);
-                if (index == -1)
+                allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
+            }
+
+            if (effectCard.GetEffectCardEffect().Keys.Contains(Effect.SameFamily))
+            {
+                foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard)
+                             .Where(invocationCard => field != null && !IsFieldDesactivate))
                 {
-                    print("Cannot find card " + deck[i].Nom);
-                }
-                else
-                {
-                    allPhysicalCards[index].transform.position =
-                        new Vector3(deckLocationP1.x, deckLocationP1.y + 0.1f * i, deckLocationP1.z);
+                    invocationCard.SetCurrentFamily(field.GetFamily());
                 }
             }
 
-            for (var i = 0; i < yellowTrash.Count; i++)
+            allPhysicalCards[index].tag = cardTag;
+        }
+
+        for (var i = 0; i < deck.Count; i++)
+        {
+            if (!deck[i]) continue;
+            var index = FindCard(deck[i]);
+            if (index == -1)
             {
-                if (!yellowTrash[i]) continue;
-                var index = FindCard(yellowTrash[i]);
+                print("Cannot find card " + deck[i].Nom);
+            }
+            else
+            {
+                var deckLocation = isPlayerOne ? deckLocationP1 : deckLocationP2;
                 allPhysicalCards[index].transform.position =
-                    new Vector3(yellowTrashLocationP1.x, yellowTrashLocationP1.y + 0.1f * i, yellowTrashLocationP1.z);
-                if (!allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
-                }
-            }
-
-            if (field)
-            {
-                var index = FindCard(field);
-                allPhysicalCards[index].transform.position = fieldCardLocationP1;
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
-
-                allPhysicalCards[index].tag = "card1";
-            }
-
-            foreach (var index in secretCards.Select(FindCard))
-            {
-                allPhysicalCards[index].transform.position = secretHide;
-                allPhysicalCards[index].tag = "card1";
-            }
-
-            foreach (var handCard in handCards)
-            {
-                var index = FindCard(handCard);
-                if (index == -1)
-                {
-                    print("Cannot find Card " + handCard.Nom);
-                }
-                else
-                {
-                    allPhysicalCards[index].transform.position = secretHide;
-                    allPhysicalCards[index].tag = "card1";
-                }
+                    new Vector3(deckLocation.x, deckLocation.y + 0.1f * i, deckLocation.z);
             }
         }
-        else
+
+        for (var i = 0; i < yellowTrash.Count; i++)
         {
-            for (var i = 0; i < invocationCards.Count; i++)
+            if (!yellowTrash[i]) continue;
+            var index = FindCard(yellowTrash[i]);
+            var yellowTrashLocation = isPlayerOne ? yellowTrashLocationP1 : yellowTrashLocationP2;
+            allPhysicalCards[index].transform.position = 
+                new Vector3(yellowTrashLocation.x, yellowTrashLocation.y + 0.1f * i, yellowTrashLocation.z);
+            if (!allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
             {
-                if (!invocationCards[i]) continue;
-                var invocationCard = invocationCards[i];
-                var index = FindCard(invocationCards[i]);
-                allPhysicalCards[index].transform.position = invocationCardsLocationP2[i];
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
+                allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
+            }
+        }
 
-                allPhysicalCards[index].tag = "card2";
-                if (invocationCard.GetEquipmentCard() == null) continue;
-                var equipmentCard = invocationCard.GetEquipmentCard();
-                index = FindCard(equipmentCard);
-                allPhysicalCards[index].transform.position = equipmentCardsLocationP2[i];
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
-
-                allPhysicalCards[index].tag = "card2";
+        if (field)
+        {
+            var index = FindCard(field);
+            var fieldCardLocation = isPlayerOne ? fieldCardLocationP1 : fieldCardLocationP2;
+            allPhysicalCards[index].transform.position = fieldCardLocation;
+            if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
+            {
+                allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
             }
 
-            for (var i = 0; i < effectCards.Count; i++)
+            allPhysicalCards[index].tag = cardTag;
+        }
+
+        foreach (var index in secretCards.Select(FindCard))
+        {
+            allPhysicalCards[index].transform.position = secretHide;
+            allPhysicalCards[index].tag = cardTag;
+        }
+
+        foreach (var handCard in handCards)
+        {
+            var index = FindCard(handCard);
+            if (index == -1)
             {
-                if (!effectCards[i]) continue;
-                var index = FindCard(effectCards[i]);
-                allPhysicalCards[index].transform.position = effectCardsLocationP2[i];
-
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
-
-                allPhysicalCards[index].tag = "card2";
+                print("Cannot find Card " + handCard.Nom);
             }
-
-            for (var i = 0; i < deck.Count; i++)
-            {
-                if (!deck[i]) continue;
-                var index = FindCard(deck[i]);
-                allPhysicalCards[index].transform.position =
-                    new Vector3(deckLocationP2.x, deckLocationP2.y + 0.1f * i, deckLocationP2.z);
-            }
-
-            for (var i = 0; i < yellowTrash.Count; i++)
-            {
-                if (!yellowTrash[i]) continue;
-                var index = FindCard(yellowTrash[i]);
-                allPhysicalCards[index].transform.position =
-                    new Vector3(yellowTrashLocationP2.x, yellowTrashLocationP2.y + 0.1f * i, yellowTrashLocationP2.z);
-                if (!allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = true;
-                }
-            }
-
-            if (field)
-            {
-                var index = FindCard(field);
-                allPhysicalCards[index].transform.position = fieldCardLocationP2;
-                if (allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
-                {
-                    allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
-                }
-
-                allPhysicalCards[index].tag = "card2";
-            }
-
-            foreach (var index in secretCards.Select(FindCard))
+            else
             {
                 allPhysicalCards[index].transform.position = secretHide;
-                allPhysicalCards[index].tag = "card2";
-            }
-
-            foreach (var index in handCards.Select(FindCard))
-            {
-                allPhysicalCards[index].transform.position = secretHide;
-                allPhysicalCards[index].tag = "card2";
+                allPhysicalCards[index].tag = cardTag;
             }
         }
     }
