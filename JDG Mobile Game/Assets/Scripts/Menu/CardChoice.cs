@@ -124,8 +124,8 @@ namespace Menu
             deck2.Add(GetSpecificCard("Frangipanus", allCards));
             deck2.Add(GetSpecificCard("Zozan Kebab", allCards));
             deck1.Add(GetSpecificCard("Poignée de porte", allCards));
-            deck1.Add(GetSpecificCard("Patate", allCards));
-            deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", allCards));
+            deck1.Add(GetSpecificCard("Hypno-boobs", allCards));
+            deck1.Add(GetSpecificCard("Armure trop lourde", allCards));
 
             while (deck1.Count != 30)
             {

@@ -338,6 +338,7 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
+                var hypnoBoobOnly = false;
                 for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
                 {
                     var invocationCard = (InvocationCard)notEmptyOpponent[j];
@@ -446,13 +447,14 @@ public class GameLoop : MonoBehaviour
                                 if (notEmptyOpponent.Contains(invocationCard))
                                 {
                                     notEmptyOpponent.Remove(invocationCard);
+                                    hypnoBoobOnly = notEmptyOpponent.Count == 0;
                                 }
                             }
                         }
                     }
                 }
 
-                if (notEmptyOpponent.Count == 0)
+                if (notEmptyOpponent.Count == 0 && !hypnoBoobOnly)
                 {
                     notEmptyOpponent.Add(player);
                 }
@@ -480,27 +482,36 @@ public class GameLoop : MonoBehaviour
     {
         nextPhaseButton.SetActive(false);
 
-        var message = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis ton adversaire :", invocationCards);
-        message.GetComponent<MessageBox>().PositiveAction = () =>
+        if (invocationCards.Count > 0)
         {
-            var invocationCard =
-                (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
-
-            if (invocationCard != null)
+            var message =
+                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis ton adversaire :", invocationCards);
+            message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                ComputeAttack(invocationCard);
-            }
+                var invocationCard =
+                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
 
-            stopDetectClicking = false;
-            nextPhaseButton.SetActive(true);
-            Destroy(message);
-        };
-        message.GetComponent<MessageBox>().NegativeAction = () =>
+                if (invocationCard != null)
+                {
+                    ComputeAttack(invocationCard);
+                }
+
+                stopDetectClicking = false;
+                nextPhaseButton.SetActive(true);
+                Destroy(message);
+            };
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                nextPhaseButton.SetActive(true);
+                stopDetectClicking = false;
+                Destroy(message);
+            };
+        }
+        else
         {
-            nextPhaseButton.SetActive(true);
-            stopDetectClicking = false;
-            Destroy(message);
-        };
+            MessageBox.CreateOkMessageBox(canvas, "Attention",
+                "Tu ne peux pas attaquer le joueur ni ses invocations");
+        }
     }
 
     private void ComputeAttack(InvocationCard opponent)
@@ -1259,17 +1270,19 @@ public class GameLoop : MonoBehaviour
             IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
         List<EffectCard> effectCards = currentPlayerCard.effectCards;
         List<EffectCard> opponentEffectCards = opponentPlayerCard.effectCards;
-        
+
         DealWithEndEffect(currentPlayerCard, opponentPlayerCard, currentPlayerStatus, effectCards);
         DealWithEndEffect(opponentPlayerCard, currentPlayerCard, opponentPlayerStatus, opponentEffectCards);
 
-        var invocationCards = IsP1Turn ? p1.GetComponent<PlayerCards>().invocationCards : p2.GetComponent<PlayerCards>().invocationCards;
-        
+        var invocationCards = IsP1Turn
+            ? p1.GetComponent<PlayerCards>().invocationCards
+            : p2.GetComponent<PlayerCards>().invocationCards;
+
         foreach (var invocationCard in invocationCards)
         {
             invocationCard.UnblockAttack();
         }
-        
+
         IsP1Turn = !IsP1Turn;
         ChangePlayer.Invoke();
         playerCamera.transform.Rotate(cameraRotation);
