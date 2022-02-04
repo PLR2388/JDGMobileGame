@@ -1,4 +1,5 @@
-﻿using Cards;
+﻿using System;
+using Cards;
 using Cards.EffectCards;
 using Cards.FieldCards;
 using Cards.InvocationCards;
@@ -109,6 +110,8 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 putCardButton.GetComponent<Button>().interactable = playerCard.field == null;
                 break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
 #if UNITY_EDITOR

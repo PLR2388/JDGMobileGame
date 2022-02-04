@@ -46,12 +46,10 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        //  OnHoverEnter ();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        //   OnHoverExit ();
     }
 
     public void OnPointerClick(PointerEventData eventData)

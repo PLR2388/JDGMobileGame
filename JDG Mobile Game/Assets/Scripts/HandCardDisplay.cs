@@ -20,59 +20,36 @@ public class HandCardDisplay : MonoBehaviour
 
     private void Update()
     {
-        if (GameLoop.IsP1Turn)
+        DisplayHandCard();
+    }
+
+    private void DisplayHandCard()
+    {
+        var handCards = GameLoop.IsP1Turn
+            ? player1.GetComponent<PlayerCards>().handCards
+            : player2.GetComponent<PlayerCards>().handCards;
+        if (createdCards.Count < handCards.Count)
         {
-            var handCards = player1.GetComponent<PlayerCards>().handCards;
-            if (createdCards.Count < handCards.Count)
+            foreach (var handCard in handCards)
             {
-                foreach (var handCard in handCards)
-                {
-                    var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-                    newCard.transform.SetParent(transform, true);
-                    newCard.GetComponent<CardDisplay>().card = handCard;
-                    newCard.GetComponent<OnHover>().bIsInGame = true;
-                    createdCards.Add(newCard);
-                }
-
-                var rectTransform = GetComponent<RectTransform>();
-                rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
+                var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+                newCard.transform.SetParent(transform, true);
+                newCard.GetComponent<CardDisplay>().card = handCard;
+                newCard.GetComponent<OnHover>().bIsInGame = true;
+                createdCards.Add(newCard);
             }
-            else if (createdCards.Count > handCards.Count)
-            {
-                foreach (var createdCard in createdCards)
-                {
-                    Destroy(createdCard);
-                }
 
-                createdCards.Clear();
-            }
+            var rectTransform = GetComponent<RectTransform>();
+            rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
         }
-        else
+        else if (createdCards.Count > handCards.Count)
         {
-            var handCards = player2.GetComponent<PlayerCards>().handCards;
-            if (createdCards.Count < handCards.Count)
+            foreach (var createdCard in createdCards)
             {
-                foreach (var handCard in handCards)
-                {
-                    var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-                    newCard.transform.SetParent(transform, true);
-                    newCard.GetComponent<CardDisplay>().card = handCard;
-                    newCard.GetComponent<OnHover>().bIsInGame = true;
-                    createdCards.Add(newCard);
-                }
-
-                var rectTransform = GetComponent<RectTransform>();
-                rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
+                Destroy(createdCard);
             }
-            else if (createdCards.Count > handCards.Count)
-            {
-                foreach (var createdCard in createdCards)
-                {
-                    Destroy(createdCard);
-                }
 
-                createdCards.Clear();
-            }
+            createdCards.Clear();
         }
     }
 

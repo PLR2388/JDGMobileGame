@@ -351,7 +351,7 @@ public class PlayerCards : MonoBehaviour
             if (!yellowTrash[i]) continue;
             var index = FindCard(yellowTrash[i]);
             var yellowTrashLocation = isPlayerOne ? yellowTrashLocationP1 : yellowTrashLocationP2;
-            allPhysicalCards[index].transform.position = 
+            allPhysicalCards[index].transform.position =
                 new Vector3(yellowTrashLocation.x, yellowTrashLocation.y + 0.1f * i, yellowTrashLocation.z);
             if (!allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden)
             {
@@ -473,16 +473,17 @@ public class PlayerCards : MonoBehaviour
         var cardName = "";
         for (var i = 0; i < keys.Count; i++)
         {
+            var value = values[i];
             switch (keys[i])
             {
                 case DeathEffect.GetSpecificCard:
                     cardName = values[i];
                     break;
                 case DeathEffect.GetCardSource:
-                    GetCardSourceDeathEffect(specificCardFound, values, i, cardName);
+                    GetCardSourceDeathEffect(specificCardFound, value, cardName);
                     break;
                 case DeathEffect.ComeBackToHand:
-                    ComeBackToHandDeathEffect(specificCardFound, values[i]);
+                    ComeBackToHandDeathEffect(specificCardFound, value);
                     break;
                 case DeathEffect.KillAlsoOtherCard:
                     break;
@@ -534,14 +535,13 @@ public class PlayerCards : MonoBehaviour
         }
 
         MessageBox.CreateSimpleMessageBox(canvas, "Carte en main",
-            "Voulez-vous aussi ajouter " + cardName + " à votre main ?", PositiveAction, NegativeAction);
+            "Veux-tu aussi ajouter " + cardName + " à ta main ?", PositiveAction, NegativeAction);
     }
 
-    private void GetCardSourceDeathEffect(Card invocationCard, IReadOnlyList<string> values, int i,
+    private void GetCardSourceDeathEffect(Card invocationCard, string source,
         string cardName)
     {
         Card cardFound = null;
-        var source = values[i];
 
         SendCardToYellowTrash(invocationCard);
         switch (source)
@@ -656,127 +656,36 @@ public class PlayerCards : MonoBehaviour
 
             for (var i = 0; i < keys.Count; i++)
             {
+                var value = values[i];
                 switch (keys[i])
                 {
                     case PermEffect.GiveStat:
                     {
-                        if (Enum.TryParse(values[i], out CardFamily cardFamily))
-                        {
-                            if (newInvocationCard.Nom == invocationCard.Nom)
-                            {
-                                // Must catch up old cards
-                                invocationCardsToChange.AddRange(invocationCards
-                                    .Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom)
-                                    .Where(invocationCardToCheck =>
-                                        invocationCardToCheck.GetFamily().Contains(cardFamily)));
-                            }
-                            else if (newInvocationCard.GetFamily().Contains(cardFamily))
-                            {
-                                invocationCardsToChange.Add(newInvocationCard);
-                            }
-                        }
+                        GiveStatPermEffect(newInvocationCard, value, invocationCard, ref invocationCardsToChange);
                     }
                         break;
                     case PermEffect.Family:
                     {
-                        if (Enum.TryParse(values[i], out CardFamily cardFamily))
-                        {
-                            if (newInvocationCard.Nom == invocationCard.Nom)
-                            {
-                                // Must catch up old cards
-                                sameFamilyInvocationCards.AddRange(invocationCards
-                                    .Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom)
-                                    .Where(invocationCardToCheck =>
-                                        invocationCardToCheck.GetFamily().Contains(cardFamily)));
-                            }
-                            else if (newInvocationCard.GetFamily().Contains(cardFamily))
-                            {
-                                sameFamilyInvocationCards.Add(newInvocationCard);
-                            }
-                        }
+                        FamilyPermEffect(newInvocationCard, value, invocationCard, ref sameFamilyInvocationCards);
                     }
                         break;
                     case PermEffect.Condition:
                     {
-                        switch (values[i])
-                        {
-                            case "2 ATK 2 DEF":
-                            {
-                                for (var k = sameFamilyInvocationCards.Count - 1; k >= 0; k--)
-                                {
-                                    var invocationCardToCheck = sameFamilyInvocationCards[k];
-                                    if (invocationCardToCheck.GetAttack() != 2f ||
-                                        invocationCardToCheck.GetDefense() != 2f)
-                                    {
-                                        sameFamilyInvocationCards.Remove(invocationCardToCheck);
-                                    }
-                                }
-                            }
-                                break;
-                            case "Benzaie jeune":
-                            {
-                                if (invocationCards.Any(invocationCardToCheck =>
-                                        invocationCardToCheck.Nom == values[i]))
-                                {
-                                    mustHaveMinimumUndef = true;
-                                }
-                            }
-                                break;
-                        }
+                        ConditionPermEffect(value, ref sameFamilyInvocationCards, ref mustHaveMinimumUndef);
                     }
                         break;
                     case PermEffect.IncreaseAtk:
                     {
-                        if (invocationCardsToChange.Count > 0)
-                        {
-                            foreach (var invocationCardToChange in invocationCardsToChange)
-                            {
-                                var value = invocationCardToChange.GetBonusAttack() + float.Parse(values[i]);
-                                invocationCardToChange.SetBonusAttack(value);
-                            }
-                        }
-                        else if (sameFamilyInvocationCards.Count > 0)
-                        {
-                            var newValue = invocationCard.GetBonusAttack() +
-                                           float.Parse(values[i]) * sameFamilyInvocationCards.Count;
-                            invocationCard.SetBonusAttack(newValue);
-                        }
-                        else if (mustHaveMinimumUndef)
-                        {
-                            var minValue = float.Parse(values[i]);
-                            if (invocationCard.GetCurrentAttack() < minValue)
-                            {
-                                var value = minValue - invocationCard.GetCurrentAttack();
-                                invocationCard.SetBonusAttack(value);
-                            }
-                        }
+                        IncreaseAtkPermEffect(invocationCardsToChange, value, sameFamilyInvocationCards,
+                            ref invocationCard,
+                            mustHaveMinimumUndef);
                     }
                         break;
                     case PermEffect.IncreaseDef:
                     {
-                        if (invocationCardsToChange.Count > 0)
-                        {
-                            foreach (var invocationCardToChange in invocationCardsToChange)
-                            {
-                                var value = invocationCardToChange.GetBonusDefense() + float.Parse(values[i]);
-                                invocationCardToChange.SetBonusDefense(value);
-                            }
-                        }
-                        else if (sameFamilyInvocationCards.Count > 0)
-                        {
-                            var newValue = invocationCard.GetBonusDefense() +
-                                           float.Parse(values[i]) * sameFamilyInvocationCards.Count;
-                            invocationCard.SetBonusDefense(newValue);
-                        }
-                        else if (mustHaveMinimumUndef)
-                        {
-                            var minValue = float.Parse(values[i]);
-                            if (invocationCard.GetCurrentDefense() < minValue)
-                            {
-                                var value = minValue - invocationCard.GetCurrentDefense();
-                                invocationCard.SetBonusDefense(value);
-                            }
-                        }
+                        IncreaseDefPermEffect(invocationCardsToChange, value, sameFamilyInvocationCards,
+                            ref invocationCard,
+                            mustHaveMinimumUndef);
                     }
                         break;
                     case PermEffect.CanOnlyAttackIt:
@@ -825,39 +734,188 @@ public class PlayerCards : MonoBehaviour
             var family = field.GetFamily();
             for (var i = 0; i < fieldKeys.Count; i++)
             {
+                var fieldValue = fieldValues[i];
                 switch (fieldKeys[i])
                 {
                     case FieldEffect.ATK:
                     {
-                        var atk = float.Parse(fieldValues[i]);
-                        if (newInvocationCard.GetFamily().Contains(family))
-                        {
-                            var newBonusAttack = newInvocationCard.GetBonusAttack() + atk;
-                            newInvocationCard.SetBonusAttack(newBonusAttack);
-                        }
+                        ATKFieldEffect(ref newInvocationCard, fieldValue, family);
                     }
-
                         break;
                     case FieldEffect.DEF:
                     {
-                        var def = float.Parse(fieldValues[i]);
-                        if (newInvocationCard.GetFamily().Contains(family))
-                        {
-                            var newBonusDefense = newInvocationCard.GetBonusDefense() + def;
-                            newInvocationCard.SetBonusDefense(newBonusDefense);
-                        }
+                        DEFFieldEffect(ref newInvocationCard, fieldValue, family);
                     }
                         break;
                     case FieldEffect.Change:
                     {
-                        var names = fieldValues[i].Split(';');
-                        if (names.Contains(newInvocationCard.Nom))
-                        {
-                            newInvocationCard.SetCurrentFamily(family);
-                        }
+                        ChangeFieldEffect(ref newInvocationCard, fieldValue, family);
                     }
                         break;
+                    case FieldEffect.GetCard:
+                        break;
+                    case FieldEffect.DrawCard:
+                        break;
+                    case FieldEffect.Life:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
+            }
+        }
+    }
+
+    private static void ChangeFieldEffect(ref InvocationCard newInvocationCard, string fieldValue, CardFamily family)
+    {
+        var names = fieldValue.Split(';');
+        if (names.Contains(newInvocationCard.Nom))
+        {
+            newInvocationCard.SetCurrentFamily(family);
+        }
+    }
+
+    private static void DEFFieldEffect(ref InvocationCard newInvocationCard, string fieldValue, CardFamily family)
+    {
+        var def = float.Parse(fieldValue);
+        if (newInvocationCard.GetFamily().Contains(family))
+        {
+            var newBonusDefense = newInvocationCard.GetBonusDefense() + def;
+            newInvocationCard.SetBonusDefense(newBonusDefense);
+        }
+    }
+
+    private static void ATKFieldEffect(ref InvocationCard newInvocationCard, string fieldValue, CardFamily family)
+    {
+        var atk = float.Parse(fieldValue);
+        if (newInvocationCard.GetFamily().Contains(family))
+        {
+            var newBonusAttack = newInvocationCard.GetBonusAttack() + atk;
+            newInvocationCard.SetBonusAttack(newBonusAttack);
+        }
+    }
+
+    private static void IncreaseDefPermEffect(List<InvocationCard> invocationCardsToChange, string value,
+        List<InvocationCard> sameFamilyInvocationCards, ref InvocationCard invocationCard, bool mustHaveMinimumUndef)
+    {
+        if (invocationCardsToChange.Count > 0)
+        {
+            foreach (var invocationCardToChange in invocationCardsToChange)
+            {
+                var newDef = invocationCardToChange.GetBonusDefense() + float.Parse(value);
+                invocationCardToChange.SetBonusDefense(newDef);
+            }
+        }
+        else if (sameFamilyInvocationCards.Count > 0)
+        {
+            var newValue = invocationCard.GetBonusDefense() +
+                           float.Parse(value) * sameFamilyInvocationCards.Count;
+            invocationCard.SetBonusDefense(newValue);
+        }
+        else if (mustHaveMinimumUndef)
+        {
+            var minValue = float.Parse(value);
+            if (invocationCard.GetCurrentDefense() < minValue)
+            {
+                var newDef = minValue - invocationCard.GetCurrentDefense();
+                invocationCard.SetBonusDefense(newDef);
+            }
+        }
+    }
+
+    private static void IncreaseAtkPermEffect(List<InvocationCard> invocationCardsToChange, string value,
+        List<InvocationCard> sameFamilyInvocationCards, ref InvocationCard invocationCard, bool mustHaveMinimumUndef)
+    {
+        if (invocationCardsToChange.Count > 0)
+        {
+            foreach (var invocationCardToChange in invocationCardsToChange)
+            {
+                var newAtk = invocationCardToChange.GetBonusAttack() + float.Parse(value);
+                invocationCardToChange.SetBonusAttack(newAtk);
+            }
+        }
+        else if (sameFamilyInvocationCards.Count > 0)
+        {
+            var newValue = invocationCard.GetBonusAttack() +
+                           float.Parse(value) * sameFamilyInvocationCards.Count;
+            invocationCard.SetBonusAttack(newValue);
+        }
+        else if (mustHaveMinimumUndef)
+        {
+            var minValue = float.Parse(value);
+            if (invocationCard.GetCurrentAttack() < minValue)
+            {
+                var newAtk = minValue - invocationCard.GetCurrentAttack();
+                invocationCard.SetBonusAttack(newAtk);
+            }
+        }
+    }
+
+    private void ConditionPermEffect(string value, ref List<InvocationCard> sameFamilyInvocationCards,
+        ref bool mustHaveMinimumUndef)
+    {
+        switch (value)
+        {
+            case "2 ATK 2 DEF":
+            {
+                for (var k = sameFamilyInvocationCards.Count - 1; k >= 0; k--)
+                {
+                    var invocationCardToCheck = sameFamilyInvocationCards[k];
+                    if (invocationCardToCheck.GetAttack() != 2f ||
+                        invocationCardToCheck.GetDefense() != 2f)
+                    {
+                        sameFamilyInvocationCards.Remove(invocationCardToCheck);
+                    }
+                }
+            }
+                break;
+            case "Benzaie jeune":
+            {
+                if (invocationCards.Any(invocationCardToCheck =>
+                        invocationCardToCheck.Nom == value))
+                {
+                    mustHaveMinimumUndef = true;
+                }
+            }
+                break;
+        }
+    }
+
+    private void FamilyPermEffect(InvocationCard newInvocationCard, string value, InvocationCard invocationCard,
+        ref List<InvocationCard> sameFamilyInvocationCards)
+    {
+        if (Enum.TryParse(value, out CardFamily cardFamily))
+        {
+            if (newInvocationCard.Nom == invocationCard.Nom)
+            {
+                // Must catch up old cards
+                sameFamilyInvocationCards.AddRange(invocationCards
+                    .Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom)
+                    .Where(invocationCardToCheck =>
+                        invocationCardToCheck.GetFamily().Contains(cardFamily)));
+            }
+            else if (newInvocationCard.GetFamily().Contains(cardFamily))
+            {
+                sameFamilyInvocationCards.Add(newInvocationCard);
+            }
+        }
+    }
+
+    private void GiveStatPermEffect(InvocationCard newInvocationCard, string value, InvocationCard invocationCard,
+        ref List<InvocationCard> invocationCardsToChange)
+    {
+        if (Enum.TryParse(value, out CardFamily cardFamily))
+        {
+            if (newInvocationCard.Nom == invocationCard.Nom)
+            {
+                // Must catch up old cards
+                invocationCardsToChange.AddRange(invocationCards
+                    .Where(invocationCardToCheck => invocationCardToCheck.Nom != newInvocationCard.Nom)
+                    .Where(invocationCardToCheck =>
+                        invocationCardToCheck.GetFamily().Contains(cardFamily)));
+            }
+            else if (newInvocationCard.GetFamily().Contains(cardFamily))
+            {
+                invocationCardsToChange.Add(newInvocationCard);
             }
         }
     }
@@ -881,127 +939,55 @@ public class PlayerCards : MonoBehaviour
 
                 for (var i = 0; i < keys.Count; i++)
                 {
+                    var value = values[i];
                     switch (keys[i])
                     {
                         case PermEffect.GiveStat:
                         {
-                            if (Enum.TryParse(values[i], out CardFamily cardFamily))
-                            {
-                                if (removedInvocationCard.Nom == invocationCard.Nom)
-                                {
-                                    // Delete itself everybody lose advantage
-                                    foreach (var invocationCardToCheck in invocationCards)
-                                    {
-                                        if (invocationCardToCheck.Nom != removedInvocationCard.Nom)
-                                        {
-                                            if (invocationCardToCheck.GetFamily().Contains(cardFamily))
-                                            {
-                                                invocationCardsToChange.Add(invocationCardToCheck);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            GiveStatPermEffectRemoved(removedInvocationCard, value, invocationCard,
+                                ref invocationCardsToChange);
                         }
                             break;
                         case PermEffect.Family:
                         {
-                            if (Enum.TryParse(values[i], out CardFamily cardFamily))
-                            {
-                                if (removedInvocationCard.Nom == invocationCard.Nom)
-                                {
-                                    // Delete itself so loose all advantage to itself
-                                    foreach (var invocationCardToCheck in invocationCards)
-                                    {
-                                        if (invocationCardToCheck.Nom != removedInvocationCard.Nom)
-                                        {
-                                            if (invocationCardToCheck.GetFamily().Contains(cardFamily))
-                                            {
-                                                sameFamilyInvocationCards.Add(invocationCardToCheck);
-                                            }
-                                        }
-                                    }
-                                }
-                                else if (removedInvocationCard.GetFamily().Contains(cardFamily))
-                                {
-                                    // Just loose 1 element
-                                    sameFamilyInvocationCards.Add(removedInvocationCard);
-                                }
-                            }
+                            FamilyPermEffectRemoved(removedInvocationCard, value, invocationCard,
+                                ref sameFamilyInvocationCards);
                         }
                             break;
                         case PermEffect.Condition:
                         {
-                            switch (values[i])
-                            {
-                                case "2 ATK 2 DEF":
-                                {
-                                    for (var k = sameFamilyInvocationCards.Count - 1; k >= 0; k--)
-                                    {
-                                        var invocationCardToCheck = sameFamilyInvocationCards[k];
-                                        if (invocationCardToCheck.GetAttack() != 2f ||
-                                            invocationCardToCheck.GetDefense() != 2f)
-                                        {
-                                            sameFamilyInvocationCards.Remove(invocationCardToCheck);
-                                        }
-                                    }
-                                }
-                                    break;
-                                case "Benzaie jeune":
-                                {
-                                    if (removedInvocationCard.Nom == invocationCard.Nom)
-                                    {
-                                        mustHaveMiminumAtkdef = true;
-                                    }
-                                }
-                                    break;
-                            }
+                            ConditionPermEffectRemoved(removedInvocationCard, value, sameFamilyInvocationCards,
+                                invocationCard, ref mustHaveMiminumAtkdef);
                         }
                             break;
                         case PermEffect.IncreaseAtk:
                         {
-                            if (invocationCardsToChange.Count > 0)
-                            {
-                                foreach (var invocationCardToChange in invocationCardsToChange)
-                                {
-                                    var value = invocationCardToChange.GetBonusAttack() - float.Parse(values[i]);
-                                    invocationCardToChange.SetBonusAttack(value);
-                                }
-                            }
-                            else if (sameFamilyInvocationCards.Count > 0)
-                            {
-                                var newValue = invocationCard.GetBonusAttack() -
-                                               float.Parse(values[i]) * sameFamilyInvocationCards.Count;
-                                invocationCard.SetBonusAttack(newValue);
-                            }
-                            else if (mustHaveMiminumAtkdef)
-                            {
-                                invocationCard.SetBonusAttack(0);
-                            }
+                            IncreaseAtkPermEffectRemoved(invocationCardsToChange, value, sameFamilyInvocationCards,
+                                ref invocationCard, mustHaveMiminumAtkdef);
                         }
                             break;
                         case PermEffect.IncreaseDef:
                         {
-                            if (invocationCardsToChange.Count > 0)
-                            {
-                                foreach (var invocationCardToChange in invocationCardsToChange)
-                                {
-                                    var value = invocationCardToChange.GetBonusDefense() - float.Parse(values[i]);
-                                    invocationCardToChange.SetBonusDefense(value);
-                                }
-                            }
-                            else if (sameFamilyInvocationCards.Count > 0)
-                            {
-                                var newValue = invocationCard.GetBonusDefense() -
-                                               float.Parse(values[i]) * sameFamilyInvocationCards.Count;
-                                invocationCard.SetBonusDefense(newValue);
-                            }
-                            else if (mustHaveMiminumAtkdef)
-                            {
-                                invocationCard.SetBonusDefense(0);
-                            }
+                            IncreaseDefPermEffectRemoved(invocationCardsToChange, value, sameFamilyInvocationCards,
+                                ref invocationCard, mustHaveMiminumAtkdef);
                         }
                             break;
+                        case PermEffect.CanOnlyAttackIt:
+                            break;
+                        case PermEffect.PreventInvocationCards:
+                            break;
+                        case PermEffect.ProtectBehind:
+                            break;
+                        case PermEffect.ImpossibleAttackByInvocation:
+                            break;
+                        case PermEffect.ImpossibleToBeAffectedByEffect:
+                            break;
+                        case PermEffect.NumberTurn:
+                            break;
+                        case PermEffect.checkCardsOnField:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
             }
@@ -1016,34 +1002,23 @@ public class PlayerCards : MonoBehaviour
 
                 for (var i = 0; i < keys.Count; i++)
                 {
+                    var value = values[i];
                     switch (keys[i])
                     {
                         case ActionEffect.GiveAtk:
                         {
-                            atk = float.Parse(values[i]);
+                            atk = float.Parse(value);
                         }
                             break;
                         case ActionEffect.GiveDef:
                         {
-                            def = float.Parse(values[i]);
+                            def = float.Parse(value);
                         }
                             break;
                         case ActionEffect.Beneficiary:
                         {
-                            if (removedInvocationCard.Nom == invocationCard.Nom)
-                            {
-                                var beneficiary = values[i];
-                                foreach (var invocationCardToCheck in invocationCards)
-                                {
-                                    if (invocationCardToCheck.Nom != beneficiary) continue;
-                                    var newBonusAttack = invocationCardToCheck.GetBonusAttack() - atk;
-                                    var newBonusDef = invocationCardToCheck.GetBonusDefense() - def;
-                                    invocationCardToCheck.SetBonusAttack(newBonusAttack);
-                                    invocationCardToCheck.SetBonusDefense(newBonusDef);
-                                    indexToDelete.Add(i);
-                                    break;
-                                }
-                            }
+                            BeneficiaryActionEffect(removedInvocationCard, invocationCard, value, atk, def,
+                                ref indexToDelete, i);
                         }
                             break;
                     }
@@ -1090,11 +1065,7 @@ public class PlayerCards : MonoBehaviour
                 {
                     case FieldEffect.Change:
                     {
-                        var names = fieldValues[i].Split(';');
-                        if (names.Contains(removedInvocationCard.Nom))
-                        {
-                            removedInvocationCard.SetCurrentFamily(null);
-                        }
+                        ChangeFieldEffect(ref removedInvocationCard, fieldValues[i]);
                     }
                         break;
                     case FieldEffect.ATK:
@@ -1109,6 +1080,160 @@ public class PlayerCards : MonoBehaviour
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+    }
+
+    private static void ChangeFieldEffect(ref InvocationCard removedInvocationCard, string fieldValue)
+    {
+        var names = fieldValue.Split(';');
+        if (names.Contains(removedInvocationCard.Nom))
+        {
+            removedInvocationCard.SetCurrentFamily(null);
+        }
+    }
+
+    private void BeneficiaryActionEffect(InvocationCard removedInvocationCard, InvocationCard invocationCard,
+        string value,
+        float atk, float def, ref List<int> indexToDelete, int i)
+    {
+        if (removedInvocationCard.Nom == invocationCard.Nom)
+        {
+            foreach (var invocationCardToCheck in invocationCards)
+            {
+                if (invocationCardToCheck.Nom != value) continue;
+                var newBonusAttack = invocationCardToCheck.GetBonusAttack() - atk;
+                var newBonusDef = invocationCardToCheck.GetBonusDefense() - def;
+                invocationCardToCheck.SetBonusAttack(newBonusAttack);
+                invocationCardToCheck.SetBonusDefense(newBonusDef);
+                indexToDelete.Add(i);
+                break;
+            }
+        }
+    }
+
+    private static void IncreaseDefPermEffectRemoved(List<InvocationCard> invocationCardsToChange, string value,
+        List<InvocationCard> sameFamilyInvocationCards, ref InvocationCard invocationCard,
+        bool mustHaveMiminumAtkdef)
+    {
+        if (invocationCardsToChange.Count > 0)
+        {
+            foreach (var invocationCardToChange in invocationCardsToChange)
+            {
+                var newBonusDefense = invocationCardToChange.GetBonusDefense() - float.Parse(value);
+                invocationCardToChange.SetBonusDefense(newBonusDefense);
+            }
+        }
+        else if (sameFamilyInvocationCards.Count > 0)
+        {
+            var newValue = invocationCard.GetBonusDefense() -
+                           float.Parse(value) * sameFamilyInvocationCards.Count;
+            invocationCard.SetBonusDefense(newValue);
+        }
+        else if (mustHaveMiminumAtkdef)
+        {
+            invocationCard.SetBonusDefense(0);
+        }
+    }
+
+    private static void IncreaseAtkPermEffectRemoved(List<InvocationCard> invocationCardsToChange, string value,
+        List<InvocationCard> sameFamilyInvocationCards, ref InvocationCard invocationCard, bool mustHaveMiminumAtkdef)
+    {
+        if (invocationCardsToChange.Count > 0)
+        {
+            foreach (var invocationCardToChange in invocationCardsToChange)
+            {
+                var newBonusAttack = invocationCardToChange.GetBonusAttack() - float.Parse(value);
+                invocationCardToChange.SetBonusAttack(newBonusAttack);
+            }
+        }
+        else if (sameFamilyInvocationCards.Count > 0)
+        {
+            var newValue = invocationCard.GetBonusAttack() -
+                           float.Parse(value) * sameFamilyInvocationCards.Count;
+            invocationCard.SetBonusAttack(newValue);
+        }
+        else if (mustHaveMiminumAtkdef)
+        {
+            invocationCard.SetBonusAttack(0);
+        }
+    }
+
+    private static void ConditionPermEffectRemoved(InvocationCard removedInvocationCard, string value,
+        List<InvocationCard> sameFamilyInvocationCards, InvocationCard invocationCard, ref bool mustHaveMiminumAtkdef)
+    {
+        switch (value)
+        {
+            case "2 ATK 2 DEF":
+            {
+                for (var k = sameFamilyInvocationCards.Count - 1; k >= 0; k--)
+                {
+                    var invocationCardToCheck = sameFamilyInvocationCards[k];
+                    if (invocationCardToCheck.GetAttack() != 2f ||
+                        invocationCardToCheck.GetDefense() != 2f)
+                    {
+                        sameFamilyInvocationCards.Remove(invocationCardToCheck);
+                    }
+                }
+            }
+                break;
+            case "Benzaie jeune":
+            {
+                if (removedInvocationCard.Nom == invocationCard.Nom)
+                {
+                    mustHaveMiminumAtkdef = true;
+                }
+            }
+                break;
+        }
+    }
+
+    private void FamilyPermEffectRemoved(InvocationCard removedInvocationCard, string value,
+        InvocationCard invocationCard,
+        ref List<InvocationCard> sameFamilyInvocationCards)
+    {
+        if (Enum.TryParse(value, out CardFamily cardFamily))
+        {
+            if (removedInvocationCard.Nom == invocationCard.Nom)
+            {
+                // Delete itself so loose all advantage to itself
+                foreach (var invocationCardToCheck in invocationCards)
+                {
+                    if (invocationCardToCheck.Nom != removedInvocationCard.Nom)
+                    {
+                        if (invocationCardToCheck.GetFamily().Contains(cardFamily))
+                        {
+                            sameFamilyInvocationCards.Add(invocationCardToCheck);
+                        }
+                    }
+                }
+            }
+            else if (removedInvocationCard.GetFamily().Contains(cardFamily))
+            {
+                // Just loose 1 element
+                sameFamilyInvocationCards.Add(removedInvocationCard);
+            }
+        }
+    }
+
+    private void GiveStatPermEffectRemoved(InvocationCard removedInvocationCard, string value,
+        InvocationCard invocationCard, ref List<InvocationCard> invocationCardsToChange)
+    {
+        if (Enum.TryParse(value, out CardFamily cardFamily))
+        {
+            if (removedInvocationCard.Nom == invocationCard.Nom)
+            {
+                // Delete itself everybody lose advantage
+                foreach (var invocationCardToCheck in invocationCards)
+                {
+                    if (invocationCardToCheck.Nom != removedInvocationCard.Nom)
+                    {
+                        if (invocationCardToCheck.GetFamily().Contains(cardFamily))
+                        {
+                            invocationCardsToChange.Add(invocationCardToCheck);
+                        }
+                    }
                 }
             }
         }
@@ -1130,32 +1255,7 @@ public class PlayerCards : MonoBehaviour
                 {
                     case PermEffect.checkCardsOnField:
                     {
-                        var isFound = false;
-                        if (Enum.TryParse(values[i], out CardFamily cardFamily))
-                        {
-                            if (invocationCards
-                                .Where(otherInvocationCard => otherInvocationCard.Nom != invocationCard.Nom)
-                                .Any(otherInvocationCard => otherInvocationCard.GetFamily().Contains(cardFamily)))
-                            {
-                                isFound = true;
-                            }
-                        }
-                        else
-                        {
-                            var cards = values[i].Split(';');
-
-                            if (invocationCards
-                                .Where(otherInvocationCard => otherInvocationCard.Nom != invocationCard.Nom)
-                                .Any(otherInvocationCard => cards.Contains(otherInvocationCard.Nom)))
-                            {
-                                isFound = true;
-                            }
-                        }
-
-                        if (!isFound)
-                        {
-                            SendInvocationCardToYellowTrash(invocationCard);
-                        }
+                        CheckCardOnFieldPermEffect(values[i], invocationCard);
                     }
                         break;
                     case PermEffect.CanOnlyAttackIt:
@@ -1176,6 +1276,36 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    private void CheckCardOnFieldPermEffect(string value, InvocationCard invocationCard)
+    {
+        var isFound = false;
+        if (Enum.TryParse(value, out CardFamily cardFamily))
+        {
+            if (invocationCards
+                .Where(otherInvocationCard => otherInvocationCard.Nom != invocationCard.Nom)
+                .Any(otherInvocationCard => otherInvocationCard.GetFamily().Contains(cardFamily)))
+            {
+                isFound = true;
+            }
+        }
+        else
+        {
+            var cards = value.Split(';');
+
+            if (invocationCards
+                .Where(otherInvocationCard => otherInvocationCard.Nom != invocationCard.Nom)
+                .Any(otherInvocationCard => cards.Contains(otherInvocationCard.Nom)))
+            {
+                isFound = true;
+            }
+        }
+
+        if (!isFound)
+        {
+            SendInvocationCardToYellowTrash(invocationCard);
+        }
+    }
+
 
     private void OnFieldCardChanged(FieldCard oldFieldCard)
     {
@@ -1188,38 +1318,22 @@ public class PlayerCards : MonoBehaviour
         var family = oldFieldCard.GetFamily();
         for (var i = 0; i < fieldKeys.Count; i++)
         {
+            var fieldValue = fieldValues[i];
             switch (fieldKeys[i])
             {
                 case FieldEffect.ATK:
                 {
-                    var atk = float.Parse(fieldValues[i]);
-                    foreach (var invocationCard in invocationCards)
-                    {
-                        if (!invocationCard.GetFamily().Contains(family)) continue;
-                        var newBonusAttack = invocationCard.GetBonusAttack() - atk;
-                        invocationCard.SetBonusAttack(newBonusAttack);
-                    }
+                    AtkFieldEffect(fieldValue, family);
                 }
                     break;
                 case FieldEffect.DEF:
                 {
-                    var def = float.Parse(fieldValues[i]);
-                    foreach (var invocationCard in invocationCards)
-                    {
-                        if (!invocationCard.GetFamily().Contains(family)) continue;
-                        var newBonusDefense = invocationCard.GetBonusDefense() - def;
-                        invocationCard.SetBonusDefense(newBonusDefense);
-                    }
+                    DefFieldEffect(fieldValue, family);
                 }
                     break;
                 case FieldEffect.Change:
                 {
-                    var names = fieldValues[i].Split(';');
-                    foreach (var invocationCard in invocationCards.Where(invocationCard =>
-                                 names.Contains(invocationCard.Nom)))
-                    {
-                        invocationCard.SetCurrentFamily(null);
-                    }
+                    ChangeFieldEffect(fieldValue);
                 }
                     break;
                 case FieldEffect.GetCard:
@@ -1231,6 +1345,38 @@ public class PlayerCards : MonoBehaviour
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+    }
+
+    private void ChangeFieldEffect(string fieldValue)
+    {
+        var names = fieldValue.Split(';');
+        foreach (var invocationCard in invocationCards.Where(invocationCard =>
+                     names.Contains(invocationCard.Nom)))
+        {
+            invocationCard.SetCurrentFamily(null);
+        }
+    }
+
+    private void DefFieldEffect(string fieldValue, CardFamily family)
+    {
+        var def = float.Parse(fieldValue);
+        foreach (var invocationCard in invocationCards)
+        {
+            if (!invocationCard.GetFamily().Contains(family)) continue;
+            var newBonusDefense = invocationCard.GetBonusDefense() - def;
+            invocationCard.SetBonusDefense(newBonusDefense);
+        }
+    }
+
+    private void AtkFieldEffect(string fieldValue, CardFamily family)
+    {
+        var atk = float.Parse(fieldValue);
+        foreach (var invocationCard in invocationCards)
+        {
+            if (!invocationCard.GetFamily().Contains(family)) continue;
+            var newBonusAttack = invocationCard.GetBonusAttack() - atk;
+            invocationCard.SetBonusAttack(newBonusAttack);
         }
     }
 }
