@@ -1430,10 +1430,18 @@ namespace Cards.EffectCards
                                     (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
                                 if (fieldCard != null)
                                 {
-                                    if (fieldCard.Nom == fieldCard1.Nom)
+                                    if (fieldCard1 != null)
                                     {
-                                        currentPlayerCard.yellowTrash.Add(fieldCard);
-                                        currentPlayerCard.field = null;
+                                        if (fieldCard.Nom == fieldCard1.Nom)
+                                        {
+                                            currentPlayerCard.yellowTrash.Add(fieldCard);
+                                            currentPlayerCard.field = null;
+                                        }
+                                        else
+                                        {
+                                            opponentPlayerCard.yellowTrash.Add(fieldCard);
+                                            opponentPlayerCard.field = null;
+                                        }
                                     }
                                     else
                                     {

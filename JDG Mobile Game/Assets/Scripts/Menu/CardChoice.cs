@@ -122,10 +122,10 @@ namespace Menu
             var allCards = FindObjectOfType<GameState>().allCards;
 
             deck2.Add(GetSpecificCard("Frangipanus", allCards));
-            deck2.Add(GetSpecificCard("Zozan Kebab", allCards));
+            deck2.Add(GetSpecificCard("Incendie", allCards));
             deck1.Add(GetSpecificCard("Poignée de porte", allCards));
             deck1.Add(GetSpecificCard("Hypno-boobs", allCards));
-            deck1.Add(GetSpecificCard("Armure trop lourde", allCards));
+            deck1.Add(GetSpecificCard("Fistiland", allCards));
 
             while (deck1.Count != 30)
             {
