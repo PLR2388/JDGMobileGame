@@ -121,11 +121,11 @@ namespace Menu
 
             var allCards = FindObjectOfType<GameState>().allCards;
 
-            deck2.Add(GetSpecificCard("Frangipanus", allCards));
+            deck2.Add(GetSpecificCard("Barry Redfield", allCards));
             deck2.Add(GetSpecificCard("Incendie", allCards));
             deck1.Add(GetSpecificCard("Poignée de porte", allCards));
-            deck1.Add(GetSpecificCard("Hypno-boobs", allCards));
-            deck1.Add(GetSpecificCard("Fistiland", allCards));
+            deck1.Add(GetSpecificCard("Sheik Point", allCards));
+            deck1.Add(GetSpecificCard("Théodule", allCards));
 
             while (deck1.Count != 30)
             {
