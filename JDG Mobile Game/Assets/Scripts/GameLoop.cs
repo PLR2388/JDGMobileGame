@@ -687,14 +687,13 @@ public class GameLoop : MonoBehaviour
 
     private void ComputeHurtAttack(float diff)
     {
-        var cardBelonging = IsP1Turn && !attacker.IsControlled;
-        var playerCards = cardBelonging ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
         attacker.IncrementNumberDeaths();
         playerStatus.ChangePv(-diff);
         if (attacker.GetInvocationDeathEffect() != null)
         {
-            DealWithDeathEffect(attacker, cardBelonging);
+            DealWithDeathEffect(attacker, IsP1Turn);
             if (!attacker.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
             {
                 playerCards.SendInvocationCardToYellowTrash(cardSelected as InvocationCard);
@@ -713,8 +712,7 @@ public class GameLoop : MonoBehaviour
 
     private void ComputeHurtAttackSuperInvocationCard(float diff, SuperInvocationCard superAttacker)
     {
-        var cardBelonging = IsP1Turn && !attacker.IsControlled;
-        var playerCards = cardBelonging ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
         RemoveCombineEffectCard(playerCards.effectCards,
             playerCards.yellowTrash);
@@ -725,7 +723,7 @@ public class GameLoop : MonoBehaviour
             combineCard.IncrementNumberDeaths();
             if (combineCard.GetInvocationDeathEffect() != null)
             {
-                DealWithDeathEffect(combineCard, cardBelonging);
+                DealWithDeathEffect(combineCard, IsP1Turn);
                 if (!combineCard.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
                 {
                     playerCards.SendCardToYellowTrash(combineCard);
@@ -831,11 +829,10 @@ public class GameLoop : MonoBehaviour
 
     private void ComputeEqualityAttacker()
     {
-        var cardBelonging = IsP1Turn & !attacker.IsControlled;
-        var playerCard = cardBelonging ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         if (attacker.GetInvocationDeathEffect() != null)
         {
-            DealWithDeathEffect(attacker, cardBelonging);
+            DealWithDeathEffect(attacker, IsP1Turn);
             if (!attacker.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
             {
                 playerCard.SendInvocationCardToYellowTrash(attacker);
@@ -854,14 +851,13 @@ public class GameLoop : MonoBehaviour
 
     private void ComputeEqualityAttackSuperAttacker(InvocationCard combineCard)
     {
-        var cardBelonging = IsP1Turn & !combineCard.IsControlled;
-        var playerCard = cardBelonging ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
 
         RemoveCombineEffectCard(playerCard.effectCards,
             playerCard.yellowTrash);
         if (combineCard.GetInvocationDeathEffect() != null)
         {
-            DealWithDeathEffect(combineCard, cardBelonging);
+            DealWithDeathEffect(combineCard, IsP1Turn);
             if (!combineCard.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
             {
                 playerCard.SendCardToYellowTrash(combineCard);
@@ -905,7 +901,6 @@ public class GameLoop : MonoBehaviour
 
     /**
      * invocationCard = card that's going to die
-     * attacker = the opponent
      */
     private void DealWithDeathEffect(InvocationCard invocationCard, bool isP1Card)
     {
@@ -971,13 +966,18 @@ public class GameLoop : MonoBehaviour
 
     private void SendCardToHand(InvocationCard invocationCard, bool isP1Card)
     {
-        if (isP1Card)
+        var playerCards = isP1Card ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCards = isP1Card ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+
+        if (invocationCard.IsControlled)
         {
-            p1.GetComponent<PlayerCards>().SendCardToHand(invocationCard);
+            playerCards.invocationCards.Remove(invocationCard);
+            playerCards.RemovePhysicalCard(invocationCard);
+            opponentPlayerCards.SendCardToHand(invocationCard);
         }
         else
         {
-            p2.GetComponent<PlayerCards>().SendCardToHand(invocationCard);
+            playerCards.SendCardToHand(invocationCard);
         }
     }
 

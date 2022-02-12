@@ -458,39 +458,84 @@ public class PlayerCards : MonoBehaviour
         specificCardFound.SetBonusAttack(0);
         specificCardFound.SetBonusDefense(0);
         specificCardFound.SetRemainedAttackThisTurn(1);
-        invocationCards.Remove(specificCardFound);
-        yellowTrash.Add(specificCardFound);
-        if (equipmentCard != null)
+        if (specificCardFound.IsControlled)
         {
-            yellowTrash.Add(equipmentCard);
-        }
-
-        if (specificCardFound.GetInvocationDeathEffect() == null) return;
-        var invocationDeathEffect = specificCardFound.GetInvocationDeathEffect();
-        var keys = invocationDeathEffect.Keys;
-        var values = invocationDeathEffect.Values;
-
-        var cardName = "";
-        for (var i = 0; i < keys.Count; i++)
-        {
-            var value = values[i];
-            switch (keys[i])
+            var opponentPlayerCards = isPlayerOne ? GameObject.Find("Player2").GetComponent<PlayerCards>() : GameObject.Find("Player1").GetComponent<PlayerCards>();
+            opponentPlayerCards.secretCards.Remove(specificCardFound);
+            opponentPlayerCards.yellowTrash.Add(specificCardFound);
+            if (equipmentCard != null)
             {
-                case DeathEffect.GetSpecificCard:
-                    cardName = values[i];
-                    break;
-                case DeathEffect.GetCardSource:
-                    GetCardSourceDeathEffect(specificCardFound, value, cardName);
-                    break;
-                case DeathEffect.ComeBackToHand:
-                    ComeBackToHandDeathEffect(specificCardFound, value);
-                    break;
-                case DeathEffect.KillAlsoOtherCard:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                opponentPlayerCards.yellowTrash.Add(equipmentCard);
+            }
+
+            var controlledCardIndex = FindCard(specificCardFound);
+            invocationCards.Remove(specificCardFound);
+            Destroy(allPhysicalCards[controlledCardIndex]);
+            
+            if (specificCardFound.GetInvocationDeathEffect() == null) return;
+            var invocationDeathEffect = specificCardFound.GetInvocationDeathEffect();
+            var keys = invocationDeathEffect.Keys;
+            var values = invocationDeathEffect.Values;
+
+            var cardName = "";
+            for (var i = 0; i < keys.Count; i++)
+            {
+                var value = values[i];
+                switch (keys[i])
+                {
+                    case DeathEffect.GetSpecificCard:
+                        cardName = values[i];
+                        break;
+                    case DeathEffect.GetCardSource:
+                        opponentPlayerCards.GetCardSourceDeathEffect(specificCardFound, value, cardName);
+                        break;
+                    case DeathEffect.ComeBackToHand:
+                        //opponentPlayerCards.ComeBackToHandDeathEffect(specificCardFound, value);
+                        break;
+                    case DeathEffect.KillAlsoOtherCard:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
         }
+        else
+        {
+            invocationCards.Remove(specificCardFound);
+            yellowTrash.Add(specificCardFound);
+            if (equipmentCard != null)
+            {
+                yellowTrash.Add(equipmentCard);
+            }
+            
+            if (specificCardFound.GetInvocationDeathEffect() == null) return;
+            var invocationDeathEffect = specificCardFound.GetInvocationDeathEffect();
+            var keys = invocationDeathEffect.Keys;
+            var values = invocationDeathEffect.Values;
+
+            var cardName = "";
+            for (var i = 0; i < keys.Count; i++)
+            {
+                var value = values[i];
+                switch (keys[i])
+                {
+                    case DeathEffect.GetSpecificCard:
+                        cardName = values[i];
+                        break;
+                    case DeathEffect.GetCardSource:
+                        GetCardSourceDeathEffect(specificCardFound, value, cardName);
+                        break;
+                    case DeathEffect.ComeBackToHand:
+                        //ComeBackToHandDeathEffect(specificCardFound, value);
+                        break;
+                    case DeathEffect.KillAlsoOtherCard:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+        specificCardFound.FreeCard();
     }
 
     private void ComeBackToHandDeathEffect(InvocationCard invocationCard, string value)
@@ -605,6 +650,17 @@ public class PlayerCards : MonoBehaviour
         }
 
         handCards.Add(card);
+    }
+
+    public void RemovePhysicalCard(Card card)
+    {
+        var currentIndex = FindCard(card);
+        if (currentIndex >= 0)
+        {
+            var physicalCard = allPhysicalCards[currentIndex];
+            allPhysicalCards.Remove(physicalCard);
+            Destroy(physicalCard);
+        }
     }
 
     private int FindCard(Card card)

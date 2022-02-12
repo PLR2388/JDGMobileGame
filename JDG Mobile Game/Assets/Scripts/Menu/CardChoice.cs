@@ -121,7 +121,7 @@ namespace Menu
 
             var allCards = FindObjectOfType<GameState>().allCards;
 
-            deck2.Add(GetSpecificCard("Barry Redfield", allCards));
+            deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", allCards));
             deck2.Add(GetSpecificCard("Incendie", allCards));
             //deck1.Add(GetSpecificCard("Captain URSSAF", allCards));
             //deck1.Add(GetSpecificCard("Canardcity", allCards));
