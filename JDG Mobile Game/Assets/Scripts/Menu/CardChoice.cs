@@ -140,7 +140,7 @@ namespace Menu
             //deck1.Add(GetSpecificCard("Patate", allCards));
             //deck1.Add(GetSpecificCard("Le Japon", allCards));
             deck1.Add(GetSpecificCard("Rémi", allCards));
-            deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", allCards));
+            deck1.Add(GetSpecificCard("Youtube Money", allCards));
 
             while (deck1.Count != 30)
             {
