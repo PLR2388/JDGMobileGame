@@ -52,6 +52,7 @@ public class GameLoop : MonoBehaviour
     private float totalDownTime;
     private Card cardSelected;
     private InvocationCard attacker;
+    private InvocationCard opponent;
     private int numberOfTurn;
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
@@ -493,7 +494,8 @@ public class GameLoop : MonoBehaviour
 
                 if (invocationCard != null)
                 {
-                    ComputeAttack(invocationCard);
+                    opponent = invocationCard;
+                    ComputeAttack();
                 }
 
                 stopDetectClicking = false;
@@ -514,7 +516,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeAttack(InvocationCard opponent)
+    private void ComputeAttack()
     {
         var attack = attacker.GetCurrentAttack();
         var defenseOpponent = opponent.GetCurrentDefense();
@@ -560,11 +562,11 @@ public class GameLoop : MonoBehaviour
             }
             else if (diff == 0)
             {
-                DealWithEqualityAttack(opponent);
+                DealWithEqualityAttack();
             }
             else
             {
-                DealWithGoodAttack(opponent, diff);
+                DealWithGoodAttack(diff);
             }
         }
 
@@ -595,7 +597,7 @@ public class GameLoop : MonoBehaviour
     /**
      * Attack that kill the opponent
      */
-    private void DealWithGoodAttack(InvocationCard opponent, float diff)
+    private void DealWithGoodAttack(float diff)
     {
         if (opponent is SuperInvocationCard superOpponent)
         {
@@ -741,7 +743,7 @@ public class GameLoop : MonoBehaviour
         playerCards.RemoveSuperInvocation(superAttacker);
     }
 
-    private void DealWithEqualityAttack(InvocationCard opponent)
+    private void DealWithEqualityAttack()
     {
         if (attacker is SuperInvocationCard || opponent is SuperInvocationCard)
         {
@@ -915,7 +917,7 @@ public class GameLoop : MonoBehaviour
                     ComeBackToHandDeathEffect(invocationCard, isP1Card, values, i);
                     break;
                 case DeathEffect.KillAlsoOtherCard:
-                    KillAlsoOtherCardDeathEffect(invocationCard, attacker);
+                    KillAlsoOtherCardDeathEffect();
                     break;
                 case DeathEffect.GetSpecificCard:
                     break;
@@ -927,15 +929,12 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void KillAlsoOtherCardDeathEffect(Card invocationCard, Card attackerInvocationCard)
+    private void KillAlsoOtherCardDeathEffect()
     {
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-        if (attackerInvocationCard != null)
-        {
-            playerCard.SendCardToYellowTrash(attackerInvocationCard);
-            opponentPlayerCard.SendCardToYellowTrash(invocationCard);
-        }
+        playerCard.SendCardToYellowTrash(attacker);
+        opponentPlayerCard.SendCardToYellowTrash(opponent);
     }
 
     private void ComeBackToHandDeathEffect(InvocationCard invocationCard, bool isP1Card, IReadOnlyList<string> values,
