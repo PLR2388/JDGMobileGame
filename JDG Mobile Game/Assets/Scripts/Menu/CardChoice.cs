@@ -123,9 +123,24 @@ namespace Menu
 
             deck2.Add(GetSpecificCard("Barry Redfield", allCards));
             deck2.Add(GetSpecificCard("Incendie", allCards));
-            deck1.Add(GetSpecificCard("Poignée de porte", allCards));
-            deck1.Add(GetSpecificCard("Sheik Point", allCards));
-            deck1.Add(GetSpecificCard("Théodule", allCards));
+            //deck1.Add(GetSpecificCard("Captain URSSAF", allCards));
+            //deck1.Add(GetSpecificCard("Canardcity", allCards));
+            //deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
+            //deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
+            //deck1.Add(GetSpecificCard("Carole du service marketing", allCards));
+            //deck1.Add(GetSpecificCard("Studio de développement", allCards));
+            //deck1.Add(GetSpecificCard("L'Elfette", allCards));
+            //deck1.Add(GetSpecificCard("Forêt des elfes sylvains", allCards));
+            //deck1.Add(GetSpecificCard("Fisti", allCards));
+            //deck1.Add(GetSpecificCard("Fistiland", allCards));
+            //deck1.Add(GetSpecificCard("Archibald Von Grenier", allCards));
+            //deck1.Add(GetSpecificCard("Magasin de jeux vidéo du coin", allCards));
+            //deck1.Add(GetSpecificCard("Gérard Choixpeau", allCards));
+            //deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
+            //deck1.Add(GetSpecificCard("Patate", allCards));
+            //deck1.Add(GetSpecificCard("Le Japon", allCards));
+            deck1.Add(GetSpecificCard("Rémi", allCards));
+            deck1.Add(GetSpecificCard("Le Hard Corner", allCards));
 
             while (deck1.Count != 30)
             {

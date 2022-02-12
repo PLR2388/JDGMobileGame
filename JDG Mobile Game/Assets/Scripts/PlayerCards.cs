@@ -152,7 +152,7 @@ public class PlayerCards : MonoBehaviour
     {
         if (field != null)
         {
-            OnFieldCardChanged(field);
+            OnFieldCardDesactivate(field);
         }
 
         IsFieldDesactivate = true;
@@ -1306,10 +1306,8 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
-
-    private void OnFieldCardChanged(FieldCard oldFieldCard)
+    private void OnFieldCardDesactivate(FieldCard oldFieldCard)
     {
-        if (oldFieldCard == null || IsFieldDesactivate) return;
         var fieldCardEffect = oldFieldCard.FieldCardEffect;
 
         var fieldKeys = fieldCardEffect.Keys;
@@ -1344,6 +1342,73 @@ public class PlayerCards : MonoBehaviour
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+    }
+
+    private void OnFieldCardChanged(FieldCard oldFieldCard)
+    {
+        if (oldFieldCard == null) return;
+        
+        SendInvocationCardToYellowTrashAfterFieldDestruction(oldFieldCard);
+
+
+        var fieldCardEffect = oldFieldCard.FieldCardEffect;
+
+        var fieldKeys = fieldCardEffect.Keys;
+        var fieldValues = fieldCardEffect.Values;
+
+        var family = oldFieldCard.GetFamily();
+        for (var i = 0; i < fieldKeys.Count; i++)
+        {
+            var fieldValue = fieldValues[i];
+            switch (fieldKeys[i])
+            {
+                case FieldEffect.ATK:
+                {
+                    AtkFieldEffect(fieldValue, family);
+                }
+                    break;
+                case FieldEffect.DEF:
+                {
+                    DefFieldEffect(fieldValue, family);
+                }
+                    break;
+                case FieldEffect.Change:
+                {
+                    ChangeFieldEffect(fieldValue);
+                }
+                    break;
+                case FieldEffect.GetCard:
+                    break;
+                case FieldEffect.DrawCard:
+                    break;
+                case FieldEffect.Life:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+    }
+
+    private void SendInvocationCardToYellowTrashAfterFieldDestruction(FieldCard oldFieldCard)
+    {
+        if (oldField.Nom == "Le grenier")
+        {
+            // Destroy all invocation cards
+            for (var i = invocationCards.Count - 1; i >= 0; i--)
+            {
+                SendInvocationCardToYellowTrash(invocationCards[i]);
+            }
+        }
+        else
+        {
+            // Picky destruction
+            var familyFieldCard = oldFieldCard.GetFamily();
+            var familySpecificCard = invocationCards.Where(card => card.GetFamily().Contains(familyFieldCard)).ToList();
+            for (var i = familySpecificCard.Count - 1; i >= 0; i--)
+            {
+                SendInvocationCardToYellowTrash(familySpecificCard[i]);
             }
         }
     }
