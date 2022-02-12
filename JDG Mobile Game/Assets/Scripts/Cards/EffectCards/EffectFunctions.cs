@@ -1637,11 +1637,29 @@ namespace Cards.EffectCards
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
+                            Destroy(message);
+                        }
+                        else
+                        {
+                            message.SetActive(false);
+                            UnityAction okAction = () =>
+                            {
+                                message.SetActive(true);
+                            };
+                            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
                         }
 
-                        Destroy(message);
+                  
                     };
-                    message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
+                    message.GetComponent<MessageBox>().NegativeAction = () =>
+                    {
+                        message.SetActive(false);
+                        UnityAction okAction = () =>
+                        {
+                            message.SetActive(true);
+                        };
+                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
+                    };
                 }
                     break;
             }

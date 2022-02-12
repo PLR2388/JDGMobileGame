@@ -139,8 +139,8 @@ namespace Menu
             //deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
             //deck1.Add(GetSpecificCard("Patate", allCards));
             //deck1.Add(GetSpecificCard("Le Japon", allCards));
-            deck1.Add(GetSpecificCard("Fatalité", allCards));
-            deck1.Add(GetSpecificCard("Youtube Money", allCards));
+            deck1.Add(GetSpecificCard("Feuille", allCards));
+            deck1.Add(GetSpecificCard("Le grenier", allCards));
 
             while (deck1.Count != 30)
             {
