@@ -698,9 +698,22 @@ public class PlayerCards : MonoBehaviour
 
     private void OnInvocationCardAdded(InvocationCard newInvocationCard)
     {
+        var opponentEffectCards = isPlayerOne
+            ? GameObject.Find("Player2").GetComponent<PlayerCards>().effectCards
+            : GameObject.Find("Player2").GetComponent<PlayerCards>().effectCards;
+
+        var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.GetEffectCardEffect().Keys).Any(keys => keys.Contains(Effect.SkipAttack));
+
+
         for (var j = invocationCards.Count - 1; j >= 0; j--)
         {
             var invocationCard = invocationCards[j];
+
+            if (mustSkipAttack)
+            {
+                invocationCard.BlockAttack();
+            }
+            
             var permEffect = invocationCard.InvocationPermEffect;
             if (permEffect == null) continue;
             var keys = permEffect.Keys;
@@ -981,6 +994,9 @@ public class PlayerCards : MonoBehaviour
         for (var j = oldInvocationCards.Count - 1; j >= 0; j--)
         {
             var invocationCard = oldInvocationCards[j];
+            
+            invocationCard.UnblockAttack();
+            
             var permEffect = invocationCard.InvocationPermEffect;
             var actionEffect = invocationCard.InvocationActionEffect;
             if (permEffect != null)

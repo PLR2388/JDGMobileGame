@@ -122,7 +122,7 @@ namespace Menu
             var allCards = FindObjectOfType<GameState>().allCards;
 
             deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", allCards));
-            deck2.Add(GetSpecificCard("Incendie", allCards));
+            deck2.Add(GetSpecificCard("Maniabilité pourrie", allCards));
             //deck1.Add(GetSpecificCard("Captain URSSAF", allCards));
             //deck1.Add(GetSpecificCard("Canardcity", allCards));
             //deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
@@ -139,7 +139,7 @@ namespace Menu
             //deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
             //deck1.Add(GetSpecificCard("Patate", allCards));
             //deck1.Add(GetSpecificCard("Le Japon", allCards));
-            deck1.Add(GetSpecificCard("Rémi", allCards));
+            deck1.Add(GetSpecificCard("Fatalité", allCards));
             deck1.Add(GetSpecificCard("Youtube Money", allCards));
 
             while (deck1.Count != 30)
