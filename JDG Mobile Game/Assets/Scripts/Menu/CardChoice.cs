@@ -138,9 +138,9 @@ namespace Menu
             //deck1.Add(GetSpecificCard("Gérard Choixpeau", allCards));
             //deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
             //deck1.Add(GetSpecificCard("Patate", allCards));
-            //deck1.Add(GetSpecificCard("Le Japon", allCards));
-            deck1.Add(GetSpecificCard("Feuille", allCards));
-            deck1.Add(GetSpecificCard("Le grenier", allCards));
+            deck1.Add(GetSpecificCard("Petite culotte", allCards));
+            deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", allCards));
+            deck1.Add(GetSpecificCard("Bolossage gratuit", allCards));
 
             while (deck1.Count != 30)
             {
