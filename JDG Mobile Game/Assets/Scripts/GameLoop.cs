@@ -380,18 +380,7 @@ public class GameLoop : MonoBehaviour
                                     {
                                         case "More DEF":
                                         {
-                                            foreach (var card in notEmptyOpponent)
-                                            {
-                                                var invocationCardToCheck = (InvocationCard)card;
-                                                if (invocationCardToCheck.Nom != invocationCard.Nom)
-                                                {
-                                                    if (invocationCardToCheck.GetCurrentDefense() >
-                                                        invocationCard.GetCurrentDefense())
-                                                    {
-                                                        moreDefInvocationCards.Add(invocationCardToCheck);
-                                                    }
-                                                }
-                                            }
+                                            moreDefInvocationCards.AddRange(from InvocationCard invocationCardToCheck in notEmptyOpponent where invocationCardToCheck.Nom != invocationCard.Nom where invocationCardToCheck.GetCurrentDefense() > invocationCard.GetCurrentDefense() select invocationCardToCheck);
                                         }
                                             break;
                                     }
