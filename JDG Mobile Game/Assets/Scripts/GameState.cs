@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using Cards.EffectCards;
 using Cards.InvocationCards;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -41,6 +42,11 @@ public class GameState : MonoBehaviour
         foreach (var invocationCard in allCards.Where(card => card.Type == CardType.Invocation).Cast<InvocationCard>())
         {
             invocationCard.Init();
+        }
+        
+        foreach (var effectCard in allCards.Where(card => card.Type == CardType.Effect).Cast<EffectCard>())
+        {
+            effectCard.Init();
         }
     }
 

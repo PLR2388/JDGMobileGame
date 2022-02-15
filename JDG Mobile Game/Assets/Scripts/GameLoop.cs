@@ -1371,6 +1371,8 @@ public class GameLoop : MonoBehaviour
                             break;
                         case Effect.SkipContre:
                             break;
+                        case Effect.NumberInvocationCardAttacker:
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -1452,6 +1454,8 @@ public class GameLoop : MonoBehaviour
                         case Effect.ChangeField:
                             break;
                         case Effect.SkipContre:
+                            break;
+                        case Effect.NumberInvocationCardAttacker:
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

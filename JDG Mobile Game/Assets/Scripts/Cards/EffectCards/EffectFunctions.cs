@@ -187,6 +187,8 @@ namespace Cards.EffectCards
                         break;
                     case Effect.NumberInvocationCard:
                         break;
+                    case Effect.NumberInvocationCardAttacker:
+                        break;
                     case Effect.NumberHandCard:
                         break;
                     case Effect.SeeOpponentHand:
@@ -416,7 +418,16 @@ namespace Cards.EffectCards
                     isValid &= allCardsOnField.Count > 0;
                 }
                     break;
+                case "equipment":
+                {
+                    var invocationCardsOnField = new List<InvocationCard>(currentPlayerCard.invocationCards);
+                    invocationCardsOnField.AddRange(opponentPlayerCard.invocationCards);
+
+                   isValid &= invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard()).Where(equipmentCard => equipmentCard != null).ToList().Count > 0;
+                }
+                    break;
             }
+            
 
             return isValid;
         }
@@ -545,6 +556,11 @@ namespace Cards.EffectCards
                         ApplyNumberInvocationCard(affectOpponent, pvAffected);
                     }
                         break;
+                    case Effect.NumberInvocationCardAttacker:
+                    {
+                        ApplyNumberInvocationCardAttacker(pvAffected);
+                    }
+                        break;
                     case Effect.NumberHandCard:
                     {
                         ApplyNumberHandCard(affectOpponent, pvAffected);
@@ -669,7 +685,7 @@ namespace Cards.EffectCards
                                         }
 
                                         MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                            "Tu dois chosir un terrain",
+                                            "Tu dois choisir un terrain",
                                             OkAction);
                                     }
                                 };
@@ -943,6 +959,12 @@ namespace Cards.EffectCards
                     }
                         break;
                     case Effect.DestroyCards:
+                    {
+                        if (keys.Count == 1)
+                        {
+                            ApplyDestroyCards(value);
+                        }
+                    }
                         break;
                     case Effect.AttackDirectly:
                         break;
@@ -952,6 +974,14 @@ namespace Cards.EffectCards
             }
 
             //TODO Add effectCard to yellow trash if necessary
+        }
+
+        private void ApplyNumberInvocationCardAttacker(float pvAffected)
+        {
+            var invocationCards = currentPlayerCard.invocationCards;
+            var size = invocationCards.Count;
+            var damages = size * pvAffected;
+            opponentPlayerStatus.ChangePv(damages);
         }
 
         private void ApplyTakeControl()
@@ -1398,7 +1428,7 @@ namespace Cards.EffectCards
             }
         }
 
-        private void ApplyDestroyCards(string value, float pvAffected, bool affectOpponent)
+        private void ApplyDestroyCards(string value, float pvAffected = 0f, bool affectOpponent = false)
         {
             switch (value)
             {
@@ -1650,6 +1680,68 @@ namespace Cards.EffectCards
                         }
 
                   
+                    };
+                    message.GetComponent<MessageBox>().NegativeAction = () =>
+                    {
+                        message.SetActive(false);
+                        UnityAction okAction = () =>
+                        {
+                            message.SetActive(true);
+                        };
+                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
+                    };
+                }
+                    break;
+                
+                case "equipment":
+                {
+                    var currentPlayerEquipmentCard = currentPlayerCard.invocationCards
+                        .Select(invocationCard => invocationCard.GetEquipmentCard())
+                        .Where(equipmentCard => equipmentCard != null).ToList();
+                    var opponentPlayerEquipmentCard = opponentPlayerCard.invocationCards
+                        .Select(invocationCard => invocationCard.GetEquipmentCard())
+                        .Where(equipmentCard => equipmentCard != null).ToList();
+
+                    var equipmentCards = new List<Card>(currentPlayerEquipmentCard);
+                    equipmentCards.AddRange(opponentPlayerEquipmentCard);
+
+                    var message =
+                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis une carte équipement à détruire",equipmentCards);
+                    message.GetComponent<MessageBox>().PositiveAction = () =>
+                    {
+                        var equipmentCardSelected = message.GetComponent<MessageBox>().GetSelectedCard();
+                        if (equipmentCardSelected != null)
+                        {
+                            var isCurrent = currentPlayerEquipmentCard.Any(equipmentCard => equipmentCard.Nom == equipmentCardSelected.Nom);
+                            if (isCurrent)
+                            {
+                                currentPlayerCard.yellowTrash.Add(equipmentCardSelected);
+                                foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation => invocation.GetEquipmentCard() != null && invocation.GetEquipmentCard().Nom ==
+                                             equipmentCardSelected.Nom))
+                                {
+                                    invocation.SetEquipmentCard(null);
+                                }
+                            }
+                            else
+                            {
+                                opponentPlayerCard.yellowTrash.Add(equipmentCardSelected);
+                                foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation => invocation.GetEquipmentCard() != null && invocation.GetEquipmentCard().Nom ==
+                                             equipmentCardSelected.Nom))
+                                {
+                                    invocation.SetEquipmentCard(null);
+                                }
+                            }
+                            Destroy(message);
+                        }
+                        else
+                        {
+                            message.SetActive(false);
+                            UnityAction okAction = () =>
+                            {
+                                message.SetActive(true);
+                            };
+                            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
+                        }
                     };
                     message.GetComponent<MessageBox>().NegativeAction = () =>
                     {
