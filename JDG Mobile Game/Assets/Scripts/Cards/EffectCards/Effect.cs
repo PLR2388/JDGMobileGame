@@ -31,6 +31,7 @@
         ProtectAttack,
         SkipFieldsEffect,
         ChangeField,
-        SkipContre
+        SkipContre,
+        NumberInvocationCardAttacker
     }
 }
