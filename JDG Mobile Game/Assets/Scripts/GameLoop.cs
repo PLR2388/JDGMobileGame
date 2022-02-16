@@ -617,6 +617,7 @@ public class GameLoop : MonoBehaviour
             {
                 opponent.SetBonusAttack(0);
                 opponent.SetBonusDefense(0);
+                opponent.UnblockAttack();
             }
         }
         else
@@ -648,6 +649,7 @@ public class GameLoop : MonoBehaviour
                 {
                     combineCard.SetBonusAttack(0);
                     combineCard.SetBonusDefense(0);
+                    combineCard.ResetNewTurn();
                 }
             }
             else
@@ -691,6 +693,7 @@ public class GameLoop : MonoBehaviour
             {
                 attacker.SetBonusAttack(0);
                 attacker.SetBonusDefense(0);
+                attacker.ResetNewTurn();
             }
         }
         else
@@ -721,6 +724,7 @@ public class GameLoop : MonoBehaviour
                 {
                     combineCard.SetBonusAttack(0);
                     combineCard.SetBonusDefense(0);
+                    combineCard.ResetNewTurn();
                 }
             }
             else
@@ -808,6 +812,7 @@ public class GameLoop : MonoBehaviour
             {
                 opponent.SetBonusAttack(0);
                 opponent.SetBonusDefense(0);
+                opponent.ResetNewTurn();
             }
         }
         else
@@ -830,6 +835,7 @@ public class GameLoop : MonoBehaviour
             {
                 attacker.SetBonusAttack(0);
                 attacker.SetBonusDefense(0);
+                attacker.ResetNewTurn();
             }
         }
         else
@@ -855,6 +861,7 @@ public class GameLoop : MonoBehaviour
             {
                 combineCard.SetBonusAttack(0);
                 combineCard.SetBonusDefense(0);
+                combineCard.ResetNewTurn();
             }
         }
         else
@@ -880,6 +887,7 @@ public class GameLoop : MonoBehaviour
             {
                 combineCard.SetBonusAttack(0);
                 combineCard.SetBonusDefense(0);
+                combineCard.ResetNewTurn();
             }
         }
         else

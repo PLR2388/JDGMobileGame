@@ -31,6 +31,9 @@ MonoBehaviour:
     type: 2}
   bonusAttack: 0
   bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
+  numberTurnOnField: 2
+  numberDeaths: 5
   blockAttackNextTurn: 0
+  affectedByEffect: 1
+  remainedAttackThisTurn: 1
+  isControlled: 0
