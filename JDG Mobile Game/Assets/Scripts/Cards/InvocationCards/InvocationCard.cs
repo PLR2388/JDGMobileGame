@@ -269,16 +269,12 @@ namespace Cards.InvocationCards
                     }
                         break;
                     case InstantEffect.DirectAtk:
-                    {
-                    }
                         break;
                     case InstantEffect.SwitchEquipment:
-                    {
-                    }
                         break;
                     case InstantEffect.DisableBonus:
-                    {
-                    }
+                        break;
+                    case InstantEffect.ProtectInvocation:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

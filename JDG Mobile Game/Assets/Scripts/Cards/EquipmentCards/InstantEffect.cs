@@ -1,6 +1,6 @@
 ﻿// Equipment
 
-namespace Cards.InvocationCards
+namespace Cards.EquipmentCards
 {
     public enum InstantEffect //Happen only at the beginning
     {
@@ -14,5 +14,6 @@ namespace Cards.InvocationCards
         DirectAtk, // Direct attack opponent stars
         SwitchEquipment, // Change previous equipmentCard by this one
         DisableBonus, // Remove native card bonus
+        ProtectInvocation // Destroy if opponent attack invocation instead of the invocation (TurboCradozaure)
     }
 }
