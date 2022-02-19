@@ -423,11 +423,12 @@ namespace Cards.EffectCards
                     var invocationCardsOnField = new List<InvocationCard>(currentPlayerCard.invocationCards);
                     invocationCardsOnField.AddRange(opponentPlayerCard.invocationCards);
 
-                   isValid &= invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard()).Where(equipmentCard => equipmentCard != null).ToList().Count > 0;
+                    isValid &= invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard())
+                        .Where(equipmentCard => equipmentCard != null).ToList().Count > 0;
                 }
                     break;
             }
-            
+
 
             return isValid;
         }
@@ -796,136 +797,24 @@ namespace Cards.EffectCards
 
                         void PositiveAction()
                         {
-                            List<Card> cardsDeckToSee = new List<Card>();
-                            if (opponentPlayerCard.deck.Count >= see)
-                            {
-                                for (var j = opponentPlayerCard.deck.Count - 1;
-                                     j > (opponentPlayerCard.deck.Count - 1 - see);
-                                     j--)
-                                {
-                                    cardsDeckToSee.Add(opponentPlayerCard.deck[j]);
-                                }
-                            }
-                            else
-                            {
-                                cardsDeckToSee.AddRange(opponentPlayerCard.invocationCards);
-                            }
+                            var cardsDeckToSee = BuildCardsDeckToSee(see, false);
 
                             void PositiveActionCardSelector()
                             {
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                    "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
-                                    multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count);
-                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-                                {
-                                    var selectedCards =
-                                        messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
-                                    if (selectedCards.Count == cardsDeckToSee.Count)
-                                    {
-                                        foreach (var card in cardsDeckToSee)
-                                        {
-                                            opponentPlayerCard.deck.Remove(card);
-                                        }
-
-                                        selectedCards.Reverse();
-                                        opponentPlayerCard.deck.AddRange(selectedCards);
-                                        Destroy(messageBox);
-                                    }
-                                    else
-                                    {
-                                        messageBox.SetActive(false);
-
-                                        void OkAction()
-                                        {
-                                            messageBox.SetActive(true);
-                                        }
-
-                                        MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                            "Tu dois choisir l'ordre des cartes", OkAction);
-                                    }
-                                };
-                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-                                {
-                                    messageBox.SetActive(false);
-
-                                    void OkAction()
-                                    {
-                                        messageBox.SetActive(true);
-                                    }
-
-                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                        "Tu dois choisir l'ordre des cartes", OkAction);
-                                };
+                                DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, false);
                             }
 
                             MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
                                 cardsDeckToSee, PositiveActionCardSelector);
                         }
 
-                        var toSee = cardsToSee;
-
                         void NegativeAction()
                         {
-                            var cardsDeckToSee = new List<Card>();
-                            if (currentPlayerCard.deck.Count >= toSee)
-                            {
-                                for (var j = currentPlayerCard.deck.Count - 1;
-                                     j > (currentPlayerCard.deck.Count - 1 - toSee);
-                                     j--)
-                                {
-                                    cardsDeckToSee.Add(currentPlayerCard.deck[j]);
-                                }
-                            }
-                            else
-                            {
-                                cardsDeckToSee.AddRange(currentPlayerCard.invocationCards);
-                            }
+                            var cardsDeckToSee = BuildCardsDeckToSee(see, true);
 
                             void PositiveActionCardSelector()
                             {
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                    "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
-                                    multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count);
-                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-                                {
-                                    var selectedCards =
-                                        messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
-                                    if (selectedCards.Count == cardsDeckToSee.Count)
-                                    {
-                                        foreach (var card in cardsDeckToSee)
-                                        {
-                                            currentPlayerCard.deck.Remove(card);
-                                        }
-
-                                        selectedCards.Reverse();
-                                        currentPlayerCard.deck.AddRange(selectedCards);
-                                        Destroy(messageBox);
-                                    }
-                                    else
-                                    {
-                                        messageBox.SetActive(false);
-
-                                        void OkAction()
-                                        {
-                                            messageBox.SetActive(true);
-                                        }
-
-                                        MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                            "Tu dois choisir l'ordre des cartes", OkAction);
-                                    }
-                                };
-                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-                                {
-                                    messageBox.SetActive(false);
-
-                                    void OkAction()
-                                    {
-                                        messageBox.SetActive(true);
-                                    }
-
-                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                        "Tu dois choisir l'ordre des cartes", OkAction);
-                                };
+                                DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, true);
                             }
 
                             MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
@@ -974,6 +863,75 @@ namespace Cards.EffectCards
             }
 
             //TODO Add effectCard to yellow trash if necessary
+        }
+
+        private List<Card> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
+        {
+            var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
+            List<Card> cardsDeckToSee = new List<Card>();
+            if (playerCard.deck.Count > see)
+            {
+                for (var j = playerCard.deck.Count - 1;
+                     j > (playerCard.deck.Count - 1 - see);
+                     j--)
+                {
+                    cardsDeckToSee.Add(playerCard.deck[j]);
+                }
+            }
+            else
+            {
+                cardsDeckToSee.AddRange(playerCard.invocationCards);
+            }
+
+            return cardsDeckToSee;
+        }
+
+        private void DisplayMessageBoxToChangeOrderCards(List<Card> cardsDeckToSee, bool isCurrentPlayerCard)
+        {
+            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
+                multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count, displayOrder: true);
+            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var selectedCards =
+                    messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
+                if (selectedCards.Count == cardsDeckToSee.Count)
+                {
+                    var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
+                    foreach (var card in cardsDeckToSee)
+                    {
+                        playerCard.deck.Remove(card);
+                    }
+
+                    selectedCards.Reverse();
+                    playerCard.deck.AddRange(selectedCards);
+                    Destroy(messageBox);
+                }
+                else
+                {
+                    messageBox.SetActive(false);
+
+                    void OkAction()
+                    {
+                        messageBox.SetActive(true);
+                    }
+
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                        "Tu dois choisir l'ordre des cartes", OkAction);
+                }
+            };
+            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                messageBox.SetActive(false);
+
+                void OkAction()
+                {
+                    messageBox.SetActive(true);
+                }
+
+                MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                    "Tu dois choisir l'ordre des cartes", OkAction);
+            };
         }
 
         private void ApplyNumberInvocationCardAttacker(float pvAffected)
@@ -1667,32 +1625,27 @@ namespace Cards.EffectCards
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
+
                             Destroy(message);
                         }
                         else
                         {
                             message.SetActive(false);
-                            UnityAction okAction = () =>
-                            {
-                                message.SetActive(true);
-                            };
-                            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
+                            UnityAction okAction = () => { message.SetActive(true); };
+                            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire",
+                                okAction);
                         }
-
-                  
                     };
                     message.GetComponent<MessageBox>().NegativeAction = () =>
                     {
                         message.SetActive(false);
-                        UnityAction okAction = () =>
-                        {
-                            message.SetActive(true);
-                        };
-                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
+                        UnityAction okAction = () => { message.SetActive(true); };
+                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire",
+                            okAction);
                     };
                 }
                     break;
-                
+
                 case "equipment":
                 {
                     var currentPlayerEquipmentCard = currentPlayerCard.invocationCards
@@ -1706,17 +1659,21 @@ namespace Cards.EffectCards
                     equipmentCards.AddRange(opponentPlayerEquipmentCard);
 
                     var message =
-                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis une carte équipement à détruire",equipmentCards);
+                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis une carte équipement à détruire",
+                            equipmentCards);
                     message.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var equipmentCardSelected = message.GetComponent<MessageBox>().GetSelectedCard();
                         if (equipmentCardSelected != null)
                         {
-                            var isCurrent = currentPlayerEquipmentCard.Any(equipmentCard => equipmentCard.Nom == equipmentCardSelected.Nom);
+                            var isCurrent = currentPlayerEquipmentCard.Any(equipmentCard =>
+                                equipmentCard.Nom == equipmentCardSelected.Nom);
                             if (isCurrent)
                             {
                                 currentPlayerCard.yellowTrash.Add(equipmentCardSelected);
-                                foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation => invocation.GetEquipmentCard() != null && invocation.GetEquipmentCard().Nom ==
+                                foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation =>
+                                             invocation.GetEquipmentCard() != null &&
+                                             invocation.GetEquipmentCard().Nom ==
                                              equipmentCardSelected.Nom))
                                 {
                                     invocation.SetEquipmentCard(null);
@@ -1725,32 +1682,31 @@ namespace Cards.EffectCards
                             else
                             {
                                 opponentPlayerCard.yellowTrash.Add(equipmentCardSelected);
-                                foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation => invocation.GetEquipmentCard() != null && invocation.GetEquipmentCard().Nom ==
+                                foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation =>
+                                             invocation.GetEquipmentCard() != null &&
+                                             invocation.GetEquipmentCard().Nom ==
                                              equipmentCardSelected.Nom))
                                 {
                                     invocation.SetEquipmentCard(null);
                                 }
                             }
+
                             Destroy(message);
                         }
                         else
                         {
                             message.SetActive(false);
-                            UnityAction okAction = () =>
-                            {
-                                message.SetActive(true);
-                            };
-                            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
+                            UnityAction okAction = () => { message.SetActive(true); };
+                            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire",
+                                okAction);
                         }
                     };
                     message.GetComponent<MessageBox>().NegativeAction = () =>
                     {
                         message.SetActive(false);
-                        UnityAction okAction = () =>
-                        {
-                            message.SetActive(true);
-                        };
-                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire", okAction);
+                        UnityAction okAction = () => { message.SetActive(true); };
+                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à détruire",
+                            okAction);
                     };
                 }
                     break;
