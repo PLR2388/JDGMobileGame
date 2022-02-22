@@ -81,10 +81,10 @@ public class PlayerCards : MonoBehaviour
 
     private readonly Vector3[] equipmentCardsLocationP2 =
     {
-        new Vector3(-53.5f, 0.5f, 30),
-        new Vector3(-32, 0.5f, 30),
-        new Vector3(-11.5f, 0.5f, 30),
-        new Vector3(10, 0.5f, 30),
+        new Vector3(53.5f, 0.5f, 30),
+        new Vector3(32, 0.5f, 30),
+        new Vector3(11.5f, 0.5f, 30),
+        new Vector3(-10, 0.5f, 30),
     };
 
     private readonly Vector3[] effectCardsLocationP2 =
@@ -665,21 +665,15 @@ public class PlayerCards : MonoBehaviour
 
     private int FindCard(Card card)
     {
-        var cardName = card.Nom;
+        var cardName = card.Nom + (isPlayerOne ? "P1": "P2");
 
         for (var i = 0; i < allPhysicalCards.Count; i++)
         {
-            if ((cardName + "P1") == allPhysicalCards[i].name)
-            {
-                return i;
-            }
-            else if ((cardName + "P2") == allPhysicalCards[i].name)
+            if (cardName == allPhysicalCards[i].name)
             {
                 return i;
             }
         }
-
-
         return -1;
     }
 

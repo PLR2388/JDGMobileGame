@@ -99,14 +99,17 @@ namespace Menu
                 card.Nom != "Blague interdite" &&
                 card.Nom != "Un bon tuyau").ToList();
 
+            var deck1AllCard = new List<Card>(allCards);
+            var deck2AllCard = new List<Card>(allCards);
+
             while (deck1.Count != 30)
             {
-                GetRandomCards(allCards, deck1);
+                GetRandomCards(deck1AllCard, deck1);
             }
 
             while (deck2.Count != 30)
             {
-                GetRandomCards(allCards, deck2);
+                GetRandomCards(deck2AllCard, deck2);
             }
 
             FindObjectOfType<GameState>().deckP1 = deck1;
@@ -120,38 +123,26 @@ namespace Menu
             var deck2 = new List<Card>();
 
             var allCards = FindObjectOfType<GameState>().allCards;
+            
+            var deck1AllCard = new List<Card>(allCards);
+            var deck2AllCard = new List<Card>(allCards);
 
-            deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", allCards));
-            deck2.Add(GetSpecificCard("Maniabilité pourrie", allCards));
-            //deck1.Add(GetSpecificCard("Captain URSSAF", allCards));
-            //deck1.Add(GetSpecificCard("Canardcity", allCards));
-            //deck1.Add(GetSpecificCard("Amiral Oméga 3", allCards));
-            //deck1.Add(GetSpecificCard("Zozan Kebab", allCards));
-            //deck1.Add(GetSpecificCard("Carole du service marketing", allCards));
-            //deck1.Add(GetSpecificCard("Studio de développement", allCards));
-            //deck1.Add(GetSpecificCard("L'Elfette", allCards));
-            //deck1.Add(GetSpecificCard("Forêt des elfes sylvains", allCards));
-            //deck1.Add(GetSpecificCard("Fisti", allCards));
-            //deck1.Add(GetSpecificCard("Fistiland", allCards));
-            //deck1.Add(GetSpecificCard("Archibald Von Grenier", allCards));
-            //deck1.Add(GetSpecificCard("Magasin de jeux vidéo du coin", allCards));
-            //deck1.Add(GetSpecificCard("Gérard Choixpeau", allCards));
-            //deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", allCards));
-            //deck1.Add(GetSpecificCard("Patate", allCards));
-            deck1.Add(GetSpecificCard("Petite culotte", allCards));
-            deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", allCards));
-            deck1.Add(GetSpecificCard("Bolossage gratuit", allCards));
+            deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", deck2AllCard));
+            deck2.Add(GetSpecificCard("Petite culotte", deck2AllCard));
+            deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
+            deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", deck1AllCard));
+            deck1.Add(GetSpecificCard("Bolossage gratuit", deck1AllCard));
 
             while (deck1.Count != 30)
             {
-                GetRandomCards(allCards, deck1);
+                GetRandomCards(deck1AllCard, deck1);
             }
 
             deck1.Reverse();
 
             while (deck2.Count != 30)
             {
-                GetRandomCards(allCards, deck2);
+                GetRandomCards(deck2AllCard, deck2);
             }
 
             deck2.Reverse();
@@ -164,7 +155,7 @@ namespace Menu
         private static Card GetSpecificCard(string nameCard, List<Card> cards)
         {
             var card = cards.Find(x => x.Nom == nameCard);
-            if (card != null)
+           if (card != null)
             {
                 cards.Remove(card);
             }
