@@ -57,7 +57,8 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         OnClick();
     }
 
-    private void OnClick()
+    // for test purposes
+    public void OnClick()
     {
         if (!bIsInGame)
         {

@@ -93,12 +93,13 @@ public class GameLoop : MonoBehaviour
         // Check if Back was pressed this frame
         if (!Input.GetKeyDown(KeyCode.Escape)) return;
 
-        void PositiveAction()
-        {
-            SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
-        }
+        MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", GoToMainScreen);
+    }
 
-        MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", PositiveAction);
+    // Need to be public for tests
+    public void GoToMainScreen()
+    {
+        SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
     }
 
     private void ChoosePhase()
