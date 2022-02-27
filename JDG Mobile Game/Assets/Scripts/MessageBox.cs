@@ -5,6 +5,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class NumberedCardEvent : UnityEvent<Card, int>
+{
+}
+
 public class MessageBox : MonoBehaviour
 {
     public UnityAction PositiveAction;
@@ -14,9 +19,10 @@ public class MessageBox : MonoBehaviour
     public string description;
     public bool isInformation;
     public DisplayCards displayCardsScript;
-    public bool displayCards;
-    public bool multipleCardSelection;
-    public int numberCardInSelection = 2;
+    private bool displayCards;
+    private bool multipleCardSelection;
+    private int numberCardInSelection = 2;
+    private bool displayNumberOnCard = false;
 
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
@@ -31,6 +37,7 @@ public class MessageBox : MonoBehaviour
     [SerializeField] private GameObject scrollCardDisplay;
     private Card currentSelectedCard;
     private readonly List<Card> multipleSelectedCards = new List<Card>();
+    public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
 
     public Card GetSelectedCard()
     {
@@ -47,6 +54,7 @@ public class MessageBox : MonoBehaviour
     private void Start()
     {
         OnHover.CardSelectedEvent.AddListener(OnCardSelected);
+        OnHover.CardUnselectedEvent.AddListener(OnCardUnselected);
         titleText.text = title;
         descriptionText.text = description;
 
@@ -65,12 +73,10 @@ public class MessageBox : MonoBehaviour
             positiveButtonText.text = "Oui";
             negativeButtonText.text = "Non";
 
-
             var positiveBtn = positiveButton.GetComponent<Button>();
             var negativeBtn = negativeButton.GetComponent<Button>();
             positiveBtn.onClick.AddListener(PositiveAction);
             negativeBtn.onClick.AddListener(NegativeAction);
-
 
             positiveButton.SetActive(true);
             negativeButton.SetActive(true);
@@ -91,10 +97,30 @@ public class MessageBox : MonoBehaviour
             }
 
             multipleSelectedCards.Add(card);
+
+            if (displayNumberOnCard)
+            {
+                for (var i = 0; i < multipleSelectedCards.Count; i++)
+                {
+                    NumberedCardEvent.Invoke(multipleSelectedCards[i], i + 1);
+                }
+            }
         }
         else
         {
             currentSelectedCard = card;
+        }
+    }
+
+    private void OnCardUnselected(Card card)
+    {
+        if (displayNumberOnCard)
+        {
+            multipleSelectedCards.Remove(card);
+            for (var i = 0; i < multipleSelectedCards.Count; i++)
+            {
+                NumberedCardEvent.Invoke(multipleSelectedCards[i], i + 1);
+            }
         }
     }
 
@@ -190,7 +216,7 @@ public class MessageBox : MonoBehaviour
 
     public static GameObject CreateMessageBoxWithCardSelector(Transform canvas, string title, List<Card> cards,
         UnityAction positiveAction = null, UnityAction negativeAction = null, bool okButton = false,
-        bool multipleCardSelection = false, int numberCardInSelection = 2)
+        bool multipleCardSelection = false, int numberCardInSelection = 2, bool displayOrder = false)
 
     {
         var messageBox = Resources.FindObjectsOfTypeAll<MessageBox>();
@@ -203,6 +229,7 @@ public class MessageBox : MonoBehaviour
         message.GetComponent<MessageBox>().displayCards = true;
         message.GetComponent<MessageBox>().multipleCardSelection = multipleCardSelection;
         message.GetComponent<MessageBox>().numberCardInSelection = numberCardInSelection;
+        message.GetComponent<MessageBox>().displayNumberOnCard = displayOrder;
         message.GetComponent<MessageBox>().displayCardsScript.cardsList = cards;
         message.GetComponent<MessageBox>().isInformation = okButton;
         message.GetComponent<MessageBox>().PositiveAction = () =>
