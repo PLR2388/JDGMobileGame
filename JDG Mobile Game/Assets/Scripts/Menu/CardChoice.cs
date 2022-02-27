@@ -120,8 +120,6 @@ namespace Menu
             var deck2 = new List<Card>();
 
             var allCards = FindObjectOfType<GameState>().allCards;
-
-            deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", allCards));
             deck2.Add(GetSpecificCard("Maniabilité pourrie", allCards));
             deck1.Add(GetSpecificCard("Petite culotte", allCards));
             deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", allCards));

@@ -105,8 +105,8 @@ public class PlayerCards : MonoBehaviour
 
     private List<InvocationCard> oldInvocationCards = new List<InvocationCard>();
     private FieldCard oldField;
-
     private List<Card> oldHandCards = new List<Card>();
+    private List<Card> oldYellowTrash = new List<Card>();
 
     public bool IsFieldDesactivate { get; private set; }
 
@@ -270,6 +270,16 @@ public class PlayerCards : MonoBehaviour
             }
 
             oldHandCards = new List<Card>(handCards);
+        }
+
+        if (oldYellowTrash.Count != yellowTrash.Count)
+        {
+            if (yellowTrash.Count > oldYellowTrash.Count)
+            {
+                OnYellowTrashAdded();
+            }
+
+            oldYellowTrash = new List<Card>(yellowTrash);
         }
 
         DisplayCardsInPosition();
@@ -1420,6 +1430,18 @@ public class PlayerCards : MonoBehaviour
                     throw new ArgumentOutOfRangeException();
             }
         }
+    }
+
+    private void OnYellowTrashAdded()
+    {
+        var newYellowTrashCard = yellowTrash.Last();
+        var invocationCard = (InvocationCard)newYellowTrashCard;
+        if (!invocationCard) return;
+        invocationCard.UnblockAttack();
+        invocationCard.SetBonusAttack(0);
+        invocationCard.SetBonusDefense(0);
+        invocationCard.FreeCard();
+        invocationCard.ResetNewTurn();
     }
 
     private void OnFieldCardChanged(FieldCard oldFieldCard)
