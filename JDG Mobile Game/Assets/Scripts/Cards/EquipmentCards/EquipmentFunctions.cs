@@ -161,6 +161,8 @@ namespace Cards.EquipmentCards
                         break;
                     case InstantEffect.DirectAtk:
                         break;
+                    case InstantEffect.ProtectInvocation:
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

@@ -121,9 +121,8 @@ namespace Menu
 
             var allCards = FindObjectOfType<GameState>().allCards;
             deck2.Add(GetSpecificCard("Maniabilité pourrie", allCards));
-            deck1.Add(GetSpecificCard("Petite culotte", allCards));
-            deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", allCards));
-            deck1.Add(GetSpecificCard("Studio de scénaristes Canadien", allCards));
+            deck1.Add(GetSpecificCard("Turbo Cradozaure", allCards));
+            deck1.Add(GetSpecificCard("Le grenier", allCards));
 
             while (deck1.Count != 30)
             {
