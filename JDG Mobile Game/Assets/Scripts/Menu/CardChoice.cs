@@ -20,7 +20,7 @@ namespace Menu
         [SerializeField] private GameObject choiceCardMenu;
         [SerializeField] private GameObject gameModeMenu;
 
-        private bool isPlayerOneCardChosen;
+        public bool isPlayerOneCardChosen;
 
         private int CheckCard(ICollection<Card> deck)
         {
@@ -94,13 +94,15 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var allCards = FindObjectOfType<GameState>().allCards.Where(card =>
+            var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards.Where(card =>
                 card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
                 card.Nom != "Blague interdite" &&
                 card.Nom != "Un bon tuyau").ToList();
-
-            var deck1AllCard = new List<Card>(allCards);
-            var deck2AllCard = new List<Card>(allCards);
+            
+            var deck2AllCard = FindObjectOfType<GameState>().deck1AllCards.Where(card =>
+                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
+                card.Nom != "Blague interdite" &&
+                card.Nom != "Un bon tuyau").ToList();
 
             while (deck1.Count != 30)
             {
@@ -122,10 +124,8 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var allCards = FindObjectOfType<GameState>().allCards;
-            
-            var deck1AllCard = new List<Card>(allCards);
-            var deck2AllCard = new List<Card>(allCards);
+            var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
+            var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
             deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", deck2AllCard));
             deck2.Add(GetSpecificCard("Petite culotte", deck2AllCard));
