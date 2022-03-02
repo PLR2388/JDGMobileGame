@@ -380,7 +380,12 @@ public class GameLoop : MonoBehaviour
                                     {
                                         case "More DEF":
                                         {
-                                            moreDefInvocationCards.AddRange(from InvocationCard invocationCardToCheck in notEmptyOpponent where invocationCardToCheck.Nom != invocationCard.Nom where invocationCardToCheck.GetCurrentDefense() > invocationCard.GetCurrentDefense() select invocationCardToCheck);
+                                            moreDefInvocationCards.AddRange(
+                                                from InvocationCard invocationCardToCheck in notEmptyOpponent
+                                                where invocationCardToCheck.Nom != invocationCard.Nom
+                                                where invocationCardToCheck.GetCurrentDefense() >
+                                                      invocationCard.GetCurrentDefense()
+                                                select invocationCardToCheck);
                                         }
                                             break;
                                     }
@@ -592,7 +597,7 @@ public class GameLoop : MonoBehaviour
         {
             ComputeGoodAttackSuperInvocationCard(diff, superOpponent);
         }
-        else
+        else if (!IsProtectedByEquipment(opponent, !IsP1Turn))
         {
             opponent.IncrementNumberDeaths();
             ComputeGoodAttack(diff);
@@ -617,6 +622,7 @@ public class GameLoop : MonoBehaviour
             {
                 opponent.SetBonusAttack(0);
                 opponent.SetBonusDefense(0);
+                opponent.UnblockAttack();
             }
         }
         else
@@ -648,6 +654,7 @@ public class GameLoop : MonoBehaviour
                 {
                     combineCard.SetBonusAttack(0);
                     combineCard.SetBonusDefense(0);
+                    combineCard.ResetNewTurn();
                 }
             }
             else
@@ -674,10 +681,24 @@ public class GameLoop : MonoBehaviour
         }
     }
 
+    private bool IsProtectedByEquipment(InvocationCard invocationCard, bool isP1)
+    {
+        var invocationEquipment = invocationCard.GetEquipmentCard();
+        if (invocationEquipment == null) return false;
+        var instantEffectEquipment = invocationEquipment.EquipmentInstantEffect;
+        if (!instantEffectEquipment.Keys.Contains(InstantEffect.ProtectInvocation)) return false;
+        var playerCards = isP1 ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        playerCards.yellowTrash.Add(invocationEquipment);
+        invocationCard.SetEquipmentCard(null);
+        return true;
+    }
+
     private void ComputeHurtAttack(float diff)
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+
+        if (IsProtectedByEquipment(attacker, IsP1Turn)) return;
         attacker.IncrementNumberDeaths();
         playerStatus.ChangePv(-diff);
         if (attacker.GetInvocationDeathEffect() != null)
@@ -691,6 +712,7 @@ public class GameLoop : MonoBehaviour
             {
                 attacker.SetBonusAttack(0);
                 attacker.SetBonusDefense(0);
+                attacker.ResetNewTurn();
             }
         }
         else
@@ -721,6 +743,7 @@ public class GameLoop : MonoBehaviour
                 {
                     combineCard.SetBonusAttack(0);
                     combineCard.SetBonusDefense(0);
+                    combineCard.ResetNewTurn();
                 }
             }
             else
@@ -755,7 +778,7 @@ public class GameLoop : MonoBehaviour
                     p2.GetComponent<PlayerCards>().RemoveSuperInvocation(superAttacker);
                 }
             }
-            else
+            else if (!IsProtectedByEquipment(attacker, IsP1Turn))
             {
                 attacker.IncrementNumberDeaths();
                 ComputeEqualityAttacker();
@@ -778,7 +801,7 @@ public class GameLoop : MonoBehaviour
                     p1.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
                 }
             }
-            else
+            else if (!IsProtectedByEquipment(opponent, !IsP1Turn))
             {
                 opponent.IncrementNumberDeaths();
                 ComputeEqualityOpponent();
@@ -786,11 +809,17 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            attacker.IncrementNumberDeaths();
-            opponent.IncrementNumberDeaths();
+            if (!IsProtectedByEquipment(attacker, IsP1Turn))
+            {
+                attacker.IncrementNumberDeaths();
+                ComputeEqualityAttacker();
+            }
 
-            ComputeEqualityAttacker();
-            ComputeEqualityOpponent();
+            if (!IsProtectedByEquipment(opponent, !IsP1Turn))
+            {
+                opponent.IncrementNumberDeaths();
+                ComputeEqualityOpponent();
+            }
         }
     }
 
@@ -808,6 +837,7 @@ public class GameLoop : MonoBehaviour
             {
                 opponent.SetBonusAttack(0);
                 opponent.SetBonusDefense(0);
+                opponent.ResetNewTurn();
             }
         }
         else
@@ -830,6 +860,7 @@ public class GameLoop : MonoBehaviour
             {
                 attacker.SetBonusAttack(0);
                 attacker.SetBonusDefense(0);
+                attacker.ResetNewTurn();
             }
         }
         else
@@ -855,6 +886,7 @@ public class GameLoop : MonoBehaviour
             {
                 combineCard.SetBonusAttack(0);
                 combineCard.SetBonusDefense(0);
+                combineCard.ResetNewTurn();
             }
         }
         else
@@ -880,6 +912,7 @@ public class GameLoop : MonoBehaviour
             {
                 combineCard.SetBonusAttack(0);
                 combineCard.SetBonusDefense(0);
+                combineCard.ResetNewTurn();
             }
         }
         else

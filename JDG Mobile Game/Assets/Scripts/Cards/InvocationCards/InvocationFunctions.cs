@@ -90,7 +90,8 @@ namespace Cards.InvocationCards
                         break;
                     case StartEffect.DestroyField:
                     {
-                        StartEffectDestroyField(currentInvocationCard, ref cardFound, mustDivideAttack, mustDivideDefense);
+                        StartEffectDestroyField(currentInvocationCard, ref cardFound, mustDivideAttack,
+                            mustDivideDefense);
                     }
                         break;
                     case StartEffect.Divide2Atk:
@@ -333,7 +334,7 @@ namespace Cards.InvocationCards
             };
         }
 
-        private void StartEffectDestroyField(InvocationCard currentInvocationCard,ref List<Card> cardFound,
+        private void StartEffectDestroyField(InvocationCard currentInvocationCard, ref List<Card> cardFound,
             bool mustDivideAttack,
             bool mustDivideDefense)
         {
@@ -511,6 +512,7 @@ namespace Cards.InvocationCards
                         if (isFound)
                         {
                             var cards = new List<Card>(cardFound);
+
                             void PositiveAction()
                             {
                                 currentPlayerCard.handCards.Add(cards[0]);
@@ -541,6 +543,7 @@ namespace Cards.InvocationCards
                             if (cardFound.Count == 1)
                             {
                                 var cards = new List<Card>(cardFound);
+
                                 void PositiveAction()
                                 {
                                     var invocationCard = (InvocationCard)cards[cards.Count - 1];
@@ -667,6 +670,7 @@ namespace Cards.InvocationCards
                         if (isFound)
                         {
                             var cards = new List<Card>(cardFound);
+
                             void PositiveAction()
                             {
                                 currentPlayerCard.handCards.Add(cards[0]);
@@ -1174,7 +1178,7 @@ namespace Cards.InvocationCards
                 {
                     case Condition.SpecificCardOnField:
                     {
-                        ConditionSpecificCardOnField(value,currentPlayerCard,ref invocationCardsOnField);
+                        ConditionSpecificCardOnField(value, currentPlayerCard, ref invocationCardsOnField);
                     }
                         break;
                     case Condition.SacrificeSpecificCard:
@@ -1260,7 +1264,8 @@ namespace Cards.InvocationCards
             }
         }
 
-        private List<InvocationCard> ConditionSacrificeThresholdAtk(List<string> cardExplanation, int i, List<InvocationCard> sacrificedCards)
+        private List<InvocationCard> ConditionSacrificeThresholdAtk(List<string> cardExplanation, int i,
+            List<InvocationCard> sacrificedCards)
         {
             var threshold = float.Parse(cardExplanation[i]);
             if (sacrificedCards.Count > 0)
@@ -1280,7 +1285,8 @@ namespace Cards.InvocationCards
             return sacrificedCards;
         }
 
-        private void ConditionNumberCard(string value, List<InvocationCard> invocationCardsOnField, List<InvocationCard> sacrificedCards)
+        private void ConditionNumberCard(string value, List<InvocationCard> invocationCardsOnField,
+            List<InvocationCard> sacrificedCards)
         {
             var numberCard = int.Parse(value);
             if (invocationCardsOnField.Count > 0)
@@ -1387,7 +1393,7 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void ConditionSpecificFamilyOnField(string familyName,ref List<InvocationCard> invocationCardsOnField)
+        private void ConditionSpecificFamilyOnField(string familyName, ref List<InvocationCard> invocationCardsOnField)
         {
             if (Enum.TryParse(familyName, out CardFamily cardFamily))
             {
@@ -1431,7 +1437,8 @@ namespace Cards.InvocationCards
             specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
         }
 
-        private static void ConditionSpecificCardOnField(string value, PlayerCards playerCards, ref List<InvocationCard> invocationCardsOnField)
+        private static void ConditionSpecificCardOnField(string value, PlayerCards playerCards,
+            ref List<InvocationCard> invocationCardsOnField)
         {
             var invocationCard = CheckSpecificCardOnField(value, playerCards);
             if (invocationCard != null)
@@ -1473,7 +1480,8 @@ namespace Cards.InvocationCards
                         break;
                     case Condition.SacrificeSpecificCard:
                     {
-                        isInvocationPossible = ConditionSacrificeSpecificCardIsPossible(value, ref specificCardFound, currentPlayerCard);
+                        isInvocationPossible =
+                            ConditionSacrificeSpecificCardIsPossible(value, ref specificCardFound, currentPlayerCard);
                     }
                         break;
                     case Condition.SpecificEquipmentAttached:
@@ -1488,32 +1496,36 @@ namespace Cards.InvocationCards
                         break;
                     case Condition.SacrificeFamily:
                     {
-                        isInvocationPossible = ConditionSacrificeFamilyIsPossible(value, currentPlayerCard, ref sacrificedCards);
+                        isInvocationPossible =
+                            ConditionSacrificeFamilyIsPossible(value, currentPlayerCard, ref sacrificedCards);
                     }
                         break;
                     case Condition.SpecificFamilyOnField:
                     {
-                        isInvocationPossible = ConditionSpecificFamilyOnFieldIsPossible(value, currentPlayerCard, ref sacrificedCards);
+                        isInvocationPossible =
+                            ConditionSpecificFamilyOnFieldIsPossible(value, currentPlayerCard, ref sacrificedCards);
                     }
                         break;
                     case Condition.NumberCard:
                     {
-                        isInvocationPossible = ConditionNumberCardIsPossible(value, invocationCardsOnField, sacrificedCards);
+                        isInvocationPossible =
+                            ConditionNumberCardIsPossible(value, invocationCardsOnField, sacrificedCards);
                     }
                         break;
                     case Condition.SacrificeThresholdAtk:
                     {
-                        ConditionSacrificeThresholdAtkIsPossible(value,ref sacrificedCards, currentPlayerCard);
+                        ConditionSacrificeThresholdAtkIsPossible(value, ref sacrificedCards, currentPlayerCard);
                     }
                         break;
                     case Condition.SacrificeThresholdDef:
                     {
-                        ConditionSacrificeThresholdDefIsPossible(value,ref sacrificedCards, currentPlayerCard);
+                        ConditionSacrificeThresholdDefIsPossible(value, ref sacrificedCards, currentPlayerCard);
                     }
                         break;
                     case Condition.NumberInvocationCardInYellowTrash:
                     {
-                        isInvocationPossible = ConditionNumberInvocationCardInYellowTrashIsPossible(value, currentPlayerCard);
+                        isInvocationPossible =
+                            ConditionNumberInvocationCardInYellowTrashIsPossible(value, currentPlayerCard);
                     }
                         break;
                     case Condition.ComeFromYellowTrash:
@@ -1541,7 +1553,8 @@ namespace Cards.InvocationCards
             return false;
         }
 
-        private static bool ConditionNumberInvocationCardInYellowTrashIsPossible(string value, PlayerCards currentPlayerCard)
+        private static bool ConditionNumberInvocationCardInYellowTrashIsPossible(string value,
+            PlayerCards currentPlayerCard)
         {
             var numberCardToHave = int.Parse(value);
             var realNumber = CheckNumberInvocationCardInYellowTrash(currentPlayerCard);
@@ -1549,7 +1562,8 @@ namespace Cards.InvocationCards
             return realNumber >= numberCardToHave;
         }
 
-        private static void ConditionSacrificeThresholdDefIsPossible(string value,ref List<InvocationCard> sacrificedCards,
+        private static void ConditionSacrificeThresholdDefIsPossible(string value,
+            ref List<InvocationCard> sacrificedCards,
             PlayerCards currentPlayerCard)
         {
             var threshold = int.Parse(value);
@@ -1570,7 +1584,8 @@ namespace Cards.InvocationCards
             }
         }
 
-        private static void ConditionSacrificeThresholdAtkIsPossible(string value, ref List<InvocationCard> sacrificedCards,
+        private static void ConditionSacrificeThresholdAtkIsPossible(string value,
+            ref List<InvocationCard> sacrificedCards,
             PlayerCards currentPlayerCard)
         {
             var threshold = float.Parse(value);
@@ -1591,7 +1606,8 @@ namespace Cards.InvocationCards
             }
         }
 
-        private static bool ConditionNumberCardIsPossible(string value, ICollection invocationCardsOnField, ICollection sacrificedCards)
+        private static bool ConditionNumberCardIsPossible(string value, ICollection invocationCardsOnField,
+            ICollection sacrificedCards)
         {
             bool isInvocationPossible;
             var numberCard = int.Parse(value);
@@ -1611,14 +1627,16 @@ namespace Cards.InvocationCards
             return isInvocationPossible;
         }
 
-        private static bool ConditionSpecificFamilyOnFieldIsPossible(string value, PlayerCards currentPlayerCard, ref List<InvocationCard> sacrificedCards)
+        private static bool ConditionSpecificFamilyOnFieldIsPossible(string value, PlayerCards currentPlayerCard,
+            ref List<InvocationCard> sacrificedCards)
         {
             if (!Enum.TryParse(value, out CardFamily cardFamily)) return false;
             sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
             return sacrificedCards.Count > 0;
         }
 
-        private static bool ConditionSacrificeFamilyIsPossible(string value, PlayerCards currentPlayerCard, ref List<InvocationCard> sacrificedCards)
+        private static bool ConditionSacrificeFamilyIsPossible(string value, PlayerCards currentPlayerCard,
+            ref List<InvocationCard> sacrificedCards)
         {
             if (!Enum.TryParse(value, out CardFamily cardFamily)) return false;
             sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);

@@ -105,8 +105,8 @@ public class PlayerCards : MonoBehaviour
 
     private List<InvocationCard> oldInvocationCards = new List<InvocationCard>();
     private FieldCard oldField;
-
     private List<Card> oldHandCards = new List<Card>();
+    private List<Card> oldYellowTrash = new List<Card>();
 
     public bool IsFieldDesactivate { get; private set; }
 
@@ -270,6 +270,16 @@ public class PlayerCards : MonoBehaviour
             }
 
             oldHandCards = new List<Card>(handCards);
+        }
+
+        if (oldYellowTrash.Count != yellowTrash.Count)
+        {
+            if (yellowTrash.Count > oldYellowTrash.Count)
+            {
+                OnYellowTrashAdded();
+            }
+
+            oldYellowTrash = new List<Card>(yellowTrash);
         }
 
         DisplayCardsInPosition();
@@ -460,7 +470,9 @@ public class PlayerCards : MonoBehaviour
         specificCardFound.SetRemainedAttackThisTurn(1);
         if (specificCardFound.IsControlled)
         {
-            var opponentPlayerCards = isPlayerOne ? GameObject.Find("Player2").GetComponent<PlayerCards>() : GameObject.Find("Player1").GetComponent<PlayerCards>();
+            var opponentPlayerCards = isPlayerOne
+                ? GameObject.Find("Player2").GetComponent<PlayerCards>()
+                : GameObject.Find("Player1").GetComponent<PlayerCards>();
             opponentPlayerCards.secretCards.Remove(specificCardFound);
             opponentPlayerCards.yellowTrash.Add(specificCardFound);
             if (equipmentCard != null)
@@ -471,7 +483,7 @@ public class PlayerCards : MonoBehaviour
             var controlledCardIndex = FindCard(specificCardFound);
             invocationCards.Remove(specificCardFound);
             Destroy(allPhysicalCards[controlledCardIndex]);
-            
+
             if (specificCardFound.GetInvocationDeathEffect() == null) return;
             var invocationDeathEffect = specificCardFound.GetInvocationDeathEffect();
             var keys = invocationDeathEffect.Keys;
@@ -507,7 +519,7 @@ public class PlayerCards : MonoBehaviour
             {
                 yellowTrash.Add(equipmentCard);
             }
-            
+
             if (specificCardFound.GetInvocationDeathEffect() == null) return;
             var invocationDeathEffect = specificCardFound.GetInvocationDeathEffect();
             var keys = invocationDeathEffect.Keys;
@@ -535,6 +547,7 @@ public class PlayerCards : MonoBehaviour
                 }
             }
         }
+
         specificCardFound.FreeCard();
     }
 
@@ -696,7 +709,8 @@ public class PlayerCards : MonoBehaviour
             ? GameObject.Find("Player2").GetComponent<PlayerCards>().effectCards
             : GameObject.Find("Player2").GetComponent<PlayerCards>().effectCards;
 
-        var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.GetEffectCardEffect().Keys).Any(keys => keys.Contains(Effect.SkipAttack));
+        var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.GetEffectCardEffect().Keys)
+            .Any(keys => keys.Contains(Effect.SkipAttack));
 
 
         for (var j = invocationCards.Count - 1; j >= 0; j--)
@@ -707,7 +721,7 @@ public class PlayerCards : MonoBehaviour
             {
                 invocationCard.BlockAttack();
             }
-            
+
             var permEffect = invocationCard.InvocationPermEffect;
             if (permEffect == null) continue;
             var keys = permEffect.Keys;
@@ -988,9 +1002,9 @@ public class PlayerCards : MonoBehaviour
         for (var j = oldInvocationCards.Count - 1; j >= 0; j--)
         {
             var invocationCard = oldInvocationCards[j];
-            
+
             invocationCard.UnblockAttack();
-            
+
             var permEffect = invocationCard.InvocationPermEffect;
             var actionEffect = invocationCard.InvocationActionEffect;
             if (permEffect != null)
@@ -1412,10 +1426,22 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    private void OnYellowTrashAdded()
+    {
+        var newYellowTrashCard = yellowTrash.Last();
+        var invocationCard = (InvocationCard)newYellowTrashCard;
+        if (!invocationCard) return;
+        invocationCard.UnblockAttack();
+        invocationCard.SetBonusAttack(0);
+        invocationCard.SetBonusDefense(0);
+        invocationCard.FreeCard();
+        invocationCard.ResetNewTurn();
+    }
+
     private void OnFieldCardChanged(FieldCard oldFieldCard)
     {
         if (oldFieldCard == null) return;
-        
+
         SendInvocationCardToYellowTrashAfterFieldDestruction(oldFieldCard);
 
 

@@ -59,7 +59,7 @@ public class GameState : MonoBehaviour
         {
             invocationCard.Init();
         }
-        
+
         foreach (var effectCard in allCards.Where(card => card.Type == CardType.Effect).Cast<EffectCard>())
         {
             effectCard.Init();
