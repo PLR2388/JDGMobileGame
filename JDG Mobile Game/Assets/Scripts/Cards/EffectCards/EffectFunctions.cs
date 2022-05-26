@@ -17,7 +17,6 @@ namespace Cards.EffectCards
         private PlayerCards opponentPlayerCard;
         private PlayerStatus opponentPlayerStatus;
         private GameObject p1;
-
         private GameObject p2;
 
         // Start is called before the first frame update
@@ -33,15 +32,14 @@ namespace Cards.EffectCards
             opponentPlayerStatus = p2.GetComponent<PlayerStatus>();
         }
 
-        private int FindFirstEmptyEffectLocationCurrentPlayer()
-        {
-            var effectCards = currentPlayerCard.effectCards;
-            return effectCards.Count;
-        }
-
+        /// <summary>
+        /// Called when user clicks on put for an effect card
+        /// Apply effects of the card or refuse to put it if 4 effects cards are on the field
+        /// </summary>
+        /// <param name="effectCard">The effect card the user put on field</param>
         private void PutEffectCard(EffectCard effectCard)
         {
-            var size = FindFirstEmptyEffectLocationCurrentPlayer();
+            var size = currentPlayerCard.effectCards.Count;
 
             if (size < 4)
             {
@@ -58,11 +56,15 @@ namespace Cards.EffectCards
             }
         }
 
+        /// <summary>
+        /// Returns a boolean to indicate if the effect card is usable for the current user
+        /// </summary>
+        /// <param name="effectCardEffect">The effect of the effect card</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
         public bool CanUseEffectCard(EffectCardEffect effectCardEffect)
         {
             var keys = effectCardEffect.Keys;
             var values = effectCardEffect.Values;
-            var isValid = true;
 
             var pvAffected = 0f;
             var affectOpponent = false;
@@ -77,79 +79,98 @@ namespace Cards.EffectCards
                 {
                     case Effect.AffectOpponent:
                     {
-                        isValid = CanUseAffectOpponent(value, pvAffected, isValid, out affectOpponent);
+                        if (!CanUseAffectOpponent(value, pvAffected, out affectOpponent))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.DestroyCards:
                     {
-                        isValid = CanUseDestroyCards(value, isValid, affectOpponent);
+                        if (!CanUseDestroyCards(value, affectOpponent))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SacrificeInvocation:
                     {
-                        isValid = CanUseSacrificeInvocation(value, isValid);
+                        if (!CanUseSacrificeInvocation(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SameFamily:
                     {
-                        isValid = CanUseSameFamily(isValid);
+                        if (!CanUseSameFamily())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.RemoveDeck:
                     {
-                        isValid = CanUseRemoveDeck(isValid);
+                        if (!CanUseRemoveDeck())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SpecialInvocation:
                     {
-                        isValid = CanUseSpecialInvocation(isValid);
-                    }
-                        break;
-                    case Effect.Duration:
-                    {
-                        //TODO Do something with it
+                        if (!CanUseSpecialInvocation())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.Combine:
                     {
-                        isValid = CanUseCombine(value, isValid);
+                        if (!CanUseCombine(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.TakeControl:
                     {
-                        isValid = CanUseTakeControl(isValid);
+                        if (!CanUseTakeControl())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.NumberAttacks:
                     {
-                        isValid &= currentPlayerCard.invocationCards.Count > 0;
-                    }
-                        break;
-                    case Effect.SkipAttack:
-                    {
-                    }
-                        break;
-                    case Effect.SeeCards:
-                    {
-                    }
-                        break;
-                    case Effect.ChangeOrder:
-                    {
+                        if (!CanUseNumberAttacks())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.AttackDirectly:
                     {
-                        isValid = CanUseAttackDirectly(value, isValid);
+                        if (!CanUseAttackDirectly(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.ProtectAttack:
                     {
-                        isValid = CanUseProtectAttack(isValid);
+                        if (!CanUseProtectAttack())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SkipFieldsEffect:
                     {
-                        isValid = CanUseSkipFieldsEffect(isValid);
+                        if (!CanUseSkipFieldsEffect())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.ChangeField:
@@ -157,17 +178,12 @@ namespace Cards.EffectCards
                         changeField = true;
                     }
                         break;
-                    case Effect.HandMax:
-                    {
-                    }
-                        break;
-                    case Effect.CheckTurn:
-                    {
-                    }
-                        break;
                     case Effect.RemoveHand:
                     {
-                        isValid = CanUseRemoveHand(values, i, isValid);
+                        if (!CanUseRemoveHand(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.AffectPv:
@@ -177,12 +193,15 @@ namespace Cards.EffectCards
                         break;
                     case Effect.Sources:
                     {
-                        isValid = CanUseSources(changeField, value, isValid, handCard);
+                        if (!CanUseSources(changeField, value, handCard))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.ChangeHandCards:
                     {
-                        isValid = CanUseChangeHandCards(value, isValid, out handCard);
+                        handCard = int.Parse(value);
                     }
                         break;
                     case Effect.NumberInvocationCard:
@@ -201,161 +220,61 @@ namespace Cards.EffectCards
                         break;
                     case Effect.SkipContre:
                         break;
+                    case Effect.HandMax:
+                        break;
+                    case Effect.CheckTurn:
+                        break;
+                    case Effect.SkipAttack:
+                        break;
+                    case Effect.SeeCards:
+                        break;
+                    case Effect.ChangeOrder:
+                        break;
+                    case Effect.Duration:
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            return isValid;
+            return true;
         }
 
-        private bool CanUseChangeHandCards(string value, bool isValid, out int handCard)
+        /// <summary>
+        /// Returns a boolean to indicate if the AffectOpponent effect can be use.
+        /// It is not usable if the effectCard make the user loose more HP than he has.
+        /// Cards that use it : Convocation au lycée, Demi-pizza, Incendie, Kebab magique, Maniabilité pourrie, Musique de Mega Drive, Squalala, Torture Ninja, Un délicieux risotto.
+        /// </summary>
+        /// <param name="value">a string which value is "true" or "false"</param>
+        /// <param name="pvAffected">the number of HP the user or the opponent can loose/win</param>
+        /// <param name="affectOpponent">a boolean which is true if the effect card impacts the opponent and false if the effect card impacts the user</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseAffectOpponent(string value, float pvAffected, out bool affectOpponent)
         {
-            handCard = int.Parse(value);
-            isValid &= currentPlayerCard.handCards.Count > handCard;
-            return isValid;
-        }
-
-        private bool CanUseSources(bool changeField, string value, bool isValid, int handCard)
-        {
-            if (changeField)
+            affectOpponent = bool.Parse(value);
+            if (pvAffected != 0 && !affectOpponent)
             {
-                if (value != "deck") return isValid;
-                var fieldCardsInDeck =
-                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
-                isValid &= fieldCardsInDeck.Count > 0;
-            }
-            else if (handCard > 0)
-            {
-                if (value == "deck;yellow")
-                {
-                    isValid &= (currentPlayerCard.deck.Count + currentPlayerCard.yellowTrash.Count) >=
-                               handCard;
-                }
+                return (currentPlayerStatus.GetCurrentPv() + pvAffected) > 0;
             }
 
-            return isValid;
+            return true;
         }
-
-        private static void CanUseAffectPv(string value, out float pvAffected)
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the DestroyCards effect can be use.
+        /// There is different cases depending of value:
+        ///  - field : A field card can be destroy if there is at least one on user field or opponent field.
+        ///  - invocation :  if it affects the opponent, he must have at least one invocation card on field.
+        ///  - 1 : the user can destroy one of the card on field, it must have at least one card on field.
+        ///  - equipment : an equipment card can be destroy if there is at least one invocation card equip with an equipment card.
+        /// Cards that use it : Croisement des effluves(all), Feuille(1), Incendie(field), Squalala(invocation).
+        /// </summary>
+        /// <param name="value">a string which value is "field", "invocation" or "1"</param>
+        /// <param name="affectOpponent">a boolean which is true if the effect card impacts the opponent and false if the effect card impacts the user</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseDestroyCards(string value, bool affectOpponent)
         {
-            if (float.TryParse(value, out pvAffected)) return;
-            if (value == "all")
-            {
-                pvAffected = 999;
-            }
-        }
-
-        private bool CanUseRemoveHand(IReadOnlyList<string> values, int i, bool isValid)
-        {
-            var numberCardToRemove = int.Parse(values[i]);
-            // This card + number to remove
-            isValid &= currentPlayerCard.handCards.Count > numberCardToRemove;
-            return isValid;
-        }
-
-        private bool CanUseSkipFieldsEffect(bool isValid)
-        {
-            isValid &= currentPlayerCard.field != null || opponentPlayerCard.field != null;
-            return isValid;
-        }
-
-        private bool CanUseProtectAttack(bool isValid)
-        {
-            isValid &= currentPlayerCard.invocationCards.Count == 0;
-            return isValid;
-        }
-
-        private bool CanUseAttackDirectly(string value, bool isValid)
-        {
-            var minValue = float.Parse(value);
-            isValid &= opponentPlayerStatus.GetCurrentPv() < minValue;
-            return isValid;
-        }
-
-        private bool CanUseTakeControl(bool isValid)
-        {
-            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
-                .Cast<Card>().ToList();
-
-            isValid &= invocationCardOpponent.Count > 0 && currentPlayerCard.invocationCards.Count < 4;
-            return isValid;
-        }
-
-        private bool CanUseCombine(string value, bool isValid)
-        {
-            var numberCombine = int.Parse(value);
-            var currentInvocationCards = currentPlayerCard.invocationCards;
-            isValid &= currentInvocationCards.Count >= numberCombine;
-            return isValid;
-        }
-
-        private bool CanUseSpecialInvocation(bool isValid)
-        {
-            var yellowTrash = currentPlayerCard.yellowTrash;
-            var invocationCards = currentPlayerCard.invocationCards;
-            var place = invocationCards.Count;
-
-            var invocationFromYellowTrash =
-                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
-            isValid &= place < 4 && invocationFromYellowTrash.Count > 0;
-            return isValid;
-        }
-
-        private bool CanUseRemoveDeck(bool isValid)
-        {
-            var size = currentPlayerCard.deck.Count;
-            isValid &= size > 0;
-            return isValid;
-        }
-
-        private bool CanUseSameFamily(bool isValid)
-        {
-            var fieldCard = currentPlayerCard.field;
-            isValid &= fieldCard != null && fieldCard.IsValid();
-            return isValid;
-        }
-
-        private bool CanUseSacrificeInvocation(string value, bool isValid)
-        {
-            switch (value)
-            {
-                case "true":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
-
-                    isValid &= invocationCardsValid.Count > 0;
-                }
-                    break;
-                case "5":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
-                            invocationCard.GetCurrentAttack() >= 5 ||
-                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
-                    isValid &= invocationCardsValid.Count > 0;
-                }
-                    break;
-                case "3":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards.Where(invocationCard =>
-                            invocationCard.GetCurrentAttack() >= 3 ||
-                            invocationCard.GetCurrentDefense() >= 3)
-                        .Cast<Card>().ToList();
-                    isValid &= invocationCardsValid.Count > 0;
-                }
-                    break;
-            }
-
-            return isValid;
-        }
-
-        private bool CanUseDestroyCards(string value, bool isValid, bool affectOpponent)
-        {
+            var isValid = true;
             switch (value)
             {
                 case "field":
@@ -373,7 +292,7 @@ namespace Cards.EffectCards
                         fieldCards.Add(fieldCard2);
                     }
 
-                    isValid &= fieldCards.Count > 0;
+                    isValid = fieldCards.Count > 0;
                 }
                     break;
                 case "invocation":
@@ -382,7 +301,7 @@ namespace Cards.EffectCards
                     {
                         var invocationOpponentValid = opponentPlayerCard.invocationCards
                             .Where(card => card.IsValid()).Cast<Card>().ToList();
-                        isValid &= invocationOpponentValid.Count > 0;
+                        isValid = invocationOpponentValid.Count > 0;
                     }
                 }
                     break;
@@ -415,7 +334,7 @@ namespace Cards.EffectCards
 
                     allCardsOnField.AddRange(invocationCards2.Where(card => card.IsValid()));
 
-                    isValid &= allCardsOnField.Count > 0;
+                    isValid = allCardsOnField.Count > 0;
                 }
                     break;
                 case "equipment":
@@ -423,25 +342,211 @@ namespace Cards.EffectCards
                     var invocationCardsOnField = new List<InvocationCard>(currentPlayerCard.invocationCards);
                     invocationCardsOnField.AddRange(opponentPlayerCard.invocationCards);
 
-                    isValid &= invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard())
+                    isValid = invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard())
                         .Where(equipmentCard => equipmentCard != null).ToList().Count > 0;
                 }
                     break;
             }
 
-
             return isValid;
         }
-
-        private bool CanUseAffectOpponent(string value, float pvAffected, bool isValid, out bool affectOpponent)
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the SacrificeInvocation effect can be use.
+        /// There is different cases depending of value:
+        ///  - true : User should have at least one invocation card on field.
+        ///  - 5 : User should have an invocation on field with at least 5 ATK Stars or 5 DEF Stars.
+        ///  - 3 : User should have an invocation on field with at least 3 ATK Stars or 3 DEF Stars.
+        ///  - equipment : an equipment card can be destroy if there is at least one invocation card equip with an equipment card.
+        /// Cards that use it : Croisement des effluves(true), Demi-pizza(3), Kebab magique(true), Un délicieux risotto(5).
+        /// </summary>
+        /// <param name="value">a string which value is "true", "3" or "5"</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSacrificeInvocation(string value)
         {
-            affectOpponent = bool.Parse(value);
-            if (pvAffected != 0 && !affectOpponent)
+            var isValid = true;
+            switch (value)
             {
-                isValid &= (currentPlayerStatus.GetCurrentPv() + pvAffected) > 0;
+                case "true":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards
+                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
+
+                    isValid = invocationCardsValid.Count > 0;
+                }
+                    break;
+                case "5":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards
+                        .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
+                            invocationCard.GetCurrentAttack() >= 5 ||
+                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
+                    isValid = invocationCardsValid.Count > 0;
+                }
+                    break;
+                case "3":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards.Where(invocationCard =>
+                            invocationCard.GetCurrentAttack() >= 3 ||
+                            invocationCard.GetCurrentDefense() >= 3)
+                        .Cast<Card>().ToList();
+                    isValid = invocationCardsValid.Count > 0;
+                }
+                    break;
             }
 
             return isValid;
+        }
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the SameFamily effect can be use.
+        /// Apply the same family that the field card.
+        /// User must have a field card on field.
+        /// Cards that use it : Convocation au lycée.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSameFamily()
+        {
+            var fieldCard = currentPlayerCard.field;
+            return fieldCard != null && fieldCard.IsValid();
+        }
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the RemoveDeck effect can be use.
+        /// Remove the first card of the deck.
+        /// User must have cards on deck.
+        /// Cards that use it : Croisement des effluves.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseRemoveDeck()
+        {
+            var size = currentPlayerCard.deck.Count;
+            return size > 0;
+        }
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the SpecialInvocation effect can be use.
+        /// Resurect an invocation from yellow trash.
+        /// User must have invocations on yellow trash and an invocation place on field.
+        /// Cards that use it : Plume de phénix.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSpecialInvocation()
+        {
+            var yellowTrash = currentPlayerCard.yellowTrash;
+            var invocationCards = currentPlayerCard.invocationCards;
+            var place = invocationCards.Count;
+
+            var invocationFromYellowTrash =
+                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
+            return place < 4 && invocationFromYellowTrash.Count > 0;
+        }
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the Combine effect can be use.
+        /// Merge several invocation cards.
+        /// User should have a certain number of invocation cards on field.
+        /// Cards that use it : Attaque de la tour Eiffel.
+        /// </summary>
+        /// <param name="value">a string which value is the number of card to merge</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseCombine(string value)
+        {
+            var numberCombine = int.Parse(value);
+            var currentInvocationCards = currentPlayerCard.invocationCards;
+            return currentInvocationCards.Count >= numberCombine;
+        }
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the TakeControl effect can be use.
+        /// Opponent should have at least one invocation card and user a place for a invocation card on field.
+        /// Cards that use it : Youtube Money.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseTakeControl()
+        {
+            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
+                .Cast<Card>().ToList();
+
+            return invocationCardOpponent.Count > 0 && currentPlayerCard.invocationCards.Count < 4;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the NumberAttacks effect can be use.
+        /// Give more attack by turn
+        /// User should have at least one invocation card.
+        /// Cards that use it : Petite portions de " riz ".
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseNumberAttacks()
+        {
+            return currentPlayerCard.invocationCards.Count > 0;
+        }
+        
+        
+        /// <summary>
+        /// Returns a boolean to indicate if the Sources effect can be use.
+        /// Check if there is enough card in sources.
+        /// Cards that use it : Faux raccord, Le mot de passe.
+        /// </summary>
+        /// <param name="changeField">a boolean</param>
+        /// <param name="value">a string which value is "deck" or "deck;yellow"</param>
+        /// <param name="handCard">a number of card to take</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSources(bool changeField, string value, int handCard)
+        {
+            if (changeField)
+            {
+                if (value != "deck") return true;
+                var fieldCardsInDeck =
+                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
+                return fieldCardsInDeck.Count > 0;
+            }
+            else if (handCard > 0)
+            {
+                if (value == "deck;yellow")
+                {
+                    return (currentPlayerCard.deck.Count + currentPlayerCard.yellowTrash.Count) >=
+                           handCard;
+                }
+            }
+
+            return true;
+        }
+
+        private static void CanUseAffectPv(string value, out float pvAffected)
+        {
+            if (float.TryParse(value, out pvAffected)) return;
+            if (value == "all")
+            {
+                pvAffected = 999;
+            }
+        }
+
+        private bool CanUseRemoveHand(string value)
+        {
+            var numberCardToRemove = int.Parse(value);
+            // This card + number to remove
+            return currentPlayerCard.handCards.Count > numberCardToRemove;
+        }
+
+        private bool CanUseSkipFieldsEffect()
+        {
+            return currentPlayerCard.field != null || opponentPlayerCard.field != null;
+        }
+
+        private bool CanUseProtectAttack()
+        {
+            return currentPlayerCard.invocationCards.Count == 0;
+        }
+
+        private bool CanUseAttackDirectly(string value)
+        {
+            var minValue = float.Parse(value);
+            return opponentPlayerStatus.GetCurrentPv() < minValue;
         }
 
         private void ReduceHandOpponentPlayer(List<Card> handCard2, int handCardsNumber)

@@ -2,7 +2,7 @@
 
 namespace Cards.ContreCards
 {
-    [CreateAssetMenu(fileName = "New Card", menuName = "ContreCard")]
+    [CreateAssetMenu(fileName = "NewContreCard", menuName = "ContreCard")]
     public class ContreCard : Card
     {
         private void Awake()

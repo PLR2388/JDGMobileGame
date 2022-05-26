@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace Cards.EffectCards
 {
-    [CreateAssetMenu(fileName = "New Card", menuName = "EffectCard")]
+    [CreateAssetMenu(fileName = "NewEffectCard", menuName = "EffectCard")]
     public class EffectCard : Card
     {
         [SerializeField] private EffectCardEffect effectCardEffect;
@@ -16,6 +16,12 @@ namespace Cards.EffectCards
         public float affectPv;
 
         private int currentLifeTime;
+        
+        private void Awake()
+        {
+            type = CardType.Effect;
+            currentLifeTime = lifeTime;
+        }
 
         public void Init()
         {
@@ -27,11 +33,6 @@ namespace Cards.EffectCards
             return effectCardEffect;
         }
 
-        private void Awake()
-        {
-            type = CardType.Effect;
-            currentLifeTime = lifeTime;
-        }
 
         public int GetLifeTime()
         {
