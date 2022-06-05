@@ -736,23 +736,12 @@ namespace Cards.EffectCards
                         break;
                     case Effect.NumberAttacks:
                     {
-                        var number = int.Parse(value);
-                        foreach (var invocationCard in currentPlayerCard.invocationCards)
-                        {
-                            invocationCard.SetRemainedAttackThisTurn(number);
-                        }
+                        ApplyNumberAttacks(value);
                     }
                         break;
                     case Effect.SkipAttack:
                     {
-                        if (affectOpponent)
-                        {
-                            foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards
-                                         .Where(card => card.IsAffectedByEffectCard).ToList())
-                            {
-                                opponentInvocationCard.BlockAttack();
-                            }
-                        }
+                        ApplySkipAttack(affectOpponent);
                     }
                         break;
                     case Effect.SeeCards:
@@ -762,49 +751,17 @@ namespace Cards.EffectCards
                         break;
                     case Effect.ChangeOrder:
                     {
-                        var see = cardsToSee;
-
-                        void PositiveAction()
-                        {
-                            var cardsDeckToSee = BuildCardsDeckToSee(see, false);
-
-                            void PositiveActionCardSelector()
-                            {
-                                DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, false);
-                            }
-
-                            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
-                                cardsDeckToSee, PositiveActionCardSelector);
-                        }
-
-                        void NegativeAction()
-                        {
-                            var cardsDeckToSee = BuildCardsDeckToSee(see, true);
-
-                            void PositiveActionCardSelector()
-                            {
-                                DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, true);
-                            }
-
-                            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
-                                cardsDeckToSee, PositiveActionCardSelector);
-                        }
-
-                        MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
-                            "Veux-tu regarder dans le deck de l'adversaire ou du tien ?",
-                            PositiveAction, NegativeAction);
+                        ApplyChangeOrder(cardsToSee);
                     }
                         break;
                     case Effect.ProtectAttack:
                     {
-                        var numberShield = int.Parse(value);
-                        currentPlayerStatus.SetNumberShield(numberShield);
+                        ApplyProtectAttack(value);
                     }
                         break;
                     case Effect.SkipFieldsEffect:
                     {
-                        currentPlayerCard.DesactivateFieldCardEffect();
-                        opponentPlayerCard.DesactivateFieldCardEffect();
+                        ApplySkipFieldsEffect();
                     }
                         break;
                     case Effect.ChangeField:
@@ -833,7 +790,6 @@ namespace Cards.EffectCards
 
             //TODO Add effectCard to yellow trash if necessary
         }
-
 
         /// <summary>
         /// Apply the AffectPv effect.
@@ -1203,6 +1159,69 @@ namespace Cards.EffectCards
                     break;
             }
         }
+        
+                private void FindCardInArrayAndSendItToTrash(IReadOnlyList<Card> cards1, IReadOnlyList<Card> cards2, Card card)
+        {
+            var found = false;
+            var j = 0;
+            while (j < cards2.Count && !found)
+            {
+                var card2 = cards2[j];
+                if (card2 != null)
+                {
+                    if (card2.Nom == card.Nom)
+                    {
+                        found = true;
+                        switch (card.Type)
+                        {
+                            case CardType.Invocation:
+                            {
+                                opponentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
+                            }
+                                break;
+                            case CardType.Effect:
+                            {
+                                opponentPlayerCard.effectCards.Remove(card as EffectCard);
+                                opponentPlayerCard.yellowTrash.Add(card);
+                            }
+                                break;
+                        }
+                    }
+                }
+
+                j++;
+            }
+
+            if (found) return;
+            j = 0;
+            while (j < cards1.Count && !found)
+            {
+                var card1 = cards1[j];
+                if (card1 != null)
+                {
+                    if (card1.Nom == card.Nom)
+                    {
+                        found = true;
+                        switch (card.Type)
+                        {
+                            case CardType.Invocation:
+                            {
+                                currentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
+                            }
+                                break;
+                            case CardType.Effect:
+                            {
+                                currentPlayerCard.yellowTrash.Add(card);
+                                currentPlayerCard.effectCards.Remove(card as EffectCard);
+                            }
+                                break;
+                        }
+                    }
+                }
+
+                j++;
+            }
+        }
 
         /// <summary>
         /// Apply the NumberInvocationCard effect.
@@ -1554,6 +1573,11 @@ namespace Cards.EffectCards
                 }
             }
         }
+        
+        private static string[] SplitSources(string value)
+        {
+            return value.Split(';');
+        }
 
         /// <summary>
         /// Apply the HandMax effect.
@@ -1640,7 +1664,13 @@ namespace Cards.EffectCards
                 };
             }
         }
-
+        
+        /// <summary>
+        /// ReduceHandOpponentPlayer.
+        /// Force opponent to have a number of cards in his hands
+        /// </summary>
+        /// <param name="handCard2">handCard of the opponent</param>
+        /// <param name="handCardsNumber">number of hand card to have</param>
         private void ReduceHandOpponentPlayer(List<Card> handCard2, int handCardsNumber)
         {
             if (handCard2.Count < handCardsNumber)
@@ -1714,96 +1744,82 @@ namespace Cards.EffectCards
                 };
             }
         }
-
-        private List<Card> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
+        
+        /// <summary>
+        /// Apply the SeeOpponentHand effect.
+        /// Display opponent Hand cards
+        /// </summary>
+        private void ApplySeeOpponentHand()
         {
-            var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
-            List<Card> cardsDeckToSee = new List<Card>();
-            if (playerCard.deck.Count > see)
-            {
-                for (var j = playerCard.deck.Count - 1;
-                     j > (playerCard.deck.Count - 1 - see);
-                     j--)
-                {
-                    cardsDeckToSee.Add(playerCard.deck[j]);
-                }
-            }
-            else
-            {
-                cardsDeckToSee.AddRange(playerCard.invocationCards);
-            }
-
-            return cardsDeckToSee;
+            var handCardOpponent = opponentPlayerCard.handCards;
+            MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
         }
-
-        private void DisplayMessageBoxToChangeOrderCards(List<Card> cardsDeckToSee, bool isCurrentPlayerCard)
+        
+        /// <summary>
+        /// Apply the RemoveCardOption effect.
+        /// Remove one card from the user to have the right to remove one from opponent
+        /// </summary>
+        private void ApplyRemoveCardOption()
         {
-            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
-                multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count, displayOrder: true);
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var selectedCards =
-                    messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
-                if (selectedCards.Count == cardsDeckToSee.Count)
-                {
-                    var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
-                    foreach (var card in cardsDeckToSee)
-                    {
-                        playerCard.deck.Remove(card);
-                    }
+            var message = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
+                "Veux-tu te défausser d'une carte pour en défausser une à l'adversaire ?");
 
-                    selectedCards.Reverse();
-                    playerCard.deck.AddRange(selectedCards);
-                    Destroy(messageBox);
-                }
-                else
-                {
-                    messageBox.SetActive(false);
-
-                    void OkAction()
-                    {
-                        messageBox.SetActive(true);
-                    }
-
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                        "Tu dois choisir l'ordre des cartes", OkAction);
-                }
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                messageBox.SetActive(false);
-
-                void OkAction()
-                {
-                    messageBox.SetActive(true);
-                }
-
-                MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                    "Tu dois choisir l'ordre des cartes", OkAction);
-            };
-        }
-
-        private void ApplyTakeControl()
-        {
-            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
-                .Cast<Card>().ToList();
-
-            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Quel carte veux-tu contrôler pendant un tour ?", invocationCardOpponent);
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var card =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                Destroy(message);
+                var handCardOpponent = opponentPlayerCard.handCards;
+                var message1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                    "Quel carte veux-tu enlever à l'adversaire ?", handCardOpponent);
+                message1.GetComponent<MessageBox>().PositiveAction = () =>
+                {
+                    var cardOpponent = message1.GetComponent<MessageBox>().GetSelectedCard();
+                    if (!cardOpponent.IsValid()) return;
+                    Destroy(message1);
+                    var handCardPlayer = currentPlayerCard.handCards;
+                    var message2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                        "Quel carte veux-tu te défausser?", handCardPlayer);
+
+                    message2.GetComponent<MessageBox>().PositiveAction = () =>
+                    {
+                        var cardPlayer = message2.GetComponent<MessageBox>().GetSelectedCard();
+                        if (cardPlayer.IsValid())
+                        {
+                            currentPlayerCard.yellowTrash.Add(cardPlayer);
+                            opponentPlayerCard.yellowTrash.Add(cardOpponent);
+                            currentPlayerCard.handCards.Remove(cardPlayer);
+                            opponentPlayerCard.handCards.Remove(cardOpponent);
+                        }
+
+                        Destroy(message2);
+                    };
+                };
+                message1.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message1); };
+            };
+
+            message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
+        }
+        
+        /// <summary>
+        /// Apply the RemoveHand effect.
+        /// Remove one card from user hand cards
+        /// <param name="effectCard">effect card that justify to remove one card from hand</param>
+        /// </summary>
+        private void ApplyRemoveHand(Card effectCard)
+        {
+            var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
+            handCardPlayer.Remove(effectCard);
+            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Quel carte veux-tu te défausser?", handCardPlayer);
+
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var card = message.GetComponent<MessageBox>().GetSelectedCard();
                 if (card != null)
                 {
-                    card.ControlCard();
-                    card.UnblockAttack();
-                    opponentPlayerCard.invocationCards.Remove(card);
-                    opponentPlayerCard.SendToSecretHide(card);
-                    currentPlayerCard.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
-                    currentPlayerCard.invocationCards.Add(card);
+                    currentPlayerCard.yellowTrash.Add(card);
+                    currentPlayerCard.handCards.Remove(card);
                     Destroy(message);
                 }
                 else
@@ -1815,7 +1831,7 @@ namespace Cards.EffectCards
                         message.SetActive(true);
                     }
 
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à controller",
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
                         OkAction);
                 }
             };
@@ -1829,34 +1845,113 @@ namespace Cards.EffectCards
                     message.SetActive(true);
                 }
 
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à contrôler",
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
                     OkAction);
             };
         }
-
-        private void ApplyRevertStat()
+        
+        /// <summary>
+        /// Apply the RemoveDeck effect.
+        /// Send the first card on the deck to the yellow trash
+        /// </summary>
+        private void ApplyRemoveDeck()
         {
-            var invocationCards1 = currentPlayerCard.invocationCards;
-            var invocationCards2 =
+            var size = currentPlayerCard.deck.Count;
+            if (size <= 0) return;
+            var c = currentPlayerCard.deck[size - 1];
+            currentPlayerCard.yellowTrash.Add(c);
+            currentPlayerCard.deck.RemoveAt(size - 1);
+        }
+        
+        /// <summary>
+        /// Apply the SpecialInvocation effect.
+        /// User can choose an invocation card from the yellow trash to invoke it directly without effect
+        /// </summary>
+        private void ApplySpecialInvocation()
+        {
+            var yellowTrash = currentPlayerCard.yellowTrash;
+            var invocationCards = currentPlayerCard.invocationCards;
+
+            var invocationFromYellowTrash =
+                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
+
+            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
+
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var card =
+                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                if (card != null)
+                {
+                    currentPlayerCard.yellowTrash.Remove(card);
+                    card.DeactivateEffect();
+                    invocationCards.Add(card);
+                    Destroy(message);
+                }
+                else
+                {
+                    message.SetActive(false);
+
+                    void OkAction()
+                    {
+                        message.SetActive(true);
+                    }
+
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                        OkAction);
+                }
+            };
+
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                message.SetActive(false);
+
+                void OkAction()
+                {
+                    message.SetActive(true);
+                }
+
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                    OkAction);
+            };
+        }
+        
+        /// <summary>
+        /// Apply the DivideInvocation effect.
+        /// Divide by 2 every opponent invocation cards Def except for those which aren't affected by effect cards
+        /// </summary>
+        private void ApplyDivideInvocation()
+        {
+            var opponentInvocationCard =
                 opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
-
-            foreach (var card in invocationCards1)
+            foreach (var card in opponentInvocationCard)
             {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                var newBonusDefense = card.GetBonusDefense() - card.GetCurrentDefense() / 2;
                 card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
-            }
-
-            foreach (var card in invocationCards2)
-            {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
             }
         }
-
+        
+        /// <summary>
+        /// Apply the Duration effect.
+        /// Change effect card lifeTime (number of turn on field)
+        /// <param name="effectCard">effect card </param>
+        /// <param name="value">value is a string that is an int</param>
+        /// </summary>
+        private static void ApplyDuration(EffectCard effectCard, string value)
+        {
+            if (int.TryParse(value, out var duration))
+            {
+                effectCard.SetLifeTime(duration);
+            }
+        }
+        
+        /// <summary>
+        /// Apply the Combine effect.
+        /// Merge multiple invocation cards
+        /// <param name="effectCard">effect card </param>
+        /// <param name="value">value is a string that is an int that represent the number of invocation cards to merge</param>
+        /// </summary>
         private void ApplyCombine(EffectCard effectCard, string value)
         {
             var numberCombine = int.Parse(value);
@@ -1910,36 +2005,45 @@ namespace Cards.EffectCards
                 Destroy(messageBox);
             };
         }
-
-        private static void ApplyDuration(EffectCard effectCard, string value)
+        
+        /// <summary>
+        /// Apply the RevertStat effect.
+        /// Revert DEF and ATK of every invocation cards on field
+        /// </summary>
+        private void ApplyRevertStat()
         {
-            if (int.TryParse(value, out var duration))
-            {
-                effectCard.SetLifeTime(duration);
-            }
-        }
-
-        private void ApplyDivideInvocation()
-        {
-            var opponentInvocationCard =
+            var invocationCards1 = currentPlayerCard.invocationCards;
+            var invocationCards2 =
                 opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
-            foreach (var card in opponentInvocationCard)
+
+            foreach (var card in invocationCards1)
             {
-                var newBonusDefense = card.GetBonusDefense() - card.GetCurrentDefense() / 2;
+                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
                 card.SetBonusDefense(newBonusDefense);
+                card.SetBonusAttack(newBonusAttack);
+            }
+
+            foreach (var card in invocationCards2)
+            {
+                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                card.SetBonusDefense(newBonusDefense);
+                card.SetBonusAttack(newBonusAttack);
             }
         }
-
-        private void ApplySpecialInvocation()
+        
+        /// <summary>
+        /// Apply the TakeControl effect.
+        /// Control an invocation card from the opponent during a turn
+        /// </summary>
+        private void ApplyTakeControl()
         {
-            var yellowTrash = currentPlayerCard.yellowTrash;
-            var invocationCards = currentPlayerCard.invocationCards;
-
-            var invocationFromYellowTrash =
-                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
+            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
+                .Cast<Card>().ToList();
 
             var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
+                "Quel carte veux-tu contrôler pendant un tour ?", invocationCardOpponent);
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
@@ -1947,9 +2051,12 @@ namespace Cards.EffectCards
                     (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (card != null)
                 {
-                    currentPlayerCard.yellowTrash.Remove(card);
-                    card.DeactivateEffect();
-                    invocationCards.Add(card);
+                    card.ControlCard();
+                    card.UnblockAttack();
+                    opponentPlayerCard.invocationCards.Remove(card);
+                    opponentPlayerCard.SendToSecretHide(card);
+                    currentPlayerCard.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
+                    currentPlayerCard.invocationCards.Add(card);
                     Destroy(message);
                 }
                 else
@@ -1961,7 +2068,7 @@ namespace Cards.EffectCards
                         message.SetActive(true);
                     }
 
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à controller",
                         OkAction);
                 }
             };
@@ -1975,179 +2082,171 @@ namespace Cards.EffectCards
                     message.SetActive(true);
                 }
 
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à contrôler",
                     OkAction);
             };
         }
-
-        private void ApplyRemoveDeck()
+        
+        /// <summary>
+        /// Apply the NumberAttacks effect.
+        /// Change the number of attack of invocations card from user on field
+        /// <param name="value">value is a string which is an int representing the number of attacks</param>
+        /// </summary>
+        private void ApplyNumberAttacks(string value)
         {
-            var size = currentPlayerCard.deck.Count;
-            if (size <= 0) return;
-            var c = currentPlayerCard.deck[size - 1];
-            currentPlayerCard.yellowTrash.Add(c);
-            currentPlayerCard.deck.RemoveAt(size - 1);
-        }
-
-        private void ApplyRemoveHand(Card effectCard)
-        {
-            var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
-            handCardPlayer.Remove(effectCard);
-            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Quel carte veux-tu te défausser?", handCardPlayer);
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
+            var number = int.Parse(value);
+            foreach (var invocationCard in currentPlayerCard.invocationCards)
             {
-                var card = message.GetComponent<MessageBox>().GetSelectedCard();
-                if (card != null)
+                invocationCard.SetRemainedAttackThisTurn(number);
+            }
+        }
+        
+        /// <summary>
+        /// Apply the SkipAttack effect.
+        /// If opponent is affect, skip attack turn of every opponent invocation cards
+        /// <param name="affectOpponent">bool that indicate if skipAttack affects opponent</param>
+        /// </summary>
+        private void ApplySkipAttack(bool affectOpponent)
+        {
+            if (affectOpponent)
+            {
+                foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards
+                             .Where(card => card.IsAffectedByEffectCard).ToList())
                 {
-                    currentPlayerCard.yellowTrash.Add(card);
-                    currentPlayerCard.handCards.Remove(card);
-                    Destroy(message);
+                    opponentInvocationCard.BlockAttack();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Apply the ChangeOrder effect.
+        /// Change next card order in the deck (opponent or player)
+        /// <param name="cardsToSee">number of card to see in the deck (and change order)</param>
+        /// </summary>
+        private void ApplyChangeOrder(int cardsToSee)
+        {
+            var see = cardsToSee;
+
+            void PositiveAction()
+            {
+                var cardsDeckToSee = BuildCardsDeckToSee(see, false);
+
+                void PositiveActionCardSelector()
+                {
+                    DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, false);
+                }
+
+                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
+                    cardsDeckToSee, PositiveActionCardSelector);
+            }
+
+            void NegativeAction()
+            {
+                var cardsDeckToSee = BuildCardsDeckToSee(see, true);
+
+                void PositiveActionCardSelector()
+                {
+                    DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, true);
+                }
+
+                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
+                    cardsDeckToSee, PositiveActionCardSelector);
+            }
+
+            MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
+                "Veux-tu regarder dans le deck de l'adversaire ou du tien ?",
+                PositiveAction, NegativeAction);
+        }
+        
+        private void DisplayMessageBoxToChangeOrderCards(List<Card> cardsDeckToSee, bool isCurrentPlayerCard)
+        {
+            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
+                multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count, displayOrder: true);
+            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var selectedCards =
+                    messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
+                if (selectedCards.Count == cardsDeckToSee.Count)
+                {
+                    var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
+                    foreach (var card in cardsDeckToSee)
+                    {
+                        playerCard.deck.Remove(card);
+                    }
+
+                    selectedCards.Reverse();
+                    playerCard.deck.AddRange(selectedCards);
+                    Destroy(messageBox);
                 }
                 else
                 {
-                    message.SetActive(false);
+                    messageBox.SetActive(false);
 
                     void OkAction()
                     {
-                        message.SetActive(true);
+                        messageBox.SetActive(true);
                     }
 
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
-                        OkAction);
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                        "Tu dois choisir l'ordre des cartes", OkAction);
                 }
             };
-
-            message.GetComponent<MessageBox>().NegativeAction = () =>
+            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
             {
-                message.SetActive(false);
+                messageBox.SetActive(false);
 
                 void OkAction()
                 {
-                    message.SetActive(true);
+                    messageBox.SetActive(true);
                 }
 
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
-                    OkAction);
+                MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                    "Tu dois choisir l'ordre des cartes", OkAction);
             };
         }
-
-        private void ApplyRemoveCardOption()
+        
+        private List<Card> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
         {
-            var message = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
-                "Veux-tu te défausser d'une carte pour en défausser une à l'adversaire ?");
-
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
+            var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
+            List<Card> cardsDeckToSee = new List<Card>();
+            if (playerCard.deck.Count > see)
             {
-                Destroy(message);
-                var handCardOpponent = opponentPlayerCard.handCards;
-                var message1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                    "Quel carte veux-tu enlever à l'adversaire ?", handCardOpponent);
-                message1.GetComponent<MessageBox>().PositiveAction = () =>
+                for (var j = playerCard.deck.Count - 1;
+                     j > (playerCard.deck.Count - 1 - see);
+                     j--)
                 {
-                    var cardOpponent = message1.GetComponent<MessageBox>().GetSelectedCard();
-                    if (!cardOpponent.IsValid()) return;
-                    Destroy(message1);
-                    var handCardPlayer = currentPlayerCard.handCards;
-                    var message2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                        "Quel carte veux-tu te défausser?", handCardPlayer);
-
-                    message2.GetComponent<MessageBox>().PositiveAction = () =>
-                    {
-                        var cardPlayer = message2.GetComponent<MessageBox>().GetSelectedCard();
-                        if (cardPlayer.IsValid())
-                        {
-                            currentPlayerCard.yellowTrash.Add(cardPlayer);
-                            opponentPlayerCard.yellowTrash.Add(cardOpponent);
-                            currentPlayerCard.handCards.Remove(cardPlayer);
-                            opponentPlayerCard.handCards.Remove(cardOpponent);
-                        }
-
-                        Destroy(message2);
-                    };
-                };
-                message1.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message1); };
-            };
-
-            message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
-        }
-
-        private void ApplySeeOpponentHand()
-        {
-            var handCardOpponent = opponentPlayerCard.handCards;
-            MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
-        }
-
-        private static string[] SplitSources(string value)
-        {
-            return value.Split(';');
-        }
-
-
-        private void FindCardInArrayAndSendItToTrash(IReadOnlyList<Card> cards1, IReadOnlyList<Card> cards2, Card card)
-        {
-            var found = false;
-            var j = 0;
-            while (j < cards2.Count && !found)
-            {
-                var card2 = cards2[j];
-                if (card2 != null)
-                {
-                    if (card2.Nom == card.Nom)
-                    {
-                        found = true;
-                        switch (card.Type)
-                        {
-                            case CardType.Invocation:
-                            {
-                                opponentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
-                            }
-                                break;
-                            case CardType.Effect:
-                            {
-                                opponentPlayerCard.effectCards.Remove(card as EffectCard);
-                                opponentPlayerCard.yellowTrash.Add(card);
-                            }
-                                break;
-                        }
-                    }
+                    cardsDeckToSee.Add(playerCard.deck[j]);
                 }
-
-                j++;
+            }
+            else
+            {
+                cardsDeckToSee.AddRange(playerCard.invocationCards);
             }
 
-            if (found) return;
-            j = 0;
-            while (j < cards1.Count && !found)
-            {
-                var card1 = cards1[j];
-                if (card1 != null)
-                {
-                    if (card1.Nom == card.Nom)
-                    {
-                        found = true;
-                        switch (card.Type)
-                        {
-                            case CardType.Invocation:
-                            {
-                                currentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
-                            }
-                                break;
-                            case CardType.Effect:
-                            {
-                                currentPlayerCard.yellowTrash.Add(card);
-                                currentPlayerCard.effectCards.Remove(card as EffectCard);
-                            }
-                                break;
-                        }
-                    }
-                }
-
-                j++;
-            }
+            return cardsDeckToSee;
+        }
+        
+        /// <summary>
+        /// Apply the ProtectAttack effect.
+        /// Change number of shield on the player (that protect him from opponent invocation attacks)
+        /// One by shield
+        /// <param name="value">value is a string which is an int that represents the number of shield</param>
+        /// </summary>
+        private void ApplyProtectAttack(string value)
+        {
+            var numberShield = int.Parse(value);
+            currentPlayerStatus.SetNumberShield(numberShield);
+        }
+        
+        /// <summary>
+        /// Apply the SkipFields effect.
+        /// Remove effects given by field cards on field for opponent and player
+        /// </summary>
+        private void ApplySkipFieldsEffect()
+        {
+            currentPlayerCard.DesactivateFieldCardEffect();
+            opponentPlayerCard.DesactivateFieldCardEffect();
         }
 
         private void ChangePlayer()
