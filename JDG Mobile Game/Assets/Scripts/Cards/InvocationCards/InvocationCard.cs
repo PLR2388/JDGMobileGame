@@ -307,7 +307,7 @@ namespace Cards.InvocationCards
                 }
             }
         }
-        
+
         /// <summary>
         /// RemoveAddAtkEffect.
         /// Disable equipment card effect on the invocation card.
@@ -318,7 +318,7 @@ namespace Cards.InvocationCards
             var newBonusAttack = -float.Parse(value) + GetBonusAttack();
             SetBonusAttack(newBonusAttack);
         }
-        
+
         /// <summary>
         /// RemoveAddDefEffect.
         /// Disable equipment card effect on the invocation card.
@@ -329,7 +329,7 @@ namespace Cards.InvocationCards
             var newBonusDefense = -float.Parse(value) + GetBonusDefense();
             SetBonusDefense(newBonusDefense);
         }
-        
+
         /// <summary>
         /// RemoveMultiplyAtkEffect.
         /// Disable equipment card effect on the invocation card.

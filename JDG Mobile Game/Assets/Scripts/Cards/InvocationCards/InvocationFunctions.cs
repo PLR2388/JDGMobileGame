@@ -35,6 +35,12 @@ namespace Cards.InvocationCards
             opponentPlayerCards = GameLoop.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         }
 
+        /// <summary>
+        /// DealWithStartEffect.
+        /// Apply startEffect of an invocation card.
+        /// <param name="currentInvocationCard">the current invocation card</param>
+        /// <param name="invocationStartEffect">start effect of this invocation card</param>
+        /// </summary>
         private void DealWithStartEffect(InvocationCard currentInvocationCard,
             InvocationStartEffect invocationStartEffect)
         {
@@ -126,6 +132,248 @@ namespace Cards.InvocationCards
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        /// <summary>
+        /// StartEffectGetCardSource.
+        /// Apply GetCardSource startEffect of an invocation card.
+        /// <param name="value">string that represent the source</param>
+        /// <param name="cardName">name of the card to get</param>
+        /// <param name="cardFound">list of cards the user can choose</param>
+        /// <param name="invokeCardNames">list of invocation card name to get from source</param>
+        /// <param name="typeCard">string that represents the type of card to get in source</param>
+        /// <param name="familyName">string that represent the family name of cards to get in source</param>
+        /// </summary>
+        private void StartEffectGetCardSource(string value, string cardName, ref List<Card> cardFound,
+            IReadOnlyCollection<string> invokeCardNames,
+            string typeCard, string familyName)
+        {
+            switch (value)
+            {
+                case "deck":
+                {
+                    var deck = currentPlayerCard.deck;
+                    if (cardName != "")
+                    {
+                        var isFound = false;
+                        var j = 0;
+                        while (j < deck.Count && !isFound)
+                        {
+                            if (deck[j].Nom == cardName)
+                            {
+                                isFound = true;
+                                cardFound.Add(deck[j]);
+                            }
+
+                            j++;
+                        }
+
+                        if (isFound)
+                        {
+                            var cards = new List<Card>(cardFound);
+
+                            void PositiveAction()
+                            {
+                                currentPlayerCard.handCards.Add(cards[0]);
+                                currentPlayerCard.deck.Remove(cards[0]);
+                                inHandButton.SetActive(true);
+                            }
+
+                            void NegativeAction()
+                            {
+                                inHandButton.SetActive(true);
+                            }
+
+                            CreateMessageBoxSimple("Carte en main",
+                                "Voulez-vous aussi ajouter " + cardName + " à votre main ?",
+                                positiveAction: PositiveAction, NegativeAction);
+                        }
+                    }
+                    else if (invokeCardNames.Count > 0)
+                    {
+                        cardFound.AddRange(from t in deck
+                            from invokeCardName in invokeCardNames
+                            where t.Nom == invokeCardName
+                            select t);
+
+                        var size = currentPlayerCard.invocationCards.Count;
+                        if (cardFound.Count > 0 && size < 4)
+                        {
+                            if (cardFound.Count == 1)
+                            {
+                                var cards = new List<Card>(cardFound);
+
+                                void PositiveAction()
+                                {
+                                    var invocationCard = (InvocationCard)cards[cards.Count - 1];
+                                    currentPlayerCard.invocationCards.Add(invocationCard);
+                                    currentPlayerCard.deck.Remove(invocationCard);
+                                    inHandButton.SetActive(true);
+                                }
+
+                                void NegativeAction()
+                                {
+                                    inHandButton.SetActive(true);
+                                }
+
+                                CreateMessageBoxSimple("Invocation",
+                                    "Voulez-vous aussi invoquer " + cardFound[0].Nom + " ?",
+                                    positiveAction: PositiveAction, NegativeAction);
+                            }
+                            else
+                            {
+                                var message =
+                                    CreateMessageBoxSelectorCard("Choix de l'invocation", cardFound);
+                                message.GetComponent<MessageBox>().PositiveAction = () =>
+                                {
+                                    var invocationCard =
+                                        (InvocationCard)message.GetComponent<MessageBox>()
+                                            .GetSelectedCard();
+                                    currentPlayerCard.invocationCards.Add(invocationCard);
+                                    currentPlayerCard.deck.Remove(invocationCard);
+                                    inHandButton.SetActive(true);
+                                    Destroy(message);
+                                };
+                                message.GetComponent<MessageBox>().NegativeAction = () =>
+                                {
+                                    inHandButton.SetActive(true);
+                                    Destroy(message);
+                                };
+                            }
+                        }
+                    }
+                    else if (Enum.TryParse(typeCard, out CardType type))
+                    {
+                        cardFound.AddRange(deck.Where(t => t.Type == type));
+
+                        if (cardFound.Count > 0)
+                        {
+                        }
+                    }
+                    else if (Enum.TryParse(familyName, out CardFamily cardFamily))
+                    {
+                        foreach (var card in deck)
+                        {
+                            if (card.Type != CardType.Invocation) continue;
+                            var invocationCard = (InvocationCard)card;
+
+                            var listFamily = invocationCard.GetFamily();
+                            cardFound.AddRange((from family in listFamily
+                                where family == cardFamily
+                                select invocationCard));
+                        }
+
+                        if (cardFound.Count > 0)
+                        {
+                            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                                "Choisis une carte à ajouter à ta main", cardFound);
+                            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                            {
+                                var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                                if (card != null)
+                                {
+                                    currentPlayerCard.deck.Remove(card);
+                                    currentPlayerCard.handCards.Add(card);
+                                    Destroy(messageBox);
+                                }
+                                else
+                                {
+                                    messageBox.SetActive(false);
+
+                                    void OkAction()
+                                    {
+                                        messageBox.SetActive(true);
+                                        Destroy(messageBox);
+                                    }
+
+                                    MessageBox.CreateOkMessageBox(canvas, "Information",
+                                        "Tu n'as pris aucune carte", OkAction);
+                                }
+                            };
+                            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                            {
+                                messageBox.SetActive(false);
+
+                                void OkAction()
+                                {
+                                    messageBox.SetActive(true);
+                                    Destroy(messageBox);
+                                }
+
+                                MessageBox.CreateOkMessageBox(canvas, "Information",
+                                    "Tu n'as pris aucune carte", OkAction);
+                            };
+                        }
+                    }
+
+                    break;
+                }
+                case "trash":
+                {
+                    var trash = currentPlayerCard.yellowTrash;
+                    if (cardName != "")
+                    {
+                        var isFound = false;
+                        var j = 0;
+                        while (j < trash.Count && !isFound)
+                        {
+                            if (trash[j].Nom == cardName)
+                            {
+                                isFound = true;
+                                cardFound.Add(trash[j]);
+                            }
+
+                            j++;
+                        }
+
+                        if (isFound)
+                        {
+                            var cards = new List<Card>(cardFound);
+
+                            void PositiveAction()
+                            {
+                                currentPlayerCard.handCards.Add(cards[0]);
+                                currentPlayerCard.yellowTrash.Remove(cards[0]);
+                                inHandButton.SetActive(true);
+                            }
+
+                            void NegativeAction()
+                            {
+                                inHandButton.SetActive(true);
+                            }
+
+                            CreateMessageBoxSimple("Carte en main",
+                                "Voulez-vous aussi ajouter " + cardName + " à votre main ?",
+                                positiveAction: PositiveAction, NegativeAction);
+                        }
+                    }
+                    else if (invokeCardNames.Count > 0)
+                    {
+                        cardFound.AddRange(from t in trash
+                            from invokeCardName in invokeCardNames
+                            where t.Nom == invokeCardName
+                            select t);
+                    }
+                    else if (Enum.TryParse(typeCard, out CardType type))
+                    {
+                        cardFound.AddRange(trash.Where(t => t.Type == type));
+                    }
+                    else if (Enum.TryParse(familyName, out CardFamily cardFamily))
+                    {
+                        foreach (var card in trash)
+                        {
+                            if (card.Type != CardType.Invocation) continue;
+                            var invocationCard = (InvocationCard)card;
+
+                            var listFamily = invocationCard.GetFamily();
+                            cardFound.AddRange(
+                                (from t in listFamily where t == cardFamily select invocationCard));
+                        }
+                    }
+
+                    break;
                 }
             }
         }
@@ -482,238 +730,6 @@ namespace Cards.InvocationCards
                 p2.GetComponent<PlayerCards>().handCards.Add(p2InvocationCards[j]);
                 p2.GetComponent<PlayerCards>().invocationCards
                     .Remove(p2InvocationCards[j]);
-            }
-        }
-
-        private void StartEffectGetCardSource(string value, string cardName, ref List<Card> cardFound,
-            IReadOnlyCollection<string> invokeCardNames,
-            string typeCard, string familyName)
-        {
-            switch (value)
-            {
-                case "deck":
-                {
-                    var deck = currentPlayerCard.deck;
-                    if (cardName != "")
-                    {
-                        var isFound = false;
-                        var j = 0;
-                        while (j < deck.Count && !isFound)
-                        {
-                            if (deck[j].Nom == cardName)
-                            {
-                                isFound = true;
-                                cardFound.Add(deck[j]);
-                            }
-
-                            j++;
-                        }
-
-                        if (isFound)
-                        {
-                            var cards = new List<Card>(cardFound);
-
-                            void PositiveAction()
-                            {
-                                currentPlayerCard.handCards.Add(cards[0]);
-                                currentPlayerCard.deck.Remove(cards[0]);
-                                inHandButton.SetActive(true);
-                            }
-
-                            void NegativeAction()
-                            {
-                                inHandButton.SetActive(true);
-                            }
-
-                            CreateMessageBoxSimple("Carte en main",
-                                "Voulez-vous aussi ajouter " + cardName + " à votre main ?",
-                                positiveAction: PositiveAction, NegativeAction);
-                        }
-                    }
-                    else if (invokeCardNames.Count > 0)
-                    {
-                        cardFound.AddRange(from t in deck
-                            from invokeCardName in invokeCardNames
-                            where t.Nom == invokeCardName
-                            select t);
-
-                        var size = currentPlayerCard.invocationCards.Count;
-                        if (cardFound.Count > 0 && size < 4)
-                        {
-                            if (cardFound.Count == 1)
-                            {
-                                var cards = new List<Card>(cardFound);
-
-                                void PositiveAction()
-                                {
-                                    var invocationCard = (InvocationCard)cards[cards.Count - 1];
-                                    currentPlayerCard.invocationCards.Add(invocationCard);
-                                    currentPlayerCard.deck.Remove(invocationCard);
-                                    inHandButton.SetActive(true);
-                                }
-
-                                void NegativeAction()
-                                {
-                                    inHandButton.SetActive(true);
-                                }
-
-                                CreateMessageBoxSimple("Invocation",
-                                    "Voulez-vous aussi invoquer " + cardFound[0].Nom + " ?",
-                                    positiveAction: PositiveAction, NegativeAction);
-                            }
-                            else
-                            {
-                                var message =
-                                    CreateMessageBoxSelectorCard("Choix de l'invocation", cardFound);
-                                message.GetComponent<MessageBox>().PositiveAction = () =>
-                                {
-                                    var invocationCard =
-                                        (InvocationCard)message.GetComponent<MessageBox>()
-                                            .GetSelectedCard();
-                                    currentPlayerCard.invocationCards.Add(invocationCard);
-                                    currentPlayerCard.deck.Remove(invocationCard);
-                                    inHandButton.SetActive(true);
-                                    Destroy(message);
-                                };
-                                message.GetComponent<MessageBox>().NegativeAction = () =>
-                                {
-                                    inHandButton.SetActive(true);
-                                    Destroy(message);
-                                };
-                            }
-                        }
-                    }
-                    else if (Enum.TryParse(typeCard, out CardType type))
-                    {
-                        cardFound.AddRange(deck.Where(t => t.Type == type));
-
-                        if (cardFound.Count > 0)
-                        {
-                        }
-                    }
-                    else if (Enum.TryParse(familyName, out CardFamily cardFamily))
-                    {
-                        foreach (var card in deck)
-                        {
-                            if (card.Type != CardType.Invocation) continue;
-                            var invocationCard = (InvocationCard)card;
-
-                            var listFamily = invocationCard.GetFamily();
-                            cardFound.AddRange((from family in listFamily
-                                where family == cardFamily
-                                select invocationCard));
-                        }
-
-                        if (cardFound.Count > 0)
-                        {
-                            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                "Choisis une carte à ajouter à ta main", cardFound);
-                            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-                            {
-                                var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
-                                if (card != null)
-                                {
-                                    currentPlayerCard.deck.Remove(card);
-                                    currentPlayerCard.handCards.Add(card);
-                                    Destroy(messageBox);
-                                }
-                                else
-                                {
-                                    messageBox.SetActive(false);
-
-                                    void OkAction()
-                                    {
-                                        messageBox.SetActive(true);
-                                        Destroy(messageBox);
-                                    }
-
-                                    MessageBox.CreateOkMessageBox(canvas, "Information",
-                                        "Tu n'as pris aucune carte", OkAction);
-                                }
-                            };
-                            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-                            {
-                                messageBox.SetActive(false);
-
-                                void OkAction()
-                                {
-                                    messageBox.SetActive(true);
-                                    Destroy(messageBox);
-                                }
-
-                                MessageBox.CreateOkMessageBox(canvas, "Information",
-                                    "Tu n'as pris aucune carte", OkAction);
-                            };
-                        }
-                    }
-
-                    break;
-                }
-                case "trash":
-                {
-                    var trash = currentPlayerCard.yellowTrash;
-                    if (cardName != "")
-                    {
-                        var isFound = false;
-                        var j = 0;
-                        while (j < trash.Count && !isFound)
-                        {
-                            if (trash[j].Nom == cardName)
-                            {
-                                isFound = true;
-                                cardFound.Add(trash[j]);
-                            }
-
-                            j++;
-                        }
-
-                        if (isFound)
-                        {
-                            var cards = new List<Card>(cardFound);
-
-                            void PositiveAction()
-                            {
-                                currentPlayerCard.handCards.Add(cards[0]);
-                                currentPlayerCard.yellowTrash.Remove(cards[0]);
-                                inHandButton.SetActive(true);
-                            }
-
-                            void NegativeAction()
-                            {
-                                inHandButton.SetActive(true);
-                            }
-
-                            CreateMessageBoxSimple("Carte en main",
-                                "Voulez-vous aussi ajouter " + cardName + " à votre main ?",
-                                positiveAction: PositiveAction, NegativeAction);
-                        }
-                    }
-                    else if (invokeCardNames.Count > 0)
-                    {
-                        cardFound.AddRange(from t in trash
-                            from invokeCardName in invokeCardNames
-                            where t.Nom == invokeCardName
-                            select t);
-                    }
-                    else if (Enum.TryParse(typeCard, out CardType type))
-                    {
-                        cardFound.AddRange(trash.Where(t => t.Type == type));
-                    }
-                    else if (Enum.TryParse(familyName, out CardFamily cardFamily))
-                    {
-                        foreach (var card in trash)
-                        {
-                            if (card.Type != CardType.Invocation) continue;
-                            var invocationCard = (InvocationCard)card;
-
-                            var listFamily = invocationCard.GetFamily();
-                            cardFound.AddRange(
-                                (from t in listFamily where t == cardFamily select invocationCard));
-                        }
-                    }
-
-                    break;
-                }
             }
         }
 

@@ -77,7 +77,7 @@ namespace Cards.FieldCards
                 }
             }
         }
-        
+
         /// <summary>
         /// Apply ApplyAtk fieldCardEffect.
         /// Increment attack of invocation card of the same family as the field card
@@ -96,7 +96,7 @@ namespace Cards.FieldCards
                 invocationCard.SetBonusAttack(newBonusAttack);
             }
         }
-        
+
         /// <summary>
         /// Apply ApplyDef fieldCardEffect.
         /// Increment defense of invocation card of the same family as the field card

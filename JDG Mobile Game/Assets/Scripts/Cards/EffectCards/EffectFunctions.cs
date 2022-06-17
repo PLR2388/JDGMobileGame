@@ -1159,8 +1159,8 @@ namespace Cards.EffectCards
                     break;
             }
         }
-        
-                private void FindCardInArrayAndSendItToTrash(IReadOnlyList<Card> cards1, IReadOnlyList<Card> cards2, Card card)
+
+        private void FindCardInArrayAndSendItToTrash(IReadOnlyList<Card> cards1, IReadOnlyList<Card> cards2, Card card)
         {
             var found = false;
             var j = 0;
@@ -1573,7 +1573,7 @@ namespace Cards.EffectCards
                 }
             }
         }
-        
+
         private static string[] SplitSources(string value)
         {
             return value.Split(';');
@@ -1664,7 +1664,7 @@ namespace Cards.EffectCards
                 };
             }
         }
-        
+
         /// <summary>
         /// ReduceHandOpponentPlayer.
         /// Force opponent to have a number of cards in his hands
@@ -1744,7 +1744,7 @@ namespace Cards.EffectCards
                 };
             }
         }
-        
+
         /// <summary>
         /// Apply the SeeOpponentHand effect.
         /// Display opponent Hand cards
@@ -1755,7 +1755,7 @@ namespace Cards.EffectCards
             MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
         }
-        
+
         /// <summary>
         /// Apply the RemoveCardOption effect.
         /// Remove one card from the user to have the right to remove one from opponent
@@ -1800,7 +1800,7 @@ namespace Cards.EffectCards
 
             message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
         }
-        
+
         /// <summary>
         /// Apply the RemoveHand effect.
         /// Remove one card from user hand cards
@@ -1849,7 +1849,7 @@ namespace Cards.EffectCards
                     OkAction);
             };
         }
-        
+
         /// <summary>
         /// Apply the RemoveDeck effect.
         /// Send the first card on the deck to the yellow trash
@@ -1862,7 +1862,7 @@ namespace Cards.EffectCards
             currentPlayerCard.yellowTrash.Add(c);
             currentPlayerCard.deck.RemoveAt(size - 1);
         }
-        
+
         /// <summary>
         /// Apply the SpecialInvocation effect.
         /// User can choose an invocation card from the yellow trash to invoke it directly without effect
@@ -1916,7 +1916,7 @@ namespace Cards.EffectCards
                     OkAction);
             };
         }
-        
+
         /// <summary>
         /// Apply the DivideInvocation effect.
         /// Divide by 2 every opponent invocation cards Def except for those which aren't affected by effect cards
@@ -1931,7 +1931,7 @@ namespace Cards.EffectCards
                 card.SetBonusDefense(newBonusDefense);
             }
         }
-        
+
         /// <summary>
         /// Apply the Duration effect.
         /// Change effect card lifeTime (number of turn on field)
@@ -1945,7 +1945,7 @@ namespace Cards.EffectCards
                 effectCard.SetLifeTime(duration);
             }
         }
-        
+
         /// <summary>
         /// Apply the Combine effect.
         /// Merge multiple invocation cards
@@ -2005,7 +2005,7 @@ namespace Cards.EffectCards
                 Destroy(messageBox);
             };
         }
-        
+
         /// <summary>
         /// Apply the RevertStat effect.
         /// Revert DEF and ATK of every invocation cards on field
@@ -2032,7 +2032,7 @@ namespace Cards.EffectCards
                 card.SetBonusAttack(newBonusAttack);
             }
         }
-        
+
         /// <summary>
         /// Apply the TakeControl effect.
         /// Control an invocation card from the opponent during a turn
@@ -2086,7 +2086,7 @@ namespace Cards.EffectCards
                     OkAction);
             };
         }
-        
+
         /// <summary>
         /// Apply the NumberAttacks effect.
         /// Change the number of attack of invocations card from user on field
@@ -2100,7 +2100,7 @@ namespace Cards.EffectCards
                 invocationCard.SetRemainedAttackThisTurn(number);
             }
         }
-        
+
         /// <summary>
         /// Apply the SkipAttack effect.
         /// If opponent is affect, skip attack turn of every opponent invocation cards
@@ -2117,7 +2117,7 @@ namespace Cards.EffectCards
                 }
             }
         }
-        
+
         /// <summary>
         /// Apply the ChangeOrder effect.
         /// Change next card order in the deck (opponent or player)
@@ -2157,7 +2157,7 @@ namespace Cards.EffectCards
                 "Veux-tu regarder dans le deck de l'adversaire ou du tien ?",
                 PositiveAction, NegativeAction);
         }
-        
+
         private void DisplayMessageBoxToChangeOrderCards(List<Card> cardsDeckToSee, bool isCurrentPlayerCard)
         {
             var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
@@ -2205,7 +2205,7 @@ namespace Cards.EffectCards
                     "Tu dois choisir l'ordre des cartes", OkAction);
             };
         }
-        
+
         private List<Card> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
         {
             var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
@@ -2226,7 +2226,7 @@ namespace Cards.EffectCards
 
             return cardsDeckToSee;
         }
-        
+
         /// <summary>
         /// Apply the ProtectAttack effect.
         /// Change number of shield on the player (that protect him from opponent invocation attacks)
@@ -2238,7 +2238,7 @@ namespace Cards.EffectCards
             var numberShield = int.Parse(value);
             currentPlayerStatus.SetNumberShield(numberShield);
         }
-        
+
         /// <summary>
         /// Apply the SkipFields effect.
         /// Remove effects given by field cards on field for opponent and player

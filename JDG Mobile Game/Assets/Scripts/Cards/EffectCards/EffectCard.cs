@@ -16,7 +16,7 @@ namespace Cards.EffectCards
         public float affectPv;
 
         private int currentLifeTime;
-        
+
         private void Awake()
         {
             type = CardType.Effect;

@@ -184,7 +184,7 @@ namespace Cards.EquipmentCards
                 }
             }
         }
-        
+
         /// <summary>
         /// Apply AddAtk Instant effect.
         /// Increment invocation's ATK
@@ -196,7 +196,7 @@ namespace Cards.EquipmentCards
             var newBonusAttack = float.Parse(value) + invocationCard.GetBonusAttack();
             invocationCard.SetBonusAttack(newBonusAttack);
         }
-        
+
         /// <summary>
         /// Apply AddDef Instant effect.
         /// Increment invocation's DEF
@@ -208,7 +208,7 @@ namespace Cards.EquipmentCards
             var newBonusDefense = float.Parse(value) + invocationCard.GetBonusDefense();
             invocationCard.SetBonusDefense(newBonusDefense);
         }
-        
+
         /// <summary>
         /// Apply MultiplyAtk Instant effect.
         /// Multiply invocation's ATK
@@ -224,7 +224,7 @@ namespace Cards.EquipmentCards
                 invocationCard.SetBonusAttack(newBonusAttack);
             }
         }
-        
+
         /// <summary>
         /// Apply MultiplyAtk Instant effect.
         /// Multiply/Divide invocation's DEF
@@ -246,7 +246,7 @@ namespace Cards.EquipmentCards
                 invocationCard.SetBonusDefense(newBonusDefense);
             }
         }
-        
+
         /// <summary>
         /// Apply setAtk Instant effect.
         /// Fix invocation card attack
@@ -259,7 +259,7 @@ namespace Cards.EquipmentCards
             var newBonusAttack = specificAtk - invocationCard.GetAttack();
             invocationCard.SetBonusAttack(newBonusAttack);
         }
-        
+
         /// <summary>
         /// Apply setDef Instant effect.
         /// Fix invocation card defense
@@ -272,7 +272,7 @@ namespace Cards.EquipmentCards
             var newBonusDefense = specificDef - invocationCard.GetDefense();
             invocationCard.SetBonusDefense(newBonusDefense);
         }
-        
+
 
         /// <summary>
         /// Apply SwitchEquipment Instant effect.
@@ -319,7 +319,7 @@ namespace Cards.EquipmentCards
                 }
             }
         }
-        
+
         /// <summary>
         /// Apply AddAtkBaseOnHandCards Perm effect.
         /// Add atk to the invocation card based on hand cards number
