@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -23,6 +22,11 @@ namespace Cards.FieldCards
             currentPlayerCard = p1.GetComponent<PlayerCards>();
         }
 
+        /// <summary>
+        /// PutFieldCard.
+        /// Put a field card on field and apply its effect
+        /// <param name="fieldCard">field card used</param>
+        /// </summary>
         private void PutFieldCard(FieldCard fieldCard)
         {
             if (currentPlayerCard.field != null) return;
@@ -32,6 +36,11 @@ namespace Cards.FieldCards
             ApplyFieldCardEffect(fieldCard, currentPlayerCard);
         }
 
+        /// <summary>
+        /// Apply fieldCardEffect.
+        /// <param name="fieldCard">field card used</param>
+        /// <param name="playerCards">player cards of current user</param>
+        /// </summary>
         public static void ApplyFieldCardEffect(FieldCard fieldCard, PlayerCards playerCards)
         {
             var fieldCardEffect = fieldCard.FieldCardEffect;
@@ -68,18 +77,33 @@ namespace Cards.FieldCards
                 }
             }
         }
-
-        private static void ApplyChange(PlayerCards playerCards, string value, CardFamily family)
+        
+        /// <summary>
+        /// Apply ApplyAtk fieldCardEffect.
+        /// Increment attack of invocation card of the same family as the field card
+        /// <param name="playerCards">player cards of current user</param>
+        /// <param name="value">value is a string that represent the bonus Atk</param>
+        /// <param name="family">family of the field card</param>
+        /// </summary>
+        private static void ApplyAtk(PlayerCards playerCards, string value, CardFamily family)
         {
             // Must be called also when invocationCards change
-            var names = value.Split(';');
-            foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard =>
-                         names.Contains(invocationCard.Nom)))
+            var atk = float.Parse(value);
+            foreach (var invocationCard in playerCards.invocationCards)
             {
-                invocationCard.SetCurrentFamily(family);
+                if (!invocationCard.GetFamily().Contains(family)) continue;
+                var newBonusAttack = invocationCard.GetBonusAttack() + atk;
+                invocationCard.SetBonusAttack(newBonusAttack);
             }
         }
-
+        
+        /// <summary>
+        /// Apply ApplyDef fieldCardEffect.
+        /// Increment defense of invocation card of the same family as the field card
+        /// <param name="playerCards">player cards of current user</param>
+        /// <param name="value">value is a string that represent the bonus Def</param>
+        /// <param name="family">family of the field card</param>
+        /// </summary>
         private static void ApplyDef(PlayerCards playerCards, string value, CardFamily family)
         {
             // Must be called also when invocationCards change
@@ -92,18 +116,28 @@ namespace Cards.FieldCards
             }
         }
 
-        private static void ApplyAtk(PlayerCards playerCards, string value, CardFamily family)
+        /// <summary>
+        /// Apply ApplyChange fieldCardEffect.
+        /// Change family of specific card
+        /// <param name="playerCards">player cards of current user</param>
+        /// <param name="value">value is a string that represent cards names of card that can change their family</param>
+        /// <param name="family">family of the field card</param>
+        /// </summary>
+        private static void ApplyChange(PlayerCards playerCards, string value, CardFamily family)
         {
             // Must be called also when invocationCards change
-            var atk = float.Parse(value);
-            foreach (var invocationCard in playerCards.invocationCards)
+            var names = value.Split(';');
+            foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard =>
+                         names.Contains(invocationCard.Nom)))
             {
-                if (!invocationCard.GetFamily().Contains(family)) continue;
-                var newBonusAttack = invocationCard.GetBonusAttack() + atk;
-                invocationCard.SetBonusAttack(newBonusAttack);
+                invocationCard.SetCurrentFamily(family);
             }
         }
 
+        /// <summary>
+        /// ChangePlayer.
+        /// Change currentPlayerCard depending of player turn
+        /// </summary>
         private void ChangePlayer()
         {
             currentPlayerCard = GameLoop.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();

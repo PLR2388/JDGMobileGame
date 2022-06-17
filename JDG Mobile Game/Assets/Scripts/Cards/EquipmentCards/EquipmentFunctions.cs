@@ -345,7 +345,5 @@ namespace Cards.EquipmentCards
             var newBonusDefense = floatValue * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusDefense();
             invocationCard.SetBonusDefense(newBonusDefense);
         }
-
-
     }
 }
