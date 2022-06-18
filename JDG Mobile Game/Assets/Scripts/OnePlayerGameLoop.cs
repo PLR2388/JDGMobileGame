@@ -38,8 +38,6 @@ public class OnePlayerGameLoop : MonoBehaviour
     [SerializeField] private Card player;
     [SerializeField] private GameObject inHandButton;
 
-    [FormerlySerializedAs("camera")] [SerializeField]
-
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
 
     private InvocationFunctions invocationFunctions;
@@ -1043,9 +1041,13 @@ public class OnePlayerGameLoop : MonoBehaviour
                 playerCards.effectCards.Remove(effectCard);
             }
 
-            MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
-                "Veux-tu prolonger l'effet de " + effectCard.Nom + " pour 1 tour pour " + effectCard.affectPv +
-                " points de vie ?", PositiveAction, NegativeAction);
+            if (IsP1Turn)
+            {
+                MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
+                    "Veux-tu prolonger l'effet de " + effectCard.Nom + " pour 1 tour pour " + effectCard.affectPv +
+                    " points de vie ?", PositiveAction, NegativeAction);
+            }
+
         }
     }
 
@@ -1249,10 +1251,14 @@ public class OnePlayerGameLoop : MonoBehaviour
             }
         }
 
-        MessageBox.CreateSimpleMessageBox(canvas, "Proposition",
-            "Veux-tu sauter ta phase de pioche pour aller directement chercher une carte de la famille " +
-            value + " dans ton deck ou ta poubelle jaune ?", PositiveAction,
-            NegativeAction);
+        if (IsP1Turn)
+        {
+            MessageBox.CreateSimpleMessageBox(canvas, "Proposition",
+                "Veux-tu sauter ta phase de pioche pour aller directement chercher une carte de la famille " +
+                value + " dans ton deck ou ta poubelle jaune ?", PositiveAction,
+                NegativeAction);
+        }
+        
     }
 
     public void NextRound()
