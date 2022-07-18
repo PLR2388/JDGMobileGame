@@ -54,9 +54,12 @@ namespace OnePlayer
         private InvocationCard opponent;
         private int numberOfTurn;
 
+        private Scenario scenario;
+
         // Start is called before the first frame update
         private void Start()
         {
+            scenario = GetComponent<ScenarioDecoder>().Scenario;
             invocationFunctions = GetComponent<InvocationFunctions>();
             IsP1Turn = true;
             ChangeHealthText(PlayerStatus.MaxPv, true);

@@ -1265,7 +1265,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 397230404}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UseSpecialAction
         m_Mode: 1
@@ -1576,11 +1576,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 397230403}
-  - component: {fileID: 397230404}
   - component: {fileID: 397230405}
   - component: {fileID: 397230406}
   - component: {fileID: 397230407}
   - component: {fileID: 397230408}
+  - component: {fileID: 397230409}
+  - component: {fileID: 397230404}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1611,23 +1612,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 397230402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5386545e4a6177d49b6c208a7e67e69c, type: 3}
+  m_Script: {fileID: 11500000, guid: fb133284f4494354cbee49083d8a0b67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseId: 0
-  playerText: {fileID: 1024667568}
-  roundText: {fileID: 138997257}
-  healthP1Text: {fileID: 29170108}
-  healthP2Text: {fileID: 1349726584}
-  bigImageCard: {fileID: 793464781}
-  invocationMenu: {fileID: 1982540492}
-  nextPhaseButton: {fileID: 1957640249}
-  canvas: {fileID: 0}
-  p1: {fileID: 230530442}
-  p2: {fileID: 2017354827}
-  player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
-  inHandButton: {fileID: 829748139}
-  playerCamera: {fileID: 1233983595}
+  jsonFile: {fileID: 4900000, guid: 892b438fda39499795eec7cf75b2be5a, type: 3}
 --- !u!114 &397230405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1684,6 +1672,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
   canvas: {fileID: 244790280}
+--- !u!114 &397230409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd01c2927ee9e4a4597b29d586f4e45f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  phaseId: 0
+  playerText: {fileID: 1024667568}
+  roundText: {fileID: 138997257}
+  healthP1Text: {fileID: 29170108}
+  healthP2Text: {fileID: 1349726584}
+  bigImageCard: {fileID: 793464781}
+  invocationMenu: {fileID: 1982540492}
+  nextPhaseButton: {fileID: 1957640249}
+  canvas: {fileID: 0}
+  p1: {fileID: 230530442}
+  p2: {fileID: 2017354827}
+  player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
+  inHandButton: {fileID: 829748139}
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0
@@ -4799,7 +4812,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 397230404}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: DisplayAvailableOpponent
         m_Mode: 1
@@ -5256,7 +5269,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 397230404}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: NextRound
         m_Mode: 1
