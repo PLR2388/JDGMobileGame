@@ -8,7 +8,7 @@ public class TutorialMessage : MonoBehaviour
     
     // State
     private int currentIndex = 0;
-    private bool messageShowed = false;
+    private bool actionDone = false;
   
     void Start()
     {
@@ -19,7 +19,8 @@ public class TutorialMessage : MonoBehaviour
     {
         var action = actionScenario[currentIndex];
 
-        if (action.Message != null && !messageShowed)
+        if (actionDone) return;
+        if (action.Message != null && !actionDone)
         {
             
         }
@@ -53,6 +54,7 @@ public class TutorialMessage : MonoBehaviour
         {
             
         }
+
     }
 
     private void DisplayMessage(string message)
