@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d264e3b90abc6643847f38de45a8096, type: 3}
+  m_Name: Tutorial
+  m_EditorClassIdentifier: 
+  dialogue:
+  - Laisse moi t'expliquer les bases de ce jeu fantastique et facile !
+  - "Devant toi, c'est ton espace de jeu. Il se divise de la mani\xE8re suivante
+    :"
+  - "Il y a tout d'abord ta pioche. Evidemment, ce sont les cartes que tu dois bien
+    s\xFBr m\xE9langer et les poser face cach\xE9es,"
+  - "ta poubelle jaune, c'est l\xE0 que tu vas mettre les cartes qui seront mortes
+    pendant la bataille"
+  - "et il y a \xE9videmment ton terrain, c'est l'emplacement sur lequel vont se
+    battre tes invocations."
+  - "Certains terrains peuvent donner des avantages \xE0 tes invocations (il suffit
+    de lire les cartes) et accesoirement, tu n'es pas oblig\xE9 d'avoir un terrain
+    pour te battre dessus."
+  - "Le plus important, ce sont les emplacements d'\xE9quipements ou d'invocations"
+  - "C'est l\xE0-dessus que tu vas pos\xE9 tes invocations. Tu peux en avoir un maximum
+    de 4."
+  - En-dessous, il y a les emplacements de cartes effet.
+  - 'Il existe plusieurs type de cartes dans ce jeu:'
+  - Tout d'abord, il y a les cartes invocations. Regardes !
+  - "Je passe mon tour d'attaque puisque c'est le premier tour, je n'ai pas le droit
+    d'attaquer. C'est donc \xE0 toi. Tu choisis tes cartes, tu les mets sur le terrain."
+  - "Une fois que tu as pos\xE9 toutes les cartes que tu veux, on peut \xE0 la phase
+    d'attaque. Tu peux poser autant de carte que tu le souhaites. Tu peux m\xEAme
+    poser la totalit\xE9 de ta main si tu as envie sur le terrain. Simplement, il
+    faut que tu restes dans la limite des 4 cartes d'invocations et des 4 cartes
+    d'effets."
+  - "Chaque carte poss\xE8de une valeur d'attaque et de d\xE9fense. Lorsqu'on r\xE9sout
+    la phase d'attaque, on compare simplement les \xE9toiles d'attaques de la carte
+    qui attaque avec les \xE9toiles de d\xE9fenses de la carte qui se d\xE9fend."
+  - Quand tu as fini ton tour, appuie sur phase suivante
+  - Je choisis de poser le Pyro-Barbare sur le terrain
+  - "Mais \xE9galement, je pose le terrain Fistiland qui \xE0 partir du prochain
+    tour me permettra de sauter directement mon tour de pioche et d'aller chercher
+    n'importe quelle carte de type Fistiland dans ma pioche."
+  - "Fisti, tu es sur ton terrain. Pr\xE9pare toi \xE0 attaquer !"
+  - "Comme tu peux le voir, certaines cartes appartiennent \xE0 des familles."
+  - "Le Clich\xE9 Raciste et les tentacules appartenaient \xE0 la famille Japon."
+  - "C'est une information \xE0 retenir car certains terrains permettent de booster
+    les caract\xE9ristiques de certaines cartes."
+  - "Et je vais \xE9galement \xE9quiper mon fisti d'une Merde magique en plastique
+    rose"
+  - "Les cartes marrons sont des cartes \xE9quipements. Elles se posent sur un personnage
+    et permettent de booster ses capacit\xE9s tant que le personnage est vivant.
+    Evidemment, si le personnage est tu\xE9, la carte \xE9quipement dispara\xEEt
+    \xE9galement."
+  - "Gr\xE2ce \xE0 ma Merde magique en plastique rose, Fisti obtient une \xE9toile
+    d'attaque et une \xE9toile de d\xE9fense en plus le faisant \xE0 3.5 \xE9toiles
+    d'attaques et 3.5 \xE9toiles de d\xE9fenses."
+  - "Fisti d\xE9truit le Clich\xE9 raciste"
+  - Ce sont tes points de vie. Dans ce jeu, les 2 joueurs ont 30 points de vie maximum.
+  - "Fisti avec sa Merde magique en plastique rose avait 3.5 \xE9toiles d'attaque
+    alors que ton Clich\xE9 raciste n'avait qu'une \xE9toile de d\xE9fense."
+  - "On soustrait donc ta d\xE9fense \xE0 mon attaque, ce qui nous fait 3.5 \xE9toiles
+    moins une \xE9toile. Puisque ta carte est d\xE9truite, il reste donc 2.5 points
+    de vie qui sont enlev\xE9s directement \xE0 ton total de points de vie. Quand
+    tu atteints z\xE9ro, tu as perdu le match."
+  - "Si tu n'as plus de cartes pour te d\xE9fendre, mon Pyro-Barbare va directement
+    attaquer tes points de vie. Pyro-Barbare \xE0 l'attaque !"
+  - "Les cartes bleues sont des cartes effets. Ce sont des cartes plac\xE9es sur
+    le terrain et qui auront des effets sp\xE9cifiques sur tes cartes ou celles de
+    l'adversaire."
+  - "On a vu tous les types de cartes. Apr\xE8s, il existe des subtilit\xE9s qu'on
+    apprend \xE0 m\xE9triser qu'avec le temps. Par exemple, il existe des cartes
+    qui, pour \xEAtre invoqu\xE9 et subsist\xE9 sur le terrain, ont besoin d'une
+    autre carte ou d'une condition sp\xE9cifique."
+  nextDialogueTriggers: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000300000000000000
+  responses: []

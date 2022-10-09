@@ -53,8 +53,12 @@ namespace OnePlayer
         private InvocationCard attacker;
         private InvocationCard opponent;
         private int numberOfTurn;
-
+        
         private Scenario scenario;
+        [SerializeField] 
+        private DialogueUI dialogueBox;
+        private int currentIndex = 0;
+        private bool hasSendCurrent = false;
 
         // Start is called before the first frame update
         private void Start()
@@ -99,6 +103,15 @@ namespace OnePlayer
             }
 
             MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", PositiveAction);
+        }
+
+        private void ApplyScenario()
+        {
+            if (!hasSendCurrent)
+            {
+                //dialogueBox.ShowDialogue(dialogueObject);
+                hasSendCurrent = true;
+            }
         }
 
         private void ChoosePhase()

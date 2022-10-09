@@ -484,7 +484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueBox: {fileID: 83409349}
   textLabel: {fileID: 1764321174}
-  testDialogue: {fileID: 11400000, guid: 01ebf145ad504a940ac9d2649eb288aa, type: 2}
+  testDialogue: {fileID: 11400000, guid: 3bd361463c111544b80baf3eec81bc05, type: 2}
 --- !u!114 &83409352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1701,6 +1701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jsonFile: {fileID: 4900000, guid: 892b438fda39499795eec7cf75b2be5a, type: 3}
+  dialogueObject: {fileID: 11400000, guid: 3bd361463c111544b80baf3eec81bc05, type: 2}
 --- !u!114 &397230405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1777,11 +1778,12 @@ MonoBehaviour:
   bigImageCard: {fileID: 793464781}
   invocationMenu: {fileID: 1982540492}
   nextPhaseButton: {fileID: 1957640249}
-  canvas: {fileID: 0}
+  canvas: {fileID: 244790280}
   p1: {fileID: 230530442}
   p2: {fileID: 2017354827}
   player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
   inHandButton: {fileID: 829748139}
+  dialogueBox: {fileID: 83409351}
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0

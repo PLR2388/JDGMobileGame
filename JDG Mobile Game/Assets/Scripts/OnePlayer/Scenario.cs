@@ -5,6 +5,7 @@ using UnityEngine;
 public class Scenario
 {
     public ActionScenario[] actionScenarios;
+    public DialogueObject dialogueObject;
 }
 
 public class ActionScenario
