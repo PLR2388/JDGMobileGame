@@ -35,11 +35,34 @@ namespace Cards.EquipmentCards
                 return currentPlayerCard;
             }
         }
+        
+        private static PlayerCards OpponentPlayerCard
+        {
+            get
+            {
+                PlayerCards opponentPlayerCard;
+                if (GameLoop.IsP1Turn)
+                {
+                    var player = GameObject.Find("Player2");
+                    opponentPlayerCard = player.GetComponent<PlayerCards>();
+                }
+                else
+                {
+                    var player = GameObject.Find("Player1");
+                    opponentPlayerCard = player.GetComponent<PlayerCards>();
+                }
+
+                return opponentPlayerCard;
+            }
+        }
 
         private void DisplayEquipmentPopUp(EquipmentCard equipmentCard)
         {
             var playerCards = CurrentPlayerCard;
-            var invocationCards = playerCards.invocationCards;
+            var opponentInvocationCards = OpponentPlayerCard.invocationCards;
+            var currentInvocationCards = playerCards.invocationCards;
+            var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
+            
             var message = DisplayEquipmentMessageBox(invocationCards, equipmentCard.EquipmentInstantEffect);
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
