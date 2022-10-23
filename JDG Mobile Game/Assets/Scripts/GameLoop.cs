@@ -56,11 +56,13 @@ public class GameLoop : MonoBehaviour
     private int numberOfTurn;
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
+    private CardLocation cardLocation;
 
     // Start is called before the first frame update
     private void Start()
     {
         invocationFunctions = GetComponent<InvocationFunctions>();
+        cardLocation = GetComponent<CardLocation>();
         IsP1Turn = true;
         ChangeHealthText(PlayerStatus.MaxPv, true);
         ChangeHealthText(PlayerStatus.MaxPv, false);
@@ -994,7 +996,7 @@ public class GameLoop : MonoBehaviour
         if (invocationCard.IsControlled)
         {
             playerCards.invocationCards.Remove(invocationCard);
-            playerCards.RemovePhysicalCard(invocationCard);
+            cardLocation.RemovePhysicalCard(invocationCard);
             opponentPlayerCards.SendCardToHand(invocationCard);
         }
         else
