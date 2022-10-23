@@ -22,7 +22,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public static readonly CardSelectedEvent CardSelectedEvent = new CardSelectedEvent();
     public static readonly CardSelectedEvent CardUnselectedEvent = new CardSelectedEvent();
-    
+
     private void Start()
     {
         MessageBox.NumberedCardEvent.AddListener(UpdateNumberOnCard);
@@ -65,7 +65,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             numberText.SetActive(false);
         }
     }
-    
+
     public void OnPointerEnter(PointerEventData eventData)
     {
     }
