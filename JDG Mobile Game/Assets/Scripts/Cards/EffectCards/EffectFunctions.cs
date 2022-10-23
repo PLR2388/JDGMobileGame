@@ -17,8 +17,8 @@ namespace Cards.EffectCards
         private PlayerCards opponentPlayerCard;
         private PlayerStatus opponentPlayerStatus;
         private GameObject p1;
-
         private GameObject p2;
+        [SerializeField] private CardLocation cardLocation;
 
         // Start is called before the first frame update
         private void Start()
@@ -33,15 +33,14 @@ namespace Cards.EffectCards
             opponentPlayerStatus = p2.GetComponent<PlayerStatus>();
         }
 
-        private int FindFirstEmptyEffectLocationCurrentPlayer()
-        {
-            var effectCards = currentPlayerCard.effectCards;
-            return effectCards.Count;
-        }
-
+        /// <summary>
+        /// Called when user clicks on put for an effect card
+        /// Apply effects of the card or refuse to put it if 4 effects cards are on the field
+        /// </summary>
+        /// <param name="effectCard">The effect card the user put on field</param>
         private void PutEffectCard(EffectCard effectCard)
         {
-            var size = FindFirstEmptyEffectLocationCurrentPlayer();
+            var size = currentPlayerCard.effectCards.Count;
 
             if (size < 4)
             {
@@ -58,11 +57,15 @@ namespace Cards.EffectCards
             }
         }
 
+        /// <summary>
+        /// Returns a boolean to indicate if the effect card is usable for the current user
+        /// </summary>
+        /// <param name="effectCardEffect">The effect of the effect card</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
         public bool CanUseEffectCard(EffectCardEffect effectCardEffect)
         {
             var keys = effectCardEffect.Keys;
             var values = effectCardEffect.Values;
-            var isValid = true;
 
             var pvAffected = 0f;
             var affectOpponent = false;
@@ -77,79 +80,98 @@ namespace Cards.EffectCards
                 {
                     case Effect.AffectOpponent:
                     {
-                        isValid = CanUseAffectOpponent(value, pvAffected, isValid, out affectOpponent);
+                        if (!CanUseAffectOpponent(value, pvAffected, out affectOpponent))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.DestroyCards:
                     {
-                        isValid = CanUseDestroyCards(value, isValid, affectOpponent);
+                        if (!CanUseDestroyCards(value, affectOpponent))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SacrificeInvocation:
                     {
-                        isValid = CanUseSacrificeInvocation(value, isValid);
+                        if (!CanUseSacrificeInvocation(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SameFamily:
                     {
-                        isValid = CanUseSameFamily(isValid);
+                        if (!CanUseSameFamily())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.RemoveDeck:
                     {
-                        isValid = CanUseRemoveDeck(isValid);
+                        if (!CanUseRemoveDeck())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SpecialInvocation:
                     {
-                        isValid = CanUseSpecialInvocation(isValid);
-                    }
-                        break;
-                    case Effect.Duration:
-                    {
-                        //TODO Do something with it
+                        if (!CanUseSpecialInvocation())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.Combine:
                     {
-                        isValid = CanUseCombine(value, isValid);
+                        if (!CanUseCombine(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.TakeControl:
                     {
-                        isValid = CanUseTakeControl(isValid);
+                        if (!CanUseTakeControl())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.NumberAttacks:
                     {
-                        isValid &= currentPlayerCard.invocationCards.Count > 0;
-                    }
-                        break;
-                    case Effect.SkipAttack:
-                    {
-                    }
-                        break;
-                    case Effect.SeeCards:
-                    {
-                    }
-                        break;
-                    case Effect.ChangeOrder:
-                    {
+                        if (!CanUseNumberAttacks())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.AttackDirectly:
                     {
-                        isValid = CanUseAttackDirectly(value, isValid);
+                        if (!CanUseAttackDirectly(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.ProtectAttack:
                     {
-                        isValid = CanUseProtectAttack(isValid);
+                        if (!CanUseProtectAttack())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.SkipFieldsEffect:
                     {
-                        isValid = CanUseSkipFieldsEffect(isValid);
+                        if (!CanUseSkipFieldsEffect())
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.ChangeField:
@@ -157,17 +179,12 @@ namespace Cards.EffectCards
                         changeField = true;
                     }
                         break;
-                    case Effect.HandMax:
-                    {
-                    }
-                        break;
-                    case Effect.CheckTurn:
-                    {
-                    }
-                        break;
                     case Effect.RemoveHand:
                     {
-                        isValid = CanUseRemoveHand(values, i, isValid);
+                        if (!CanUseRemoveHand(value))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.AffectPv:
@@ -177,12 +194,15 @@ namespace Cards.EffectCards
                         break;
                     case Effect.Sources:
                     {
-                        isValid = CanUseSources(changeField, value, isValid, handCard);
+                        if (!CanUseSources(changeField, value, handCard))
+                        {
+                            return false;
+                        }
                     }
                         break;
                     case Effect.ChangeHandCards:
                     {
-                        isValid = CanUseChangeHandCards(value, isValid, out handCard);
+                        handCard = int.Parse(value);
                     }
                         break;
                     case Effect.NumberInvocationCard:
@@ -201,161 +221,61 @@ namespace Cards.EffectCards
                         break;
                     case Effect.SkipContre:
                         break;
+                    case Effect.HandMax:
+                        break;
+                    case Effect.CheckTurn:
+                        break;
+                    case Effect.SkipAttack:
+                        break;
+                    case Effect.SeeCards:
+                        break;
+                    case Effect.ChangeOrder:
+                        break;
+                    case Effect.Duration:
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            return isValid;
+            return true;
         }
 
-        private bool CanUseChangeHandCards(string value, bool isValid, out int handCard)
+        /// <summary>
+        /// Returns a boolean to indicate if the AffectOpponent effect can be use.
+        /// It is not usable if the effectCard make the user loose more HP than he has.
+        /// Cards that use it : Convocation au lycée, Demi-pizza, Incendie, Kebab magique, Maniabilité pourrie, Musique de Mega Drive, Squalala, Torture Ninja, Un délicieux risotto.
+        /// </summary>
+        /// <param name="value">a string which value is "true" or "false"</param>
+        /// <param name="pvAffected">the number of HP the user or the opponent can loose/win</param>
+        /// <param name="affectOpponent">a boolean which is true if the effect card impacts the opponent and false if the effect card impacts the user</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseAffectOpponent(string value, float pvAffected, out bool affectOpponent)
         {
-            handCard = int.Parse(value);
-            isValid &= currentPlayerCard.handCards.Count > handCard;
-            return isValid;
-        }
-
-        private bool CanUseSources(bool changeField, string value, bool isValid, int handCard)
-        {
-            if (changeField)
+            affectOpponent = bool.Parse(value);
+            if (pvAffected != 0 && !affectOpponent)
             {
-                if (value != "deck") return isValid;
-                var fieldCardsInDeck =
-                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
-                isValid &= fieldCardsInDeck.Count > 0;
-            }
-            else if (handCard > 0)
-            {
-                if (value == "deck;yellow")
-                {
-                    isValid &= (currentPlayerCard.deck.Count + currentPlayerCard.yellowTrash.Count) >=
-                               handCard;
-                }
+                return (currentPlayerStatus.GetCurrentPv() + pvAffected) > 0;
             }
 
-            return isValid;
+            return true;
         }
 
-        private static void CanUseAffectPv(string value, out float pvAffected)
+        /// <summary>
+        /// Returns a boolean to indicate if the DestroyCards effect can be use.
+        /// There is different cases depending of value:
+        ///  - field : A field card can be destroy if there is at least one on user field or opponent field.
+        ///  - invocation :  if it affects the opponent, he must have at least one invocation card on field.
+        ///  - 1 : the user can destroy one of the card on field, it must have at least one card on field.
+        ///  - equipment : an equipment card can be destroy if there is at least one invocation card equip with an equipment card.
+        /// Cards that use it : Croisement des effluves(all), Feuille(1), Incendie(field), Squalala(invocation).
+        /// </summary>
+        /// <param name="value">a string which value is "field", "invocation" or "1"</param>
+        /// <param name="affectOpponent">a boolean which is true if the effect card impacts the opponent and false if the effect card impacts the user</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseDestroyCards(string value, bool affectOpponent)
         {
-            if (float.TryParse(value, out pvAffected)) return;
-            if (value == "all")
-            {
-                pvAffected = 999;
-            }
-        }
-
-        private bool CanUseRemoveHand(IReadOnlyList<string> values, int i, bool isValid)
-        {
-            var numberCardToRemove = int.Parse(values[i]);
-            // This card + number to remove
-            isValid &= currentPlayerCard.handCards.Count > numberCardToRemove;
-            return isValid;
-        }
-
-        private bool CanUseSkipFieldsEffect(bool isValid)
-        {
-            isValid &= currentPlayerCard.field != null || opponentPlayerCard.field != null;
-            return isValid;
-        }
-
-        private bool CanUseProtectAttack(bool isValid)
-        {
-            isValid &= currentPlayerCard.invocationCards.Count == 0;
-            return isValid;
-        }
-
-        private bool CanUseAttackDirectly(string value, bool isValid)
-        {
-            var minValue = float.Parse(value);
-            isValid &= opponentPlayerStatus.GetCurrentPv() < minValue;
-            return isValid;
-        }
-
-        private bool CanUseTakeControl(bool isValid)
-        {
-            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
-                .Cast<Card>().ToList();
-
-            isValid &= invocationCardOpponent.Count > 0 && currentPlayerCard.invocationCards.Count < 4;
-            return isValid;
-        }
-
-        private bool CanUseCombine(string value, bool isValid)
-        {
-            var numberCombine = int.Parse(value);
-            var currentInvocationCards = currentPlayerCard.invocationCards;
-            isValid &= currentInvocationCards.Count >= numberCombine;
-            return isValid;
-        }
-
-        private bool CanUseSpecialInvocation(bool isValid)
-        {
-            var yellowTrash = currentPlayerCard.yellowTrash;
-            var invocationCards = currentPlayerCard.invocationCards;
-            var place = invocationCards.Count;
-
-            var invocationFromYellowTrash =
-                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
-            isValid &= place < 4 && invocationFromYellowTrash.Count > 0;
-            return isValid;
-        }
-
-        private bool CanUseRemoveDeck(bool isValid)
-        {
-            var size = currentPlayerCard.deck.Count;
-            isValid &= size > 0;
-            return isValid;
-        }
-
-        private bool CanUseSameFamily(bool isValid)
-        {
-            var fieldCard = currentPlayerCard.field;
-            isValid &= fieldCard != null && fieldCard.IsValid();
-            return isValid;
-        }
-
-        private bool CanUseSacrificeInvocation(string value, bool isValid)
-        {
-            switch (value)
-            {
-                case "true":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
-
-                    isValid &= invocationCardsValid.Count > 0;
-                }
-                    break;
-                case "5":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
-                            invocationCard.GetCurrentAttack() >= 5 ||
-                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
-                    isValid &= invocationCardsValid.Count > 0;
-                }
-                    break;
-                case "3":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards.Where(invocationCard =>
-                            invocationCard.GetCurrentAttack() >= 3 ||
-                            invocationCard.GetCurrentDefense() >= 3)
-                        .Cast<Card>().ToList();
-                    isValid &= invocationCardsValid.Count > 0;
-                }
-                    break;
-            }
-
-            return isValid;
-        }
-
-        private bool CanUseDestroyCards(string value, bool isValid, bool affectOpponent)
-        {
+            var isValid = true;
             switch (value)
             {
                 case "field":
@@ -373,7 +293,7 @@ namespace Cards.EffectCards
                         fieldCards.Add(fieldCard2);
                     }
 
-                    isValid &= fieldCards.Count > 0;
+                    isValid = fieldCards.Count > 0;
                 }
                     break;
                 case "invocation":
@@ -382,7 +302,7 @@ namespace Cards.EffectCards
                     {
                         var invocationOpponentValid = opponentPlayerCard.invocationCards
                             .Where(card => card.IsValid()).Cast<Card>().ToList();
-                        isValid &= invocationOpponentValid.Count > 0;
+                        isValid = invocationOpponentValid.Count > 0;
                     }
                 }
                     break;
@@ -415,7 +335,7 @@ namespace Cards.EffectCards
 
                     allCardsOnField.AddRange(invocationCards2.Where(card => card.IsValid()));
 
-                    isValid &= allCardsOnField.Count > 0;
+                    isValid = allCardsOnField.Count > 0;
                 }
                     break;
                 case "equipment":
@@ -423,101 +343,254 @@ namespace Cards.EffectCards
                     var invocationCardsOnField = new List<InvocationCard>(currentPlayerCard.invocationCards);
                     invocationCardsOnField.AddRange(opponentPlayerCard.invocationCards);
 
-                    isValid &= invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard())
+                    isValid = invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard())
                         .Where(equipmentCard => equipmentCard != null).ToList().Count > 0;
                 }
                     break;
             }
 
-
             return isValid;
         }
 
-        private bool CanUseAffectOpponent(string value, float pvAffected, bool isValid, out bool affectOpponent)
+        /// <summary>
+        /// Returns a boolean to indicate if the SacrificeInvocation effect can be use.
+        /// There is different cases depending of value:
+        ///  - true : User should have at least one invocation card on field.
+        ///  - 5 : User should have an invocation on field with at least 5 ATK Stars or 5 DEF Stars.
+        ///  - 3 : User should have an invocation on field with at least 3 ATK Stars or 3 DEF Stars.
+        ///  - equipment : an equipment card can be destroy if there is at least one invocation card equip with an equipment card.
+        /// Cards that use it : Croisement des effluves(true), Demi-pizza(3), Kebab magique(true), Un délicieux risotto(5).
+        /// </summary>
+        /// <param name="value">a string which value is "true", "3" or "5"</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSacrificeInvocation(string value)
         {
-            affectOpponent = bool.Parse(value);
-            if (pvAffected != 0 && !affectOpponent)
+            var isValid = true;
+            switch (value)
             {
-                isValid &= (currentPlayerStatus.GetCurrentPv() + pvAffected) > 0;
+                case "true":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards
+                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
+
+                    isValid = invocationCardsValid.Count > 0;
+                }
+                    break;
+                case "5":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards
+                        .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
+                            invocationCard.GetCurrentAttack() >= 5 ||
+                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
+                    isValid = invocationCardsValid.Count > 0;
+                }
+                    break;
+                case "3":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards.Where(invocationCard =>
+                            invocationCard.GetCurrentAttack() >= 3 ||
+                            invocationCard.GetCurrentDefense() >= 3)
+                        .Cast<Card>().ToList();
+                    isValid = invocationCardsValid.Count > 0;
+                }
+                    break;
             }
 
             return isValid;
         }
 
-        private void ReduceHandOpponentPlayer(List<Card> handCard2, int handCardsNumber)
+        /// <summary>
+        /// Returns a boolean to indicate if the SameFamily effect can be use.
+        /// Apply the same family that the field card.
+        /// User must have a field card on field.
+        /// Cards that use it : Convocation au lycée.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSameFamily()
         {
-            if (handCard2.Count < handCardsNumber)
+            var fieldCard = currentPlayerCard.field;
+            return fieldCard != null && fieldCard.IsValid();
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the RemoveDeck effect can be use.
+        /// Remove the first card of the deck.
+        /// User must have cards on deck.
+        /// Cards that use it : Croisement des effluves.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseRemoveDeck()
+        {
+            var size = currentPlayerCard.deck.Count;
+            return size > 0;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the SpecialInvocation effect can be use.
+        /// Resurect an invocation from yellow trash.
+        /// User must have invocations on yellow trash and an invocation place on field.
+        /// Cards that use it : Plume de phénix.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSpecialInvocation()
+        {
+            var yellowTrash = currentPlayerCard.yellowTrash;
+            var invocationCards = currentPlayerCard.invocationCards;
+            var place = invocationCards.Count;
+
+            var invocationFromYellowTrash =
+                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
+            return place < 4 && invocationFromYellowTrash.Count > 0;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the Combine effect can be use.
+        /// Merge several invocation cards.
+        /// User should have a certain number of invocation cards on field.
+        /// Cards that use it : Attaque de la tour Eiffel.
+        /// </summary>
+        /// <param name="value">a string which value is the number of card to merge</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseCombine(string value)
+        {
+            var numberCombine = int.Parse(value);
+            var currentInvocationCards = currentPlayerCard.invocationCards;
+            return currentInvocationCards.Count >= numberCombine;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the TakeControl effect can be use.
+        /// Opponent should have at least one invocation card and user a place for a invocation card on field.
+        /// Cards that use it : Youtube Money.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseTakeControl()
+        {
+            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsValid())
+                .Cast<Card>().ToList();
+
+            return invocationCardOpponent.Count > 0 && currentPlayerCard.invocationCards.Count < 4;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the NumberAttacks effect can be use.
+        /// Give more attack by turn
+        /// User should have at least one invocation card.
+        /// Cards that use it : Petite portions de " riz ".
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseNumberAttacks()
+        {
+            return currentPlayerCard.invocationCards.Count > 0;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the AttackDirectly effect can be use.
+        /// Check if user can attack directly opponent's HP.
+        /// Cards that use it : Fatalité.
+        /// </summary>
+        /// <param name="value">a string which value is the number of HR opponent should have to use it</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseAttackDirectly(string value)
+        {
+            var minValue = float.Parse(value);
+            return opponentPlayerStatus.GetCurrentPv() < minValue;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the ProtectAttack effect can be use.
+        /// Check if user can be protected from direct attack.
+        /// He should not have any invocation cards on field.
+        /// Cards that use it : Sceaux magiques.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseProtectAttack()
+        {
+            return currentPlayerCard.invocationCards.Count == 0;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the SkipFieldsEffect effect can be use.
+        /// Cancel field effect during a turn.
+        /// Opponent or player should have at least one field card on field.
+        /// Cards that use it : Filtre dégueulasse FMV.
+        /// </summary>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSkipFieldsEffect()
+        {
+            return currentPlayerCard.field != null || opponentPlayerCard.field != null;
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the RemoveHand effect can be use.
+        /// Check if user has enough cards in his hands to remove some
+        /// Cards that use it : Croisement des effluves, Feuille.
+        /// </summary>
+        /// <param name="value">a string which value is the number of cards to remove from their hands</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseRemoveHand(string value)
+        {
+            var numberCardToRemove = int.Parse(value);
+            // This card + number to remove
+            return currentPlayerCard.handCards.Count > numberCardToRemove;
+        }
+
+        /// <summary>
+        /// Save the number of HP affected.
+        /// Cards that use it : Bolossage gratuit, Convocation au lycée, Demi-pizza, Musique de Mega Drive, Torture Ninja, Un délicieux risotto.
+        /// </summary>
+        /// <param name="value">a string which value is the number of HP affected</param>
+        /// <param name="pvAffected">a variable in which we store the HP affected in float</param>
+        private static void CanUseAffectPv(string value, out float pvAffected)
+        {
+            if (float.TryParse(value, out pvAffected)) return;
+            if (value == "all")
             {
-                var size = opponentPlayerCard.deck.Count;
-                while (size > 0 && opponentPlayerCard.handCards.Count < handCardsNumber)
+                pvAffected = 999;
+            }
+        }
+
+        /// <summary>
+        /// Returns a boolean to indicate if the Sources effect can be use.
+        /// Check if there is enough card in sources.
+        /// if changeField is true, one can change our field card if we have one on our deck
+        /// if handCard > 0, one should have at least handCard cards in our deck + yellow trash
+        /// Cards that use it : Faux raccord, Le mot de passe.
+        /// </summary>
+        /// <param name="changeField">a boolean</param>
+        /// <param name="value">a string which value is "deck" or "deck;yellow"</param>
+        /// <param name="handCard">a number of card to take</param>
+        /// <returns>A boolean indicating if effect card is usable</returns>
+        private bool CanUseSources(bool changeField, string value, int handCard)
+        {
+            if (changeField)
+            {
+                if (value != "deck") return true;
+                var fieldCardsInDeck =
+                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
+                return fieldCardsInDeck.Count > 0;
+            }
+            else if (handCard > 0)
+            {
+                if (value == "deck;yellow")
                 {
-                    var c = opponentPlayerCard.deck[size - 1];
-                    opponentPlayerCard.handCards.Add(c);
-                    opponentPlayerCard.deck.RemoveAt(size - 1);
-                    size--;
+                    return (currentPlayerCard.deck.Count + currentPlayerCard.yellowTrash.Count) >=
+                           handCard;
                 }
             }
-            else if (handCard2.Count > handCardsNumber)
-            {
-                var numberToGet = handCard2.Count - handCardsNumber;
-                var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                    "Choisis " + numberToGet + " cartes à enlever",
-                    handCard2, multipleCardSelection: true, numberCardInSelection: numberToGet);
 
-                message.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var currentCards = message.GetComponent<MessageBox>().GetMultipleSelectedCards();
-
-                    if (currentCards != null && currentCards.Count > 0)
-                    {
-                        if (currentCards.Count == numberToGet)
-                        {
-                            foreach (var card in currentCards)
-                            {
-                                opponentPlayerCard.handCards.Remove(card);
-                                opponentPlayerCard.yellowTrash.Add(card);
-                            }
-
-                            Destroy(message);
-                        }
-                        else
-                        {
-                            message.SetActive(false);
-                            var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                "Tu dois enlever " + numberToGet + "cartes !");
-                            messageBox.GetComponent<MessageBox>().OkAction = () =>
-                            {
-                                message.SetActive(true);
-                                Destroy(messageBox);
-                            };
-                        }
-                    }
-                    else
-                    {
-                        message.SetActive(false);
-                        var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                            "Tu dois enlever " + numberToGet + "cartes !");
-                        messageBox.GetComponent<MessageBox>().OkAction = () =>
-                        {
-                            message.SetActive(true);
-                            Destroy(messageBox);
-                        };
-                    }
-                };
-                message.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    message.SetActive(false);
-                    var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                        "Tu ne peux pas y échapper ...");
-                    messageBox.GetComponent<MessageBox>().OkAction = () =>
-                    {
-                        message.SetActive(true);
-                        Destroy(messageBox);
-                    };
-                };
-            }
+            return true;
         }
 
+        /// <summary>
+        /// Apply the effect of an effect card.
+        /// Called when user click on put card for an effect card whose button is enabled
+        /// </summary>
+        /// <param name="effectCard">the effect card</param>
+        /// <param name="effectCardEffect">effects of the effect card</param>
         private void ApplyEffectCard(EffectCard effectCard, EffectCardEffect effectCardEffect)
         {
             var keys = effectCardEffect.Keys;
@@ -601,110 +674,7 @@ namespace Cards.EffectCards
                         break;
                     case Effect.Sources:
                     {
-                        var sources = ApplySources(value);
-                        if (handCardsNumber > 0)
-                        {
-                            if (sources.Contains("deck") && sources.Contains("yellow"))
-                            {
-                                List<Card> cards = new List<Card>(currentPlayerCard.deck);
-                                cards.AddRange(currentPlayerCard.yellowTrash);
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                    "Choisis 1 carte à rajouter dans ta main", cards);
-                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-                                {
-                                    var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
-                                    if (card != null)
-                                    {
-                                        currentPlayerCard.handCards.Add(card);
-                                        if (currentPlayerCard.yellowTrash.Contains(card))
-                                        {
-                                            currentPlayerCard.yellowTrash.Remove(card);
-                                        }
-                                        else
-                                        {
-                                            currentPlayerCard.deck.Remove(card);
-                                        }
-
-                                        Destroy(messageBox);
-                                    }
-                                    else
-                                    {
-                                        messageBox.SetActive(false);
-
-                                        void OkAction()
-                                        {
-                                            messageBox.SetActive(true);
-                                        }
-
-                                        MessageBox.CreateOkMessageBox(canvas, "Information",
-                                            "Tu dois choisir une carte", OkAction);
-                                    }
-                                };
-                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-                                {
-                                    messageBox.SetActive(false);
-
-                                    void OkAction()
-                                    {
-                                        messageBox.SetActive(true);
-                                    }
-
-                                    MessageBox.CreateOkMessageBox(canvas, "Information",
-                                        "Tu dois choisir une carte", OkAction);
-                                };
-                            }
-                        }
-                        else if (changeField)
-                        {
-                            if (value == "deck")
-                            {
-                                List<Card> fieldCardInDeck =
-                                    currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
-                                var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                                    "Choix du nouveau terrain", fieldCardInDeck);
-                                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-                                {
-                                    var fieldCard = (FieldCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
-                                    if (fieldCard != null)
-                                    {
-                                        if (currentPlayerCard.field != null)
-                                        {
-                                            currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
-                                            currentPlayerCard.field = null;
-                                        }
-
-                                        currentPlayerCard.field = fieldCard;
-                                        Destroy(messageBox);
-                                    }
-                                    else
-                                    {
-                                        messageBox.SetActive(false);
-
-                                        void OkAction()
-                                        {
-                                            messageBox.SetActive(true);
-                                        }
-
-                                        MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                            "Tu dois choisir un terrain",
-                                            OkAction);
-                                    }
-                                };
-                                messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-                                {
-                                    messageBox.SetActive(false);
-
-                                    void OkAction()
-                                    {
-                                        messageBox.SetActive(true);
-                                    }
-
-                                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                        "Tu dois choisir un terrain",
-                                        OkAction);
-                                };
-                            }
-                        }
+                        ApplySources(value, handCardsNumber, changeField);
                     }
                         break;
                     case Effect.HandMax:
@@ -767,23 +737,12 @@ namespace Cards.EffectCards
                         break;
                     case Effect.NumberAttacks:
                     {
-                        var number = int.Parse(value);
-                        foreach (var invocationCard in currentPlayerCard.invocationCards)
-                        {
-                            invocationCard.SetRemainedAttackThisTurn(number);
-                        }
+                        ApplyNumberAttacks(value);
                     }
                         break;
                     case Effect.SkipAttack:
                     {
-                        if (affectOpponent)
-                        {
-                            foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards
-                                         .Where(card => card.IsAffectedByEffectCard).ToList())
-                            {
-                                opponentInvocationCard.BlockAttack();
-                            }
-                        }
+                        ApplySkipAttack(affectOpponent);
                     }
                         break;
                     case Effect.SeeCards:
@@ -793,49 +752,17 @@ namespace Cards.EffectCards
                         break;
                     case Effect.ChangeOrder:
                     {
-                        var see = cardsToSee;
-
-                        void PositiveAction()
-                        {
-                            var cardsDeckToSee = BuildCardsDeckToSee(see, false);
-
-                            void PositiveActionCardSelector()
-                            {
-                                DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, false);
-                            }
-
-                            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
-                                cardsDeckToSee, PositiveActionCardSelector);
-                        }
-
-                        void NegativeAction()
-                        {
-                            var cardsDeckToSee = BuildCardsDeckToSee(see, true);
-
-                            void PositiveActionCardSelector()
-                            {
-                                DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, true);
-                            }
-
-                            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
-                                cardsDeckToSee, PositiveActionCardSelector);
-                        }
-
-                        MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
-                            "Veux-tu regarder dans le deck de l'adversaire ou du tien ?",
-                            PositiveAction, NegativeAction);
+                        ApplyChangeOrder(cardsToSee);
                     }
                         break;
                     case Effect.ProtectAttack:
                     {
-                        var numberShield = int.Parse(value);
-                        currentPlayerStatus.SetNumberShield(numberShield);
+                        ApplyProtectAttack(value);
                     }
                         break;
                     case Effect.SkipFieldsEffect:
                     {
-                        currentPlayerCard.DesactivateFieldCardEffect();
-                        opponentPlayerCard.DesactivateFieldCardEffect();
+                        ApplySkipFieldsEffect();
                     }
                         break;
                     case Effect.ChangeField:
@@ -865,527 +792,45 @@ namespace Cards.EffectCards
             //TODO Add effectCard to yellow trash if necessary
         }
 
-        private List<Card> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
+        /// <summary>
+        /// Apply the AffectPv effect.
+        /// Store affected HP
+        /// </summary>
+        /// <param name="effectCard">the effect card</param>
+        /// <param name="value">value is a string which is the number of affected HP</param>
+        /// <returns>the number of affected HP</returns>
+        private static float ApplyAffectPv(EffectCard effectCard, string value)
         {
-            var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
-            List<Card> cardsDeckToSee = new List<Card>();
-            if (playerCard.deck.Count > see)
-            {
-                for (var j = playerCard.deck.Count - 1;
-                     j > (playerCard.deck.Count - 1 - see);
-                     j--)
-                {
-                    cardsDeckToSee.Add(playerCard.deck[j]);
-                }
-            }
-            else
-            {
-                cardsDeckToSee.AddRange(playerCard.invocationCards);
-            }
+            var pvAffected = value == "all" ? 100.0f : float.Parse(value);
 
-            return cardsDeckToSee;
+            effectCard.affectPv = pvAffected;
+
+            return pvAffected;
         }
 
-        private void DisplayMessageBoxToChangeOrderCards(List<Card> cardsDeckToSee, bool isCurrentPlayerCard)
+        /// <summary>
+        /// Apply the AffectOpponent effect.
+        /// Store boolean value
+        /// </summary>
+        /// <param name="value">value is a string which is a boolean</param>
+        /// <returns>a boolean indicating if it affect the user or his opponent</returns>
+        private static bool ApplyAffectOpponent(string value)
         {
-            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
-                multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count, displayOrder: true);
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var selectedCards =
-                    messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
-                if (selectedCards.Count == cardsDeckToSee.Count)
-                {
-                    var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
-                    foreach (var card in cardsDeckToSee)
-                    {
-                        playerCard.deck.Remove(card);
-                    }
-
-                    selectedCards.Reverse();
-                    playerCard.deck.AddRange(selectedCards);
-                    Destroy(messageBox);
-                }
-                else
-                {
-                    messageBox.SetActive(false);
-
-                    void OkAction()
-                    {
-                        messageBox.SetActive(true);
-                    }
-
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                        "Tu dois choisir l'ordre des cartes", OkAction);
-                }
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                messageBox.SetActive(false);
-
-                void OkAction()
-                {
-                    messageBox.SetActive(true);
-                }
-
-                MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                    "Tu dois choisir l'ordre des cartes", OkAction);
-            };
+            return bool.Parse(value);
         }
 
-        private void ApplyNumberInvocationCardAttacker(float pvAffected)
-        {
-            var invocationCards = currentPlayerCard.invocationCards;
-            var size = invocationCards.Count;
-            var damages = size * pvAffected;
-            opponentPlayerStatus.ChangePv(damages);
-        }
-
-        private void ApplyTakeControl()
-        {
-            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
-                .Cast<Card>().ToList();
-
-            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Quel carte veux-tu contrôler pendant un tour ?", invocationCardOpponent);
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var card =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
-                if (card != null)
-                {
-                    card.ControlCard();
-                    card.UnblockAttack();
-                    opponentPlayerCard.invocationCards.Remove(card);
-                    opponentPlayerCard.SendToSecretHide(card);
-                    currentPlayerCard.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
-                    currentPlayerCard.invocationCards.Add(card);
-                    Destroy(message);
-                }
-                else
-                {
-                    message.SetActive(false);
-
-                    void OkAction()
-                    {
-                        message.SetActive(true);
-                    }
-
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à controller",
-                        OkAction);
-                }
-            };
-
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                message.SetActive(false);
-
-                void OkAction()
-                {
-                    message.SetActive(true);
-                }
-
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à contrôler",
-                    OkAction);
-            };
-        }
-
-        private void ApplyRevertStat()
-        {
-            var invocationCards1 = currentPlayerCard.invocationCards;
-            var invocationCards2 =
-                opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
-
-            foreach (var card in invocationCards1)
-            {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
-            }
-
-            foreach (var card in invocationCards2)
-            {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
-            }
-        }
-
-        private void ApplyCombine(EffectCard effectCard, string value)
-        {
-            var numberCombine = int.Parse(value);
-            var currentInvocationCards = currentPlayerCard.invocationCards;
-            if (currentInvocationCards.Count < numberCombine) return;
-            var cards = currentInvocationCards.Cast<Card>().ToList();
-
-            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Sélectionnez " + numberCombine + " Cartes à fusionner", cards,
-                multipleCardSelection: true, numberCardInSelection: numberCombine);
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var currentCards = messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
-
-                if (currentCards != null && currentCards.Count > 0)
-                {
-                    var invocationCards = currentCards.Cast<InvocationCard>().ToList();
-
-                    var superInvocationCard =
-                        ScriptableObject.CreateInstance<SuperInvocationCard>();
-                    superInvocationCard.Init(invocationCards);
-
-                    var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
-                    currentPlayerCard.AddPhysicalCard(superInvocationCard, playerName);
-                    foreach (var invocationCard in invocationCards)
-                    {
-                        var index1 = currentInvocationCards.FindIndex(0, currentInvocationCards.Count,
-                            card => card.Nom == invocationCard.Nom);
-                        if (index1 <= -1) continue;
-                        currentPlayerCard.SendToSecretHide(invocationCard);
-                        currentPlayerCard.invocationCards.RemoveAt(index1);
-                    }
-
-                    currentInvocationCards.Add(superInvocationCard);
-
-                    Destroy(messageBox);
-                }
-                else
-                {
-                    MessageBox.CreateOkMessageBox(canvas, "Information",
-                        "Vous n'avez pas choisi le nombre de carte adéquat");
-                    currentPlayerCard.effectCards.Remove(effectCard);
-                    currentPlayerCard.handCards.Add(effectCard);
-                    Destroy(messageBox);
-                }
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                currentPlayerCard.effectCards.Remove(effectCard);
-                currentPlayerCard.handCards.Add(effectCard);
-                Destroy(messageBox);
-            };
-        }
-
-        private static void ApplyDuration(EffectCard effectCard, string value)
-        {
-            if (int.TryParse(value, out var duration))
-            {
-                effectCard.SetLifeTime(duration);
-            }
-        }
-
-        private void ApplyDivideInvocation()
-        {
-            var opponentInvocationCard =
-                opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
-            foreach (var card in opponentInvocationCard)
-            {
-                var newBonusDefense = card.GetBonusDefense() - card.GetCurrentDefense() / 2;
-                card.SetBonusDefense(newBonusDefense);
-            }
-        }
-
-        private void ApplySpecialInvocation()
-        {
-            var yellowTrash = currentPlayerCard.yellowTrash;
-            var invocationCards = currentPlayerCard.invocationCards;
-
-            var invocationFromYellowTrash =
-                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
-
-            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var card =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
-                if (card != null)
-                {
-                    currentPlayerCard.yellowTrash.Remove(card);
-                    card.DeactivateEffect();
-                    invocationCards.Add(card);
-                    Destroy(message);
-                }
-                else
-                {
-                    message.SetActive(false);
-
-                    void OkAction()
-                    {
-                        message.SetActive(true);
-                    }
-
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
-                        OkAction);
-                }
-            };
-
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                message.SetActive(false);
-
-                void OkAction()
-                {
-                    message.SetActive(true);
-                }
-
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
-                    OkAction);
-            };
-        }
-
-        private void ApplyRemoveDeck()
-        {
-            var size = currentPlayerCard.deck.Count;
-            if (size <= 0) return;
-            var c = currentPlayerCard.deck[size - 1];
-            currentPlayerCard.yellowTrash.Add(c);
-            currentPlayerCard.deck.RemoveAt(size - 1);
-        }
-
-        private void ApplyRemoveHand(Card effectCard)
-        {
-            var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
-            handCardPlayer.Remove(effectCard);
-            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Quel carte veux-tu te défausser?", handCardPlayer);
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var card = message.GetComponent<MessageBox>().GetSelectedCard();
-                if (card != null)
-                {
-                    currentPlayerCard.yellowTrash.Add(card);
-                    currentPlayerCard.handCards.Remove(card);
-                    Destroy(message);
-                }
-                else
-                {
-                    message.SetActive(false);
-
-                    void OkAction()
-                    {
-                        message.SetActive(true);
-                    }
-
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
-                        OkAction);
-                }
-            };
-
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                message.SetActive(false);
-
-                void OkAction()
-                {
-                    message.SetActive(true);
-                }
-
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
-                    OkAction);
-            };
-        }
-
-        private void ApplyRemoveCardOption()
-        {
-            var message = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
-                "Veux-tu te défausser d'une carte pour en défausser une à l'adversaire ?");
-
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                Destroy(message);
-                var handCardOpponent = opponentPlayerCard.handCards;
-                var message1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                    "Quel carte veux-tu enlever à l'adversaire ?", handCardOpponent);
-                message1.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var cardOpponent = message1.GetComponent<MessageBox>().GetSelectedCard();
-                    if (!cardOpponent.IsValid()) return;
-                    Destroy(message1);
-                    var handCardPlayer = currentPlayerCard.handCards;
-                    var message2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                        "Quel carte veux-tu te défausser?", handCardPlayer);
-
-                    message2.GetComponent<MessageBox>().PositiveAction = () =>
-                    {
-                        var cardPlayer = message2.GetComponent<MessageBox>().GetSelectedCard();
-                        if (cardPlayer.IsValid())
-                        {
-                            currentPlayerCard.yellowTrash.Add(cardPlayer);
-                            opponentPlayerCard.yellowTrash.Add(cardOpponent);
-                            currentPlayerCard.handCards.Remove(cardPlayer);
-                            opponentPlayerCard.handCards.Remove(cardOpponent);
-                        }
-
-                        Destroy(message2);
-                    };
-                };
-                message1.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message1); };
-            };
-
-            message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
-        }
-
-        private void ApplySeeOpponentHand()
-        {
-            var handCardOpponent = opponentPlayerCard.handCards;
-            MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
-        }
-
-        private void ApplyHandMax(int handCardsNumber, EffectCard effectCard)
-        {
-            var handCard1 = currentPlayerCard.handCards;
-            handCard1.Remove(effectCard);
-            var handCard2 = opponentPlayerCard.handCards;
-
-
-            if (handCard1.Count < handCardsNumber)
-            {
-                var size = currentPlayerCard.deck.Count;
-                while (size > 0 && currentPlayerCard.handCards.Count < handCardsNumber)
-                {
-                    var c = currentPlayerCard.deck[size - 1];
-                    currentPlayerCard.handCards.Add(c);
-                    currentPlayerCard.deck.RemoveAt(size - 1);
-                    size--;
-                }
-            }
-            else if (handCard1.Count > handCardsNumber)
-            {
-                var numberToGet = handCard1.Count - handCardsNumber;
-                var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                    "Choisis " + numberToGet + " cartes à enlever",
-                    handCard1, multipleCardSelection: true, numberCardInSelection: numberToGet);
-
-                message.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var currentCards = message.GetComponent<MessageBox>().GetMultipleSelectedCards();
-
-                    if (currentCards != null && currentCards.Count > 0)
-                    {
-                        if (currentCards.Count == numberToGet)
-                        {
-                            foreach (var card in currentCards)
-                            {
-                                currentPlayerCard.handCards.Remove(card);
-                                currentPlayerCard.yellowTrash.Add(card);
-                            }
-
-                            ReduceHandOpponentPlayer(handCard2, handCardsNumber);
-                            Destroy(message);
-                        }
-                        else
-                        {
-                            message.SetActive(false);
-                            var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                                "Tu dois enlever " + numberToGet + "cartes !");
-                            messageBox.GetComponent<MessageBox>().OkAction = () =>
-                            {
-                                message.SetActive(true);
-                                Destroy(messageBox);
-                            };
-                        }
-                    }
-                    else
-                    {
-                        message.SetActive(false);
-                        var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                            "Tu dois enlever " + numberToGet + "cartes !");
-                        messageBox.GetComponent<MessageBox>().OkAction = () =>
-                        {
-                            message.SetActive(true);
-                            Destroy(messageBox);
-                        };
-                    }
-                };
-                message.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    message.SetActive(false);
-                    var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
-                        "Tu ne peux pas y échapper ...");
-                    messageBox.GetComponent<MessageBox>().OkAction = () =>
-                    {
-                        message.SetActive(true);
-                        Destroy(messageBox);
-                    };
-                };
-            }
-        }
-
-        private static string[] ApplySources(string value)
-        {
-            return value.Split(';');
-        }
-
-        private static int ApplyChangeHandCards(string value)
-        {
-            var handCardsNumber = int.Parse(value);
-            return handCardsNumber;
-        }
-
-        private static void ApplyCheckTurn(EffectCard effectCard)
-        {
-            effectCard.checkTurn = true;
-        }
-
-        private void ApplySameFamily()
-        {
-            var fieldCard = currentPlayerCard.field;
-            if (fieldCard.IsValid())
-            {
-                var familyField = fieldCard.GetFamily();
-                foreach (var card in currentPlayerCard.invocationCards.Where(card => card.IsValid()))
-                {
-                    card.SetCurrentFamily(familyField);
-                }
-            }
-            else
-            {
-            }
-        }
-
-        private void ApplySacrificeInvocation(string value, float pvAffected, UnityAction completion)
-        {
-            switch (value)
-            {
-                case "true":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
-                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
-                }
-                    break;
-                case "5":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
-                            invocationCard.GetCurrentAttack() >= 5 ||
-                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
-                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
-                }
-                    break;
-                case "3":
-                {
-                    var invocationCards = currentPlayerCard.invocationCards;
-                    var invocationCardsValid = invocationCards.Where(invocationCard =>
-                            invocationCard.GetCurrentAttack() >= 3 ||
-                            invocationCard.GetCurrentDefense() >= 3)
-                        .Cast<Card>().ToList();
-                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
-                }
-                    break;
-            }
-        }
-
+        /// <summary>
+        /// Apply the DestroyCards effect.
+        /// Destroy cards depending of value :
+        /// - field : remove a field card if there is one on field and it affects HP negatively
+        /// - all : send all cards on field to their respective yellow trashs
+        /// - invocation : send an opponent invocation card (except those which are not affected by effect cards) to its yellow trash 
+        /// - 1 : send one card which is on field to its respective yellow trash
+        /// - equipment : send a equipment card from opponent or user to its yellow trash
+        /// </summary>
+        /// <param name="value">value is a string which is the type of card to destroy or the number</param>
+        /// <param name="pvAffected">number of affected HP</param>
+        /// <param name="affectOpponent">boolean to indicate if affected HP is for the user or his opponent</param>
         private void ApplyDestroyCards(string value, float pvAffected = 0f, bool affectOpponent = false)
         {
             switch (value)
@@ -1418,6 +863,8 @@ namespace Cards.EffectCards
                                     (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
                                 if (fieldCard != null)
                                 {
+                                    // User select a card
+                                    // Need to find if it's from user or opponent
                                     if (fieldCard1 != null)
                                     {
                                         if (fieldCard.Nom == fieldCard1.Nom)
@@ -1442,6 +889,7 @@ namespace Cards.EffectCards
                                 }
                                 else
                                 {
+                                    // User don't select a card
                                     message.SetActive(false);
 
                                     void OkAction()
@@ -1713,94 +1161,6 @@ namespace Cards.EffectCards
             }
         }
 
-        private void ApplyNumberHandCard(bool affectOpponent, float pvAffected)
-        {
-            if (affectOpponent)
-            {
-                AffectOpponentNumberHandCard(pvAffected);
-            }
-            else
-            {
-                AffectCurrentNumberHandCard(pvAffected);
-            }
-        }
-
-        private void ApplyNumberInvocationCard(bool affectOpponent, float pvAffected)
-        {
-            if (affectOpponent)
-            {
-                AffectOpponentNumberInvocation(pvAffected);
-            }
-            else
-            {
-                AffectCurrentNumberInvocation(pvAffected);
-            }
-        }
-
-        private static bool ApplyAffectOpponent(string value)
-        {
-            return Boolean.Parse(value);
-        }
-
-        private static float ApplyAffectPv(EffectCard effectCard, string value)
-        {
-            var pvAffected = value == "all" ? 100.0f : float.Parse(value);
-
-            effectCard.affectPv = pvAffected;
-
-            return pvAffected;
-        }
-
-        private void GenerateSacrificeInvocationMessageBox(List<Card> invocationCardsValid,
-            float pvAffected, UnityAction completion)
-        {
-            var message =
-                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de l'invocation à sacrifier",
-                    invocationCardsValid);
-
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var card = message.GetComponent<MessageBox>().GetSelectedCard();
-                if (card != null)
-                {
-                    currentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
-                    if (pvAffected != 0)
-                    {
-                        currentPlayerStatus.ChangePv(pvAffected);
-                    }
-
-                    completion();
-                    Destroy(message);
-                }
-                else
-                {
-                    message.SetActive(false);
-
-                    void OkAction()
-                    {
-                        message.SetActive(true);
-                    }
-
-                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier",
-                        OkAction);
-                }
-            };
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                message.SetActive(false);
-
-                void OkAction()
-                {
-                    message.SetActive(true);
-                }
-
-                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier",
-                    OkAction);
-            };
-        }
-
-
         private void FindCardInArrayAndSendItToTrash(IReadOnlyList<Card> cards1, IReadOnlyList<Card> cards2, Card card)
         {
             var found = false;
@@ -1864,12 +1224,35 @@ namespace Cards.EffectCards
             }
         }
 
+        /// <summary>
+        /// Apply the NumberInvocationCard effect.
+        /// Change HP on user or opponent depending of affectOpponent bool and the number of invocation cards on field on the correspond player
+        /// </summary>
+        /// <param name="pvAffected">number of affected HP</param>
+        /// <param name="affectOpponent">boolean to indicate if affected HP is for the user or his opponent</param>
+        private void ApplyNumberInvocationCard(bool affectOpponent, float pvAffected)
+        {
+            // TODO: test this refactor
+            var invocationCards =
+                affectOpponent ? opponentPlayerCard.invocationCards : currentPlayerCard.invocationCards;
+            var playerStatus = affectOpponent ? opponentPlayerStatus : currentPlayerStatus;
+            var size = invocationCards.Count;
+            var damages = size * pvAffected;
+            playerStatus.ChangePv(damages);
+
+            /*if (affectOpponent)
+            {
+                AffectOpponentNumberInvocation(pvAffected);
+            }
+            else
+            {
+                AffectCurrentNumberInvocation(pvAffected);
+            }*/
+        }
+
         private void AffectOpponentNumberInvocation(float pvAffected)
         {
             var invocationCards = opponentPlayerCard.invocationCards;
-            var size = invocationCards.Count;
-            var damages = size * pvAffected;
-            opponentPlayerStatus.ChangePv(damages);
         }
 
         private void AffectCurrentNumberInvocation(float pvAffected)
@@ -1878,6 +1261,43 @@ namespace Cards.EffectCards
             var size = invocationCards.Count;
             var damages = size * pvAffected;
             currentPlayerStatus.ChangePv(damages);
+        }
+
+        /// <summary>
+        /// Apply the NumberInvocationCardAttacker effect.
+        /// Change HP on opponent depending of the number of invocation cards the user has on field.
+        /// </summary>
+        /// <param name="pvAffected">number of affected HP</param>
+        private void ApplyNumberInvocationCardAttacker(float pvAffected)
+        {
+            var invocationCards = currentPlayerCard.invocationCards;
+            var size = invocationCards.Count;
+            var damages = size * pvAffected;
+            opponentPlayerStatus.ChangePv(damages);
+        }
+
+        /// <summary>
+        /// Apply the NumberHandCard effect.
+        /// Change HP on opponent or user depending of the number of Hand cards the user has on field.
+        /// </summary>
+        /// <param name="affectOpponent">boolean to indicate if affected HP is for the user or his opponent</param>
+        /// <param name="pvAffected">number of affected HP</param>
+        private void ApplyNumberHandCard(bool affectOpponent, float pvAffected)
+        {
+            // TODO: test it
+            var handCards = affectOpponent ? opponentPlayerCard.handCards : currentPlayerCard.handCards;
+            var playerStatus = affectOpponent ? opponentPlayerStatus : currentPlayerStatus;
+            var size = handCards.Count;
+            var damages = size * pvAffected;
+            playerStatus.ChangePv(damages);
+            /*if (affectOpponent)
+            {
+                AffectOpponentNumberHandCard(pvAffected);
+            }
+            else
+            {
+                AffectCurrentNumberHandCard(pvAffected);
+            }*/
         }
 
         private void AffectOpponentNumberHandCard(float pvAffected)
@@ -1894,6 +1314,940 @@ namespace Cards.EffectCards
             var size = handCards.Count;
             var damages = size * pvAffected;
             currentPlayerStatus.ChangePv(damages);
+        }
+
+        /// <summary>
+        /// Apply the SacrificeInvocation effect.
+        /// User has to choose invocations to sacrifice.
+        /// Depending of value :
+        ///  - true : user can sacrifice any invocations he wants
+        ///  - 5 : user can sacrifice invocations that has at least 5 ATK Stars or 5 DEF Stars
+        ///  - 3 : user can sacrifice invocations that has at least 3 ATK Stars or 3 DEF Stars
+        /// </summary>
+        /// <param name="value">value is a string which is a bool or a number</param>
+        /// <param name="pvAffected">number of HP user can win or lose (can be 0)</param>
+        /// <param name="completion">callback call after selecting the invocation to sacrifice</param>
+        private void ApplySacrificeInvocation(string value, float pvAffected, UnityAction completion)
+        {
+            switch (value)
+            {
+                case "true":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards
+                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
+                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
+                }
+                    break;
+                case "5":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards
+                        .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
+                            invocationCard.GetCurrentAttack() >= 5 ||
+                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
+                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
+                }
+                    break;
+                case "3":
+                {
+                    var invocationCards = currentPlayerCard.invocationCards;
+                    var invocationCardsValid = invocationCards.Where(invocationCard =>
+                            invocationCard.GetCurrentAttack() >= 3 ||
+                            invocationCard.GetCurrentDefense() >= 3)
+                        .Cast<Card>().ToList();
+                    GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
+                }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Display sacrifice messageBox.
+        /// User has to choose invocations to sacrifice.
+        /// </summary>
+        /// <param name="invocationCardsValid">invocation cards list to display</param>
+        /// <param name="pvAffected">number of HP user can win or lose (can be 0)</param>
+        /// <param name="completion">callback call after selecting the invocation to sacrifice</param>
+        private void GenerateSacrificeInvocationMessageBox(List<Card> invocationCardsValid,
+            float pvAffected, UnityAction completion)
+        {
+            var message =
+                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de l'invocation à sacrifier",
+                    invocationCardsValid);
+
+
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var card = message.GetComponent<MessageBox>().GetSelectedCard();
+                if (card != null)
+                {
+                    currentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
+                    if (pvAffected != 0)
+                    {
+                        currentPlayerStatus.ChangePv(pvAffected);
+                    }
+
+                    completion();
+                    Destroy(message);
+                }
+                else
+                {
+                    message.SetActive(false);
+
+                    void OkAction()
+                    {
+                        message.SetActive(true);
+                    }
+
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier",
+                        OkAction);
+                }
+            };
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                message.SetActive(false);
+
+                void OkAction()
+                {
+                    message.SetActive(true);
+                }
+
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à sacrifier",
+                    OkAction);
+            };
+        }
+
+        /// <summary>
+        /// Apply the SameFamily effect.
+        /// Invocation cards on field has the same family as the field card.
+        /// </summary>
+        private void ApplySameFamily()
+        {
+            var fieldCard = currentPlayerCard.field;
+            if (fieldCard.IsValid())
+            {
+                var familyField = fieldCard.GetFamily();
+                foreach (var card in currentPlayerCard.invocationCards.Where(card => card.IsValid()))
+                {
+                    card.SetCurrentFamily(familyField);
+                }
+            }
+            else
+            {
+            }
+        }
+
+        /// <summary>
+        /// Apply the CheckTurn effect.
+        /// Set a boolean on effect card to check effects of this card at every draw (start of turn)
+        /// </summary>
+        /// <param name="effectCard">effect card to check at each turn</param>
+        private static void ApplyCheckTurn(EffectCard effectCard)
+        {
+            effectCard.checkTurn = true;
+        }
+
+        /// <summary>
+        /// Apply the ChangeHandCards effect.
+        /// Store the number of card to add/remove from handCards
+        /// Remove or addition are deduced thanks to other effects on effect card
+        /// </summary>
+        /// <param name="value">value is a string which is a number</param>
+        private static int ApplyChangeHandCards(string value)
+        {
+            var handCardsNumber = int.Parse(value);
+            return handCardsNumber;
+        }
+
+        /// <summary>
+        /// Apply the Sources effect.
+        /// Get a card from value or change field card on field by another from the deck
+        /// </summary>
+        /// <param name="value">value is a string representing the different sources to get cards to (deck, yellow) separated by ;</param>
+        /// <param name="handCardsNumber">number of cards to pick</param>
+        /// <param name="changeField">bool to indicate if we're going to change a field card</param>
+        private void ApplySources(string value, int handCardsNumber, bool changeField)
+        {
+            var sources = SplitSources(value);
+            if (handCardsNumber > 0)
+            {
+                if (sources.Contains("deck") && sources.Contains("yellow"))
+                {
+                    List<Card> cards = new List<Card>(currentPlayerCard.deck);
+                    cards.AddRange(currentPlayerCard.yellowTrash);
+                    var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                        "Choisis 1 carte à rajouter dans ta main", cards);
+                    messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                    {
+                        var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                        if (card != null)
+                        {
+                            currentPlayerCard.handCards.Add(card);
+                            if (currentPlayerCard.yellowTrash.Contains(card))
+                            {
+                                currentPlayerCard.yellowTrash.Remove(card);
+                            }
+                            else
+                            {
+                                currentPlayerCard.deck.Remove(card);
+                            }
+
+                            Destroy(messageBox);
+                        }
+                        else
+                        {
+                            messageBox.SetActive(false);
+
+                            void OkAction()
+                            {
+                                messageBox.SetActive(true);
+                            }
+
+                            MessageBox.CreateOkMessageBox(canvas, "Information",
+                                "Tu dois choisir une carte", OkAction);
+                        }
+                    };
+                    messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                    {
+                        messageBox.SetActive(false);
+
+                        void OkAction()
+                        {
+                            messageBox.SetActive(true);
+                        }
+
+                        MessageBox.CreateOkMessageBox(canvas, "Information",
+                            "Tu dois choisir une carte", OkAction);
+                    };
+                }
+            }
+            else if (changeField)
+            {
+                if (value == "deck")
+                {
+                    List<Card> fieldCardInDeck =
+                        currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
+                    var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                        "Choix du nouveau terrain", fieldCardInDeck);
+                    messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+                    {
+                        var fieldCard = (FieldCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                        if (fieldCard != null)
+                        {
+                            if (currentPlayerCard.field != null)
+                            {
+                                currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
+                                currentPlayerCard.field = null;
+                            }
+
+                            currentPlayerCard.field = fieldCard;
+                            Destroy(messageBox);
+                        }
+                        else
+                        {
+                            messageBox.SetActive(false);
+
+                            void OkAction()
+                            {
+                                messageBox.SetActive(true);
+                            }
+
+                            MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                "Tu dois choisir un terrain",
+                                OkAction);
+                        }
+                    };
+                    messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+                    {
+                        messageBox.SetActive(false);
+
+                        void OkAction()
+                        {
+                            messageBox.SetActive(true);
+                        }
+
+                        MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                            "Tu dois choisir un terrain",
+                            OkAction);
+                    };
+                }
+            }
+        }
+
+        private static string[] SplitSources(string value)
+        {
+            return value.Split(';');
+        }
+
+        /// <summary>
+        /// Apply the HandMax effect.
+        /// Force user to have a number of cards in their hands
+        /// </summary>
+        /// <param name="handCardsNumber">number of cards to have in hand</param>
+        /// <param name="effectCard">effect card that forces it</param>
+        private void ApplyHandMax(int handCardsNumber, EffectCard effectCard)
+        {
+            var handCard1 = currentPlayerCard.handCards;
+            handCard1.Remove(effectCard);
+            var handCard2 = opponentPlayerCard.handCards;
+
+
+            if (handCard1.Count < handCardsNumber)
+            {
+                var size = currentPlayerCard.deck.Count;
+                while (size > 0 && currentPlayerCard.handCards.Count < handCardsNumber)
+                {
+                    var c = currentPlayerCard.deck[size - 1];
+                    currentPlayerCard.handCards.Add(c);
+                    currentPlayerCard.deck.RemoveAt(size - 1);
+                    size--;
+                }
+            }
+            else if (handCard1.Count > handCardsNumber)
+            {
+                var numberToGet = handCard1.Count - handCardsNumber;
+                var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                    "Choisis " + numberToGet + " cartes à enlever",
+                    handCard1, multipleCardSelection: true, numberCardInSelection: numberToGet);
+
+                message.GetComponent<MessageBox>().PositiveAction = () =>
+                {
+                    var currentCards = message.GetComponent<MessageBox>().GetMultipleSelectedCards();
+
+                    if (currentCards != null && currentCards.Count > 0)
+                    {
+                        if (currentCards.Count == numberToGet)
+                        {
+                            foreach (var card in currentCards)
+                            {
+                                currentPlayerCard.handCards.Remove(card);
+                                currentPlayerCard.yellowTrash.Add(card);
+                            }
+
+                            ReduceHandOpponentPlayer(handCard2, handCardsNumber);
+                            Destroy(message);
+                        }
+                        else
+                        {
+                            message.SetActive(false);
+                            var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                "Tu dois enlever " + numberToGet + "cartes !");
+                            messageBox.GetComponent<MessageBox>().OkAction = () =>
+                            {
+                                message.SetActive(true);
+                                Destroy(messageBox);
+                            };
+                        }
+                    }
+                    else
+                    {
+                        message.SetActive(false);
+                        var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                            "Tu dois enlever " + numberToGet + "cartes !");
+                        messageBox.GetComponent<MessageBox>().OkAction = () =>
+                        {
+                            message.SetActive(true);
+                            Destroy(messageBox);
+                        };
+                    }
+                };
+                message.GetComponent<MessageBox>().NegativeAction = () =>
+                {
+                    message.SetActive(false);
+                    var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                        "Tu ne peux pas y échapper ...");
+                    messageBox.GetComponent<MessageBox>().OkAction = () =>
+                    {
+                        message.SetActive(true);
+                        Destroy(messageBox);
+                    };
+                };
+            }
+        }
+
+        /// <summary>
+        /// ReduceHandOpponentPlayer.
+        /// Force opponent to have a number of cards in his hands
+        /// </summary>
+        /// <param name="handCard2">handCard of the opponent</param>
+        /// <param name="handCardsNumber">number of hand card to have</param>
+        private void ReduceHandOpponentPlayer(List<Card> handCard2, int handCardsNumber)
+        {
+            if (handCard2.Count < handCardsNumber)
+            {
+                var size = opponentPlayerCard.deck.Count;
+                while (size > 0 && opponentPlayerCard.handCards.Count < handCardsNumber)
+                {
+                    var c = opponentPlayerCard.deck[size - 1];
+                    opponentPlayerCard.handCards.Add(c);
+                    opponentPlayerCard.deck.RemoveAt(size - 1);
+                    size--;
+                }
+            }
+            else if (handCard2.Count > handCardsNumber)
+            {
+                var numberToGet = handCard2.Count - handCardsNumber;
+                var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                    "Choisis " + numberToGet + " cartes à enlever",
+                    handCard2, multipleCardSelection: true, numberCardInSelection: numberToGet);
+
+                message.GetComponent<MessageBox>().PositiveAction = () =>
+                {
+                    var currentCards = message.GetComponent<MessageBox>().GetMultipleSelectedCards();
+
+                    if (currentCards != null && currentCards.Count > 0)
+                    {
+                        if (currentCards.Count == numberToGet)
+                        {
+                            foreach (var card in currentCards)
+                            {
+                                opponentPlayerCard.handCards.Remove(card);
+                                opponentPlayerCard.yellowTrash.Add(card);
+                            }
+
+                            Destroy(message);
+                        }
+                        else
+                        {
+                            message.SetActive(false);
+                            var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                                "Tu dois enlever " + numberToGet + "cartes !");
+                            messageBox.GetComponent<MessageBox>().OkAction = () =>
+                            {
+                                message.SetActive(true);
+                                Destroy(messageBox);
+                            };
+                        }
+                    }
+                    else
+                    {
+                        message.SetActive(false);
+                        var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                            "Tu dois enlever " + numberToGet + "cartes !");
+                        messageBox.GetComponent<MessageBox>().OkAction = () =>
+                        {
+                            message.SetActive(true);
+                            Destroy(messageBox);
+                        };
+                    }
+                };
+                message.GetComponent<MessageBox>().NegativeAction = () =>
+                {
+                    message.SetActive(false);
+                    var messageBox = MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                        "Tu ne peux pas y échapper ...");
+                    messageBox.GetComponent<MessageBox>().OkAction = () =>
+                    {
+                        message.SetActive(true);
+                        Destroy(messageBox);
+                    };
+                };
+            }
+        }
+
+        /// <summary>
+        /// Apply the SeeOpponentHand effect.
+        /// Display opponent Hand cards
+        /// </summary>
+        private void ApplySeeOpponentHand()
+        {
+            var handCardOpponent = opponentPlayerCard.handCards;
+            MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
+        }
+
+        /// <summary>
+        /// Apply the RemoveCardOption effect.
+        /// Remove one card from the user to have the right to remove one from opponent
+        /// </summary>
+        private void ApplyRemoveCardOption()
+        {
+            var message = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
+                "Veux-tu te défausser d'une carte pour en défausser une à l'adversaire ?");
+
+
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                Destroy(message);
+                var handCardOpponent = opponentPlayerCard.handCards;
+                var message1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                    "Quel carte veux-tu enlever à l'adversaire ?", handCardOpponent);
+                message1.GetComponent<MessageBox>().PositiveAction = () =>
+                {
+                    var cardOpponent = message1.GetComponent<MessageBox>().GetSelectedCard();
+                    if (!cardOpponent.IsValid()) return;
+                    Destroy(message1);
+                    var handCardPlayer = currentPlayerCard.handCards;
+                    var message2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                        "Quel carte veux-tu te défausser?", handCardPlayer);
+
+                    message2.GetComponent<MessageBox>().PositiveAction = () =>
+                    {
+                        var cardPlayer = message2.GetComponent<MessageBox>().GetSelectedCard();
+                        if (cardPlayer.IsValid())
+                        {
+                            currentPlayerCard.yellowTrash.Add(cardPlayer);
+                            opponentPlayerCard.yellowTrash.Add(cardOpponent);
+                            currentPlayerCard.handCards.Remove(cardPlayer);
+                            opponentPlayerCard.handCards.Remove(cardOpponent);
+                        }
+
+                        Destroy(message2);
+                    };
+                };
+                message1.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message1); };
+            };
+
+            message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
+        }
+
+        /// <summary>
+        /// Apply the RemoveHand effect.
+        /// Remove one card from user hand cards
+        /// <param name="effectCard">effect card that justify to remove one card from hand</param>
+        /// </summary>
+        private void ApplyRemoveHand(Card effectCard)
+        {
+            var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
+            handCardPlayer.Remove(effectCard);
+            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Quel carte veux-tu te défausser?", handCardPlayer);
+
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var card = message.GetComponent<MessageBox>().GetSelectedCard();
+                if (card != null)
+                {
+                    currentPlayerCard.yellowTrash.Add(card);
+                    currentPlayerCard.handCards.Remove(card);
+                    Destroy(message);
+                }
+                else
+                {
+                    message.SetActive(false);
+
+                    void OkAction()
+                    {
+                        message.SetActive(true);
+                    }
+
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
+                        OkAction);
+                }
+            };
+
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                message.SetActive(false);
+
+                void OkAction()
+                {
+                    message.SetActive(true);
+                }
+
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à te défausser",
+                    OkAction);
+            };
+        }
+
+        /// <summary>
+        /// Apply the RemoveDeck effect.
+        /// Send the first card on the deck to the yellow trash
+        /// </summary>
+        private void ApplyRemoveDeck()
+        {
+            var size = currentPlayerCard.deck.Count;
+            if (size <= 0) return;
+            var c = currentPlayerCard.deck[size - 1];
+            currentPlayerCard.yellowTrash.Add(c);
+            currentPlayerCard.deck.RemoveAt(size - 1);
+        }
+
+        /// <summary>
+        /// Apply the SpecialInvocation effect.
+        /// User can choose an invocation card from the yellow trash to invoke it directly without effect
+        /// </summary>
+        private void ApplySpecialInvocation()
+        {
+            var yellowTrash = currentPlayerCard.yellowTrash;
+            var invocationCards = currentPlayerCard.invocationCards;
+
+            var invocationFromYellowTrash =
+                yellowTrash.Where(card => card.Type == CardType.Invocation).ToList();
+
+            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Quel carte veux-tu invoquer spécialement ?", invocationFromYellowTrash);
+
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var card =
+                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                if (card != null)
+                {
+                    currentPlayerCard.yellowTrash.Remove(card);
+                    card.DeactivateEffect();
+                    invocationCards.Add(card);
+                    Destroy(message);
+                }
+                else
+                {
+                    message.SetActive(false);
+
+                    void OkAction()
+                    {
+                        message.SetActive(true);
+                    }
+
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                        OkAction);
+                }
+            };
+
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                message.SetActive(false);
+
+                void OkAction()
+                {
+                    message.SetActive(true);
+                }
+
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte invocation",
+                    OkAction);
+            };
+        }
+
+        /// <summary>
+        /// Apply the DivideInvocation effect.
+        /// Divide by 2 every opponent invocation cards Def except for those which aren't affected by effect cards
+        /// </summary>
+        private void ApplyDivideInvocation()
+        {
+            var opponentInvocationCard =
+                opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
+            foreach (var card in opponentInvocationCard)
+            {
+                var newBonusDefense = card.GetBonusDefense() - card.GetCurrentDefense() / 2;
+                card.SetBonusDefense(newBonusDefense);
+            }
+        }
+
+        /// <summary>
+        /// Apply the Duration effect.
+        /// Change effect card lifeTime (number of turn on field)
+        /// <param name="effectCard">effect card </param>
+        /// <param name="value">value is a string that is an int</param>
+        /// </summary>
+        private static void ApplyDuration(EffectCard effectCard, string value)
+        {
+            if (int.TryParse(value, out var duration))
+            {
+                effectCard.SetLifeTime(duration);
+            }
+        }
+
+        /// <summary>
+        /// Apply the Combine effect.
+        /// Merge multiple invocation cards
+        /// <param name="effectCard">effect card </param>
+        /// <param name="value">value is a string that is an int that represent the number of invocation cards to merge</param>
+        /// </summary>
+        private void ApplyCombine(EffectCard effectCard, string value)
+        {
+            var numberCombine = int.Parse(value);
+            var currentInvocationCards = currentPlayerCard.invocationCards;
+            if (currentInvocationCards.Count < numberCombine) return;
+            var cards = currentInvocationCards.Cast<Card>().ToList();
+
+            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Sélectionnez " + numberCombine + " Cartes à fusionner", cards,
+                multipleCardSelection: true, numberCardInSelection: numberCombine);
+            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var currentCards = messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
+
+                if (currentCards != null && currentCards.Count > 0)
+                {
+                    var invocationCards = currentCards.Cast<InvocationCard>().ToList();
+
+                    var superInvocationCard =
+                        ScriptableObject.CreateInstance<SuperInvocationCard>();
+                    superInvocationCard.Init(invocationCards);
+
+                    var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
+                    cardLocation.AddPhysicalCard(superInvocationCard, playerName);
+                    foreach (var invocationCard in invocationCards)
+                    {
+                        var index1 = currentInvocationCards.FindIndex(0, currentInvocationCards.Count,
+                            card => card.Nom == invocationCard.Nom);
+                        if (index1 <= -1) continue;
+                        currentPlayerCard.SendToSecretHide(invocationCard);
+                        currentPlayerCard.invocationCards.RemoveAt(index1);
+                    }
+
+                    currentInvocationCards.Add(superInvocationCard);
+
+                    Destroy(messageBox);
+                }
+                else
+                {
+                    MessageBox.CreateOkMessageBox(canvas, "Information",
+                        "Vous n'avez pas choisi le nombre de carte adéquat");
+                    currentPlayerCard.effectCards.Remove(effectCard);
+                    currentPlayerCard.handCards.Add(effectCard);
+                    Destroy(messageBox);
+                }
+            };
+            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                currentPlayerCard.effectCards.Remove(effectCard);
+                currentPlayerCard.handCards.Add(effectCard);
+                Destroy(messageBox);
+            };
+        }
+
+        /// <summary>
+        /// Apply the RevertStat effect.
+        /// Revert DEF and ATK of every invocation cards on field
+        /// </summary>
+        private void ApplyRevertStat()
+        {
+            var invocationCards1 = currentPlayerCard.invocationCards;
+            var invocationCards2 =
+                opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
+
+            foreach (var card in invocationCards1)
+            {
+                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                card.SetBonusDefense(newBonusDefense);
+                card.SetBonusAttack(newBonusAttack);
+            }
+
+            foreach (var card in invocationCards2)
+            {
+                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
+                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
+                card.SetBonusDefense(newBonusDefense);
+                card.SetBonusAttack(newBonusAttack);
+            }
+        }
+
+        /// <summary>
+        /// Apply the TakeControl effect.
+        /// Control an invocation card from the opponent during a turn
+        /// </summary>
+        private void ApplyTakeControl()
+        {
+            var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
+                .Cast<Card>().ToList();
+
+            var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Quel carte veux-tu contrôler pendant un tour ?", invocationCardOpponent);
+
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var card =
+                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                if (card != null)
+                {
+                    card.ControlCard();
+                    card.UnblockAttack();
+                    opponentPlayerCard.invocationCards.Remove(card);
+                    opponentPlayerCard.SendToSecretHide(card);
+                    cardLocation.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
+                    currentPlayerCard.invocationCards.Add(card);
+                    Destroy(message);
+                }
+                else
+                {
+                    message.SetActive(false);
+
+                    void OkAction()
+                    {
+                        message.SetActive(true);
+                    }
+
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à controller",
+                        OkAction);
+                }
+            };
+
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                message.SetActive(false);
+
+                void OkAction()
+                {
+                    message.SetActive(true);
+                }
+
+                MessageBox.CreateOkMessageBox(canvas, "Action requise", "Tu dois choisir une carte à contrôler",
+                    OkAction);
+            };
+        }
+
+        /// <summary>
+        /// Apply the NumberAttacks effect.
+        /// Change the number of attack of invocations card from user on field
+        /// <param name="value">value is a string which is an int representing the number of attacks</param>
+        /// </summary>
+        private void ApplyNumberAttacks(string value)
+        {
+            var number = int.Parse(value);
+            foreach (var invocationCard in currentPlayerCard.invocationCards)
+            {
+                invocationCard.SetRemainedAttackThisTurn(number);
+            }
+        }
+
+        /// <summary>
+        /// Apply the SkipAttack effect.
+        /// If opponent is affect, skip attack turn of every opponent invocation cards
+        /// <param name="affectOpponent">bool that indicate if skipAttack affects opponent</param>
+        /// </summary>
+        private void ApplySkipAttack(bool affectOpponent)
+        {
+            if (affectOpponent)
+            {
+                foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards
+                             .Where(card => card.IsAffectedByEffectCard).ToList())
+                {
+                    opponentInvocationCard.BlockAttack();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Apply the ChangeOrder effect.
+        /// Change next card order in the deck (opponent or player)
+        /// <param name="cardsToSee">number of card to see in the deck (and change order)</param>
+        /// </summary>
+        private void ApplyChangeOrder(int cardsToSee)
+        {
+            var see = cardsToSee;
+
+            void PositiveAction()
+            {
+                var cardsDeckToSee = BuildCardsDeckToSee(see, false);
+
+                void PositiveActionCardSelector()
+                {
+                    DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, false);
+                }
+
+                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
+                    cardsDeckToSee, PositiveActionCardSelector);
+            }
+
+            void NegativeAction()
+            {
+                var cardsDeckToSee = BuildCardsDeckToSee(see, true);
+
+                void PositiveActionCardSelector()
+                {
+                    DisplayMessageBoxToChangeOrderCards(cardsDeckToSee, true);
+                }
+
+                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Veux-tu changer l'ordre ?",
+                    cardsDeckToSee, PositiveActionCardSelector);
+            }
+
+            MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
+                "Veux-tu regarder dans le deck de l'adversaire ou du tien ?",
+                PositiveAction, NegativeAction);
+        }
+
+        private void DisplayMessageBoxToChangeOrderCards(List<Card> cardsDeckToSee, bool isCurrentPlayerCard)
+        {
+            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
+                multipleCardSelection: true, numberCardInSelection: cardsDeckToSee.Count, displayOrder: true);
+            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var selectedCards =
+                    messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
+                if (selectedCards.Count == cardsDeckToSee.Count)
+                {
+                    var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
+                    foreach (var card in cardsDeckToSee)
+                    {
+                        playerCard.deck.Remove(card);
+                    }
+
+                    selectedCards.Reverse();
+                    playerCard.deck.AddRange(selectedCards);
+                    Destroy(messageBox);
+                }
+                else
+                {
+                    messageBox.SetActive(false);
+
+                    void OkAction()
+                    {
+                        messageBox.SetActive(true);
+                    }
+
+                    MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                        "Tu dois choisir l'ordre des cartes", OkAction);
+                }
+            };
+            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                messageBox.SetActive(false);
+
+                void OkAction()
+                {
+                    messageBox.SetActive(true);
+                }
+
+                MessageBox.CreateOkMessageBox(canvas, "Action requise",
+                    "Tu dois choisir l'ordre des cartes", OkAction);
+            };
+        }
+
+        private List<Card> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
+        {
+            var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
+            List<Card> cardsDeckToSee = new List<Card>();
+            if (playerCard.deck.Count > see)
+            {
+                for (var j = playerCard.deck.Count - 1;
+                     j > (playerCard.deck.Count - 1 - see);
+                     j--)
+                {
+                    cardsDeckToSee.Add(playerCard.deck[j]);
+                }
+            }
+            else
+            {
+                cardsDeckToSee.AddRange(playerCard.invocationCards);
+            }
+
+            return cardsDeckToSee;
+        }
+
+        /// <summary>
+        /// Apply the ProtectAttack effect.
+        /// Change number of shield on the player (that protect him from opponent invocation attacks)
+        /// One by shield
+        /// <param name="value">value is a string which is an int that represents the number of shield</param>
+        /// </summary>
+        private void ApplyProtectAttack(string value)
+        {
+            var numberShield = int.Parse(value);
+            currentPlayerStatus.SetNumberShield(numberShield);
+        }
+
+        /// <summary>
+        /// Apply the SkipFields effect.
+        /// Remove effects given by field cards on field for opponent and player
+        /// </summary>
+        private void ApplySkipFieldsEffect()
+        {
+            currentPlayerCard.DesactivateFieldCardEffect();
+            opponentPlayerCard.DesactivateFieldCardEffect();
         }
 
         private void ChangePlayer()

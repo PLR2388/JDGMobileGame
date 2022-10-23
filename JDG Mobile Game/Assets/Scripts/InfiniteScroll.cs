@@ -1,4 +1,6 @@
-﻿using Cards;
+﻿using System.Collections.Generic;
+using Cards;
+using Menu;
 using UnityEngine;
 
 public class InfiniteScroll : MonoBehaviour
@@ -8,11 +10,22 @@ public class InfiniteScroll : MonoBehaviour
 
     private int numberSelected;
     private int numberRare;
+    private CardChoice cardChoice;
+    private bool displayP1Card = true;
+    private List<Card> deck1AllCards;
+    private List<Card> deck2AllCards;
 
     // Start is called before the first frame update
     private void Start()
     {
-        var allCards = FindObjectOfType<GameState>().allCards;
+        cardChoice = FindObjectOfType<CardChoice>();
+        deck1AllCards = FindObjectOfType<GameState>().deck1AllCards;
+        deck2AllCards = FindObjectOfType<GameState>().deck2AllCards;
+        DisplayAvailableCards(deck1AllCards);
+    }
+
+    private void DisplayAvailableCards(List<Card> allCards)
+    {
         foreach (var card in allCards)
         {
             if (card.Type == CardType.Contre) continue;
@@ -36,6 +49,13 @@ public class InfiniteScroll : MonoBehaviour
 
     private void Update()
     {
+        // If there is a change
+        if (cardChoice.isPlayerOneCardChosen == displayP1Card)
+        {
+            displayP1Card = !cardChoice.isPlayerOneCardChosen;
+            DisplayAvailableCards(displayP1Card ? deck1AllCards : deck2AllCards);
+        }
+
         numberSelected = 0;
         numberRare = 0;
         var children = GetComponentsInChildren<Transform>();

@@ -10,6 +10,9 @@ public class GameState : MonoBehaviour
 {
     public List<Card> allCards;
 
+    public List<Card> deck1AllCards;
+    public List<Card> deck2AllCards;
+
     [FormerlySerializedAs("DeckP1")] public List<Card> deckP1;
     [FormerlySerializedAs("DeckP2")] public List<Card> deckP2;
 
@@ -35,6 +38,19 @@ public class GameState : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+
+        ResetDeckPlayer();
+    }
+
+    private void ResetDeckPlayer()
+    {
+        deck1AllCards.Clear();
+        deck2AllCards.Clear();
+        foreach (var card in allCards)
+        {
+            deck1AllCards.Add(Instantiate(card));
+            deck2AllCards.Add(Instantiate(card));
+        }
     }
 
     private void InitCards()

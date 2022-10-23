@@ -20,7 +20,7 @@ namespace Menu
         [SerializeField] private GameObject choiceCardMenu;
         [SerializeField] private GameObject gameModeMenu;
 
-        private bool isPlayerOneCardChosen;
+        public bool isPlayerOneCardChosen;
 
         private int CheckCard(ICollection<Card> deck)
         {
@@ -71,6 +71,12 @@ namespace Menu
                     playerToken.SetValue(1);
                     buttonLabel.TranslationName = choiceText.name;
                     isPlayerOneCardChosen = false;
+
+                    foreach (var card in deck)
+                    {
+                        card.CardOwner = CardOwner.Player2;
+                    }
+                    
                     FindObjectOfType<GameState>().deckP2 = deck;
                 }
                 else
@@ -78,6 +84,12 @@ namespace Menu
                     playerToken.SetValue(2);
                     buttonLabel.TranslationName = playText.name;
                     isPlayerOneCardChosen = true;
+                    
+                    foreach (var card in deck)
+                    {
+                        card.CardOwner = CardOwner.Player1;
+                    }
+                    
                     FindObjectOfType<GameState>().deckP1 = deck;
                     DeselectAllCards();
                 }
@@ -94,19 +106,34 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var allCards = FindObjectOfType<GameState>().allCards.Where(card =>
+            var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards.Where(card =>
+                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
+                card.Nom != "Blague interdite" &&
+                card.Nom != "Un bon tuyau").ToList();
+
+            var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards.Where(card =>
                 card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
                 card.Nom != "Blague interdite" &&
                 card.Nom != "Un bon tuyau").ToList();
 
             while (deck1.Count != 30)
             {
-                GetRandomCards(allCards, deck1);
+                GetRandomCards(deck1AllCard, deck1);
             }
 
             while (deck2.Count != 30)
             {
-                GetRandomCards(allCards, deck2);
+                GetRandomCards(deck2AllCard, deck2);
+            }
+
+            foreach (var card in deck1)
+            {
+                card.CardOwner = CardOwner.Player1;
+            }
+            
+            foreach (var card in deck2)
+            {
+                card.CardOwner = CardOwner.Player2;
             }
 
             FindObjectOfType<GameState>().deckP1 = deck1;
@@ -119,25 +146,38 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var allCards = FindObjectOfType<GameState>().allCards;
-            deck2.Add(GetSpecificCard("Maniabilité pourrie", allCards));
-            deck1.Add(GetSpecificCard("Petite culotte", allCards));
-            deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", allCards));
-            deck1.Add(GetSpecificCard("MJ corrompu", allCards));
+            var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
+            var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
+
+            deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", deck2AllCard));
+            deck2.Add(GetSpecificCard("Petite culotte", deck2AllCard));
+            deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
+            deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", deck1AllCard));
+            deck1.Add(GetSpecificCard("Bolossage gratuit", deck1AllCard));
 
             while (deck1.Count != 30)
             {
-                GetRandomCards(allCards, deck1);
+                GetRandomCards(deck1AllCard, deck1);
             }
 
             deck1.Reverse();
 
             while (deck2.Count != 30)
             {
-                GetRandomCards(allCards, deck2);
+                GetRandomCards(deck2AllCard, deck2);
             }
 
             deck2.Reverse();
+            
+            foreach (var card in deck1)
+            {
+                card.CardOwner = CardOwner.Player1;
+            }
+            
+            foreach (var card in deck2)
+            {
+                card.CardOwner = CardOwner.Player2;
+            }
 
             FindObjectOfType<GameState>().deckP1 = deck1;
             FindObjectOfType<GameState>().deckP2 = deck2;

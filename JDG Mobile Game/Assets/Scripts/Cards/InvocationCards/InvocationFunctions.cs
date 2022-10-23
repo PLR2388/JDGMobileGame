@@ -35,6 +35,12 @@ namespace Cards.InvocationCards
             opponentPlayerCards = GameLoop.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         }
 
+        /// <summary>
+        /// DealWithStartEffect.
+        /// Apply startEffect of an invocation card.
+        /// <param name="currentInvocationCard">the current invocation card</param>
+        /// <param name="invocationStartEffect">start effect of this invocation card</param>
+        /// </summary>
         private void DealWithStartEffect(InvocationCard currentInvocationCard,
             InvocationStartEffect invocationStartEffect)
         {
@@ -130,361 +136,16 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void StartEffectSacrificeFieldIncrement(InvocationCard currentInvocationCard, string value)
-        {
-            var elements = value.Split(';');
-            var sacrifice = elements[0];
-            var field = elements[1];
-            var incrementStat = float.Parse(elements[2]);
-
-            var currentField = currentPlayerCard.field;
-            if (currentField == null || field != currentField.Nom) return;
-            var invocationCardOnField = currentPlayerCard.invocationCards;
-            var k = 0;
-            var found = false;
-            while (!found && k < invocationCardOnField.Count)
-            {
-                if (invocationCardOnField[k] != null &&
-                    invocationCardOnField[k].Nom == sacrifice)
-                {
-                    found = true;
-                }
-                else
-                {
-                    k++;
-                }
-            }
-
-            if (!found) return;
-            var cardToSacrifice = invocationCardOnField[k];
-
-            void PositiveAction()
-            {
-                currentPlayerCard.invocationCards.Remove(cardToSacrifice);
-                currentPlayerCard.yellowTrash.Add(cardToSacrifice);
-                currentInvocationCard.SetBonusAttack(incrementStat);
-                currentInvocationCard.SetBonusDefense(incrementStat);
-            }
-
-            MessageBox.CreateSimpleMessageBox(canvas, "Choix",
-                "Voulez-vous sacrifier " + sacrifice + " pour gagner " + incrementStat +
-                " en ATK et DEF ?", PositiveAction);
-        }
-
-        private void StartEffectCondition(InvocationCard currentInvocationCard, string value)
-        {
-            switch (value)
-            {
-                case "skipAttack":
-                {
-                    var m = CreateMessageBoxSimple("Action possible",
-                        "Voulez-vous sauter la phase d'attaque de la carte pour ajouter une carte equipement de votre pioche à votre main ?");
-                    m.GetComponent<MessageBox>().PositiveAction = () =>
-                    {
-                        m.GetComponent<MessageBox>().description = "";
-                        var deck = currentPlayerCard.deck;
-                        var equipmentCards = deck.Where(card => card.Type == CardType.Equipment).ToList();
-                        var messageBox1 =
-                            CreateMessageBoxSelectorCard("Choix de la carte équipement", equipmentCards);
-                        messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-                        {
-                            var selectedCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
-                            if (selectedCard != null)
-                            {
-                                currentPlayerCard.handCards.Add(selectedCard);
-                                currentPlayerCard.deck.Remove(selectedCard);
-                                var index = currentPlayerCard.GetIndexInvocationCard(currentInvocationCard
-                                    .Nom);
-                                currentPlayerCard.invocationCards[index].BlockAttack();
-                                currentInvocationCard.BlockAttack();
-                            }
-
-                            inHandButton.SetActive(true);
-                            Destroy(messageBox1);
-                        };
-                        messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-                        {
-                            inHandButton.SetActive(true);
-                            Destroy(messageBox1);
-                        };
-                        Destroy(m);
-                    };
-                    m.GetComponent<MessageBox>().NegativeAction = () =>
-                    {
-                        inHandButton.SetActive(true);
-                        Destroy(m);
-                    };
-                }
-                    break;
-                case "cantAttack":
-                {
-                    currentInvocationCard.BlockAttack();
-                }
-                    break;
-            }
-        }
-
-        private void StartEffectDrawXCards(string value)
-        {
-            var x = int.Parse(value);
-            var size = currentPlayerCard.deck.Count;
-            if (size <= 0) return;
-            int maxCardDraw;
-            if ((size - x) >= 0)
-            {
-                maxCardDraw = x;
-            }
-            else
-            {
-                maxCardDraw = size % x;
-            }
-
-            void PositiveAction()
-            {
-                for (var j = size - 1; j >= size - 1 - maxCardDraw; j--)
-                {
-                    var c = currentPlayerCard.deck[j];
-                    currentPlayerCard.handCards.Add(c);
-                    currentPlayerCard.deck.Remove(c);
-                }
-
-                inHandButton.SetActive(true);
-            }
-
-            void NegativeAction()
-            {
-                inHandButton.SetActive(true);
-            }
-
-            CreateMessageBoxSimple("Action possible",
-                "Voulez-vous piocher " + maxCardDraw + " cartes ?", PositiveAction, NegativeAction);
-        }
-
-        private void StartEffectSendToDeath(InvocationCard currentInvocationCard, ref List<Card> cardFound)
-        {
-            if (GameLoop.IsP1Turn)
-            {
-                var p2InvocationCards = opponentPlayerCards.invocationCards;
-
-                cardFound.AddRange(p2InvocationCards);
-            }
-            else
-            {
-                var p1InvocationCards = opponentPlayerCards.invocationCards;
-
-                cardFound.AddRange(p1InvocationCards);
-            }
-
-
-            var message = CreateMessageBoxSelectorCard("Choix de la carte à tuer :", cardFound);
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var invocationCardSelected =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
-                if (invocationCardSelected != null)
-                {
-                    var invocationCards = opponentPlayerCards.invocationCards;
-                    var k = 0;
-                    var found = false;
-                    while (!found && k < invocationCards.Count)
-                    {
-                        if (invocationCards[k] != null &&
-                            invocationCards[k].Nom == invocationCardSelected.Nom)
-                        {
-                            found = true;
-                        }
-                        else
-                        {
-                            k++;
-                        }
-                    }
-
-                    if (found)
-                    {
-                        if (GameLoop.IsP1Turn)
-                        {
-                            p2.GetComponent<PlayerCards>().invocationCards.Remove(invocationCardSelected);
-                            p2.GetComponent<PlayerCards>().yellowTrash.Add(invocationCardSelected);
-                        }
-                        else
-                        {
-                            p1.GetComponent<PlayerCards>().invocationCards.Remove(invocationCardSelected);
-                            p1.GetComponent<PlayerCards>().yellowTrash.Add(invocationCardSelected);
-                        }
-
-                        currentInvocationCard.IncrementNumberDeaths();
-                    }
-                    else
-                    {
-                        Debug.Log("Something went wrong!");
-                    }
-                }
-                else
-                {
-                    CreateMessageBoxNotChoosenCard();
-                }
-
-                inHandButton.SetActive(true);
-                Destroy(message);
-            };
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                inHandButton.SetActive(true);
-                Destroy(message);
-            };
-        }
-
-        private void StartEffectDestroyField(InvocationCard currentInvocationCard, ref List<Card> cardFound,
-            bool mustDivideAttack,
-            bool mustDivideDefense)
-        {
-            var fieldCardP1 = p1.GetComponent<PlayerCards>().field;
-            var fieldCardP2 = p2.GetComponent<PlayerCards>().field;
-
-            if (fieldCardP1 != null)
-            {
-                cardFound.Add(fieldCardP1);
-            }
-
-            if (fieldCardP2 != null)
-            {
-                cardFound.Add(fieldCardP2);
-            }
-
-            if (cardFound.Count <= 0) return;
-            var message = CreateMessageBoxSelectorCard("Choix du terrain à détruire", cardFound);
-            var attack = mustDivideAttack;
-            var defense = mustDivideDefense;
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var fieldCard =
-                    (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
-
-                if (fieldCard != null)
-                {
-                    if (attack)
-                    {
-                        currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetAttack() / 2);
-                    }
-
-                    if (defense)
-                    {
-                        currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetDefense() / 2);
-                    }
-
-                    if (fieldCardP1 && fieldCard.Nom == fieldCardP1.Nom)
-                    {
-                        p1.GetComponent<PlayerCards>().field = null;
-                        p1.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
-                    }
-                    else
-                    {
-                        p2.GetComponent<PlayerCards>().field = null;
-                        p2.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
-                    }
-                }
-                else
-                {
-                    CreateMessageBoxNotChoosenCard();
-                }
-
-                inHandButton.SetActive(true);
-                Destroy(message);
-            };
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                inHandButton.SetActive(true);
-                currentInvocationCard.UnblockAttack();
-                Destroy(message);
-            };
-        }
-
-        private void StartEffectPutField(List<Card> cardFound)
-        {
-            if (cardFound.Count <= 0) return;
-            if (currentPlayerCard.field == null)
-            {
-                var message = CreateMessageBoxSelectorCard("Choix du terrain à poser", cardFound);
-
-                message.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var fieldCard =
-                        (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
-
-                    if (fieldCard != null)
-                    {
-                        currentPlayerCard.field = fieldCard;
-                        currentPlayerCard.deck.Remove(fieldCard);
-                    }
-                    else
-                    {
-                        CreateMessageBoxNotChoosenCard();
-                    }
-
-                    inHandButton.SetActive(true);
-                    Destroy(message);
-                };
-                message.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    inHandButton.SetActive(true);
-                    Destroy(message);
-                };
-            }
-            else
-            {
-                var message =
-                    CreateMessageBoxSelectorCard("Choix du terrain à prendre en main", cardFound);
-
-
-                message.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var fieldCard =
-                        (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
-
-                    if (fieldCard != null)
-                    {
-                        currentPlayerCard.deck.Add(fieldCard);
-                        currentPlayerCard.deck.Remove(fieldCard);
-                    }
-                    else
-                    {
-                        CreateMessageBoxNotChoosenCard();
-                    }
-
-                    inHandButton.SetActive(true);
-                    Destroy(message);
-                };
-                message.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    inHandButton.SetActive(true);
-                    Destroy(message);
-                };
-            }
-        }
-
-        private void StartEffectRemoveAllInvocationCards(string value)
-        {
-            var p1InvocationCards = p1.GetComponent<PlayerCards>().invocationCards;
-            var p2InvocationCards = p2.GetComponent<PlayerCards>().invocationCards;
-
-
-            for (var j = p1InvocationCards.Count - 1; j >= 0; j--)
-            {
-                if (p1InvocationCards[j].Nom == value) continue;
-                p1.GetComponent<PlayerCards>().handCards.Add(p1InvocationCards[j]);
-                p1.GetComponent<PlayerCards>().invocationCards
-                    .Remove(p1InvocationCards[j]);
-            }
-
-            for (var j = p2InvocationCards.Count - 1; j >= 0; j--)
-            {
-                if (p2InvocationCards[j].Nom == value) continue;
-                p2.GetComponent<PlayerCards>().handCards.Add(p2InvocationCards[j]);
-                p2.GetComponent<PlayerCards>().invocationCards
-                    .Remove(p2InvocationCards[j]);
-            }
-        }
-
+        /// <summary>
+        /// StartEffectGetCardSource.
+        /// Apply GetCardSource startEffect of an invocation card.
+        /// <param name="value">string that represent the source</param>
+        /// <param name="cardName">name of the card to get</param>
+        /// <param name="cardFound">list of cards the user can choose</param>
+        /// <param name="invokeCardNames">list of invocation card name to get from source</param>
+        /// <param name="typeCard">string that represents the type of card to get in source</param>
+        /// <param name="familyName">string that represent the family name of cards to get in source</param>
+        /// </summary>
         private void StartEffectGetCardSource(string value, string cardName, ref List<Card> cardFound,
             IReadOnlyCollection<string> invokeCardNames,
             string typeCard, string familyName)
@@ -717,6 +378,421 @@ namespace Cards.InvocationCards
             }
         }
 
+        /// <summary>
+        /// StartEffectRemoveAllInvocationCards.
+        /// Apply RemoveAllInvocationCards startEffect of an invocation card.
+        /// Remove all invocation cards on field except one
+        /// <param name="value">string that represent the name of the card to except</param>
+        /// </summary>
+        private void StartEffectRemoveAllInvocationCards(string value)
+        {
+            var p1InvocationCards = p1.GetComponent<PlayerCards>().invocationCards;
+            var p2InvocationCards = p2.GetComponent<PlayerCards>().invocationCards;
+
+
+            for (var j = p1InvocationCards.Count - 1; j >= 0; j--)
+            {
+                if (p1InvocationCards[j].Nom == value) continue;
+                p1.GetComponent<PlayerCards>().handCards.Add(p1InvocationCards[j]);
+                p1.GetComponent<PlayerCards>().invocationCards
+                    .Remove(p1InvocationCards[j]);
+            }
+
+            for (var j = p2InvocationCards.Count - 1; j >= 0; j--)
+            {
+                if (p2InvocationCards[j].Nom == value) continue;
+                p2.GetComponent<PlayerCards>().handCards.Add(p2InvocationCards[j]);
+                p2.GetComponent<PlayerCards>().invocationCards
+                    .Remove(p2InvocationCards[j]);
+            }
+        }
+
+        /// <summary>
+        /// StartEffectPutField.
+        /// Apply PutField startEffect of an invocation card.
+        /// Put or get a field card from the deck depending if user already has a field card on field.
+        /// <param name="cardFound">list of field card available to the user</param>
+        /// </summary>
+        private void StartEffectPutField(List<Card> cardFound)
+        {
+            if (cardFound.Count <= 0) return;
+            if (currentPlayerCard.field == null)
+            {
+                var message = CreateMessageBoxSelectorCard("Choix du terrain à poser", cardFound);
+
+                message.GetComponent<MessageBox>().PositiveAction = () =>
+                {
+                    var fieldCard =
+                        (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+
+                    if (fieldCard != null)
+                    {
+                        currentPlayerCard.field = fieldCard;
+                        currentPlayerCard.deck.Remove(fieldCard);
+                    }
+                    else
+                    {
+                        CreateMessageBoxNotChoosenCard();
+                    }
+
+                    inHandButton.SetActive(true);
+                    Destroy(message);
+                };
+                message.GetComponent<MessageBox>().NegativeAction = () =>
+                {
+                    inHandButton.SetActive(true);
+                    Destroy(message);
+                };
+            }
+            else
+            {
+                var message =
+                    CreateMessageBoxSelectorCard("Choix du terrain à prendre en main", cardFound);
+
+
+                message.GetComponent<MessageBox>().PositiveAction = () =>
+                {
+                    var fieldCard =
+                        (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+
+                    if (fieldCard != null)
+                    {
+                        currentPlayerCard.deck.Add(fieldCard);
+                        currentPlayerCard.deck.Remove(fieldCard);
+                    }
+                    else
+                    {
+                        CreateMessageBoxNotChoosenCard();
+                    }
+
+                    inHandButton.SetActive(true);
+                    Destroy(message);
+                };
+                message.GetComponent<MessageBox>().NegativeAction = () =>
+                {
+                    inHandButton.SetActive(true);
+                    Destroy(message);
+                };
+            }
+        }
+
+        /// <summary>
+        /// StartEffectDestroyField.
+        /// Apply DestroyField startEffect of an invocation card.
+        /// Remove a field card from the field be it user or opponent.
+        /// <param name="currentInvocationCard">invocation card that has this property</param>
+        /// <param name="cardFound">list of field cards available to destroy</param>
+        /// <param name="mustDivideAttack">boolean to know if we have to divide attack by 2 if user agree to destroy a field card</param>
+        /// <param name="mustDivideDefense">boolean to know if we have to divide defense by 2 if user agree to destroy a field card</param>
+        /// </summary>
+        private void StartEffectDestroyField(InvocationCard currentInvocationCard, ref List<Card> cardFound,
+            bool mustDivideAttack,
+            bool mustDivideDefense)
+        {
+            var fieldCardP1 = p1.GetComponent<PlayerCards>().field;
+            var fieldCardP2 = p2.GetComponent<PlayerCards>().field;
+
+            if (fieldCardP1 != null)
+            {
+                cardFound.Add(fieldCardP1);
+            }
+
+            if (fieldCardP2 != null)
+            {
+                cardFound.Add(fieldCardP2);
+            }
+
+            if (cardFound.Count <= 0) return;
+            var message = CreateMessageBoxSelectorCard("Choix du terrain à détruire", cardFound);
+            var attack = mustDivideAttack;
+            var defense = mustDivideDefense;
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var fieldCard =
+                    (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+
+                if (fieldCard != null)
+                {
+                    if (attack)
+                    {
+                        currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetAttack() / 2);
+                    }
+
+                    if (defense)
+                    {
+                        currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetDefense() / 2);
+                    }
+
+                    if (fieldCardP1 && fieldCard.Nom == fieldCardP1.Nom)
+                    {
+                        p1.GetComponent<PlayerCards>().field = null;
+                        p1.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
+                    }
+                    else
+                    {
+                        p2.GetComponent<PlayerCards>().field = null;
+                        p2.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
+                    }
+                }
+                else
+                {
+                    CreateMessageBoxNotChoosenCard();
+                }
+
+                inHandButton.SetActive(true);
+                Destroy(message);
+            };
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                inHandButton.SetActive(true);
+                currentInvocationCard.UnblockAttack();
+                Destroy(message);
+            };
+        }
+
+        // TODO: Check if that's the expected behaviour
+        /// <summary>
+        /// StartEffectSendToDeath.
+        /// Apply SendToDeath startEffect of an invocation card.
+        /// Send a card from the opponent to the yellow trash.
+        /// Increment the number of deck of the invocationCard with this property
+        /// <param name="currentInvocationCard">invocation card that has this property</param>
+        /// <param name="cardFound">list of invocation cards available to destroy</param>
+        /// </summary>
+        private void StartEffectSendToDeath(InvocationCard currentInvocationCard, ref List<Card> cardFound)
+        {
+            if (GameLoop.IsP1Turn)
+            {
+                var p2InvocationCards = opponentPlayerCards.invocationCards;
+
+                cardFound.AddRange(p2InvocationCards);
+            }
+            else
+            {
+                var p1InvocationCards = opponentPlayerCards.invocationCards;
+
+                cardFound.AddRange(p1InvocationCards);
+            }
+
+
+            var message = CreateMessageBoxSelectorCard("Choix de la carte à tuer :", cardFound);
+            message.GetComponent<MessageBox>().PositiveAction = () =>
+            {
+                var invocationCardSelected =
+                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                if (invocationCardSelected != null)
+                {
+                    var invocationCards = opponentPlayerCards.invocationCards;
+                    var k = 0;
+                    var found = false;
+                    while (!found && k < invocationCards.Count)
+                    {
+                        if (invocationCards[k] != null &&
+                            invocationCards[k].Nom == invocationCardSelected.Nom)
+                        {
+                            found = true;
+                        }
+                        else
+                        {
+                            k++;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        if (GameLoop.IsP1Turn)
+                        {
+                            p2.GetComponent<PlayerCards>().invocationCards.Remove(invocationCardSelected);
+                            p2.GetComponent<PlayerCards>().yellowTrash.Add(invocationCardSelected);
+                        }
+                        else
+                        {
+                            p1.GetComponent<PlayerCards>().invocationCards.Remove(invocationCardSelected);
+                            p1.GetComponent<PlayerCards>().yellowTrash.Add(invocationCardSelected);
+                        }
+
+                        currentInvocationCard.IncrementNumberDeaths();
+                    }
+                    else
+                    {
+                        Debug.Log("Something went wrong!");
+                    }
+                }
+                else
+                {
+                    CreateMessageBoxNotChoosenCard();
+                }
+
+                inHandButton.SetActive(true);
+                Destroy(message);
+            };
+            message.GetComponent<MessageBox>().NegativeAction = () =>
+            {
+                inHandButton.SetActive(true);
+                Destroy(message);
+            };
+        }
+
+
+        /// <summary>
+        /// StartEffectDrawXCards.
+        /// Apply DrawXCards startEffect of an invocation card.
+        /// Ask user if he wants to draw value cards
+        /// <param name="value">value is a string that is an number representing the max number of cards to draw</param>
+        /// </summary>
+        private void StartEffectDrawXCards(string value)
+        {
+            var x = int.Parse(value);
+            var size = currentPlayerCard.deck.Count;
+            if (size <= 0) return;
+            int maxCardDraw;
+            if ((size - x) >= 0)
+            {
+                maxCardDraw = x;
+            }
+            else
+            {
+                maxCardDraw = size % x;
+            }
+
+            void PositiveAction()
+            {
+                for (var j = size - 1; j >= size - 1 - maxCardDraw; j--)
+                {
+                    var c = currentPlayerCard.deck[j];
+                    currentPlayerCard.handCards.Add(c);
+                    currentPlayerCard.deck.Remove(c);
+                }
+
+                inHandButton.SetActive(true);
+            }
+
+            void NegativeAction()
+            {
+                inHandButton.SetActive(true);
+            }
+
+            CreateMessageBoxSimple("Action possible",
+                "Voulez-vous piocher " + maxCardDraw + " cartes ?", PositiveAction, NegativeAction);
+        }
+
+        /// <summary>
+        /// StartEffectCondition.
+        /// Apply Condition startEffect of an invocation card.
+        /// Apply special affect to invocation card.
+        /// Currently there are 2 affects :
+        /// - skipAttack : Prevent from attacking this turn to add an equipment card to the hand
+        /// - cantAttack : Block user from attacking 
+        /// <param name="currentInvocationCard">invocation card with this property</param>
+        /// <param name="value">value is a string that reprensent the condition</param>
+        /// </summary>
+        private void StartEffectCondition(InvocationCard currentInvocationCard, string value)
+        {
+            switch (value)
+            {
+                case "skipAttack":
+                {
+                    var m = CreateMessageBoxSimple("Action possible",
+                        "Voulez-vous sauter la phase d'attaque de la carte pour ajouter une carte equipement de votre pioche à votre main ?");
+                    m.GetComponent<MessageBox>().PositiveAction = () =>
+                    {
+                        m.GetComponent<MessageBox>().description = "";
+                        var deck = currentPlayerCard.deck;
+                        var equipmentCards = deck.Where(card => card.Type == CardType.Equipment).ToList();
+                        var messageBox1 =
+                            CreateMessageBoxSelectorCard("Choix de la carte équipement", equipmentCards);
+                        messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
+                        {
+                            var selectedCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
+                            if (selectedCard != null)
+                            {
+                                currentPlayerCard.handCards.Add(selectedCard);
+                                currentPlayerCard.deck.Remove(selectedCard);
+                                var index = currentPlayerCard.GetIndexInvocationCard(currentInvocationCard
+                                    .Nom);
+                                currentPlayerCard.invocationCards[index].BlockAttack();
+                                currentInvocationCard.BlockAttack();
+                            }
+
+                            inHandButton.SetActive(true);
+                            Destroy(messageBox1);
+                        };
+                        messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
+                        {
+                            inHandButton.SetActive(true);
+                            Destroy(messageBox1);
+                        };
+                        Destroy(m);
+                    };
+                    m.GetComponent<MessageBox>().NegativeAction = () =>
+                    {
+                        inHandButton.SetActive(true);
+                        Destroy(m);
+                    };
+                }
+                    break;
+                case "cantAttack":
+                {
+                    currentInvocationCard.BlockAttack();
+                }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// StartEffectSacrificeFieldIncrement.
+        /// Apply SacrificeFieldIncrement startEffect of an invocation card.
+        /// Earn Def and atk by sacrificing invocation cards
+        /// <param name="currentInvocationCard">invocation card with this property</param>
+        /// <param name="value">value is a string that represent the invocation card name and field card name</param>
+        /// </summary>
+        private void StartEffectSacrificeFieldIncrement(InvocationCard currentInvocationCard, string value)
+        {
+            var elements = value.Split(';');
+            var sacrifice = elements[0];
+            var field = elements[1];
+            var incrementStat = float.Parse(elements[2]);
+
+            var currentField = currentPlayerCard.field;
+            if (currentField == null || field != currentField.Nom) return;
+            var invocationCardOnField = currentPlayerCard.invocationCards;
+            var k = 0;
+            var found = false;
+            while (!found && k < invocationCardOnField.Count)
+            {
+                if (invocationCardOnField[k] != null &&
+                    invocationCardOnField[k].Nom == sacrifice)
+                {
+                    found = true;
+                }
+                else
+                {
+                    k++;
+                }
+            }
+
+            if (!found) return;
+            var cardToSacrifice = invocationCardOnField[k];
+
+            void PositiveAction()
+            {
+                currentPlayerCard.invocationCards.Remove(cardToSacrifice);
+                currentPlayerCard.yellowTrash.Add(cardToSacrifice);
+                currentInvocationCard.SetBonusAttack(incrementStat);
+                currentInvocationCard.SetBonusDefense(incrementStat);
+            }
+
+            MessageBox.CreateSimpleMessageBox(canvas, "Choix",
+                "Voulez-vous sacrifier " + sacrifice + " pour gagner " + incrementStat +
+                " en ATK et DEF ?", PositiveAction);
+        }
+
+        /// <summary>
+        /// PutInvocationCard.
+        /// Put an invocation card on field.
+        /// Apply StartEffect and ConditionEffect of this card if there is enough place
+        /// <param name="invocationCard">invocation card</param>
+        /// </summary>
         private void PutInvocationCard(InvocationCard invocationCard)
         {
             var size = currentPlayerCard.invocationCards.Count;
@@ -744,6 +820,13 @@ namespace Cards.InvocationCards
             }
         }
 
+        /// <summary>
+        /// IsSpecialActionPossible.
+        /// Check if a special action is possible for a specific invocation Card.
+        /// Activate or desactivate a button when user clicks on a card
+        /// <param name="currentInvocationCard">invocation card</param>
+        /// <param name="invocationActionEffect">invocation actionEffect</param>
+        /// </summary>
         public bool IsSpecialActionPossible(InvocationCard currentInvocationCard,
             InvocationActionEffect invocationActionEffect)
         {
@@ -789,6 +872,27 @@ namespace Cards.InvocationCards
             return isPossible;
         }
 
+        /// <summary>
+        /// ActionEffectBackToLifePossible.
+        /// Check BackToLife ActionEffect can be used.
+        /// <param name="isPossible">previous value of isPossible</param>
+        /// </summary>
+        private bool ActionEffectBackToLifePossible(bool isPossible)
+        {
+            var trash = currentPlayerCard.yellowTrash;
+
+            var invocationCardDead =
+                trash.Where(card => card is InvocationCard && !card.Collector).ToList();
+
+            if (invocationCardDead.Count > 0)
+            {
+                isPossible = true;
+            }
+
+            return isPossible;
+        }
+
+
         private bool ActionEffectSpecificFamilyPossible(InvocationCard currentInvocationCard, string value, float def,
             float atk, bool isPossible)
         {
@@ -820,21 +924,6 @@ namespace Cards.InvocationCards
             }
 
             if (currentInvocationCard.GetBonusAttack() > -atk)
-            {
-                isPossible = true;
-            }
-
-            return isPossible;
-        }
-
-        private bool ActionEffectBackToLifePossible(bool isPossible)
-        {
-            var trash = currentPlayerCard.yellowTrash;
-
-            var invocationCardDead =
-                trash.Where(card => card is InvocationCard && !card.Collector).ToList();
-
-            if (invocationCardDead.Count > 0)
             {
                 isPossible = true;
             }

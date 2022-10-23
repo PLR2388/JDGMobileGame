@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cards.EquipmentCards;
 using UnityEngine;
 
@@ -25,7 +26,6 @@ namespace Cards.InvocationCards
         [SerializeField] private int remainedAttackThisTurn;
         private CardFamily? currentFamily;
         [SerializeField] private bool isControlled;
-
         private void Awake()
         {
             type = CardType.Invocation;
@@ -145,6 +145,12 @@ namespace Cards.InvocationCards
         {
         }
 
+        /// <summary>
+        /// SetBonusDefense.
+        /// Change bonus defense.
+        /// Prevent user from modifying its bonus if he equips invocation card with equipment card "Set Def"
+        /// <param name="bonus">bonus defense</param>
+        /// </summary>
         public void SetBonusDefense(float bonus)
         {
             bonusDefense = bonus;
@@ -157,6 +163,12 @@ namespace Cards.InvocationCards
             bonusDefense = def - GetDefense();
         }
 
+        /// <summary>
+        /// SetBonusAttack.
+        /// Change bonus attack.
+        /// Prevent user from modifying its bonus if he equips invocation card with equipment card "Set Atk"
+        /// <param name="bonus">bonus attack</param>
+        /// </summary>
         public void SetBonusAttack(float bonus)
         {
             bonusAttack = bonus;
@@ -169,11 +181,21 @@ namespace Cards.InvocationCards
             bonusAttack = atk - GetAttack();
         }
 
+        /// <summary>
+        /// IncrementNumberDeaths.
+        /// Increment the value numberDeaths by one.
+        /// </summary>
         public void IncrementNumberDeaths()
         {
             numberDeaths++;
         }
 
+        /// <summary>
+        /// CanAttack.
+        /// Check if an invocation card can attack.
+        /// if there is no equipment, we look at remainedAttackThisTurn and blockAttackNextTurn.
+        /// Otherwise, if there is an equipment card with BlockAtk InstantEffect, we had this condition to the previous one
+        /// </summary>
         public bool CanAttack()
         {
             if (equipmentCard == null) return remainedAttackThisTurn > 0 && !blockAttackNextTurn;
@@ -187,16 +209,30 @@ namespace Cards.InvocationCards
             return remainedAttackThisTurn > 0 && !blockAttackNextTurn & !equipmentBlockedAttack;
         }
 
+        /// <summary>
+        /// AttackTurnDone.
+        /// Decrement remainedAttackThisTurn.
+        /// </summary>
         public void AttackTurnDone()
         {
             remainedAttackThisTurn--;
         }
 
+        /// <summary>
+        /// ResetNewTurn.
+        /// Reset remainedAttackThisTurn variable to one.
+        /// </summary>
         public void ResetNewTurn()
         {
             remainedAttackThisTurn = 1;
         }
 
+        /// <summary>
+        /// SetEquipmentCard.
+        /// Change equipment card.
+        /// If user decided to remove an equipment (card = null), one should remove all equipment effect
+        /// <param name="card">new equipment card</param>
+        /// </summary>
         public void SetEquipmentCard(EquipmentCard card)
         {
             if (equipmentCard != null && card == null)
@@ -207,6 +243,11 @@ namespace Cards.InvocationCards
             equipmentCard = card;
         }
 
+        /// <summary>
+        /// RemoveEquipmentCardEffect.
+        /// Disable equipment card effect on the invocation card.
+        /// <param name="equipmentCardEquipmentInstantEffect">instant effect of the previous equipment card</param>
+        /// </summary>
         private void RemoveEquipmentCardEffect(EquipmentInstantEffect equipmentCardEquipmentInstantEffect)
         {
             if (equipmentCardEquipmentInstantEffect == null) return;
@@ -214,43 +255,27 @@ namespace Cards.InvocationCards
             var values = equipmentCardEquipmentInstantEffect.Values;
             for (var i = 0; i < keys.Count; i++)
             {
+                var value = values[i];
                 switch (keys[i])
                 {
                     case InstantEffect.AddAtk:
                     {
-                        var newBonusAttack = -float.Parse(values[i]) + GetBonusAttack();
-                        SetBonusAttack(newBonusAttack);
+                        RemoveAddAtkEffect(value);
                     }
                         break;
                     case InstantEffect.AddDef:
                     {
-                        var newBonusDefense = -float.Parse(values[i]) + GetBonusDefense();
-                        SetBonusDefense(newBonusDefense);
+                        RemoveAddDefEffect(value);
                     }
                         break;
                     case InstantEffect.MultiplyAtk:
                     {
-                        var multiplicator = int.Parse(values[i]);
-                        if (multiplicator > 1)
-                        {
-                            var newBonusAttack = -(multiplicator - 1) * GetAttack() + GetBonusAttack();
-                            SetBonusAttack(newBonusAttack);
-                        }
+                        RemoveMultiplyAtkEffect(value);
                     }
                         break;
                     case InstantEffect.MultiplyDef:
                     {
-                        var multiplicator = int.Parse(values[i]);
-                        if (multiplicator > 1)
-                        {
-                            var newBonusDefense = -(multiplicator - 1) * GetDefense() + GetBonusDefense();
-                            SetBonusDefense(newBonusDefense);
-                        }
-                        else if (multiplicator < 0)
-                        {
-                            var newBonusDefense = -(GetDefense() / multiplicator) + GetBonusDefense();
-                            SetBonusDefense(newBonusDefense);
-                        }
+                        RemoveMultiplyDefEffect(value);
                     }
                         break;
                     case InstantEffect.SetAtk:
@@ -282,6 +307,67 @@ namespace Cards.InvocationCards
             }
         }
 
+        /// <summary>
+        /// RemoveAddAtkEffect.
+        /// Disable equipment card effect on the invocation card.
+        /// <param name="value">value is a string that represent the bonus atk</param>
+        /// </summary>
+        private void RemoveAddAtkEffect(string value)
+        {
+            var newBonusAttack = -float.Parse(value) + GetBonusAttack();
+            SetBonusAttack(newBonusAttack);
+        }
+
+        /// <summary>
+        /// RemoveAddDefEffect.
+        /// Disable equipment card effect on the invocation card.
+        /// <param name="value">value is a string that represent the bonus def</param>
+        /// </summary>
+        private void RemoveAddDefEffect(string value)
+        {
+            var newBonusDefense = -float.Parse(value) + GetBonusDefense();
+            SetBonusDefense(newBonusDefense);
+        }
+
+        /// <summary>
+        /// RemoveMultiplyAtkEffect.
+        /// Disable equipment card effect on the invocation card.
+        /// <param name="value">value is a string that represent the multiplicator atk</param>
+        /// </summary>
+        private void RemoveMultiplyAtkEffect(string value)
+        {
+            var multiplicator = int.Parse(value);
+            if (multiplicator > 1)
+            {
+                var newBonusAttack = -(multiplicator - 1) * GetAttack() + GetBonusAttack();
+                SetBonusAttack(newBonusAttack);
+            }
+        }
+
+        /// <summary>
+        /// RemoveMultiplyDefEffect.
+        /// Disable equipment card effect on the invocation card.
+        /// <param name="value">value is a string that represent the multiplicator def</param>
+        /// </summary>
+        private void RemoveMultiplyDefEffect(string value)
+        {
+            var multiplicator = int.Parse(value);
+            if (multiplicator > 1)
+            {
+                var newBonusDefense = -(multiplicator - 1) * GetDefense() + GetBonusDefense();
+                SetBonusDefense(newBonusDefense);
+            }
+            else if (multiplicator < 0)
+            {
+                var newBonusDefense = -(GetDefense() / multiplicator) + GetBonusDefense();
+                SetBonusDefense(newBonusDefense);
+            }
+        }
+
+        /// <summary>
+        /// IsInvocationPossible.
+        /// Check if an invocation card can be put on field.
+        /// </summary>
         public bool IsInvocationPossible()
         {
             return InvocationFunctions.IsInvocationPossible(invocationConditions,

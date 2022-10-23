@@ -11,6 +11,13 @@ namespace Cards
         [SerializeField] protected CardType type;
         [SerializeField] protected Material materialCard;
         [SerializeField] protected bool collector;
+        [SerializeField] private CardOwner cardOwner = CardOwner.NotDefined;
+
+        public CardOwner CardOwner
+        {
+            get => cardOwner;
+            set => cardOwner = value;
+        }
 
         public string Nom => nom;
 
