@@ -55,7 +55,7 @@ public class InfiniteScroll : MonoBehaviour
             displayP1Card = !cardChoice.isPlayerOneCardChosen;
             DisplayAvailableCards(displayP1Card ? deck1AllCards : deck2AllCards);
         }
-        
+
         numberSelected = 0;
         numberRare = 0;
         var children = GetComponentsInChildren<Transform>();

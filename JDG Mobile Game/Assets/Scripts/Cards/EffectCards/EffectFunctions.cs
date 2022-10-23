@@ -18,6 +18,7 @@ namespace Cards.EffectCards
         private PlayerStatus opponentPlayerStatus;
         private GameObject p1;
         private GameObject p2;
+        [SerializeField] private CardLocation cardLocation;
 
         // Start is called before the first frame update
         private void Start()
@@ -1975,7 +1976,7 @@ namespace Cards.EffectCards
                     superInvocationCard.Init(invocationCards);
 
                     var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
-                    currentPlayerCard.AddPhysicalCard(superInvocationCard, playerName);
+                    cardLocation.AddPhysicalCard(superInvocationCard, playerName);
                     foreach (var invocationCard in invocationCards)
                     {
                         var index1 = currentInvocationCards.FindIndex(0, currentInvocationCards.Count,
@@ -2055,7 +2056,7 @@ namespace Cards.EffectCards
                     card.UnblockAttack();
                     opponentPlayerCard.invocationCards.Remove(card);
                     opponentPlayerCard.SendToSecretHide(card);
-                    currentPlayerCard.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
+                    cardLocation.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
                     currentPlayerCard.invocationCards.Add(card);
                     Destroy(message);
                 }

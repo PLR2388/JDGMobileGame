@@ -35,7 +35,7 @@ namespace Cards.EquipmentCards
                 return currentPlayerCard;
             }
         }
-        
+
         private static PlayerCards OpponentPlayerCard
         {
             get
@@ -67,7 +67,7 @@ namespace Cards.EquipmentCards
             var opponentInvocationCards = OpponentPlayerCard.invocationCards;
             var currentInvocationCards = playerCards.invocationCards;
             var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
-            
+
             var message = DisplayEquipmentMessageBox(invocationCards, equipmentCard.EquipmentInstantEffect);
 
             message.GetComponent<MessageBox>().PositiveAction = () =>

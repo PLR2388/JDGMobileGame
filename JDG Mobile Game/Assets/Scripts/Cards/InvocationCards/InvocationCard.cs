@@ -26,7 +26,6 @@ namespace Cards.InvocationCards
         [SerializeField] private int remainedAttackThisTurn;
         private CardFamily? currentFamily;
         [SerializeField] private bool isControlled;
-
         private void Awake()
         {
             type = CardType.Invocation;

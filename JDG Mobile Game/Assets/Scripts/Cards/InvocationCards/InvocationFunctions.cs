@@ -871,7 +871,7 @@ namespace Cards.InvocationCards
 
             return isPossible;
         }
-        
+
         /// <summary>
         /// ActionEffectBackToLifePossible.
         /// Check BackToLife ActionEffect can be used.
@@ -891,7 +891,7 @@ namespace Cards.InvocationCards
 
             return isPossible;
         }
-        
+
 
         private bool ActionEffectSpecificFamilyPossible(InvocationCard currentInvocationCard, string value, float def,
             float atk, bool isPossible)

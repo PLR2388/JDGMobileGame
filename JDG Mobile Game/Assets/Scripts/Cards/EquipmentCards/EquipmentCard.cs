@@ -26,16 +26,9 @@ public class EquipmentCard : Card
     /// </summary>
     public bool IsEquipmentPossible()
     {
-        if (GameLoop.IsP1Turn)
-        {
-            var player = GameObject.Find("Player1");
-            return HasEnoughInvocationCard(player);
-        }
-        else
-        {
-            var player = GameObject.Find("Player2");
-            return HasEnoughInvocationCard(player);
-        }
+        var player1 = GameObject.Find("Player1");
+        var player2 = GameObject.Find("Player2");
+        return HasEnoughInvocationCard(player1) || HasEnoughInvocationCard(player2);
     }
 
     /// <summary>
