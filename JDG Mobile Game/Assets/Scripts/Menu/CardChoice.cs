@@ -111,7 +111,7 @@ namespace Menu
                 card.Nom != "Blague interdite" &&
                 card.Nom != "Un bon tuyau").ToList();
 
-            var deck2AllCard = FindObjectOfType<GameState>().deck1AllCards.Where(card =>
+            var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards.Where(card =>
                 card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
                 card.Nom != "Blague interdite" &&
                 card.Nom != "Un bon tuyau").ToList();
