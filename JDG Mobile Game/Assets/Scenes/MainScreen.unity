@@ -4673,7 +4673,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1309832205}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2003630710}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: onClickStory
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1309832205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5747,7 +5759,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1579045381}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2003630710}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: OnClickTuto
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1579045381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7112,6 +7136,7 @@ MonoBehaviour:
   canvas: {fileID: 1089345441}
   choiceCardMenu: {fileID: 1700677370}
   gameModeMenu: {fileID: 978570126}
+  isPlayerOneCardChosen: 0
 --- !u!1 &2007526730
 GameObject:
   m_ObjectHideFlags: 0
