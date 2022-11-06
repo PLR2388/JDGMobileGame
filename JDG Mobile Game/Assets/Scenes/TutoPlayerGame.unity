@@ -1450,12 +1450,11 @@ MonoBehaviour:
   invocationCards: []
   effectCards: []
   isPlayerOne: 1
-  prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
-    type: 3}
-  allPhysicalCards: []
   nextPhaseButton: {fileID: 1957640249}
   inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
+  cardLocation: {fileID: 397230410}
+  secretCards: []
 --- !u!114 &230530445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1667,6 +1666,7 @@ GameObject:
   - component: {fileID: 397230408}
   - component: {fileID: 397230409}
   - component: {fileID: 397230404}
+  - component: {fileID: 397230410}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1744,6 +1744,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
   canvas: {fileID: 244790280}
+  cardLocation: {fileID: 0}
 --- !u!114 &397230408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1784,6 +1785,22 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
   inHandButton: {fileID: 829748139}
   dialogueBox: {fileID: 83409351}
+--- !u!114 &397230410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae7d1432eb6a08a4b8ff632e663bf10d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
+    type: 3}
+  player1: {fileID: 230530442}
+  player2: {fileID: 2017354827}
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0
@@ -6134,12 +6151,11 @@ MonoBehaviour:
   invocationCards: []
   effectCards: []
   isPlayerOne: 0
-  prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
-    type: 3}
-  allPhysicalCards: []
   nextPhaseButton: {fileID: 1957640249}
   inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
+  cardLocation: {fileID: 397230410}
+  secretCards: []
 --- !u!114 &2017354830
 MonoBehaviour:
   m_ObjectHideFlags: 0

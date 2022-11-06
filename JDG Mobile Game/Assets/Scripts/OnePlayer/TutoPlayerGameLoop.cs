@@ -21,6 +21,7 @@ namespace OnePlayer
 
         public int phaseId;
 
+        private CardLocation cardLocation;
         [SerializeField] private GameObject playerText;
         [SerializeField] private GameObject roundText;
         [SerializeField] private TextMeshProUGUI healthP1Text;
@@ -63,6 +64,7 @@ namespace OnePlayer
         // Start is called before the first frame update
         private void Start()
         {
+            cardLocation = GetComponent<CardLocation>();
             scenario = GetComponent<ScenarioDecoder>().Scenario;
             invocationFunctions = GetComponent<InvocationFunctions>();
             IsP1Turn = true;
@@ -1007,7 +1009,7 @@ namespace OnePlayer
             if (invocationCard.IsControlled)
             {
                 playerCards.invocationCards.Remove(invocationCard);
-                playerCards.RemovePhysicalCard(invocationCard);
+                cardLocation.RemovePhysicalCard(invocationCard);
                 opponentPlayerCards.SendCardToHand(invocationCard);
             }
             else

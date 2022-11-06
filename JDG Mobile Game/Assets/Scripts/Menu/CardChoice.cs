@@ -184,7 +184,7 @@ namespace Menu
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
-        private static Card GetSpecificCard(string nameCard, List<Card> cards)
+        public static Card GetSpecificCard(string nameCard, List<Card> cards)
         {
             var card = cards.Find(x => x.Nom == nameCard);
             if (card != null)

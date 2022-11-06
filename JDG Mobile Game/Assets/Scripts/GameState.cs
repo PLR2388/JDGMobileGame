@@ -3,6 +3,7 @@ using System.Linq;
 using Cards;
 using Cards.EffectCards;
 using Cards.InvocationCards;
+using Menu;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -78,5 +79,15 @@ public class GameState : MonoBehaviour
         {
             deckP2.Add(allCards[i]);
         }
+    }
+
+    public void BuildDeckForTuto()
+    {
+        deckP1.Clear();
+        deckP2.Clear();
+
+        var card = CardChoice.GetSpecificCard("Cliché Raciste", deck1AllCards);
+        card.CardOwner = CardOwner.Player1;
+        deckP1.Add(card);
     }
 }
