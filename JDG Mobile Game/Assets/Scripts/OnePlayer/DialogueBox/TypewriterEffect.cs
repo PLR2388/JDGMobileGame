@@ -1,37 +1,50 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class TypewriterEffect : MonoBehaviour
+namespace OnePlayer.DialogueBox
 {
-    [SerializeField] private float typewriterSpeed = 50f;
-
-    public Coroutine Run(string textToType, TMP_Text textLabel)
+    public class TypewriterEffect : MonoBehaviour
     {
-        return StartCoroutine(TypeText(textToType, textLabel));
-    }
+        private float typewriterSpeed = 25f;
 
-    private IEnumerator TypeText(string textToType, TMP_Text textLabel)
-    {
-        textLabel.text = string.Empty;
-
-        float t = 0;
-        int charIndex = 0;
-
-        while (charIndex < textToType.Length)
+        public void AdaptSpeedToLength(float duration, int lengthText)
         {
-            t += Time.deltaTime * typewriterSpeed;
-            charIndex = Mathf.FloorToInt(t);
-            charIndex = Mathf.Clamp(charIndex, 0, textToType.Length);
-
-            textLabel.text = textToType.Substring(0, charIndex);
-            
-            yield return null;
+            if (duration > 0 && lengthText > 0)
+            {
+                typewriterSpeed = lengthText / duration;
+            }
+            else
+            {
+                typewriterSpeed = 25f;
+            }
         }
 
-        textLabel.text = textToType;
-    }
+        public Coroutine Run(string textToType, TMP_Text textLabel)
+        {
+           return StartCoroutine(TypeText(textToType, textLabel));
+        }
 
+        private IEnumerator TypeText(string textToType, TMP_Text textLabel)
+        {
+            textLabel.text = string.Empty;
+
+            float t = 0;
+            int charIndex = 0;
+
+            while (charIndex < textToType.Length)
+            {
+                t += Time.deltaTime * typewriterSpeed;
+                charIndex = Mathf.FloorToInt(t);
+                charIndex = Mathf.Clamp(charIndex, 0, textToType.Length);
+
+                textLabel.text = textToType.Substring(0, charIndex);
+
+                yield return null;
+            }
+
+            textLabel.text = textToType;
+        }
+
+    }
 }

@@ -18,64 +18,100 @@ MonoBehaviour:
     :"
   - "Il y a tout d'abord ta pioche. Evidemment, ce sont les cartes que tu dois bien
     s\xFBr m\xE9langer et les poser face cach\xE9es,"
-  - "ta poubelle jaune, c'est l\xE0 que tu vas mettre les cartes qui seront mortes
+  - "ta poubelle jaune, c'est l\xE0 o\xF9 tu vas mettre les cartes qui seront mortes
     pendant la bataille"
-  - "et il y a \xE9videmment ton terrain, c'est l'emplacement sur lequel vont se
-    battre tes invocations."
+  - "et il y a \xE9galement ton terrain, c'est l'emplacement sur lequel vont se battre
+    tes invocations."
   - "Certains terrains peuvent donner des avantages \xE0 tes invocations (il suffit
-    de lire les cartes) et accesoirement, tu n'es pas oblig\xE9 d'avoir un terrain
-    pour te battre dessus."
-  - "Le plus important, ce sont les emplacements d'\xE9quipements ou d'invocations"
+    de lire les cartes)"
+  - "et accessoirement, tu n'es pas oblig\xE9 d'avoir un terrain pour te battre dessus."
+  - "Le plus important, ce sont les emplacements d'\xE9quipement ou d'invocation."
   - "C'est l\xE0-dessus que tu vas pos\xE9 tes invocations. Tu peux en avoir un maximum
     de 4."
-  - En-dessous, il y a les emplacements de cartes effet.
-  - 'Il existe plusieurs type de cartes dans ce jeu:'
-  - Tout d'abord, il y a les cartes invocations. Regardes !
+  - En-dessous, il y a les emplacements de cartes effets.
+  - 'Il existe plusieurs types de cartes dans ce jeu:'
+  - Tout d'abord, il y a les cartes invocations. Regarde !
   - "Je passe mon tour d'attaque puisque c'est le premier tour, je n'ai pas le droit
-    d'attaquer. C'est donc \xE0 toi. Tu choisis tes cartes, tu les mets sur le terrain."
-  - "Une fois que tu as pos\xE9 toutes les cartes que tu veux, on peut \xE0 la phase
-    d'attaque. Tu peux poser autant de carte que tu le souhaites. Tu peux m\xEAme
-    poser la totalit\xE9 de ta main si tu as envie sur le terrain. Simplement, il
-    faut que tu restes dans la limite des 4 cartes d'invocations et des 4 cartes
-    d'effets."
-  - "Chaque carte poss\xE8de une valeur d'attaque et de d\xE9fense. Lorsqu'on r\xE9sout
-    la phase d'attaque, on compare simplement les \xE9toiles d'attaques de la carte
-    qui attaque avec les \xE9toiles de d\xE9fenses de la carte qui se d\xE9fend."
-  - Quand tu as fini ton tour, appuie sur phase suivante
+    d'attaquer. C'est donc \xE0 toi."
+  - Tu choisis tes cartes, tu les mets sur le terrain.
+  - "Une fois que tu as pos\xE9 toutes les cartes que tu veux, on peut passer \xE0
+    la phase d'attaque. Tu peux poser autant de carte que tu le souhaites."
+  - "Tu peux m\xEAme poser la totalit\xE9 de ta main si tu as envie sur le terrain."
+  - Simplement, il faut que tu restes dans la limite des 4 cartes d'invocations et
+    des 4 cartes d'effets.
+  - "Chaque carte poss\xE8de une valeur d'attaque et de d\xE9fense. "
+  - "Lorsqu'on r\xE9sout la phase d'attaque,"
+  - "on compare simplement les \xE9toiles d'attaques de la carte qui attaque avec
+    les \xE9toiles de d\xE9fenses de la carte qui se d\xE9fend."
   - Je choisis de poser le Pyro-Barbare sur le terrain
-  - "Mais \xE9galement, je pose le terrain Fistiland qui \xE0 partir du prochain
-    tour me permettra de sauter directement mon tour de pioche et d'aller chercher
-    n'importe quelle carte de type Fistiland dans ma pioche."
+  - "Mais \xE9galement, je pose le terrain Fistiland"
+  - "qui \xE0 partir du prochain tour me permettra de sauter directement mon tour
+    de pioche"
+  - et d'aller chercher n'importe quelle carte de type Fistiland dans ma pioche.
   - "Fisti, tu es sur ton terrain. Pr\xE9pare toi \xE0 attaquer !"
   - "Comme tu peux le voir, certaines cartes appartiennent \xE0 des familles."
   - "Le Clich\xE9 Raciste et les tentacules appartenaient \xE0 la famille Japon."
   - "C'est une information \xE0 retenir car certains terrains permettent de booster
     les caract\xE9ristiques de certaines cartes."
-  - "Et je vais \xE9galement \xE9quiper mon fisti d'une Merde magique en plastique
-    rose"
-  - "Les cartes marrons sont des cartes \xE9quipements. Elles se posent sur un personnage
-    et permettent de booster ses capacit\xE9s tant que le personnage est vivant.
-    Evidemment, si le personnage est tu\xE9, la carte \xE9quipement dispara\xEEt
+  - "Et je vais \xE9galement \xE9quiper mon Fisti d'une Merde magique en plastique
+    rose !"
+  - "Les cartes marrons sont des cartes \xE9quipements. "
+  - "Elles se posent sur un personnage et permettent de booster ses capacit\xE9s
+    tant que le personnage est vivant."
+  - "Evidemment, si le personnage est tu\xE9, la carte \xE9quipement dispara\xEEt
     \xE9galement."
-  - "Gr\xE2ce \xE0 ma Merde magique en plastique rose, Fisti obtient une \xE9toile
-    d'attaque et une \xE9toile de d\xE9fense en plus le faisant \xE0 3.5 \xE9toiles
-    d'attaques et 3.5 \xE9toiles de d\xE9fenses."
-  - "Fisti d\xE9truit le Clich\xE9 raciste"
+  - "Gr\xE2ce \xE0 ma Merde magique en plastique rose,"
+  - "Fisti obtient une \xE9toile d'attaque et une \xE9toile de d\xE9fense en plus
+    le faisant passer \xE0 3.5 \xE9toiles d'attaques et 3.5 \xE9toiles de d\xE9fenses."
+  - "Fisti d\xE9truit le Clich\xE9 raciste !"
   - Ce sont tes points de vie. Dans ce jeu, les 2 joueurs ont 30 points de vie maximum.
   - "Fisti avec sa Merde magique en plastique rose avait 3.5 \xE9toiles d'attaque
     alors que ton Clich\xE9 raciste n'avait qu'une \xE9toile de d\xE9fense."
   - "On soustrait donc ta d\xE9fense \xE0 mon attaque, ce qui nous fait 3.5 \xE9toiles
-    moins une \xE9toile. Puisque ta carte est d\xE9truite, il reste donc 2.5 points
-    de vie qui sont enlev\xE9s directement \xE0 ton total de points de vie. Quand
-    tu atteints z\xE9ro, tu as perdu le match."
+    moins une \xE9toile."
+  - "Puisque ta carte est d\xE9truite, il reste donc 2.5 points de vie qui sont enlev\xE9s
+    directement \xE0 ton total de points de vie."
+  - "Quand tu atteints z\xE9ro, tu as perdu le match."
   - "Si tu n'as plus de cartes pour te d\xE9fendre, mon Pyro-Barbare va directement
     attaquer tes points de vie. Pyro-Barbare \xE0 l'attaque !"
-  - "Les cartes bleues sont des cartes effets. Ce sont des cartes plac\xE9es sur
-    le terrain et qui auront des effets sp\xE9cifiques sur tes cartes ou celles de
-    l'adversaire."
+  - Les cartes bleues sont des cartes effets.
+  - "Ce sont des cartes plac\xE9es sur le terrain et qui auront des effets sp\xE9cifiques
+    sur tes cartes ou celles de l'adversaire."
   - "On a vu tous les types de cartes. Apr\xE8s, il existe des subtilit\xE9s qu'on
-    apprend \xE0 m\xE9triser qu'avec le temps. Par exemple, il existe des cartes
-    qui, pour \xEAtre invoqu\xE9 et subsist\xE9 sur le terrain, ont besoin d'une
-    autre carte ou d'une condition sp\xE9cifique."
-  nextDialogueTriggers: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000300000000000000
+    apprend \xE0 m\xE9triser qu'avec le temps."
+  - "Par exemple, il existe des cartes qui, pour \xEAtre invoqu\xE9es et subsist\xE9es
+    sur le terrain, ont besoin d'une autre carte ou d'une condition sp\xE9cifique."
+  nextDialogueTriggers: 000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000010000000000000001000000010000000000000001000000010000000000000000000000010000000100000000000000000000000000000000000000000000000000000001000000010000000000000001000000000000000000000000000000000000000100000001000000000000000000000001000000000000000100000000000000
   responses: []
+  audioClips:
+  - {fileID: 8300000, guid: a4c53f6c828195641b7dde392e578eba, type: 3}
+  - {fileID: 8300000, guid: 20e76ae362724ed49bb4cad5baeb3675, type: 3}
+  - {fileID: 8300000, guid: 43180c6f83a82ca47b2ecb248c116155, type: 3}
+  - {fileID: 8300000, guid: 2b7711be652984d4f86028cc1f901d6c, type: 3}
+  - {fileID: 8300000, guid: edf9e3be2346d274b8a191b6ecf83630, type: 3}
+  - {fileID: 8300000, guid: 91ec4eb74955543488011e94c6905bcb, type: 3}
+  - {fileID: 8300000, guid: f4e3dc0ac8acade42ac01e20e6fb2e12, type: 3}
+  - {fileID: 8300000, guid: 40d76293f3e6ae445b16caf427ac436e, type: 3}
+  - {fileID: 8300000, guid: 16ad236cd1601794794431ef705b4faa, type: 3}
+  - {fileID: 8300000, guid: ebc6ddb261b6e934fa4b49c61f88490c, type: 3}
+  - {fileID: 8300000, guid: cd826c02ded57e842bd512b177441dc4, type: 3}
+  - {fileID: 8300000, guid: f71552fa9226b5a409fbc1512abaecaf, type: 3}
+  - {fileID: 8300000, guid: 8262cb9e348543c4aa8aa57b1fbb3b36, type: 3}
+  - {fileID: 8300000, guid: a51e3a2d31a63144dad84b4a4de1e2da, type: 3}
+  - {fileID: 8300000, guid: 3aababd78f97d1346bce3ca66b651a6a, type: 3}
+  - {fileID: 8300000, guid: 83989777fead8734e80424cd393518d5, type: 3}
+  - {fileID: 8300000, guid: 5ececda64df3a8941bb29dceaa1b6354, type: 3}
+  - {fileID: 8300000, guid: 7d08970d25750a34eb0d62e32f91c029, type: 3}
+  - {fileID: 8300000, guid: 12f6d66b24e64af42a0fd8a3579c96a9, type: 3}
+  - {fileID: 8300000, guid: c01881b3b60ef9a4bb876f5644a0fdc1, type: 3}
+  - {fileID: 8300000, guid: 4cd3302fae2cbd149aadf15bcd665ea2, type: 3}
+  - {fileID: 8300000, guid: 4302a1b036033c047863fdf17623dd66, type: 3}
+  - {fileID: 8300000, guid: 393eb0968c1673b47b11db06b6a65eb0, type: 3}
+  - {fileID: 8300000, guid: d8a3e9c56e68c5842a16164e8bd8d7af, type: 3}
+  - {fileID: 8300000, guid: 2882641f373276a4fb52d1308c6aaa7f, type: 3}
+  - {fileID: 8300000, guid: 0935e2095f1f6ab46a81e692bf7b7af3, type: 3}
+  - {fileID: 8300000, guid: 50417eb1e5994ba4faae23b44648a95f, type: 3}
+  - {fileID: 8300000, guid: 0bc03878c7ca51c42b7f47adff2dbb51, type: 3}
+  - {fileID: 8300000, guid: 0031d31eb2f52a14abdbb2daa9bc584c, type: 3}
+  - {fileID: 8300000, guid: 7db8f1c173061ca4585e9c0e92407f68, type: 3}
+  soundDialogueIndex: 0000000001000000020000000300000004000000050000000700000008000000090000000a0000000b0000000c0000000e00000011000000140000001500000018000000190000001a0000001b0000001c0000001d000000200000002200000023000000240000002500000028000000290000002b000000

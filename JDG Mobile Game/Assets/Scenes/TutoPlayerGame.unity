@@ -439,8 +439,8 @@ GameObject:
   m_Component:
   - component: {fileID: 83409350}
   - component: {fileID: 83409351}
-  - component: {fileID: 83409352}
   - component: {fileID: 83409353}
+  - component: {fileID: 83409352}
   m_Layer: 5
   m_Name: DialogueBox
   m_TagString: Untagged
@@ -497,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cac269e1b1a4252408f513d513c5d741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typewriterSpeed: 50
+  typewriterSpeed: 1
 --- !u!114 &83409353
 MonoBehaviour:
   m_ObjectHideFlags: 0
