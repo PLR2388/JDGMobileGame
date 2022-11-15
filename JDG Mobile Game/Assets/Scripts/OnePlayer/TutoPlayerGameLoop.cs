@@ -55,7 +55,7 @@ namespace OnePlayer
         private InvocationCard opponent;
         private int numberOfTurn;
         
-        private Scenario scenario;
+        private ActionScenario[] actionScenarios;
         [SerializeField] 
         private DialogueUI dialogueBox;
         private int currentIndex = 0;
@@ -65,7 +65,7 @@ namespace OnePlayer
         private void Start()
         {
             cardLocation = GetComponent<CardLocation>();
-            scenario = GetComponent<ScenarioDecoder>().Scenario;
+            actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
             invocationFunctions = GetComponent<InvocationFunctions>();
             IsP1Turn = true;
             ChangeHealthText(PlayerStatus.MaxPv, true);
@@ -73,6 +73,66 @@ namespace OnePlayer
             p1.GetComponent<PlayerStatus>().SetNumberShield(0);
             p2.GetComponent<PlayerStatus>().SetNumberShield(0);
             PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
+            DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
+        }
+
+        private void TriggerScenarioAction(int index)
+        {
+            try
+            {
+                var actionScenario = actionScenarios.First(elt => elt.Index == index);
+                var highlight = actionScenario.Highlight;
+                var putCard = actionScenario.PutCard;
+                var image = actionScenario.Image;
+                var video = actionScenario.Video;
+                var attack = actionScenario.Attack;
+
+                UnsetHighligh();
+                switch (highlight)
+                {
+                    case Highlight.space:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.Space, true);
+                        break;
+                    case Highlight.deck:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.Deck, true);
+                        break;
+                    case Highlight.yellow_trash:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.YellowTrash, true);
+                        break;
+                    case Highlight.field:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.Field, true);
+                        break;
+                    case Highlight.invocation_cards:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.Invocations, true);
+                        break;
+                    case Highlight.effect_cards:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.Effect, true);
+                        break;
+                    case Highlight.hand_cards:
+                        break;
+                    case Highlight.next_phase:
+                        break;
+                    case Highlight.unknown:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            catch (Exception e)
+            {
+                UnsetHighligh();
+                Console.WriteLine(e);
+            }
+        }
+
+        private void UnsetHighligh()
+        {
+            HighLightPlane.Highlight.Invoke(HighlightElement.Space, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.Deck, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.YellowTrash, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.Field, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.Invocations, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.Effect, false);
         }
 
         // Update is called once per frame

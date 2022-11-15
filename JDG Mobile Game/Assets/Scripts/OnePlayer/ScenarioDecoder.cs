@@ -12,7 +12,6 @@ public class ScenarioDecoder : MonoBehaviour
             JsonScenario jsonScenario = JsonUtility.FromJson<JsonScenario>(jsonFile.text);
 
             Scenario scenario = jsonScenario.ToScenario();
-            scenario.dialogueObject = dialogueObject;
             return scenario;
         }
     }

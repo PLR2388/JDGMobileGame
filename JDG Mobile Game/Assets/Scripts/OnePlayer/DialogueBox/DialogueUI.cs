@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [System.Serializable]
-public class NextDialogueEvent : UnityEvent<NextDialogueTrigger>
+public class CurrentDialogIndex : UnityEvent<int>
 {
 }
 
@@ -17,7 +17,7 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private TMP_Text textLabel;
     [SerializeField] private DialogueObject testDialogue;
 
-    public static readonly NextDialogueEvent NextDialogueTriggerEvent = new NextDialogueEvent();
+    public static readonly CurrentDialogIndex DialogIndex = new CurrentDialogIndex();
     private NextDialogueTrigger currentTrigger = NextDialogueTrigger.Undefined;
 
     private ResponseHandler responseHandler;
@@ -29,7 +29,6 @@ public class DialogueUI : MonoBehaviour
     private void Start()
     {
         currentSoundIndex = 0;
-        NextDialogueTriggerEvent.AddListener(ReceiveNextDialogueEvent);
         typewriterEffect = GetComponent<TypewriterEffect>();
         responseHandler = GetComponent<ResponseHandler>();
         audioSource = FindObjectOfType<AudioSource>();
@@ -54,6 +53,7 @@ public class DialogueUI : MonoBehaviour
         var audioClips = dialogueObject.AudioClips;
         for (int i = 0; i < dialogueObject.Dialogue.Length; i++)
         {
+            DialogIndex.Invoke(i);
             string dialogue = dialogueObject.Dialogue[i];
 
             if (soundDialogIndex.Contains(i))

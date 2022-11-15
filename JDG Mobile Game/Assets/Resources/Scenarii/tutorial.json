@@ -1,117 +1,79 @@
 ﻿{
   "jsonScenarios": [
     {
-      "message": "Laisse moi t'expliquer les bases de ce jeu fantastique et facile !"
+      "index": 1,
+      "highlight": "space"
     },
     {
-      "message": "Devant toi, c'est ton espace de jeu. Il se divise de la manière suivante :"
-    },
-    {
-      "message": "Il y a tout d'abord ta pioche. Evidemment, ce sont les cartes que tu dois bien sûr mélanger et les poser face cachées,",
+      "index": 2,
       "highlight": "deck"
     },
     {
-      "message": "ta poubelle jaune, c'est là que tu vas mettre les cartes qui seront mortes pendant la bataille",
+      "index": 3,
       "highlight": "yellow_trash"
     },
     {
-      "message": "et il y a évidemment ton terrain, c'est l'emplacement sur lequel vont se battre tes invocations.",
+      "index": 4,
       "highlight": "field"
     },
     {
-      "message": "Certains terrains peuvent donner des avantages à tes invocations (il suffit de lire les cartes) et accesoirement, tu n'es pas obligé d'avoir un terrain pour te battre dessus."
-    },
-    {
-      "message": "Le plus important, ce sont les emplacements d'équipements ou d'invocations",
+      "index": 7,
       "highlight": "invocation_cards"
     },
     {
-      "message": "C'est là-dessus que tu vas posé tes invocations. Tu peux en avoir un maximum de 4."
-    },
-    {
-      "message": "En-dessous, il y a les emplacements de cartes effet.",
+      "index": 9,
       "highlight": "effect_cards"
     },
     {
-      "message": "Il existe plusieurs type de cartes dans ce jeu:"
-    },
-    {
-      "message": "Tout d'abord, il y a les cartes invocations. Regardes !",
+      "index": 11,
       "putCard": "Fisti",
       "putCard": "Jean-Michel Bruitages"
     },
     {
-      "message": "Je passe mon tour d'attaque puisque c'est le premier tour, je n'ai pas le droit d'attaquer. C'est donc à toi. Tu choisis tes cartes, tu les mets sur le terrain.",
+      "index": 13,
       "highlight": "hand_cards"
     },
     {
+      "index": 16,
       "trigger": "put_card",
-      "message": "Une fois que tu as posé toutes les cartes que tu veux, on peut à la phase d'attaque. Tu peux poser autant de carte que tu le souhaites. Tu peux même poser la totalité de ta main si tu as envie sur le terrain. Simplement, il faut que tu restes dans la limite des 4 cartes d'invocations et des 4 cartes d'effets.",
       "highlight": "next_phase"
     },
     {
-      "message": "Chaque carte possède une valeur d'attaque et de défense. Lorsqu'on résout la phase d'attaque, on compare simplement les étoiles d'attaques de la carte qui attaque avec les étoiles de défenses de la carte qui se défend."
-    },
-    {
-      "message": "Quand tu as fini ton tour, appuie sur phase suivante",
+      "index": 17,
       "highlight": "next_phase"
     },
     {
+      "index": 20,
       "trigger": "next_phase",
-      "message": "Je choisis de poser le Pyro-Barbare sur le terrain",
       "putCard": "Le Pyro-Barbare"
     },
     {
-      "message": "Mais également, je pose le terrain Fistiland qui à partir du prochain tour me permettra de sauter directement mon tour de pioche et d'aller chercher n'importe quelle carte de type Fistiland dans ma pioche."
-    },
-    {
-      "message": "Fisti, tu es sur ton terrain. Prépare toi à attaquer !"
-    },
-    {
-      "message": "Comme tu peux le voir, certaines cartes appartiennent à des familles."
-    },
-    {
-      "message": "Le Cliché Raciste et les tentacules appartenaient à la famille Japon.",
+      "index": 26,
       "image": "tuto1.png"
     },
     {
-      "message": "C'est une information à retenir car certains terrains permettent de booster les caractéristiques de certaines cartes."
-    },
-    {
-      "message": "Et je vais également équiper mon fisti d'une Merde magique en plastique rose",
+      "index": 28,
       "putCard": "Merde magique en plastique rose;Fisti"
     },
     {
-      "message": "Les cartes marrons sont des cartes équipements. Elles se posent sur un personnage et permettent de booster ses capacités tant que le personnage est vivant. Evidemment, si le personnage est tué, la carte équipement disparaît également.",
+      "index": 29,
       "video": "tuto1.mp4 (sous titre)"
     },
     {
-      "message": "Grâce à ma Merde magique en plastique rose, Fisti obtient une étoile d'attaque et une étoile de défense en plus le faisant à 3.5 étoiles d'attaques et 3.5 étoiles de défenses."
-    },
-    {
-      "message": "Fisti détruit le Cliché raciste",
+      "index": 34,
       "attack": "Fisti>Cliché Raciste"
     },
     {
-      "message": "Ce sont tes points de vie. Dans ce jeu, les 2 joueurs ont 30 points de vie maximum.",
+      "index": 35,
       "highlight": "life_point"
     },
     {
-      "message": "Fisti avec sa Merde magique en plastique rose avait 3.5 étoiles d'attaque alors que ton Cliché raciste n'avait qu'une étoile de défense."
-    },
-    {
-      "message": "On soustrait donc ta défense à mon attaque, ce qui nous fait 3.5 étoiles moins une étoile. Puisque ta carte est détruite, il reste donc 2.5 points de vie qui sont enlevés directement à ton total de points de vie. Quand tu atteints zéro, tu as perdu le match."
-    },
-    {
-      "message": "Si tu n'as plus de cartes pour te défendre, mon Pyro-Barbare va directement attaquer tes points de vie. Pyro-Barbare à l'attaque !",
+      "index": 40,
       "attack": "Le Pyro-Barbare>"
     },
     {
-      "trigger": "put_card_effect",
-      "message": "Les cartes bleues sont des cartes effets. Ce sont des cartes placées sur le terrain et qui auront des effets spécifiques sur tes cartes ou celles de l'adversaire."
-    },
-    {
-      "message": "On a vu tous les types de cartes. Après, il existe des subtilités qu'on apprend à métriser qu'avec le temps. Par exemple, il existe des cartes qui, pour être invoqué et subsisté sur le terrain, ont besoin d'une autre carte ou d'une condition spécifique."
+      "index": 41,
+      "trigger": "put_card_effect"
     }
   ]
 }

@@ -20,10 +20,6 @@ public class TutorialMessage : MonoBehaviour
         var action = actionScenario[currentIndex];
 
         if (actionDone) return;
-        if (action.Message != null && !actionDone)
-        {
-            
-        }
 
         if (action.Highlight != Highlight.unknown)
         {

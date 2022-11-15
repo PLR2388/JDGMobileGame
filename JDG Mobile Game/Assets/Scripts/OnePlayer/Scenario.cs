@@ -1,16 +1,14 @@
 using System;
 using System.Collections;
-using UnityEngine;
 
 public class Scenario
 {
     public ActionScenario[] actionScenarios;
-    public DialogueObject dialogueObject;
 }
 
 public class ActionScenario
 {
-    public string Message;
+    public int Index;
     public Highlight Highlight;
     public string PutCard;
     public Trigger Trigger;
@@ -31,7 +29,7 @@ public class JsonScenario
         foreach (var actionJson in jsonScenarios)
         {
             var actionScenario = new ActionScenario();
-            actionScenario.Message = actionJson.message;
+            actionScenario.Index = actionJson.index;
             if (actionJson.highlight == null)
             {
                 actionScenario.Highlight = Highlight.unknown;
@@ -65,7 +63,7 @@ public class JsonScenario
 [System.Serializable]
 public class ActionJsonScenario
 {
-    public string message;
+    public int index;
     public string highlight;
     public string putCard;
     public string trigger;
@@ -76,6 +74,7 @@ public class ActionJsonScenario
 
 public enum Highlight
 {
+    space,
     deck,
     yellow_trash,
     field,
