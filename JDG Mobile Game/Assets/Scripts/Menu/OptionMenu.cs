@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Menu
@@ -13,10 +14,25 @@ namespace Menu
 
         [SerializeField] private Dropdown languageDropdown;
 
+        private AudioSource audioSource;
+        
+        private void Awake()
+        {
+            audioSource = GameObject.Find("GameState").GetComponent<AudioSource>();
+        }
+
+
         // Start is called before the first frame update
         private void Start()
         {
             languageDropdown.ClearOptions();
+
+            volumeSlider.value = audioSource.volume;
+            Slider.SliderEvent sliderEvent = new Slider.SliderEvent();
+            
+            sliderEvent.AddListener(MusicVolumeChanged);
+
+            volumeSlider.onValueChanged = sliderEvent;
 
             var englishData = new Dropdown.OptionData(English);
             var frenchData = new Dropdown.OptionData(FrenchInFrench);
@@ -43,6 +59,11 @@ namespace Menu
 
             languageDropdown.onValueChanged.AddListener(delegate { LanguageDropDownItemSelected(languageDropdown); });
             languageDropdown.RefreshShownValue();
+        }
+
+        private void MusicVolumeChanged(float value)
+        {
+            audioSource.volume = value;
         }
 
         private static void LanguageDropDownItemSelected(Dropdown dropdown)
