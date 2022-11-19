@@ -15,6 +15,7 @@ public class ActionScenario
     public string Image;
     public string Video;
     public string[] Attack;
+    public Action Action;
 }
 
 [System.Serializable]
@@ -47,6 +48,15 @@ public class JsonScenario
             {
                 Enum.TryParse(actionJson.trigger, out actionScenario.Trigger);
             }
+
+            if (actionJson.action == null)
+            {
+                actionScenario.Action = Action.unknown;
+            }
+            else
+            {
+                Enum.TryParse(actionJson.action, out actionScenario.Action);
+            }
         
             actionScenario.PutCard = actionJson.putCard;
             actionScenario.Image = actionJson.image;
@@ -70,6 +80,7 @@ public class ActionJsonScenario
     public string image;
     public string video;
     public string attack;
+    public string action;
 }
 
 public enum Highlight
@@ -90,5 +101,11 @@ public enum Trigger
     put_card,
     next_phase,
     put_card_effect,
+    unknown
+}
+
+public enum Action
+{
+    next_phase,
     unknown
 }

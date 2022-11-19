@@ -6,6 +6,7 @@ using Cards.EffectCards;
 using Cards.EquipmentCards;
 using Cards.FieldCards;
 using Cards.InvocationCards;
+using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -62,10 +63,17 @@ namespace OnePlayer
         private bool hasSendCurrent = false;
 
         // Start is called before the first frame update
+
+        private void Awake()
+        {
+            actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
+            DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
+        }
+
+
         private void Start()
         {
             cardLocation = GetComponent<CardLocation>();
-            actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
             invocationFunctions = GetComponent<InvocationFunctions>();
             IsP1Turn = true;
             ChangeHealthText(PlayerStatus.MaxPv, true);
@@ -73,7 +81,7 @@ namespace OnePlayer
             p1.GetComponent<PlayerStatus>().SetNumberShield(0);
             p2.GetComponent<PlayerStatus>().SetNumberShield(0);
             PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
-            DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
+
         }
 
         private void TriggerScenarioAction(int index)
@@ -86,6 +94,7 @@ namespace OnePlayer
                 var image = actionScenario.Image;
                 var video = actionScenario.Video;
                 var attack = actionScenario.Attack;
+                var action = actionScenario.Action;
 
                 UnsetHighligh();
                 switch (highlight)
@@ -109,10 +118,38 @@ namespace OnePlayer
                         HighLightPlane.Highlight.Invoke(HighlightElement.Effect, true);
                         break;
                     case Highlight.hand_cards:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
                         break;
                     case Highlight.next_phase:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
                         break;
                     case Highlight.unknown:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                if (putCard != null)
+                {
+                    var cardNames = putCard.Split(';');
+                    PlayerCards playerCards = p1.GetComponent<PlayerCards>();
+                    foreach (var name in cardNames)
+                    {
+                        Card card = playerCards.handCards.Find(elt => elt.Nom == name);
+                        if (card is InvocationCard invocationCard)
+                        {
+                            playerCards.handCards.Remove(card);
+                            playerCards.invocationCards.Add(invocationCard);
+                        }
+                    }
+                }
+
+                switch (action)
+                {
+                    case Action.next_phase:
+                        NextRound();
+                        break;
+                    case Action.unknown:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -133,11 +170,18 @@ namespace OnePlayer
             HighLightPlane.Highlight.Invoke(HighlightElement.Field, false);
             HighLightPlane.Highlight.Invoke(HighlightElement.Invocations, false);
             HighLightPlane.Highlight.Invoke(HighlightElement.Effect, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
         }
 
         // Update is called once per frame
         private void Update()
         {
+            if (phaseId == 1 && numberOfTurn == 2 && p2.GetComponent<PlayerCards>().invocationCards.Count == 2)
+            {
+                nextPhaseButton.GetComponent<HighLightButton>().isActivated = true;
+            }
+            
             switch (phaseId)
             {
                 case 0:
@@ -1343,6 +1387,10 @@ namespace OnePlayer
 
         public void NextRound()
         {
+            if (!IsP1Turn)
+            {
+                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
+            }
             invocationMenu.SetActive(false);
             if (numberOfTurn == 1 && IsP1Turn)
             {

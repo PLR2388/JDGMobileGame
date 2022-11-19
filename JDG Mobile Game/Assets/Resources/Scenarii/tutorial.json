@@ -26,8 +26,11 @@
     },
     {
       "index": 11,
-      "putCard": "Fisti",
-      "putCard": "Jean-Michel Bruitages"
+      "putCard": "Fisti;Jean-Michel Bruitages"
+    },
+    {
+      "index": 12,
+      "action": "next_phase"
     },
     {
       "index": 13,
@@ -53,7 +56,7 @@
     },
     {
       "index": 28,
-      "putCard": "Merde magique en plastique rose;Fisti"
+      "putCard": "Merde magique en plastique rose>Fisti"
     },
     {
       "index": 29,

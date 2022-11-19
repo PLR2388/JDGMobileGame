@@ -11,6 +11,11 @@ public class CurrentDialogIndex : UnityEvent<int>
 {
 }
 
+public class TriggerDoneEvent : UnityEvent<NextDialogueTrigger>
+{
+    
+}
+
 public class DialogueUI : MonoBehaviour
 {
     [SerializeField] private GameObject dialogueBox;
@@ -19,6 +24,7 @@ public class DialogueUI : MonoBehaviour
 
     public static readonly CurrentDialogIndex DialogIndex = new CurrentDialogIndex();
     private NextDialogueTrigger currentTrigger = NextDialogueTrigger.Undefined;
+    public static readonly TriggerDoneEvent TriggerDoneEvent = new TriggerDoneEvent();
 
     private ResponseHandler responseHandler;
     private TypewriterEffect typewriterEffect;
@@ -34,11 +40,13 @@ public class DialogueUI : MonoBehaviour
         audioSource = FindObjectOfType<AudioSource>();
         CloseDialogueBox();
         ShowDialogue(testDialogue);
+        TriggerDoneEvent.AddListener(TriggerReceived);
     }
 
-    private void ReceiveNextDialogueEvent(NextDialogueTrigger nextDialogueEvent)
+    private void TriggerReceived(NextDialogueTrigger nextDialogueTrigger)
     {
-        currentTrigger = nextDialogueEvent;
+        currentTrigger = nextDialogueTrigger;
+
     }
 
     public void ShowDialogue(DialogueObject dialogueObject)
@@ -84,6 +92,13 @@ public class DialogueUI : MonoBehaviour
                         return true;
                         break;
                     case NextDialogueTrigger.PutCard:
+                        dialogueBox.SetActive(false);
+                        while (currentTrigger != nextDialogueTrigger)
+                        {
+                        }
+                        dialogueBox.SetActive(true);
+                        currentTrigger = NextDialogueTrigger.Undefined;
+                        return true;
                         break;
                     case NextDialogueTrigger.NextPhase:
                         break;

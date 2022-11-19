@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class HandCardDisplay : MonoBehaviour
+public class TutoHandCardDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
 
@@ -36,9 +36,10 @@ public class HandCardDisplay : MonoBehaviour
                 newCard.transform.SetParent(transform, true);
                 newCard.GetComponent<CardDisplay>().card = handCard;
                 newCard.GetComponent<OnHover>().bIsInGame = true;
-                
-                if (handCard.Nom == "")
-                
+                if (handCard.Nom == "Cliché Raciste")
+                {
+                    newCard.AddComponent<HighLightCard>();
+                }
                 createdCards.Add(newCard);
             }
 

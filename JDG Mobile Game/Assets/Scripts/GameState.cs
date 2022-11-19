@@ -86,37 +86,39 @@ public class GameState : MonoBehaviour
         deckP1.Clear();
         deckP2.Clear();
 
-        var card = CardChoice.GetSpecificCard("Cliché Raciste", deck1AllCards);
-        var tentacule = CardChoice.GetSpecificCard("Tentacules", deck1AllCards);
-        var musicMegaDrive = CardChoice.GetSpecificCard("Musique de Mega Drive", deck1AllCards);
-        var elfette = CardChoice.GetSpecificCard("L'Elfette", deck1AllCards);
-        card.CardOwner = CardOwner.Player1;
-        tentacule.CardOwner = CardOwner.Player1;
-        musicMegaDrive.CardOwner = CardOwner.Player1;
-        elfette.CardOwner = CardOwner.Player1;
-        deckP1.Add(card);
-        deckP1.Add(tentacule);
-        deckP1.Add(musicMegaDrive);
-        deckP1.Add(elfette);
+        var card = CardChoice.GetSpecificCard("Cliché Raciste", deck2AllCards);
+        var tentacule = CardChoice.GetSpecificCard("Tentacules", deck2AllCards);
+        var musicMegaDrive = CardChoice.GetSpecificCard("Musique de Mega Drive", deck2AllCards);
+        var elfette = CardChoice.GetSpecificCard("L'Elfette", deck2AllCards);
+        card.CardOwner = CardOwner.Player2;
+        tentacule.CardOwner = CardOwner.Player2;
+        musicMegaDrive.CardOwner = CardOwner.Player2;
+        elfette.CardOwner = CardOwner.Player2;
 
-        var fisti = CardChoice.GetSpecificCard("Fisti", deck2AllCards);
-        fisti.CardOwner = CardOwner.Player2;
-        var jeanMichelBruitage = CardChoice.GetSpecificCard("Jean-Michel Bruitages", deck2AllCards);
-        jeanMichelBruitage.CardOwner = CardOwner.Player2;
-        var pyroBarbare = CardChoice.GetSpecificCard("Le Pyro-Barbare", deck2AllCards);
-        pyroBarbare.CardOwner = CardOwner.Player2;
-        var fistiland = CardChoice.GetSpecificCard("Fistiland", deck2AllCards);
-        fistiland.CardOwner = CardOwner.Player2;
-        var merdeRose = CardChoice.GetSpecificCard("Merde magique en plastique rose", deck2AllCards);
-        merdeRose.CardOwner = CardOwner.Player2;
+
+        var fisti = CardChoice.GetSpecificCard("Fisti", deck1AllCards);
+        fisti.CardOwner = CardOwner.Player1;
+        var jeanMichelBruitage = CardChoice.GetSpecificCard("Jean-Michel Bruitages", deck1AllCards);
+        jeanMichelBruitage.CardOwner = CardOwner.Player1;
+        var pyroBarbare = CardChoice.GetSpecificCard("Le Pyro-Barbare", deck1AllCards);
+        pyroBarbare.CardOwner = CardOwner.Player1;
+        var fistiland = CardChoice.GetSpecificCard("Fistiland", deck1AllCards);
+        fistiland.CardOwner = CardOwner.Player1;
+        var merdeRose = CardChoice.GetSpecificCard("Merde magique en plastique rose", deck1AllCards);
+        merdeRose.CardOwner = CardOwner.Player1;
         
-        deckP2.Add(fisti);
-        deckP2.Add(pyroBarbare);
-        deckP2.Add(jeanMichelBruitage);
-        deckP2.Add(fistiland);
-        deckP2.Add(merdeRose);
+
         
-        CardChoice.GetRandomDeck(30, ref deckP1, deck1AllCards, CardOwner.Player1);
-        CardChoice.GetRandomDeck(30, ref deckP2, deck2AllCards, CardOwner.Player2);
+        CardChoice.GetRandomDeck(25, ref deckP1, deck1AllCards, CardOwner.Player1);
+        deckP1.Add(fisti);
+        deckP1.Add(pyroBarbare);
+        deckP1.Add(jeanMichelBruitage);
+        deckP1.Add(fistiland);
+        deckP1.Add(merdeRose);
+        deckP2.Add(tentacule);
+        CardChoice.GetRandomDeck(26, ref deckP2, deck2AllCards, CardOwner.Player2);
+        deckP2.Add(card);
+        deckP2.Add(musicMegaDrive);
+        deckP2.Add(elfette);
     }
 }

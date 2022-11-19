@@ -1,31 +1,20 @@
 using System.Collections;
+using System.Collections.Generic;
+using OnePlayer;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.UI;
 
-namespace OnePlayer
+public class HighLightCard : MonoBehaviour
 {
-    public enum HighlightElement
-    {
-        Invocations, Space, Deck, YellowTrash, Effect, Field, InHandButton, NextPhaseButton
-    }
-
-    [System.Serializable]
-    public class HighlightEvent : UnityEvent<HighlightElement, bool>
-    {
-    }
-
-    public class HighLightPlane : MonoBehaviour
-    {
         [SerializeField] private HighlightElement element;
         
-        private bool isActivated = false;
+        private bool isActivated = true;
         private bool waitEndTurn = true;
         
-        public static readonly HighlightEvent Highlight = new HighlightEvent();
         // Start is called before the first frame update
         void Start()
         {
-            Highlight.AddListener(UpdateStatus);
+            HighLightPlane.Highlight.AddListener(UpdateStatus);
         }
 
         void UpdateStatus(HighlightElement element, bool isActivated)
@@ -48,7 +37,7 @@ namespace OnePlayer
             }
             else
             {
-                gameObject.GetComponent<MeshRenderer>().material.color = Color.clear;
+                gameObject.GetComponent<Image>().color = Color.clear;
                 waitEndTurn = true;
             }
         }
@@ -57,10 +46,9 @@ namespace OnePlayer
         {
             waitEndTurn = false;
             yield return new WaitForSeconds(0.5f);
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+            gameObject.GetComponent<Image>().color = Color.green;
             yield return new WaitForSeconds(0.5f);
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.clear;
+            gameObject.GetComponent<Image>().color = Color.clear;
             waitEndTurn = true;
         }
     }
-}
