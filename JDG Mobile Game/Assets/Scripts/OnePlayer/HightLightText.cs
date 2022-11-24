@@ -9,7 +9,7 @@ public class HightLightText : MonoBehaviour
 {
     [SerializeField] private HighlightElement element;
         
-    private bool isActivated = true;
+    private bool isActivated = false;
     private bool waitEndTurn = true;
         
     // Start is called before the first frame update
@@ -38,7 +38,7 @@ public class HightLightText : MonoBehaviour
         }
         else
         {
-            gameObject.GetComponent<TextMeshProUGUI>().color = Color.clear;
+            gameObject.GetComponent<TextMeshProUGUI>().color = Color.white;
             waitEndTurn = true;
         }
     }
@@ -47,7 +47,7 @@ public class HightLightText : MonoBehaviour
     {
         waitEndTurn = false;
         yield return new WaitForSeconds(0.5f);
-        gameObject.GetComponent<TextMeshProUGUI>().color = Color.green;
+        gameObject.GetComponent<TextMeshProUGUI>().color = Color.white;
         yield return new WaitForSeconds(0.5f);
         gameObject.GetComponent<TextMeshProUGUI>().color = Color.clear;
         waitEndTurn = true;
