@@ -207,7 +207,7 @@ namespace OnePlayer
                     else
                     {
                         opponentInvocationCard = p2.GetComponent<PlayerCards>().invocationCards
-                            .Find(card => card.Nom == attacker);
+                            .Find(card => card.Nom == defender);
                     }
 
                     this.attacker = attackerInvocationCard;

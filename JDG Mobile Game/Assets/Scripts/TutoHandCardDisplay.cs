@@ -11,9 +11,17 @@ public class TutoHandCardDisplay : MonoBehaviour
     [FormerlySerializedAs("Player2")] public GameObject player2;
 
     private List<GameObject> createdCards;
+    
+    private int currentDialogIndex = 0;
+
+    private void SavedIndexDialog(int index)
+    {
+        currentDialogIndex = index;
+    }
 
     private void Awake()
     {
+        DialogueUI.DialogIndex.AddListener(SavedIndexDialog);
         GameObject.Find("GameLoop").GetComponent<GameLoop>();
         createdCards = new List<GameObject>();
     }
@@ -37,6 +45,11 @@ public class TutoHandCardDisplay : MonoBehaviour
                 newCard.GetComponent<CardDisplay>().card = handCard;
                 newCard.GetComponent<OnHover>().bIsInGame = true;
                 if (handCard.Nom == "Cliché Raciste")
+                {
+                    newCard.AddComponent<HighLightCard>();
+                }
+
+                if (handCard.Nom == "Musique de Mega Drive" && currentDialogIndex > 35)
                 {
                     newCard.AddComponent<HighLightCard>();
                 }

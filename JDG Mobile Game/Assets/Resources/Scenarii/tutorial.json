@@ -70,7 +70,7 @@
       "video": "tuto1.mp4"
     },
     {
-      "index": 31,
+      "index": 32,
       "attack": "Fisti>Cliché Raciste"
     },
     {
@@ -80,7 +80,8 @@
     {
       "index": 38,
       "attack": "Le Pyro-Barbare>",
-      "action": "next_phase"
+      "action": "next_phase",
+      "highlight": "hand_cards"
     }
   ]
 }

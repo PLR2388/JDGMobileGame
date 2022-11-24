@@ -3,6 +3,7 @@ using Cards;
 using Cards.EffectCards;
 using Cards.FieldCards;
 using Cards.InvocationCards;
+using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -32,7 +33,6 @@ public class TutoInGameMenuScript : MonoBehaviour
     public static readonly CardEvent EventClick = new CardEvent();
     public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
     public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
-    public static readonly EffectCardEvent EffectCardEvent = new EffectCardEvent();
     public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
 
 
@@ -148,7 +148,8 @@ public class TutoInGameMenuScript : MonoBehaviour
             case CardType.Effect:
             {
                 var effectCard = (EffectCard)currentSelectedCard;
-                EffectCardEvent.Invoke(effectCard);
+                InGameMenuScript.EffectCardEvent.Invoke(effectCard);
+                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
                 break;
             }
             case CardType.Equipment:

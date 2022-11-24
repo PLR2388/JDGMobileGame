@@ -109,6 +109,13 @@ public class DialogueUI : MonoBehaviour
                         }
                         break;
                     case NextDialogueTrigger.PutEffectCard:
+                        dialogueBox.SetActive(false);
+                        if (currentTrigger == NextDialogueTrigger.PutEffectCard)
+                        {
+                            dialogueBox.SetActive(true);
+                            currentTrigger = NextDialogueTrigger.Undefined;
+                            return true;
+                        }
                         break;
                     case NextDialogueTrigger.Undefined:
                         break;
