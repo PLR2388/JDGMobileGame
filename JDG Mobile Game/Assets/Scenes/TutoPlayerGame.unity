@@ -438,9 +438,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 83409350}
-  - component: {fileID: 83409351}
-  - component: {fileID: 83409353}
-  - component: {fileID: 83409352}
   m_Layer: 5
   m_Name: DialogueBox
   m_TagString: Untagged
@@ -470,48 +467,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -125}
   m_SizeDelta: {x: 1400, y: 250}
   m_Pivot: {x: 0.5, y: 0}
---- !u!114 &83409351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83409349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17315b66b4acac547843a00f88d7cd22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dialogueBox: {fileID: 83409349}
-  textLabel: {fileID: 1764321174}
-  testDialogue: {fileID: 11400000, guid: 3bd361463c111544b80baf3eec81bc05, type: 2}
---- !u!114 &83409352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83409349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cac269e1b1a4252408f513d513c5d741, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &83409353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 83409349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aefea76f69e884444a00ab756bf4fce0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  responseBox: {fileID: 1528379802}
-  responseButtonTemplate: {fileID: 1664943300}
-  responseContainer: {fileID: 1752771739}
 --- !u!1 &123132198
 GameObject:
   m_ObjectHideFlags: 0
@@ -1348,8 +1303,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 397230409}
+        m_TargetAssemblyTypeName: OnePlayer.TutoPlayerGameLoop, Assembly-CSharp
         m_MethodName: UseSpecialAction
         m_Mode: 1
         m_Arguments:
@@ -1481,6 +1436,9 @@ GameObject:
   - component: {fileID: 244790279}
   - component: {fileID: 244790278}
   - component: {fileID: 244790277}
+  - component: {fileID: 244790281}
+  - component: {fileID: 244790283}
+  - component: {fileID: 244790282}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1567,6 +1525,7 @@ RectTransform:
   - {fileID: 793464782}
   - {fileID: 1982540493}
   - {fileID: 83409350}
+  - {fileID: 2095843836}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1575,6 +1534,48 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &244790281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244790276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17315b66b4acac547843a00f88d7cd22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueBox: {fileID: 83409349}
+  textLabel: {fileID: 1764321174}
+  testDialogue: {fileID: 11400000, guid: 3bd361463c111544b80baf3eec81bc05, type: 2}
+--- !u!114 &244790282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244790276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cac269e1b1a4252408f513d513c5d741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &244790283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244790276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aefea76f69e884444a00ab756bf4fce0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  responseBox: {fileID: 1528379802}
+  responseButtonTemplate: {fileID: 1664943300}
+  responseContainer: {fileID: 1752771739}
 --- !u!1 &299255074
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,11 +1780,12 @@ MonoBehaviour:
   invocationMenu: {fileID: 1982540492}
   nextPhaseButton: {fileID: 1957640249}
   canvas: {fileID: 244790280}
+  tutoImage: {fileID: 2095843835}
   p1: {fileID: 230530442}
   p2: {fileID: 2017354827}
   player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
   inHandButton: {fileID: 829748139}
-  dialogueBox: {fileID: 83409351}
+  dialogueBox: {fileID: 0}
 --- !u!114 &397230410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2327,7 +2329,7 @@ GameObject:
   - component: {fileID: 519244309}
   - component: {fileID: 519244308}
   - component: {fileID: 519244307}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HighLight-Field
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2607,7 +2609,7 @@ GameObject:
   - component: {fileID: 712574312}
   - component: {fileID: 712574311}
   - component: {fileID: 712574310}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HighLight-Deck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3591,7 +3593,7 @@ GameObject:
   - component: {fileID: 1051150497}
   - component: {fileID: 1051150496}
   - component: {fileID: 1051150495}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HighLight-Invocations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4712,6 +4714,8 @@ GameObject:
   - component: {fileID: 1349726583}
   - component: {fileID: 1349726585}
   - component: {fileID: 1349726584}
+  - component: {fileID: 1349726587}
+  - component: {fileID: 1349726586}
   m_Layer: 5
   m_Name: LifePointP2Text
   m_TagString: Untagged
@@ -4835,6 +4839,60 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1349726582}
   m_CullTransparentMesh: 0
+--- !u!114 &1349726586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349726582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3981cec1e8f11b84ab851daebc0077a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 9
+--- !u!23 &1349726587
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349726582}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 470ee92c5c16efa4a842108487f692b2, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1364238925
 GameObject:
   m_ObjectHideFlags: 0
@@ -5412,6 +5470,7 @@ GameObject:
   - component: {fileID: 1655526769}
   - component: {fileID: 1655526768}
   - component: {fileID: 1655526767}
+  - component: {fileID: 1655526770}
   m_Layer: 5
   m_Name: AttackButton
   m_TagString: Untagged
@@ -5483,8 +5542,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 397230409}
+        m_TargetAssemblyTypeName: OnePlayer.TutoPlayerGameLoop, Assembly-CSharp
         m_MethodName: DisplayAvailableOpponent
         m_Mode: 1
         m_Arguments:
@@ -5533,6 +5592,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1655526765}
   m_CullTransparentMesh: 0
+--- !u!114 &1655526770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655526765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f444e1f48da93ed4787062699ec77834, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 8
+  isActivated: 1
 --- !u!1 &1664943299
 GameObject:
   m_ObjectHideFlags: 0
@@ -6487,7 +6560,7 @@ GameObject:
   - component: {fileID: 2000437097}
   - component: {fileID: 2000437096}
   - component: {fileID: 2000437095}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HighLight-YellowTrash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6668,7 +6741,7 @@ GameObject:
   - component: {fileID: 2021223252}
   - component: {fileID: 2021223251}
   - component: {fileID: 2021223250}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HighLight-Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6899,6 +6972,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094974137}
   m_CullTransparentMesh: 0
+--- !u!1 &2095843835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2095843836}
+  - component: {fileID: 2095843838}
+  - component: {fileID: 2095843837}
+  m_Layer: 5
+  m_Name: TutoImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &2095843836
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095843835}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 244790280}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 2000, y: 1000}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2095843837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095843835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: 69a408814598dc04d9fc617f2ccd5994, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2095843838
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095843835}
+  m_CullTransparentMesh: 1
 --- !u!1 &2118254608
 GameObject:
   m_ObjectHideFlags: 0
@@ -6912,7 +7060,7 @@ GameObject:
   - component: {fileID: 2118254611}
   - component: {fileID: 2118254610}
   - component: {fileID: 2118254609}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HighLight-Space
   m_TagString: Untagged
   m_Icon: {fileID: 0}

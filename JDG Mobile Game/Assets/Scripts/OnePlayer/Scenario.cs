@@ -93,7 +93,9 @@ public enum Highlight
     effect_cards,
     hand_cards,
     next_phase,
-    unknown
+    unknown,
+    tentacules,
+    life_point
 }
 
 public enum Trigger

@@ -7,6 +7,7 @@ namespace OnePlayer.DialogueBox
         PutCard,
         NextPhase,
         PutEffectCard,
-        Undefined
+        Undefined,
+        Attack
     }
 }

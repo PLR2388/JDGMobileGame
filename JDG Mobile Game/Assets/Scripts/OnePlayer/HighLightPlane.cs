@@ -6,11 +6,16 @@ namespace OnePlayer
 {
     public enum HighlightElement
     {
-        Invocations, Space, Deck, YellowTrash, Effect, Field, InHandButton, NextPhaseButton
+        Invocations, Space, Deck, YellowTrash, Effect, Field, InHandButton, NextPhaseButton, Tentacules, LifePoints
     }
 
     [System.Serializable]
     public class HighlightEvent : UnityEvent<HighlightElement, bool>
+    {
+    }
+    
+    [System.Serializable]
+    public class RemoveHighlightEvent : UnityEvent<HighlightElement>
     {
     }
 
@@ -22,10 +27,20 @@ namespace OnePlayer
         private bool waitEndTurn = true;
         
         public static readonly HighlightEvent Highlight = new HighlightEvent();
+        public static readonly RemoveHighlightEvent RemoveHighlight = new RemoveHighlightEvent();
         // Start is called before the first frame update
         void Start()
         {
             Highlight.AddListener(UpdateStatus);
+            RemoveHighlight.AddListener(HideStatus);
+        }
+
+        void HideStatus(HighlightElement element)
+        {
+            if (element == this.element)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         void UpdateStatus(HighlightElement element, bool isActivated)

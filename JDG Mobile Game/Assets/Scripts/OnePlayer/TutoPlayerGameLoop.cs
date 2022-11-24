@@ -33,6 +33,8 @@ namespace OnePlayer
         [SerializeField] private GameObject nextPhaseButton;
         [SerializeField] private Transform canvas;
 
+        [SerializeField] private GameObject tutoImage;
+
         [FormerlySerializedAs("P1")] [SerializeField]
         private GameObject p1;
 
@@ -55,10 +57,9 @@ namespace OnePlayer
         private InvocationCard attacker;
         private InvocationCard opponent;
         private int numberOfTurn;
-        
+
         private ActionScenario[] actionScenarios;
-        [SerializeField] 
-        private DialogueUI dialogueBox;
+        [SerializeField] private DialogueUI dialogueBox;
         private int currentIndex = 0;
         private bool hasSendCurrent = false;
 
@@ -81,7 +82,6 @@ namespace OnePlayer
             p1.GetComponent<PlayerStatus>().SetNumberShield(0);
             p2.GetComponent<PlayerStatus>().SetNumberShield(0);
             PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
-
         }
 
         private void TriggerScenarioAction(int index)
@@ -123,11 +123,19 @@ namespace OnePlayer
                     case Highlight.next_phase:
                         HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
                         break;
+                    case Highlight.tentacules:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, true);
+                        break;
+                    case Highlight.life_point:
+                        HighLightPlane.Highlight.Invoke(HighlightElement.LifePoints, true);
+                        break;
                     case Highlight.unknown:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
+                tutoImage.SetActive(image != null);
 
                 if (putCard != null)
                 {
@@ -154,6 +162,35 @@ namespace OnePlayer
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
+                if (attack != null)
+                {
+                    string attacker = attack[0];
+                    string defender = "player";
+                    if (attack.Length > 1)
+                    {
+                        defender = attack[1];
+                    }
+
+                    InvocationCard attackerInvocationCard =
+                        p1.GetComponent<PlayerCards>().invocationCards.Find(card => card.Nom == attacker);
+
+                    InvocationCard opponentInvocationCard;
+
+                    if (defender == "player")
+                    {
+                        opponentInvocationCard = player as InvocationCard;
+                    }
+                    else
+                    {
+                        opponentInvocationCard = p2.GetComponent<PlayerCards>().invocationCards
+                            .Find(card => card.Nom == attacker);
+                    }
+
+                    this.attacker = attackerInvocationCard;
+                    opponent = opponentInvocationCard;
+                    ComputeAttack();
+                }
             }
             catch (Exception e)
             {
@@ -172,6 +209,8 @@ namespace OnePlayer
             HighLightPlane.Highlight.Invoke(HighlightElement.Effect, false);
             HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, false);
             HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
+            HighLightPlane.Highlight.Invoke(HighlightElement.LifePoints, false);
         }
 
         // Update is called once per frame
@@ -181,7 +220,7 @@ namespace OnePlayer
             {
                 nextPhaseButton.GetComponent<HighLightButton>().isActivated = true;
             }
-            
+
             switch (phaseId)
             {
                 case 0:
@@ -292,6 +331,9 @@ namespace OnePlayer
             var opponentTag = IsP1Turn ? p2.GetComponent<PlayerCards>().Tag : p1.GetComponent<PlayerCards>().Tag;
             var cardObject = hitInfo.transform.gameObject;
 
+            if (cardObject.GetComponent<PhysicalCardDisplay>() == null) return;
+            var card = cardObject.GetComponent<PhysicalCardDisplay>().card;
+            if (card.Nom != "Tentacules") return;
             if (objectTag == personTag)
             {
                 cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
@@ -423,9 +465,10 @@ namespace OnePlayer
      */
         private void DisplayCards(List<InvocationCard> invocationCards, List<EffectCard> attackPlayerEffectCard)
         {
-            var notEmptyOpponent = invocationCards.Where(t => t != null && t.Nom != null).Cast<Card>().ToList();
+            var notEmptyOpponent = invocationCards.Where(t => t != null && t.Nom == "Jean-Michel Bruitages")
+                .Cast<Card>().ToList();
 
-            if (notEmptyOpponent.Count == 0)
+            /*if (notEmptyOpponent.Count == 0)
             {
                 notEmptyOpponent.Add(player);
             }
@@ -586,7 +629,7 @@ namespace OnePlayer
                         }
                     }
                 }
-            }
+            }*/
 
             DisplayOpponentMessageBox(notEmptyOpponent);
             stopDetectClicking = true;
@@ -595,6 +638,7 @@ namespace OnePlayer
         private void DisplayOpponentMessageBox(List<Card> invocationCards)
         {
             nextPhaseButton.SetActive(false);
+            invocationMenu.SetActive(false);
 
             if (invocationCards.Count > 0)
             {
@@ -613,14 +657,11 @@ namespace OnePlayer
 
                     stopDetectClicking = false;
                     nextPhaseButton.SetActive(true);
+
+
                     Destroy(message);
                 };
-                message.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    nextPhaseButton.SetActive(true);
-                    stopDetectClicking = false;
-                    Destroy(message);
-                };
+                message.GetComponent<MessageBox>().NegativeAction = () => { };
             }
             else
             {
@@ -1077,7 +1118,8 @@ namespace OnePlayer
             opponentPlayerCard.SendCardToYellowTrash(opponent);
         }
 
-        private void ComeBackToHandDeathEffect(InvocationCard invocationCard, bool isP1Card, IReadOnlyList<string> values,
+        private void ComeBackToHandDeathEffect(InvocationCard invocationCard, bool isP1Card,
+            IReadOnlyList<string> values,
             int i)
         {
             var isParsed = int.TryParse(values[i], out var number);
@@ -1171,7 +1213,6 @@ namespace OnePlayer
                         "Veux-tu prolonger l'effet de " + effectCard.Nom + " pour 1 tour pour " + effectCard.affectPv +
                         " points de vie ?", PositiveAction, NegativeAction);
                 }
-
             }
         }
 
@@ -1382,7 +1423,6 @@ namespace OnePlayer
                     value + " dans ton deck ou ta poubelle jaune ?", PositiveAction,
                     NegativeAction);
             }
-        
         }
 
         public void NextRound()
@@ -1391,6 +1431,7 @@ namespace OnePlayer
             {
                 DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
             }
+
             invocationMenu.SetActive(false);
             if (numberOfTurn == 1 && IsP1Turn)
             {
@@ -1421,7 +1462,8 @@ namespace OnePlayer
             if (phaseId != 3) return;
             PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
             PlayerCards opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-            PlayerStatus currentPlayerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+            PlayerStatus currentPlayerStatus =
+                IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
             PlayerStatus opponentPlayerStatus =
                 IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
             List<EffectCard> effectCards = currentPlayerCard.effectCards;
@@ -1443,6 +1485,7 @@ namespace OnePlayer
             ChangePlayer.Invoke();
             playerText.GetComponent<TextMeshProUGUI>().text = IsP1Turn ? "Joueur 1" : "Joueur 2";
             phaseId = 0;
+            nextPhaseButton.GetComponent<Button>().interactable = false;
         }
 
         private static void DealWithEndEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard,
@@ -1706,7 +1749,8 @@ namespace OnePlayer
             }
         }
 
-        private static void PreventInvocationCardsPermEffect(PlayerCards currentPlayerCard, InvocationCard invocationCard)
+        private static void PreventInvocationCardsPermEffect(PlayerCards currentPlayerCard,
+            InvocationCard invocationCard)
         {
             for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
             {

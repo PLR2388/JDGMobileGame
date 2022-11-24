@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8735995293094144933}
   - component: {fileID: 8735995293094144937}
   - component: {fileID: 8735995293094144938}
+  - component: {fileID: 5448778775695990426}
   m_Layer: 0
   m_Name: PhysicalCard
   m_TagString: Untagged
@@ -63,6 +64,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -87,6 +89,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &8735995293094144933
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -124,3 +127,16 @@ MonoBehaviour:
   card: {fileID: 0}
   defaultMaterial: {fileID: 2100000, guid: 4dd6b92fe5f1b5f488d9787da2d47e59, type: 2}
   bIsFaceHidden: 1
+--- !u!114 &5448778775695990426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8735995293094144934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4373f4f24563ccf438119c273b912083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 8

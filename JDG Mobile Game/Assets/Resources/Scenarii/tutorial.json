@@ -38,17 +38,20 @@
     },
     {
       "index": 16,
-      "trigger": "put_card",
-      "highlight": "next_phase"
+      "trigger": "put_card"
     },
     {
-      "index": 17,
-      "highlight": "next_phase"
+      "index": 19,
+      "highlight": "tentacules"
     },
     {
       "index": 20,
       "trigger": "next_phase",
       "putCard": "Le Pyro-Barbare"
+    },
+    {
+      "index": 21,
+      "putCard": "Fistiland"
     },
     {
       "index": 26,
@@ -60,7 +63,7 @@
     },
     {
       "index": 29,
-      "video": "tuto1.mp4 (sous titre)"
+      "video": "tuto1.mp4"
     },
     {
       "index": 34,

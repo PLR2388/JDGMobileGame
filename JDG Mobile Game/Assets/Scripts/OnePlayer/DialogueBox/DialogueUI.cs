@@ -93,18 +93,27 @@ public class DialogueUI : MonoBehaviour
                         break;
                     case NextDialogueTrigger.PutCard:
                         dialogueBox.SetActive(false);
-                        while (currentTrigger != nextDialogueTrigger)
+                        if (currentTrigger == NextDialogueTrigger.NextPhase)
                         {
+                            dialogueBox.SetActive(true);
+                            currentTrigger = NextDialogueTrigger.Undefined;
+                            return true;
                         }
-                        dialogueBox.SetActive(true);
-                        currentTrigger = NextDialogueTrigger.Undefined;
-                        return true;
                         break;
                     case NextDialogueTrigger.NextPhase:
                         break;
                     case NextDialogueTrigger.PutEffectCard:
                         break;
                     case NextDialogueTrigger.Undefined:
+                        break;
+                    case NextDialogueTrigger.Attack:
+                        dialogueBox.SetActive(false);
+                        if (currentTrigger == NextDialogueTrigger.NextPhase)
+                        {
+                            dialogueBox.SetActive(true);
+                            currentTrigger = NextDialogueTrigger.Undefined;
+                            return true;
+                        }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
