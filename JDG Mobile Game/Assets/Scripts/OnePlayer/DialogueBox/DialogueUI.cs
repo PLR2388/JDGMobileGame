@@ -101,6 +101,12 @@ public class DialogueUI : MonoBehaviour
                         }
                         break;
                     case NextDialogueTrigger.NextPhase:
+                        if (currentTrigger == NextDialogueTrigger.NextPhase)
+                        {
+                            dialogueBox.SetActive(true);
+                            currentTrigger = NextDialogueTrigger.Undefined;
+                            return true;
+                        }
                         break;
                     case NextDialogueTrigger.PutEffectCard:
                         break;
@@ -109,6 +115,15 @@ public class DialogueUI : MonoBehaviour
                     case NextDialogueTrigger.Attack:
                         dialogueBox.SetActive(false);
                         if (currentTrigger == NextDialogueTrigger.NextPhase)
+                        {
+                            dialogueBox.SetActive(true);
+                            currentTrigger = NextDialogueTrigger.Undefined;
+                            return true;
+                        }
+                        break;
+                    case NextDialogueTrigger.EndVideo:
+                        dialogueBox.SetActive(false);
+                        if (currentTrigger == NextDialogueTrigger.EndVideo)
                         {
                             dialogueBox.SetActive(true);
                             currentTrigger = NextDialogueTrigger.Undefined;

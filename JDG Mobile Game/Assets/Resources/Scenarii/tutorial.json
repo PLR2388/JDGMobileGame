@@ -58,28 +58,29 @@
       "image": "tuto1.png"
     },
     {
+      "index": 27
+    },
+    {
       "index": 28,
-      "putCard": "Merde magique en plastique rose>Fisti"
+      "putCard": "Merde magique en plastique rose>Fisti",
+      "action": "next_phase"
     },
     {
       "index": 29,
       "video": "tuto1.mp4"
     },
     {
-      "index": 34,
+      "index": 31,
       "attack": "Fisti>Cliché Raciste"
     },
     {
-      "index": 35,
+      "index": 33,
       "highlight": "life_point"
     },
     {
-      "index": 40,
-      "attack": "Le Pyro-Barbare>"
-    },
-    {
-      "index": 41,
-      "trigger": "put_card_effect"
+      "index": 38,
+      "attack": "Le Pyro-Barbare>",
+      "action": "next_phase"
     }
   ]
 }

@@ -8,6 +8,7 @@ namespace OnePlayer.DialogueBox
         NextPhase,
         PutEffectCard,
         Undefined,
-        Attack
+        Attack,
+        EndVideo
     }
 }

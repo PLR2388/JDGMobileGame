@@ -41,6 +41,18 @@ public class TutoInGameMenuScript : MonoBehaviour
 
     private EffectFunctions effectFunctions;
 
+    private int currentDialogIndex = 0;
+
+    private void Awake()
+    {
+        DialogueUI.DialogIndex.AddListener(SavedIndexDialog);
+    }
+
+    private void SavedIndexDialog(int index)
+    {
+        currentDialogIndex = index;
+    }
+
     private void Start()
     {
         effectFunctions = gameLoop.GetComponent<EffectFunctions>();
@@ -57,7 +69,9 @@ public class TutoInGameMenuScript : MonoBehaviour
             ? GameObject.Find("Player1").GetComponent<PlayerCards>()
             : GameObject.Find("Player2").GetComponent<PlayerCards>();
 
-        if (card.Nom == "Cliché Raciste" || card.Nom == "Musique de Mega Drive")
+        var authorizedCard = currentDialogIndex > 36 ? "Musique de Mega Drive" : "Cliché Raciste";
+
+        if (card.Nom == authorizedCard)
         {
             switch (cardType)
             {

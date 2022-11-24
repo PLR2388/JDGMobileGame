@@ -34,6 +34,7 @@ namespace OnePlayer
         [SerializeField] private Transform canvas;
 
         [SerializeField] private GameObject tutoImage;
+        [SerializeField] private GameObject tutoVideo;
 
         [FormerlySerializedAs("P1")] [SerializeField]
         private GameObject p1;
@@ -136,31 +137,53 @@ namespace OnePlayer
                 }
 
                 tutoImage.SetActive(image != null);
+                tutoVideo.SetActive(video != null);
 
                 if (putCard != null)
                 {
-                    var cardNames = putCard.Split(';');
-                    PlayerCards playerCards = p1.GetComponent<PlayerCards>();
-                    foreach (var name in cardNames)
+                    if (putCard.Contains(">"))
                     {
-                        Card card = playerCards.handCards.Find(elt => elt.Nom == name);
-                        if (card is InvocationCard invocationCard)
+                        var cardNames = putCard.Split('>');
+                        PlayerCards playerCards = p1.GetComponent<PlayerCards>();
+                        EquipmentCard equipmentCard = playerCards.handCards.Find(elt => elt.Nom == cardNames[0]) as EquipmentCard;
+                        InvocationCard invocationCard =
+                            playerCards.invocationCards.Find(elt => elt.Nom == cardNames[1]);
+                        
+                        var instantEffect = equipmentCard.EquipmentInstantEffect;
+                        var permEffect = equipmentCard.EquipmentPermEffect;
+
+                        if (instantEffect != null)
                         {
-                            playerCards.handCards.Remove(card);
-                            playerCards.invocationCards.Add(invocationCard);
+                            EquipmentFunctions.DealWithInstantEffect(invocationCard, instantEffect);
+                        }
+
+                        if (permEffect != null)
+                        {
+                            EquipmentFunctions.DealWithPermEffect(invocationCard, permEffect);
+                        }
+
+                        invocationCard.SetEquipmentCard(equipmentCard);
+                        playerCards.handCards.Remove(equipmentCard);
+                    }
+                    else
+                    {
+                        var cardNames = putCard.Split(';');
+                        PlayerCards playerCards = p1.GetComponent<PlayerCards>();
+                        foreach (var name in cardNames)
+                        {
+                            Card card = playerCards.handCards.Find(elt => elt.Nom == name);
+                            if (card is InvocationCard invocationCard)
+                            {
+                                playerCards.handCards.Remove(card);
+                                playerCards.invocationCards.Add(invocationCard);
+                            } else if (card is FieldCard fieldCard)
+                            {
+                                playerCards.field = fieldCard;
+                                playerCards.handCards.Remove(fieldCard);
+                                FieldFunctions.ApplyFieldCardEffect(fieldCard, playerCards);
+                            }
                         }
                     }
-                }
-
-                switch (action)
-                {
-                    case Action.next_phase:
-                        NextRound();
-                        break;
-                    case Action.unknown:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
                 }
 
                 if (attack != null)
@@ -190,6 +213,17 @@ namespace OnePlayer
                     this.attacker = attackerInvocationCard;
                     opponent = opponentInvocationCard;
                     ComputeAttack();
+                }
+                
+                switch (action)
+                {
+                    case Action.next_phase:
+                        NextRound();
+                        break;
+                    case Action.unknown:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             catch (Exception e)
@@ -248,15 +282,6 @@ namespace OnePlayer
             }
 
             MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", PositiveAction);
-        }
-
-        private void ApplyScenario()
-        {
-            if (!hasSendCurrent)
-            {
-                //dialogueBox.ShowDialogue(dialogueObject);
-                hasSendCurrent = true;
-            }
         }
 
         private void ChoosePhase()
@@ -657,7 +682,7 @@ namespace OnePlayer
 
                     stopDetectClicking = false;
                     nextPhaseButton.SetActive(true);
-
+                    nextPhaseButton.GetComponent<HighLightButton>().isActivated = true;
 
                     Destroy(message);
                 };
