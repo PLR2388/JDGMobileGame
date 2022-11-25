@@ -7035,6 +7035,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 350a3d48a3ce73e4d8eed45b5be65c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: {fileID: 0}
 --- !u!114 &2003630711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7235,6 +7236,7 @@ GameObject:
   - component: {fileID: 2031386176}
   - component: {fileID: 2031386175}
   - component: {fileID: 2031386174}
+  - component: {fileID: 2031386177}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -7290,6 +7292,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2031386177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2031386173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fd69f538fa6f0d48b78f2ae23d8e85b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musics:
+  - {fileID: 8300000, guid: 664bc74f504ce2d459e65f0959354e2f, type: 3}
 --- !u!1 &2040487124
 GameObject:
   m_ObjectHideFlags: 0
