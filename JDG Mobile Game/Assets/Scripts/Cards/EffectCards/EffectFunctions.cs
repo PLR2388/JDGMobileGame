@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards.FieldCards;
 using Cards.InvocationCards;
+using OnePlayer;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -23,8 +24,10 @@ namespace Cards.EffectCards
         // Start is called before the first frame update
         private void Start()
         {
+            TutoPlayerGameLoop.ChangePlayer.AddListener(ChangePlayer);
             GameLoop.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
+            TutoInGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
             p1 = GameObject.Find("Player1");
             p2 = GameObject.Find("Player2");
             currentPlayerCard = p1.GetComponent<PlayerCards>();

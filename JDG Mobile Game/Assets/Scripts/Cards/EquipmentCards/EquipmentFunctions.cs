@@ -143,7 +143,7 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCards">invocation card allow to receive equipment card</param>
         /// <param name="equipmentInstantEffect">equipmentCard instant effect to test if it authorizes invocations with equipment</param>
         /// </summary>
-        private static void DealWithInstantEffect(InvocationCard invocationCard,
+        public static void DealWithInstantEffect(InvocationCard invocationCard,
             EquipmentInstantEffect equipmentInstantEffect)
         {
             var keys = equipmentInstantEffect.Keys;
@@ -314,7 +314,7 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="equipmentPermEffect">equipment perm effect of equipment card</param>
         /// </summary>
-        private static void DealWithPermEffect(InvocationCard invocationCard, EquipmentPermEffect equipmentPermEffect)
+        public static void DealWithPermEffect(InvocationCard invocationCard, EquipmentPermEffect equipmentPermEffect)
         {
             var keys = equipmentPermEffect.Keys;
             var values = equipmentPermEffect.Values;

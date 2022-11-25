@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class CardSelectedEvent : UnityEvent<Card>
@@ -101,7 +102,15 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         else
         {
             var currentCard = GetComponent<CardDisplay>().card;
-            InGameMenuScript.EventClick.Invoke(currentCard);
+            if (SceneManager.GetActiveScene().name == "TutoPlayerGame")
+            {
+                TutoInGameMenuScript.EventClick.Invoke(currentCard);
+            }
+            else
+            {
+                InGameMenuScript.EventClick.Invoke(currentCard);
+            }
+          
         }
     }
 }

@@ -1,0 +1,86 @@
+﻿{
+  "jsonScenarios": [
+    {
+      "index": 1,
+      "highlight": "space"
+    },
+    {
+      "index": 2,
+      "highlight": "deck"
+    },
+    {
+      "index": 3,
+      "highlight": "yellow_trash"
+    },
+    {
+      "index": 4,
+      "highlight": "field"
+    },
+    {
+      "index": 7,
+      "highlight": "invocation_cards"
+    },
+    {
+      "index": 9,
+      "highlight": "effect_cards"
+    },
+    {
+      "index": 11,
+      "putCard": "Fisti;Jean-Michel Bruitages"
+    },
+    {
+      "index": 12,
+      "action": "next_phase"
+    },
+    {
+      "index": 13,
+      "highlight": "hand_cards"
+    },
+    {
+      "index": 16,
+      "trigger": "put_card"
+    },
+    {
+      "index": 19,
+      "highlight": "tentacules"
+    },
+    {
+      "index": 20,
+      "trigger": "next_phase",
+      "putCard": "Le Pyro-Barbare"
+    },
+    {
+      "index": 21,
+      "putCard": "Fistiland"
+    },
+    {
+      "index": 26,
+      "image": "tuto1.png"
+    },
+    {
+      "index": 27
+    },
+    {
+      "index": 28,
+      "putCard": "Merde magique en plastique rose>Fisti",
+      "action": "next_phase"
+    },
+    {
+      "index": 29,
+      "video": "tuto1.mp4"
+    },
+    {
+      "index": 32,
+      "attack": "Fisti>Cliché Raciste"
+    },
+    {
+      "index": 33,
+      "highlight": "life_point"
+    },
+    {
+      "index": 38,
+      "attack": "Le Pyro-Barbare>",
+      "action": "next_phase"
+    }
+  ]
+}

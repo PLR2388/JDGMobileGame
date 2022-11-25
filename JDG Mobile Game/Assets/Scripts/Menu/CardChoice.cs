@@ -101,6 +101,24 @@ namespace Menu
             }
         }
 
+        public static void GetRandomDeck(int numberOfCards, ref List<Card> initialDeck, List<Card> cards, CardOwner cardOwner)
+        {
+            var deckAllCard = cards.Where(card =>
+                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
+                card.Nom != "Blague interdite" &&
+                card.Nom != "Un bon tuyau").ToList();
+
+            while (initialDeck.Count != numberOfCards)
+            {
+                GetRandomCards(deckAllCard, initialDeck);
+            }
+
+            foreach (var card in initialDeck)
+            {
+                card.CardOwner = cardOwner;
+            }
+        }
+
         public void RandomDeck()
         {
             var deck1 = new List<Card>();
@@ -184,7 +202,7 @@ namespace Menu
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
-        private static Card GetSpecificCard(string nameCard, List<Card> cards)
+        public static Card GetSpecificCard(string nameCard, List<Card> cards)
         {
             var card = cards.Find(x => x.Nom == nameCard);
             if (card != null)

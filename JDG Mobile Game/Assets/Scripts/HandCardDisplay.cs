@@ -36,6 +36,9 @@ public class HandCardDisplay : MonoBehaviour
                 newCard.transform.SetParent(transform, true);
                 newCard.GetComponent<CardDisplay>().card = handCard;
                 newCard.GetComponent<OnHover>().bIsInGame = true;
+                
+                if (handCard.Nom == "")
+                
                 createdCards.Add(newCard);
             }
 
