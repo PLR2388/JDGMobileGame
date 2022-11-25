@@ -86,7 +86,7 @@ public class DialogueUI : MonoBehaviour
 #if UNITY_EDITOR
                         return Input.GetKeyDown(KeyCode.Space);
 #elif UNITY_ANDROID
-                        return Input.GetTouch(0);
+                        return Input.touchCount > 0;
 #endif
                         break;
                     case NextDialogueTrigger.Automatic:
