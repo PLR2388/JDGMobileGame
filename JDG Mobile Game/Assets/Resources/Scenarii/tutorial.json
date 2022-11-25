@@ -80,8 +80,7 @@
     {
       "index": 38,
       "attack": "Le Pyro-Barbare>",
-      "action": "next_phase",
-      "highlight": "hand_cards"
+      "action": "next_phase"
     }
   ]
 }

@@ -33,6 +33,7 @@ public class TutoInGameMenuScript : MonoBehaviour
     public static readonly CardEvent EventClick = new CardEvent();
     public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
     public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
+    public static readonly EffectCardEvent EffectCardEvent = new EffectCardEvent();
     public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
 
 
@@ -148,8 +149,7 @@ public class TutoInGameMenuScript : MonoBehaviour
             case CardType.Effect:
             {
                 var effectCard = (EffectCard)currentSelectedCard;
-                InGameMenuScript.EffectCardEvent.Invoke(effectCard);
-                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
+                EffectCardEvent.Invoke(effectCard);
                 break;
             }
             case CardType.Equipment:
@@ -201,6 +201,10 @@ public class TutoInGameMenuScript : MonoBehaviour
             HideHand();
             inHandButton.GetComponent<Button>().interactable = false;
             inHandButton.GetComponent<HighLightButton>().isActivated = false;
+            if (currentDialogIndex == 38)
+            {
+                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
+            }
         }
         else
         {

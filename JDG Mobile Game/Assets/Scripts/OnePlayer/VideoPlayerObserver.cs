@@ -15,7 +15,6 @@ public class VideoPlayerObserver : MonoBehaviour
 
     void CheckOver(VideoPlayer vp)
     {
-        print("Video is over");
         DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.EndVideo);
         gameObject.SetActive(false);
     }

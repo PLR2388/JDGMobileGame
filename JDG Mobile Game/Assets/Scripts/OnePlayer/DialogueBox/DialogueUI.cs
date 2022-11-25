@@ -5,6 +5,7 @@ using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class CurrentDialogIndex : UnityEvent<int>
@@ -136,6 +137,10 @@ public class DialogueUI : MonoBehaviour
                             currentTrigger = NextDialogueTrigger.Undefined;
                             return true;
                         }
+                        break;
+                    case NextDialogueTrigger.EndGame:
+                        SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
+                        return true;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

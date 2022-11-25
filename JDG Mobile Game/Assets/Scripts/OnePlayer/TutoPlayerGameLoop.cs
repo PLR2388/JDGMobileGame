@@ -192,7 +192,7 @@ namespace OnePlayer
                     string defender = "player";
                     if (attack.Length > 1)
                     {
-                        defender = attack[1];
+                        defender = attack[1] == "" ? "player" : attack[1];
                     }
 
                     InvocationCard attackerInvocationCard =
@@ -213,6 +213,11 @@ namespace OnePlayer
                     this.attacker = attackerInvocationCard;
                     opponent = opponentInvocationCard;
                     ComputeAttack();
+
+                    if (defender == "player")
+                    {
+                        HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+                    }
                 }
                 
                 switch (action)

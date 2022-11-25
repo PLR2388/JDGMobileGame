@@ -9,6 +9,7 @@ namespace OnePlayer.DialogueBox
         PutEffectCard,
         Undefined,
         Attack,
-        EndVideo
+        EndVideo,
+        EndGame
     }
 }

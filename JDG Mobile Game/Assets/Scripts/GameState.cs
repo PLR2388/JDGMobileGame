@@ -83,6 +83,7 @@ public class GameState : MonoBehaviour
 
     public void BuildDeckForTuto()
     {
+        ResetDeckPlayer();
         deckP1.Clear();
         deckP2.Clear();
 
