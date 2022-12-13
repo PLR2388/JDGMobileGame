@@ -135,7 +135,6 @@ GameObject:
   - component: {fileID: 450410626}
   - component: {fileID: 450410625}
   - component: {fileID: 450410628}
-  - component: {fileID: 450410629}
   m_Layer: 0
   m_Name: GameState
   m_TagString: Untagged
@@ -447,20 +446,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &450410629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450410624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fd69f538fa6f0d48b78f2ae23d8e85b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  musics:
-  - {fileID: 8300000, guid: 664bc74f504ce2d459e65f0959354e2f, type: 3}
 --- !u!1 &693115520
 GameObject:
   m_ObjectHideFlags: 0

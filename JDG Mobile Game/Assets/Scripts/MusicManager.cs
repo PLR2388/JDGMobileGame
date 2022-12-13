@@ -12,7 +12,7 @@ public class MusicManager : MonoBehaviour
     private 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        audioSource = FindObjectOfType<AudioSource>();
     }
 
     // Update is called once per frame
