@@ -61,7 +61,7 @@ namespace Cards.EquipmentCards
         /// Show the player invocations cards he can put equipment on.
         /// <param name="equipmentCard">equipmentCard player want to put</param>
         /// </summary>
-        private void DisplayEquipmentPopUp(EquipmentCard equipmentCard)
+        private void DisplayEquipmentPopUp(InGameEquipementCard equipmentCard)
         {
             var playerCards = CurrentPlayerCard;
             var opponentInvocationCards = OpponentPlayerCard.invocationCards;
@@ -73,7 +73,7 @@ namespace Cards.EquipmentCards
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var currentSelectedInvocationCard =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (currentSelectedInvocationCard != null)
                 {
                     miniCardMenu.SetActive(false);
@@ -110,15 +110,15 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCards">invocation card allow to receive equipment card</param>
         /// <param name="equipmentInstantEffect">equipmentCard instant effect to test if it authorizes invocations with equipment</param>
         /// </summary>
-        private GameObject DisplayEquipmentMessageBox(IEnumerable<InvocationCard> invocationCards,
+        private GameObject DisplayEquipmentMessageBox(IEnumerable<InGameInvocationCard> invocationCards,
             EquipmentInstantEffect equipmentInstantEffect)
         {
-            var cards = new List<Card>();
+            var cards = new List<InGameCard>();
             if (equipmentInstantEffect != null)
             {
                 foreach (var invocationCard in invocationCards)
                 {
-                    if (invocationCard.GetEquipmentCard() == null)
+                    if (invocationCard.EquipmentCard == null)
                     {
                         cards.Add(invocationCard);
                     }
@@ -130,7 +130,7 @@ namespace Cards.EquipmentCards
             }
             else
             {
-                cards = invocationCards.Cast<Card>().ToList();
+                cards = invocationCards.Cast<InGameCard>().ToList();
             }
 
 
@@ -143,7 +143,7 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCards">invocation card allow to receive equipment card</param>
         /// <param name="equipmentInstantEffect">equipmentCard instant effect to test if it authorizes invocations with equipment</param>
         /// </summary>
-        public static void DealWithInstantEffect(InvocationCard invocationCard,
+        public static void DealWithInstantEffect(InGameInvocationCard invocationCard,
             EquipmentInstantEffect equipmentInstantEffect)
         {
             var keys = equipmentInstantEffect.Keys;
@@ -214,10 +214,9 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is a number representing the number of ATK won</param>
         /// </summary>
-        private static void DealWithInstantEffectAddAtk(InvocationCard invocationCard, string value)
+        private static void DealWithInstantEffectAddAtk(InGameInvocationCard invocationCard, string value)
         {
-            var newBonusAttack = float.Parse(value) + invocationCard.GetBonusAttack();
-            invocationCard.SetBonusAttack(newBonusAttack);
+            invocationCard.Attack += float.Parse(value);
         }
 
         /// <summary>
@@ -226,10 +225,9 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is a number representing the number of DEF won</param>
         /// </summary>
-        private static void DealWithInstantEffectAddDef(InvocationCard invocationCard, string value)
+        private static void DealWithInstantEffectAddDef(InGameInvocationCard invocationCard, string value)
         {
-            var newBonusDefense = float.Parse(value) + invocationCard.GetBonusDefense();
-            invocationCard.SetBonusDefense(newBonusDefense);
+            invocationCard.Defense = float.Parse(value);
         }
 
         /// <summary>
@@ -238,13 +236,13 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is a number representing the multiplicator of ATK won</param>
         /// </summary>
-        private static void DealWithInstantEffectMultiplyAtk(InvocationCard invocationCard, string value)
+        private static void DealWithInstantEffectMultiplyAtk(InGameInvocationCard invocationCard, string value)
         {
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
-                var newBonusAttack = (multiplicator - 1) * invocationCard.GetAttack() + invocationCard.GetBonusAttack();
-                invocationCard.SetBonusAttack(newBonusAttack);
+                var newBonusAttack = (multiplicator - 1) * invocationCard.baseInvocationCard.GetAttack();
+                invocationCard.Attack += newBonusAttack;
             }
         }
 
@@ -254,19 +252,19 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is a number representing the multiplicator/dividor of DEF won</param>
         /// </summary>
-        private static void DealWithInstantEffectMultiplyDef(InvocationCard invocationCard, string value)
+        private static void DealWithInstantEffectMultiplyDef(InGameInvocationCard invocationCard, string value)
         {
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
                 var newBonusDefense =
-                    (multiplicator - 1) * invocationCard.GetDefense() + invocationCard.GetBonusDefense();
-                invocationCard.SetBonusDefense(newBonusDefense);
+                    (multiplicator - 1) * invocationCard.baseInvocationCard.GetDefense();
+                invocationCard.Defense += newBonusDefense;
             }
             else if (multiplicator < 0)
             {
-                var newBonusDefense = (invocationCard.GetDefense() / multiplicator) + invocationCard.GetBonusDefense();
-                invocationCard.SetBonusDefense(newBonusDefense);
+                var newBonusDefense = (invocationCard.baseInvocationCard.GetDefense() / multiplicator);
+                invocationCard.Defense += newBonusDefense;
             }
         }
 
@@ -276,11 +274,10 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is a number representing the fixed ATK value</param>
         /// </summary>
-        private static void DealWithInstantEffectSetAtk(InvocationCard invocationCard, string value)
+        private static void DealWithInstantEffectSetAtk(InGameInvocationCard invocationCard, string value)
         {
             var specificAtk = float.Parse(value);
-            var newBonusAttack = specificAtk - invocationCard.GetAttack();
-            invocationCard.SetBonusAttack(newBonusAttack);
+            invocationCard.Attack = specificAtk;
         }
 
         /// <summary>
@@ -289,11 +286,10 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is a number representing the fixed DEF value</param>
         /// </summary>
-        private static void DealWithInstantEffectSetDef(InvocationCard invocationCard, string value)
+        private static void DealWithInstantEffectSetDef(InGameInvocationCard invocationCard, string value)
         {
             var specificDef = float.Parse(value);
-            var newBonusDefense = specificDef - invocationCard.GetDefense();
-            invocationCard.SetBonusDefense(newBonusDefense);
+            invocationCard.Defense = specificDef;
         }
 
 
@@ -302,10 +298,11 @@ namespace Cards.EquipmentCards
         /// Remove the previous equipment card link to invocation card
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// </summary>
-        private static void DealWithInstantEffectSwitchEquipment(InvocationCard invocationCard)
+        private static void DealWithInstantEffectSwitchEquipment(InGameInvocationCard invocationCard)
         {
-            if (invocationCard.GetEquipmentCard() == null) return;
-            CurrentPlayerCard.yellowTrash.Add(invocationCard.GetEquipmentCard());
+            if (invocationCard.EquipmentCard == null) return;
+            CurrentPlayerCard.yellowTrash.Add(invocationCard.EquipmentCard);
+            invocationCard.EquipmentCard = null;
             invocationCard.SetEquipmentCard(null);
         }
 
@@ -314,7 +311,7 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="equipmentPermEffect">equipment perm effect of equipment card</param>
         /// </summary>
-        public static void DealWithPermEffect(InvocationCard invocationCard, EquipmentPermEffect equipmentPermEffect)
+        public static void DealWithPermEffect(InGameInvocationCard invocationCard, EquipmentPermEffect equipmentPermEffect)
         {
             var keys = equipmentPermEffect.Keys;
             var values = equipmentPermEffect.Values;
@@ -349,11 +346,11 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is the atk bonus per card on hand</param>
         /// </summary>
-        private static void DealWithPermEffectAddAtkBaseOnHandCards(InvocationCard invocationCard, string value)
+        private static void DealWithPermEffectAddAtkBaseOnHandCards(InGameInvocationCard invocationCard, string value)
         {
             var floatValue = float.Parse(value);
-            var newBonusAttack = floatValue * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusAttack();
-            invocationCard.SetBonusAttack(newBonusAttack);
+            var newBonusAttack = floatValue * CurrentPlayerCard.handCards.Count;
+            invocationCard.Attack += newBonusAttack;
         }
 
         /// <summary>
@@ -362,11 +359,11 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="value">value is a string that is the def bonus per card on hand</param>
         /// </summary>
-        private static void DealWithPermEffectAddDefBaseOnHandCards(InvocationCard invocationCard, string value)
+        private static void DealWithPermEffectAddDefBaseOnHandCards(InGameInvocationCard invocationCard, string value)
         {
             var floatValue = float.Parse(value);
-            var newBonusDefense = floatValue * CurrentPlayerCard.handCards.Count + invocationCard.GetBonusDefense();
-            invocationCard.SetBonusDefense(newBonusDefense);
+            var newBonusDefense = floatValue * CurrentPlayerCard.handCards.Count;
+            invocationCard.Defense += newBonusDefense;
         }
     }
 }

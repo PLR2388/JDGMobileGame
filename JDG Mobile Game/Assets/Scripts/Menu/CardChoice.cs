@@ -77,7 +77,7 @@ namespace Menu
                         card.CardOwner = CardOwner.Player2;
                     }
                     
-                    FindObjectOfType<GameState>().deckP2 = deck;
+                    FindObjectOfType<GameState>().deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card)).ToList();
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace Menu
                         card.CardOwner = CardOwner.Player1;
                     }
                     
-                    FindObjectOfType<GameState>().deckP1 = deck;
+                    FindObjectOfType<GameState>().deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -154,8 +154,8 @@ namespace Menu
                 card.CardOwner = CardOwner.Player2;
             }
 
-            FindObjectOfType<GameState>().deckP1 = deck1;
-            FindObjectOfType<GameState>().deckP2 = deck2;
+            FindObjectOfType<GameState>().deckP1 = deck1.Select(InGameCard.CreateInGameCard).ToList();
+            FindObjectOfType<GameState>().deckP2 = deck2.Select(InGameCard.CreateInGameCard).ToList();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
@@ -197,8 +197,8 @@ namespace Menu
                 card.CardOwner = CardOwner.Player2;
             }
 
-            FindObjectOfType<GameState>().deckP1 = deck1;
-            FindObjectOfType<GameState>().deckP2 = deck2;
+            FindObjectOfType<GameState>().deckP1 = deck1.Select(InGameCard.CreateInGameCard).ToList();
+            FindObjectOfType<GameState>().deckP2 = deck2.Select(InGameCard.CreateInGameCard).ToList();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
@@ -230,7 +230,7 @@ namespace Menu
                 playerToken.SetValue(1);
                 buttonLabel.TranslationName = choiceText.name;
                 isPlayerOneCardChosen = false;
-                FindObjectOfType<GameState>().deckP1 = new List<Card>();
+                FindObjectOfType<GameState>().deckP1 = new List<InGameCard>();
                 DeselectAllCards();
             }
             else

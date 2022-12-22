@@ -41,7 +41,7 @@ namespace Cards.EffectCards
         /// Apply effects of the card or refuse to put it if 4 effects cards are on the field
         /// </summary>
         /// <param name="effectCard">The effect card the user put on field</param>
-        private void PutEffectCard(EffectCard effectCard)
+        private void PutEffectCard(InGameEffectCard effectCard)
         {
             var size = currentPlayerCard.effectCards.Count;
 
@@ -283,7 +283,7 @@ namespace Cards.EffectCards
             {
                 case "field":
                 {
-                    var fieldCards = new List<Card>();
+                    var fieldCards = new List<InGameCard>();
                     var fieldCard1 = currentPlayerCard.field;
                     var fieldCard2 = opponentPlayerCard.field;
                     if (fieldCard1 != null)
@@ -318,7 +318,7 @@ namespace Cards.EffectCards
                     var invocationCards1 = currentPlayerCard.invocationCards;
                     var invocationCards2 = opponentPlayerCard.invocationCards;
 
-                    var allCardsOnField = new List<Card>();
+                    var allCardsOnField = new List<InGameCard>();
 
                     if (fieldCard1 != null)
                     {
@@ -343,10 +343,10 @@ namespace Cards.EffectCards
                     break;
                 case "equipment":
                 {
-                    var invocationCardsOnField = new List<InvocationCard>(currentPlayerCard.invocationCards);
+                    var invocationCardsOnField = new List<InGameInvocationCard>(currentPlayerCard.invocationCards);
                     invocationCardsOnField.AddRange(opponentPlayerCard.invocationCards);
 
-                    isValid = invocationCardsOnField.Select(invocationCard => invocationCard.GetEquipmentCard())
+                    isValid = invocationCardsOnField.Select(invocationCard => invocationCard.EquipmentCard)
                         .Where(equipmentCard => equipmentCard != null).ToList().Count > 0;
                 }
                     break;
@@ -594,7 +594,7 @@ namespace Cards.EffectCards
         /// </summary>
         /// <param name="effectCard">the effect card</param>
         /// <param name="effectCardEffect">effects of the effect card</param>
-        private void ApplyEffectCard(EffectCard effectCard, EffectCardEffect effectCardEffect)
+        private void ApplyEffectCard(InGameEffectCard effectCard, EffectCardEffect effectCardEffect)
         {
             var keys = effectCardEffect.Keys;
             var values = effectCardEffect.Values;
@@ -727,7 +727,7 @@ namespace Cards.EffectCards
                         break;
                     case Effect.Combine:
                     {
-                        ApplyCombine(effectCard, value);
+                        //ApplyCombine(effectCard, value); // TODO : Remake it
                     }
                         break;
                     case Effect.RevertStat:
@@ -802,7 +802,7 @@ namespace Cards.EffectCards
         /// <param name="effectCard">the effect card</param>
         /// <param name="value">value is a string which is the number of affected HP</param>
         /// <returns>the number of affected HP</returns>
-        private static float ApplyAffectPv(EffectCard effectCard, string value)
+        private static float ApplyAffectPv(InGameEffectCard effectCard, string value)
         {
             var pvAffected = value == "all" ? 100.0f : float.Parse(value);
 
@@ -840,7 +840,7 @@ namespace Cards.EffectCards
             {
                 case "field":
                 {
-                    var fieldCards = new List<Card>();
+                    var fieldCards = new List<InGameCard>();
                     var fieldCard1 = currentPlayerCard.field;
                     var fieldCard2 = opponentPlayerCard.field;
                     if (fieldCard1 != null)
@@ -863,14 +863,14 @@ namespace Cards.EffectCards
                             message.GetComponent<MessageBox>().PositiveAction = () =>
                             {
                                 var fieldCard =
-                                    (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                                    (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
                                 if (fieldCard != null)
                                 {
                                     // User select a card
                                     // Need to find if it's from user or opponent
                                     if (fieldCard1 != null)
                                     {
-                                        if (fieldCard.Nom == fieldCard1.Nom)
+                                        if (fieldCard.Title == fieldCard1.Title)
                                         {
                                             currentPlayerCard.yellowTrash.Add(fieldCard);
                                             currentPlayerCard.field = null;
@@ -968,13 +968,13 @@ namespace Cards.EffectCards
                     if (affectOpponent)
                     {
                         var invocationOpponentValid = opponentPlayerCard.invocationCards
-                            .Where(card => card.IsAffectedByEffectCard).Cast<Card>().ToList();
+                            .Where(card => card.IsAffectedByEffectCard).Cast<InGameCard>().ToList();
                         var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                             "Choix de l'invocation à détruire", invocationOpponentValid);
                         message.GetComponent<MessageBox>().PositiveAction = () =>
                         {
                             var invocationCard =
-                                (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                                (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                             if (invocationCard != null)
                             {
                                 opponentPlayerCard.SendInvocationCardToYellowTrash(invocationCard);
@@ -1015,11 +1015,11 @@ namespace Cards.EffectCards
                     var effectCards1 = currentPlayerCard.effectCards;
                     var effectCards2 = opponentPlayerCard.effectCards;
                     var invocationCards1 = currentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
-                        .Cast<Card>().ToList();
+                        .Cast<InGameCard>().ToList();
                     var invocationCards2 = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
-                        .Cast<Card>().ToList();
+                        .Cast<InGameCard>().ToList();
 
-                    var allCardsOnField = new List<Card>();
+                    var allCardsOnField = new List<InGameCard>();
 
                     if (fieldCard1 != null)
                     {
@@ -1055,13 +1055,13 @@ namespace Cards.EffectCards
                                 case CardType.Effect:
                                     FindCardInArrayAndSendItToTrash(effectCards1, effectCards2, card);
                                     break;
-                                case CardType.Field when fieldCard1.Nom == card.Nom:
+                                case CardType.Field when fieldCard1.Title == card.Title:
                                     currentPlayerCard.yellowTrash.Add(card);
                                     currentPlayerCard.field = null;
                                     break;
                                 case CardType.Field:
                                 {
-                                    if (fieldCard2.Nom == card.Nom)
+                                    if (fieldCard2.Title == card.Title)
                                     {
                                         opponentPlayerCard.yellowTrash.Add(fieldCard2);
                                         opponentPlayerCard.field = null;
@@ -1100,13 +1100,13 @@ namespace Cards.EffectCards
                 case "equipment":
                 {
                     var currentPlayerEquipmentCard = currentPlayerCard.invocationCards
-                        .Select(invocationCard => invocationCard.GetEquipmentCard())
+                        .Select(invocationCard => invocationCard.EquipmentCard)
                         .Where(equipmentCard => equipmentCard != null).ToList();
                     var opponentPlayerEquipmentCard = opponentPlayerCard.invocationCards
-                        .Select(invocationCard => invocationCard.GetEquipmentCard())
+                        .Select(invocationCard => invocationCard.EquipmentCard)
                         .Where(equipmentCard => equipmentCard != null).ToList();
 
-                    var equipmentCards = new List<Card>(currentPlayerEquipmentCard);
+                    var equipmentCards = new List<InGameCard>(currentPlayerEquipmentCard);
                     equipmentCards.AddRange(opponentPlayerEquipmentCard);
 
                     var message =
@@ -1118,14 +1118,14 @@ namespace Cards.EffectCards
                         if (equipmentCardSelected != null)
                         {
                             var isCurrent = currentPlayerEquipmentCard.Any(equipmentCard =>
-                                equipmentCard.Nom == equipmentCardSelected.Nom);
+                                equipmentCard.Title == equipmentCardSelected.Title);
                             if (isCurrent)
                             {
                                 currentPlayerCard.yellowTrash.Add(equipmentCardSelected);
                                 foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation =>
-                                             invocation.GetEquipmentCard() != null &&
-                                             invocation.GetEquipmentCard().Nom ==
-                                             equipmentCardSelected.Nom))
+                                             invocation.EquipmentCard != null &&
+                                             invocation.EquipmentCard.Title ==
+                                             equipmentCardSelected.Title))
                                 {
                                     invocation.SetEquipmentCard(null);
                                 }
@@ -1134,9 +1134,9 @@ namespace Cards.EffectCards
                             {
                                 opponentPlayerCard.yellowTrash.Add(equipmentCardSelected);
                                 foreach (var invocation in currentPlayerCard.invocationCards.Where(invocation =>
-                                             invocation.GetEquipmentCard() != null &&
-                                             invocation.GetEquipmentCard().Nom ==
-                                             equipmentCardSelected.Nom))
+                                             invocation.EquipmentCard != null &&
+                                             invocation.EquipmentCard.Title ==
+                                             equipmentCardSelected.Title))
                                 {
                                     invocation.SetEquipmentCard(null);
                                 }
@@ -1164,7 +1164,7 @@ namespace Cards.EffectCards
             }
         }
 
-        private void FindCardInArrayAndSendItToTrash(IReadOnlyList<Card> cards1, IReadOnlyList<Card> cards2, Card card)
+        private void FindCardInArrayAndSendItToTrash(IReadOnlyList<InGameCard> cards1, IReadOnlyList<InGameCard> cards2, InGameCard card)
         {
             var found = false;
             var j = 0;
@@ -1173,19 +1173,19 @@ namespace Cards.EffectCards
                 var card2 = cards2[j];
                 if (card2 != null)
                 {
-                    if (card2.Nom == card.Nom)
+                    if (card2.Title == card.Title)
                     {
                         found = true;
                         switch (card.Type)
                         {
                             case CardType.Invocation:
                             {
-                                opponentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
+                                opponentPlayerCard.SendInvocationCardToYellowTrash(card as InGameInvocationCard);
                             }
                                 break;
                             case CardType.Effect:
                             {
-                                opponentPlayerCard.effectCards.Remove(card as EffectCard);
+                                opponentPlayerCard.effectCards.Remove(card as InGameEffectCard);
                                 opponentPlayerCard.yellowTrash.Add(card);
                             }
                                 break;
@@ -1203,20 +1203,20 @@ namespace Cards.EffectCards
                 var card1 = cards1[j];
                 if (card1 != null)
                 {
-                    if (card1.Nom == card.Nom)
+                    if (card1.Title == card.Title)
                     {
                         found = true;
                         switch (card.Type)
                         {
                             case CardType.Invocation:
                             {
-                                currentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
+                                currentPlayerCard.SendInvocationCardToYellowTrash(card as InGameInvocationCard);
                             }
                                 break;
                             case CardType.Effect:
                             {
                                 currentPlayerCard.yellowTrash.Add(card);
-                                currentPlayerCard.effectCards.Remove(card as EffectCard);
+                                currentPlayerCard.effectCards.Remove(card as InGameEffectCard);
                             }
                                 break;
                         }
@@ -1338,7 +1338,7 @@ namespace Cards.EffectCards
                 {
                     var invocationCards = currentPlayerCard.invocationCards;
                     var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
+                        .Where(invocationCard => invocationCard.IsValid()).Cast<InGameCard>().ToList();
                     GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
                 }
                     break;
@@ -1348,7 +1348,7 @@ namespace Cards.EffectCards
                     var invocationCardsValid = invocationCards
                         .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
                             invocationCard.GetCurrentAttack() >= 5 ||
-                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
+                            invocationCard.GetCurrentDefense() >= 5).Cast<InGameCard>().ToList();
                     GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
                 }
                     break;
@@ -1358,7 +1358,7 @@ namespace Cards.EffectCards
                     var invocationCardsValid = invocationCards.Where(invocationCard =>
                             invocationCard.GetCurrentAttack() >= 3 ||
                             invocationCard.GetCurrentDefense() >= 3)
-                        .Cast<Card>().ToList();
+                        .Cast<InGameCard>().ToList();
                     GenerateSacrificeInvocationMessageBox(invocationCardsValid, pvAffected, completion);
                 }
                     break;
@@ -1372,7 +1372,7 @@ namespace Cards.EffectCards
         /// <param name="invocationCardsValid">invocation cards list to display</param>
         /// <param name="pvAffected">number of HP user can win or lose (can be 0)</param>
         /// <param name="completion">callback call after selecting the invocation to sacrifice</param>
-        private void GenerateSacrificeInvocationMessageBox(List<Card> invocationCardsValid,
+        private void GenerateSacrificeInvocationMessageBox(List<InGameCard> invocationCardsValid,
             float pvAffected, UnityAction completion)
         {
             var message =
@@ -1385,7 +1385,7 @@ namespace Cards.EffectCards
                 var card = message.GetComponent<MessageBox>().GetSelectedCard();
                 if (card != null)
                 {
-                    currentPlayerCard.SendInvocationCardToYellowTrash(card as InvocationCard);
+                    currentPlayerCard.SendInvocationCardToYellowTrash(card as InGameInvocationCard);
                     if (pvAffected != 0)
                     {
                         currentPlayerStatus.ChangePv(pvAffected);
@@ -1433,7 +1433,7 @@ namespace Cards.EffectCards
                 var familyField = fieldCard.GetFamily();
                 foreach (var card in currentPlayerCard.invocationCards.Where(card => card.IsValid()))
                 {
-                    card.SetCurrentFamily(familyField);
+                    card.Families = new[] { familyField };
                 }
             }
             else
@@ -1446,7 +1446,7 @@ namespace Cards.EffectCards
         /// Set a boolean on effect card to check effects of this card at every draw (start of turn)
         /// </summary>
         /// <param name="effectCard">effect card to check at each turn</param>
-        private static void ApplyCheckTurn(EffectCard effectCard)
+        private static void ApplyCheckTurn(InGameEffectCard effectCard)
         {
             effectCard.checkTurn = true;
         }
@@ -1477,7 +1477,7 @@ namespace Cards.EffectCards
             {
                 if (sources.Contains("deck") && sources.Contains("yellow"))
                 {
-                    List<Card> cards = new List<Card>(currentPlayerCard.deck);
+                    List<InGameCard> cards = new List<InGameCard>(currentPlayerCard.deck);
                     cards.AddRange(currentPlayerCard.yellowTrash);
                     var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                         "Choisis 1 carte à rajouter dans ta main", cards);
@@ -1529,13 +1529,13 @@ namespace Cards.EffectCards
             {
                 if (value == "deck")
                 {
-                    List<Card> fieldCardInDeck =
+                    List<InGameCard> fieldCardInDeck =
                         currentPlayerCard.deck.FindAll(card => card.Type == CardType.Field);
                     var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                         "Choix du nouveau terrain", fieldCardInDeck);
                     messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                     {
-                        var fieldCard = (FieldCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                        var fieldCard = (InGameFieldCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
                         if (fieldCard != null)
                         {
                             if (currentPlayerCard.field != null)
@@ -1589,7 +1589,7 @@ namespace Cards.EffectCards
         /// </summary>
         /// <param name="handCardsNumber">number of cards to have in hand</param>
         /// <param name="effectCard">effect card that forces it</param>
-        private void ApplyHandMax(int handCardsNumber, EffectCard effectCard)
+        private void ApplyHandMax(int handCardsNumber, InGameEffectCard effectCard)
         {
             var handCard1 = currentPlayerCard.handCards;
             handCard1.Remove(effectCard);
@@ -1675,7 +1675,7 @@ namespace Cards.EffectCards
         /// </summary>
         /// <param name="handCard2">handCard of the opponent</param>
         /// <param name="handCardsNumber">number of hand card to have</param>
-        private void ReduceHandOpponentPlayer(List<Card> handCard2, int handCardsNumber)
+        private void ReduceHandOpponentPlayer(List<InGameCard> handCard2, int handCardsNumber)
         {
             if (handCard2.Count < handCardsNumber)
             {
@@ -1810,9 +1810,9 @@ namespace Cards.EffectCards
         /// Remove one card from user hand cards
         /// <param name="effectCard">effect card that justify to remove one card from hand</param>
         /// </summary>
-        private void ApplyRemoveHand(Card effectCard)
+        private void ApplyRemoveHand(InGameCard effectCard)
         {
-            var handCardPlayer = new List<Card>(currentPlayerCard.handCards);
+            var handCardPlayer = new List<InGameCard>(currentPlayerCard.handCards);
             handCardPlayer.Remove(effectCard);
             var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Quel carte veux-tu te défausser?", handCardPlayer);
@@ -1885,7 +1885,7 @@ namespace Cards.EffectCards
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var card =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (card != null)
                 {
                     currentPlayerCard.yellowTrash.Remove(card);
@@ -1931,8 +1931,7 @@ namespace Cards.EffectCards
                 opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard).ToList();
             foreach (var card in opponentInvocationCard)
             {
-                var newBonusDefense = card.GetBonusDefense() - card.GetCurrentDefense() / 2;
-                card.SetBonusDefense(newBonusDefense);
+                card.Defense /= 2;
             }
         }
 
@@ -1942,7 +1941,7 @@ namespace Cards.EffectCards
         /// <param name="effectCard">effect card </param>
         /// <param name="value">value is a string that is an int</param>
         /// </summary>
-        private static void ApplyDuration(EffectCard effectCard, string value)
+        private static void ApplyDuration(InGameEffectCard effectCard, string value)
         {
             if (int.TryParse(value, out var duration))
             {
@@ -1956,12 +1955,12 @@ namespace Cards.EffectCards
         /// <param name="effectCard">effect card </param>
         /// <param name="value">value is a string that is an int that represent the number of invocation cards to merge</param>
         /// </summary>
-        private void ApplyCombine(EffectCard effectCard, string value)
+        private void ApplyCombine(InGameEffectCard effectCard, string value)
         {
             var numberCombine = int.Parse(value);
             var currentInvocationCards = currentPlayerCard.invocationCards;
             if (currentInvocationCards.Count < numberCombine) return;
-            var cards = currentInvocationCards.Cast<Card>().ToList();
+            var cards = currentInvocationCards.Cast<InGameCard>().ToList();
 
             var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Sélectionnez " + numberCombine + " Cartes à fusionner", cards,
@@ -1972,24 +1971,24 @@ namespace Cards.EffectCards
 
                 if (currentCards != null && currentCards.Count > 0)
                 {
-                    var invocationCards = currentCards.Cast<InvocationCard>().ToList();
+                    var invocationCards = currentCards.Cast<InGameInvocationCard>().ToList();
 
                     var superInvocationCard =
                         ScriptableObject.CreateInstance<SuperInvocationCard>();
-                    superInvocationCard.Init(invocationCards);
+                    //superInvocationCard.Init(invocationCards);
 
                     var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
-                    cardLocation.AddPhysicalCard(superInvocationCard, playerName);
+                    //cardLocation.AddPhysicalCard(superInvocationCard, playerName);
                     foreach (var invocationCard in invocationCards)
                     {
                         var index1 = currentInvocationCards.FindIndex(0, currentInvocationCards.Count,
-                            card => card.Nom == invocationCard.Nom);
+                            card => card.Title == invocationCard.Title);
                         if (index1 <= -1) continue;
                         currentPlayerCard.SendToSecretHide(invocationCard);
                         currentPlayerCard.invocationCards.RemoveAt(index1);
                     }
 
-                    currentInvocationCards.Add(superInvocationCard);
+                    //currentInvocationCards.Add(superInvocationCard);
 
                     Destroy(messageBox);
                 }
@@ -2022,18 +2021,18 @@ namespace Cards.EffectCards
 
             foreach (var card in invocationCards1)
             {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
+                var currentAttack = card.Attack;
+                var currentDefense = card.Defense;
+                card.Defense = currentAttack;
+                card.Attack = currentDefense;
             }
 
             foreach (var card in invocationCards2)
             {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
+                var currentAttack = card.Attack;
+                var currentDefense = card.Defense;
+                card.Defense = currentAttack;
+                card.Attack = currentDefense;
             }
         }
 
@@ -2044,7 +2043,7 @@ namespace Cards.EffectCards
         private void ApplyTakeControl()
         {
             var invocationCardOpponent = opponentPlayerCard.invocationCards.Where(card => card.IsAffectedByEffectCard)
-                .Cast<Card>().ToList();
+                .Cast<InGameCard>().ToList();
 
             var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Quel carte veux-tu contrôler pendant un tour ?", invocationCardOpponent);
@@ -2052,7 +2051,7 @@ namespace Cards.EffectCards
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var card =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (card != null)
                 {
                     card.ControlCard();
@@ -2162,7 +2161,7 @@ namespace Cards.EffectCards
                 PositiveAction, NegativeAction);
         }
 
-        private void DisplayMessageBoxToChangeOrderCards(List<Card> cardsDeckToSee, bool isCurrentPlayerCard)
+        private void DisplayMessageBoxToChangeOrderCards(List<InGameCard> cardsDeckToSee, bool isCurrentPlayerCard)
         {
             var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Choisis les cartes dans l'ordre que tu veux", cardsDeckToSee,
@@ -2210,10 +2209,10 @@ namespace Cards.EffectCards
             };
         }
 
-        private List<Card> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
+        private List<InGameCard> BuildCardsDeckToSee(int see, bool isCurrentPlayerCard)
         {
             var playerCard = isCurrentPlayerCard ? currentPlayerCard : opponentPlayerCard;
-            List<Card> cardsDeckToSee = new List<Card>();
+            List<InGameCard> cardsDeckToSee = new List<InGameCard>();
             if (playerCard.deck.Count > see)
             {
                 for (var j = playerCard.deck.Count - 1;

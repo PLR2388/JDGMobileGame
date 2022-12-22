@@ -1,9 +1,13 @@
+using Cards.EffectCards;
+using Cards.FieldCards;
+using Cards.InvocationCards;
 using UnityEngine;
 
 namespace Cards
 {
-    public class InGameCard : MonoBehaviour
+    public class InGameCard
     {
+        public Card baseCard;
         [SerializeField] protected string title = "";
         [SerializeField] protected string description;
         [SerializeField] protected string detailedDescription;
@@ -28,6 +32,18 @@ namespace Cards
         public Material MaterialCard => materialCard;
 
         public bool Collector => collector;
+
+        public static InGameCard CreateInGameCard(Card card)
+        {
+            return card switch
+            {
+                EquipmentCard equipmentCard => InGameEquipementCard.Init(equipmentCard),
+                EffectCard effectCard => InGameEffectCard.Init(effectCard),
+                InvocationCard invocationCard => InGameInvocationCard.Init(invocationCard),
+                FieldCard fieldCard => InGameFieldCard.Init(fieldCard),
+                _ => null
+            };
+        }
 
         public bool IsValid()
         {

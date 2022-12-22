@@ -14,7 +14,7 @@ public class InteractPhysicalCards : MonoBehaviour
         startTime = 0f;
     }
 
-    private void DisplayCurrentCard(Card card)
+    private void DisplayCurrentCard(InGameCard card)
     {
         bigImageCard.SetActive(true);
         bigImageCard.GetComponent<Image>().material = card.MaterialCard;

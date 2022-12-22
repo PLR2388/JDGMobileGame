@@ -25,7 +25,7 @@ public class TutoInGameMenuScript : MonoBehaviour
     [FormerlySerializedAs("backgroundInformations")] [SerializeField]
     private GameObject backgroundInformation;
 
-    [SerializeField] private Card currentSelectedCard;
+    [SerializeField] private InGameCard currentSelectedCard;
     [SerializeField] private GameObject invocationMenu;
 
     [SerializeField] private GameObject gameLoop;
@@ -62,7 +62,7 @@ public class TutoInGameMenuScript : MonoBehaviour
         EventClick.AddListener(ClickOnCard);
     }
 
-    private void ClickOnCard(Card card)
+    private void ClickOnCard(InGameCard card)
     {
         currentSelectedCard = card;
         var cardType = currentSelectedCard.Type;
@@ -72,13 +72,13 @@ public class TutoInGameMenuScript : MonoBehaviour
 
         var authorizedCard = currentDialogIndex > 36 ? "Musique de Mega Drive" : "Cliché Raciste";
 
-        if (card.Nom == authorizedCard)
+        if (card.Title == authorizedCard)
         {
             switch (cardType)
             {
                 case CardType.Invocation:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                    var invocationCard = (InvocationCard)card;
+                    var invocationCard = (InGameInvocationCard)card;
                     putCardButton.GetComponent<Button>().interactable =
                         invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
 
@@ -88,16 +88,16 @@ public class TutoInGameMenuScript : MonoBehaviour
                     putCardButton.GetComponent<Button>().interactable = true;
                     break;
                 case CardType.Effect:
-                    var effectCard = (EffectCard)card;
+                    var effectCard = (InGameEffectCard)card;
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                     putCardButton.GetComponent<Button>().interactable =
                         effectFunctions.CanUseEffectCard(effectCard.GetEffectCardEffect());
                     break;
                 case CardType.Equipment:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
-                    var equipmentCard = (EquipmentCard)card;
-                    putCardButton.GetComponent<Button>().interactable = equipmentCard.IsEquipmentPossible();
-
+                    var equipmentCard = (InGameEquipementCard)card;
+                    putCardButton.GetComponent<Button>().interactable =
+                        InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
                     break;
                 case CardType.Field:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
@@ -136,25 +136,25 @@ public class TutoInGameMenuScript : MonoBehaviour
         {
             case CardType.Invocation:
             {
-                var invocationCard = (InvocationCard)currentSelectedCard;
+                var invocationCard = (InGameInvocationCard)currentSelectedCard;
                 InvocationCardEvent.Invoke(invocationCard);
                 break;
             }
             case CardType.Field:
             {
-                var fieldCard = (FieldCard)currentSelectedCard;
+                var fieldCard = (InGameFieldCard)currentSelectedCard;
                 FieldCardEvent.Invoke(fieldCard);
                 break;
             }
             case CardType.Effect:
             {
-                var effectCard = (EffectCard)currentSelectedCard;
+                var effectCard = (InGameEffectCard)currentSelectedCard;
                 EffectCardEvent.Invoke(effectCard);
                 break;
             }
             case CardType.Equipment:
             {
-                var equipmentCard = (EquipmentCard)currentSelectedCard;
+                var equipmentCard = (InGameEquipementCard)currentSelectedCard;
                 EquipmentCardEvent.Invoke(equipmentCard);
                 break;
             }
@@ -187,7 +187,8 @@ public class TutoInGameMenuScript : MonoBehaviour
             miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
 
             detailButtonText.GetComponent<TextMeshProUGUI>().text = "Retour";
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard;
+            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard.baseCard;
+            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().inGameCard = currentSelectedCard;
             detailCardPanel.SetActive(true);
             inHandButton.SetActive(false);
         }

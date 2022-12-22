@@ -18,40 +18,4 @@ public class EquipmentCard : Card
     {
         type = CardType.Equipment;
     }
-
-    // TODO: Modifiy this function as we can put an equipment card on any invocationCard on field
-    /// <summary>
-    /// IsEquipmentPossible.
-    /// Test if user can put an equipment on at least one invocation card on field.
-    /// </summary>
-    public bool IsEquipmentPossible()
-    {
-        var player1 = GameObject.Find("Player1");
-        var player2 = GameObject.Find("Player2");
-        return HasEnoughInvocationCard(player1) || HasEnoughInvocationCard(player2);
-    }
-
-    /// <summary>
-    /// IsEquipmentPossible.
-    /// Test if the player in parameter have enough invocation cards without equipment card or
-    /// the current equipment card can change its place with another
-    /// <param name="player">Player gameObject</param>
-    /// </summary>
-    private bool HasEnoughInvocationCard(GameObject player)
-    {
-        var currentPlayerCard = player.GetComponent<PlayerCards>();
-
-        var invocationCards = currentPlayerCard.invocationCards;
-
-        return HasEnoughInvocationCard(invocationCards);
-    }
-
-    private bool HasEnoughInvocationCard(IReadOnlyList<InvocationCard> invocationCards)
-    {
-        var count = invocationCards.Count(t => t != null && t.Nom != null && (t.GetEquipmentCard() == null ||
-                                                                              (equipmentInstantEffect != null &&
-                                                                               equipmentInstantEffect.Keys.Contains(
-                                                                                   InstantEffect.SwitchEquipment))));
-        return count > 0;
-    }
 }

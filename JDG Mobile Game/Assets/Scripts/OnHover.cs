@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
-public class CardSelectedEvent : UnityEvent<Card>
+public class CardSelectedEvent : UnityEvent<InGameCard>
 {
 }
 
@@ -19,7 +19,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     private bool displayNumber = false;
     public bool bIsSelected = false;
     public bool bIsInGame = false;
-    private Card card;
+    private InGameCard card;
 
     public static readonly CardSelectedEvent CardSelectedEvent = new CardSelectedEvent();
     public static readonly CardSelectedEvent CardUnselectedEvent = new CardSelectedEvent();
@@ -28,12 +28,12 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         MessageBox.NumberedCardEvent.AddListener(UpdateNumberOnCard);
         image = GetComponent<Image>();
-        card = gameObject.GetComponent<CardDisplay>().card;
+        card = gameObject.GetComponent<CardDisplay>().inGameCard;
     }
 
-    private void UpdateNumberOnCard(Card cardToModify, int numberToApply)
+    private void UpdateNumberOnCard(InGameCard cardToModify, int numberToApply)
     {
-        if (card.Nom == cardToModify.Nom)
+        if (card.Title == cardToModify.Title)
         {
             number = numberToApply;
             displayNumber = true;
@@ -95,13 +95,13 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             {
                 image.color = Color.green;
                 bIsSelected = true;
-                var clickedCard = gameObject.GetComponent<CardDisplay>().card;
+                var clickedCard = gameObject.GetComponent<CardDisplay>().inGameCard;
                 CardSelectedEvent.Invoke(clickedCard);
             }
         }
         else
         {
-            var currentCard = GetComponent<CardDisplay>().card;
+            var currentCard = GetComponent<CardDisplay>().inGameCard;
             if (SceneManager.GetActiveScene().name == "TutoPlayerGame")
             {
                 TutoInGameMenuScript.EventClick.Invoke(currentCard);

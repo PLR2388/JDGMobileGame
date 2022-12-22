@@ -5,7 +5,7 @@ using UnityEngine;
 public class DisplayCards : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
-    [SerializeField] public List<Card> cardsList;
+    public List<InGameCard> cardsList;
 
     private List<GameObject> createdCards;
 
@@ -24,7 +24,8 @@ public class DisplayCards : MonoBehaviour
             {
                 var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
                 newCard.transform.SetParent(transform, true);
-                newCard.GetComponent<CardDisplay>().card = card;
+                newCard.GetComponent<CardDisplay>().card = card.baseCard;
+                newCard.GetComponent<CardDisplay>().inGameCard = card;
                 createdCards.Add(newCard);
             }
 

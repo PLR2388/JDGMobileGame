@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class CardDisplay : MonoBehaviour
 {
+    public InGameCard inGameCard;
     public Card card;
     public Material defaultMaterial;
     public bool bIsFaceHidden;

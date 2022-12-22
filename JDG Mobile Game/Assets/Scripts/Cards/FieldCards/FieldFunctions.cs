@@ -27,7 +27,7 @@ namespace Cards.FieldCards
         /// Put a field card on field and apply its effect
         /// <param name="fieldCard">field card used</param>
         /// </summary>
-        private void PutFieldCard(FieldCard fieldCard)
+        private void PutFieldCard(InGameFieldCard fieldCard)
         {
             if (currentPlayerCard.field != null) return;
             miniCardMenu.SetActive(false);
@@ -41,7 +41,7 @@ namespace Cards.FieldCards
         /// <param name="fieldCard">field card used</param>
         /// <param name="playerCards">player cards of current user</param>
         /// </summary>
-        public static void ApplyFieldCardEffect(FieldCard fieldCard, PlayerCards playerCards)
+        public static void ApplyFieldCardEffect(InGameFieldCard fieldCard, PlayerCards playerCards)
         {
             var fieldCardEffect = fieldCard.FieldCardEffect;
 
@@ -89,11 +89,9 @@ namespace Cards.FieldCards
         {
             // Must be called also when invocationCards change
             var atk = float.Parse(value);
-            foreach (var invocationCard in playerCards.invocationCards)
+            foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard => invocationCard.Families.Contains(family)))
             {
-                if (!invocationCard.GetFamily().Contains(family)) continue;
-                var newBonusAttack = invocationCard.GetBonusAttack() + atk;
-                invocationCard.SetBonusAttack(newBonusAttack);
+                invocationCard.Attack += atk;
             }
         }
 
@@ -108,11 +106,9 @@ namespace Cards.FieldCards
         {
             // Must be called also when invocationCards change
             var def = float.Parse(value);
-            foreach (var invocationCard in playerCards.invocationCards)
+            foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard => invocationCard.Families.Contains(family)))
             {
-                if (!invocationCard.GetFamily().Contains(family)) continue;
-                var newBonusAttack = invocationCard.GetBonusDefense() + def;
-                invocationCard.SetBonusDefense(newBonusAttack);
+                invocationCard.Defense += def;
             }
         }
 
@@ -128,9 +124,12 @@ namespace Cards.FieldCards
             // Must be called also when invocationCards change
             var names = value.Split(';');
             foreach (var invocationCard in playerCards.invocationCards.Where(invocationCard =>
-                         names.Contains(invocationCard.Nom)))
+                         names.Contains(invocationCard.Title)))
             {
-                invocationCard.SetCurrentFamily(family);
+                invocationCard.Families = new[]
+                {
+                    family
+                };
             }
         }
 

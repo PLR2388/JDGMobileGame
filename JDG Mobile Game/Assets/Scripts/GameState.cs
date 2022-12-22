@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using Cards.EffectCards;
+using Cards.FieldCards;
 using Cards.InvocationCards;
 using Menu;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class GameState : MonoBehaviour
 {
@@ -14,8 +14,8 @@ public class GameState : MonoBehaviour
     public List<Card> deck1AllCards;
     public List<Card> deck2AllCards;
 
-    [FormerlySerializedAs("DeckP1")] public List<Card> deckP1;
-    [FormerlySerializedAs("DeckP2")] public List<Card> deckP2;
+    public List<InGameCard> deckP1 = new List<InGameCard>();
+    public List<InGameCard> deckP2 = new List<InGameCard>();
 
     private static GameState instance;
 
@@ -72,20 +72,21 @@ public class GameState : MonoBehaviour
         InitCards();
         foreach (var t in allCards)
         {
-            deckP1.Add(t);
+            InGameCard inGameCard = InGameCard.CreateInGameCard(t);
+            deckP1.Add(inGameCard);
         }
 
         for (var i = 30; i < 60; i++)
         {
-            deckP2.Add(allCards[i]);
+            deckP2.Add(InGameCard.CreateInGameCard(allCards[i]));
         }
     }
 
     public void BuildDeckForTuto()
     {
         ResetDeckPlayer();
-        deckP1.Clear();
-        deckP2.Clear();
+        List<Card> deck1 = new List<Card>();
+        List<Card> deck2 = new List<Card>();
 
         var card = CardChoice.GetSpecificCard("Cliché Raciste", deck2AllCards);
         var tentacule = CardChoice.GetSpecificCard("Tentacules", deck2AllCards);
@@ -107,19 +108,21 @@ public class GameState : MonoBehaviour
         fistiland.CardOwner = CardOwner.Player1;
         var merdeRose = CardChoice.GetSpecificCard("Merde magique en plastique rose", deck1AllCards);
         merdeRose.CardOwner = CardOwner.Player1;
-        
 
-        
-        CardChoice.GetRandomDeck(25, ref deckP1, deck1AllCards, CardOwner.Player1);
-        deckP1.Add(fisti);
-        deckP1.Add(pyroBarbare);
-        deckP1.Add(jeanMichelBruitage);
-        deckP1.Add(fistiland);
-        deckP1.Add(merdeRose);
-        deckP2.Add(tentacule);
-        CardChoice.GetRandomDeck(26, ref deckP2, deck2AllCards, CardOwner.Player2);
-        deckP2.Add(card);
-        deckP2.Add(musicMegaDrive);
-        deckP2.Add(elfette);
+
+        CardChoice.GetRandomDeck(25, ref deck1, deck1AllCards, CardOwner.Player1);
+        deck1.Add(fisti);
+        deck1.Add(pyroBarbare);
+        deck1.Add(jeanMichelBruitage);
+        deck1.Add(fistiland);
+        deck1.Add(merdeRose);
+        deck1.Add(tentacule);
+        CardChoice.GetRandomDeck(26, ref deck2, deck2AllCards, CardOwner.Player2);
+        deck2.Add(card);
+        deck2.Add(musicMegaDrive);
+        deck2.Add(elfette);
+
+        deckP1 = deck1.Select(InGameCard.CreateInGameCard).ToList();
+        deckP2 = deck2.Select(InGameCard.CreateInGameCard).ToList();
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PhysicalCardDisplay : MonoBehaviour
 {
-    public Card card;
+    public InGameCard card;
     public Material defaultMaterial;
     public bool bIsFaceHidden;
     private MeshRenderer meshRenderer;
@@ -21,7 +21,7 @@ public class PhysicalCardDisplay : MonoBehaviour
         }
         else
         {
-            meshRenderer.material = card ? card.MaterialCard : defaultMaterial;
+            meshRenderer.material = card != null ? card.MaterialCard : defaultMaterial;
         }
     }
 }

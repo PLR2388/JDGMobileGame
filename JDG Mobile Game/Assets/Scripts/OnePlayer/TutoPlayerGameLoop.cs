@@ -42,7 +42,7 @@ namespace OnePlayer
         [FormerlySerializedAs("P2")] [SerializeField]
         private GameObject p2;
 
-        [SerializeField] private Card player;
+        [SerializeField] private InGameCard player;
         [SerializeField] private GameObject inHandButton;
 
         public static readonly UnityEvent ChangePlayer = new UnityEvent();
@@ -54,9 +54,9 @@ namespace OnePlayer
         private bool stopDetectClicking;
         private bool clicking;
         private float totalDownTime;
-        private Card cardSelected;
-        private InvocationCard attacker;
-        private InvocationCard opponent;
+        private InGameCard cardSelected;
+        private InGameInvocationCard attacker;
+        private InGameInvocationCard opponent;
         private int numberOfTurn;
 
         private ActionScenario[] actionScenarios;
@@ -145,21 +145,24 @@ namespace OnePlayer
                     {
                         var cardNames = putCard.Split('>');
                         PlayerCards playerCards = p1.GetComponent<PlayerCards>();
-                        EquipmentCard equipmentCard = playerCards.handCards.Find(elt => elt.Nom == cardNames[0]) as EquipmentCard;
-                        InvocationCard invocationCard =
-                            playerCards.invocationCards.Find(elt => elt.Nom == cardNames[1]);
-                        
-                        var instantEffect = equipmentCard.EquipmentInstantEffect;
-                        var permEffect = equipmentCard.EquipmentPermEffect;
+                        InGameEquipementCard equipmentCard = playerCards.handCards.Find(elt => elt.Title == cardNames[0]) as InGameEquipementCard;
+                        InGameInvocationCard invocationCard =
+                            playerCards.invocationCards.Find(elt => elt.Title == cardNames[1]);
 
-                        if (instantEffect != null)
+                        if (equipmentCard != null)
                         {
-                            EquipmentFunctions.DealWithInstantEffect(invocationCard, instantEffect);
-                        }
+                            var instantEffect = equipmentCard.EquipmentInstantEffect;
+                            var permEffect = equipmentCard.EquipmentPermEffect;
 
-                        if (permEffect != null)
-                        {
-                            EquipmentFunctions.DealWithPermEffect(invocationCard, permEffect);
+                            if (instantEffect != null)
+                            {
+                                EquipmentFunctions.DealWithInstantEffect(invocationCard, instantEffect);
+                            }
+
+                            if (permEffect != null)
+                            {
+                                EquipmentFunctions.DealWithPermEffect(invocationCard, permEffect);
+                            }
                         }
 
                         invocationCard.SetEquipmentCard(equipmentCard);
@@ -171,12 +174,12 @@ namespace OnePlayer
                         PlayerCards playerCards = p1.GetComponent<PlayerCards>();
                         foreach (var name in cardNames)
                         {
-                            Card card = playerCards.handCards.Find(elt => elt.Nom == name);
-                            if (card is InvocationCard invocationCard)
+                            InGameCard card = playerCards.handCards.Find(elt => elt.Title == name);
+                            if (card is InGameInvocationCard invocationCard)
                             {
                                 playerCards.handCards.Remove(card);
                                 playerCards.invocationCards.Add(invocationCard);
-                            } else if (card is FieldCard fieldCard)
+                            } else if (card is InGameFieldCard fieldCard)
                             {
                                 playerCards.field = fieldCard;
                                 playerCards.handCards.Remove(fieldCard);
@@ -195,19 +198,19 @@ namespace OnePlayer
                         defender = attack[1] == "" ? "player" : attack[1];
                     }
 
-                    InvocationCard attackerInvocationCard =
-                        p1.GetComponent<PlayerCards>().invocationCards.Find(card => card.Nom == attacker);
+                    InGameInvocationCard attackerInvocationCard =
+                        p1.GetComponent<PlayerCards>().invocationCards.Find(card => card.Title == attacker);
 
-                    InvocationCard opponentInvocationCard;
+                    InGameInvocationCard opponentInvocationCard;
 
                     if (defender == "player")
                     {
-                        opponentInvocationCard = player as InvocationCard;
+                        opponentInvocationCard = player as InGameInvocationCard;
                     }
                     else
                     {
                         opponentInvocationCard = p2.GetComponent<PlayerCards>().invocationCards
-                            .Find(card => card.Nom == defender);
+                            .Find(card => card.Title == defender);
                     }
 
                     this.attacker = attackerInvocationCard;
@@ -340,13 +343,13 @@ namespace OnePlayer
                 ? p2.GetComponent<PlayerCards>().invocationCards
                 : p1.GetComponent<PlayerCards>().invocationCards;
             foreach (var ownInvocationCard in from invocationCard in invocationsOpponent
-                     where invocationCard.GetEquipmentCard() != null
-                     select invocationCard.GetEquipmentCard()
+                     where invocationCard.EquipmentCard != null
+                     select invocationCard.EquipmentCard
                      into equipment
                      where equipment.EquipmentPermEffect != null &&
                            equipment.EquipmentPermEffect.Keys.Contains(PermanentEffect.BlockOpponentDuringInvocation)
                      from ownInvocationCard in ownInvocations.Where(ownInvocationCard =>
-                         ownInvocationCard.NumberTurnOnField == 0)
+                         ownInvocationCard.NumberOfTurnOnField == 0)
                      select ownInvocationCard)
             {
                 ownInvocationCard.BlockAttack();
@@ -363,7 +366,7 @@ namespace OnePlayer
 
             if (cardObject.GetComponent<PhysicalCardDisplay>() == null) return;
             var card = cardObject.GetComponent<PhysicalCardDisplay>().card;
-            if (card.Nom != "Tentacules") return;
+            if (card.Title != "Tentacules") return;
             if (objectTag == personTag)
             {
                 cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
@@ -376,7 +379,7 @@ namespace OnePlayer
 #elif UNITY_ANDROID
                 var mousePosition = Input.GetTouch(0).position;
 #endif
-                    if (cardSelected is InvocationCard invocationCard)
+                    if (cardSelected is InGameInvocationCard invocationCard)
                     {
                         attacker = invocationCard;
                         var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
@@ -422,7 +425,7 @@ namespace OnePlayer
                     totalDownTime = 0;
                     clicking = true;
                     var opponentInvocationCard = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                    if (opponentInvocationCard is InvocationCard { IsControlled: true } invocationCard)
+                    if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
                     {
 #if UNITY_EDITOR
                         var mousePosition = Input.mousePosition;
@@ -493,10 +496,10 @@ namespace OnePlayer
         /**
      * Return the list of available opponents
      */
-        private void DisplayCards(List<InvocationCard> invocationCards, List<EffectCard> attackPlayerEffectCard)
+        private void DisplayCards(List<InGameInvocationCard> invocationCards, List<InGameEffectCard> attackPlayerEffectCard)
         {
-            var notEmptyOpponent = invocationCards.Where(t => t != null && t.Nom == "Jean-Michel Bruitages")
-                .Cast<Card>().ToList();
+            var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title == "Jean-Michel Bruitages")
+                .Cast<InGameCard>().ToList();
 
             /*if (notEmptyOpponent.Count == 0)
             {
@@ -665,7 +668,7 @@ namespace OnePlayer
             stopDetectClicking = true;
         }
 
-        private void DisplayOpponentMessageBox(List<Card> invocationCards)
+        private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
         {
             nextPhaseButton.SetActive(false);
             invocationMenu.SetActive(false);
@@ -677,7 +680,7 @@ namespace OnePlayer
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var invocationCard =
-                        (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
 
                     if (invocationCard != null)
                     {
@@ -710,7 +713,7 @@ namespace OnePlayer
             attacker.AttackTurnDone();
             invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = attacker.CanAttack();
 
-            if (opponent.Nom == "Player")
+            if (opponent.Title == "Player")
             {
                 // Directly attack the player
                 if (IsP1Turn)
@@ -768,9 +771,9 @@ namespace OnePlayer
             }
         }
 
-        private void RemoveCombineEffectCard(List<EffectCard> effectCards, List<Card> yellowCards)
+        private void RemoveCombineEffectCard(List<InGameEffectCard> effectCards, List<InGameCard> yellowCards)
         {
-            foreach (var effectCard in effectCards.Where(effectCard => effectCard.Nom == "Attaque de la tour Eiffel"))
+            foreach (var effectCard in effectCards.Where(effectCard => effectCard.Title == "Attaque de la tour Eiffel"))
             {
                 effectCards.Remove(effectCard);
                 yellowCards.Add(effectCard);
@@ -783,7 +786,7 @@ namespace OnePlayer
      */
         private void DealWithGoodAttack(float diff)
         {
-            if (opponent is SuperInvocationCard superOpponent)
+            if (opponent is InGameSuperInvocationCard superOpponent)
             {
                 ComputeGoodAttackSuperInvocationCard(diff, superOpponent);
             }
@@ -801,17 +804,17 @@ namespace OnePlayer
 
             playerStatus.ChangePv(diff);
 
-            if (opponent.GetInvocationDeathEffect() != null)
+            if (opponent.InvocationDeathEffect != null)
             {
                 DealWithDeathEffect(opponent, !IsP1Turn);
-                if (!opponent.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                if (!opponent.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                 {
                     playerCards.SendInvocationCardToYellowTrash(opponent);
                 }
                 else
                 {
-                    opponent.SetBonusAttack(0);
-                    opponent.SetBonusDefense(0);
+                    opponent.Attack = opponent.baseInvocationCard.GetAttack();
+                    opponent.Defense = opponent.baseInvocationCard.GetDefense();
                     opponent.UnblockAttack();
                 }
             }
@@ -821,7 +824,7 @@ namespace OnePlayer
             }
         }
 
-        private void ComputeGoodAttackSuperInvocationCard(float diff, SuperInvocationCard superOpponent)
+        private void ComputeGoodAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superOpponent)
         {
             var playerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
             var playerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
@@ -833,17 +836,17 @@ namespace OnePlayer
             foreach (var combineCard in superOpponent.invocationCards)
             {
                 combineCard.IncrementNumberDeaths();
-                if (combineCard.GetInvocationDeathEffect() != null)
+                if (combineCard.InvocationDeathEffect != null)
                 {
                     DealWithDeathEffect(combineCard, !IsP1Turn);
-                    if (!combineCard.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                    if (!combineCard.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                     {
                         playerCards.SendCardToYellowTrash(combineCard);
                     }
                     else
                     {
-                        combineCard.SetBonusAttack(0);
-                        combineCard.SetBonusDefense(0);
+                        combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
+                        combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
                         combineCard.ResetNewTurn();
                     }
                 }
@@ -861,7 +864,7 @@ namespace OnePlayer
      */
         private void DealWithHurtAttack(float diff)
         {
-            if (attacker is SuperInvocationCard superAttacker)
+            if (attacker is InGameSuperInvocationCard superAttacker)
             {
                 ComputeHurtAttackSuperInvocationCard(diff, superAttacker);
             }
@@ -871,9 +874,9 @@ namespace OnePlayer
             }
         }
 
-        private bool IsProtectedByEquipment(InvocationCard invocationCard, bool isP1)
+        private bool IsProtectedByEquipment(InGameInvocationCard invocationCard, bool isP1)
         {
-            var invocationEquipment = invocationCard.GetEquipmentCard();
+            var invocationEquipment = invocationCard.EquipmentCard;
             if (invocationEquipment == null) return false;
             var instantEffectEquipment = invocationEquipment.EquipmentInstantEffect;
             if (!instantEffectEquipment.Keys.Contains(InstantEffect.ProtectInvocation)) return false;
@@ -891,27 +894,27 @@ namespace OnePlayer
             if (IsProtectedByEquipment(attacker, IsP1Turn)) return;
             attacker.IncrementNumberDeaths();
             playerStatus.ChangePv(-diff);
-            if (attacker.GetInvocationDeathEffect() != null)
+            if (attacker.InvocationDeathEffect != null)
             {
                 DealWithDeathEffect(attacker, IsP1Turn);
-                if (!attacker.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                if (!attacker.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                 {
-                    playerCards.SendInvocationCardToYellowTrash(cardSelected as InvocationCard);
+                    playerCards.SendInvocationCardToYellowTrash(cardSelected as InGameInvocationCard);
                 }
                 else
                 {
-                    attacker.SetBonusAttack(0);
-                    attacker.SetBonusDefense(0);
+                    attacker.Attack = attacker.baseInvocationCard.GetAttack();
+                    attacker.Defense = attacker.baseInvocationCard.GetDefense();
                     attacker.ResetNewTurn();
                 }
             }
             else
             {
-                playerCards.SendInvocationCardToYellowTrash(cardSelected as InvocationCard);
+                playerCards.SendInvocationCardToYellowTrash(cardSelected as InGameInvocationCard);
             }
         }
 
-        private void ComputeHurtAttackSuperInvocationCard(float diff, SuperInvocationCard superAttacker)
+        private void ComputeHurtAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superAttacker)
         {
             var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
             var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
@@ -922,17 +925,17 @@ namespace OnePlayer
             foreach (var combineCard in superAttacker.invocationCards)
             {
                 combineCard.IncrementNumberDeaths();
-                if (combineCard.GetInvocationDeathEffect() != null)
+                if (combineCard.InvocationDeathEffect != null)
                 {
                     DealWithDeathEffect(combineCard, IsP1Turn);
-                    if (!combineCard.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                    if (!combineCard.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                     {
                         playerCards.SendCardToYellowTrash(combineCard);
                     }
                     else
                     {
-                        combineCard.SetBonusAttack(0);
-                        combineCard.SetBonusDefense(0);
+                        combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
+                        combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
                         combineCard.ResetNewTurn();
                     }
                 }
@@ -947,11 +950,11 @@ namespace OnePlayer
 
         private void DealWithEqualityAttack()
         {
-            if (attacker is SuperInvocationCard || opponent is SuperInvocationCard)
+            if (attacker is InGameSuperInvocationCard || opponent is InGameSuperInvocationCard)
             {
-                var superAttacker = attacker as SuperInvocationCard;
-                var superOpponent = opponent as SuperInvocationCard;
-                if (superAttacker)
+                var superAttacker = attacker as InGameSuperInvocationCard;
+                var superOpponent = opponent as InGameSuperInvocationCard;
+                if (superAttacker != null)
                 {
                     foreach (var combineCard in superAttacker.invocationCards)
                     {
@@ -974,7 +977,7 @@ namespace OnePlayer
                     ComputeEqualityAttacker();
                 }
 
-                if (superOpponent)
+                if (superOpponent != null)
                 {
                     foreach (var combineCard in superOpponent.invocationCards)
                     {
@@ -1016,17 +1019,17 @@ namespace OnePlayer
         private void ComputeEqualityOpponent()
         {
             var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-            if (opponent.GetInvocationDeathEffect() != null)
+            if (opponent.InvocationDeathEffect != null)
             {
                 DealWithDeathEffect(opponent, !IsP1Turn);
-                if (!opponent.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                if (!opponent.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                 {
                     playerCard.SendInvocationCardToYellowTrash(opponent);
                 }
                 else
                 {
-                    opponent.SetBonusAttack(0);
-                    opponent.SetBonusDefense(0);
+                    opponent.Attack = opponent.baseInvocationCard.GetAttack();
+                    opponent.Defense = opponent.baseInvocationCard.GetDefense();
                     opponent.ResetNewTurn();
                 }
             }
@@ -1039,17 +1042,17 @@ namespace OnePlayer
         private void ComputeEqualityAttacker()
         {
             var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-            if (attacker.GetInvocationDeathEffect() != null)
+            if (attacker.InvocationDeathEffect != null)
             {
                 DealWithDeathEffect(attacker, IsP1Turn);
-                if (!attacker.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                if (!attacker.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                 {
                     playerCard.SendInvocationCardToYellowTrash(attacker);
                 }
                 else
                 {
-                    attacker.SetBonusAttack(0);
-                    attacker.SetBonusDefense(0);
+                    attacker.Attack = attacker.baseInvocationCard.GetAttack();
+                    attacker.Defense = attacker.baseInvocationCard.GetDefense();
                     attacker.ResetNewTurn();
                 }
             }
@@ -1059,23 +1062,23 @@ namespace OnePlayer
             }
         }
 
-        private void ComputeEqualityAttackSuperAttacker(InvocationCard combineCard)
+        private void ComputeEqualityAttackSuperAttacker(InGameInvocationCard combineCard)
         {
             var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
 
             RemoveCombineEffectCard(playerCard.effectCards,
                 playerCard.yellowTrash);
-            if (combineCard.GetInvocationDeathEffect() != null)
+            if (combineCard.InvocationDeathEffect != null)
             {
                 DealWithDeathEffect(combineCard, IsP1Turn);
-                if (!combineCard.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                if (!combineCard.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                 {
                     playerCard.SendCardToYellowTrash(combineCard);
                 }
                 else
                 {
-                    combineCard.SetBonusAttack(0);
-                    combineCard.SetBonusDefense(0);
+                    combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
+                    combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
                     combineCard.ResetNewTurn();
                 }
             }
@@ -1085,23 +1088,23 @@ namespace OnePlayer
             }
         }
 
-        private void ComputeEqualityAttackSuperOpponent(InvocationCard combineCard)
+        private void ComputeEqualityAttackSuperOpponent(InGameInvocationCard combineCard)
         {
             var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
 
             RemoveCombineEffectCard(playerCard.effectCards,
                 playerCard.yellowTrash);
-            if (combineCard.GetInvocationDeathEffect() != null)
+            if (combineCard.InvocationDeathEffect != null)
             {
                 DealWithDeathEffect(combineCard, !IsP1Turn);
-                if (!combineCard.GetInvocationDeathEffect().Keys.Contains(DeathEffect.ComeBackToHand))
+                if (!combineCard.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
                 {
                     playerCard.SendCardToYellowTrash(combineCard);
                 }
                 else
                 {
-                    combineCard.SetBonusAttack(0);
-                    combineCard.SetBonusDefense(0);
+                    combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
+                    combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
                     combineCard.ResetNewTurn();
                 }
             }
@@ -1114,9 +1117,9 @@ namespace OnePlayer
         /**
      * invocationCard = card that's going to die
      */
-        private void DealWithDeathEffect(InvocationCard invocationCard, bool isP1Card)
+        private void DealWithDeathEffect(InGameInvocationCard invocationCard, bool isP1Card)
         {
-            var invocationDeathEffect = invocationCard.GetInvocationDeathEffect();
+            var invocationDeathEffect = invocationCard.InvocationDeathEffect;
             var keys = invocationDeathEffect.Keys;
             var values = invocationDeathEffect.Values;
 
@@ -1148,14 +1151,14 @@ namespace OnePlayer
             opponentPlayerCard.SendCardToYellowTrash(opponent);
         }
 
-        private void ComeBackToHandDeathEffect(InvocationCard invocationCard, bool isP1Card,
+        private void ComeBackToHandDeathEffect(InGameInvocationCard invocationCard, bool isP1Card,
             IReadOnlyList<string> values,
             int i)
         {
             var isParsed = int.TryParse(values[i], out var number);
             if (isParsed)
             {
-                if (invocationCard.GetNumberDeaths() > number)
+                if (invocationCard.NumberOfDeaths > number)
                 {
                     if (isP1Card)
                     {
@@ -1177,7 +1180,7 @@ namespace OnePlayer
             }
         }
 
-        private void SendCardToHand(InvocationCard invocationCard, bool isP1Card)
+        private void SendCardToHand(InGameInvocationCard invocationCard, bool isP1Card)
         {
             var playerCards = isP1Card ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
             var opponentPlayerCards = isP1Card ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
@@ -1194,7 +1197,7 @@ namespace OnePlayer
             }
         }
 
-        private void DisplayCurrentCard(Card card)
+        private void DisplayCurrentCard(InGameCard card)
         {
             bigImageCard.SetActive(true);
             bigImageCard.GetComponent<Image>().material = card.MaterialCard;
@@ -1230,7 +1233,7 @@ namespace OnePlayer
                 {
                     foreach (var invocationCard in invocationCards)
                     {
-                        invocationCard.SetCurrentFamily(null);
+                        invocationCard.Families = invocationCard.baseInvocationCard.GetFamily();
                     }
 
                     playerCards.yellowTrash.Add(effectCard);
@@ -1240,7 +1243,7 @@ namespace OnePlayer
                 if (IsP1Turn)
                 {
                     MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
-                        "Veux-tu prolonger l'effet de " + effectCard.Nom + " pour 1 tour pour " + effectCard.affectPv +
+                        "Veux-tu prolonger l'effet de " + effectCard.Title + " pour 1 tour pour " + effectCard.affectPv +
                         " points de vie ?", PositiveAction, NegativeAction);
                 }
             }
@@ -1314,7 +1317,7 @@ namespace OnePlayer
             var family = playerCards.field.GetFamily();
             var numberFamilyOnField =
                 playerCards.invocationCards.Count(invocationCard =>
-                    invocationCard.GetFamily().Contains(family));
+                    invocationCard.Families.Contains(family));
             if (IsP1Turn)
             {
                 p1.GetComponent<PlayerStatus>().ChangePv(pvPerAlly * numberFamilyOnField);
@@ -1358,15 +1361,15 @@ namespace OnePlayer
             if (!Enum.TryParse(value, out CardFamily cardFamily)) return;
             var familyCards = (from deckCard in playerCards.deck
                 where deckCard.Type == CardType.Invocation
-                select (InvocationCard)deckCard
+                select (InGameInvocationCard)deckCard
                 into invocationCard
-                where invocationCard.GetFamily().Contains(cardFamily)
-                select invocationCard).Cast<Card>().ToList();
+                where invocationCard.Families.Contains(cardFamily)
+                select invocationCard).Cast<InGameCard>().ToList();
             familyCards.AddRange(from fieldCard in playerCards.yellowTrash
                 where fieldCard.Type == CardType.Invocation
-                select (InvocationCard)fieldCard
+                select (InGameInvocationCard)fieldCard
                 into invocationCard
-                where invocationCard.GetFamily().Contains(cardFamily)
+                where invocationCard.Families.Contains(cardFamily)
                 select invocationCard);
 
             if (familyCards.Count <= 0) return;
@@ -1379,7 +1382,7 @@ namespace OnePlayer
                 messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var selectedCard =
-                        (InvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                        (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
                     if (selectedCard != null)
                     {
                         if (playerCards.deck.Contains(selectedCard))
@@ -1496,8 +1499,8 @@ namespace OnePlayer
                 IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
             PlayerStatus opponentPlayerStatus =
                 IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
-            List<EffectCard> effectCards = currentPlayerCard.effectCards;
-            List<EffectCard> opponentEffectCards = opponentPlayerCard.effectCards;
+            List<InGameEffectCard> effectCards = currentPlayerCard.effectCards;
+            List<InGameEffectCard> opponentEffectCards = opponentPlayerCard.effectCards;
 
             DealWithEndEffect(currentPlayerCard, opponentPlayerCard, currentPlayerStatus, effectCards);
             DealWithEndEffect(opponentPlayerCard, currentPlayerCard, opponentPlayerStatus, opponentEffectCards);
@@ -1519,9 +1522,9 @@ namespace OnePlayer
         }
 
         private static void DealWithEndEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard,
-            PlayerStatus playerStatus, List<EffectCard> effectCards)
+            PlayerStatus playerStatus, List<InGameEffectCard> effectCards)
         {
-            List<EffectCard> effectCardsToDelete = new List<EffectCard>();
+            List<InGameEffectCard> effectCardsToDelete = new List<InGameEffectCard>();
 
             foreach (var effectCard in effectCards)
             {
@@ -1770,22 +1773,22 @@ namespace OnePlayer
         }
 
         private static void NumberTurnPermEffect(PlayerCards currentPlayerCard, string value,
-            InvocationCard invocationCard)
+            InGameInvocationCard invocationCard)
         {
             var maxTurn = int.Parse(value);
-            if (invocationCard.NumberTurnOnField >= maxTurn)
+            if (invocationCard.NumberOfTurnOnField >= maxTurn)
             {
                 currentPlayerCard.SendInvocationCardToYellowTrash(invocationCard);
             }
         }
 
         private static void PreventInvocationCardsPermEffect(PlayerCards currentPlayerCard,
-            InvocationCard invocationCard)
+            InGameInvocationCard invocationCard)
         {
             for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
             {
                 var checkInvocationCard = currentPlayerCard.invocationCards[j];
-                if (checkInvocationCard.Nom == invocationCard.Nom) continue;
+                if (checkInvocationCard.Title == invocationCard.Title) continue;
                 currentPlayerCard.invocationCards.Remove(checkInvocationCard);
                 currentPlayerCard.handCards.Add(checkInvocationCard);
             }
@@ -1797,8 +1800,8 @@ namespace OnePlayer
             opponentPlayerCard.ActivateFieldCardEffect();
         }
 
-        private static void ProtectAttackEffect(PlayerStatus playerStatus, List<EffectCard> effectCardsToDelete,
-            EffectCard effectCard)
+        private static void ProtectAttackEffect(PlayerStatus playerStatus, List<InGameEffectCard> effectCardsToDelete,
+            InGameEffectCard effectCard)
         {
             if (playerStatus.NumberShield == 0)
             {
@@ -1810,9 +1813,10 @@ namespace OnePlayer
         {
             foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards)
             {
-                var newBonusDef = opponentInvocationCard.GetBonusDefense() +
+                // TODO Look at it
+                /*var newBonusDef = opponentInvocationCard.GetBonusDefense() +
                                   opponentInvocationCard.GetCurrentDefense();
-                opponentInvocationCard.SetBonusDefense(newBonusDef);
+                opponentInvocationCard.SetBonusDefense(newBonusDef);*/
             }
         }
 
@@ -1823,18 +1827,18 @@ namespace OnePlayer
 
             foreach (var card in invocationCards1)
             {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
+                var currentAttack = card.Attack;
+                var currentDefense = card.Defense;
+                card.Defense = currentAttack;
+                card.Attack = currentDefense;
             }
 
             foreach (var card in invocationCards2)
             {
-                var newBonusAttack = card.GetCurrentDefense() - card.GetAttack();
-                var newBonusDefense = card.GetCurrentAttack() - card.GetDefense();
-                card.SetBonusDefense(newBonusDefense);
-                card.SetBonusAttack(newBonusAttack);
+                var currentAttack = card.Attack;
+                var currentDefense = card.Defense;
+                card.Defense = currentAttack;
+                card.Attack = currentDefense;
             }
         }
     }

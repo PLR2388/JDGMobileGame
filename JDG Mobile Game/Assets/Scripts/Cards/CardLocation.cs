@@ -83,7 +83,7 @@ namespace Cards
             player2Cards = player2.GetComponent<PlayerCards>();
         }
 
-        public void InitPhysicalCards(List<Card> deck, bool isPlayerOne)
+        public void InitPhysicalCards(List<InGameCard> deck, bool isPlayerOne)
         {
             for (var i = 0; i < deck.Count; i++)
             {
@@ -96,7 +96,7 @@ namespace Cards
 
                 newPhysicalCard.transform.position =
                     new Vector3(deckLocation.x, deckLocation.y + 0.1f * i, deckLocation.z);
-                newPhysicalCard.name = deck[i].Nom + (isPlayerOne ? "P1" : "P2");
+                newPhysicalCard.name = deck[i].Title + (isPlayerOne ? "P1" : "P2");
                 newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
                 AddPhysicalCard(newPhysicalCard);
             }
@@ -109,12 +109,12 @@ namespace Cards
             DisplayCardsInPosition(player2Cards, false);
         }
     
-        public void AddPhysicalCard(Card card, string playerName)
+        public void AddPhysicalCard(InGameCard card, string playerName)
         {
             var newPhysicalCard = Instantiate(prefabCard, playerName == "P1" ? deckLocationP1 : deckLocationP2,
                 Quaternion.identity);
             newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = card;
-            newPhysicalCard.name = card.Nom + playerName;
+            newPhysicalCard.name = card.Title + playerName;
             allPhysicalCards.Add(newPhysicalCard);
         }
 
@@ -123,7 +123,7 @@ namespace Cards
             allPhysicalCards.Add(physicalCard);
         }
 
-        public void HideCards(List<Card> cards)
+        public void HideCards(List<InGameCard> cards)
         {
             foreach (var card in cards)
             {
@@ -132,9 +132,9 @@ namespace Cards
             }
         }
 
-        private int GetPhysicalCardIndex(Card card, bool isPlayerOne)
+        private int GetPhysicalCardIndex(InGameCard card, bool isPlayerOne)
         {
-            var cardName = card.Nom + (isPlayerOne ? "P1" : "P2");
+            var cardName = card.Title + (isPlayerOne ? "P1" : "P2");
 
             for (var i = 0; i < allPhysicalCards.Count; i++)
             {
@@ -147,7 +147,7 @@ namespace Cards
             return -1;
         }
 
-        public void RemovePhysicalCard(Card card)
+        public void RemovePhysicalCard(InGameCard card)
         {
             var currentIndex = GetPhysicalCardIndex(card, card.CardOwner == CardOwner.Player1);
             if (currentIndex >= 0)
@@ -171,7 +171,7 @@ namespace Cards
             var secretCards = playerCards.secretCards;
             for (var i = 0; i < invocationCards.Count; i++)
             {
-                if (!invocationCards[i]) continue;
+                if (invocationCards[i] == null) continue;
                 var invocationCard = invocationCards[i];
                 var index = GetPhysicalCardIndex(invocationCard, invocationCard.CardOwner == CardOwner.Player1);
                 var invocationCardsLocation = isPlayerOne ? invocationCardsLocationP1[i] : invocationCardsLocationP2[i];
@@ -183,8 +183,8 @@ namespace Cards
 
                 allPhysicalCards[index].tag = cardTag;
 
-                if (invocationCard.GetEquipmentCard() == null) continue;
-                var equipmentCard = invocationCard.GetEquipmentCard();
+                if (invocationCard.EquipmentCard == null) continue;
+                var equipmentCard = invocationCard.EquipmentCard;
                 index = GetPhysicalCardIndex(equipmentCard, equipmentCard.CardOwner == CardOwner.Player1);
                 var equipmentCardsLocation = isPlayerOne ? equipmentCardsLocationP1[i] : equipmentCardsLocationP2[i];
                 allPhysicalCards[index].transform.position = equipmentCardsLocation;
@@ -199,7 +199,7 @@ namespace Cards
             for (var i = 0; i < playerCards.effectCards.Count; i++)
             {
                 var effectCard = effectCards[i];
-                if (!effectCard) continue;
+                if (effectCard == null) continue;
                 var index = GetPhysicalCardIndex(effectCards[i], effectCard.CardOwner == CardOwner.Player1);
                 var effectCardsLocation = isPlayerOne ? effectCardsLocationP1[i] : effectCardsLocationP2[i];
                 allPhysicalCards[index].transform.position = effectCardsLocation;
@@ -211,10 +211,13 @@ namespace Cards
 
                 if (effectCard.GetEffectCardEffect().Keys.Contains(Effect.SameFamily))
                 {
-                    foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard)
+                    foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard != null)
                                  .Where(invocationCard => field != null && !playerCards.IsFieldDesactivate))
                     {
-                        invocationCard.SetCurrentFamily(field.GetFamily());
+                        invocationCard.Families = new[]
+                        {
+                            field.GetFamily()
+                        };
                     }
                 }
 
@@ -223,11 +226,11 @@ namespace Cards
 
             for (var i = 0; i < deck.Count; i++)
             {
-                if (!deck[i]) continue;
+                if (deck[i] == null) continue;
                 var index = GetPhysicalCardIndex(deck[i],deck[i].CardOwner == CardOwner.Player1);
                 if (index == -1)
                 {
-                    print("Cannot find card " + deck[i].Nom);
+                    print("Cannot find card " + deck[i].Title);
                 }
                 else
                 {
@@ -239,7 +242,7 @@ namespace Cards
 
             for (var i = 0; i < yellowTrash.Count; i++)
             {
-                if (!yellowTrash[i]) continue;
+                if (yellowTrash[i] == null) continue;
                 var index = GetPhysicalCardIndex(yellowTrash[i], yellowTrash[i].CardOwner == CardOwner.Player1);
                 var yellowTrashLocation = isPlayerOne ? yellowTrashLocationP1 : yellowTrashLocationP2;
                 allPhysicalCards[index].transform.position =
@@ -250,7 +253,7 @@ namespace Cards
                 }
             }
 
-            if (field)
+            if (field != null)
             {
                 var index = GetPhysicalCardIndex(field, field.CardOwner == CardOwner.Player1);
                 var fieldCardLocation = isPlayerOne ? fieldCardLocationP1 : fieldCardLocationP2;
@@ -274,7 +277,7 @@ namespace Cards
                 var index = GetPhysicalCardIndex(handCard, handCard.CardOwner == CardOwner.Player1);
                 if (index == -1)
                 {
-                    print("Cannot find Card " + handCard.Nom);
+                    print("Cannot find Card " + handCard.Title);
                 }
                 else
                 {

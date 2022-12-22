@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Cards;
 using TMPro;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 [System.Serializable]
-public class NumberedCardEvent : UnityEvent<Card, int>
+public class NumberedCardEvent : UnityEvent<InGameCard, int>
 {
 }
 
@@ -35,16 +36,16 @@ public class MessageBox : MonoBehaviour
     [SerializeField] private GameObject container;
 
     [SerializeField] private GameObject scrollCardDisplay;
-    private Card currentSelectedCard;
-    private readonly List<Card> multipleSelectedCards = new List<Card>();
+    private InGameCard currentSelectedCard;
+    private readonly List<InGameCard> multipleSelectedCards = new List<InGameCard>();
     public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
 
-    public Card GetSelectedCard()
+    public InGameCard GetSelectedCard()
     {
         return currentSelectedCard;
     }
 
-    public List<Card> GetMultipleSelectedCards()
+    public List<InGameCard> GetMultipleSelectedCards()
     {
         return multipleSelectedCards;
     }
@@ -86,11 +87,11 @@ public class MessageBox : MonoBehaviour
         scrollCardDisplay.SetActive(displayCards);
     }
 
-    private void OnCardSelected(Card card)
+    private void OnCardSelected(InGameCard card)
     {
         if (multipleCardSelection)
         {
-            if (multipleSelectedCards.Contains(card)) return;
+            if (multipleSelectedCards.Exists(selectedCard => card.Title == selectedCard.Title)) return;
             if (numberCardInSelection == multipleSelectedCards.Count)
             {
                 multipleSelectedCards.RemoveAt(0);
@@ -112,7 +113,7 @@ public class MessageBox : MonoBehaviour
         }
     }
 
-    private void OnCardUnselected(Card card)
+    private void OnCardUnselected(InGameCard card)
     {
         if (displayNumberOnCard)
         {
@@ -136,7 +137,7 @@ public class MessageBox : MonoBehaviour
 
             if (multipleCardSelection)
             {
-                if (multipleSelectedCards.Count > 0 && multipleSelectedCards.Find(card => card.Nom == cardNom) == null)
+                if (multipleSelectedCards.Count > 0 && multipleSelectedCards.Find(card => card.Title == cardNom) == null)
                 {
                     childGameObject.GetComponent<OnHover>().bIsSelected = false;
                 }
@@ -144,7 +145,7 @@ public class MessageBox : MonoBehaviour
                 {
                     // if the card is unselected
                     var index = multipleSelectedCards.FindIndex(0, multipleSelectedCards.Count,
-                        card => card.Nom == cardNom);
+                        card => card.Title == cardNom);
                     if (index > -1)
                     {
                         multipleSelectedCards.RemoveAt(index);
@@ -153,7 +154,7 @@ public class MessageBox : MonoBehaviour
             }
             else
             {
-                if (!(currentSelectedCard is null) && currentSelectedCard.Nom != cardNom)
+                if (!(currentSelectedCard is null) && currentSelectedCard.Title != cardNom)
                 {
                     childGameObject.GetComponent<OnHover>().bIsSelected = false;
                 }
@@ -214,7 +215,7 @@ public class MessageBox : MonoBehaviour
         return message;
     }
 
-    public static GameObject CreateMessageBoxWithCardSelector(Transform canvas, string title, List<Card> cards,
+    public static GameObject CreateMessageBoxWithCardSelector(Transform canvas, string title, List<InGameCard> cards,
         UnityAction positiveAction = null, UnityAction negativeAction = null, bool okButton = false,
         bool multipleCardSelection = false, int numberCardInSelection = 2, bool displayOrder = false)
 

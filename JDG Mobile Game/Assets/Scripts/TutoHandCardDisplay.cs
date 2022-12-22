@@ -42,14 +42,15 @@ public class TutoHandCardDisplay : MonoBehaviour
             {
                 var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
                 newCard.transform.SetParent(transform, true);
-                newCard.GetComponent<CardDisplay>().card = handCard;
+                newCard.GetComponent<CardDisplay>().card = handCard.baseCard;
+                newCard.GetComponent<CardDisplay>().inGameCard = handCard;
                 newCard.GetComponent<OnHover>().bIsInGame = true;
-                if (handCard.Nom == "Cliché Raciste")
+                if (handCard.Title == "Cliché Raciste")
                 {
                     newCard.AddComponent<HighLightCard>();
                 }
 
-                if (handCard.Nom == "Musique de Mega Drive" && currentDialogIndex > 35)
+                if (handCard.Title == "Musique de Mega Drive" && currentDialogIndex > 35)
                 {
                     newCard.AddComponent<HighLightCard>();
                 }

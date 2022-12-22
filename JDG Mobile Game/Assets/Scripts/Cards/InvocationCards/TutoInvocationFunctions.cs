@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Cards.FieldCards;
 using OnePlayer;
 using UnityEngine;
 using UnityEngine.Events;
@@ -42,7 +41,7 @@ namespace Cards.InvocationCards
         /// <param name="currentInvocationCard">the current invocation card</param>
         /// <param name="invocationStartEffect">start effect of this invocation card</param>
         /// </summary>
-        private void DealWithStartEffect(InvocationCard currentInvocationCard,
+        private void DealWithStartEffect(InGameInvocationCard currentInvocationCard,
             InvocationStartEffect invocationStartEffect)
         {
             var keys = invocationStartEffect.Keys;
@@ -52,7 +51,7 @@ namespace Cards.InvocationCards
             var typeCard = "";
             var familyName = "";
             var invokeCardNames = new List<string>();
-            var cardFound = new List<Card>();
+            var cardFound = new List<InGameCard>();
             var mustDivideAttack = false;
             var mustDivideDefense = false;
             for (var i = 0; i < keys.Count; i++)
@@ -147,7 +146,7 @@ namespace Cards.InvocationCards
         /// <param name="typeCard">string that represents the type of card to get in source</param>
         /// <param name="familyName">string that represent the family name of cards to get in source</param>
         /// </summary>
-        private void StartEffectGetCardSource(string value, string cardName, ref List<Card> cardFound,
+        private void StartEffectGetCardSource(string value, string cardName, ref List<InGameCard> cardFound,
             IReadOnlyCollection<string> invokeCardNames,
             string typeCard, string familyName)
         {
@@ -162,7 +161,7 @@ namespace Cards.InvocationCards
                         var j = 0;
                         while (j < deck.Count && !isFound)
                         {
-                            if (deck[j].Nom == cardName)
+                            if (deck[j].Title == cardName)
                             {
                                 isFound = true;
                                 cardFound.Add(deck[j]);
@@ -173,7 +172,7 @@ namespace Cards.InvocationCards
 
                         if (isFound)
                         {
-                            var cards = new List<Card>(cardFound);
+                            var cards = new List<InGameCard>(cardFound);
 
                             void PositiveAction()
                             {
@@ -196,7 +195,7 @@ namespace Cards.InvocationCards
                     {
                         cardFound.AddRange(from t in deck
                             from invokeCardName in invokeCardNames
-                            where t.Nom == invokeCardName
+                            where t.Title == invokeCardName
                             select t);
 
                         var size = currentPlayerCard.invocationCards.Count;
@@ -204,18 +203,18 @@ namespace Cards.InvocationCards
                         {
                             if (cardFound.Count == 1)
                             {
-                                var cards = new List<Card>(cardFound);
+                                var cards = new List<InGameCard>(cardFound);
 
                                 void PositiveAction()
                                 {
-                                    var invocationCard = (InvocationCard)cards[cards.Count - 1];
+                                    var invocationCard = (InGameInvocationCard)cards[cards.Count - 1];
                                     currentPlayerCard.invocationCards.Add(invocationCard);
                                     currentPlayerCard.deck.Remove(invocationCard);
                                     inHandButton.SetActive(true);
                                 }
 
                                 var messageBox = CreateMessageBoxSimple("Invocation",
-                                    "Voulez-vous aussi invoquer " + cardFound[0].Nom + " ?",
+                                    "Voulez-vous aussi invoquer " + cardFound[0].Title + " ?",
                                     positiveAction: PositiveAction);
 
                                 messageBox.GetComponent<MessageBox>().NegativeAction = () =>
@@ -239,7 +238,7 @@ namespace Cards.InvocationCards
                                 message.GetComponent<MessageBox>().PositiveAction = () =>
                                 {
                                     var invocationCard =
-                                        (InvocationCard)message.GetComponent<MessageBox>()
+                                        (InGameInvocationCard)message.GetComponent<MessageBox>()
                                             .GetSelectedCard();
                                     currentPlayerCard.invocationCards.Add(invocationCard);
                                     currentPlayerCard.deck.Remove(invocationCard);
@@ -267,9 +266,9 @@ namespace Cards.InvocationCards
                         foreach (var card in deck)
                         {
                             if (card.Type != CardType.Invocation) continue;
-                            var invocationCard = (InvocationCard)card;
+                            var invocationCard = (InGameInvocationCard)card;
 
-                            var listFamily = invocationCard.GetFamily();
+                            var listFamily = invocationCard.Families;
                             cardFound.AddRange((from family in listFamily
                                 where family == cardFamily
                                 select invocationCard));
@@ -329,7 +328,7 @@ namespace Cards.InvocationCards
                         var j = 0;
                         while (j < trash.Count && !isFound)
                         {
-                            if (trash[j].Nom == cardName)
+                            if (trash[j].Title == cardName)
                             {
                                 isFound = true;
                                 cardFound.Add(trash[j]);
@@ -340,7 +339,7 @@ namespace Cards.InvocationCards
 
                         if (isFound)
                         {
-                            var cards = new List<Card>(cardFound);
+                            var cards = new List<InGameCard>(cardFound);
 
                             void PositiveAction()
                             {
@@ -363,7 +362,7 @@ namespace Cards.InvocationCards
                     {
                         cardFound.AddRange(from t in trash
                             from invokeCardName in invokeCardNames
-                            where t.Nom == invokeCardName
+                            where t.Title == invokeCardName
                             select t);
                     }
                     else if (Enum.TryParse(typeCard, out CardType type))
@@ -375,9 +374,9 @@ namespace Cards.InvocationCards
                         foreach (var card in trash)
                         {
                             if (card.Type != CardType.Invocation) continue;
-                            var invocationCard = (InvocationCard)card;
+                            var invocationCard = (InGameInvocationCard)card;
 
-                            var listFamily = invocationCard.GetFamily();
+                            var listFamily = invocationCard.Families;
                             cardFound.AddRange(
                                 (from t in listFamily where t == cardFamily select invocationCard));
                         }
@@ -402,7 +401,7 @@ namespace Cards.InvocationCards
 
             for (var j = p1InvocationCards.Count - 1; j >= 0; j--)
             {
-                if (p1InvocationCards[j].Nom == value) continue;
+                if (p1InvocationCards[j].Title == value) continue;
                 p1.GetComponent<PlayerCards>().handCards.Add(p1InvocationCards[j]);
                 p1.GetComponent<PlayerCards>().invocationCards
                     .Remove(p1InvocationCards[j]);
@@ -410,7 +409,7 @@ namespace Cards.InvocationCards
 
             for (var j = p2InvocationCards.Count - 1; j >= 0; j--)
             {
-                if (p2InvocationCards[j].Nom == value) continue;
+                if (p2InvocationCards[j].Title == value) continue;
                 p2.GetComponent<PlayerCards>().handCards.Add(p2InvocationCards[j]);
                 p2.GetComponent<PlayerCards>().invocationCards
                     .Remove(p2InvocationCards[j]);
@@ -423,7 +422,7 @@ namespace Cards.InvocationCards
         /// Put or get a field card from the deck depending if user already has a field card on field.
         /// <param name="cardFound">list of field card available to the user</param>
         /// </summary>
-        private void StartEffectPutField(List<Card> cardFound)
+        private void StartEffectPutField(List<InGameCard> cardFound)
         {
             if (cardFound.Count <= 0) return;
             if (currentPlayerCard.field == null)
@@ -433,7 +432,7 @@ namespace Cards.InvocationCards
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var fieldCard =
-                        (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
 
                     if (fieldCard != null)
                     {
@@ -463,7 +462,7 @@ namespace Cards.InvocationCards
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var fieldCard =
-                        (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
 
                     if (fieldCard != null)
                     {
@@ -495,7 +494,7 @@ namespace Cards.InvocationCards
         /// <param name="mustDivideAttack">boolean to know if we have to divide attack by 2 if user agree to destroy a field card</param>
         /// <param name="mustDivideDefense">boolean to know if we have to divide defense by 2 if user agree to destroy a field card</param>
         /// </summary>
-        private void StartEffectDestroyField(InvocationCard currentInvocationCard, ref List<Card> cardFound,
+        private void StartEffectDestroyField(InGameInvocationCard currentInvocationCard, ref List<InGameCard> cardFound,
             bool mustDivideAttack,
             bool mustDivideDefense)
         {
@@ -519,21 +518,23 @@ namespace Cards.InvocationCards
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var fieldCard =
-                    (FieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
 
                 if (fieldCard != null)
                 {
                     if (attack)
                     {
-                        currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetAttack() / 2);
+                        // TODO Look at
+                        //currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetAttack() / 2);
                     }
 
                     if (defense)
                     {
-                        currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetDefense() / 2);
+                        // TODO Look at
+                        //currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetDefense() / 2);
                     }
 
-                    if (fieldCardP1 && fieldCard.Nom == fieldCardP1.Nom)
+                    if (fieldCardP1 != null && fieldCard.Title == fieldCardP1.Title)
                     {
                         p1.GetComponent<PlayerCards>().field = null;
                         p1.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
@@ -569,7 +570,7 @@ namespace Cards.InvocationCards
         /// <param name="currentInvocationCard">invocation card that has this property</param>
         /// <param name="cardFound">list of invocation cards available to destroy</param>
         /// </summary>
-        private void StartEffectSendToDeath(InvocationCard currentInvocationCard, ref List<Card> cardFound)
+        private void StartEffectSendToDeath(InGameInvocationCard currentInvocationCard, ref List<InGameCard> cardFound)
         {
             if (GameLoop.IsP1Turn)
             {
@@ -589,7 +590,7 @@ namespace Cards.InvocationCards
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCardSelected =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (invocationCardSelected != null)
                 {
                     var invocationCards = opponentPlayerCards.invocationCards;
@@ -598,7 +599,7 @@ namespace Cards.InvocationCards
                     while (!found && k < invocationCards.Count)
                     {
                         if (invocationCards[k] != null &&
-                            invocationCards[k].Nom == invocationCardSelected.Nom)
+                            invocationCards[k].Title == invocationCardSelected.Title)
                         {
                             found = true;
                         }
@@ -696,7 +697,7 @@ namespace Cards.InvocationCards
         /// <param name="currentInvocationCard">invocation card with this property</param>
         /// <param name="value">value is a string that reprensent the condition</param>
         /// </summary>
-        private void StartEffectCondition(InvocationCard currentInvocationCard, string value)
+        private void StartEffectCondition(InGameInvocationCard currentInvocationCard, string value)
         {
             switch (value)
             {
@@ -719,7 +720,7 @@ namespace Cards.InvocationCards
                                 currentPlayerCard.handCards.Add(selectedCard);
                                 currentPlayerCard.deck.Remove(selectedCard);
                                 var index = currentPlayerCard.GetIndexInvocationCard(currentInvocationCard
-                                    .Nom);
+                                    .Title);
                                 currentPlayerCard.invocationCards[index].BlockAttack();
                                 currentInvocationCard.BlockAttack();
                             }
@@ -756,7 +757,7 @@ namespace Cards.InvocationCards
         /// <param name="currentInvocationCard">invocation card with this property</param>
         /// <param name="value">value is a string that represent the invocation card name and field card name</param>
         /// </summary>
-        private void StartEffectSacrificeFieldIncrement(InvocationCard currentInvocationCard, string value)
+        private void StartEffectSacrificeFieldIncrement(InGameInvocationCard currentInvocationCard, string value)
         {
             var elements = value.Split(';');
             var sacrifice = elements[0];
@@ -764,14 +765,14 @@ namespace Cards.InvocationCards
             var incrementStat = float.Parse(elements[2]);
 
             var currentField = currentPlayerCard.field;
-            if (currentField == null || field != currentField.Nom) return;
+            if (currentField == null || field != currentField.Title) return;
             var invocationCardOnField = currentPlayerCard.invocationCards;
             var k = 0;
             var found = false;
             while (!found && k < invocationCardOnField.Count)
             {
                 if (invocationCardOnField[k] != null &&
-                    invocationCardOnField[k].Nom == sacrifice)
+                    invocationCardOnField[k].Title == sacrifice)
                 {
                     found = true;
                 }
@@ -788,8 +789,9 @@ namespace Cards.InvocationCards
             {
                 currentPlayerCard.invocationCards.Remove(cardToSacrifice);
                 currentPlayerCard.yellowTrash.Add(cardToSacrifice);
-                currentInvocationCard.SetBonusAttack(incrementStat);
-                currentInvocationCard.SetBonusDefense(incrementStat);
+                // TODO Look at
+                //currentInvocationCard.SetBonusAttack(incrementStat);
+                //currentInvocationCard.SetBonusDefense(incrementStat);
             }
 
             MessageBox.CreateSimpleMessageBox(canvas, "Choix",
@@ -803,13 +805,13 @@ namespace Cards.InvocationCards
         /// Apply StartEffect and ConditionEffect of this card if there is enough place
         /// <param name="invocationCard">invocation card</param>
         /// </summary>
-        private void PutInvocationCard(InvocationCard invocationCard)
+        private void PutInvocationCard(InGameInvocationCard invocationCard)
         {
             var size = currentPlayerCard.invocationCards.Count;
 
             if (size >= 4) return;
 
-            var invocationStartEffect = invocationCard.GetInvocationStartEffect();
+            var invocationStartEffect = invocationCard.InvocationStartEffect;
             var invocationConditionEffect = invocationCard.InvocationConditions;
 
             if (invocationConditionEffect != null)
@@ -837,7 +839,7 @@ namespace Cards.InvocationCards
         /// <param name="currentInvocationCard">invocation card</param>
         /// <param name="invocationActionEffect">invocation actionEffect</param>
         /// </summary>
-        public bool IsSpecialActionPossible(InvocationCard currentInvocationCard,
+        public bool IsSpecialActionPossible(InGameInvocationCard currentInvocationCard,
             InvocationActionEffect invocationActionEffect)
         {
             var isPossible = false;
@@ -892,7 +894,7 @@ namespace Cards.InvocationCards
             var trash = currentPlayerCard.yellowTrash;
 
             var invocationCardDead =
-                trash.Where(card => card is InvocationCard && !card.Collector).ToList();
+                trash.Where(card => card is InGameInvocationCard && !card.Collector).ToList();
 
             if (invocationCardDead.Count > 0)
             {
@@ -903,22 +905,22 @@ namespace Cards.InvocationCards
         }
 
 
-        private bool ActionEffectSpecificFamilyPossible(InvocationCard currentInvocationCard, string value, float def,
+        private bool ActionEffectSpecificFamilyPossible(InGameInvocationCard currentInvocationCard, string value, float def,
             float atk, bool isPossible)
         {
             var family = (CardFamily)Enum.Parse(typeof(CardFamily), value);
 
             var invocationsOnField = currentPlayerCard.invocationCards;
 
-            var invocationCardSameFamily = new List<Card>();
+            var invocationCardSameFamily = new List<InGameCard>();
             foreach (var card in invocationsOnField.Where(card => card != null))
             {
-                if (card.Nom == currentInvocationCard.Nom)
+                if (card.Title == currentInvocationCard.Title)
                 {
                 }
                 else
                 {
-                    var currentFamilies = card.GetFamily();
+                    var currentFamilies = card.Families;
                     if (currentFamilies.Any(currentFamily => currentFamily == family))
                     {
                         invocationCardSameFamily.Add(card);
@@ -928,7 +930,8 @@ namespace Cards.InvocationCards
 
             if (invocationCardSameFamily.Count <= 0) return isPossible;
             if (!(def > 0) || !(atk > 0)) return isPossible;
-            if (currentInvocationCard.GetBonusDefense() > -def)
+            // TODO Look at
+            /*if (currentInvocationCard.GetBonusDefense() > -def)
             {
                 isPossible = true;
             }
@@ -936,12 +939,12 @@ namespace Cards.InvocationCards
             if (currentInvocationCard.GetBonusAttack() > -atk)
             {
                 isPossible = true;
-            }
+            }*/
 
             return isPossible;
         }
 
-        public void AskIfUserWantToUseActionEffect(InvocationCard currentInvocationCard,
+        public void AskIfUserWantToUseActionEffect(InGameInvocationCard currentInvocationCard,
             InvocationActionEffect invocationActionEffect)
         {
             var keys = invocationActionEffect.Keys;
@@ -991,14 +994,14 @@ namespace Cards.InvocationCards
             var invocationCards = opponentPlayerCards.invocationCards;
 
             if (invocationCards.Count <= 0) return;
-            var validList = invocationCards.Cast<Card>().ToList();
+            var validList = invocationCards.Cast<InGameCard>().ToList();
             var message =
                 MessageBox.CreateMessageBoxWithCardSelector(canvas,
                     "Choix de la carte qui ne pourra pas attaquer le prochain tour", validList);
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCardSelected =
-                    (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (invocationCardSelected != null)
                 {
                     invocationCardSelected.BlockAttack();
@@ -1014,7 +1017,7 @@ namespace Cards.InvocationCards
             message.GetComponent<MessageBox>().NegativeAction = () => { Destroy(message); };
         }
 
-        private void ActionEffectSpecificFamily(InvocationCard currentInvocationCard,
+        private void ActionEffectSpecificFamily(InGameInvocationCard currentInvocationCard,
             InvocationActionEffect invocationActionEffect, List<string> values, int i, float atk, float def,
             List<ActionEffect> keys)
         {
@@ -1023,18 +1026,18 @@ namespace Cards.InvocationCards
             var invocationsOnField = currentPlayerCard.invocationCards;
             var indexCurrent = 0;
 
-            var invocationCardSameFamily = new List<Card>();
+            var invocationCardSameFamily = new List<InGameCard>();
             for (var j = 0; j < invocationsOnField.Count; j++)
             {
                 var card = invocationsOnField[j];
                 if (card == null) continue;
-                if (card.Nom == currentInvocationCard.Nom)
+                if (card.Title == currentInvocationCard.Title)
                 {
                     indexCurrent = j;
                 }
                 else
                 {
-                    var currentFamilies = card.GetFamily();
+                    var currentFamilies = card.Families;
                     if (currentFamilies.Any(t => t == family))
                     {
                         invocationCardSameFamily.Add(card);
@@ -1054,34 +1057,24 @@ namespace Cards.InvocationCards
                     message.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var invocationCardSelected =
-                            (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                            (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                         if (invocationCardSelected != null)
                         {
                             for (var j = 0; j < invocationsOnField.Count; j++)
                             {
                                 var card = invocationsOnField[j];
-                                if (card == null || card.Nom != invocationCardSelected.Nom) continue;
-                                var beneficiary = currentPlayerCard.invocationCards[j];
-                                var currentInvocation = currentPlayerCard.invocationCards[indexCurrent];
-                                var newBonusAttack = beneficiary.GetBonusAttack() + atk;
-                                var newBonusDef = beneficiary.GetBonusDefense() + def;
-
-                                var newMalusAttack = currentInvocation.GetBonusAttack() - atk;
-                                var newMalusDef = currentInvocation.GetBonusDefense() - def;
-
-                                currentPlayerCard.invocationCards[j].SetBonusAttack(newBonusAttack);
-                                currentPlayerCard.invocationCards[j].SetBonusDefense(newBonusDef);
-                                currentPlayerCard.invocationCards[indexCurrent]
-                                    .SetBonusAttack(newMalusAttack);
-                                currentPlayerCard.invocationCards[indexCurrent]
-                                    .SetBonusDefense(newMalusDef);
+                                if (card == null || card.Title != invocationCardSelected.Title) continue;
+                                currentPlayerCard.invocationCards[j].Attack += atk;
+                                currentPlayerCard.invocationCards[j].Defense += def;
+                                currentPlayerCard.invocationCards[indexCurrent].Attack -= atk;
+                                currentPlayerCard.invocationCards[indexCurrent].Defense -= def;
 
                                 invocationMenu.transform.GetChild(1).GetComponent<Button>()
                                         .interactable =
                                     false;
 
                                 keys.Add(ActionEffect.Beneficiary);
-                                values.Add(card.Nom);
+                                values.Add(card.Title);
                                 invocationActionEffect.Keys = keys;
                                 invocationActionEffect.Values = values;
                                 currentPlayerCard.invocationCards[indexCurrent].InvocationActionEffect =
@@ -1107,7 +1100,7 @@ namespace Cards.InvocationCards
             var trash = currentPlayerCard.yellowTrash;
 
             var invocationCardDead =
-                trash.Where(card => card is InvocationCard && !card.Collector).ToList();
+                trash.Where(card => card is InGameInvocationCard && !card.Collector).ToList();
 
             if (invocationCardDead.Count <= 0) return;
             var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
@@ -1127,7 +1120,7 @@ namespace Cards.InvocationCards
                     var k = 0;
                     while (!found && k < invocationCards.Count)
                     {
-                        if (invocationCards[k] != null && invocationCards[k].Nom == name1)
+                        if (invocationCards[k] != null && invocationCards[k].Title == name1)
                         {
                             found = true;
                         }
@@ -1139,7 +1132,7 @@ namespace Cards.InvocationCards
 
 
                     var invocationCardSelected =
-                        (InvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                     if (invocationCardSelected != null)
                     {
                         currentPlayerCard.SendInvocationCardToYellowTrash(invocationCards[k]);
@@ -1158,17 +1151,17 @@ namespace Cards.InvocationCards
             };
         }
 
-        private static InvocationCard CheckSpecificCardOnField(string cardName, PlayerCards currentPlayerCards)
+        private static InGameInvocationCard CheckSpecificCardOnField(string cardName, PlayerCards currentPlayerCards)
         {
             var found = false;
             var invocationCards = currentPlayerCards.invocationCards;
             var size = invocationCards.Count;
-            InvocationCard invocationCard = null;
+            InGameInvocationCard invocationCard = null;
 
             var j = 0;
             while (j < size && !found)
             {
-                if (invocationCards[j] != null && invocationCards[j].Nom == cardName)
+                if (invocationCards[j] != null && invocationCards[j].Title == cardName)
                 {
                     found = true;
                     invocationCard = invocationCards[j];
@@ -1180,9 +1173,9 @@ namespace Cards.InvocationCards
             return invocationCard;
         }
 
-        private static InvocationCard CheckSacrificeSpecificCard(string cardName, PlayerCards currentPlayerCards)
+        private static InGameInvocationCard CheckSacrificeSpecificCard(string cardName, PlayerCards currentPlayerCards)
         {
-            InvocationCard foundCard = null;
+            InGameInvocationCard foundCard = null;
             var found = false;
             var invocationCards = currentPlayerCards.invocationCards;
             var size = invocationCards.Count;
@@ -1190,7 +1183,7 @@ namespace Cards.InvocationCards
 
             while (j < size && !found)
             {
-                if (invocationCards[j] != null && invocationCards[j].Nom == cardName)
+                if (invocationCards[j] != null && invocationCards[j].Title == cardName)
                 {
                     foundCard = invocationCards[j];
                     found = true;
@@ -1203,13 +1196,13 @@ namespace Cards.InvocationCards
             return foundCard;
         }
 
-        private static bool CheckSpecificEquipmentAttached(InvocationCard invocationCard, string equipmentName)
+        private static bool CheckSpecificEquipmentAttached(InGameInvocationCard invocationCard, string equipmentName)
         {
             var isChecked = false;
-            if (!invocationCard) return false;
-            if (invocationCard.GetEquipmentCard())
+            if (invocationCard == null) return false;
+            if (invocationCard.EquipmentCard != null)
             {
-                isChecked = invocationCard.GetEquipmentCard().Nom == equipmentName;
+                isChecked = invocationCard.EquipmentCard.Title == equipmentName;
             }
 
             return isChecked;
@@ -1219,33 +1212,33 @@ namespace Cards.InvocationCards
         {
             var isCorrectField = false;
             var fieldCard = currentPlayerCards.field;
-            if (fieldCard)
+            if (fieldCard != null)
             {
-                isCorrectField = fieldCard.Nom == fieldName;
+                isCorrectField = fieldCard.Title == fieldName;
             }
 
             return isCorrectField;
         }
 
-        private static List<InvocationCard> CheckFamily(CardFamily cardFamily, PlayerCards currentPlayerCards)
+        private static List<InGameInvocationCard> CheckFamily(CardFamily cardFamily, PlayerCards currentPlayerCards)
         {
             var invocationCards = currentPlayerCards.invocationCards;
 
             return (from t in invocationCards
                 where t != null
-                let families = t.GetFamily()
+                let families = t.Families
                 from family in families
                 where family == cardFamily
                 select t).ToList();
         }
 
-        private static List<InvocationCard> CheckThreshold(bool isAttack, float value, PlayerCards currentPlayerCards)
+        private static List<InGameInvocationCard> CheckThreshold(bool isAttack, float value, PlayerCards currentPlayerCards)
         {
-            var threshold = new List<InvocationCard>();
+            var threshold = new List<InGameInvocationCard>();
             var invocationCards = currentPlayerCards.invocationCards;
             threshold.AddRange(isAttack
                 ? invocationCards.Where(invocationCard =>
-                    invocationCard != null && invocationCard.Nom != null && invocationCard.GetCurrentAttack() >= value)
+                    invocationCard != null && invocationCard.Title != null && invocationCard.GetCurrentAttack() >= value)
                 : invocationCards.Where(invocationCard => invocationCard.GetCurrentDefense() >= value));
 
             return threshold;
@@ -1263,11 +1256,11 @@ namespace Cards.InvocationCards
             var cardConditions = conditions.Keys;
             var cardExplanation = conditions.Values;
 
-            InvocationCard specificCardFound = null;
+            InGameInvocationCard specificCardFound = null;
 
-            var sacrificedCards = new List<InvocationCard>();
+            var sacrificedCards = new List<InGameInvocationCard>();
 
-            var invocationCardsOnField = new List<InvocationCard>();
+            var invocationCardsOnField = new List<InGameInvocationCard>();
 
             var i = 0;
             while (i < cardConditions.Count)
@@ -1337,7 +1330,7 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void ConditionComeFromYellowTrash(InvocationCard specificCardFound)
+        private void ConditionComeFromYellowTrash(InGameInvocationCard specificCardFound)
         {
             if (specificCardFound != null)
             {
@@ -1345,7 +1338,7 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void ConditionSacrificeThresholdDef(string value, List<InvocationCard> sacrificedCards)
+        private void ConditionSacrificeThresholdDef(string value, List<InGameInvocationCard> sacrificedCards)
         {
             var threshold = int.Parse(value);
             if (sacrificedCards.Count > 0)
@@ -1363,8 +1356,8 @@ namespace Cards.InvocationCards
             }
         }
 
-        private List<InvocationCard> ConditionSacrificeThresholdAtk(List<string> cardExplanation, int i,
-            List<InvocationCard> sacrificedCards)
+        private List<InGameInvocationCard> ConditionSacrificeThresholdAtk(List<string> cardExplanation, int i,
+            List<InGameInvocationCard> sacrificedCards)
         {
             var threshold = float.Parse(cardExplanation[i]);
             if (sacrificedCards.Count > 0)
@@ -1384,8 +1377,8 @@ namespace Cards.InvocationCards
             return sacrificedCards;
         }
 
-        private void ConditionNumberCard(string value, List<InvocationCard> invocationCardsOnField,
-            List<InvocationCard> sacrificedCards)
+        private void ConditionNumberCard(string value, List<InGameInvocationCard> invocationCardsOnField,
+            List<InGameInvocationCard> sacrificedCards)
         {
             var numberCard = int.Parse(value);
             if (invocationCardsOnField.Count > 0)
@@ -1402,7 +1395,7 @@ namespace Cards.InvocationCards
                 {
                     if (numberCard == 1)
                     {
-                        var listCard = sacrificedCards.Cast<Card>().ToList();
+                        var listCard = sacrificedCards.Cast<InGameCard>().ToList();
                         var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                             "Choix de la carte à sacrifier", listCard);
                         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
@@ -1410,7 +1403,7 @@ namespace Cards.InvocationCards
                             var cardSelected = messageBox.GetComponent<MessageBox>().GetSelectedCard();
                             if (cardSelected.IsValid())
                             {
-                                var invocationCardToKill = (InvocationCard)cardSelected;
+                                var invocationCardToKill = (InGameInvocationCard)cardSelected;
                                 currentPlayerCard.SendInvocationCardToYellowTrash(invocationCardToKill);
                                 Destroy(messageBox);
                             }
@@ -1437,7 +1430,7 @@ namespace Cards.InvocationCards
                     }
                     else if (sacrificedCards.Count > numberCard)
                     {
-                        var listCard = sacrificedCards.Cast<Card>().ToList();
+                        var listCard = sacrificedCards.Cast<InGameCard>().ToList();
                         var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                             "Choix des " + numberCard + " cartes à sacrifier", listCard,
                             multipleCardSelection: true, numberCardInSelection: 2);
@@ -1447,7 +1440,7 @@ namespace Cards.InvocationCards
                                 .GetMultipleSelectedCards();
                             if (cardSelected.Count == numberCard)
                             {
-                                foreach (var sacrificedCard in cardSelected.Cast<InvocationCard>())
+                                foreach (var sacrificedCard in cardSelected.Cast<InGameInvocationCard>())
                                 {
                                     currentPlayerCard.SendInvocationCardToYellowTrash(sacrificedCard);
                                 }
@@ -1492,7 +1485,7 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void ConditionSpecificFamilyOnField(string familyName, ref List<InvocationCard> invocationCardsOnField)
+        private void ConditionSpecificFamilyOnField(string familyName, ref List<InGameInvocationCard> invocationCardsOnField)
         {
             if (Enum.TryParse(familyName, out CardFamily cardFamily))
             {
@@ -1500,7 +1493,7 @@ namespace Cards.InvocationCards
             }
         }
 
-        private List<InvocationCard> ConditionSacrificeFamily(string familyName, List<InvocationCard> sacrificedCards)
+        private List<InGameInvocationCard> ConditionSacrificeFamily(string familyName, List<InGameInvocationCard> sacrificedCards)
         {
             if (Enum.TryParse(familyName, out CardFamily cardFamily))
             {
@@ -1510,34 +1503,34 @@ namespace Cards.InvocationCards
             return sacrificedCards;
         }
 
-        private void ConditionSpecificField(string value, InvocationCard specificCardFound)
+        private void ConditionSpecificField(string value, InGameInvocationCard specificCardFound)
         {
-            if (!specificCardFound) return;
+            if (specificCardFound == null) return;
             var fieldCard = currentPlayerCard.field;
-            if (fieldCard != null && fieldCard.Nom == value)
+            if (fieldCard != null && fieldCard.Title == value)
             {
                 currentPlayerCard.SendInvocationCardToYellowTrash(specificCardFound);
             }
         }
 
-        private void ConditionSpecificEquipmentAttached(string value, InvocationCard specificCardFound)
+        private void ConditionSpecificEquipmentAttached(string value, InGameInvocationCard specificCardFound)
         {
-            if (!specificCardFound) return;
-            var equipmentCard = specificCardFound.GetEquipmentCard();
-            if (equipmentCard != null && equipmentCard.Nom == value)
+            if (specificCardFound == null) return;
+            var equipmentCard = specificCardFound.EquipmentCard;
+            if (equipmentCard != null && equipmentCard.Title == value)
             {
                 currentPlayerCard.SendInvocationCardToYellowTrash(specificCardFound);
             }
         }
 
-        private void ConditionSacrificeSpecificCard(string cardName, ref InvocationCard specificCardFound)
+        private void ConditionSacrificeSpecificCard(string cardName, ref InGameInvocationCard specificCardFound)
         {
-            if (specificCardFound) return;
+            if (specificCardFound != null) return;
             specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
         }
 
         private static void ConditionSpecificCardOnField(string value, PlayerCards playerCards,
-            ref List<InvocationCard> invocationCardsOnField)
+            ref List<InGameInvocationCard> invocationCardsOnField)
         {
             var invocationCard = CheckSpecificCardOnField(value, playerCards);
             if (invocationCard != null)
@@ -1558,11 +1551,11 @@ namespace Cards.InvocationCards
             var cardConditions = conditions.Keys;
             var cardExplanation = conditions.Values;
 
-            InvocationCard specificCardFound = null;
+            InGameInvocationCard specificCardFound = null;
 
-            var sacrificedCards = new List<InvocationCard>();
+            var sacrificedCards = new List<InGameInvocationCard>();
 
-            var invocationCardsOnField = new List<InvocationCard>();
+            var invocationCardsOnField = new List<InGameInvocationCard>();
 
             var isInvocationPossible = true;
 
@@ -1642,11 +1635,11 @@ namespace Cards.InvocationCards
             return isInvocationPossible;
         }
 
-        private static bool ConditionComeFromYellowTrashIsPossible(InvocationCard specificCardFound)
+        private static bool ConditionComeFromYellowTrashIsPossible(InGameInvocationCard specificCardFound)
         {
             if (specificCardFound != null)
             {
-                return specificCardFound.GetNumberDeaths() > 0;
+                return specificCardFound.NumberOfDeaths > 0;
             }
 
             return false;
@@ -1662,7 +1655,7 @@ namespace Cards.InvocationCards
         }
 
         private static void ConditionSacrificeThresholdDefIsPossible(string value,
-            ref List<InvocationCard> sacrificedCards,
+            ref List<InGameInvocationCard> sacrificedCards,
             PlayerCards currentPlayerCard)
         {
             var threshold = int.Parse(value);
@@ -1684,7 +1677,7 @@ namespace Cards.InvocationCards
         }
 
         private static void ConditionSacrificeThresholdAtkIsPossible(string value,
-            ref List<InvocationCard> sacrificedCards,
+            ref List<InGameInvocationCard> sacrificedCards,
             PlayerCards currentPlayerCard)
         {
             var threshold = float.Parse(value);
@@ -1727,7 +1720,7 @@ namespace Cards.InvocationCards
         }
 
         private static bool ConditionSpecificFamilyOnFieldIsPossible(string value, PlayerCards currentPlayerCard,
-            ref List<InvocationCard> sacrificedCards)
+            ref List<InGameInvocationCard> sacrificedCards)
         {
             if (!Enum.TryParse(value, out CardFamily cardFamily)) return false;
             sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
@@ -1735,7 +1728,7 @@ namespace Cards.InvocationCards
         }
 
         private static bool ConditionSacrificeFamilyIsPossible(string value, PlayerCards currentPlayerCard,
-            ref List<InvocationCard> sacrificedCards)
+            ref List<InGameInvocationCard> sacrificedCards)
         {
             if (!Enum.TryParse(value, out CardFamily cardFamily)) return false;
             sacrificedCards = CheckFamily(cardFamily, currentPlayerCard);
@@ -1743,14 +1736,14 @@ namespace Cards.InvocationCards
         }
 
         private static bool ConditionSacrificeSpecificCardIsPossible(string cardName,
-            ref InvocationCard specificCardFound, PlayerCards currentPlayerCard)
+            ref InGameInvocationCard specificCardFound, PlayerCards currentPlayerCard)
         {
-            if (specificCardFound) return true;
+            if (specificCardFound != null) return true;
             specificCardFound = CheckSacrificeSpecificCard(cardName, currentPlayerCard);
             return specificCardFound != null;
         }
 
-        private GameObject CreateMessageBoxSelectorCard(string title, List<Card> cards,
+        private GameObject CreateMessageBoxSelectorCard(string title, List<InGameCard> cards,
             UnityAction positiveAction = null,
             UnityAction negativeAction = null, bool isInfo = false)
         {
