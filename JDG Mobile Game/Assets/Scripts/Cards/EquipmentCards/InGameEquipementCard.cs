@@ -39,8 +39,7 @@ public class InGameEquipementCard : InGameCard
         equipmentPermEffect = baseEquipmentCard.EquipmentPermEffect;
         CardOwner = baseEquipmentCard.CardOwner;
     }
-
-    // TODO: Modifiy this function as we can put an equipment card on any invocationCard on field
+    
     /// <summary>
     /// IsEquipmentPossible.
     /// Test if user can put an equipment on at least one invocation card on field.

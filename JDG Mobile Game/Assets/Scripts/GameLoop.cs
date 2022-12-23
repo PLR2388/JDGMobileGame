@@ -1607,10 +1607,7 @@ public class GameLoop : MonoBehaviour
     {
         foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards)
         {
-            // TODO Look at it
-            /*var newBonusDef = opponentInvocationCard.GetBonusDefense() +
-                              opponentInvocationCard.GetCurrentDefense();
-            opponentInvocationCard.SetBonusDefense(newBonusDef);*/
+            opponentInvocationCard.Defense *= 2;
         }
     }
 

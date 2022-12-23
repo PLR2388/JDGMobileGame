@@ -644,9 +644,7 @@ public class PlayerCards : MonoBehaviour
             var minValue = float.Parse(value);
             if (invocationCard.GetCurrentDefense() < minValue)
             {
-                var newDef = minValue - invocationCard.GetCurrentDefense();
-                //invocationCard.SetBonusDefense(newDef);
-                // TODO : To Look at
+                invocationCard.Defense = minValue;
             }
         }
     }
@@ -668,12 +666,11 @@ public class PlayerCards : MonoBehaviour
         }
         else if (mustHaveMinimumUndef)
         {
+            // TODO : Set same value for this card than benzaie ATK And Def
             var minValue = float.Parse(value);
             if (invocationCard.GetCurrentAttack() < minValue)
             {
-                var newAtk = minValue - invocationCard.GetCurrentAttack();
-                //invocationCard.SetBonusAttack(newAtk);
-                // TODO Look at what to   change
+                invocationCard.Attack = minValue;
             }
         }
     }
@@ -962,8 +959,7 @@ public class PlayerCards : MonoBehaviour
         }
         else if (mustHaveMiminumAtkdef)
         {
-            //invocationCard.SetBonusDefense(0);
-            // TODO : Look at
+            invocationCard.Defense = invocationCard.baseInvocationCard.GetDefense();
         }
     }
 
@@ -984,8 +980,7 @@ public class PlayerCards : MonoBehaviour
         }
         else if (mustHaveMiminumAtkdef)
         {
-            //  TODO : Look at
-            //invocationCard.SetBonusAttack(0);
+            invocationCard.Attack = invocationCard.baseInvocationCard.GetAttack();
         }
     }
 

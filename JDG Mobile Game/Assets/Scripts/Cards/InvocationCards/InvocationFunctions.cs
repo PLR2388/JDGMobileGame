@@ -917,16 +917,9 @@ namespace Cards.InvocationCards
 
             if (invocationCardSameFamily.Count <= 0) return isPossible;
             if (!(def > 0) || !(atk > 0)) return isPossible;
-            // TODO Look at
-            /*if (currentInvocationCard.GetBonusDefense() > -def)
-            {
-                isPossible = true;
-            }
 
-            if (currentInvocationCard.GetBonusAttack() > -atk)
-            {
-                isPossible = true;
-            }*/
+            // TODO: Check
+            isPossible = currentInvocationCard.Defense > 0 || currentInvocationCard.Attack > 0;
 
             return isPossible;
         }

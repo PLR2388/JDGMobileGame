@@ -1612,10 +1612,7 @@ namespace OnePlayer
         {
             foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards)
             {
-                // TODO : Adjust
-/*                var newBonusDef = opponentInvocationCard.GetBonusDefense() +
-                                  opponentInvocationCard.GetCurrentDefense();
-                opponentInvocationCard.SetBonusDefense(newBonusDef);*/
+                opponentInvocationCard.Defense *= 2;
             }
         }
 

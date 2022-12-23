@@ -524,14 +524,12 @@ namespace Cards.InvocationCards
                 {
                     if (attack)
                     {
-                        // TODO Look at
-                        //currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetAttack() / 2);
+                        currentInvocationCard.Attack /= 2;
                     }
 
                     if (defense)
                     {
-                        // TODO Look at
-                        //currentInvocationCard.SetBonusAttack(-currentInvocationCard.GetDefense() / 2);
+                        currentInvocationCard.Defense /= 2;
                     }
 
                     if (fieldCardP1 != null && fieldCard.Title == fieldCardP1.Title)
@@ -789,9 +787,10 @@ namespace Cards.InvocationCards
             {
                 currentPlayerCard.invocationCards.Remove(cardToSacrifice);
                 currentPlayerCard.yellowTrash.Add(cardToSacrifice);
-                // TODO Look at
-                //currentInvocationCard.SetBonusAttack(incrementStat);
-                //currentInvocationCard.SetBonusDefense(incrementStat);
+                
+                // Example of Mahammad that can earn 2.5 ATK and DEF by sacrificing JDG
+                currentInvocationCard.Attack += incrementStat;
+                currentInvocationCard.Defense += incrementStat;
             }
 
             MessageBox.CreateSimpleMessageBox(canvas, "Choix",
@@ -930,7 +929,9 @@ namespace Cards.InvocationCards
 
             if (invocationCardSameFamily.Count <= 0) return isPossible;
             if (!(def > 0) || !(atk > 0)) return isPossible;
-            // TODO Look at
+            
+            // TODO : Check if Ok
+            isPossible = currentInvocationCard.Defense > 0 || currentInvocationCard.Attack > 0;
             /*if (currentInvocationCard.GetBonusDefense() > -def)
             {
                 isPossible = true;

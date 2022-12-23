@@ -727,7 +727,7 @@ namespace Cards.EffectCards
                         break;
                     case Effect.Combine:
                     {
-                        //ApplyCombine(effectCard, value); // TODO : Remake it
+                        ApplyCombine(effectCard, value);
                     }
                         break;
                     case Effect.RevertStat:
@@ -1235,35 +1235,12 @@ namespace Cards.EffectCards
         /// <param name="affectOpponent">boolean to indicate if affected HP is for the user or his opponent</param>
         private void ApplyNumberInvocationCard(bool affectOpponent, float pvAffected)
         {
-            // TODO: test this refactor
             var invocationCards =
                 affectOpponent ? opponentPlayerCard.invocationCards : currentPlayerCard.invocationCards;
             var playerStatus = affectOpponent ? opponentPlayerStatus : currentPlayerStatus;
             var size = invocationCards.Count;
             var damages = size * pvAffected;
             playerStatus.ChangePv(damages);
-
-            /*if (affectOpponent)
-            {
-                AffectOpponentNumberInvocation(pvAffected);
-            }
-            else
-            {
-                AffectCurrentNumberInvocation(pvAffected);
-            }*/
-        }
-
-        private void AffectOpponentNumberInvocation(float pvAffected)
-        {
-            var invocationCards = opponentPlayerCard.invocationCards;
-        }
-
-        private void AffectCurrentNumberInvocation(float pvAffected)
-        {
-            var invocationCards = currentPlayerCard.invocationCards;
-            var size = invocationCards.Count;
-            var damages = size * pvAffected;
-            currentPlayerStatus.ChangePv(damages);
         }
 
         /// <summary>
@@ -1287,36 +1264,11 @@ namespace Cards.EffectCards
         /// <param name="pvAffected">number of affected HP</param>
         private void ApplyNumberHandCard(bool affectOpponent, float pvAffected)
         {
-            // TODO: test it
             var handCards = affectOpponent ? opponentPlayerCard.handCards : currentPlayerCard.handCards;
             var playerStatus = affectOpponent ? opponentPlayerStatus : currentPlayerStatus;
             var size = handCards.Count;
             var damages = size * pvAffected;
             playerStatus.ChangePv(damages);
-            /*if (affectOpponent)
-            {
-                AffectOpponentNumberHandCard(pvAffected);
-            }
-            else
-            {
-                AffectCurrentNumberHandCard(pvAffected);
-            }*/
-        }
-
-        private void AffectOpponentNumberHandCard(float pvAffected)
-        {
-            var handCards = opponentPlayerCard.handCards;
-            var size = handCards.Count;
-            var damages = size * pvAffected;
-            opponentPlayerStatus.ChangePv(damages);
-        }
-
-        private void AffectCurrentNumberHandCard(float pvAffected)
-        {
-            var handCards = currentPlayerCard.handCards;
-            var size = handCards.Count;
-            var damages = size * pvAffected;
-            currentPlayerStatus.ChangePv(damages);
         }
 
         /// <summary>
