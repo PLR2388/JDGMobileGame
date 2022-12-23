@@ -54,11 +54,6 @@ namespace Cards.InvocationCards
             return inGameInvocationCard;
         }
 
-        private void Awake()
-        {
-            Reset();
-        }
-
         public CardFamily[] Families
         {
             get => families;
@@ -102,6 +97,7 @@ namespace Cards.InvocationCards
             invocationPermEffect = baseInvocationCard.InvocationPermEffect;
             invocationActionEffect = baseInvocationCard.InvocationActionEffect;
             invocationDeathEffect = baseInvocationCard.GetInvocationDeathEffect();
+            CardOwner = baseInvocationCard.CardOwner;
         }
 
         public void DeactivateEffect()

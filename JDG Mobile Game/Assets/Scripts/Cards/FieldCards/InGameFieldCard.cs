@@ -37,6 +37,7 @@ public class InGameFieldCard : InGameCard
         collector = baseFieldCard.Collector;
         family = baseFieldCard.GetFamily();
         fieldCardEffect = baseFieldCard.FieldCardEffect;
+        CardOwner = baseFieldCard.CardOwner;
     }
 
     public CardFamily GetFamily()

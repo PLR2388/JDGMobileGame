@@ -43,6 +43,7 @@ namespace Cards.EffectCards
             lifeTime = baseEffectCard.GetLifeTime();
             checkTurn = baseEffectCard.checkTurn;
             affectPv = baseEffectCard.affectPv;
+            CardOwner = baseEffectCard.CardOwner;
         }
 
         public void Init()

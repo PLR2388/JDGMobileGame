@@ -37,6 +37,7 @@ public class InGameEquipementCard : InGameCard
         collector = baseEquipmentCard.Collector;
         equipmentInstantEffect = baseEquipmentCard.EquipmentInstantEffect;
         equipmentPermEffect = baseEquipmentCard.EquipmentPermEffect;
+        CardOwner = baseEquipmentCard.CardOwner;
     }
 
     // TODO: Modifiy this function as we can put an equipment card on any invocationCard on field
