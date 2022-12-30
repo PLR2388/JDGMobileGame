@@ -17,6 +17,7 @@ namespace Cards.FieldCards
         {
             GameLoop.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
+            TutoInGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
             p1 = GameObject.Find("Player1");
             p2 = GameObject.Find("Player2");
             currentPlayerCard = p1.GetComponent<PlayerCards>();

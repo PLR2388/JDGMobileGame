@@ -22,6 +22,7 @@ namespace Cards.InvocationCards
         {
             GameLoop.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
+            TutoInGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
             p1 = GameObject.Find("Player1");
             p2 = GameObject.Find("Player2");
             currentPlayerCard = p1.GetComponent<PlayerCards>();

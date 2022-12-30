@@ -14,6 +14,7 @@ namespace Cards.EquipmentCards
         private void Start()
         {
             InGameMenuScript.EquipmentCardEvent.AddListener(DisplayEquipmentPopUp);
+            TutoInGameMenuScript.EquipmentCardEvent.AddListener(DisplayEquipmentPopUp);
         }
 
         private static PlayerCards CurrentPlayerCard

@@ -116,11 +116,11 @@ public class GameState : MonoBehaviour
         deck1.Add(jeanMichelBruitage);
         deck1.Add(fistiland);
         deck1.Add(merdeRose);
-        deck1.Add(tentacule);
         CardChoice.GetRandomDeck(26, ref deck2, deck2AllCards, CardOwner.Player2);
         deck2.Add(card);
         deck2.Add(musicMegaDrive);
         deck2.Add(elfette);
+        deck2.Add(tentacule);
 
         deckP1 = deck1.Select(InGameCard.CreateInGameCard).ToList();
         deckP2 = deck2.Select(InGameCard.CreateInGameCard).ToList();

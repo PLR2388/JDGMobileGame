@@ -154,7 +154,7 @@ namespace Cards.InvocationCards
             {
                 case "deck":
                 {
-                    var deck = currentPlayerCard.deck;
+                    var deck = new List<InGameCard>(currentPlayerCard.deck);
                     if (cardName != "")
                     {
                         var isFound = false;
@@ -193,6 +193,7 @@ namespace Cards.InvocationCards
                     }
                     else if (invokeCardNames.Count > 0)
                     {
+                        deck.AddRange(currentPlayerCard.handCards);
                         cardFound.AddRange(from t in deck
                             from invokeCardName in invokeCardNames
                             where t.Title == invokeCardName
@@ -209,6 +210,7 @@ namespace Cards.InvocationCards
                                 {
                                     var invocationCard = (InGameInvocationCard)cards[cards.Count - 1];
                                     currentPlayerCard.invocationCards.Add(invocationCard);
+                                    currentPlayerCard.handCards.Remove(invocationCard);
                                     currentPlayerCard.deck.Remove(invocationCard);
                                     inHandButton.SetActive(true);
                                 }
@@ -241,6 +243,7 @@ namespace Cards.InvocationCards
                                         (InGameInvocationCard)message.GetComponent<MessageBox>()
                                             .GetSelectedCard();
                                     currentPlayerCard.invocationCards.Add(invocationCard);
+                                    currentPlayerCard.handCards.Remove(invocationCard);
                                     currentPlayerCard.deck.Remove(invocationCard);
                                     inHandButton.SetActive(true);
                                     Destroy(message);
