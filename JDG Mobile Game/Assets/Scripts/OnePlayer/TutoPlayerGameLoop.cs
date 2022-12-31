@@ -42,7 +42,8 @@ namespace OnePlayer
         [FormerlySerializedAs("P2")] [SerializeField]
         private GameObject p2;
 
-        [SerializeField] private InGameCard player;
+        [SerializeField] private InvocationCard playerInvocationCard;
+        private InGameCard player;
         [SerializeField] private GameObject inHandButton;
 
         public static readonly UnityEvent ChangePlayer = new UnityEvent();
@@ -68,6 +69,7 @@ namespace OnePlayer
 
         private void Awake()
         {
+            player = InGameCard.CreateInGameCard(playerInvocationCard);
             actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
             DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
         }
@@ -214,7 +216,7 @@ namespace OnePlayer
                     }
 
                     this.attacker = attackerInvocationCard;
-                    opponent = opponentInvocationCard;
+                    opponent = opponentInvocationCard; 
                     ComputeAttack();
 
                     if (defender == "player")

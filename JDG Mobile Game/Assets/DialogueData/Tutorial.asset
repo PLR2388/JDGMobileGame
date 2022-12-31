@@ -74,7 +74,7 @@ MonoBehaviour:
   - "Ce sont des cartes plac\xE9es sur le terrain et qui auront des effets sp\xE9cifiques
     sur tes cartes ou celles de l'adversaire."
   - "On a vu tous les types de cartes. Apr\xE8s, il existe des subtilit\xE9s qu'on
-    apprend \xE0 m\xE9triser qu'avec le temps."
+    apprend \xE0 ma\xEEtriser qu'avec le temps."
   - "Par exemple, il existe des cartes qui, pour \xEAtre invoqu\xE9es et subsist\xE9es
     sur le terrain, ont besoin d'une autre carte ou d'une condition sp\xE9cifique."
   nextDialogueTriggers: 00000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000001000000020000000100000001000000000000000100000001000000060000000000000001000000010000000000000000000000000000000000000000000000000000000700000001000000000000000000000000000000000000000100000001000000000000000400000001000000000000000100000008000000

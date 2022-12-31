@@ -35,6 +35,7 @@ public class GameLoop : MonoBehaviour
     private GameObject p2;
 
     private InGameCard player;
+    [SerializeField] private InvocationCard playerInvocationCard;
     [SerializeField] private GameObject inHandButton;
 
     [SerializeField]
@@ -56,6 +57,11 @@ public class GameLoop : MonoBehaviour
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
     private CardLocation cardLocation;
+
+    private void Awake()
+    {
+        player = InGameCard.CreateInGameCard(playerInvocationCard);
+    }
 
     // Start is called before the first frame update
     private void Start()

@@ -1397,18 +1397,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a0078b40147bd249a996db68814eb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck: []
-  handCards: []
-  yellowTrash: []
-  field: {fileID: 0}
-  invocationCards: []
-  effectCards: []
   isPlayerOne: 1
   nextPhaseButton: {fileID: 1957640249}
   inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 397230410}
-  secretCards: []
 --- !u!114 &230530445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1785,7 +1778,8 @@ MonoBehaviour:
   tutoVideo: {fileID: 1045100655}
   p1: {fileID: 230530442}
   p2: {fileID: 2017354827}
-  player: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544, type: 2}
+  playerInvocationCard: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544,
+    type: 2}
   inHandButton: {fileID: 829748139}
   dialogueBox: {fileID: 0}
 --- !u!114 &397230410
@@ -6175,7 +6169,6 @@ MonoBehaviour:
   putCardButton: {fileID: 1930089324}
   inHandButton: {fileID: 829748139}
   backgroundInformation: {fileID: 1582983282}
-  currentSelectedCard: {fileID: 0}
   invocationMenu: {fileID: 1982540492}
   gameLoop: {fileID: 397230402}
 --- !u!1 &1928831686
@@ -6824,18 +6817,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a0078b40147bd249a996db68814eb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck: []
-  handCards: []
-  yellowTrash: []
-  field: {fileID: 0}
-  invocationCards: []
-  effectCards: []
   isPlayerOne: 0
   nextPhaseButton: {fileID: 1957640249}
   inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 397230410}
-  secretCards: []
 --- !u!114 &2017354830
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1619,6 +1619,8 @@ MonoBehaviour:
   canvas: {fileID: 244790280}
   p1: {fileID: 230530442}
   p2: {fileID: 2017354827}
+  playerInvocationCard: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544,
+    type: 2}
   inHandButton: {fileID: 829748139}
   playerCamera: {fileID: 1233983595}
 --- !u!114 &397230405
