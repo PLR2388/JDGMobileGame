@@ -114,7 +114,7 @@ public class PlayerCards : MonoBehaviour
             for (var i = effectCards.Count - 1; i >= 0; i--)
             {
                 var effectCard = effectCards[i];
-                var effectCardEffect = effectCard.GetEffectCardEffect();
+                var effectCardEffect = effectCard.EffectCardEffect;
                 if (effectCardEffect == null) continue;
                 if (!effectCardEffect.Keys.Contains(Effect.SameFamily)) continue;
                 if (field != null && !IsFieldDesactivate)
@@ -457,7 +457,7 @@ public class PlayerCards : MonoBehaviour
             ? GameObject.Find("Player2").GetComponent<PlayerCards>().effectCards
             : GameObject.Find("Player1").GetComponent<PlayerCards>().effectCards;
 
-        var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.GetEffectCardEffect().Keys)
+        var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.EffectCardEffect.Keys)
             .Any(keys => keys.Contains(Effect.SkipAttack));
 
 
@@ -529,7 +529,7 @@ public class PlayerCards : MonoBehaviour
         for (var i = effectCards.Count - 1; i >= 0; i--)
         {
             var effectCard = effectCards[i];
-            var effectCardEffect = effectCard.GetEffectCardEffect();
+            var effectCardEffect = effectCard.EffectCardEffect;
             if (effectCardEffect != null)
             {
                 if (effectCardEffect.Keys.Contains(Effect.SameFamily))
@@ -869,14 +869,14 @@ public class PlayerCards : MonoBehaviour
         for (var i = effectCards.Count - 1; i >= 0; i--)
         {
             var effectCard = effectCards[i];
-            var effectCardEffect = effectCard.GetEffectCardEffect();
+            var effectCardEffect = effectCard.EffectCardEffect;
             if (effectCardEffect != null)
             {
                 if (effectCardEffect.Keys.Contains(Effect.SameFamily))
                 {
                     if (field != null)
                     {
-                        removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.GetFamily();
+                        removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.Family;
                     }
                 }
             }
@@ -920,7 +920,7 @@ public class PlayerCards : MonoBehaviour
         var names = fieldValue.Split(';');
         if (names.Contains(removedInvocationCard.Title))
         {
-            removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.GetFamily();
+            removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.Family;
         }
     }
 
@@ -1256,7 +1256,7 @@ public class PlayerCards : MonoBehaviour
         foreach (var invocationCard in invocationCards.Where(invocationCard =>
                      names.Contains(invocationCard.Title)))
         {
-            invocationCard.Families = invocationCard.baseInvocationCard.GetFamily();
+            invocationCard.Families = invocationCard.baseInvocationCard.Family;
         }
     }
 

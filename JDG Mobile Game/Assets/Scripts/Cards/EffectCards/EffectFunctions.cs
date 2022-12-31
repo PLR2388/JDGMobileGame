@@ -47,7 +47,7 @@ namespace Cards.EffectCards
 
             if (size < 4)
             {
-                ApplyEffectCard(effectCard, effectCard.GetEffectCardEffect());
+                ApplyEffectCard(effectCard, effectCard.EffectCardEffect);
 
                 miniCardMenu.SetActive(false);
                 currentPlayerCard.handCards.Remove(effectCard);
@@ -304,7 +304,7 @@ namespace Cards.EffectCards
                     if (affectOpponent)
                     {
                         var invocationOpponentValid = opponentPlayerCard.invocationCards
-                            .Where(card => card.IsValid()).Cast<Card>().ToList();
+                            .Where(card => card.IsValid()).Cast<InGameCard>().ToList();
                         isValid = invocationOpponentValid.Count > 0;
                     }
                 }
@@ -1897,7 +1897,7 @@ namespace Cards.EffectCards
         {
             if (int.TryParse(value, out var duration))
             {
-                effectCard.SetLifeTime(duration);
+                effectCard.LifeTime = duration;
             }
         }
 

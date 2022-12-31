@@ -88,10 +88,8 @@ public class DialogueUI : MonoBehaviour
 #elif UNITY_ANDROID
                         return Input.touchCount > 0;
 #endif
-                        break;
                     case NextDialogueTrigger.Automatic:
                         return true;
-                        break;
                     case NextDialogueTrigger.PutCard:
                         dialogueBox.SetActive(false);
                         if (currentTrigger == NextDialogueTrigger.NextPhase)
@@ -141,7 +139,6 @@ public class DialogueUI : MonoBehaviour
                     case NextDialogueTrigger.EndGame:
                         SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
                         return true;
-                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

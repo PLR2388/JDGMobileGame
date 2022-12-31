@@ -7,21 +7,21 @@ namespace Cards.InvocationCards
     public class InGameInvocationCard : InGameCard
     {
         public InvocationCard baseInvocationCard;
-        [SerializeField] protected float attack;
-        [SerializeField] protected float defense;
-        [SerializeField] private CardFamily[] families;
-        [SerializeField] private InGameEquipementCard equipmentCard;
-        [SerializeField] private InvocationConditions invocationConditions;
-        [SerializeField] private InvocationStartEffect invocationStartEffect;
-        [SerializeField] private InvocationPermEffect invocationPermEffect;
-        [SerializeField] private InvocationActionEffect invocationActionEffect;
-        [SerializeField] private InvocationDeathEffect invocationDeathEffect;
-        [SerializeField] private int numberTurnOnField;
-        [SerializeField] private int numberDeaths;
-        [SerializeField] private bool blockAttackNextTurn;
-        [SerializeField] private bool affectedByEffect = true;
-        [SerializeField] private int remainedAttackThisTurn;
-        [SerializeField] private bool isControlled;
+        protected float attack;
+        protected float defense;
+        private CardFamily[] families;
+        private InGameEquipementCard equipmentCard;
+        private InvocationConditions invocationConditions;
+        private InvocationStartEffect invocationStartEffect;
+        private InvocationPermEffect invocationPermEffect;
+        private InvocationActionEffect invocationActionEffect;
+        private InvocationDeathEffect invocationDeathEffect;
+        private int numberTurnOnField;
+        private int numberDeaths;
+        private bool blockAttackNextTurn;
+        private bool affectedByEffect = true;
+        private int remainedAttackThisTurn;
+        private bool isControlled;
 
         public int NumberOfTurnOnField => numberTurnOnField;
 
@@ -44,11 +44,12 @@ namespace Cards.InvocationCards
             set => equipmentCard = value;
         }
         
-        public static InGameInvocationCard Init(InvocationCard invocationCard)
+        public static InGameInvocationCard Init(InvocationCard invocationCard, CardOwner cardOwner)
         {
             InGameInvocationCard inGameInvocationCard = new InGameInvocationCard
             {
-                baseInvocationCard = invocationCard
+                baseInvocationCard = invocationCard,
+                CardOwner = cardOwner
             };
             inGameInvocationCard.Reset();
             return inGameInvocationCard;
@@ -90,14 +91,14 @@ namespace Cards.InvocationCards
 
             attack = baseInvocationCard.GetAttack();
             defense = baseInvocationCard.GetDefense();
-            families = baseInvocationCard.GetFamily();
+            families = baseInvocationCard.Family;
             equipmentCard = null;
             invocationConditions = baseInvocationCard.InvocationConditions;
             invocationStartEffect = baseInvocationCard.GetInvocationStartEffect();
             invocationPermEffect = baseInvocationCard.InvocationPermEffect;
             invocationActionEffect = baseInvocationCard.InvocationActionEffect;
             invocationDeathEffect = baseInvocationCard.GetInvocationDeathEffect();
-            CardOwner = baseInvocationCard.CardOwner;
+            IsAffectedByEffectCard = baseInvocationCard.IsAffectedByEffectCard;
         }
 
         public void DeactivateEffect()
@@ -119,7 +120,11 @@ namespace Cards.InvocationCards
             blockAttackNextTurn = false;
         }
 
-        public bool IsAffectedByEffectCard => affectedByEffect;
+        public bool IsAffectedByEffectCard
+        {
+            get => affectedByEffect;
+            set => affectedByEffect = value;
+        }
 
         public void SetRemainedAttackThisTurn(int number)
         {

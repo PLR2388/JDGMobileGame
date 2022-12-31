@@ -29,7 +29,7 @@ public class UpdateDescription : MonoBehaviour
             allInvocationOptions.SetActive(true);
             cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte INVOCATION";
             var invocationCard = (InvocationCard)card;
-            var families = invocationCard.GetFamily();
+            var families = invocationCard.Family;
             var familyFormatText = "";
             if (families.Length == 2)
             {

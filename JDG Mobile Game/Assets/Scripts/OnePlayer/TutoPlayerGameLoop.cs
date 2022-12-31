@@ -61,15 +61,13 @@ namespace OnePlayer
         private int numberOfTurn;
 
         private ActionScenario[] actionScenarios;
-        [SerializeField] private DialogueUI dialogueBox;
-        private int currentIndex = 0;
-        private bool hasSendCurrent = false;
 
         // Start is called before the first frame update
 
         private void Awake()
         {
-            player = InGameCard.CreateInGameCard(playerInvocationCard);
+            // The opponent is player2 (only the AI attacks the player directly)
+            player = InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
             actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
             DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
         }
@@ -1235,7 +1233,7 @@ namespace OnePlayer
                 {
                     foreach (var invocationCard in invocationCards)
                     {
-                        invocationCard.Families = invocationCard.baseInvocationCard.GetFamily();
+                        invocationCard.Families = invocationCard.baseInvocationCard.Family;
                     }
 
                     playerCards.yellowTrash.Add(effectCard);
@@ -1530,12 +1528,12 @@ namespace OnePlayer
 
             foreach (var effectCard in effectCards)
             {
-                if (effectCard.GetLifeTime() == 1)
+                if (effectCard.LifeTime == 1)
                 {
                     effectCard.DecrementLifeTime();
                     effectCardsToDelete.Add(effectCard);
 
-                    var effectCardEffect = effectCard.GetEffectCardEffect();
+                    var effectCardEffect = effectCard.EffectCardEffect;
                     if (effectCardEffect == null) continue;
                     var keys = effectCardEffect.Keys;
 
@@ -1619,13 +1617,13 @@ namespace OnePlayer
                         }
                     }
                 }
-                else if (effectCard.GetLifeTime() > 1)
+                else if (effectCard.LifeTime > 1)
                 {
                     effectCard.DecrementLifeTime();
                 }
                 else
                 {
-                    var effectCardEffect = effectCard.GetEffectCardEffect();
+                    var effectCardEffect = effectCard.EffectCardEffect;
                     if (effectCardEffect == null) continue;
                     var keys = effectCardEffect.Keys;
 

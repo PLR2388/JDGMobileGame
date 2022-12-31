@@ -209,7 +209,7 @@ namespace Cards
                     allPhysicalCards[index].GetComponent<PhysicalCardDisplay>().bIsFaceHidden = false;
                 }
 
-                if (effectCard.GetEffectCardEffect().Keys.Contains(Effect.SameFamily))
+                if (effectCard.EffectCardEffect.Keys.Contains(Effect.SameFamily))
                 {
                     foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard != null)
                                  .Where(invocationCard => field != null && !playerCards.IsFieldDesactivate))

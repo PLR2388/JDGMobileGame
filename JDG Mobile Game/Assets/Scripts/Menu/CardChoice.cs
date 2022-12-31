@@ -72,25 +72,15 @@ namespace Menu
                     buttonLabel.TranslationName = choiceText.name;
                     isPlayerOneCardChosen = false;
 
-                    foreach (var card in deck)
-                    {
-                        card.CardOwner = CardOwner.Player2;
-                    }
-                    
-                    FindObjectOfType<GameState>().deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card)).ToList();
+                    FindObjectOfType<GameState>().deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
                 {
                     playerToken.SetValue(2);
                     buttonLabel.TranslationName = playText.name;
                     isPlayerOneCardChosen = true;
-                    
-                    foreach (var card in deck)
-                    {
-                        card.CardOwner = CardOwner.Player1;
-                    }
-                    
-                    FindObjectOfType<GameState>().deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card)).ToList();
+
+                    FindObjectOfType<GameState>().deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -101,7 +91,7 @@ namespace Menu
             }
         }
 
-        public static void GetRandomDeck(int numberOfCards, ref List<Card> initialDeck, List<Card> cards, CardOwner cardOwner)
+        public static void GetRandomDeck(int numberOfCards, ref List<Card> initialDeck, List<Card> cards)
         {
             var deckAllCard = cards.Where(card =>
                 card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
@@ -111,11 +101,6 @@ namespace Menu
             while (initialDeck.Count != numberOfCards)
             {
                 GetRandomCards(deckAllCard, initialDeck);
-            }
-
-            foreach (var card in initialDeck)
-            {
-                card.CardOwner = cardOwner;
             }
         }
 
@@ -144,18 +129,8 @@ namespace Menu
                 GetRandomCards(deck2AllCard, deck2);
             }
 
-            foreach (var card in deck1)
-            {
-                card.CardOwner = CardOwner.Player1;
-            }
-            
-            foreach (var card in deck2)
-            {
-                card.CardOwner = CardOwner.Player2;
-            }
-
-            FindObjectOfType<GameState>().deckP1 = deck1.Select(InGameCard.CreateInGameCard).ToList();
-            FindObjectOfType<GameState>().deckP2 = deck2.Select(InGameCard.CreateInGameCard).ToList();
+            FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
@@ -186,19 +161,9 @@ namespace Menu
             }
 
             deck2.Reverse();
-            
-            foreach (var card in deck1)
-            {
-                card.CardOwner = CardOwner.Player1;
-            }
-            
-            foreach (var card in deck2)
-            {
-                card.CardOwner = CardOwner.Player2;
-            }
 
-            FindObjectOfType<GameState>().deckP1 = deck1.Select(InGameCard.CreateInGameCard).ToList();
-            FindObjectOfType<GameState>().deckP2 = deck2.Select(InGameCard.CreateInGameCard).ToList();
+            FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 

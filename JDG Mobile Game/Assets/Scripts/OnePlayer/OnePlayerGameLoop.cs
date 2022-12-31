@@ -349,7 +349,7 @@ namespace OnePlayer
                             var keys = permEffect.Keys;
                             var values = permEffect.Values;
 
-                            List<InvocationCard> moreDefInvocationCards = new List<InvocationCard>();
+                            List<InGameInvocationCard> moreDefInvocationCards = new List<InGameInvocationCard>();
 
                             for (var i = 0; i < keys.Count; i++)
                             {
@@ -380,8 +380,8 @@ namespace OnePlayer
                                             case "More DEF":
                                             {
                                                 moreDefInvocationCards.AddRange(
-                                                    from InvocationCard invocationCardToCheck in notEmptyOpponent
-                                                    where invocationCardToCheck.Nom != invocationCard.Title
+                                                    from InGameInvocationCard invocationCardToCheck in notEmptyOpponent
+                                                    where invocationCardToCheck.Title != invocationCard.Title
                                                     where invocationCardToCheck.GetCurrentDefense() >
                                                           invocationCard.GetCurrentDefense()
                                                     select invocationCardToCheck);
@@ -455,7 +455,7 @@ namespace OnePlayer
                     else
                     {
                         // Check effect card
-                        if (attackPlayerEffectCard.Select(effectCard => effectCard.GetEffectCardEffect())
+                        if (attackPlayerEffectCard.Select(effectCard => effectCard.EffectCardEffect)
                             .Where(effectCardEffect => effectCardEffect != null).Any(effectCardEffect =>
                                 effectCardEffect.Keys.Contains(Effect.AttackDirectly)))
                         {
@@ -1038,7 +1038,7 @@ namespace OnePlayer
                 {
                     foreach (var invocationCard in invocationCards)
                     {
-                        invocationCard.Families = invocationCard.baseInvocationCard.GetFamily();
+                        invocationCard.Families = invocationCard.baseInvocationCard.Family;
                     }
 
                     playerCards.yellowTrash.Add(effectCard);
@@ -1328,12 +1328,12 @@ namespace OnePlayer
 
             foreach (var effectCard in effectCards)
             {
-                if (effectCard.GetLifeTime() == 1)
+                if (effectCard.LifeTime == 1)
                 {
                     effectCard.DecrementLifeTime();
                     effectCardsToDelete.Add(effectCard);
 
-                    var effectCardEffect = effectCard.GetEffectCardEffect();
+                    var effectCardEffect = effectCard.EffectCardEffect;
                     if (effectCardEffect == null) continue;
                     var keys = effectCardEffect.Keys;
 
@@ -1417,13 +1417,13 @@ namespace OnePlayer
                         }
                     }
                 }
-                else if (effectCard.GetLifeTime() > 1)
+                else if (effectCard.LifeTime > 1)
                 {
                     effectCard.DecrementLifeTime();
                 }
                 else
                 {
-                    var effectCardEffect = effectCard.GetEffectCardEffect();
+                    var effectCardEffect = effectCard.EffectCardEffect;
                     if (effectCardEffect == null) continue;
                     var keys = effectCardEffect.Keys;
 

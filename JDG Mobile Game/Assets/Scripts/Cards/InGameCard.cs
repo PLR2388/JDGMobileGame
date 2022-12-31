@@ -1,4 +1,5 @@
 using Cards.EffectCards;
+using Cards.EquipmentCards;
 using Cards.FieldCards;
 using Cards.InvocationCards;
 using UnityEngine;
@@ -8,19 +9,14 @@ namespace Cards
     public class InGameCard
     {
         public Card baseCard;
-        [SerializeField] protected string title = "";
-        [SerializeField] protected string description;
-        [SerializeField] protected string detailedDescription;
-        [SerializeField] protected CardType type;
-        [SerializeField] protected Material materialCard;
-        [SerializeField] protected bool collector;
-        [SerializeField] private CardOwner cardOwner = CardOwner.NotDefined;
-        
-        public CardOwner CardOwner
-        {
-            get => cardOwner;
-            set => cardOwner = value;
-        }
+        protected string title = "";
+        protected string description;
+        protected string detailedDescription;
+        protected CardType type;
+        protected Material materialCard;
+        protected bool collector;
+
+        public CardOwner CardOwner { get; protected set; } = CardOwner.NotDefined;
 
         public string Title => title;
 
@@ -33,14 +29,14 @@ namespace Cards
 
         public bool Collector => collector;
 
-        public static InGameCard CreateInGameCard(Card card)
+        public static InGameCard CreateInGameCard(Card card, CardOwner cardOwner)
         {
             return card switch
             {
-                EquipmentCard equipmentCard => InGameEquipementCard.Init(equipmentCard),
-                EffectCard effectCard => InGameEffectCard.Init(effectCard),
-                InvocationCard invocationCard => InGameInvocationCard.Init(invocationCard),
-                FieldCard fieldCard => InGameFieldCard.Init(fieldCard),
+                EquipmentCard equipmentCard => InGameEquipementCard.Init(equipmentCard, cardOwner),
+                EffectCard effectCard => InGameEffectCard.Init(effectCard, cardOwner),
+                InvocationCard invocationCard => InGameInvocationCard.Init(invocationCard, cardOwner),
+                FieldCard fieldCard => InGameFieldCard.Init(fieldCard, cardOwner),
                 _ => null
             };
         }

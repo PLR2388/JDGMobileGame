@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
@@ -8,25 +7,26 @@ using UnityEngine;
 
 public class InGameEquipementCard : InGameCard
 {
-    public EquipmentCard baseEquipmentCard;
-    [SerializeField] private EquipmentInstantEffect equipmentInstantEffect;
-    [SerializeField] private EquipmentPermEffect equipmentPermEffect;
+    private EquipmentCard baseEquipmentCard;
+    private EquipmentInstantEffect equipmentInstantEffect;
+    private EquipmentPermEffect equipmentPermEffect;
 
     public EquipmentInstantEffect EquipmentInstantEffect => equipmentInstantEffect;
     public EquipmentPermEffect EquipmentPermEffect => equipmentPermEffect;
 
 
-    public static InGameEquipementCard Init(EquipmentCard equipmentCard)
+    public static InGameEquipementCard Init(EquipmentCard equipmentCard, CardOwner cardOwner)
     {
         InGameEquipementCard inGameEquipmentCard = new InGameEquipementCard
         {
-            baseEquipmentCard = equipmentCard
+            baseEquipmentCard = equipmentCard,
+            CardOwner = cardOwner
         };
         inGameEquipmentCard.Reset();
         return inGameEquipmentCard;
     }
 
-    public void Reset()
+    private void Reset()
     {
         title = baseEquipmentCard.Nom;
         description = baseEquipmentCard.Description;
@@ -37,7 +37,6 @@ public class InGameEquipementCard : InGameCard
         collector = baseEquipmentCard.Collector;
         equipmentInstantEffect = baseEquipmentCard.EquipmentInstantEffect;
         equipmentPermEffect = baseEquipmentCard.EquipmentPermEffect;
-        CardOwner = baseEquipmentCard.CardOwner;
     }
     
     /// <summary>

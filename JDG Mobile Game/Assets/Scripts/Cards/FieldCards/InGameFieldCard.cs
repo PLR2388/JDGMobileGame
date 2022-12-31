@@ -1,32 +1,27 @@
-using System;
 using Cards;
 using Cards.FieldCards;
-using UnityEngine;
 
 public class InGameFieldCard : InGameCard
 {
-    public FieldCard baseFieldCard;
-    [SerializeField] private CardFamily family;
-    [SerializeField] private FieldCardEffect fieldCardEffect;
+    private FieldCard baseFieldCard;
+    private CardFamily family;
+    private FieldCardEffect fieldCardEffect;
 
     public FieldCardEffect FieldCardEffect => fieldCardEffect;
 
 
-    public static InGameFieldCard Init(FieldCard fieldCard)
+    public static InGameFieldCard Init(FieldCard fieldCard, CardOwner cardOwner)
     {
         InGameFieldCard inGameFieldCard = new InGameFieldCard
         {
-            baseFieldCard = fieldCard
+            baseFieldCard = fieldCard,
+            CardOwner = cardOwner
         };
         inGameFieldCard.Reset();
         return inGameFieldCard;
     }
-    private void Awake()
-    {
-        Reset();
-    }
 
-    public void Reset()
+    private void Reset()
     {
         title = baseFieldCard.Nom;
         description = baseFieldCard.Description;
@@ -35,9 +30,8 @@ public class InGameFieldCard : InGameCard
         type = baseFieldCard.Type;
         materialCard = baseFieldCard.MaterialCard;
         collector = baseFieldCard.Collector;
-        family = baseFieldCard.GetFamily();
+        family = baseFieldCard.Family;
         fieldCardEffect = baseFieldCard.FieldCardEffect;
-        CardOwner = baseFieldCard.CardOwner;
     }
 
     public CardFamily GetFamily()

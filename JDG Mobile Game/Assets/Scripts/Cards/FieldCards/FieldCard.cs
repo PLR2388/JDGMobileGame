@@ -9,15 +9,13 @@ namespace Cards.FieldCards
         [SerializeField] private FieldCardEffect fieldCardEffect;
 
         public FieldCardEffect FieldCardEffect => fieldCardEffect;
+        public CardFamily Family => family;
 
         private void Awake()
         {
-            this.type = CardType.Field;
+            type = CardType.Field;
         }
 
-        public CardFamily GetFamily()
-        {
-            return family;
-        }
+       
     }
 }

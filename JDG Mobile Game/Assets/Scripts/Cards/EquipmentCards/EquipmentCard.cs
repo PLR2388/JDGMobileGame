@@ -1,21 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Cards;
-using Cards.EquipmentCards;
-using Cards.InvocationCards;
-using UnityEngine;
+﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Card", menuName = "EquipmentCard")]
-public class EquipmentCard : Card
+namespace Cards.EquipmentCards
 {
-    [SerializeField] private EquipmentInstantEffect equipmentInstantEffect;
-    [SerializeField] private EquipmentPermEffect equipmentPermEffect;
-
-    public EquipmentInstantEffect EquipmentInstantEffect => equipmentInstantEffect;
-    public EquipmentPermEffect EquipmentPermEffect => equipmentPermEffect;
-
-    private void Awake()
+    [CreateAssetMenu(fileName = "New Card", menuName = "EquipmentCard")]
+    public class EquipmentCard : Card
     {
-        type = CardType.Equipment;
+        [SerializeField] private EquipmentInstantEffect equipmentInstantEffect;
+        [SerializeField] private EquipmentPermEffect equipmentPermEffect;
+
+        public EquipmentInstantEffect EquipmentInstantEffect => equipmentInstantEffect;
+        public EquipmentPermEffect EquipmentPermEffect => equipmentPermEffect;
+
+        private void Awake()
+        {
+            type = CardType.Equipment;
+        }
     }
 }

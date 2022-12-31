@@ -11,14 +11,7 @@ namespace Cards
         [SerializeField] protected CardType type;
         [SerializeField] protected Material materialCard;
         [SerializeField] protected bool collector;
-        [SerializeField] private CardOwner cardOwner = CardOwner.NotDefined;
-
-        public CardOwner CardOwner
-        {
-            get => cardOwner;
-            set => cardOwner = value;
-        }
-
+        
         public string Nom => nom;
 
         public string Description => description;
@@ -29,10 +22,5 @@ namespace Cards
         public Material MaterialCard => materialCard;
 
         public bool Collector => collector;
-
-        public bool IsValid()
-        {
-            return !string.IsNullOrEmpty(nom);
-        }
     }
 }

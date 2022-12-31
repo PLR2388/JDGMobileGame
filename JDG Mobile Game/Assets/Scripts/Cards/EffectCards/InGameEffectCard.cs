@@ -1,33 +1,31 @@
-using UnityEngine;
-
 namespace Cards.EffectCards
 {
     public class InGameEffectCard : InGameCard
     {
-        public EffectCard baseEffectCard;
-        [SerializeField] private EffectCardEffect effectCardEffect;
-        [SerializeField] private int lifeTime;
-        [SerializeField] public bool checkTurn;
+        private EffectCard baseEffectCard;
+        private EffectCardEffect effectCardEffect;
+        private int lifeTime;
+        public bool checkTurn;
 
-        [SerializeField]
         public float affectPv;
 
-        private int currentLifeTime;
+        public EffectCardEffect EffectCardEffect => effectCardEffect;
 
-        public static InGameEffectCard Init(EffectCard effectCard)
+        public int LifeTime
+        {
+            get => lifeTime;
+            set => lifeTime = value;
+        }
+
+        public static InGameEffectCard Init(EffectCard effectCard, CardOwner cardOwner)
         {
             InGameEffectCard inGameEffectCard = new InGameEffectCard
             {
-                baseEffectCard = effectCard
+                baseEffectCard = effectCard,
+                CardOwner = cardOwner
             };
             inGameEffectCard.Reset();
             return inGameEffectCard;
-        }
-
-        private void Awake()
-        {
-            type = CardType.Effect;
-            currentLifeTime = lifeTime;
         }
 
         private void Reset()
@@ -39,43 +37,15 @@ namespace Cards.EffectCards
             type = baseEffectCard.Type;
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;
-            effectCardEffect = baseEffectCard.GetEffectCardEffect();
-            lifeTime = baseEffectCard.GetLifeTime();
+            effectCardEffect = baseEffectCard.EffectCardEffect;
+            lifeTime = baseEffectCard.LifeTime;
             checkTurn = baseEffectCard.checkTurn;
             affectPv = baseEffectCard.affectPv;
-            CardOwner = baseEffectCard.CardOwner;
-        }
-
-        public void Init()
-        {
-            ResetLifeTime();
-        }
-
-        public EffectCardEffect GetEffectCardEffect()
-        {
-            return effectCardEffect;
-        }
-
-
-        public int GetLifeTime()
-        {
-            return currentLifeTime;
-        }
-
-        public void SetLifeTime(int life)
-        {
-            lifeTime = life;
-            currentLifeTime = life;
         }
 
         public void DecrementLifeTime()
         {
-            currentLifeTime -= 1;
-        }
-
-        private void ResetLifeTime()
-        {
-            currentLifeTime = lifeTime;
+            lifeTime -= 1;
         }
     }
 }

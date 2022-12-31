@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.PlayerLoop;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Cards.EffectCards
@@ -15,44 +13,13 @@ namespace Cards.EffectCards
         [FormerlySerializedAs("affectPV")] [SerializeField]
         public float affectPv;
 
-        private int currentLifeTime;
+        public int LifeTime => lifeTime;
+
+        public EffectCardEffect EffectCardEffect => effectCardEffect;
 
         private void Awake()
         {
             type = CardType.Effect;
-            currentLifeTime = lifeTime;
-        }
-
-        public void Init()
-        {
-            ResetLifeTime();
-        }
-
-        public EffectCardEffect GetEffectCardEffect()
-        {
-            return effectCardEffect;
-        }
-
-
-        public int GetLifeTime()
-        {
-            return currentLifeTime;
-        }
-
-        public void SetLifeTime(int life)
-        {
-            lifeTime = life;
-            currentLifeTime = life;
-        }
-
-        public void DecrementLifeTime()
-        {
-            currentLifeTime -= 1;
-        }
-
-        private void ResetLifeTime()
-        {
-            currentLifeTime = lifeTime;
         }
     }
 }

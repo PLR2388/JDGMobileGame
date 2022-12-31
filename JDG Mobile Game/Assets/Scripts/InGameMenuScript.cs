@@ -97,7 +97,7 @@ public class InGameMenuScript : MonoBehaviour
                 var effectCard = (InGameEffectCard)card;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 putCardButton.GetComponent<Button>().interactable =
-                    effectFunctions.CanUseEffectCard(effectCard.GetEffectCardEffect());
+                    effectFunctions.CanUseEffectCard(effectCard.EffectCardEffect);
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
