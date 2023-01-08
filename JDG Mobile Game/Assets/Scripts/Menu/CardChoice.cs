@@ -144,9 +144,9 @@ namespace Menu
 
             deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", deck2AllCard));
             deck2.Add(GetSpecificCard("Petite culotte", deck2AllCard));
-            deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
+            deck1.Add(GetSpecificCard("Main bionique", deck1AllCard));
             deck1.Add(GetSpecificCard("Moïse, le plus grand de tous les hébreux", deck1AllCard));
-            deck1.Add(GetSpecificCard("Joueur Du Grenier", deck1AllCard));
+            deck1.Add(GetSpecificCard("Un délicieux risotto", deck1AllCard));
 
             while (deck1.Count != 30)
             {

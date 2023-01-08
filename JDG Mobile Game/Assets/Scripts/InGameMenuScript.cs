@@ -84,7 +84,7 @@ public class InGameMenuScript : MonoBehaviour
         {
             case CardType.Invocation:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                var invocationCard = (InGameInvocationCard)card;
+                var invocationCard = card as InGameInvocationCard;
                 putCardButton.GetComponent<Button>().interactable =
                     invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
 
@@ -94,14 +94,14 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButton.GetComponent<Button>().interactable = true;
                 break;
             case CardType.Effect:
-                var effectCard = (InGameEffectCard)card;
+                var effectCard = card as InGameEffectCard;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 putCardButton.GetComponent<Button>().interactable =
                     effectFunctions.CanUseEffectCard(effectCard.EffectCardEffect);
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
-                var equipmentCard = (InGameEquipementCard)card;
+                var equipmentCard = card as InGameEquipementCard;
                 putCardButton.GetComponent<Button>().interactable =
                     InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
                 break;
@@ -141,25 +141,25 @@ public class InGameMenuScript : MonoBehaviour
         {
             case CardType.Invocation:
             {
-                var invocationCard = (InGameInvocationCard)currentSelectedCard;
+                var invocationCard = currentSelectedCard as InGameInvocationCard;
                 InvocationCardEvent.Invoke(invocationCard);
                 break;
             }
             case CardType.Field:
             {
-                var fieldCard = (InGameFieldCard)currentSelectedCard;
+                var fieldCard = currentSelectedCard as InGameFieldCard;
                 FieldCardEvent.Invoke(fieldCard);
                 break;
             }
             case CardType.Effect:
             {
-                var effectCard = (InGameEffectCard)currentSelectedCard;
+                var effectCard = currentSelectedCard as InGameEffectCard;
                 EffectCardEvent.Invoke(effectCard);
                 break;
             }
             case CardType.Equipment:
             {
-                var equipmentCard = (InGameEquipementCard)currentSelectedCard;
+                var equipmentCard = currentSelectedCard as InGameEquipementCard;
                 EquipmentCardEvent.Invoke(equipmentCard);
                 break;
             }

@@ -375,7 +375,7 @@ namespace Cards.EffectCards
                 {
                     var invocationCards = currentPlayerCard.invocationCards;
                     var invocationCardsValid = invocationCards
-                        .Where(invocationCard => invocationCard.IsValid()).Cast<Card>().ToList();
+                        .Where(invocationCard => invocationCard.IsValid()).Cast<InGameCard>().ToList();
 
                     isValid = invocationCardsValid.Count > 0;
                 }
@@ -386,7 +386,7 @@ namespace Cards.EffectCards
                     var invocationCardsValid = invocationCards
                         .Where(invocationCard => invocationCard.IsValid()).Where(invocationCard =>
                             invocationCard.GetCurrentAttack() >= 5 ||
-                            invocationCard.GetCurrentDefense() >= 5).Cast<Card>().ToList();
+                            invocationCard.GetCurrentDefense() >= 5).Cast<InGameCard>().ToList();
                     isValid = invocationCardsValid.Count > 0;
                 }
                     break;
@@ -862,8 +862,7 @@ namespace Cards.EffectCards
                             var affected = pvAffected;
                             message.GetComponent<MessageBox>().PositiveAction = () =>
                             {
-                                var fieldCard =
-                                    (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                                var fieldCard = message.GetComponent<MessageBox>().GetSelectedCard() as InGameFieldCard;
                                 if (fieldCard != null)
                                 {
                                     // User select a card
@@ -973,8 +972,7 @@ namespace Cards.EffectCards
                             "Choix de l'invocation à détruire", invocationOpponentValid);
                         message.GetComponent<MessageBox>().PositiveAction = () =>
                         {
-                            var invocationCard =
-                                (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                            var invocationCard = message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                             if (invocationCard != null)
                             {
                                 opponentPlayerCard.SendInvocationCardToYellowTrash(invocationCard);
@@ -1487,7 +1485,7 @@ namespace Cards.EffectCards
                         "Choix du nouveau terrain", fieldCardInDeck);
                     messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                     {
-                        var fieldCard = (InGameFieldCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                        var fieldCard = messageBox.GetComponent<MessageBox>().GetSelectedCard() as InGameFieldCard;
                         if (fieldCard != null)
                         {
                             if (currentPlayerCard.field != null)
@@ -1836,8 +1834,7 @@ namespace Cards.EffectCards
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var card =
-                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                var card = message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                 if (card != null)
                 {
                     currentPlayerCard.yellowTrash.Remove(card);
@@ -2002,8 +1999,7 @@ namespace Cards.EffectCards
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var card =
-                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                var card = message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                 if (card != null)
                 {
                     card.ControlCard();

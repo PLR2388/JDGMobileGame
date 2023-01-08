@@ -207,7 +207,7 @@ namespace Cards.InvocationCards
 
                                 void PositiveAction()
                                 {
-                                    var invocationCard = (InGameInvocationCard)cards[cards.Count - 1];
+                                    var invocationCard = cards[cards.Count - 1] as InGameInvocationCard;
                                     currentPlayerCard.invocationCards.Add(invocationCard);
                                     currentPlayerCard.deck.Remove(invocationCard);
                                     inHandButton.SetActive(true);
@@ -229,8 +229,8 @@ namespace Cards.InvocationCards
                                 message.GetComponent<MessageBox>().PositiveAction = () =>
                                 {
                                     var invocationCard =
-                                        (InGameInvocationCard)message.GetComponent<MessageBox>()
-                                            .GetSelectedCard();
+                                        message.GetComponent<MessageBox>()
+                                            .GetSelectedCard() as InGameInvocationCard;
                                     currentPlayerCard.invocationCards.Add(invocationCard);
                                     currentPlayerCard.deck.Remove(invocationCard);
                                     inHandButton.SetActive(true);
@@ -257,7 +257,7 @@ namespace Cards.InvocationCards
                         foreach (var card in deck)
                         {
                             if (card.Type != CardType.Invocation) continue;
-                            var invocationCard = (InGameInvocationCard)card;
+                            var invocationCard = card as InGameInvocationCard;
 
                             var listFamily = invocationCard.Families;
                             cardFound.AddRange((from family in listFamily
@@ -365,7 +365,7 @@ namespace Cards.InvocationCards
                         foreach (var card in trash)
                         {
                             if (card.Type != CardType.Invocation) continue;
-                            var invocationCard = (InGameInvocationCard)card;
+                            var invocationCard = card as InGameInvocationCard;
 
                             var listFamily = invocationCard.Families;
                             cardFound.AddRange(
@@ -423,7 +423,7 @@ namespace Cards.InvocationCards
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var fieldCard =
-                        (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        message.GetComponent<MessageBox>().GetSelectedCard() as InGameFieldCard;
 
                     if (fieldCard != null)
                     {
@@ -452,8 +452,7 @@ namespace Cards.InvocationCards
 
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
-                    var fieldCard =
-                        (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    var fieldCard = message.GetComponent<MessageBox>().GetSelectedCard() as InGameFieldCard;
 
                     if (fieldCard != null)
                     {
@@ -508,8 +507,7 @@ namespace Cards.InvocationCards
             var defense = mustDivideDefense;
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var fieldCard =
-                    (InGameFieldCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                var fieldCard = message.GetComponent<MessageBox>().GetSelectedCard() as InGameFieldCard;
 
                 if (fieldCard != null)
                 {
@@ -579,7 +577,7 @@ namespace Cards.InvocationCards
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCardSelected =
-                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                 if (invocationCardSelected != null)
                 {
                     var invocationCards = opponentPlayerCards.invocationCards;
@@ -982,7 +980,7 @@ namespace Cards.InvocationCards
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCardSelected =
-                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                    message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                 if (invocationCardSelected != null)
                 {
                     invocationCardSelected.BlockAttack();
@@ -1038,7 +1036,7 @@ namespace Cards.InvocationCards
                     message.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var invocationCardSelected =
-                            (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                            message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                         if (invocationCardSelected != null)
                         {
                             for (var j = 0; j < invocationsOnField.Count; j++)
@@ -1113,7 +1111,7 @@ namespace Cards.InvocationCards
 
 
                     var invocationCardSelected =
-                        (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                     if (invocationCardSelected != null)
                     {
                         currentPlayerCard.SendInvocationCardToYellowTrash(invocationCards[k]);
@@ -1384,7 +1382,7 @@ namespace Cards.InvocationCards
                             var cardSelected = messageBox.GetComponent<MessageBox>().GetSelectedCard();
                             if (cardSelected.IsValid())
                             {
-                                var invocationCardToKill = (InGameInvocationCard)cardSelected;
+                                var invocationCardToKill = cardSelected as InGameInvocationCard;
                                 currentPlayerCard.SendInvocationCardToYellowTrash(invocationCardToKill);
                                 Destroy(messageBox);
                             }

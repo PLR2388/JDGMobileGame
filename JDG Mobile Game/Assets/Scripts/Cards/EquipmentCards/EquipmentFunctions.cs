@@ -73,8 +73,7 @@ namespace Cards.EquipmentCards
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var currentSelectedInvocationCard =
-                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                var currentSelectedInvocationCard = message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                 if (currentSelectedInvocationCard != null)
                 {
                     miniCardMenu.SetActive(false);

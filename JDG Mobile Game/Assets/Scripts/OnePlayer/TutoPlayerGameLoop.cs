@@ -680,7 +680,7 @@ namespace OnePlayer
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var invocationCard =
-                        (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
 
                     if (invocationCard != null)
                     {
@@ -1382,7 +1382,7 @@ namespace OnePlayer
                 messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var selectedCard =
-                        (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                        messageBox.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                     if (selectedCard != null)
                     {
                         if (playerCards.deck.Contains(selectedCard))

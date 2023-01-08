@@ -1174,13 +1174,15 @@ public class PlayerCards : MonoBehaviour
     private void OnYellowTrashAdded()
     {
         var newYellowTrashCard = yellowTrash.Last();
-        var invocationCard = (InGameInvocationCard)newYellowTrashCard;
-        if (invocationCard == null) return;
-        invocationCard.UnblockAttack();
-        invocationCard.Attack = invocationCard.baseInvocationCard.GetAttack();
-        invocationCard.Defense = invocationCard.baseInvocationCard.GetDefense();
-        invocationCard.FreeCard();
-        invocationCard.ResetNewTurn();
+        var invocationCard = newYellowTrashCard as InGameInvocationCard;
+        if (invocationCard != null)
+        {
+            invocationCard.UnblockAttack();
+            invocationCard.Attack = invocationCard.baseInvocationCard.GetAttack();
+            invocationCard.Defense = invocationCard.baseInvocationCard.GetDefense();
+            invocationCard.FreeCard();
+            invocationCard.ResetNewTurn(); 
+        }
     }
 
     private void OnFieldCardChanged(InGameFieldCard oldFieldCard)

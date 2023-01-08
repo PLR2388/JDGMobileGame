@@ -322,7 +322,7 @@ namespace OnePlayer
                 var newList = new List<InGameCard>();
                 foreach (var card in notEmptyOpponent)
                 {
-                    var invocationCard = (InGameInvocationCard)card;
+                    var invocationCard = card as InGameInvocationCard;
                     var permEffect = invocationCard.InvocationPermEffect;
                     if (permEffect != null)
                     {
@@ -341,7 +341,7 @@ namespace OnePlayer
                     var hypnoBoobOnly = false;
                     for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
                     {
-                        var invocationCard = (InGameInvocationCard)notEmptyOpponent[j];
+                        var invocationCard = notEmptyOpponent[j] as InGameInvocationCard;
                         var permEffect = invocationCard.InvocationPermEffect;
                         var equipmentCard = invocationCard.EquipmentCard;
                         if (permEffect != null)
@@ -483,7 +483,7 @@ namespace OnePlayer
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var invocationCard =
-                        (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
+                        message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
 
                     if (invocationCard != null)
                     {
@@ -1188,7 +1188,7 @@ namespace OnePlayer
                 messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var selectedCard =
-                        (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
+                        messageBox.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                     if (selectedCard != null)
                     {
                         if (playerCards.deck.Contains(selectedCard))
