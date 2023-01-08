@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class InteractPhysicalCards : MonoBehaviour
 {
     [SerializeField] private GameObject bigImageCard;
+    [SerializeField] private GameObject handScreen;
 
     private float startTime;
 
@@ -25,7 +26,7 @@ public class InteractPhysicalCards : MonoBehaviour
     {
         if (startTime > 1f)
         {
-            if (Camera.main == null) return;
+            if (Camera.main == null || handScreen.activeSelf) return;
             var hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hitInfo);
             if (hit)
             {

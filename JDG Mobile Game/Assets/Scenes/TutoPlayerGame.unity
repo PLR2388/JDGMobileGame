@@ -1771,6 +1771,7 @@ MonoBehaviour:
   healthP1Text: {fileID: 29170108}
   healthP2Text: {fileID: 1349726584}
   bigImageCard: {fileID: 793464781}
+  handScreen: {fileID: 1928831686}
   invocationMenu: {fileID: 1982540492}
   nextPhaseButton: {fileID: 1957640249}
   canvas: {fileID: 244790280}
@@ -1781,7 +1782,6 @@ MonoBehaviour:
   playerInvocationCard: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544,
     type: 2}
   inHandButton: {fileID: 829748139}
-  dialogueBox: {fileID: 0}
 --- !u!114 &397230410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6148,6 +6148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bigImageCard: {fileID: 793464781}
+  handScreen: {fileID: 1928831686}
 --- !u!114 &1809721689
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4943,6 +4943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bigImageCard: {fileID: 793464781}
+  handScreen: {fileID: 1928831686}
 --- !u!1 &1928831686
 GameObject:
   m_ObjectHideFlags: 0

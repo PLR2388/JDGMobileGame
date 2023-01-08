@@ -1359,18 +1359,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a0078b40147bd249a996db68814eb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck: []
-  handCards: []
-  yellowTrash: []
-  field: {fileID: 0}
-  invocationCards: []
-  effectCards: []
   isPlayerOne: 1
   nextPhaseButton: {fileID: 1957640249}
   inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 0}
-  secretCards: []
 --- !u!114 &230530445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1620,12 +1613,12 @@ MonoBehaviour:
   healthP1Text: {fileID: 0}
   healthP2Text: {fileID: 0}
   bigImageCard: {fileID: 0}
+  handScreen: {fileID: 0}
   invocationMenu: {fileID: 0}
   nextPhaseButton: {fileID: 0}
   canvas: {fileID: 0}
   p1: {fileID: 0}
   p2: {fileID: 0}
-  player: {fileID: 0}
   inHandButton: {fileID: 0}
 --- !u!114 &397230405
 MonoBehaviour:
@@ -4902,7 +4895,6 @@ MonoBehaviour:
   putCardButton: {fileID: 1930089324}
   inHandButton: {fileID: 829748139}
   backgroundInformation: {fileID: 1582983282}
-  currentSelectedCard: {fileID: 0}
   invocationMenu: {fileID: 1982540492}
   gameLoop: {fileID: 397230402}
 --- !u!114 &1809721688
@@ -4918,6 +4910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bigImageCard: {fileID: 793464781}
+  handScreen: {fileID: 1928831686}
 --- !u!1 &1928831686
 GameObject:
   m_ObjectHideFlags: 0
@@ -5424,18 +5417,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a0078b40147bd249a996db68814eb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck: []
-  handCards: []
-  yellowTrash: []
-  field: {fileID: 0}
-  invocationCards: []
-  effectCards: []
   isPlayerOne: 0
   nextPhaseButton: {fileID: 1957640249}
   inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 0}
-  secretCards: []
 --- !u!114 &2017354830
 MonoBehaviour:
   m_ObjectHideFlags: 0
