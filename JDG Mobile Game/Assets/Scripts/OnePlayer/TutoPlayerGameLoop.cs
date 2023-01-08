@@ -370,7 +370,8 @@ namespace OnePlayer
             if (objectTag == personTag)
             {
                 cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                if (Input.GetMouseButtonDown(0))
+                var isInYellowTrash = ownPlayerCards.yellowTrash.Contains(cardSelected);
+                if (Input.GetMouseButtonDown(0) && !isInYellowTrash)
                 {
                     totalDownTime = 0;
                     clicking = true;
@@ -682,17 +683,25 @@ namespace OnePlayer
                     var invocationCard =
                         message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
 
-                    if (invocationCard != null)
+                    if (invocationCard == null)
+                    {
+                        message.SetActive(false);
+                        MessageBox.CreateOkMessageBox(canvas, "Attention",
+                            "Tu es obligé d'attaquer Jean-Michel Bruitages", () =>
+                            {
+                                message.SetActive(true);
+                            });
+                    }
+                    else
                     {
                         opponent = invocationCard;
                         ComputeAttack();
+                        stopDetectClicking = false;
+                        nextPhaseButton.SetActive(true);
+                        nextPhaseButton.GetComponent<HighLightButton>().isActivated = true;
+                        HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
+                        Destroy(message);
                     }
-
-                    stopDetectClicking = false;
-                    nextPhaseButton.SetActive(true);
-                    nextPhaseButton.GetComponent<HighLightButton>().isActivated = true;
-
-                    Destroy(message);
                 };
                 message.GetComponent<MessageBox>().NegativeAction = () => { };
             }

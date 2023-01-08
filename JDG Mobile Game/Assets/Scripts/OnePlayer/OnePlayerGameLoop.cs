@@ -175,7 +175,8 @@ namespace OnePlayer
             if (objectTag == personTag)
             {
                 cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                if (Input.GetMouseButtonDown(0))
+                var isInYellowTrash = ownPlayerCards.yellowTrash.Contains(cardSelected);
+                if (Input.GetMouseButtonDown(0) && !isInYellowTrash)
                 {
                     totalDownTime = 0;
                     clicking = true;
