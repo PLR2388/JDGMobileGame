@@ -679,9 +679,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd69f538fa6f0d48b78f2ae23d8e85b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicNames: 00000000
+  musicNames: 010000000200000003000000000000000400000005000000060000000700000008000000
   musics:
+  - {fileID: 8300000, guid: dd2e1bb38e841c9498104a009897995b, type: 3}
+  - {fileID: 8300000, guid: 8ba7fef1f1751e348bbbe33d3264eedf, type: 3}
+  - {fileID: 8300000, guid: b326fcacd6580904bb162693afb68a02, type: 3}
   - {fileID: 8300000, guid: 664bc74f504ce2d459e65f0959354e2f, type: 3}
+  - {fileID: 8300000, guid: 5de9a9146bae6534483184ce64cb256c, type: 3}
+  - {fileID: 8300000, guid: b574c20e7a0b54940b64c162b59c8c63, type: 3}
+  - {fileID: 8300000, guid: ee56cc3aa1e1aa545873db29f323e213, type: 3}
+  - {fileID: 8300000, guid: 9ecbd09136c8f0e449f3d95467e94646, type: 3}
+  - {fileID: 8300000, guid: e4d7552f1974b2a4d8a93bff78e7fd9e, type: 3}
   soundEffectName: 0000000001000000
   soundEffect:
   - {fileID: 8300000, guid: 95b70f0978f3f924ba3c4c142e83eb69, type: 3}

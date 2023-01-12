@@ -4,6 +4,7 @@ using Cards;
 using Lean.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Menu
@@ -18,7 +19,7 @@ namespace Menu
         [SerializeField] private Transform canvas;
 
         [SerializeField] private GameObject choiceCardMenu;
-        [SerializeField] private GameObject gameModeMenu;
+        [SerializeField] private GameObject twoPlayerModeMenu;
 
         public bool isPlayerOneCardChosen;
 
@@ -67,6 +68,7 @@ namespace Menu
             {
                 if (isPlayerOneCardChosen)
                 {
+                    SoundManager.Instance.StopMusic();
                     SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
                     playerToken.SetValue(1);
                     buttonLabel.TranslationName = choiceText.name;
@@ -131,6 +133,7 @@ namespace Menu
 
             FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
             FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            SoundManager.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
@@ -164,6 +167,7 @@ namespace Menu
 
             FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
             FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            SoundManager.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
@@ -202,7 +206,7 @@ namespace Menu
             {
                 DeselectAllCards();
                 choiceCardMenu.SetActive(false);
-                gameModeMenu.SetActive(true);
+                twoPlayerModeMenu.SetActive(true);
             }
         }
     }

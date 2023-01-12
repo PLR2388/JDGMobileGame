@@ -621,6 +621,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 2003630713}
+        m_TargetAssemblyTypeName: MainMenuAction, Assembly-CSharp
+        m_MethodName: PlayMainTheme
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &125698210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2820,6 +2832,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2003630713}
+        m_TargetAssemblyTypeName: MainMenuAction, Assembly-CSharp
+        m_MethodName: PlayOptionMenuMusic
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &663974742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3081,6 +3105,18 @@ MonoBehaviour:
       - m_Target: {fileID: 2003630713}
         m_TargetAssemblyTypeName: MainMenuAction, Assembly-CSharp
         m_MethodName: PlayBackSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2003630713}
+        m_TargetAssemblyTypeName: MainMenuAction, Assembly-CSharp
+        m_MethodName: PlayMainTheme
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3585,6 +3621,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2003630713}
+        m_TargetAssemblyTypeName: MainMenuAction, Assembly-CSharp
+        m_MethodName: PlayMainTheme
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &812188599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3656,6 +3704,7 @@ Transform:
   - {fileID: 1977546296}
   - {fileID: 1836908166}
   - {fileID: 1257305025}
+  - {fileID: 1103657406}
   m_Father: {fileID: 1974056337}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4829,6 +4878,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 2003630713}
+        m_TargetAssemblyTypeName: MainMenuAction, Assembly-CSharp
+        m_MethodName: PlayTwoPlayerMenuMusic
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1083409875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5018,6 +5079,85 @@ MonoBehaviour:
   - Language: English
     Text: Choice player 2
     Object: {fileID: 0}
+--- !u!1 &1103657405
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1103657406}
+  - component: {fileID: 1103657408}
+  - component: {fileID: 1103657407}
+  m_Layer: 5
+  m_Name: Musique2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1103657406
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103657405}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 820349635}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 846, y: 279}
+  m_SizeDelta: {x: 800, y: 41.926956}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1103657407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103657405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: e3265ab4bf004d28a9537516768c1c75, type: 3}
+    m_FontSize: 72
+    m_FontStyle: 1
+    m_BestFit: 1
+    m_MinSize: 7
+    m_MaxSize: 72
+    m_Alignment: 1
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Musique - Thomas - Compositeur
+--- !u!222 &1103657408
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103657405}
+  m_CullTransparentMesh: 0
 --- !u!1 &1111680941
 GameObject:
   m_ObjectHideFlags: 0
@@ -7274,6 +7414,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 2003630713}
+        m_TargetAssemblyTypeName: MainMenuAction, Assembly-CSharp
+        m_MethodName: PlayOnePlayerMenuMusic
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1693271215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8438,7 +8590,7 @@ MonoBehaviour:
   playText: {fileID: 1379722778}
   canvas: {fileID: 1089345441}
   choiceCardMenu: {fileID: 1700677370}
-  gameModeMenu: {fileID: 978570126}
+  twoPlayerModeMenu: {fileID: 1648840136}
   isPlayerOneCardChosen: 0
 --- !u!114 &2003630713
 MonoBehaviour:
@@ -8452,8 +8604,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6d9a5dbff51dd14f865dd9430bf5fe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transitionSound: {fileID: 8300000, guid: 522dd8e1cbe88dc4d843f5c3f9969df1, type: 3}
-  backSound: {fileID: 8300000, guid: 95b70f0978f3f924ba3c4c142e83eb69, type: 3}
 --- !u!1 &2007526730
 GameObject:
   m_ObjectHideFlags: 0

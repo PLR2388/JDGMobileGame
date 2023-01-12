@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum Music
 {
-    MainTheme
+    MainTheme, CanardCity, DrawPhase, Fight, OnePlayerMenu, OptionMenu, Rpg, TwoPlayerMenu, Wizard
 }
 
 public enum SoundEffect

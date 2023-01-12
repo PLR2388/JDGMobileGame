@@ -7,6 +7,26 @@ public class MainMenuAction : MonoBehaviour
     {
         SoundManager.Instance.PlayMusic(Music.MainTheme);
     }
+
+    public void PlayMainTheme()
+    {
+        SoundManager.Instance.PlayMusic(Music.MainTheme);
+    }
+
+    public void PlayOnePlayerMenuMusic()
+    {
+        SoundManager.Instance.PlayMusic(Music.OnePlayerMenu);
+    }
+
+    public void PlayTwoPlayerMenuMusic()
+    {
+        SoundManager.Instance.PlayMusic(Music.TwoPlayerMenu);
+    }
+
+    public void PlayOptionMenuMusic()
+    {
+        SoundManager.Instance.PlayMusic(Music.OptionMenu);
+    }
     
     public void PlayTransitionSound()
     {

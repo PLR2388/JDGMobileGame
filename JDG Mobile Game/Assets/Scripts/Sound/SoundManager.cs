@@ -42,6 +42,11 @@ public class SoundManager : MonoBehaviour
         return Array.IndexOf(soundEffectName, soundEffect);
     }
 
+    public void StopMusic()
+    {
+        musicAudioSource.Stop();
+    }
+
     public void PlayMusic(Music music)
     {
         musicAudioSource.clip = musics[IndexMusic(music)];
