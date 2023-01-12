@@ -15,6 +15,15 @@ public class CardDisplay : MonoBehaviour
     {
         image = GetComponent<Image>();
         image.material = defaultMaterial;
+        if (card != null && inGameCard == null)
+        {
+            inGameCard = InGameCard.CreateInGameCard(card, CardOwner.NotDefined);
+        }
+
+        if (card == null && inGameCard != null)
+        {
+            card = inGameCard.baseCard;
+        }
     }
 
     private void Update()

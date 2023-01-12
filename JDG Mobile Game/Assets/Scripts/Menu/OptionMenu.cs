@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Menu
@@ -10,16 +9,10 @@ namespace Menu
         private const string FrenchInFrench = "Français";
         private const string English = "English";
 
-        [SerializeField] private Slider volumeSlider;
+        [SerializeField] private Slider volumeMusicSlider;
+        [SerializeField] private Slider soundEffectSlider;
 
         [SerializeField] private Dropdown languageDropdown;
-
-        private AudioSource audioSource;
-        
-        private void Awake()
-        {
-            audioSource = GameObject.Find("GameState").GetComponent<AudioSource>();
-        }
 
 
         // Start is called before the first frame update
@@ -27,12 +20,16 @@ namespace Menu
         {
             languageDropdown.ClearOptions();
 
-            volumeSlider.value = audioSource.volume;
-            Slider.SliderEvent sliderEvent = new Slider.SliderEvent();
+            volumeMusicSlider.value = SoundManager.Instance.MusicVolume;
+            soundEffectSlider.value = SoundManager.Instance.SoundEffectVolume;
+            Slider.SliderEvent sliderMusicEvent = new Slider.SliderEvent();
+            Slider.SliderEvent sliderSoundEffectEvent = new Slider.SliderEvent();
             
-            sliderEvent.AddListener(MusicVolumeChanged);
+            sliderMusicEvent.AddListener(MusicVolumeChanged);
+            sliderSoundEffectEvent.AddListener(SoundEffectVolumeChanged);
 
-            volumeSlider.onValueChanged = sliderEvent;
+            volumeMusicSlider.onValueChanged = sliderMusicEvent;
+            soundEffectSlider.onValueChanged = sliderSoundEffectEvent;
 
             var englishData = new Dropdown.OptionData(English);
             var frenchData = new Dropdown.OptionData(FrenchInFrench);
@@ -63,7 +60,12 @@ namespace Menu
 
         private void MusicVolumeChanged(float value)
         {
-            audioSource.volume = value;
+            SoundManager.Instance.ChangeMusicVolume(value);
+        }
+        
+        private void SoundEffectVolumeChanged(float value)
+        {
+            SoundManager.Instance.ChangeSoundEffectVolume(value);
         }
 
         private static void LanguageDropDownItemSelected(Dropdown dropdown)

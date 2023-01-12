@@ -1,4 +1,4 @@
-﻿using Cards;
+using Cards;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
