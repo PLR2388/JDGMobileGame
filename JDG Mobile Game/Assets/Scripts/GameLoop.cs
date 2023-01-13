@@ -111,6 +111,34 @@ public class GameLoop : MonoBehaviour
     private void ChoosePhase()
     {
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
+        ChoosePhaseMusic();
+    }
+
+    private void ChoosePhaseMusic()
+    {
+        var currentFieldCard = IsP1Turn ? p1.GetComponent<PlayerCards>().field : p2.GetComponent<PlayerCards>().field;
+        if (currentFieldCard == null)
+        {
+            SoundManager.Instance.PlayMusic(Music.DrawPhase);
+        }
+        else
+        {
+            switch (currentFieldCard.GetFamily())
+            {
+                case CardFamily.Comics:
+                    SoundManager.Instance.PlayMusic(Music.CanardCity);
+                    break;
+                case CardFamily.Rpg:
+                    SoundManager.Instance.PlayMusic(Music.Rpg);
+                    break;
+                case CardFamily.Wizard:
+                    SoundManager.Instance.PlayMusic(Music.Wizard);
+                    break;
+                default:
+                    SoundManager.Instance.PlayMusic(Music.DrawPhase);
+                    break;
+            }
+        }
     }
 
     private static void GameOver()
@@ -132,6 +160,7 @@ public class GameLoop : MonoBehaviour
 
     private void ChooseAttack()
     {
+        SoundManager.Instance.PlayMusic(Music.Fight);
         if (!Input.GetMouseButton(0) || phaseId != 2 || stopDetectClicking) return;
 #if UNITY_EDITOR
         var position = Input.mousePosition;

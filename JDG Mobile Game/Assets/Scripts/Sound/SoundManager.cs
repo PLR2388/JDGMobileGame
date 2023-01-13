@@ -49,8 +49,12 @@ public class SoundManager : MonoBehaviour
 
     public void PlayMusic(Music music)
     {
-        musicAudioSource.clip = musics[IndexMusic(music)];
-        musicAudioSource.Play();
+        var audioClipToPlay = musics[IndexMusic(music)];
+        if (musicAudioSource.clip != audioClipToPlay)
+        {
+            musicAudioSource.clip = musics[IndexMusic(music)];
+            musicAudioSource.Play();
+        }
     }
 
     public void ChangeSoundEffectVolume(float value)
