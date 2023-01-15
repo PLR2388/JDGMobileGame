@@ -1,4 +1,5 @@
 ﻿using System;
+using Sound;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,6 +21,7 @@ public class SceneLoader : MonoBehaviour
     public void GoToTutorial()
     {
         gameState.BuildDeckForTuto();
+        AudioSystem.Instance.StopMusic();
         SceneManager.LoadSceneAsync("TutoPlayerGame", LoadSceneMode.Single);
     }
 

@@ -3,17 +3,13 @@ using UnityEngine;
 
 namespace Sound
 {
-    public class SoundManager : MonoBehaviour
+    public class AudioSystem : StaticInstance<AudioSystem>
     {
-        public static SoundManager Instance;
-    
         [SerializeField] private Music[] musicNames;
         [SerializeField] private AudioClip[] musics;
 
         [SerializeField] private SoundEffect[] soundEffectName;
-
         [SerializeField] private AudioClip[] soundEffect;
-        // Start is called before the first frame update
 
         [SerializeField] private AudioSource musicAudioSource;
         [SerializeField] private AudioSource soundEffectAudioSource;
@@ -21,27 +17,14 @@ namespace Sound
         public float MusicVolume => musicAudioSource.volume;
         public float SoundEffectVolume => soundEffectAudioSource.volume;
 
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-
         private int IndexMusic(Music music)
         {
             return Array.IndexOf(musicNames, music);
         }
 
-        private int IndexSound(SoundEffect soundEffect)
+        private int IndexSound(SoundEffect soundEffectSound)
         {
-            return Array.IndexOf(soundEffectName, soundEffect);
+            return Array.IndexOf(soundEffectName, soundEffectSound);
         }
 
         public void StopMusic()

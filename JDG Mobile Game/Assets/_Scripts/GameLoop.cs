@@ -120,23 +120,23 @@ public class GameLoop : MonoBehaviour
         var currentFieldCard = IsP1Turn ? p1.GetComponent<PlayerCards>().field : p2.GetComponent<PlayerCards>().field;
         if (currentFieldCard == null)
         {
-            SoundManager.Instance.PlayMusic(Music.DrawPhase);
+            AudioSystem.Instance.PlayMusic(Music.DrawPhase);
         }
         else
         {
             switch (currentFieldCard.GetFamily())
             {
                 case CardFamily.Comics:
-                    SoundManager.Instance.PlayMusic(Music.CanardCity);
+                    AudioSystem.Instance.PlayMusic(Music.CanardCity);
                     break;
                 case CardFamily.Rpg:
-                    SoundManager.Instance.PlayMusic(Music.Rpg);
+                    AudioSystem.Instance.PlayMusic(Music.Rpg);
                     break;
                 case CardFamily.Wizard:
-                    SoundManager.Instance.PlayMusic(Music.Wizard);
+                    AudioSystem.Instance.PlayMusic(Music.Wizard);
                     break;
                 default:
-                    SoundManager.Instance.PlayMusic(Music.DrawPhase);
+                    AudioSystem.Instance.PlayMusic(Music.DrawPhase);
                     break;
             }
         }
@@ -161,7 +161,7 @@ public class GameLoop : MonoBehaviour
 
     private void ChooseAttack()
     {
-        SoundManager.Instance.PlayMusic(Music.Fight);
+        AudioSystem.Instance.PlayMusic(Music.Fight);
         if (!Input.GetMouseButton(0) || phaseId != 2 || stopDetectClicking) return;
 #if UNITY_EDITOR
         var position = Input.mousePosition;

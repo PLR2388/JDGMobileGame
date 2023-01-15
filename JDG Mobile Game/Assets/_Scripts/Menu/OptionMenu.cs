@@ -12,8 +12,8 @@ namespace Menu
         // Start is called before the first frame update
         private void Start()
         {
-            volumeMusicSlider.value = SoundManager.Instance.MusicVolume;
-            soundEffectSlider.value = SoundManager.Instance.SoundEffectVolume;
+            volumeMusicSlider.value = AudioSystem.Instance.MusicVolume;
+            soundEffectSlider.value = AudioSystem.Instance.SoundEffectVolume;
             Slider.SliderEvent sliderMusicEvent = new Slider.SliderEvent();
             Slider.SliderEvent sliderSoundEffectEvent = new Slider.SliderEvent();
             
@@ -26,12 +26,12 @@ namespace Menu
 
         private void MusicVolumeChanged(float value)
         {
-            SoundManager.Instance.ChangeMusicVolume(value);
+            AudioSystem.Instance.ChangeMusicVolume(value);
         }
         
         private void SoundEffectVolumeChanged(float value)
         {
-            SoundManager.Instance.ChangeSoundEffectVolume(value);
+            AudioSystem.Instance.ChangeSoundEffectVolume(value);
         }
     }
 }

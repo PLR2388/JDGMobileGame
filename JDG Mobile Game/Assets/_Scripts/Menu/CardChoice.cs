@@ -67,7 +67,7 @@ namespace Menu
             {
                 if (isPlayerOneCardChosen)
                 {
-                    SoundManager.Instance.StopMusic();
+                    AudioSystem.Instance.StopMusic();
                     SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
                     title.text = "Choix de cartes pour le joueur 1";
                     buttonText.text = "Choix joueur 2";
@@ -132,7 +132,7 @@ namespace Menu
 
             FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
             FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
-            SoundManager.Instance.StopMusic();
+            AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
@@ -166,7 +166,7 @@ namespace Menu
 
             FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
             FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
-            SoundManager.Instance.StopMusic();
+            AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 

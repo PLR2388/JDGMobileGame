@@ -6,37 +6,37 @@ public class MainMenuAction : MonoBehaviour
 
     private void Awake()
     {
-        SoundManager.Instance.PlayMusic(Music.MainTheme);
+        AudioSystem.Instance.PlayMusic(Music.MainTheme);
     }
 
     public void PlayMainTheme()
     {
-        SoundManager.Instance.PlayMusic(Music.MainTheme);
+        AudioSystem.Instance.PlayMusic(Music.MainTheme);
     }
 
     public void PlayOnePlayerMenuMusic()
     {
-        SoundManager.Instance.PlayMusic(Music.OnePlayerMenu);
+        AudioSystem.Instance.PlayMusic(Music.OnePlayerMenu);
     }
 
     public void PlayTwoPlayerMenuMusic()
     {
-        SoundManager.Instance.PlayMusic(Music.TwoPlayerMenu);
+        AudioSystem.Instance.PlayMusic(Music.TwoPlayerMenu);
     }
 
     public void PlayOptionMenuMusic()
     {
-        SoundManager.Instance.PlayMusic(Music.OptionMenu);
+        AudioSystem.Instance.PlayMusic(Music.OptionMenu);
     }
     
     public void PlayTransitionSound()
     {
-        SoundManager.Instance.PlayTransitionSound();
+        AudioSystem.Instance.PlayTransitionSound();
     }
 
     public void PlayBackSound()
     {
-        SoundManager.Instance.PlayBackSound();
+        AudioSystem.Instance.PlayBackSound();
     }
 
 
