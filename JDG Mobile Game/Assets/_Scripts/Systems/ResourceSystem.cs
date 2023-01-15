@@ -18,7 +18,7 @@ public class ResourceSystem : StaticInstance<ResourceSystem>
     private void AssembleResources()
     {
         Cards = Resources.LoadAll<Card>("Cards").ToList();
-        _CardsDict = Cards.ToDictionary(card => card.Title, card => card);
+        _CardsDict = Cards.ToDictionary(card => card.Nom, card => card);
     }
 
     public Card GetCardByName(string title) => _CardsDict[title];
