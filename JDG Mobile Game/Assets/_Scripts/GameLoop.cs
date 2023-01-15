@@ -657,8 +657,8 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                opponent.Attack = opponent.baseInvocationCard.GetAttack();
-                opponent.Defense = opponent.baseInvocationCard.GetDefense();
+                opponent.Attack = opponent.baseInvocationCard.BaseInvocationCardStats.Attack;
+                opponent.Defense = opponent.baseInvocationCard.BaseInvocationCardStats.Defense;
                 opponent.UnblockAttack();
             }
         }
@@ -689,8 +689,8 @@ public class GameLoop : MonoBehaviour
                 }
                 else
                 {
-                    combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
-                    combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
+                    combineCard.Attack = combineCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                    combineCard.Defense = combineCard.baseInvocationCard.BaseInvocationCardStats.Defense;
                     combineCard.ResetNewTurn();
                 }
             }
@@ -747,8 +747,8 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                attacker.Attack = attacker.baseInvocationCard.GetAttack();
-                attacker.Defense = attacker.baseInvocationCard.GetDefense();
+                attacker.Attack = attacker.baseInvocationCard.BaseInvocationCardStats.Attack;
+                attacker.Defense = attacker.baseInvocationCard.BaseInvocationCardStats.Defense;
                 attacker.ResetNewTurn();
             }
         }
@@ -778,8 +778,8 @@ public class GameLoop : MonoBehaviour
                 }
                 else
                 {
-                    combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
-                    combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
+                    combineCard.Attack = combineCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                    combineCard.Defense = combineCard.baseInvocationCard.BaseInvocationCardStats.Defense;
                     combineCard.ResetNewTurn();
                 }
             }
@@ -872,8 +872,8 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                opponent.Attack = opponent.baseInvocationCard.GetAttack();
-                opponent.Defense = opponent.baseInvocationCard.GetDefense();
+                opponent.Attack = opponent.baseInvocationCard.BaseInvocationCardStats.Attack;
+                opponent.Defense = opponent.baseInvocationCard.BaseInvocationCardStats.Defense;
                 opponent.ResetNewTurn();
             }
         }
@@ -895,8 +895,8 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                attacker.Attack = attacker.baseInvocationCard.GetAttack();
-                attacker.Defense = attacker.baseInvocationCard.GetDefense();
+                attacker.Attack = attacker.baseInvocationCard.BaseInvocationCardStats.Attack;
+                attacker.Defense = attacker.baseInvocationCard.BaseInvocationCardStats.Defense;
                 attacker.ResetNewTurn();
             }
         }
@@ -921,8 +921,8 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
-                combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
+                combineCard.Attack = combineCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                combineCard.Defense = combineCard.baseInvocationCard.BaseInvocationCardStats.Defense;
                 combineCard.ResetNewTurn();
             }
         }
@@ -947,8 +947,8 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                combineCard.Attack = combineCard.baseInvocationCard.GetAttack();
-                combineCard.Defense = combineCard.baseInvocationCard.GetDefense();
+                combineCard.Attack = combineCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                combineCard.Defense = combineCard.baseInvocationCard.BaseInvocationCardStats.Defense;
                 combineCard.ResetNewTurn();
             }
         }
@@ -1076,7 +1076,7 @@ public class GameLoop : MonoBehaviour
             {
                 foreach (var invocationCard in invocationCards)
                 {
-                    invocationCard.Families = invocationCard.baseInvocationCard.Family;
+                    invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
                 }
 
                 playerCards.yellowTrash.Add(effectCard);

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Cards;
+using UnityEngine;
 
-namespace Cards.ContreCards
+namespace _Scripts.Scriptables
 {
     [CreateAssetMenu(fileName = "NewContreCard", menuName = "ContreCard")]
     public class ContreCard : Card

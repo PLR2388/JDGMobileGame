@@ -876,7 +876,7 @@ public class PlayerCards : MonoBehaviour
                 {
                     if (field != null)
                     {
-                        removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.Family;
+                        removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
                     }
                 }
             }
@@ -920,7 +920,7 @@ public class PlayerCards : MonoBehaviour
         var names = fieldValue.Split(';');
         if (names.Contains(removedInvocationCard.Title))
         {
-            removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.Family;
+            removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
         }
     }
 
@@ -959,7 +959,7 @@ public class PlayerCards : MonoBehaviour
         }
         else if (mustHaveMiminumAtkdef)
         {
-            invocationCard.Defense = invocationCard.baseInvocationCard.GetDefense();
+            invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
         }
     }
 
@@ -980,7 +980,7 @@ public class PlayerCards : MonoBehaviour
         }
         else if (mustHaveMiminumAtkdef)
         {
-            invocationCard.Attack = invocationCard.baseInvocationCard.GetAttack();
+            invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
         }
     }
 
@@ -1178,8 +1178,8 @@ public class PlayerCards : MonoBehaviour
         if (invocationCard != null)
         {
             invocationCard.UnblockAttack();
-            invocationCard.Attack = invocationCard.baseInvocationCard.GetAttack();
-            invocationCard.Defense = invocationCard.baseInvocationCard.GetDefense();
+            invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+            invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
             invocationCard.FreeCard();
             invocationCard.ResetNewTurn(); 
         }
@@ -1258,7 +1258,7 @@ public class PlayerCards : MonoBehaviour
         foreach (var invocationCard in invocationCards.Where(invocationCard =>
                      names.Contains(invocationCard.Title)))
         {
-            invocationCard.Families = invocationCard.baseInvocationCard.Family;
+            invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
         }
     }
 

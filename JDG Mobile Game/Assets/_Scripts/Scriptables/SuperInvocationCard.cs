@@ -16,13 +16,15 @@ namespace Cards.InvocationCards
             var newName = "";
             foreach (var invocationCard in invocationCardsList)
             {
-                totalAttack += invocationCard.GetAttack();
-                totalDefense += invocationCard.GetDefense();
+                totalAttack += invocationCard.BaseInvocationCardStats.Attack;
+                totalDefense += invocationCard.BaseInvocationCardStats.Defense;
                 newName += invocationCard.Title;
             }
+            
+            //TODO Refactor this
 
-            attack = totalAttack;
-            defense = totalDefense;
+            //attack = totalAttack;
+            //defense = totalDefense;
             title = newName;
         }
     }

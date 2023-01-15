@@ -29,7 +29,7 @@ public class UpdateDescription : MonoBehaviour
             allInvocationOptions.SetActive(true);
             cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte INVOCATION";
             var invocationCard = (InvocationCard)card;
-            var families = invocationCard.Family;
+            var families = invocationCard.BaseInvocationCardStats.Families;
             var familyFormatText = "";
             if (families.Length == 2)
             {
@@ -42,9 +42,9 @@ public class UpdateDescription : MonoBehaviour
 
             familyText.GetComponent<TMPro.TextMeshProUGUI>().text = familyFormatText;
             attackText.GetComponent<TMPro.TextMeshProUGUI>().text =
-                invocationCard.GetAttack().ToString(CultureInfo.InvariantCulture);
+                invocationCard.BaseInvocationCardStats.Attack.ToString(CultureInfo.InvariantCulture);
             defenseText.GetComponent<TMPro.TextMeshProUGUI>().text =
-                invocationCard.GetDefense().ToString(CultureInfo.InvariantCulture);
+                invocationCard.BaseInvocationCardStats.Defense.ToString(CultureInfo.InvariantCulture);
         }
         else
         {

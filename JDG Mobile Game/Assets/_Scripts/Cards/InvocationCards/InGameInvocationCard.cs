@@ -89,16 +89,16 @@ namespace Cards.InvocationCards
 
             isControlled = false;
 
-            attack = baseInvocationCard.GetAttack();
-            defense = baseInvocationCard.GetDefense();
-            families = baseInvocationCard.Family;
+            attack = baseInvocationCard.BaseInvocationCardStats.Attack;
+            defense = baseInvocationCard.BaseInvocationCardStats.Defense;
+            families = baseInvocationCard.BaseInvocationCardStats.Families;
             equipmentCard = null;
-            invocationConditions = baseInvocationCard.InvocationConditions;
-            invocationStartEffect = baseInvocationCard.GetInvocationStartEffect();
-            invocationPermEffect = baseInvocationCard.InvocationPermEffect;
-            invocationActionEffect = baseInvocationCard.InvocationActionEffect;
-            invocationDeathEffect = baseInvocationCard.GetInvocationDeathEffect();
-            IsAffectedByEffectCard = baseInvocationCard.IsAffectedByEffectCard;
+            invocationConditions = baseInvocationCard.BaseInvocationCardStats.InvocationConditions;
+            invocationStartEffect = baseInvocationCard.BaseInvocationCardStats.InvocationStartEffect;
+            invocationPermEffect = baseInvocationCard.BaseInvocationCardStats.InvocationPermEffect;
+            invocationActionEffect = baseInvocationCard.BaseInvocationCardStats.InvocationActionEffect;
+            invocationDeathEffect = baseInvocationCard.BaseInvocationCardStats.InvocationDeathEffect;
+            IsAffectedByEffectCard = baseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
         }
 
         public void DeactivateEffect()
@@ -240,12 +240,12 @@ namespace Cards.InvocationCards
                         break;
                     case InstantEffect.SetAtk:
                     {
-                        attack = baseInvocationCard.GetAttack();
+                        attack = baseInvocationCard.BaseInvocationCardStats.Attack;
                     }
                         break;
                     case InstantEffect.SetDef:
                     {
-                        defense = baseInvocationCard.GetDefense();
+                        defense = baseInvocationCard.BaseInvocationCardStats.Defense;
                     }
                         break;
                     case InstantEffect.BlockAtk:
@@ -297,7 +297,7 @@ namespace Cards.InvocationCards
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
-                var newBonusAttack = -(multiplicator - 1) * baseInvocationCard.GetAttack() + attack;
+                var newBonusAttack = -(multiplicator - 1) * baseInvocationCard.BaseInvocationCardStats.Attack + attack;
             }
         }
 
@@ -311,11 +311,11 @@ namespace Cards.InvocationCards
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
-                var newBonusDefense = -(multiplicator - 1) * baseInvocationCard.GetDefense() + defense;
+                var newBonusDefense = -(multiplicator - 1) * baseInvocationCard.BaseInvocationCardStats.Defense + defense;
             }
             else if (multiplicator < 0)
             {
-                var newBonusDefense = -(baseInvocationCard.GetDefense() / multiplicator) + defense;
+                var newBonusDefense = -(baseInvocationCard.BaseInvocationCardStats.Defense / multiplicator) + defense;
             }
         }
 

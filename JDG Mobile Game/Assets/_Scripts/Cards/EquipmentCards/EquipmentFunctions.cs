@@ -241,7 +241,7 @@ namespace Cards.EquipmentCards
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
-                var newBonusAttack = (multiplicator - 1) * invocationCard.baseInvocationCard.GetAttack();
+                var newBonusAttack = (multiplicator - 1) * invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
                 invocationCard.Attack += newBonusAttack;
             }
         }
@@ -258,12 +258,12 @@ namespace Cards.EquipmentCards
             if (multiplicator > 1)
             {
                 var newBonusDefense =
-                    (multiplicator - 1) * invocationCard.baseInvocationCard.GetDefense();
+                    (multiplicator - 1) * invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
                 invocationCard.Defense += newBonusDefense;
             }
             else if (multiplicator < 0)
             {
-                var newBonusDefense = (invocationCard.baseInvocationCard.GetDefense() / multiplicator);
+                var newBonusDefense = (invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense / multiplicator);
                 invocationCard.Defense += newBonusDefense;
             }
         }

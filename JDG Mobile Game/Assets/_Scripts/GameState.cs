@@ -20,20 +20,6 @@ public class GameState : MonoBehaviour
     public const int MaxDeckCards = 30;
     public const int MaxRare = 5;
 
-
-    public static GameState Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<GameState>();
-            }
-
-            return instance;
-        }
-    }
-
     private void Awake()
     {
         ResetDeckPlayer();
