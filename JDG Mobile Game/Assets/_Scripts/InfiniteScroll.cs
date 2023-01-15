@@ -29,8 +29,8 @@ public class InfiniteScroll : MonoBehaviour
         foreach (var card in allCards)
         {
             if (card.Type == CardType.Contre) continue;
-            if (card.Nom == "Attaque de la tour Eiffel" || card.Nom == "Blague interdite" ||
-                card.Nom == "Un bon tuyau") continue;
+            if (card.Title == "Attaque de la tour Eiffel" || card.Title == "Blague interdite" ||
+                card.Title == "Un bon tuyau") continue;
             var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
 
             newCard.GetComponent<OnHover>().bIsInGame = false;

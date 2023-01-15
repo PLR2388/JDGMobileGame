@@ -75,7 +75,7 @@ namespace Cards.InvocationCards
 
         public void Reset()
         {
-            title = baseInvocationCard.Nom;
+            title = baseInvocationCard.Title;
             description = baseInvocationCard.Description;
             detailedDescription = baseInvocationCard.DetailedDescription;
             type = baseInvocationCard.Type;

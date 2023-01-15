@@ -28,7 +28,7 @@ public class InGameEquipementCard : InGameCard
 
     private void Reset()
     {
-        title = baseEquipmentCard.Nom;
+        title = baseEquipmentCard.Title;
         description = baseEquipmentCard.Description;
         detailedDescription = baseEquipmentCard.DetailedDescription;
         baseCard = baseEquipmentCard;

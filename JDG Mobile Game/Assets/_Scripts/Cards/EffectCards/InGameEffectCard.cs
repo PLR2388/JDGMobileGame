@@ -30,7 +30,7 @@ namespace Cards.EffectCards
 
         private void Reset()
         {
-            title = baseEffectCard.Nom;
+            title = baseEffectCard.Title;
             description = baseEffectCard.Description;
             baseCard = baseEffectCard;
             detailedDescription = baseEffectCard.DetailedDescription;

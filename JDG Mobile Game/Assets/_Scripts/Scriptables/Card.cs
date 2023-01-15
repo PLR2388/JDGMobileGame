@@ -5,17 +5,17 @@ namespace Cards
     [CreateAssetMenu(fileName = "New Card", menuName = "Card")]
     public class Card : ScriptableObject
     {
-        [SerializeField] protected string nom = "";
+        [SerializeField] protected string title;
         [SerializeField] protected string description;
-        [SerializeField] protected string descriptionDetaillee;
+        [SerializeField] protected string detailedDescription;
         [SerializeField] protected CardType type;
         [SerializeField] protected Material materialCard;
         [SerializeField] protected bool collector;
         
-        public string Nom => nom;
+        public string Title => title;
 
         public string Description => description;
-        public string DetailedDescription => descriptionDetaillee;
+        public string DetailedDescription => detailedDescription;
 
         public CardType Type => type;
 

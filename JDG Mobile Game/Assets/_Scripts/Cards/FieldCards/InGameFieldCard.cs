@@ -23,7 +23,7 @@ public class InGameFieldCard : InGameCard
 
     private void Reset()
     {
-        title = baseFieldCard.Nom;
+        title = baseFieldCard.Title;
         description = baseFieldCard.Description;
         baseCard = baseFieldCard;
         detailedDescription = baseFieldCard.DetailedDescription;

@@ -18,12 +18,12 @@ namespace Cards.InvocationCards
             {
                 totalAttack += invocationCard.GetAttack();
                 totalDefense += invocationCard.GetDefense();
-                newName += invocationCard.Nom;
+                newName += invocationCard.Title;
             }
 
             attack = totalAttack;
             defense = totalDefense;
-            nom = newName;
+            title = newName;
         }
     }
 }

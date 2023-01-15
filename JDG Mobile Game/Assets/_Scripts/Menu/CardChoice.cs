@@ -95,9 +95,9 @@ namespace Menu
         public static void GetRandomDeck(int numberOfCards, ref List<Card> initialDeck, List<Card> cards)
         {
             var deckAllCard = cards.Where(card =>
-                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
-                card.Nom != "Blague interdite" &&
-                card.Nom != "Un bon tuyau").ToList();
+                card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
+                card.Title != "Blague interdite" &&
+                card.Title != "Un bon tuyau").ToList();
 
             while (initialDeck.Count != numberOfCards)
             {
@@ -111,14 +111,14 @@ namespace Menu
             var deck2 = new List<Card>();
 
             var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards.Where(card =>
-                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
-                card.Nom != "Blague interdite" &&
-                card.Nom != "Un bon tuyau").ToList();
+                card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
+                card.Title != "Blague interdite" &&
+                card.Title != "Un bon tuyau").ToList();
 
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards.Where(card =>
-                card.Type != CardType.Contre && card.Nom != "Attaque de la tour Eiffel" &&
-                card.Nom != "Blague interdite" &&
-                card.Nom != "Un bon tuyau").ToList();
+                card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
+                card.Title != "Blague interdite" &&
+                card.Title != "Un bon tuyau").ToList();
 
             while (deck1.Count != 30)
             {
@@ -172,7 +172,7 @@ namespace Menu
 
         public static Card GetSpecificCard(string nameCard, List<Card> cards)
         {
-            var card = cards.Find(x => x.Nom == nameCard);
+            var card = cards.Find(x => x.Title == nameCard);
             if (card != null)
             {
                 cards.Remove(card);

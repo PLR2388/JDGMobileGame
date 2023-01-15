@@ -133,7 +133,7 @@ public class MessageBox : MonoBehaviour
         {
             var childGameObject = child.gameObject;
             if (childGameObject.GetComponent<CardDisplay>() == null) continue;
-            var cardNom = childGameObject.GetComponent<CardDisplay>().card.Nom;
+            var cardNom = childGameObject.GetComponent<CardDisplay>().card.Title;
 
             if (multipleCardSelection)
             {
