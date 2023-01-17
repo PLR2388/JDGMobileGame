@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Quart de smiley sur la main
   m_EditorClassIdentifier: 
-  nom: Quart de smiley sur la main
+  title: Quart de smiley sur la main
   description: "S'accompagne en g\xE9n\xE9ral d'un dicours sur l'amiti\xE9."
-  descriptionDetaillee: "Les \xE9toiles de DEF des cartes INVOCATION de votre adversaire
+  detailedDescription: "Les \xE9toiles de DEF des cartes INVOCATION de votre adversaire
     sont divis\xE9es par 2 pour ce tour."
   type: 1
   materialCard: {fileID: 2100000, guid: 72d3875769182c545a92ac6d1d8e1f17, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: f2df4870dcf2c224f9bcb57bb7454eb2, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

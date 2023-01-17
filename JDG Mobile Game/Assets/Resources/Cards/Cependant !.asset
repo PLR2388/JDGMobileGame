@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Cependant !
   m_EditorClassIdentifier: 
-  nom: Cependant !
+  title: Cependant !
   description: 20 milliards de points pour Nintendor !
-  descriptionDetaillee: "S'utilise dans le cas o\xF9 votre adversaire inflige des
+  detailedDescription: "S'utilise dans le cas o\xF9 votre adversaire inflige des
     dommages \xE0 vos \xE9toiles de vie. Le montant d'abord soustrait est ensuite
-    multipli\xE9 par deux pour l'additionner \xE0 vos \xE9toiles de vie."
-  type: contre
+    multipl\xE9 par deux pour l'additionner \xE0 vos \xE9toiles de vie."
+  type: 0
   materialCard: {fileID: 2100000, guid: 9960902112f26334a9c498ff1d643c58, type: 2}
+  collector: 0

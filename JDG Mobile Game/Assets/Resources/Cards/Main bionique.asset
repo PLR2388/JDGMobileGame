@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Main bionique
   m_EditorClassIdentifier: 
-  nom: Main bionique
+  title: Main bionique
   description: "M\xE9tal jouir ?"
-  descriptionDetaillee: "L'INVOCATION \xE9quip\xE9e gagne 3 \xE9toiles d'ATQ et perd
-    1 \xE9toile de DEF."
-  type: equipment
+  detailedDescription: "L'INVOCATION \xE9quip\xE9e gagne 3 \xE9toiles d'ATQ et perd
+    1 \xE9toiles de DEF."
+  type: 2
   materialCard: {fileID: 2100000, guid: ca6215c48a43b604ba68afcdf218ffd2, type: 2}
   collector: 0
   equipmentInstantEffect: {fileID: 11400000, guid: c6d28317853836e4dafea607ef6c648d,

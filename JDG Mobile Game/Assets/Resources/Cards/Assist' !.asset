@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Assist' !
   m_EditorClassIdentifier: 
-  nom: Assist' !
+  title: Assist' !
   description: New challenger !
-  descriptionDetaillee: "Vous permet d'\xE9changer par invocation sp\xE9ciale une
-    carte INVOCATION de votre terrain contre une autre carte INVOCATION de votre
+  detailedDescription: "Vous permet d'\xE9changer par invocation sp\xE9ciale une
+    carte INVOCATION de votre terrain contrre une autre carte INVOCATION de votre
     main."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: c4780c1f0917b4f4094fffb760c4c644, type: 2}
+  collector: 0

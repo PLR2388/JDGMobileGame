@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Armure trop lourde
   m_EditorClassIdentifier: 
-  nom: Armure trop lourde
+  title: Armure trop lourde
   description: Quoi ?! Game Over ?!!
-  descriptionDetaillee: "La DEF de l'INVOCATION \xE9quip\xE9e est multipli\xE9e par
+  detailedDescription: "La DEF de l'INVOCATION \xE9quip\xE9e est multipl\xE9e par
     deux, mais elle ne peut plus attaquer tant que cette carte lui est \xE9quip\xE9e."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 66890f93fe8ac1a489df592dcb787c23, type: 2}
   collector: 0
   equipmentInstantEffect: {fileID: 11400000, guid: bc85657e262c9244e80dfabad0795791,

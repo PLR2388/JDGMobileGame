@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
   m_Name: "Lyc\xE9e magique Georges Pompidou"
   m_EditorClassIdentifier: 
-  nom: "Lyc\xE9e magique Georges Pompidou"
+  title: "Lyc\xE9e magique Georges Pompidou"
   description: On n'apprend pas la magie avec du salami.
-  descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB Sorcier
-    \xBB sur ce terrain font gagner 0.5 \xE9toile de vie chacune \xE0 son propri\xE9taire
+  detailedDescription: "Toutes les cartes INVOCATION de la famille \" Sorcier \"
+    sur ce terrain font gagner 0,5 \xE9toile de vie chacune \xE0 son propri\xE9taire
     \xE0 chaque fois que son tour commence."
   type: 3
   materialCard: {fileID: 2100000, guid: dd7822175a32f5e4ca76952de6c1a6f9, type: 2}

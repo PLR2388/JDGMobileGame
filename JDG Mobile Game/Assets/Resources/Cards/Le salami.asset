@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Le salami
   m_EditorClassIdentifier: 
-  nom: Le salami
+  title: Le salami
   description: Votre seul ami.
-  descriptionDetaillee: "Ajoute \xE0 une INVOCATION 2 \xE9toiles de plus en ATQ."
-  type: equipment
+  detailedDescription: "Ajoute \xE0 une INVOCATION 2 \xE9toiles de plus en ATQ."
+  type: 2
   materialCard: {fileID: 2100000, guid: e0963f994e1a80943a7040659302497d, type: 2}
   collector: 0
   equipmentInstantEffect: {fileID: 11400000, guid: eebb006abb64ef840b80348cf60c8d9e,

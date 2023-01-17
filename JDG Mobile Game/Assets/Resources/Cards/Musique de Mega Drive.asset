@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Musique de Mega Drive
   m_EditorClassIdentifier: 
-  nom: Musique de Mega Drive
+  title: Musique de Mega Drive
   description: Mes oreilles viennent de vomir je crois.
-  descriptionDetaillee: "Votre adversaire perd 2,5 \xE9toiles de vie pour chaque
-    carte INVOCATION pr\xE9sente sur son terrain."
+  detailedDescription: "Votre adversaire perd 2,5 \xE9toiles de vie pour chaque carte
+    INVOCATION pr\xE9sente sur son terrain."
   type: 1
   materialCard: {fileID: 2100000, guid: ecad77efe5974504eb48509c81f4010d, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 49d293dd0d2ba6042a0ffa08ab147069, type: 2}
   lifeTime: 1
   checkTurn: 0
-  affectPV: -2.5
+  affectPv: -2.5

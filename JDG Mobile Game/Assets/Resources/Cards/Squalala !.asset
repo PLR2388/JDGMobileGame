@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Squalala !
   m_EditorClassIdentifier: 
-  nom: Squalala !
+  title: Squalala !
   description: Nous sommes partis !
-  descriptionDetaillee: "Envoie une carte INVOCATION du terrain de votre adversaire
+  detailedDescription: "Envoie une carte INVOCATION du terrain de votre adversaire
     directement \xE0 la poubelle jaune."
   type: 1
   materialCard: {fileID: 2100000, guid: 7dfafefff1031264597d3868b5c7bf7e, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: cdc7f28401de4074880a9932429f7a44, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

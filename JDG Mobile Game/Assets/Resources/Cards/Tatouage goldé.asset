@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: "Tatouage gold\xE9"
   m_EditorClassIdentifier: 
-  nom: "Tatouage gold\xE9"
+  title: "Tatouage gold\xE9"
   description: Ah ouais... La classe !
-  descriptionDetaillee: "L'INVOCATION \xE9quip\xE9e perd 2 \xE9toiles d'ATQ."
-  type: equipment
+  detailedDescription: "L'INVOCATION \xE9quip\xE9e perd 2 \xE9toiles d'ATQ."
+  type: 2
   materialCard: {fileID: 2100000, guid: 0a1c2877aa744364eb58ebf19833a3a7, type: 2}
   collector: 0
   equipmentInstantEffect: {fileID: 11400000, guid: 66a9b633f24482e4287acb86a0dcde0b,

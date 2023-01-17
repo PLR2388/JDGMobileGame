@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Classe de Segpa
   m_EditorClassIdentifier: 
-  nom: Classe de Segpa
+  title: Classe de Segpa
   description: "Arr\xEAtez de faire les cons !"
-  descriptionDetaillee: "Si une carte INVOCATION de votre adversaire lance une attaque
+  detailedDescription: "Si une carte INVOCATION de votre adversaire lance une attaque
     sur l'une des v\xF4tres ou directement sur vos \xE9toiles de vie, vous pouvez
     annuler cette attaque et clore la phase d'attaque de votre adversaire."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: b2c0d97df4ad2eb4e8b37f811d17dc43, type: 2}
+  collector: 0

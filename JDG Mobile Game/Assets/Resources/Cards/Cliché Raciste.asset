@@ -12,25 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: "Clich\xE9 Raciste"
   m_EditorClassIdentifier: 
-  nom: "Clich\xE9 Raciste"
+  title: "Clich\xE9 Raciste"
   description: "En plus elle est m\xEAme pas japonaise."
-  descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'y invoquer
-    \xE9galement la carte \xAB Tentacules \xBB depuis votre pioche."
+  detailedDescription: "Invoquer cette carte sur votre terrain vous permet d'y invoquer
+    \xE9galement la carte \" Tentacules \" depuis votre pioche."
   type: 4
   materialCard: {fileID: 2100000, guid: 40af43125afbf424cb6b1c15f1c751d8, type: 2}
   collector: 0
-  attack: 1
-  defense: 1
-  family: 06000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 11400000, guid: c34966f9469fc684583b687b1af254e3,
-    type: 2}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 1
+    Defense: 1
+    Families: 06000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 11400000, guid: c34966f9469fc684583b687b1af254e3,
+      type: 2}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1

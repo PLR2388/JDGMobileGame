@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
   m_Name: "Studio de d\xE9veloppement"
   m_EditorClassIdentifier: 
-  nom: "Studio de d\xE9veloppement"
+  title: "Studio de d\xE9veloppement"
   description: "La vie de d\xE9veloppeur, c'est pas toujours facile !"
-  descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB D\xE9veloppeur
-    \xBB sur ce terrain perdent 0.5 \xE9toile d'ATQ et gagnent 1.5 \xE9toile de DEF.
-    Si les cartes \xAB Jean-Michel Bruitages \xBB et/ou \xAB Le Patron d'infogrammes
-    \xBB sont invoqu\xE9s sur ce terrain, leur famille de base est remplac\xE9e par
-    \xAB D\xE9veloppeur \xBB."
+  detailedDescription: "Toutes les cartes INVOCATION de la famille \" D\xE9veloppeur
+    \" sur ce terrain perdent 0,5 \xE9toile d'ATQ et gagnent 1,5 \xE9toile de DEF.
+    Si les cartes \" Jean-Michel Bruitages \" et/ou \" Le patron d'Infogrames \"
+    sont invoqu\xE9es sur ce terrain, leur famille de base est remplac\xE9e par \"
+    D\xE9veloppeur \"."
   type: 3
   materialCard: {fileID: 2100000, guid: 5cfa96f2ed49284499d2fde7687e4821, type: 2}
   collector: 0

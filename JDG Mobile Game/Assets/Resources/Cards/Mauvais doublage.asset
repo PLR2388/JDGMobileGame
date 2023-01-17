@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Mauvais doublage
   m_EditorClassIdentifier: 
-  nom: Mauvais doublage
-  description: "Ouai, alors forc\xE9ment, \xE7a rend moins bien sur une image."
-  descriptionDetaillee: "Pour la dur\xE9e du tour, les statistiques d'ATQ et de DEF
+  title: Mauvais doublage
+  description: "Ouais, alors forc\xE9ment, \xE7a rend moins bien sur une image."
+  detailedDescription: "Pour la dur\xE9e du tour, les statistiques d'ATQ et de DEF
     de toutes les cartes INVOCATION pr\xE9sentes sur le terrain sont interverties."
   type: 1
   materialCard: {fileID: 2100000, guid: fe5240f4446a2e84d93108f685a5553d, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 43fca8b84d56f114d86c3009eea8f0c9, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

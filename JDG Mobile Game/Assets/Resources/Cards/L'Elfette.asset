@@ -12,27 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: L'Elfette
   m_EditorClassIdentifier: 
-  nom: L'Elfette
+  title: L'Elfette
   description: C'est pour les quotas.
-  descriptionDetaillee: "Cette carte peut se soustraire de ses \xE9toiles d'ATQ et
+  detailedDescription: "Cette carte peut se soustraire de ses \xE9toiles d'ATQ et
     de DEF pour les additionner sur les m\xEAmes statistiques d'autres cartes INVOCATION
-    de type \xAB RPG \xBB Les \xE9toiles distribu\xE9es sont annul\xE9es si cette
-    carte est d\xE9truite."
+    de type \" RPG \" sur le terrain. Les \xE9toiles distribu\xE9es sont annul\xE9es
+    si cette carte est d\xE9truite."
   type: 4
   materialCard: {fileID: 2100000, guid: 6048fb6c27d6dd24a930f340307b1eac, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 09000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 11400000, guid: b477f41cb51886b41b2563dd68a6d8cc,
-    type: 2}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 09000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 11400000, guid: b477f41cb51886b41b2563dd68a6d8cc,
+      type: 2}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1

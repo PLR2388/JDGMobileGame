@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Incendie
   m_EditorClassIdentifier: 
-  nom: Incendie
+  title: Incendie
   description: Bon, je rangerai demain...
-  descriptionDetaillee: "Sacrifiez 7.5 de vos \xE9toiles de vie pour d\xE9truire
-    une carte TERRAIN pr\xE9sente sur le terrain."
+  detailedDescription: "Sacrifiez 7,5 de vos \xE9toiles de vie pour d\xE9truire une
+    carte TERRAIN pr\xE9sente sur le terrain."
   type: 1
   materialCard: {fileID: 2100000, guid: e5ee0dd927f6d5349a04784af3509ad3, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 04f4670dbb5bd5847927341e700940ae, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

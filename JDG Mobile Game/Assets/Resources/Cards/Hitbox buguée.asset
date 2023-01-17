@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: "Hitbox bugu\xE9e"
   m_EditorClassIdentifier: 
-  nom: "Hitbox bugu\xE9e"
+  title: "Hitbox bugu\xE9e"
   description: C'est vraiment magnifique !
-  descriptionDetaillee: "Si une INVOCATION adverse attaque une de vos cartes INVOCATION
-    sur le terrain ou directement vos \xE9toiles de vie son attaque est annul\xE9e
+  detailedDescription: "Si une INVOCATION adverse attaque une de vos cartes INVOCATION
+    sur le terrain ou directement vos \xE9toiles de vie, son attaque est annul\xE9e
     et le montant de ses \xE9toiles d'ATQ au moment de l'attaque est soustraite directement
     des \xE9toiles de vie de votre adversaire."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 4bbbac60b98aade4b903d9e4ce6f95b6, type: 2}
+  collector: 0

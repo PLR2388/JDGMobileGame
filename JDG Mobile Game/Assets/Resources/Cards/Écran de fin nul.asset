@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: "\xC9cran de fin nul"
   m_EditorClassIdentifier: 
-  nom: "\xC9cran de fin nul"
+  title: "\xC9cran de fin nul"
   description: Bravo... je crois.
-  descriptionDetaillee: "S'utilise dans le cas o\xF9 une INVOCATION adverse attaque
+  detailedDescription: "S'utilise dans le cas o\xF9 une INVOCATION adverse attaque
     et d\xE9truit une de celles de votre terrain. L'INVOCATION victorieuse ne pourra
     plus lancer d'attaque et ce jusqu'\xE0 la fin du duel."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 7fa2b3968ae8f5148a669bd3aa62f6c9, type: 2}
+  collector: 0

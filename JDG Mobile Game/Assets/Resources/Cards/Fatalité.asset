@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: "Fatalit\xE9"
   m_EditorClassIdentifier: 
-  nom: "Fatalit\xE9"
+  title: "Fatalit\xE9"
   description: "\xAB Benzaie wins. \xBB. NOTE: c'est un pav\xE9 de saumon \xE0 l'image"
-  descriptionDetaillee: "S'il reste \xE0 votre adversaire moins de 5 \xE9toiles de
+  detailedDescription: "S'il reste \xE0 votre adversaire moins de 5 \xE9toiles de
     vie, vous pouvez les attaquer directement avec une de vos cartes INVOCATION pendant
     ce tour."
   type: 1
@@ -22,3 +22,5 @@ MonoBehaviour:
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 0e534b1106440dd44a900437657b2fa6, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

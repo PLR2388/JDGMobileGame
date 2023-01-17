@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Faux raccord
   m_EditorClassIdentifier: 
-  nom: Faux raccord
+  title: Faux raccord
   description: "Eh oui, le tiroir \xE9tait ouvert !"
-  descriptionDetaillee: "Vous permet d'aller chercher directement depuis votre pioche
+  detailedDescription: "Vous permet d'aller chercher directement depuis votre pioche
     une carte TERRAIN pour la jouer imm\xE9diatement, m\xEAme sur un emplacement
     d\xE9j\xE0 occup\xE9 par une autre carte TERRAIN. Auquel cas, la carte pr\xE9c\xE9dente
     est d\xE9truite."
@@ -23,3 +23,5 @@ MonoBehaviour:
   collector: 1
   effectCardEffect: {fileID: 11400000, guid: 0ffec8cd5ce52e64b8e54b428e1ca482, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

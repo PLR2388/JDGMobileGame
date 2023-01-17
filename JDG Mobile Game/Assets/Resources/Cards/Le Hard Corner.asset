@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
   m_Name: Le Hard Corner
   m_EditorClassIdentifier: 
-  nom: Le Hard Corner
+  title: Le Hard Corner
   description: "Une pile de jeux et un \xE9cran sur une planche, et paf : des millions
     de vues !"
-  descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB Hard Corner
-    \xBB sur ce terrain gagnent 1.5 \xE9toiles d'ATQ et perdent 0.5 \xE9toile de
-    DEF."
+  detailedDescription: "Toutes les cartes INVOCATION de la famille \" Hard Corner
+    \" sur ce terrain gagnent 1,5 \xE9toiles d'ATQ et perdent 0,5 \xE9toile de DEF."
   type: 3
   materialCard: {fileID: 2100000, guid: 0169eed06f27ac64e8eba79ce9f3db05, type: 2}
   collector: 0

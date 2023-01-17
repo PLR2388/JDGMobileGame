@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Canarang
   m_EditorClassIdentifier: 
-  nom: Canarang
+  title: Canarang
   description: Le gadget le plus discret du monde.
-  descriptionDetaillee: "Ajoute 1 \xE9toile d'ATQ et soustrait une \xE9toile de DEF
+  detailedDescription: "Ajoute 1 \xE9toile d'ATQ et soustraint une \xE9toile de DEF
     \xE0 l'INVOCATION \xE9quip\xE9e, et lui permet d'attaquer directement les \xE9toiles
     de vie de l'adversaire."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 13c03c155c76e7142a41a49ce83c5694, type: 2}
   collector: 0
   equipmentInstantEffect: {fileID: 11400000, guid: 7d49ebb9c80acfd4abd29c33def60ed1,

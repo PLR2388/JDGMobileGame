@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Hypno-boobs
   m_EditorClassIdentifier: 
-  nom: Hypno-boobs
+  title: Hypno-boobs
   description: Ok Bibiche, je vais me raser et me mettre au sport !
-  descriptionDetaillee: "L'INVOCATION \xE9quip\xE9e ne peut \xEAtre attaqu\xE9e ni
+  detailedDescription: "L'INVOCATION \xE9quip\xE9e ne peut \xEAtre attaqu\xE9e ni
     d\xE9truite par une autre carte INVOCATION."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 402ef32c302e7a24ab239ecea772c3c3, type: 2}
   collector: 0
   equipmentInstantEffect: {fileID: 0}

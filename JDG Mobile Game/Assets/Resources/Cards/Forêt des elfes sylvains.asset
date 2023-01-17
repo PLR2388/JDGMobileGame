@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
   m_Name: "For\xEAt des elfes sylvains"
   m_EditorClassIdentifier: 
-  nom: "For\xEAt des elfes sylvains"
+  title: "For\xEAt des elfes sylvains"
   description: Les arbres aussi s'appellent Sylvain.
-  descriptionDetaillee: "Toutes les cartes INVOCATION de type \xAB RPG \xBB sur ce
-    terrain obtiennent 0,5 \xE9toiles d'ATQ et de DEF suppl\xE9mentaires."
+  detailedDescription: "Toutes les cartes INVOCATION de type \" RPG \" sur ce terrain
+    obtiennent 0,5 \xE9toiles d'ATQ et de DEF suppl\xE9mentaires."
   type: 3
   materialCard: {fileID: 2100000, guid: a941b686e4ad5df47baed858ebf1f9b4, type: 2}
   collector: 0

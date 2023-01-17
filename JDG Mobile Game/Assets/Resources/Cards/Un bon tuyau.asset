@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Un bon tuyau
   m_EditorClassIdentifier: 
-  nom: Un bon tuyau
+  title: Un bon tuyau
   description: Permet de vous tenir au parfum.
-  descriptionDetaillee: "Annule l'effet bonus de la carte INVOCATION \xE9quip\xE9e."
-  type: equipment
+  detailedDescription: "Annule l'effet bonus de la carte INVOCATION \xE9quip\xE9e."
+  type: 2
   materialCard: {fileID: 2100000, guid: 260094d22db58fa43b15e7d583ca104c, type: 2}
   collector: 0
   equipmentInstantEffect: {fileID: 11400000, guid: d1c499bdfaa10a4498af7cd3e19d7bfc,

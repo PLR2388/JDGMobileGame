@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: "Maniabilit\xE9 pourrie"
   m_EditorClassIdentifier: 
-  nom: "Maniabilit\xE9 pourrie"
+  title: "Maniabilit\xE9 pourrie"
   description: Des fois, c'est aussi la faute de la manette.
-  descriptionDetaillee: Fait sauter la phase d'attaque des cartes INVOCATION adverses
+  detailedDescription: Fait sauter la phase d'attaque des cartes INVOCATION adverses
     lors du prochain tour de votre adversaire.
   type: 1
   materialCard: {fileID: 2100000, guid: 8ad725d463e1b6c4498e0385792ad61c, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 9db65152c089fb74f93dffa072563e43, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

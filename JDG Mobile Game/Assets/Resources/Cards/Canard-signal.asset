@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Canard-signal
   m_EditorClassIdentifier: 
-  nom: Canard-signal
+  title: Canard-signal
   description: La justice m'appelle !
-  descriptionDetaillee: "Si vous n'avez pas de cartes INVOCATION sur votre terrain
+  detailedDescription: "Si vous n'avez pas de carte INVOCATION sur votre terrain
     et qu'une INVOCATION adverse attaque directement vos \xE9toiles de vie, vous
     pouvez faire l'invocation sp\xE9ciale sur votre terrain d'une carte INVOCATION
     de votre choix depuis votre main ou votre pioche pour faire barrage \xE0 cette
     attaque."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 5d4ee77c904c4f24a95bd6184ce99081, type: 2}
+  collector: 0

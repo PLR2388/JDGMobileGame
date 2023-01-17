@@ -12,27 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Benzaie
   m_EditorClassIdentifier: 
-  nom: Benzaie
+  title: Benzaie
   description: Oh ! Bonjour et bienvenue dans le Hard Corner !
-  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9 directement sur le
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur le
     terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre terrain
-    une carte \xAB Benzaie jeune \xBB \xE9quip\xE9e d'une carte \xAB Cassette VHS
-    \xBB."
+    une carte \" Benzaie jeune \" \xE9quip\xE9e d'une carte \" Cassette VHS \"."
   type: 4
   materialCard: {fileID: 2100000, guid: 0a85140be21898743934ba4fd4208a18, type: 2}
   collector: 1
-  attack: 5
-  defense: 4
-  family: 03000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: eaab4f869d4d3964c8e848f96d4938cc,
-    type: 2}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 5
+    Defense: 4
+    Families: 03000000
+    InvocationConditions: {fileID: 11400000, guid: eaab4f869d4d3964c8e848f96d4938cc,
+      type: 2}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1

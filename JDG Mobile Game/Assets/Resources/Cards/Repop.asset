@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Repop
   m_EditorClassIdentifier: 
-  nom: Repop
+  title: Repop
   description: "Parce que le malheur ne s'arr\xEAte jamais compl\xE8tement."
-  descriptionDetaillee: "Si votre adversaire envoie une de vos cartes INVOCATION
-    \xE0 la poubelle jaune, vous pouvez la r\xE9invoquer par invocation sp\xE9ciale
-    imm\xE9diatement sur le terrain."
-  type: contre
+  detailedDescription: "Si votre adversaire envoie une de vos cartes INVOCATION \xE0
+    la poubelle jaune, vous pouvez la r\xE9invoquer par invocation sp\xE9ciale imm\xE9diatement
+    sur le terrain."
+  type: 0
   materialCard: {fileID: 2100000, guid: 4a432ce898f0b634893459a3ea76d5a5, type: 2}
+  collector: 0

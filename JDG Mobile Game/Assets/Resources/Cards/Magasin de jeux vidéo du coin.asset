@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
   m_Name: "Magasin de jeux vid\xE9o du coin"
   m_EditorClassIdentifier: 
-  nom: "Magasin de jeux vid\xE9o du coin"
+  title: "Magasin de jeux vid\xE9o du coin"
   description: Construit sur les ruines d'un ancien restaurant indien.
-  descriptionDetaillee: "Toutes les cartes INVOCATION de la famille \xAB Incarnation
-    \xBB sur ce terrain perdent 1 \xE9toile d'ATQ et gagnent 2 \xE9toiles de DEF."
+  detailedDescription: "Toutes les cartes INVOCATION de la famille \" Incarnation
+    \" sur ce terrain perdent 1 \xE9toile d'ATQ et gagnent 2 \xE9toiles de DEF."
   type: 3
   materialCard: {fileID: 2100000, guid: 1d9e905d01aec214f941ebcfb7fa1ffb, type: 2}
   collector: 0

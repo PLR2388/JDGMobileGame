@@ -12,14 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Le Pygargue
   m_EditorClassIdentifier: 
-  nom: Le Pygargue
+  title: Le Pygargue
   description: Facilement confondu avec L'Aigle De La Nuit.
-  descriptionDetaillee: "Aucun effet ! Question de droits pour la photo. Sinon cette
+  detailedDescription: "Aucun effet ! Question de droits pour la photo. Sinon cette
     carte aurait valu au moins 5 \xE9toiles d'ATQ !"
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 67e9f6553518f134b94ad6fa4e1235fa, type: 2}
-  attack: 2
-  defense: 3
-  family:
-  - comics
-  equipmentCard: {fileID: 0}
+  collector: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 3
+    Families: 00000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1

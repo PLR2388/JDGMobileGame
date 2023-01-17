@@ -12,26 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Sandrine le porte-manteau extraterrestre
   m_EditorClassIdentifier: 
-  nom: Sandrine le porte-manteau extraterrestre
+  title: Sandrine le porte-manteau extraterrestre
   description: Un de nos meilleurs personnages.
-  descriptionDetaillee: "Si cette carte est d\xE9truite lors d'une phase d'attaque
+  detailedDescription: "Si cette carte est d\xE9truite lors d'une phase d'attaque
     contre une autre INVOCATION, apr\xE8s calcul de la diff\xE9rence d'\xE9toiles
     ce sont les deux cartes qui partent \xE0 la poubelle jaune."
   type: 4
   materialCard: {fileID: 2100000, guid: 8cfc767c6f84a5d44a4d4c5961da1890, type: 2}
   collector: 0
-  attack: 1
-  defense: 1
-  family: 0a000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 11400000, guid: 4bbe2fd1b5df5334c96b808f3726f6e0,
-    type: 2}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 1
+    Defense: 1
+    Families: 0a000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 11400000, guid: 4bbe2fd1b5df5334c96b808f3726f6e0,
+      type: 2}
+    AffectedByEffect: 1

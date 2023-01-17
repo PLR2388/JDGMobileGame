@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Mauvaise traduction
   m_EditorClassIdentifier: 
-  nom: Mauvaise traduction
+  title: Mauvaise traduction
   description: Rayon magique !
-  descriptionDetaillee: "Si votre adversaire joue une carte EFFET, vous pouvez l'annuler
+  detailedDescription: "Si votre adversaire joue une carte EFFET, vous pouvez l'annuler
     et l'envoyer \xE0 la poubelle jaune."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: fd4a547c464b5f04dbcc754a7c6a13f4, type: 2}
+  collector: 0

@@ -12,27 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Daffy
   m_EditorClassIdentifier: 
-  nom: Daffy
+  title: Daffy
   description: Pro labs gaming, c'est les prix qui te retournent comme une chaussette
     !
-  descriptionDetaillee: "Si cette carte est invoqu\xE9e sur votre TERRAIN \xAB Hard
-    Corner \xBB et que vous y sacrifiez une carte \xAB Seb du grenier \xBB, ses statistiques
-    passent \xE0 4.5 d'ATQ et 4.5 de DEF."
+  detailedDescription: "Si cette carte est invoqu\xE9e sur votre TERRAIN \" Hard
+    Cordner \" et que vous y sacrifiez une carte \" Seb du grenier \", ses statistiques
+    passent \xE0 4,5 d'ATQ et 4,5 de DEF."
   type: 4
   materialCard: {fileID: 2100000, guid: cceab59d158b88d48aadc523cc98d053, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 03000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 11400000, guid: ff990b6cdb815374e9b0d755ba140d40,
-    type: 2}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 1
-  bonusDefense: 1
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 03000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 11400000, guid: ff990b6cdb815374e9b0d755ba140d40,
+      type: 2}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1

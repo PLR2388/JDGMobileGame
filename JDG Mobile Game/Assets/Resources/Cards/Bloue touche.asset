@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Bloue touche
   m_EditorClassIdentifier: 
-  nom: Bloue touche
+  title: Bloue touche
   description: "Tiens ! Bloue touche-toi avec \xE7a !"
-  descriptionDetaillee: "Chaque joueur pioche ou se d\xE9fausse d'autant de cartes
+  detailedDescription: "Chaque joueur pioche ou se d\xE9fausse d'autant de cartes
     n\xE9cessaires pour en avoir un total de cinq dans sa main."
   type: 1
   materialCard: {fileID: 2100000, guid: 1433dcecedd3a4549b73037bb34db18f, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: 36de45fc926423342b7361d691dc9280, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

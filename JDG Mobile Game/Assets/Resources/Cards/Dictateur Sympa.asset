@@ -12,29 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Dictateur Sympa
   m_EditorClassIdentifier: 
-  nom: Dictateur Sympa
+  title: Dictateur Sympa
   description: Pas vraiment pire que nos hommes politiques actuels.
-  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
-    le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre
-    terrain une autre carte INVOCATION d'au moins 3 \xE9toiles d'ATQ et de DEF. Cette
-    carte vous permet d'aller chercher et de poser imm\xE9diatement une carte TERRAIN
-    de votre pioche sur votre terrain."
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur le
+    terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre terrain
+    une autre carte INVOCATION d'au moins 3 \xE9toiles d'ATQ ou de DEF. Cette carte
+    vous permet d'aller chercher et de poser imm\xE9diatement uen carte TERRAIN de
+    votre pioche sur votre terrain."
   type: 4
   materialCard: {fileID: 2100000, guid: b43499c4a57a1da49af54357bb9508f3, type: 2}
   collector: 0
-  attack: 4
-  defense: 3
-  family: 07000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: 5d35966ef5bf3064a818e4bef4c25d9b,
-    type: 2}
-  invocationStartEffect: {fileID: 11400000, guid: 9d44048a70cfe9f4db49d6d5f65714dd,
-    type: 2}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 4
+    Defense: 3
+    Families: 07000000
+    InvocationConditions: {fileID: 11400000, guid: 5d35966ef5bf3064a818e4bef4c25d9b,
+      type: 2}
+    InvocationStartEffect: {fileID: 11400000, guid: 9d44048a70cfe9f4db49d6d5f65714dd,
+      type: 2}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1

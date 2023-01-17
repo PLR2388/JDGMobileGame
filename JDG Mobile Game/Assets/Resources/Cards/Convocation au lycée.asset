@@ -12,15 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: "Convocation au lyc\xE9e"
   m_EditorClassIdentifier: 
-  nom: "Convocation au lyc\xE9e"
+  title: "Convocation au lyc\xE9e"
   description: "N'oubliez votre justificatif de domicile et le ch\xE8que de 42\u20AC
     pour la vie scolaire !"
-  descriptionDetaillee: "Cette carte vous permet d'attribuer la famille d'INVOCATION
-    affili\xE9e \xE0 votre TERRAIN \xE0 toutes les cartes INVOCATION pr\xE9sentes
-    sur votre terrain tant que cette carte y susbsiste. Vous pouvez la conserver
-    pour le tour suivant en sacrifiant 0.5 de vos \xE9toiles de vie \xE0 la fin de
-    chaque tour."
-  type: effect
+  detailedDescription: "Cette carte vous permet d'attribuer la famille d'INVOCATION
+    affili\xE9 \xE0 votre TERRAIN \xE0 toutes les cartes INVOCATION pr\xE9sentes
+    sur votre terrain tant que cette carte y subsiste. Vous pouvez la conserver pour
+    le tour suivant en sacrifiant 0,5 de vos \xE9toiles de vie \xE0 la fin de chaque
+    tour."
+  type: 1
   materialCard: {fileID: 2100000, guid: 735aa2c824e3a9f42b3368545a3b0e98, type: 2}
   collector: 1
   effectCardEffect: {fileID: 11400000, guid: 73e5c525f966e93408f2ee4ae001097f, type: 2}
+  lifeTime: 0
+  checkTurn: 0
+  affectPv: 0

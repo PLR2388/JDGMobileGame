@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: "\xC9touff\xE9 sous les jeux de merde"
   m_EditorClassIdentifier: 
-  nom: "\xC9touff\xE9 sous les jeux de merde"
+  title: "\xC9touff\xE9 sous les jeux de merde"
   description: Mon p'tit gars ?!
-  descriptionDetaillee: "Si une INVOCATION adverse attaque une de vos cartes INVOCATION
+  detailedDescription: "Si une INVOCATION adverse attaque une de vos cartes INVOCATION
     sur le terrain ou directement vos \xE9toiles de vie, vous pouvez annuler son
     attaque et l'envoyer directement \xE0 la poubelle jaune en vous d\xE9faussant
     d'une carte de votre main."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 9ff40a80b884dd641857814eeb237533, type: 2}
+  collector: 0

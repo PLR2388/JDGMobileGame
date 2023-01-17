@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
   m_Name: Zozan Kebab
   m_EditorClassIdentifier: 
-  nom: Zozan Kebab
+  title: Zozan Kebab
   description: "Meilleur Kebab de l'h\xE9misph\xE8re nord."
-  descriptionDetaillee: "Toutes les cartes INVOCATION de type \xAB Spatial \xBB sur
-    ce terrain obtiennent 1 \xE9toile de DEF suppl\xE9mentaires."
+  detailedDescription: "Toutes les cartes INVOCATION de type \" Spatial \" sur ce
+    terrain obtiennent 1 \xE9toile de DEF suppl\xE9mentaires."
   type: 3
   materialCard: {fileID: 2100000, guid: a97f23475120d2d4e8bd1ec2473247ca, type: 2}
   collector: 0

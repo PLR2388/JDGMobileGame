@@ -12,27 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Patron D'Infogrames
   m_EditorClassIdentifier: 
-  nom: Patron D'Infogrames
+  title: Patron D'Infogrames
   description: Vendeur de cauchemars depuis 1983.
-  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
-    le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant la carte \xAB
-    Seb Du Grenier \xBB \xE9quip\xE9 d'une carte \xAB Merde tournoyante en plastique
-    bleu \xBB."
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur le
+    terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre terrain
+    une carte \" Seb du grenier \" \xE9quip\xE9 d'une carte \" Merde tournoyante
+    en plastique bleu \"."
   type: 4
   materialCard: {fileID: 2100000, guid: fd67ae7dc9494fc409988d8f3c1c0710, type: 2}
   collector: 1
-  attack: 4.5
-  defense: 4.5
-  family: 07000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: 7374ccf0580b1ae46983df7d4ac45993,
-    type: 2}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 4.5
+    Defense: 4.5
+    Families: 01000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1

@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: "Filtre d\xE9gueulasse FMV"
   m_EditorClassIdentifier: 
-  nom: "Filtre d\xE9gueulasse FMV"
+  title: "Filtre d\xE9gueulasse FMV"
   description: "N'emp\xEAche qu'on trouvait \xE7a plus cool \xE0 l'\xE9poque."
-  descriptionDetaillee: "Les effets des cartes TERRAIN pr\xE9sentes sur le terrain
-    sont annul\xE9s pour le tour en cours ainsi que pour le tour suivant."
+  detailedDescription: "Les effets des cartes TERRAIN pr\xE9sentes sur le terrain
+    sont anul\xE9s pour le tour en cours ainsi que pour le tour suivant."
   type: 1
   materialCard: {fileID: 2100000, guid: c935c0223ba78b2478b0195affd684cf, type: 2}
   collector: 0
   effectCardEffect: {fileID: 11400000, guid: ad1f279fb41e3b147b1ef3ce3f4e72f0, type: 2}
   lifeTime: 2
+  checkTurn: 0
+  affectPv: 0

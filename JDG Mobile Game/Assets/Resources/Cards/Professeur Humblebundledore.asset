@@ -12,27 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Professeur Humblebundledore
   m_EditorClassIdentifier: 
-  nom: Professeur Humblebundledore
+  title: Professeur Humblebundledore
   description: "Proviseur du Lyc\xE9e magique public George Pompidou."
-  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
-    le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant une carte
-    \xAB Seb du grenier \xBB sur le TERRAIN \xAB Lyc\xE9e magique Georges Pompidou
-    \xBB."
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur le
+    terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant une carte \"
+    Seb du grenier \" sur le TERRAIN \" Lyc\xE9e magique Georges Pompidou \"."
   type: 4
   materialCard: {fileID: 2100000, guid: 259d58188dfb5ec4bada0b35ab6af22a, type: 2}
   collector: 1
-  attack: 5
-  defense: 4
-  family: 0b000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: 3809041e82dd27c46915c4a663782c14,
-    type: 2}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 5
+    Defense: 4
+    Families: 0b000000
+    InvocationConditions: {fileID: 11400000, guid: 3809041e82dd27c46915c4a663782c14,
+      type: 2}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1
