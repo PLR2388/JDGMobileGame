@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Cards;
 using Cards.EquipmentCards;
-using UnityEngine;
+using Cards.InvocationCards;
 
-namespace Cards.InvocationCards
+namespace _Scripts.Units.Invocation
 {
     public class InGameInvocationCard : InGameCard
     {
@@ -22,6 +25,10 @@ namespace Cards.InvocationCards
         private bool affectedByEffect = true;
         private int remainedAttackThisTurn;
         private bool isControlled;
+
+        public List<global::Condition> Conditions = new List<global::Condition>();
+        public List<Ability> Abilities = new List<Ability>();
+
 
         public int NumberOfTurnOnField => numberTurnOnField;
 
@@ -99,6 +106,12 @@ namespace Cards.InvocationCards
             invocationActionEffect = baseInvocationCard.BaseInvocationCardStats.InvocationActionEffect;
             invocationDeathEffect = baseInvocationCard.BaseInvocationCardStats.InvocationDeathEffect;
             IsAffectedByEffectCard = baseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
+            Conditions = baseInvocationCard.Conditions.Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
+        }
+
+        public bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+        {
+            return Conditions.Count == 0 || Conditions.TrueForAll(condition => condition.CanBeSummoned(playerCards, opponentPlayerCards));
         }
 
         public void DeactivateEffect()

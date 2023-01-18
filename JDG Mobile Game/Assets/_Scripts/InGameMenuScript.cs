@@ -1,4 +1,5 @@
 ﻿using System;
+using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using Cards.FieldCards;
@@ -80,13 +81,16 @@ public class InGameMenuScript : MonoBehaviour
         var playerCard = GameLoop.IsP1Turn
             ? GameObject.Find("Player1").GetComponent<PlayerCards>()
             : GameObject.Find("Player2").GetComponent<PlayerCards>();
+        var opponentPlayerCard = GameLoop.IsP1Turn
+            ? GameObject.Find("Player2").GetComponent<PlayerCards>()
+            : GameObject.Find("Player1").GetComponent<PlayerCards>();
         switch (cardType)
         {
             case CardType.Invocation:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 var invocationCard = card as InGameInvocationCard;
                 putCardButton.GetComponent<Button>().interactable =
-                    invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
+                    invocationCard.CanBeSummoned(playerCard, opponentPlayerCard) && playerCard.invocationCards.Count < 4;
 
                 break;
             case CardType.Contre:

@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using Cards;
-using Cards.EquipmentCards;
 using Cards.InvocationCards;
 using UnityEngine;
 
@@ -12,6 +12,9 @@ namespace Cards.InvocationCards
         [SerializeField] private InvocationCardStats _invocationCardStats;
 
         public InvocationCardStats BaseInvocationCardStats => _invocationCardStats;
+
+        public List<ConditionName> Conditions = new List<ConditionName>();
+        public List<AbilityName> Abilities = new List<AbilityName>();
 
         private void Awake()
         {
