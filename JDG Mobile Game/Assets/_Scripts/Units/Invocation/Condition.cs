@@ -4,7 +4,11 @@ using UnityEngine;
 
 public enum ConditionName
 {
-    InvocationCardOnFieldCondition
+    InvocationCardOnFieldAlphaManCondition,
+    InvocationCardOnFieldAlphaVCondition,
+    FieldCardOnFieldAlphaVCondition,
+    EquipmentCardOnCardBenzaieCondition,
+    EquipmentCardOnCardCanardmanCondition
 }
 
 public abstract class Condition
