@@ -11,7 +11,7 @@ namespace _Scripts.Units.Invocation.Condition
             this.cardNames = cardNames;
         }
     
-        private readonly List<string> cardNames;
+        protected readonly List<string> cardNames;
         public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
         {
             return playerCards.invocationCards.Exists(card => cardNames.Contains(card.Title));

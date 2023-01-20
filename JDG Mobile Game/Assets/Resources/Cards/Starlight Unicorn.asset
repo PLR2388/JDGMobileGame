@@ -33,3 +33,5 @@ MonoBehaviour:
       type: 2}
     InvocationDeathEffect: {fileID: 0}
     AffectedByEffect: 1
+  Conditions: 15000000
+  Abilities: 

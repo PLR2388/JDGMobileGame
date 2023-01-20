@@ -32,3 +32,5 @@ MonoBehaviour:
     InvocationActionEffect: {fileID: 0}
     InvocationDeathEffect: {fileID: 0}
     AffectedByEffect: 0
+  Conditions: 10000000
+  Abilities: 
