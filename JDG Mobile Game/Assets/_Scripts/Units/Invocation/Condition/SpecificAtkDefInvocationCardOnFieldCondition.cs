@@ -12,7 +12,7 @@ public class SpecificAtkDefInvocationCardOnFieldCondition : Condition
         this.def = def;
     }
 
-    public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override bool CanBeSummoned(PlayerCards playerCards)
     {
         return playerCards.invocationCards.Exists(card => card.Defense >= def || card.Attack >= atk);
     }

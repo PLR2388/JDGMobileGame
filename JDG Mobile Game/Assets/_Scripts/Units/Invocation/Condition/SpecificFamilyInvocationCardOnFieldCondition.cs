@@ -12,7 +12,7 @@ public class SpecificFamilyInvocationCardOnFieldCondition : Condition
         this.family = family;
     }
 
-    public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override bool CanBeSummoned(PlayerCards playerCards)
     {
         return playerCards.invocationCards.Exists(card => card.Families.Contains(family));
     }

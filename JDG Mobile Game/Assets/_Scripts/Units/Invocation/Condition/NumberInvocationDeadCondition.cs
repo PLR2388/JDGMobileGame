@@ -14,7 +14,7 @@ public class NumberInvocationDeadCondition : Condition
         this.numberDeath = numberDeath;
     }
 
-    public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override bool CanBeSummoned(PlayerCards playerCards)
     {
         return playerCards.yellowTrash.FindAll(card => card.Type == CardType.Invocation).Count >= numberDeath;
     }

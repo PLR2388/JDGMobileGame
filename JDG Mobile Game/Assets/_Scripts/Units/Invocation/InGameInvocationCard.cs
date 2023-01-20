@@ -109,9 +109,9 @@ namespace _Scripts.Units.Invocation
             Conditions = baseInvocationCard.Conditions.Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
         }
 
-        public bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+        public bool CanBeSummoned(PlayerCards playerCards)
         {
-            return Conditions.Count == 0 || Conditions.TrueForAll(condition => condition.CanBeSummoned(playerCards, opponentPlayerCards));
+            return Conditions.Count == 0 || Conditions.TrueForAll(condition => condition.CanBeSummoned(playerCards));
         }
 
         public void DeactivateEffect()

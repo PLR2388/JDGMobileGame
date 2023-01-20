@@ -8,8 +8,8 @@ public class SpecificCardBackFromDeathCondition : InvocationCardOnFieldCondition
         
     }
 
-    public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return base.CanBeSummoned(playerCards, opponentPlayerCards) && playerCards.invocationCards.Find(card => card.Title == cardNames[0]).NumberOfDeaths > 0;
+        return base.CanBeSummoned(playerCards) && playerCards.invocationCards.Find(card => card.Title == cardNames[0]).NumberOfDeaths > 0;
     }
 }

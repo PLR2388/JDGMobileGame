@@ -12,7 +12,7 @@ public class EquipmentCardOnCardCondition : Condition
         this.invocationCardName = invocationCardName;
     }
 
-    public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override bool CanBeSummoned(PlayerCards playerCards)
     {
         return playerCards.invocationCards.Exists(card =>
             card.Title == invocationCardName && card.EquipmentCard != null &&

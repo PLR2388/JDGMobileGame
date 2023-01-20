@@ -33,7 +33,7 @@ public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Conditio
         numberOfCards = number;
     }
     
-    public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override bool CanBeSummoned(PlayerCards playerCards)
     {
         return playerCards.invocationCards.FindAll(card =>
                    (card.Attack >= attack || card.Defense >= defense) && card.Families.Contains(family)).Count >=

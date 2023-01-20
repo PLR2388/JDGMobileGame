@@ -12,7 +12,7 @@ public class FieldCardOnFieldCondition : Condition
     }
 
     private readonly string fieldName;
-    public override bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override bool CanBeSummoned(PlayerCards playerCards)
     {
         return playerCards.field != null && playerCards.field.Title == fieldName;
     }

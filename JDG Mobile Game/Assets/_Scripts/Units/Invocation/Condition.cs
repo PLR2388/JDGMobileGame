@@ -30,5 +30,5 @@ public abstract class Condition
     public ConditionName Name { get; set; }
     protected string Description { get; set; }
 
-    public abstract bool CanBeSummoned(PlayerCards playerCards, PlayerCards opponentPlayerCards);
+    public abstract bool CanBeSummoned(PlayerCards playerCards);
 }
