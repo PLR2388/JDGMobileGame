@@ -25,6 +25,20 @@ namespace _Scripts.Units.Invocation
         private bool affectedByEffect = true;
         private int remainedAttackThisTurn;
         private bool isControlled;
+        private bool cantBeAttack = false;
+        private bool attrackAttack = false;
+
+        public bool CantBeAttack
+        {
+            get => cantBeAttack;
+            set => cantBeAttack = value;
+        }
+
+        public bool Aggro
+        {
+            get => attrackAttack;
+            set => attrackAttack = value;
+        }
 
         public List<global::Condition> Conditions = new List<global::Condition>();
         public List<Ability> Abilities = new List<Ability>();
@@ -107,6 +121,7 @@ namespace _Scripts.Units.Invocation
             invocationDeathEffect = baseInvocationCard.BaseInvocationCardStats.InvocationDeathEffect;
             IsAffectedByEffectCard = baseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
             Conditions = baseInvocationCard.Conditions.Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
+            Abilities = baseInvocationCard.Abilities.Select(abilityName => AbilityLibrary.Instance.abilityDictionary[abilityName]).ToList();
         }
 
         public bool CanBeSummoned(PlayerCards playerCards)
