@@ -797,8 +797,16 @@ namespace Cards.InvocationCards
             var size = currentPlayerCard.invocationCards.Count;
 
             if (size >= 4) return;
+            
+            currentPlayerCard.invocationCards.Add(invocationCard);
+            currentPlayerCard.handCards.Remove(invocationCard);
 
-            var invocationStartEffect = invocationCard.InvocationStartEffect;
+            foreach (var ability in invocationCard.Abilities)
+            {
+                ability.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCards);
+            }
+
+            /*var invocationStartEffect = invocationCard.InvocationStartEffect;
             var invocationConditionEffect = invocationCard.InvocationConditions;
 
             if (invocationConditionEffect != null)
@@ -816,7 +824,7 @@ namespace Cards.InvocationCards
             if (invocationStartEffect != null)
             {
                 DealWithStartEffect(invocationCard, invocationStartEffect);
-            }
+            }*/
         }
 
         /// <summary>

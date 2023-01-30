@@ -84,6 +84,35 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.InvokeTentacules,
             "Invoke Tentacules from deck to field",
             "Tentacules"
+        ),
+        new GetSpecificCardFromDeckAbility(
+            AbilityName.GetLycéeMagiqueGeorgesPompidouFromDeck,
+            "Get Lycée magique Georges Pompidou from deck to hand",
+            "Lycée magique Georges Pompidou"
+        ),
+        new OptionalSacrificeForAtkDefAbility(
+            AbilityName.SacrificeSebDuGrenierOnHardCornerForAtkDef,
+            "Sacrifice Seb du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
+            "Daffy",
+            "Seb Du Grenier",
+            "Le Hard Corner",
+            4.5f,
+            4.5f
+        ),
+        new WinAtkDefFamilyAbility(
+            AbilityName.Win1Atk1DefDeveloper,
+            "Win 1 ATK and 1 DEF for every Developer on Field",
+            "David Gnouf",
+            CardFamily.Developer,
+            1,
+            1
+        ),
+        new SacrificeCardMinAtkMinDefAbility(
+            AbilityName.DictateurSympaSacrifice3Atk3Def,
+            "Dictateur Sympa needs a sacrifice of an invocation that has at least 3 atk or 3 def",
+            "Dictateur Sympa",
+            3,
+            3
         )
     };
 }

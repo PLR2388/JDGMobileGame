@@ -1,7 +1,6 @@
 
 
 using _Scripts.Units.Invocation;
-using Cards;
 using UnityEngine;
 
 public enum AbilityName
@@ -17,7 +16,11 @@ public enum AbilityName
     GetNounoursFromDeck,
     SacrificeJoueurDuGrenier,
     GetPetitePortionDeRizFromDeck,
-    InvokeTentacules
+    InvokeTentacules,
+    GetLycéeMagiqueGeorgesPompidouFromDeck,
+    SacrificeSebDuGrenierOnHardCornerForAtkDef,
+    Win1Atk1DefDeveloper,
+    DictateurSympaSacrifice3Atk3Def
 }
 
 public abstract class Ability
