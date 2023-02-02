@@ -19,7 +19,7 @@ public class SacrificeCardMinAtkMinDefAbility : Ability
         minDef = def;
     }
 
-    private static void DisplayOkMessage(Transform canvas, GameObject messageBox)
+    protected static void DisplayOkMessage(Transform canvas, GameObject messageBox)
     {
         messageBox.SetActive(false);
         GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention",
@@ -31,11 +31,14 @@ public class SacrificeCardMinAtkMinDefAbility : Ability
         };
     }
 
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    protected List<InGameInvocationCard> GetValidInvocationCards(PlayerCards playerCards)
     {
-        List<InGameCard> validInvocationCards =
-            new List<InGameCard>(
-                playerCards.invocationCards.FindAll(card => card.Title != originCardName && (card.Attack >= minAtk || card.Defense >= minDef)));
+        return playerCards.invocationCards.FindAll(card =>
+            card.Title != originCardName && (card.Attack >= minAtk || card.Defense >= minDef));
+    }
+    
+    protected static void DisplaySacrificeMessageBox(Transform canvas, PlayerCards playerCards, List<InGameCard> validInvocationCards)
+    {
         if (validInvocationCards.Count == 1)
         {
             InGameInvocationCard invocationCard = validInvocationCards[0] as InGameInvocationCard;
@@ -62,6 +65,15 @@ public class SacrificeCardMinAtkMinDefAbility : Ability
             messageBox.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas, messageBox); };
         }
     }
+
+    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        List<InGameCard> validInvocationCards =
+            new List<InGameCard>(GetValidInvocationCards(playerCards));
+        DisplaySacrificeMessageBox(canvas, playerCards, validInvocationCards);
+    }
+
+
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {

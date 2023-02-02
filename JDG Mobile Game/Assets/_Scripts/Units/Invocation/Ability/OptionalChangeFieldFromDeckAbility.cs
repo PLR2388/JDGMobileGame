@@ -48,7 +48,15 @@ public class OptionalChangeFieldFromDeckAbility : Ability
                     }
                     else
                     {
-                        
+                        if (playerCards.field == null)
+                        {
+                            playerCards.field = fieldCard;
+                        }
+                        else
+                        {
+                            playerCards.yellowTrash.Add(playerCards.field);
+                            playerCards.field = fieldCard;
+                        }
                     }
                 };
                 messageBox1.GetComponent<MessageBox>().NegativeAction = () =>

@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using _Scripts.Units.Invocation;
-using Cards;
 using UnityEngine;
 
 public class InvokeSpecificCardAbility : Ability
@@ -23,7 +20,7 @@ public class InvokeSpecificCardAbility : Ability
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
                     canvas, 
-                    "Benzaie jeune",
+                    "Invocation",
                     "Veux-tu aller invoquer directement " + cardName + " ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {

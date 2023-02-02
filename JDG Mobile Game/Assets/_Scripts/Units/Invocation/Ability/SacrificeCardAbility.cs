@@ -3,13 +3,25 @@ using UnityEngine;
 
 public class SacrificeCardAbility : Ability
 {
-    private readonly string cardName;
+    protected readonly string cardName;
 
     public SacrificeCardAbility(AbilityName name, string description, string cardName)
     {
         Name = name;
         Description = description;
         this.cardName = cardName;
+    }
+    
+    protected static void DisplayOkMessage(Transform canvas, GameObject messageBox)
+    {
+        messageBox.SetActive(false);
+        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention",
+            "Tu dois sélectionner une carte à sacrifier");
+        messageBox1.GetComponent<MessageBox>().OkAction = () =>
+        {
+            messageBox.SetActive(true);
+            Object.Destroy(messageBox1);
+        };
     }
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {

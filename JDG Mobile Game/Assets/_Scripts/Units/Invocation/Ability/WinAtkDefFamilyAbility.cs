@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
@@ -7,10 +5,10 @@ using UnityEngine;
 
 public class WinAtkDefFamilyAbility : Ability
 {
-    private CardFamily family;
-    private float attack;
-    private float defense;
-    private string cardName;
+    protected CardFamily family;
+    protected float attack;
+    protected float defense;
+    protected string cardName;
 
     public WinAtkDefFamilyAbility(AbilityName name, string description, string cardName, CardFamily family, float atk,
         float def)
@@ -23,14 +21,14 @@ public class WinAtkDefFamilyAbility : Ability
         defense = def;
     }
     
-    private void IncrementAtkDefInvocationCard(PlayerCards playerCards, int numberCardInvocation)
+    protected void IncrementAtkDefInvocationCard(PlayerCards playerCards, int numberCardInvocation)
     {
         InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => card.Title == cardName);
         invocationCard.Attack += numberCardInvocation * attack;
         invocationCard.Defense += numberCardInvocation * defense;
     }
     
-    private void DecrementAtkDefInvocationCard(PlayerCards playerCards, int numberCardInvocation)
+    protected void DecrementAtkDefInvocationCard(PlayerCards playerCards, int numberCardInvocation)
     {
         InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => card.Title == cardName);
         invocationCard.Attack -= numberCardInvocation * attack;

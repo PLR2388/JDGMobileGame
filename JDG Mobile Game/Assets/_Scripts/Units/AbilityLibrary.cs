@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
-using UnityEngine;
 
 
 public class AbilityLibrary : StaticInstance<AbilityLibrary>
@@ -100,7 +99,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             4.5f
         ),
         new WinAtkDefFamilyAbility(
-            AbilityName.Win1Atk1DefDeveloper,
+            AbilityName.DavidGnoufWin1Atk1DefDeveloper,
             "Win 1 ATK and 1 DEF for every Developer on Field",
             "David Gnouf",
             CardFamily.Developer,
@@ -113,6 +112,96 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Dictateur Sympa",
             3,
             3
-        )
+        ),
+        new OptionalChangeFieldFromDeckAbility(
+            AbilityName.ChangeFieldWithFieldFromDeck,
+            "Change current field with field from deck"
+        ),
+        new WinAtkDefFamilityAtkDefConditionAbility(
+            AbilityName.DresseurBidulmonWin1ATK1DefJaponWith2ATK2DEFCondition,
+            "Win 1 ATK and 1 DEF for every japon invocard card with 2 ATK and 2 DEF",
+            "Dresseur de Bidulmon",
+            CardFamily.Japan,
+            1,
+            1,
+            2,
+            2
+        ),
+        new InvokeSpecificCardAbility(
+            AbilityName.InvokeDresseurBidulmon,
+            "Invoke Dresseur de Bidulmon from deck to field",
+            "Dresseur de Bidulmon"
+        ),
+        new GetSpecificCardFromDeckAbility(
+            AbilityName.GetZozanKebabFromDeck,
+            "Get Zozan Kebab from deck to hand",
+            "Zozan Kebab"
+        ),
+        new SacrificeCardFamilyAbility(
+            AbilityName.GeorgesSacrificeWizard,
+            "Georges Tuséki need a sacrifice of a wizard invocation card",
+            CardFamily.Wizard,
+            "Georges Tuséki"
+        ),
+        new GetSpecificCardFromDeckAbility(
+            AbilityName.GetConvocationAuLyceeFromDeck,
+            "Get Convocation au lycée from deck to hand",
+            "Convocation au lycée"
+        ),
+        new ProtectBehindDuringAttackAbility(
+            AbilityName.GranolaxProtectedBehindStarlightUnicorn,
+            "Granolax protect himself behind Starlight Unicorn if present",
+            "Starlight Unicorn",
+            "Granolax"
+        ),
+        new GetSpecificCardFromDeckAbility(
+            AbilityName.GetCanardSignal,
+            "Get Canard-signal from deck to hand",
+            "Canard-signal"
+        ),
+        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
+            AbilityName.JeanClaudeSacrificeDeveloper3Atk3Def,
+            "Jean Claude needs 2 developer sacrifce with at least 3 Atk or 3 Def",
+            "Jean-Claude",
+            3,
+            3,
+            CardFamily.Developer,
+            2
+        ),
+        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
+            AbilityName.JeanGuySacrificeHardCornerAtk3Def,
+            "Jean Guy needs 2 hard corner sacrifce with at least 3 Atk or 3 Def",
+            "Jean-Guy",
+            3,
+            3,
+            CardFamily.HardCorner,
+            2
+        ),
+        new CantBeAttackKillByInvocationAbility(
+            AbilityName.JeanLouisCantBeAttackKill,
+            "Jean-Louis La Chaussette can't be attacked or killed by other invocation cards",
+            "Jean-Louis La Chaussette"
+        ),
+        new BackToHandAfterDeathAbility(
+            AbilityName.JeanMarcComesBackFromDeath,
+            "Jean-Marc Soul comes back to player hand everytime he died",
+            "Jean-Marc Soul"
+        ),
+        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
+            AbilityName.Koaloutre2JapanSacrifice,
+            "Koaloutre-Ornithambas Lapinzord nain de Californie needs 2 Japan sacrifice to be invoke",
+            "Koaloutre-Ornithambas Lapinzord nain de Californie",
+            0,
+            0,
+            CardFamily.Japan,
+            2
+        ),
+        new DestroyFieldAtkDefAttackConditionAbility(
+            AbilityName.KoaloutreDestroyField,
+            "Koaloutre-Ornithambas Lapinzord nain de Californie can destroy a field but divide Atk by 2",
+            "Koaloutre-Ornithambas Lapinzord nain de Californie",
+            2,
+            1
+            )
     };
 }
