@@ -32,7 +32,16 @@ public enum AbilityName
     JeanLouisCantBeAttackKill,
     JeanMarcComesBackFromDeath,
     Koaloutre2JapanSacrifice,
-    KoaloutreDestroyField
+    KoaloutreDestroyField,
+    KillOponentInvocation,
+    CantLiveWithoutJDG,
+    CanOnlyAttackPetiteFille,
+    GetForetElfesSylvains,
+    InvokeSebOrJDG,
+    BananeCantLiveWithoutComics,
+    Lolhitler2IncarnationSacrifice,
+    LolhitlerDestroyField,
+    GetBenzaieJeuneFromDeck
 }
 
 public abstract class Ability

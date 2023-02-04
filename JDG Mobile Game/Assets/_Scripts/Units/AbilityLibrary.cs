@@ -202,6 +202,65 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Koaloutre-Ornithambas Lapinzord nain de Californie",
             2,
             1
-            )
+        ),
+        new KillOpponentInvocationCardAbility(
+            AbilityName.KillOponentInvocation,
+            "Kill an invocation opponent when invoke"
+        ),
+        new CantLiveWithoutInvocationCardsAbility(
+            AbilityName.CantLiveWithoutJDG,
+            "La Petite Fille can't live without Joueur Du Grenier",
+            "La Petite Fille",
+            new List<string>
+            {
+                "Joueur Du Grenier"
+            }
+        ),
+        new CanOnlyAttackItselfAbility(
+            AbilityName.CanOnlyAttackPetiteFille,
+            "Opponent can only attack La Petite Fille",
+            "La Petite Fille"
+        ),
+        new GetSpecificCardFromDeckAbility(
+            AbilityName.GetForetElfesSylvains,
+            "Get Forêt des elfes sylvains from deck to hand",
+            "Forêt des elfes sylvains"
+        ),
+        new InvokeSpecificCardChoiceAbility(
+            AbilityName.InvokeSebOrJDG,
+            "Offer the choice to invoke Joueur Du Grenier or Seb Du Grenier",
+            new List<string>
+            {
+                "Joueur Du Grenier",
+                "Seb Du Grenier"
+            }
+        ),
+        new CantLiveWithoutFamilyInvocationAbility(
+            AbilityName.BananeCantLiveWithoutComics,
+            "L'homme-banane cannot live without Comic invocation card",
+            "L'homme-banane",
+            CardFamily.Comics
+        ),
+        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
+            AbilityName.Lolhitler2IncarnationSacrifice,
+            "Lolhitler needs 2 Incarnation sacrifice to be invoke",
+            "Lolhitler",
+            0,
+            0,
+            CardFamily.Japan,
+            2
+        ),
+        new DestroyFieldAtkDefAttackConditionAbility(
+            AbilityName.LolhitlerDestroyField,
+            "Lolhitler can destroy a field but divide Def by 2",
+            "Lolhitler",
+            1,
+            2
+        ),
+        new GetSpecificCardFromDeckAbility(
+            AbilityName.GetBenzaieJeuneFromDeck,
+            "Get Benzaie jeune from deck to hand",
+            "Benzaie jeune"
+        ),
     };
 }

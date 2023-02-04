@@ -35,4 +35,4 @@ MonoBehaviour:
     InvocationDeathEffect: {fileID: 0}
     AffectedByEffect: 1
   Conditions: 0c000000
-  Abilities: 
+  Abilities: 1c0000001d000000

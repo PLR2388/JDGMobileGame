@@ -23,7 +23,7 @@ public class GetSpecificCardFromDeckAbility : Ability
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
                     canvas, 
-                    "Benzaie jeune",
+                    "Aller chercher carte",
                     "Veux-tu aller chercher directement " + cardName + " dans ton deck ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
