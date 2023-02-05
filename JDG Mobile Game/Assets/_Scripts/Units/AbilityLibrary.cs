@@ -40,7 +40,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Sacrifice Archibald Von Grenier",
             "Archibald Von Grenier"
         ),
-        new CantBeAttackIfFamilyAbility(
+        new CantBeAttackAbility(
             AbilityName.BabsCantBeAttackIfComics,
             "Babs can't be attack if there is another card on the field belonging to Comics family",
             "Babs",
@@ -177,7 +177,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             CardFamily.HardCorner,
             2
         ),
-        new CantBeAttackKillByInvocationAbility(
+        new CantBeAttackAbility(
             AbilityName.JeanLouisCantBeAttackKill,
             "Jean-Louis La Chaussette can't be attacked or killed by other invocation cards",
             "Jean-Louis La Chaussette"
