@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GetSpecificCardFromDeckAbility : Ability
 {
-    private string cardName;
+    protected string cardName;
 
     public GetSpecificCardFromDeckAbility(AbilityName name, string description, string cardName)
     {

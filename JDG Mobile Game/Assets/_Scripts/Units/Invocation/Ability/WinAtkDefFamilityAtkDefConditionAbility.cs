@@ -13,7 +13,7 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
         cardName, family, atk, def)
     {
         invocationAtkCondition = invocationAtk;
-        invocationDefCondition = invocationDefCondition;
+        invocationDefCondition = invocationDef;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)

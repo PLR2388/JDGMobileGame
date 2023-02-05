@@ -53,7 +53,15 @@ public enum AbilityName
     SacrificeSebDuGrenier,
     ProprioFistiliandWin1Atk1DefFistiland,
     SacrificeClicheRaciste,
-    SandrineKillEnemyIfDestroy
+    SandrineKillEnemyIfDestroy,
+    SheikPointSacrificeToInvoke,
+    GetPatronInfogramesFromDeckYellowTrash,
+    CantLiveWithoutGranolaxOrMechaGranolax,
+    SkipOpponentAttackEveryTurn,
+    ScenaristeCanadienComesBackFromDeath5times,
+    TentaculesCantLiveWithoutJapon,
+    CanOnlyAttackTentacules,
+    Draw2Cards
 }
 
 public abstract class Ability

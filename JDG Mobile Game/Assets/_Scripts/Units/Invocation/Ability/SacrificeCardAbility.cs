@@ -11,18 +11,7 @@ public class SacrificeCardAbility : Ability
         Description = description;
         this.cardName = cardName;
     }
-    
-    protected static void DisplayOkMessage(Transform canvas, GameObject messageBox)
-    {
-        messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention",
-            "Tu dois sélectionner une carte à sacrifier");
-        messageBox1.GetComponent<MessageBox>().OkAction = () =>
-        {
-            messageBox.SetActive(true);
-            Object.Destroy(messageBox1);
-        };
-    }
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => cardName == card.Title);

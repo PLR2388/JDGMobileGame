@@ -15,7 +15,8 @@ namespace Cards
         Police,
         Rpg,
         Spatial,
-        Wizard
+        Wizard,
+        Any
     }
     
     // Define an extension method in a non-nested static class.

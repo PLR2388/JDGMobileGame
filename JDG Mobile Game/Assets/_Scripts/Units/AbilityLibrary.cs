@@ -15,11 +15,11 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
 
     private readonly List<Ability> abilities = new List<Ability>
     {
-        new CantLiveWithoutInvocationCardsAbility(
+        new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune,
             "Alpha man can't live without Benzaie or Benzaie jeune",
             "Alpha Man",
-            new List<string>
+            list: new List<string>
             {
                 "Benzaie jeune",
                 "Benzaie"
@@ -106,7 +106,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             1,
             1
         ),
-        new SacrificeCardMinAtkMinDefAbility(
+        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
             AbilityName.DictateurSympaSacrifice3Atk3Def,
             "Dictateur Sympa needs a sacrifice of an invocation that has at least 3 atk or 3 def",
             "Dictateur Sympa",
@@ -137,11 +137,11 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Get Zozan Kebab from deck to hand",
             "Zozan Kebab"
         ),
-        new SacrificeCardFamilyAbility(
+        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
             AbilityName.GeorgesSacrificeWizard,
             "Georges Tuséki need a sacrifice of a wizard invocation card",
-            CardFamily.Wizard,
-            "Georges Tuséki"
+            "Georges Tuséki",
+            cardFamily: CardFamily.Wizard
         ),
         new GetSpecificCardFromDeckAbility(
             AbilityName.GetConvocationAuLyceeFromDeck,
@@ -207,11 +207,11 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.KillOponentInvocation,
             "Kill an invocation opponent when invoke"
         ),
-        new CantLiveWithoutInvocationCardsAbility(
+        new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutJDG,
             "La Petite Fille can't live without Joueur Du Grenier",
             "La Petite Fille",
-            new List<string>
+            list: new List<string>
             {
                 "Joueur Du Grenier"
             }
@@ -235,11 +235,11 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
                 "Seb Du Grenier"
             }
         ),
-        new CantLiveWithoutFamilyInvocationAbility(
+        new CantLiveWithoutAbility(
             AbilityName.BananeCantLiveWithoutComics,
             "L'homme-banane cannot live without Comic invocation card",
             "L'homme-banane",
-            CardFamily.Comics
+            family: CardFamily.Comics
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
             AbilityName.Lolhitler2IncarnationSacrifice,
@@ -282,11 +282,11 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             4.5f,
             4.5f
         ),
-        new CantLiveWithoutFamilyInvocationAbility(
+        new CantLiveWithoutAbility(
             AbilityName.MoiseCantLiveWithoutHuman,
             "Moïse, le plus grand de tous les hébreux cannot live without Human invocation card",
             "Moïse, le plus grand de tous les hébreux",
-            CardFamily.Human
+            family: CardFamily.Human
         ),
         new CopyAtkDefAbility(
             AbilityName.NounoursCopyBenzaieJeune,
@@ -333,6 +333,52 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.SandrineKillEnemyIfDestroy,
             "Sandrine le porte-manteau extraterrestre kill its opponent if detroy by another invocation card",
             "Sandrine le porte-manteau extraterrestre"
+        ),
+        new SacrificeToInvokeAbility(
+            AbilityName.SheikPointSacrificeToInvoke,
+            "Sacrifice Sheik Point to invoke non-collector card from yellow trash",
+            "Sheik Point"
+        ),
+        new GetSpecificCardFromDeckOrYellowCardAbility(
+            AbilityName.GetPatronInfogramesFromDeckYellowTrash,
+            "Get Patron D'Infogrames from deck or yellow trash",
+            "Patron D'Infogrames"
+        ),
+        new CantLiveWithoutAbility(
+            AbilityName.CantLiveWithoutGranolaxOrMechaGranolax,
+            "Starlight Unicorn can't live without Granolax or Mecha-Granolax",
+            "Starlight Unicorn",
+            list: new List<string>
+            {
+                "Granolax",
+                "Mecha-Granolax"
+            }
+        ),
+        new SkipOpponentAttackAbility(
+            AbilityName.SkipOpponentAttackEveryTurn,
+            "Player can choose to skip attack of one of his opponent invocation cards"
+        ),
+        new BackToHandAfterDeathAbility(
+            AbilityName.ScenaristeCanadienComesBackFromDeath5times,
+            "Studio de scénaristes Canadien comes back to player hand everytime he died",
+            "Studio de scénaristes Canadien",
+            5
+        ),
+        new CantLiveWithoutAbility(
+            AbilityName.TentaculesCantLiveWithoutJapon,
+            "Tentacules cannot live without Japan invocation card",
+            "Tentacules",
+            family:CardFamily.Japan
+        ),
+        new CanOnlyAttackItselfAbility(
+            AbilityName.CanOnlyAttackTentacules,
+            "Opponent can only attack Tentacules",
+            "Tentacules"
+        ),
+        new DrawCardsAbility(
+            AbilityName.Draw2Cards,
+            "Can draw maximum 2 card when invoke",
+            2
         )
     };
 }
