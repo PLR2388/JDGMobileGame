@@ -32,3 +32,5 @@ MonoBehaviour:
     InvocationDeathEffect: {fileID: 11400000, guid: 0141e1807edc22544b8952c28c17ec6c,
       type: 2}
     AffectedByEffect: 1
+  Conditions: 
+  Abilities: 2c0000002d000000

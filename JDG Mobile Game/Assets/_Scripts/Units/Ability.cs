@@ -41,7 +41,19 @@ public enum AbilityName
     BananeCantLiveWithoutComics,
     Lolhitler2IncarnationSacrifice,
     LolhitlerDestroyField,
-    GetBenzaieJeuneFromDeck
+    GetBenzaieJeuneFromDeck,
+    ManuelGetEquipmentCardWithoutAttack,
+    SacrificeGranolax,
+    SacrificeJDGOnStudioDevForAtkDef, 
+    MoiseCantLiveWithoutHuman,
+    NounoursCopyBenzaieJeune,
+    Papy1TurnSurvive,
+    PapyGiveDeathWhenDie,
+    PatateProtectBehindGreaterDef,
+    SacrificeSebDuGrenier,
+    ProprioFistiliandWin1Atk1DefFistiland,
+    SacrificeClicheRaciste,
+    SandrineKillEnemyIfDestroy
 }
 
 public abstract class Ability
@@ -70,22 +82,24 @@ public abstract class Ability
         float resultAttack = attackedCard.Defense - attacker.Attack;
         if (resultAttack > 0)
         {
-            playerCards.invocationCards.Remove(attacker);
-            playerCards.yellowTrash.Add(attacker);
+            OnCardDeath(canvas, attacker, playerCards);
             currentPlayerStatus.ChangePv(-resultAttack);
         }
         else if (resultAttack == 0)
         {
-            playerCards.invocationCards.Remove(attacker);
-            playerCards.yellowTrash.Add(attacker);
-            opponentPlayerCards.invocationCards.Remove(attackedCard);
-            opponentPlayerCards.yellowTrash.Add(attackedCard);
+            OnCardDeath(canvas, attacker, playerCards);
+            OnCardDeath(canvas, attackedCard, opponentPlayerCards);
         }
         else
         {
-            opponentPlayerCards.invocationCards.Remove(attackedCard);
-            opponentPlayerCards.yellowTrash.Add(attackedCard);
+            OnCardDeath(canvas, attackedCard, opponentPlayerCards);
             opponentPlayerStatus.ChangePv(resultAttack);
         }
+    }
+
+    protected virtual void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    {
+        playerCards.yellowTrash.Add(deadCard);
+        playerCards.invocationCards.Remove(deadCard);
     }
 }

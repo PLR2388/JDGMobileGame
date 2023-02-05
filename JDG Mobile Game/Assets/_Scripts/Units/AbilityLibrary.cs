@@ -262,5 +262,77 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Get Benzaie jeune from deck to hand",
             "Benzaie jeune"
         ),
+        new GetTypeCardFromDeckWithoutAttackAbility(
+            AbilityName.ManuelGetEquipmentCardWithoutAttack,
+            "Manuel Ferrara can get Equipment card and loose its attack phase",
+            "Manuel Ferrara",
+            CardType.Equipment
+        ),
+        new SacrificeCardAbility(
+            AbilityName.SacrificeGranolax,
+            "Sacrifice Granolax",
+            "Granolax"
+        ),
+        new OptionalSacrificeForAtkDefAbility(
+            AbilityName.SacrificeJDGOnStudioDevForAtkDef,
+            "Sacrifice Joueur Du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
+            "Mohammad",
+            "Joueur Du Grenier",
+            "Studio de développement",
+            4.5f,
+            4.5f
+        ),
+        new CantLiveWithoutFamilyInvocationAbility(
+            AbilityName.MoiseCantLiveWithoutHuman,
+            "Moïse, le plus grand de tous les hébreux cannot live without Human invocation card",
+            "Moïse, le plus grand de tous les hébreux",
+            CardFamily.Human
+        ),
+        new CopyAtkDefAbility(
+            AbilityName.NounoursCopyBenzaieJeune,
+            "Nounours copy atk and def Benzaie jeune",
+            "Nounours",
+            "Benzaie jeune"
+        ),
+        new LimitTurnExistenceAbility(
+            AbilityName.Papy1TurnSurvive,
+            "Papy Grenier survive only one turn",
+            "Papy Grenier",
+            1
+        ),
+        new GetSpecificCardAfterDeathAbility(
+            AbilityName.PapyGiveDeathWhenDie,
+            "Papy Grenier gives La Mort from deck to hand when he die",
+            "La Mort",
+            "Papy Grenier"
+        ),
+        new ProtectBehindDuringAttackDefConditionAbility(
+            AbilityName.PatateProtectBehindGreaterDef,
+            "Patate protect itself behind invocation card with greater def",
+            "Patate"
+        ),
+        new SacrificeCardAbility(
+            AbilityName.SacrificeSebDuGrenier,
+            "Sacrifice Seb Du Grenier",
+            "Seb Du Grenier"
+        ),
+        new WinAtkDefFamilyAbility(
+            AbilityName.ProprioFistiliandWin1Atk1DefFistiland,
+            "Propriétaire De Fistiland win 1 ATK and 1 DEF for every Fistiland on Field",
+            "Propriétaire De Fistiland",
+            CardFamily.Fistiland,
+            1,
+            1
+        ),
+        new SacrificeCardAbility(
+            AbilityName.SacrificeClicheRaciste,
+            "Sacrifice Cliché Raciste",
+            "Cliché Raciste"
+        ),
+        new KillBothCardsIfAttackAbility(
+            AbilityName.SandrineKillEnemyIfDestroy,
+            "Sandrine le porte-manteau extraterrestre kill its opponent if detroy by another invocation card",
+            "Sandrine le porte-manteau extraterrestre"
+        )
     };
 }

@@ -15,7 +15,7 @@ public class GetSpecificCardFromDeckAbility : Ability
         this.cardName = cardName;
     }
 
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    protected void GetSpecificCard(Transform canvas, PlayerCards playerCards)
     {
         bool hasCardInDeck = playerCards.deck.Exists(card => card.Title == cardName);
         if (hasCardInDeck)
@@ -37,6 +37,11 @@ public class GetSpecificCardFromDeckAbility : Ability
                 Object.Destroy(messageBox);
             };
         }
+    }
+
+    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        GetSpecificCard(canvas, playerCards);
     }
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)

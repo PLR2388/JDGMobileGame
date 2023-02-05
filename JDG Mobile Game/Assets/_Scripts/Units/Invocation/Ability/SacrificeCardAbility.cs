@@ -27,6 +27,10 @@ public class SacrificeCardAbility : Ability
     {
         InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => cardName == card.Title);
         // TODO Centralize death invocation Card
+        if (invocationCard.EquipmentCard != null)
+        {
+            playerCards.yellowTrash.Add(invocationCard.EquipmentCard);
+        }
         playerCards.invocationCards.Remove(invocationCard);
         playerCards.yellowTrash.Add(invocationCard);
     }
