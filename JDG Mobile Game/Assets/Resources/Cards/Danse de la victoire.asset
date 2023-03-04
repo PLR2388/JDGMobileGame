@@ -18,5 +18,7 @@ MonoBehaviour:
     et d\xE9truit une de celles de votre terrain. L'INVOCATION victorieuse lance
     apr\xE8s destruction de votre carte une attaque sur chacune des autres cartes
     INVOCATION pr\xE9sentes sur son propre terrain."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: ffc361b54a803ae4f8bd1738aac413c9, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: 7d0dc2243d05e8d439aaf381ead7f069, type: 3}

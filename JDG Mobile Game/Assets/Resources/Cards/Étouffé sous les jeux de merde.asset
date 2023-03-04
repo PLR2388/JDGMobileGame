@@ -18,5 +18,7 @@ MonoBehaviour:
     sur le terrain ou directement vos \xE9toiles de vie, vous pouvez annuler son
     attaque et l'envoyer directement \xE0 la poubelle jaune en vous d\xE9faussant
     d'une carte de votre main."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 9ff40a80b884dd641857814eeb237533, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: 8ab9ede2a614e2142ba6ae720ca30657, type: 3}

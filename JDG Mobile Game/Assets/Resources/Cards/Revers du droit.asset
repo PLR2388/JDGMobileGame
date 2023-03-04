@@ -17,5 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "Si une INVOCATION adverse attaque une de vos cartes INVOCATION
     sur le terrain ou directement vos \xE9toiles de vie, la puissance de son attaque
     est multipli\xE9e par 2 et lui est renvoy\xE9e."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: f5bd9ae8d674f2d42bdc01ff6556d51b, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: bce5aa0b06aac9d4b89ec954b6737cfb, type: 3}

@@ -17,9 +17,10 @@ MonoBehaviour:
   descriptionDetaillee: "\xC9quiper cette carte \xE0 une invocation permet de lui
     d\xE9s\xE9quiper et envoyer \xE0 la poubelle jaune une carte EQUIPEMENT d\xE9j\xE0
     \xE9quip\xE9e."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 9998414d579eeff42a2ac03d8b125c87, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: 006fd18b675caf444a0fb90d25ff0b63, type: 3}
   equipmentInstantEffect: {fileID: 11400000, guid: 3d227de83a4684f45b97f78093d499a7,
     type: 2}
   equipmentPermEffect: {fileID: 0}

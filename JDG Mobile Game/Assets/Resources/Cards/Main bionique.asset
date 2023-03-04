@@ -16,9 +16,10 @@ MonoBehaviour:
   description: "M\xE9tal jouir ?"
   descriptionDetaillee: "L'INVOCATION \xE9quip\xE9e gagne 3 \xE9toiles d'ATQ et perd
     1 \xE9toile de DEF."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: ca6215c48a43b604ba68afcdf218ffd2, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: c2fdefc837dde064babd2763c1a34682, type: 3}
   equipmentInstantEffect: {fileID: 11400000, guid: c6d28317853836e4dafea607ef6c648d,
     type: 2}
   equipmentPermEffect: {fileID: 0}

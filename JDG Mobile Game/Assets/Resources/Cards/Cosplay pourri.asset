@@ -16,9 +16,10 @@ MonoBehaviour:
   description: "Voil\xE0 ce qui arrive quand la costumi\xE8re est malade."
   descriptionDetaillee: "Enl\xE8ve \xE0 une INVOCATION une \xE9toile en ATQ et une
     \xE9toile en DEF."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: bc4eadaa97a446a42a73856a82b1066d, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: 4a147dba19d07cb429904818010c4907, type: 3}
   equipmentInstantEffect: {fileID: 11400000, guid: 7b966f354cc14bb42b5de9fa90e9ff11,
     type: 2}
   equipmentPermEffect: {fileID: 0}

@@ -17,20 +17,17 @@ MonoBehaviour:
   descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
     le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant la carte \xAB
     Joueur Du Grenier \xBB \xE9quip\xE9 d'une carte \xAB Canarang \xBB."
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: de4c31eed23f03841bcdbdc4d24abd86, type: 2}
   collector: 1
+  image: {fileID: 21300000, guid: 707e45c37d8c7cd44b31f08caf36555b, type: 3}
   attack: 5
   defense: 4
-  family:
-  - comics
-  equipmentCard: {fileID: 0}
+  family: 00000000
   invocationConditions: {fileID: 11400000, guid: 97d5ac54ded281540973c44eda203745,
     type: 2}
   invocationStartEffect: {fileID: 0}
   invocationPermEffect: {fileID: 0}
   invocationActionEffect: {fileID: 0}
   invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
+  affectedByEffect: 1

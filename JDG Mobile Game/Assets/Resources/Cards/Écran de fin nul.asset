@@ -17,5 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "S'utilise dans le cas o\xF9 une INVOCATION adverse attaque
     et d\xE9truit une de celles de votre terrain. L'INVOCATION victorieuse ne pourra
     plus lancer d'attaque et ce jusqu'\xE0 la fin du duel."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 7fa2b3968ae8f5148a669bd3aa62f6c9, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: bababa503d075bf4ea101db847428ffc, type: 3}

@@ -16,5 +16,7 @@ MonoBehaviour:
   description: Cadeau de la maison, joie du patron.
   descriptionDetaillee: "Si votre adversaire invoque une ou plusieurs cartes INVOCATION
     lors de ce tour, vous pouvez lui soustraire 3 \xE9toiles de vie par carte invoqu\xE9e."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: ec2fa65ac39c96d40ad260cdc9f880fd, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: b59911b23bac61244878840a483deef8, type: 3}

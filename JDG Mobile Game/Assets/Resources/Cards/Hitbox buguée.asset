@@ -18,5 +18,7 @@ MonoBehaviour:
     sur le terrain ou directement vos \xE9toiles de vie son attaque est annul\xE9e
     et le montant de ses \xE9toiles d'ATQ au moment de l'attaque est soustraite directement
     des \xE9toiles de vie de votre adversaire."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 4bbbac60b98aade4b903d9e4ce6f95b6, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: ab8b799631b70b14eaedb323a903a660, type: 3}

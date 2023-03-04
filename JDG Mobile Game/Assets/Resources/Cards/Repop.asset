@@ -17,5 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "Si votre adversaire envoie une de vos cartes INVOCATION
     \xE0 la poubelle jaune, vous pouvez la r\xE9invoquer par invocation sp\xE9ciale
     imm\xE9diatement sur le terrain."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 4a432ce898f0b634893459a3ea76d5a5, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: 2c8203c93bf82f34c9b4221a06744267, type: 3}

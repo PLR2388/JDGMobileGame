@@ -16,9 +16,10 @@ MonoBehaviour:
   description: Ok Bibiche, je vais me raser et me mettre au sport !
   descriptionDetaillee: "L'INVOCATION \xE9quip\xE9e ne peut \xEAtre attaqu\xE9e ni
     d\xE9truite par une autre carte INVOCATION."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 402ef32c302e7a24ab239ecea772c3c3, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: 2e3dc4835198c2941849a5793134a1f8, type: 3}
   equipmentInstantEffect: {fileID: 0}
   equipmentPermEffect: {fileID: 11400000, guid: 4224df8db189b9e478e1b8e9e79f8d9f,
     type: 2}

@@ -16,9 +16,10 @@ MonoBehaviour:
   description: Pour vous les mecs !
   descriptionDetaillee: "Multiplie par 2 l'ATQ et divise par 2 la DEF de l'INVOCATION
     \xE9quip\xE9e."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 263669d008dcc7348a559eacfb1f315e, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: f2bd40c42c7c6aa49bbc8d4f383f5fd8, type: 3}
   equipmentInstantEffect: {fileID: 11400000, guid: 57f5c8b64fae26b49b225849dc54cb54,
     type: 2}
   equipmentPermEffect: {fileID: 0}

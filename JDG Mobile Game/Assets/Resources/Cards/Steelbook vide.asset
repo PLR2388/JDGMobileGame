@@ -16,5 +16,7 @@ MonoBehaviour:
   description: "C'est \xE0 moi de finir l'assemblage des jeux ou quoi ?!"
   descriptionDetaillee: "Si votre adversaire joue une carte CONTRE, elle est annul\xE9e
     et retourne dans sa pioche avant de la rem\xE9langer."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: dd6efb888eb535340aae803608c0db99, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: 3bf9b148c3a7fff4ebe8f4e19b6cbf22, type: 3}

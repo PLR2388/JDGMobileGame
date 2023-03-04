@@ -19,5 +19,6 @@ MonoBehaviour:
   type: 3
   materialCard: {fileID: 2100000, guid: 5aef8d60f0a01c24b8e33715fc651396, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: ec21153e2f323914aa6d71b23a773343, type: 3}
   family: 6
   fieldCardEffect: {fileID: 11400000, guid: d59a963dbe695774ea1ec142b8245e86, type: 2}

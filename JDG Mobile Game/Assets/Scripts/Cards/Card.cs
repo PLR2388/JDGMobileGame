@@ -11,6 +11,7 @@ namespace Cards
         [SerializeField] protected CardType type;
         [SerializeField] protected Material materialCard;
         [SerializeField] protected bool collector;
+        [SerializeField] protected Sprite image;
         
         public string Nom => nom;
 

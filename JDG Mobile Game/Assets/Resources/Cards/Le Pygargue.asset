@@ -16,10 +16,16 @@ MonoBehaviour:
   description: Facilement confondu avec L'Aigle De La Nuit.
   descriptionDetaillee: "Aucun effet ! Question de droits pour la photo. Sinon cette
     carte aurait valu au moins 5 \xE9toiles d'ATQ !"
-  type: invocation
+  type: 4
   materialCard: {fileID: 2100000, guid: 67e9f6553518f134b94ad6fa4e1235fa, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: 2bc412c1647b80c4c8642939987736d0, type: 3}
   attack: 2
   defense: 3
-  family:
-  - comics
-  equipmentCard: {fileID: 0}
+  family: 00000000
+  invocationConditions: {fileID: 0}
+  invocationStartEffect: {fileID: 0}
+  invocationPermEffect: {fileID: 0}
+  invocationActionEffect: {fileID: 0}
+  invocationDeathEffect: {fileID: 0}
+  affectedByEffect: 1

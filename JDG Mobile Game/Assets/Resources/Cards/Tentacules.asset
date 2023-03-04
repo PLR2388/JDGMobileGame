@@ -21,10 +21,10 @@ MonoBehaviour:
   type: 4
   materialCard: {fileID: 2100000, guid: 778f3bf8428a5f84da0f5f505129f3f8, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: 994992db50537a44abcaee7516dae3a4, type: 3}
   attack: 2.5
   defense: 4
   family: 06000000
-  equipmentCard: {fileID: 0}
   invocationConditions: {fileID: 11400000, guid: 517b2c377df6f744187950ca7821a55a,
     type: 2}
   invocationStartEffect: {fileID: 0}
@@ -32,8 +32,4 @@ MonoBehaviour:
     type: 2}
   invocationActionEffect: {fileID: 0}
   invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  affectedByEffect: 1

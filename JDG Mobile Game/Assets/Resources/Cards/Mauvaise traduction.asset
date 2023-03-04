@@ -16,5 +16,7 @@ MonoBehaviour:
   description: Rayon magique !
   descriptionDetaillee: "Si votre adversaire joue une carte EFFET, vous pouvez l'annuler
     et l'envoyer \xE0 la poubelle jaune."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: fd4a547c464b5f04dbcc754a7c6a13f4, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: 8ec49e20a190b204e9dc5647e1684d97, type: 3}

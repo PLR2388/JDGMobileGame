@@ -18,5 +18,7 @@ MonoBehaviour:
     votre terrain, son attaque est annul\xE9e et l'INVOCATION qui a lanc\xE9 l'attaque
     passe de votre c\xF4t\xE9 du terrain s'il y a un emplacement libre, ce qui vous
     permet d'en prendre le contr\xF4le jusqu'\xE0 la fin du prochain tour."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: c00766f8d1aa73e418a83df57df0164f, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: c2967f6d9826a4242ba52c062f1e272f, type: 3}

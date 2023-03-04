@@ -17,5 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "Si votre adversaire fait une invocation sp\xE9ciale ou normale
     d'une INVOCATION sur le terrain, cette carte est envoy\xE9e directement \xE0
     la poubelle jaune."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 8779aa0457ebaa349989287dfb42cd85, type: 2}
+  collector: 0
+  image: {fileID: 21300000, guid: 4dc7aa7a0536f1c4981a5a0c45d29b18, type: 3}

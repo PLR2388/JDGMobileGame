@@ -17,6 +17,7 @@ MonoBehaviour:
   descriptionDetaillee: "Si votre adversaire inflige des d\xE9g\xE2ts \xE0 vos \xE9toiles
     de vie, ces d\xE9g\xE2ts sont annul\xE9s et toutes les cartes qu'il a jou\xE9
     ce tour vont directement \xE0 la poubelle jaune."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 618ebd11d5dcbdd4785eca92de543093, type: 2}
   collector: 1
+  image: {fileID: 21300000, guid: 08d97ec54cdc89641aeb43dc06f140b4, type: 3}

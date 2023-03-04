@@ -17,9 +17,10 @@ MonoBehaviour:
   descriptionDetaillee: "Ajoute 1 \xE9toile d'ATQ et soustrait une \xE9toile de DEF
     \xE0 l'INVOCATION \xE9quip\xE9e, et lui permet d'attaquer directement les \xE9toiles
     de vie de l'adversaire."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 13c03c155c76e7142a41a49ce83c5694, type: 2}
   collector: 0
+  image: {fileID: 21300000, guid: 1c913b610cf1b714ba28977d3c748f84, type: 3}
   equipmentInstantEffect: {fileID: 11400000, guid: 7d49ebb9c80acfd4abd29c33def60ed1,
     type: 2}
   equipmentPermEffect: {fileID: 0}
