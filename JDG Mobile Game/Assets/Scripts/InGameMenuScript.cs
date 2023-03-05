@@ -1,7 +1,6 @@
 ﻿using System;
 using Cards;
 using Cards.EffectCards;
-using Cards.FieldCards;
 using Cards.InvocationCards;
 using TMPro;
 using UnityEngine;
@@ -39,7 +38,6 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private GameObject buttonText;
     [SerializeField] private GameObject handScreen;
     [SerializeField] private GameObject miniMenuCard;
-    [SerializeField] private GameObject detailCardPanel;
     [SerializeField] private GameObject detailButtonText;
     [SerializeField] private GameObject putCardButtonText;
     [SerializeField] private GameObject putCardButton;
@@ -58,9 +56,7 @@ public class InGameMenuScript : MonoBehaviour
     public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
     public static readonly EffectCardEvent EffectCardEvent = new EffectCardEvent();
     public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
-
-
-    private readonly Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
+    
     private readonly Vector3 padding = new Vector3(490, -350, 0);
 
     private EffectFunctions effectFunctions;
@@ -69,7 +65,6 @@ public class InGameMenuScript : MonoBehaviour
     {
         effectFunctions = gameLoop.GetComponent<EffectFunctions>();
         miniMenuCard.SetActive(false);
-        detailCardPanel.SetActive(false);
         EventClick.AddListener(ClickOnCard);
     }
 
@@ -166,35 +161,8 @@ public class InGameMenuScript : MonoBehaviour
         }
 
         miniMenuCard.SetActive(false);
-        if (!detailCardPanel.activeSelf) return;
-        // The detail panel is visible. One must go back to card display
-        detailCardPanel.SetActive(false);
         handScreen.SetActive(true);
         inHandButton.SetActive(true);
-    }
-
-    public void DetailCardClick()
-    {
-        if (detailCardPanel.activeSelf)
-        {
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Détails";
-            miniMenuCard.SetActive(false);
-            detailCardPanel.SetActive(false);
-            handScreen.SetActive(true);
-            inHandButton.SetActive(true);
-        }
-        else
-        {
-            handScreen.SetActive(false);
-
-            miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
-
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Retour";
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardImageBuilder>().card = currentSelectedCard.baseCard;
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardImageBuilder>().inGameCard = currentSelectedCard;
-            detailCardPanel.SetActive(true);
-            inHandButton.SetActive(false);
-        }
     }
 
     public void ClickHandCard()
@@ -220,7 +188,6 @@ public class InGameMenuScript : MonoBehaviour
     private void HideHand()
     {
         miniMenuCard.SetActive(false);
-        detailCardPanel.SetActive(false);
         handScreen.SetActive(false);
         backgroundInformation.SetActive(true);
         buttonText.GetComponent<TextMeshProUGUI>().SetText("Cartes en main");

@@ -42,7 +42,7 @@ public class HandCardDisplay : MonoBehaviour
             }
 
             var rectTransform = GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
+            rectTransform.sizeDelta = new Vector2(642 * handCards.Count, rectTransform.sizeDelta.y);
         }
         else if (createdCards.Count > handCards.Count)
         {
