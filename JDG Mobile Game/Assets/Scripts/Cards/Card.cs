@@ -23,5 +23,7 @@ namespace Cards
         public Material MaterialCard => materialCard;
 
         public bool Collector => collector;
+
+        public Sprite Image => image;
     }
 }

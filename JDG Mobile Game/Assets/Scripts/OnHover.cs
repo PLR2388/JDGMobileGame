@@ -28,7 +28,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         MessageBox.NumberedCardEvent.AddListener(UpdateNumberOnCard);
         image = GetComponent<Image>();
-        card = gameObject.GetComponent<CardDisplay>().inGameCard;
+        card = gameObject.GetComponent<CardImageBuilder>().inGameCard;
     }
 
     private void UpdateNumberOnCard(InGameCard cardToModify, int numberToApply)
@@ -42,6 +42,11 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     private void Update()
     {
+        if (card == null)
+        {
+            card = gameObject.GetComponent<CardImageBuilder>().inGameCard;
+        }
+        
         if (bIsInGame) return;
         if (bIsSelected)
         {
@@ -95,13 +100,13 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             {
                 image.color = Color.green;
                 bIsSelected = true;
-                var clickedCard = gameObject.GetComponent<CardDisplay>().inGameCard;
+                var clickedCard = gameObject.GetComponent<CardImageBuilder>().inGameCard;
                 CardSelectedEvent.Invoke(clickedCard);
             }
         }
         else
         {
-            var currentCard = GetComponent<CardDisplay>().inGameCard;
+            var currentCard = GetComponent<CardImageBuilder>().inGameCard;
             if (SceneManager.GetActiveScene().name == "TutoPlayerGame")
             {
                 TutoInGameMenuScript.EventClick.Invoke(currentCard);

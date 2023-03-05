@@ -190,8 +190,8 @@ public class InGameMenuScript : MonoBehaviour
             miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
 
             detailButtonText.GetComponent<TextMeshProUGUI>().text = "Retour";
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard.baseCard;
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().inGameCard = currentSelectedCard;
+            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardImageBuilder>().card = currentSelectedCard.baseCard;
+            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardImageBuilder>().inGameCard = currentSelectedCard;
             detailCardPanel.SetActive(true);
             inHandButton.SetActive(false);
         }

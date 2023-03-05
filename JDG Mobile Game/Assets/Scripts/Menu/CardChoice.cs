@@ -34,7 +34,7 @@ namespace Menu
                 var isSelected = cardGameObject.GetComponent<OnHover>().bIsSelected;
                 if (!isSelected) continue;
                 numberSelected++;
-                deck.Add(cardGameObject.GetComponent<CardDisplay>().card);
+                deck.Add(cardGameObject.GetComponent<CardImageBuilder>().card);
             }
 
             return numberSelected;

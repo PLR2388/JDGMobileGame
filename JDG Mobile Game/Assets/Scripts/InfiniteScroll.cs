@@ -32,10 +32,10 @@ public class InfiniteScroll : MonoBehaviour
             if (card.Nom == "Attaque de la tour Eiffel" || card.Nom == "Blague interdite" ||
                 card.Nom == "Un bon tuyau") continue;
             var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-
             newCard.GetComponent<OnHover>().bIsInGame = false;
+            newCard.GetComponent<CardImageBuilder>().card = card;
             newCard.transform.SetParent(transform, true);
-            newCard.GetComponent<CardDisplay>().card = card;
+           
         }
     }
 
@@ -68,7 +68,7 @@ public class InfiniteScroll : MonoBehaviour
             if (numberSelected < GameState.MaxDeckCards)
             {
                 numberSelected++;
-                if (!childGameObject.GetComponent<CardDisplay>().card.Collector) continue;
+                if (!childGameObject.GetComponent<CardImageBuilder>().card.Collector) continue;
                 if (numberRare < GameState.MaxRare)
                 {
                     numberRare++;

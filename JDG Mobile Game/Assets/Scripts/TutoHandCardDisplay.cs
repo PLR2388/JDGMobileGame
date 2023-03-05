@@ -42,8 +42,8 @@ public class TutoHandCardDisplay : MonoBehaviour
             {
                 var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
                 newCard.transform.SetParent(transform, true);
-                newCard.GetComponent<CardDisplay>().card = handCard.baseCard;
-                newCard.GetComponent<CardDisplay>().inGameCard = handCard;
+                newCard.GetComponent<CardImageBuilder>().card = handCard.baseCard;
+                newCard.GetComponent<CardImageBuilder>().inGameCard = handCard;
                 newCard.GetComponent<OnHover>().bIsInGame = true;
                 if (handCard.Title == "Cliché Raciste")
                 {

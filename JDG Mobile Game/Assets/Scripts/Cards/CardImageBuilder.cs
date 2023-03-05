@@ -6,14 +6,22 @@ using UnityEngine.UI;
 
 public class CardImageBuilder : MonoBehaviour
 {
-    public InGameCard card; 
+    public InGameCard inGameCard;
+
+    [SerializeField] public Card card;
+
+    public bool bIsFaceHidden = false;
 
     private Image background;
+    [SerializeField] private Image image;
     [SerializeField] private Text title;
     [SerializeField] private GameObject family1;
     [SerializeField] private GameObject family2;
     [SerializeField] private Text quote;
     [SerializeField] private Text description;
+    [SerializeField] private RectTransform quotePosition;
+    [SerializeField] private RectTransform descriptionPosition;
+    
 
     [SerializeField] private GameObject atkStar1;
     [SerializeField] private GameObject atkStar2;
@@ -56,21 +64,79 @@ public class CardImageBuilder : MonoBehaviour
     [SerializeField] private Sprite equipmentBackground;
     [SerializeField] private Sprite fieldBackground;
 
+    private float yQuotePositionInvocation = -120f;
+    private float yDescriptionPositionInvocation = -300f;
+    
+    private float yQuotePosition = -185f;
+    private float yDescriptionPosition = -400f;
+
 
     private void Awake()
     {
         background = GetComponent<Image>();
+        
+        if (card != null && inGameCard == null)
+        {
+            inGameCard = InGameCard.CreateInGameCard(card, CardOwner.NotDefined);
+        }
+
+        if (card == null && inGameCard != null)
+        {
+            card = inGameCard.baseCard;
+        }
     }
 
     void Start()
     {
-        if (card != null)
+
+        if (inGameCard != null)
+        {
+            BuildInGameCard(inGameCard);
+        } else if (card != null)
         {
             BuildCard(card);
         }
     }
 
-    private void BuildCard(InGameCard inGameCard)
+    private void Update()
+    {
+
+        if (card != null && inGameCard == null)
+        {
+            inGameCard = InGameCard.CreateInGameCard(card, CardOwner.NotDefined);
+        }
+
+        if (card == null && inGameCard != null)
+        {
+            card = inGameCard.baseCard;
+        }
+    }
+
+    private void SetQuoteDescriptionPosition(bool isInvocation)
+    {
+        if (isInvocation)
+        {
+            var position = quotePosition.localPosition;
+            position = new Vector3(position.x, yQuotePositionInvocation, position.z);
+            quotePosition.localPosition = position;
+
+            var position1 = descriptionPosition.localPosition;
+            position1 = new Vector3(position1.x, yDescriptionPositionInvocation, position1.z);
+            descriptionPosition.localPosition = position1;
+        }
+        else
+        {
+            var position = quotePosition.localPosition;
+            position = new Vector3(position.x, yQuotePosition, position.z);
+            quotePosition.localPosition = position;
+
+            var position1 = descriptionPosition.localPosition;
+            position1 = new Vector3(position1.x, yDescriptionPosition, position1.z);
+            descriptionPosition.localPosition = position1;
+        }
+    }
+
+    private void BuildCard(Card card)
     {
         family1.SetActive(false);
         family2.SetActive(false);
@@ -88,66 +154,173 @@ public class CardImageBuilder : MonoBehaviour
         defStar5.SetActive(false);
         defStar6.SetActive(false);
 
+        image.sprite = card.Image;
 
-        switch (inGameCard.Type)
+        SetQuoteDescriptionPosition(false);
+
+        switch (card.Type)
         {
             case CardType.Contre:
-                BuildContreCard(inGameCard);
+                BuildContreCard(card);
                 break;
             case CardType.Effect:
-                BuildEffectCard(inGameCard);
+                BuildEffectCard(card);
                 break;
             case CardType.Equipment:
-                BuildEquipmentCard(inGameCard);
+                BuildEquipmentCard(card);
                 break;
             case CardType.Field:
-                BuildFieldCard(inGameCard);
+                BuildFieldCard(card);
                 break;
             case CardType.Invocation:
-                BuildInvocationCard(inGameCard as InGameInvocationCard);
+                BuildInvocationCard(card as InvocationCard);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    private void BuildContreCard(InGameCard inGameCard)
+    private void BuildInGameCard(InGameCard inGameCard)
+    {
+        family1.SetActive(false);
+        family2.SetActive(false);
+        atkStar1.SetActive(false);
+        atkStar2.SetActive(false);
+        atkStar3.SetActive(false);
+        atkStar4.SetActive(false);
+        atkStar5.SetActive(false);
+        atkStar6.SetActive(false);
+
+        defStar1.SetActive(false);
+        defStar2.SetActive(false);
+        defStar3.SetActive(false);
+        defStar4.SetActive(false);
+        defStar5.SetActive(false);
+        defStar6.SetActive(false);
+
+        image.sprite = inGameCard.Image;
+        
+        SetQuoteDescriptionPosition(false);
+        
+        switch (inGameCard.Type)
+        {
+            case CardType.Contre:
+                BuildInGameContreCard(inGameCard);
+                break;
+            case CardType.Effect:
+                BuildInGameEffectCard(inGameCard);
+                break;
+            case CardType.Equipment:
+                BuildInGameEquipmentCard(inGameCard);
+                break;
+            case CardType.Field:
+                BuildInGameFieldCard(inGameCard);
+                break;
+            case CardType.Invocation:
+                BuildInGameInvocationCard(inGameCard as InGameInvocationCard);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void BuildContreCard(Card card)
+    {
+        background.sprite = contreBackground;
+        title.text = card.Nom;
+        quote.text = "« " + card.Description + " »";
+        description.text = card.DetailedDescription;
+    }
+
+    private void BuildInGameContreCard(InGameCard inGameCard)
     {
         background.sprite = contreBackground;
         title.text = inGameCard.Title;
-        quote.text = inGameCard.Description;
+        quote.text = "« " + inGameCard.Description + " »";
         description.text = inGameCard.DetailedDescription;
     }
+    
+    private void BuildEffectCard(Card card)
+    {
+        background.sprite = effectBackground;
+        title.text = card.Nom;
+        quote.text = "« " + card.Description  + " »";
+        description.text = card.DetailedDescription;
+    }
 
-    private void BuildEffectCard(InGameCard inGameCard)
+    private void BuildInGameEffectCard(InGameCard inGameCard)
     {
         background.sprite = effectBackground;
         title.text = inGameCard.Title;
-        quote.text = inGameCard.Description;
+        quote.text = "« " + inGameCard.Description + " »";
         description.text = inGameCard.DetailedDescription;
     }
+    
+    private void BuildEquipmentCard(Card card)
+    {
+        background.sprite = equipmentBackground;
+        title.text = card.Nom;
+        quote.text = "« " + card.Description + " »";
+        description.text = card.DetailedDescription;
+    }
 
-    private void BuildEquipmentCard(InGameCard inGameCard)
+    private void BuildInGameEquipmentCard(InGameCard inGameCard)
     {
         background.sprite = equipmentBackground;
         title.text = inGameCard.Title;
-        quote.text = inGameCard.Description;
+        quote.text = inGameCard.Description + " »";
         description.text = inGameCard.DetailedDescription;
     }
+    
+    private void BuildFieldCard(Card card)
+    {
+        background.sprite = fieldBackground;
+        title.text = card.Nom;
+        quote.text = "« " + card.Description + " »";
+        description.text = card.DetailedDescription;
+    }
 
-    private void BuildFieldCard(InGameCard inGameCard)
+    private void BuildInGameFieldCard(InGameCard inGameCard)
     {
         background.sprite = fieldBackground;
         title.text = inGameCard.Title;
-        quote.text = inGameCard.Description;
+        quote.text = "« " + inGameCard.Description + " »";
         description.text = inGameCard.DetailedDescription;
     }
 
-    private void BuildInvocationCard(InGameInvocationCard invocationCard)
+    private void BuildInvocationCard(InvocationCard invocationCard)
     {
+        SetQuoteDescriptionPosition(true);
+        background.sprite = invocationBackground;
+        title.text = card.Nom;
+        quote.text = "« " + card.Description + " »";
+        description.text = card.DetailedDescription;
+        
+        switch (invocationCard.Family.Length)
+        {
+            case 1:
+                family1.SetActive(false);
+                family2.SetActive(true);
+                family2.GetComponent<Image>().sprite = ConvertFamilyToSprite(invocationCard.Family[0]);
+                break;
+            case 2:
+                family1.SetActive(true);
+                family2.SetActive(true);
+                family1.GetComponent<Image>().sprite = ConvertFamilyToSprite(invocationCard.Family[0]);
+                family2.GetComponent<Image>().sprite = ConvertFamilyToSprite(invocationCard.Family[1]);
+                break;
+        }
+
+        DisplayStars(invocationCard.GetAttack(), true);
+        DisplayStars(invocationCard.GetDefense(), false);
+    }
+
+    private void BuildInGameInvocationCard(InGameInvocationCard invocationCard)
+    {
+        SetQuoteDescriptionPosition(true);
         background.sprite = invocationBackground;
         title.text = invocationCard.Title;
-        quote.text = invocationCard.Description;
+        quote.text = "« " + invocationCard.Description + " »";
         description.text = invocationCard.DetailedDescription;
 
         switch (invocationCard.Families.Length)
@@ -549,10 +722,5 @@ public class CardImageBuilder : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException(nameof(cardFamily), cardFamily, null);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 }

@@ -15,6 +15,7 @@ namespace Cards
         protected CardType type;
         protected Material materialCard;
         protected bool collector;
+        protected Sprite image;
 
         public CardOwner CardOwner { get; protected set; } = CardOwner.NotDefined;
 
@@ -28,6 +29,8 @@ namespace Cards
         public Material MaterialCard => materialCard;
 
         public bool Collector => collector;
+
+        public Sprite Image => image;
 
         public static InGameCard CreateInGameCard(Card card, CardOwner cardOwner)
         {

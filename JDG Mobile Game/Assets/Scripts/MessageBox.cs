@@ -132,8 +132,8 @@ public class MessageBox : MonoBehaviour
         foreach (var child in children)
         {
             var childGameObject = child.gameObject;
-            if (childGameObject.GetComponent<CardDisplay>() == null) continue;
-            var cardNom = childGameObject.GetComponent<CardDisplay>().card.Nom;
+            if (childGameObject.GetComponent<CardImageBuilder>() == null) continue;
+            var cardNom = childGameObject.GetComponent<CardImageBuilder>().card.Nom;
 
             if (multipleCardSelection)
             {

@@ -75,6 +75,7 @@ namespace Cards.InvocationCards
 
         public void Reset()
         {
+            image = baseInvocationCard.Image;
             title = baseInvocationCard.Nom;
             description = baseInvocationCard.Description;
             detailedDescription = baseInvocationCard.DetailedDescription;

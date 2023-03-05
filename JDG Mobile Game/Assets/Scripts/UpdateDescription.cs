@@ -19,7 +19,7 @@ public class UpdateDescription : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        card = GetComponent<CardDisplay>().card;
+        card = GetComponent<CardImageBuilder>().card;
         titleCardText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Nom;
         shortDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Description;
         descriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.DetailedDescription;
