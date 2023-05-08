@@ -19,8 +19,8 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         this.divideAtkFactor = divideAtkFactor;
         this.divideDefFactor = divideDefFactor;
     }
-    
-    protected static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
+
+    private static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
     {
         messageBox.SetActive(false);
         GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Information",
@@ -103,19 +103,5 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         {
             Object.Destroy(messageBox);
         };
-    }
-
-    public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
-    {
-    }
-
-    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-    }
-
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
     }
 }

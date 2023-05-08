@@ -74,14 +74,4 @@ public class SkipOpponentAttackAbility : Ability
     {
         ApplyEffect(canvas, opponentPlayerCards);
     }
-
-    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-    }
-
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-    }
 }

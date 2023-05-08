@@ -11,11 +11,7 @@ public class GetSpecificCardAfterDeathAbility : GetSpecificCardFromDeckAbility
     {
         cardWhichDeadName = deadCardName;
     }
-    
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
-    {
-    }
-    
+
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {

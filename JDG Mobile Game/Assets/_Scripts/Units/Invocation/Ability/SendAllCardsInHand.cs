@@ -42,16 +42,4 @@ public class SendAllCardsInHand : Ability
     {
         RemoveAllCardExceptOne(playerCards, opponentPlayerCards);
     }
-
-    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-        
-    }
-
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-
-    }
 }

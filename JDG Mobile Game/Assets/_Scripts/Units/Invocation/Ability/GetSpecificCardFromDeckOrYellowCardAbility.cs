@@ -1,14 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using Cards;
 using UnityEngine;
 
 public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDeckAbility
 {
-    public GetSpecificCardFromDeckOrYellowCardAbility(AbilityName name, string description, string cardName) : base(name, description, cardName)
+    public GetSpecificCardFromDeckOrYellowCardAbility(AbilityName name, string description, string cardName) : base(
+        name, description, cardName)
     {
     }
-    
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         bool hasCardInDeck = playerCards.deck.Exists(card => card.Title == cardName);
@@ -17,7 +16,7 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
         {
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
-                    canvas, 
+                    canvas,
                     "Aller chercher carte",
                     "Veux-tu aller chercher directement " + cardName + " dans ton deck ou ta poubelle jaune?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
@@ -34,12 +33,10 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
                     playerCards.deck.Remove(card);
                     playerCards.handCards.Add(card);
                 }
+
                 Object.Destroy(messageBox);
             };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-            };
+            messageBox.GetComponent<MessageBox>().NegativeAction = () => { Object.Destroy(messageBox); };
         }
     }
 }

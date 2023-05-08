@@ -14,25 +14,7 @@ public class ProtectBehindDuringAttackDefConditionAbility : Ability
         this.protegee = protegee;
     }
 
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
-    {
-    }
-
-    public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
-    {
-    }
-
-    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-    }
-
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-    }
-
-    protected override void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
+    public override void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards,
         PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {

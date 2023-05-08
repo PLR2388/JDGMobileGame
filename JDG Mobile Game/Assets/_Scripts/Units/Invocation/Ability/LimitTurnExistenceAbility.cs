@@ -16,12 +16,6 @@ public class LimitTurnExistenceAbility : Ability
         numberOfTurn = numberTurn;
     }
 
-
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
-    {
-     
-    }
-
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => card.Title == cardName);
@@ -30,17 +24,5 @@ public class LimitTurnExistenceAbility : Ability
             playerCards.yellowTrash.Add(invocationCard);
             playerCards.invocationCards.Remove(invocationCard);
         }
-    }
-
-    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-   
-    }
-
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-    
     }
 }

@@ -70,21 +70,21 @@ public abstract class Ability
     protected string Description { get; set; }
 
     // Called when invocation card is put on field without special invocation
-    public abstract void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards);
+    public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards){}
     
     // Called when a turn start
-    public abstract void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards);
+    public virtual void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards){}
 
     // Called when an invocation is added to field
-    public abstract void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards);
+    public virtual void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards) {}
 
     // Called when an invocation is removed from field
-    public abstract void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards);
+    public virtual void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards) {}
 
     // Called before an attack on a card (attacker belong to playerCards)
-    protected virtual void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
+    public virtual void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
         float resultAttack = attackedCard.Defense - attacker.Attack;
@@ -105,7 +105,7 @@ public abstract class Ability
         }
     }
 
-    protected virtual void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public virtual void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
     {
         playerCards.yellowTrash.Add(deadCard);
         playerCards.invocationCards.Remove(deadCard);
