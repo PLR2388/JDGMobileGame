@@ -19,46 +19,46 @@ public class GameLoop : MonoBehaviour
     public static bool IsP1Turn;
 
     public int phaseId;
+    
+    [SerializeField] protected GameObject playerText;
+    [SerializeField] protected GameObject roundText;
+    [SerializeField] protected TextMeshProUGUI healthP1Text;
+    [SerializeField] protected TextMeshProUGUI healthP2Text;
 
-    [SerializeField] private GameObject playerText;
-    [SerializeField] private GameObject roundText;
-    [SerializeField] private TextMeshProUGUI healthP1Text;
-    [SerializeField] private TextMeshProUGUI healthP2Text;
-
-    [SerializeField] private GameObject bigImageCard;
-    [SerializeField] private GameObject invocationMenu;
-    [SerializeField] private GameObject nextPhaseButton;
-    [SerializeField] private Transform canvas;
-
-    [SerializeField]
-    private GameObject p1;
+    [SerializeField] protected GameObject bigImageCard;
+    [SerializeField] protected GameObject invocationMenu;
+    [SerializeField] protected GameObject nextPhaseButton;
+    [SerializeField] protected Transform canvas;
 
     [SerializeField]
-    private GameObject p2;
+    protected GameObject p1;
 
-    private InGameCard player;
-    [SerializeField] private InvocationCard playerInvocationCard;
-    [SerializeField] private GameObject inHandButton;
+    [SerializeField]
+    protected GameObject p2;
+
+    protected InGameCard player;
+    [SerializeField] protected InvocationCard playerInvocationCard;
+    [SerializeField] protected GameObject inHandButton;
 
     [SerializeField]
     private GameObject playerCamera;
 
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
 
-    private InvocationFunctions invocationFunctions;
+    protected InvocationFunctions invocationFunctions;
 
-    private const float ClickDuration = 2;
+    protected const float ClickDuration = 2;
 
-    private bool stopDetectClicking;
-    private bool clicking;
-    private float totalDownTime;
-    private InGameCard cardSelected;
-    private InGameInvocationCard attacker;
-    private InGameInvocationCard opponent;
-    private int numberOfTurn;
+    protected CardLocation cardLocation;
+    protected bool stopDetectClicking;
+    protected bool clicking;
+    protected float totalDownTime;
+    protected InGameCard cardSelected;
+    protected InGameInvocationCard attacker;
+    protected InGameInvocationCard opponent;
+    protected int numberOfTurn;
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
-    private CardLocation cardLocation;
 
     private void Awake()
     {
@@ -66,7 +66,7 @@ public class GameLoop : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    private void Start()
+    protected void Start()
     {
         invocationFunctions = GetComponent<InvocationFunctions>();
         cardLocation = GetComponent<CardLocation>();
@@ -102,7 +102,7 @@ public class GameLoop : MonoBehaviour
         MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", PositiveAction);
     }
 
-    private void ChoosePhase()
+    protected void ChoosePhase()
     {
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
         ChoosePhaseMusic();
@@ -135,12 +135,12 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private static void GameOver()
+    protected static void GameOver()
     {
         SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
     }
 
-    private void ChangeHealthText(float pv, bool isP1)
+    protected void ChangeHealthText(float pv, bool isP1)
     {
         if (isP1)
         {
@@ -152,7 +152,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ChooseAttack()
+    protected void ChooseAttack()
     {
         AudioSystem.Instance.PlayMusic(Music.Fight);
         if (!Input.GetMouseButton(0) || phaseId != 2 || stopDetectClicking) return;
@@ -173,7 +173,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void BlockCardJustInvokeIfNeeded()
+    protected void BlockCardJustInvokeIfNeeded()
     {
         var ownInvocations = IsP1Turn
             ? p1.GetComponent<PlayerCards>().invocationCards
@@ -195,7 +195,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void HandleClick(RaycastHit hitInfo)
+    protected virtual void HandleClick(RaycastHit hitInfo)
     {
         var objectTag = hitInfo.transform.gameObject.tag;
         var ownPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
@@ -309,7 +309,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    public void DisplayAvailableOpponent()
+    protected void DisplayAvailableOpponent()
     {
         var opponentCards = IsP1Turn
             ? p2.GetComponent<PlayerCards>().invocationCards
@@ -319,12 +319,12 @@ public class GameLoop : MonoBehaviour
         DisplayCards(opponentCards, attackerEffectCards);
     }
 
-    private bool IsSpecialActionPossible()
+    protected bool IsSpecialActionPossible()
     {
         return invocationFunctions.IsSpecialActionPossible(attacker, attacker.InvocationActionEffect);
     }
 
-    public void UseSpecialAction()
+    protected void UseSpecialAction()
     {
         invocationFunctions.AskIfUserWantToUseActionEffect(attacker, attacker.InvocationActionEffect);
     }
@@ -332,7 +332,7 @@ public class GameLoop : MonoBehaviour
     /**
      * Return the list of available opponents
      */
-    private void DisplayCards(List<InGameInvocationCard> invocationCards, List<InGameEffectCard> attackPlayerEffectCard)
+    protected virtual void DisplayCards(List<InGameInvocationCard> invocationCards, List<InGameEffectCard> attackPlayerEffectCard)
     {
         var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title != null).Cast<InGameCard>().ToList();
 
@@ -503,7 +503,7 @@ public class GameLoop : MonoBehaviour
         stopDetectClicking = true;
     }
 
-    private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
+    protected virtual void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
     {
         nextPhaseButton.SetActive(false);
 
@@ -540,7 +540,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeAttack()
+    protected void ComputeAttack()
     {
         var attack = attacker.GetCurrentAttack();
         var defenseOpponent = opponent.GetCurrentDefense();
@@ -610,7 +610,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void RemoveCombineEffectCard(List<InGameEffectCard> effectCards, List<InGameCard> yellowCards)
+    protected void RemoveCombineEffectCard(List<InGameEffectCard> effectCards, List<InGameCard> yellowCards)
     {
         foreach (var effectCard in effectCards.Where(effectCard => effectCard.Title == "Attaque de la tour Eiffel"))
         {
@@ -623,7 +623,7 @@ public class GameLoop : MonoBehaviour
     /**
      * Attack that kill the opponent
      */
-    private void DealWithGoodAttack(float diff)
+    protected void DealWithGoodAttack(float diff)
     {
         if (opponent is InGameSuperInvocationCard superOpponent)
         {
@@ -636,7 +636,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeGoodAttack(float diff)
+    protected void ComputeGoodAttack(float diff)
     {
         var playerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
@@ -663,7 +663,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeGoodAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superOpponent)
+    protected void ComputeGoodAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superOpponent)
     {
         var playerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
@@ -701,7 +701,7 @@ public class GameLoop : MonoBehaviour
     /**
      * Attack that kill the attacker
      */
-    private void DealWithHurtAttack(float diff)
+    protected void DealWithHurtAttack(float diff)
     {
         if (attacker is InGameSuperInvocationCard superAttacker)
         {
@@ -713,7 +713,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private bool IsProtectedByEquipment(InGameInvocationCard invocationCard, bool isP1)
+    protected bool IsProtectedByEquipment(InGameInvocationCard invocationCard, bool isP1)
     {
         var invocationEquipment = invocationCard.EquipmentCard;
         if (invocationEquipment == null) return false;
@@ -725,7 +725,7 @@ public class GameLoop : MonoBehaviour
         return true;
     }
 
-    private void ComputeHurtAttack(float diff)
+    protected void ComputeHurtAttack(float diff)
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
@@ -753,7 +753,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeHurtAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superAttacker)
+    protected void ComputeHurtAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superAttacker)
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
@@ -787,7 +787,7 @@ public class GameLoop : MonoBehaviour
         playerCards.RemoveSuperInvocation(superAttacker);
     }
 
-    private void DealWithEqualityAttack()
+    protected void DealWithEqualityAttack()
     {
         if (attacker is InGameSuperInvocationCard || opponent is InGameSuperInvocationCard)
         {
@@ -855,7 +855,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeEqualityOpponent()
+    protected void ComputeEqualityOpponent()
     {
         var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         if (opponent.InvocationDeathEffect != null)
@@ -878,7 +878,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeEqualityAttacker()
+    protected void ComputeEqualityAttacker()
     {
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         if (attacker.InvocationDeathEffect != null)
@@ -901,7 +901,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeEqualityAttackSuperAttacker(InGameInvocationCard combineCard)
+    protected void ComputeEqualityAttackSuperAttacker(InGameInvocationCard combineCard)
     {
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
 
@@ -927,7 +927,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void ComputeEqualityAttackSuperOpponent(InGameInvocationCard combineCard)
+    protected void ComputeEqualityAttackSuperOpponent(InGameInvocationCard combineCard)
     {
         var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
 
@@ -956,7 +956,7 @@ public class GameLoop : MonoBehaviour
     /**
      * invocationCard = card that's going to die
      */
-    private void DealWithDeathEffect(InGameInvocationCard invocationCard, bool isP1Card)
+    protected void DealWithDeathEffect(InGameInvocationCard invocationCard, bool isP1Card)
     {
         var invocationDeathEffect = invocationCard.InvocationDeathEffect;
         var keys = invocationDeathEffect.Keys;
@@ -982,7 +982,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void KillAlsoOtherCardDeathEffect()
+    protected void KillAlsoOtherCardDeathEffect()
     {
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
@@ -990,7 +990,7 @@ public class GameLoop : MonoBehaviour
         opponentPlayerCard.SendCardToYellowTrash(opponent);
     }
 
-    private void ComeBackToHandDeathEffect(InGameInvocationCard invocationCard, bool isP1Card, IReadOnlyList<string> values,
+    protected void ComeBackToHandDeathEffect(InGameInvocationCard invocationCard, bool isP1Card, IReadOnlyList<string> values,
         int i)
     {
         var isParsed = int.TryParse(values[i], out var number);
@@ -1018,7 +1018,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void SendCardToHand(InGameInvocationCard invocationCard, bool isP1Card)
+    protected void SendCardToHand(InGameInvocationCard invocationCard, bool isP1Card)
     {
         var playerCards = isP1Card ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var opponentPlayerCards = isP1Card ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
@@ -1035,13 +1035,13 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void DisplayCurrentCard(InGameCard card)
+    protected void DisplayCurrentCard(InGameCard card)
     {
         bigImageCard.SetActive(true);
         bigImageCard.GetComponent<Image>().material = card.MaterialCard;
     }
 
-    private void Draw()
+    protected void Draw()
     {
         DoDraw();
         numberOfTurn++;
@@ -1049,7 +1049,7 @@ public class GameLoop : MonoBehaviour
         roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";
     }
 
-    private void DoDraw()
+    protected void DoDraw()
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         playerCards.ResetInvocationCardNewTurn();
@@ -1084,7 +1084,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void DrawPlayerCard(PlayerCards playerCards)
+    protected void DrawPlayerCard(PlayerCards playerCards)
     {
         var canSkipDraw = false;
 
@@ -1147,7 +1147,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void LifeFieldEffect(PlayerCards playerCards, string value)
+    protected void LifeFieldEffect(PlayerCards playerCards, string value)
     {
         var pvPerAlly = float.Parse(value);
         var family = playerCards.field.GetFamily();
@@ -1164,7 +1164,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void DrawCardFieldEffect(PlayerCards playerCards, string value, ref bool canSkipDraw)
+    protected void DrawCardFieldEffect(PlayerCards playerCards, string value, ref bool canSkipDraw)
     {
         var numberCardToTake = int.Parse(value);
         canSkipDraw = true;
@@ -1193,7 +1193,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private void GetCardFieldEffect(PlayerCards playerCards, string value, ref bool canSkipDraw)
+    protected void GetCardFieldEffect(PlayerCards playerCards, string value, ref bool canSkipDraw)
     {
         if (!Enum.TryParse(value, out CardFamily cardFamily)) return;
         var familyCards = (from deckCard in playerCards.deck
@@ -1292,7 +1292,7 @@ public class GameLoop : MonoBehaviour
             NegativeAction);
     }
 
-    public void NextRound()
+    protected virtual void NextRound()
     {
         invocationMenu.SetActive(false);
         if (numberOfTurn == 1 && IsP1Turn)
@@ -1351,7 +1351,7 @@ public class GameLoop : MonoBehaviour
         Draw();
     }
 
-    private static void DealWithEndEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard,
+    protected static void DealWithEndEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard,
         PlayerStatus playerStatus, List<InGameEffectCard> effectCards)
     {
         List<InGameEffectCard> effectCardsToDelete = new List<InGameEffectCard>();
@@ -1602,7 +1602,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private static void NumberTurnPermEffect(PlayerCards currentPlayerCard, string value,
+    protected static void NumberTurnPermEffect(PlayerCards currentPlayerCard, string value,
         InGameInvocationCard invocationCard)
     {
         var maxTurn = int.Parse(value);
@@ -1612,7 +1612,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private static void PreventInvocationCardsPermEffect(PlayerCards currentPlayerCard, InGameInvocationCard invocationCard)
+    protected static void PreventInvocationCardsPermEffect(PlayerCards currentPlayerCard, InGameInvocationCard invocationCard)
     {
         for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
         {
@@ -1623,13 +1623,13 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private static void SkipFieldsEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard)
+    protected static void SkipFieldsEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard)
     {
         currentPlayerCard.ActivateFieldCardEffect();
         opponentPlayerCard.ActivateFieldCardEffect();
     }
 
-    private static void ProtectAttackEffect(PlayerStatus playerStatus, List<InGameEffectCard> effectCardsToDelete,
+    protected static void ProtectAttackEffect(PlayerStatus playerStatus, List<InGameEffectCard> effectCardsToDelete,
         InGameEffectCard effectCard)
     {
         if (playerStatus.NumberShield == 0)
@@ -1638,7 +1638,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private static void DivideInvocationEffect(PlayerCards opponentPlayerCard)
+    protected static void DivideInvocationEffect(PlayerCards opponentPlayerCard)
     {
         foreach (var opponentInvocationCard in opponentPlayerCard.invocationCards)
         {
@@ -1646,7 +1646,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    private static void RevertStatEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard)
+    protected static void RevertStatEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard)
     {
         var invocationCards1 = currentPlayerCard.invocationCards;
         var invocationCards2 = opponentPlayerCard.invocationCards;

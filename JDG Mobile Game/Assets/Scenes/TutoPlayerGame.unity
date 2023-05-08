@@ -1771,17 +1771,17 @@ MonoBehaviour:
   healthP1Text: {fileID: 29170108}
   healthP2Text: {fileID: 1349726584}
   bigImageCard: {fileID: 793464781}
-  handScreen: {fileID: 1928831686}
   invocationMenu: {fileID: 1982540492}
   nextPhaseButton: {fileID: 1957640249}
   canvas: {fileID: 244790280}
-  tutoImage: {fileID: 2095843835}
-  tutoVideo: {fileID: 1045100655}
   p1: {fileID: 230530442}
   p2: {fileID: 2017354827}
   playerInvocationCard: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544,
     type: 2}
   inHandButton: {fileID: 829748139}
+  playerCamera: {fileID: 0}
+  tutoImage: {fileID: 2095843835}
+  tutoVideo: {fileID: 1045100655}
 --- !u!114 &397230410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6114,6 +6114,7 @@ GameObject:
   - component: {fileID: 1809721686}
   - component: {fileID: 1809721688}
   - component: {fileID: 1809721689}
+  - component: {fileID: 1809721687}
   m_Layer: 0
   m_Name: MenuScript
   m_TagString: Untagged
@@ -6135,6 +6136,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1809721687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1809721685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19c2b80b7957b247bd6ac9398dd011f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
+    type: 3}
 --- !u!114 &1809721688
 MonoBehaviour:
   m_ObjectHideFlags: 0
