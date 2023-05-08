@@ -11,17 +11,18 @@ public class PhysicalCardDisplay : MonoBehaviour
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer.material = defaultMaterial;
     }
 
-    private void Update()
+    public void Hide()
     {
-        if (bIsFaceHidden)
-        {
-            meshRenderer.material = defaultMaterial;
-        }
-        else
-        {
-            meshRenderer.material = card != null ? card.MaterialCard : defaultMaterial;
-        }
+        bIsFaceHidden = true;
+        meshRenderer.material = defaultMaterial;
+    }
+
+    public void Display()
+    {
+        bIsFaceHidden = false;
+        meshRenderer.material = card != null ? card.MaterialCard : defaultMaterial;
     }
 }

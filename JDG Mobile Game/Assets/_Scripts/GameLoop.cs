@@ -76,6 +76,7 @@ public class GameLoop : MonoBehaviour
         p1.GetComponent<PlayerStatus>().SetNumberShield(0);
         p2.GetComponent<PlayerStatus>().SetNumberShield(0);
         PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
+        Draw();
     }
 
     // Update is called once per frame
@@ -83,17 +84,8 @@ public class GameLoop : MonoBehaviour
     {
         switch (phaseId)
         {
-            case 0:
-                Draw();
-                break;
-            case 1:
-                ChoosePhase();
-                break;
             case 2:
                 ChooseAttack();
-                break;
-            case 5:
-                GameOver();
                 break;
         }
 
@@ -609,10 +601,12 @@ public class GameLoop : MonoBehaviour
         if (p1Pv <= 0)
         {
             phaseId = 5;
+            GameOver();
         }
         else if (p2Pv <= 0)
         {
             phaseId = 5;
+            GameOver();
         }
     }
 
@@ -1148,6 +1142,7 @@ public class GameLoop : MonoBehaviour
                 p2.GetComponent<PlayerStatus>().GetCurrentPv();
 
                 phaseId = 5;
+                GameOver();
             }
         }
     }
@@ -1194,6 +1189,7 @@ public class GameLoop : MonoBehaviour
             p2.GetComponent<PlayerStatus>().GetCurrentPv();
 
             phaseId = 5;
+            GameOver();
         }
     }
 
@@ -1286,6 +1282,7 @@ public class GameLoop : MonoBehaviour
                 }
 
                 phaseId = 5;
+                GameOver();
             }
         }
 
@@ -1316,6 +1313,7 @@ public class GameLoop : MonoBehaviour
             case 1:
                 inHandButton.SetActive(true);
                 roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";
+                ChoosePhase();
                 break;
             case 2:
                 inHandButton.SetActive(false);
@@ -1350,6 +1348,7 @@ public class GameLoop : MonoBehaviour
         playerCamera.transform.Rotate(cameraRotation);
         playerText.GetComponent<TextMeshProUGUI>().text = IsP1Turn ? "Joueur 1" : "Joueur 2";
         phaseId = 0;
+        Draw();
     }
 
     private static void DealWithEndEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard,

@@ -25,6 +25,8 @@ public class PlayerCards : MonoBehaviour
     [SerializeField] private Transform canvas;
     [SerializeField] private CardLocation cardLocation;
 
+    private UnitManager unitManager;
+
 
     public List<InGameCard> secretCards = new List<InGameCard>(); // Where combine card go
 
@@ -46,7 +48,7 @@ public class PlayerCards : MonoBehaviour
         var gameStateGameObject = GameObject.Find("GameState");
         var gameState = gameStateGameObject.GetComponent<GameState>();
         deck = isPlayerOne ? gameState.deckP1 : gameState.deckP2;
-        cardLocation.InitPhysicalCards(deck, isPlayerOne);
+        UnitManager.Instance.InitPhysicalCards(deck, isPlayerOne);
 
         for (var i = deck.Count - 5; i < deck.Count; i++)
         {
@@ -161,6 +163,7 @@ public class PlayerCards : MonoBehaviour
             }
 
             oldHandCards = new List<InGameCard>(handCards);
+            CardLocation.UpdateLocation.Invoke();
         }
 
         if (oldYellowTrash.Count != yellowTrash.Count)
@@ -171,6 +174,7 @@ public class PlayerCards : MonoBehaviour
             }
 
             oldYellowTrash = new List<InGameCard>(yellowTrash);
+            CardLocation.UpdateLocation.Invoke();
         }
     }
 
@@ -1100,6 +1104,7 @@ public class PlayerCards : MonoBehaviour
                 }
             }
         }
+        CardLocation.UpdateLocation.Invoke();
     }
 
     private void CheckCardOnFieldPermEffect(string value, InGameInvocationCard invocationCard)
@@ -1188,6 +1193,7 @@ public class PlayerCards : MonoBehaviour
 
     private void OnFieldCardChanged(InGameFieldCard oldFieldCard)
     {
+        CardLocation.UpdateLocation.Invoke();
         if (oldFieldCard == null) return;
 
         SendInvocationCardToYellowTrashAfterFieldDestruction(oldFieldCard);
