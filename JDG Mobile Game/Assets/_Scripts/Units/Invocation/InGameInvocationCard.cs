@@ -4,6 +4,7 @@ using System.Linq;
 using Cards;
 using Cards.EquipmentCards;
 using Cards.InvocationCards;
+using UnityEngine;
 
 namespace _Scripts.Units.Invocation
 {
@@ -47,8 +48,6 @@ namespace _Scripts.Units.Invocation
         public int NumberOfTurnOnField => numberTurnOnField;
 
         public int NumberOfDeaths => numberDeaths;
-
-        public InvocationConditions InvocationConditions => invocationConditions;
         public InvocationStartEffect InvocationStartEffect => invocationStartEffect;
         public InvocationPermEffect InvocationPermEffect => invocationPermEffect;
 
@@ -114,7 +113,6 @@ namespace _Scripts.Units.Invocation
             defense = baseInvocationCard.BaseInvocationCardStats.Defense;
             families = baseInvocationCard.BaseInvocationCardStats.Families;
             equipmentCard = null;
-            invocationConditions = baseInvocationCard.BaseInvocationCardStats.InvocationConditions;
             invocationStartEffect = baseInvocationCard.BaseInvocationCardStats.InvocationStartEffect;
             invocationPermEffect = baseInvocationCard.BaseInvocationCardStats.InvocationPermEffect;
             invocationActionEffect = baseInvocationCard.BaseInvocationCardStats.InvocationActionEffect;
@@ -131,7 +129,6 @@ namespace _Scripts.Units.Invocation
 
         public void DeactivateEffect()
         {
-            invocationConditions = null;
             invocationStartEffect = null;
             invocationPermEffect = null;
             invocationActionEffect = null;
@@ -211,8 +208,10 @@ namespace _Scripts.Units.Invocation
         /// </summary>
         public bool IsInvocationPossible()
         {
-            return InvocationFunctions.IsInvocationPossible(invocationConditions,
-                GameLoop.IsP1Turn ? "Player1" : "Player2");
+            var playerCards = GameLoop.IsP1Turn
+                ? GameObject.Find("Player1").GetComponent<PlayerCards>()
+                : GameObject.Find("Player2").GetComponent<PlayerCards>();
+            return CanBeSummoned(playerCards);
         }
 
         /// <summary>

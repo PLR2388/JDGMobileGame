@@ -29,7 +29,6 @@ public struct InvocationCardStats
     public float Attack;
     public float Defense;
     public CardFamily[] Families;
-    public InvocationConditions InvocationConditions;
     public InvocationStartEffect InvocationStartEffect;
     public InvocationPermEffect InvocationPermEffect;
     public InvocationActionEffect InvocationActionEffect;

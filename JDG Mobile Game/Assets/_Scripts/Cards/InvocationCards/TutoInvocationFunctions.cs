@@ -791,7 +791,7 @@ namespace Cards.InvocationCards
             {
                 currentPlayerCard.invocationCards.Remove(cardToSacrifice);
                 currentPlayerCard.yellowTrash.Add(cardToSacrifice);
-                
+
                 // Example of Mahammad that can earn 2.5 ATK and DEF by sacrificing JDG
                 currentInvocationCard.Attack += incrementStat;
                 currentInvocationCard.Defense += incrementStat;
@@ -815,19 +815,18 @@ namespace Cards.InvocationCards
             if (size >= 4) return;
 
             var invocationStartEffect = invocationCard.InvocationStartEffect;
-            var invocationConditionEffect = invocationCard.InvocationConditions;
 
-            if (invocationConditionEffect != null)
-            {
-                DealWithConditionInvocation(invocationConditionEffect);
-                currentPlayerCard.invocationCards.Add(invocationCard);
-                currentPlayerCard.handCards.Remove(invocationCard);
-            }
-            else
-            {
-                currentPlayerCard.invocationCards.Add(invocationCard);
-                currentPlayerCard.handCards.Remove(invocationCard);
-            }
+            //  if (invocationConditionEffect != null)
+            //{
+            //  DealWithConditionInvocation(invocationConditionEffect);
+            currentPlayerCard.invocationCards.Add(invocationCard);
+            currentPlayerCard.handCards.Remove(invocationCard);
+            //}
+            // else
+            //{
+            //    currentPlayerCard.invocationCards.Add(invocationCard);
+            //    currentPlayerCard.handCards.Remove(invocationCard);
+            //}
 
             if (invocationStartEffect != null)
             {
@@ -908,7 +907,8 @@ namespace Cards.InvocationCards
         }
 
 
-        private bool ActionEffectSpecificFamilyPossible(InGameInvocationCard currentInvocationCard, string value, float def,
+        private bool ActionEffectSpecificFamilyPossible(InGameInvocationCard currentInvocationCard, string value,
+            float def,
             float atk, bool isPossible)
         {
             var family = (CardFamily)Enum.Parse(typeof(CardFamily), value);
@@ -933,7 +933,7 @@ namespace Cards.InvocationCards
 
             if (invocationCardSameFamily.Count <= 0) return isPossible;
             if (!(def > 0) || !(atk > 0)) return isPossible;
-            
+
             // TODO : Check if Ok
             isPossible = currentInvocationCard.Defense > 0 || currentInvocationCard.Attack > 0;
             /*if (currentInvocationCard.GetBonusDefense() > -def)
@@ -1237,13 +1237,15 @@ namespace Cards.InvocationCards
                 select t).ToList();
         }
 
-        private static List<InGameInvocationCard> CheckThreshold(bool isAttack, float value, PlayerCards currentPlayerCards)
+        private static List<InGameInvocationCard> CheckThreshold(bool isAttack, float value,
+            PlayerCards currentPlayerCards)
         {
             var threshold = new List<InGameInvocationCard>();
             var invocationCards = currentPlayerCards.invocationCards;
             threshold.AddRange(isAttack
                 ? invocationCards.Where(invocationCard =>
-                    invocationCard != null && invocationCard.Title != null && invocationCard.GetCurrentAttack() >= value)
+                    invocationCard != null && invocationCard.Title != null &&
+                    invocationCard.GetCurrentAttack() >= value)
                 : invocationCards.Where(invocationCard => invocationCard.GetCurrentDefense() >= value));
 
             return threshold;
@@ -1490,7 +1492,8 @@ namespace Cards.InvocationCards
             }
         }
 
-        private void ConditionSpecificFamilyOnField(string familyName, ref List<InGameInvocationCard> invocationCardsOnField)
+        private void ConditionSpecificFamilyOnField(string familyName,
+            ref List<InGameInvocationCard> invocationCardsOnField)
         {
             if (Enum.TryParse(familyName, out CardFamily cardFamily))
             {
@@ -1498,7 +1501,8 @@ namespace Cards.InvocationCards
             }
         }
 
-        private List<InGameInvocationCard> ConditionSacrificeFamily(string familyName, List<InGameInvocationCard> sacrificedCards)
+        private List<InGameInvocationCard> ConditionSacrificeFamily(string familyName,
+            List<InGameInvocationCard> sacrificedCards)
         {
             if (Enum.TryParse(familyName, out CardFamily cardFamily))
             {
