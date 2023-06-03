@@ -20,17 +20,17 @@ public class CantBeAttackAbility : Ability
     private bool IsProtected(PlayerCards playerCards)
     {
         return family == CardFamily.Any ||
-               playerCards.invocationCards.Exists(card => card.Title != cardName && card.Families.Contains(family));
+               playerCards.invocationCards.Any(card => card.Title != cardName && card.Families.Contains(family));
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        playerCards.invocationCards.Find(card => card.Title == cardName).CantBeAttack = IsProtected(playerCards);
+        playerCards.invocationCards.First(card => card.Title == cardName).CantBeAttack = IsProtected(playerCards);
     }
 
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
-        playerCards.invocationCards.Find(card => card.Title == cardName).CantBeAttack = IsProtected(playerCards);
+        playerCards.invocationCards.First(card => card.Title == cardName).CantBeAttack = IsProtected(playerCards);
     }
 }

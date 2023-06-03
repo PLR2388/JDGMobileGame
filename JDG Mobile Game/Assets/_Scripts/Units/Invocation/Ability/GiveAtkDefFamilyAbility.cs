@@ -35,8 +35,8 @@ public class GiveAtkDefFamilyAbility : Ability
     
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        List<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.FindAll(card => card.Title != originCardName && card.Families.Contains(family));
+        IEnumerable<InGameInvocationCard> invocationCards =
+            playerCards.invocationCards.Where(card => card.Title != originCardName && card.Families.Contains(family));
         foreach (var invocationCard in invocationCards)
         {
             IncreaseAtkDef(invocationCard);
@@ -60,8 +60,8 @@ public class GiveAtkDefFamilyAbility : Ability
             DecreaseAtkDef(removeCard);
         } else if (removeCard.Title == originCardName)// Todo maybe make a OnCardDeath ?
         {
-            List<InGameInvocationCard> invocationCards =
-                playerCards.invocationCards.FindAll(card => card.Title != originCardName && card.Families.Contains(family));
+            IEnumerable<InGameInvocationCard> invocationCards =
+                playerCards.invocationCards.Where(card => card.Title != originCardName && card.Families.Contains(family));
             foreach (var invocationCard in invocationCards)
             {
                 DecreaseAtkDef(invocationCard);

@@ -1,3 +1,4 @@
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -19,10 +20,10 @@ public class ProtectBehindDuringAttackAbility : Ability
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
         if (attackedCard.Title == protegeeName &&
-            opponentPlayerCards.invocationCards.Exists(card => card.Title == protectorName))
+            opponentPlayerCards.invocationCards.Any(card => card.Title == protectorName))
         {
             InGameInvocationCard newAttackedCard =
-                opponentPlayerCards.invocationCards.Find(card => card.Title == protectorName);
+                opponentPlayerCards.invocationCards.First(card => card.Title == protectorName);
             base.OnCardAttacked(canvas, newAttackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
         }
         else

@@ -1,3 +1,4 @@
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ public class SacrificeCardAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => cardName == card.Title);
+        InGameInvocationCard invocationCard = playerCards.invocationCards.First(card => cardName == card.Title);
         // TODO Centralize death invocation Card
         if (invocationCard.EquipmentCard != null)
         {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation.Condition;
 
 public class SpecificCardBackFromDeathCondition : InvocationCardOnFieldCondition
@@ -10,6 +11,6 @@ public class SpecificCardBackFromDeathCondition : InvocationCardOnFieldCondition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return base.CanBeSummoned(playerCards) && playerCards.invocationCards.Find(card => card.Title == cardNames[0]).NumberOfDeaths > 0;
+        return base.CanBeSummoned(playerCards) && playerCards.invocationCards.First(card => card.Title == cardNames[0]).NumberOfDeaths > 0;
     }
 }

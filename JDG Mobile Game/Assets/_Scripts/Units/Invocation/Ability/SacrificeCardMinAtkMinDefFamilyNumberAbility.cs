@@ -26,10 +26,10 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
 
     private List<InGameInvocationCard> GetValidInvocationCards(PlayerCards playerCards)
     {
-        return playerCards.invocationCards.FindAll(card =>
+        return playerCards.invocationCards.Where(card =>
             card.Title != originCardName &&
             (card.Attack >= minAtk || card.Defense >= minDef) &&
-            (family == CardFamily.Any || card.Families.Contains(family)));
+            (family == CardFamily.Any || card.Families.Contains(family))).ToList();
     }
 
     private static void DisplayOkMessage(Transform canvas, GameObject messageBox, int numberOfCards)

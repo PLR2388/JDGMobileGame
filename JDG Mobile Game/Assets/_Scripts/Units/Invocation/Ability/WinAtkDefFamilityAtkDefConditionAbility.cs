@@ -19,8 +19,8 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         int numberCardInvocation = playerCards.invocationCards
-            .FindAll(card => card.Title != cardName && card.Families.Contains(family) &&
-                             card.Defense == invocationDefCondition && card.Attack == invocationAtkCondition).Count;
+            .Count(card => card.Title != cardName && card.Families.Contains(family) &&
+                             card.Defense == invocationDefCondition && card.Attack == invocationAtkCondition);
         IncrementAtkDefInvocationCard(playerCards, numberCardInvocation);
     }
     

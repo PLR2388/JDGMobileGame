@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
@@ -95,7 +96,7 @@ namespace OnePlayer
                         InGameEquipementCard equipmentCard =
                             playerCards.handCards.Find(elt => elt.Title == cardNames[0]) as InGameEquipementCard;
                         InGameInvocationCard invocationCard =
-                            playerCards.invocationCards.Find(elt => elt.Title == cardNames[1]);
+                            playerCards.invocationCards.First(elt => elt.Title == cardNames[1]);
 
                         if (equipmentCard != null)
                         {
@@ -148,7 +149,7 @@ namespace OnePlayer
                     }
 
                     InGameInvocationCard attackerInvocationCard =
-                        p1.GetComponent<PlayerCards>().invocationCards.Find(card => card.Title == attacker);
+                        p1.GetComponent<PlayerCards>().invocationCards.First(card => card.Title == attacker);
 
                     InGameInvocationCard opponentInvocationCard;
 
@@ -159,7 +160,7 @@ namespace OnePlayer
                     else
                     {
                         opponentInvocationCard = p2.GetComponent<PlayerCards>().invocationCards
-                            .Find(card => card.Title == defender);
+                            .First(card => card.Title == defender);
                     }
 
                     this.attacker = attackerInvocationCard;
@@ -362,7 +363,7 @@ namespace OnePlayer
         /**
      * Return the list of available opponents
      */
-        protected override void DisplayCards(List<InGameInvocationCard> invocationCards,
+        protected override void DisplayCards(ObservableCollection<InGameInvocationCard> invocationCards,
             List<InGameEffectCard> attackPlayerEffectCard)
         {
             var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title == "Jean-Michel Bruitages")

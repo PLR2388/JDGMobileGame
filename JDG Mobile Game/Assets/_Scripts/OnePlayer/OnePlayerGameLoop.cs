@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
@@ -303,7 +304,7 @@ namespace OnePlayer
         /**
      * Return the list of available opponents
      */
-        private void DisplayCards(List<InGameInvocationCard> invocationCards, List<InGameEffectCard> attackPlayerEffectCard)
+        private void DisplayCards(ObservableCollection<InGameInvocationCard> invocationCards, List<InGameEffectCard> attackPlayerEffectCard)
         {
             var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title != null).Cast<InGameCard>().ToList();
 

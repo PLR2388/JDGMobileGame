@@ -1,4 +1,6 @@
 
+using System.Linq;
+
 public class SpecificAtkDefInvocationCardOnFieldCondition : Condition
 {
     private float atk;
@@ -14,6 +16,6 @@ public class SpecificAtkDefInvocationCardOnFieldCondition : Condition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return playerCards.invocationCards.Exists(card => card.Defense >= def || card.Attack >= atk);
+        return playerCards.invocationCards.Any(card => card.Defense >= def || card.Attack >= atk);
     }
 }

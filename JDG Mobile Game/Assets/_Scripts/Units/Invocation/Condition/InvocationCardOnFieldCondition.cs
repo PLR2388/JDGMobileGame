@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace _Scripts.Units.Invocation.Condition
 {
@@ -14,7 +15,7 @@ namespace _Scripts.Units.Invocation.Condition
         protected readonly List<string> cardNames;
         public override bool CanBeSummoned(PlayerCards playerCards)
         {
-            return playerCards.invocationCards.Exists(card => cardNames.Contains(card.Title));
+            return playerCards.invocationCards.Any(card => cardNames.Contains(card.Title));
         }
     }
 }

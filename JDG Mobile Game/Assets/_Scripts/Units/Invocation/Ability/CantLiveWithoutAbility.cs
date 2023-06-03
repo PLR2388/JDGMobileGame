@@ -27,7 +27,7 @@ public class CantLiveWithoutAbility : Ability
         if (CantLive(playerCards))
         {
             // TODO Add Observer on InvocationCards to know when card is dead
-            InGameInvocationCard doomedCard = playerCards.invocationCards.Find(card => card.Title == cardName);
+            InGameInvocationCard doomedCard = playerCards.invocationCards.First(card => card.Title == cardName);
             playerCards.invocationCards.Remove(doomedCard);
             playerCards.yellowTrash.Add(doomedCard);
         }
@@ -38,14 +38,14 @@ public class CantLiveWithoutAbility : Ability
         if (conditionInvocationCards == null)
         {
             // Check Family
-            return !playerCards.invocationCards.Exists(card =>
+            return !playerCards.invocationCards.Any(card =>
                 card.Title != cardName &&
                 (card.Families.Contains(family) || family == CardFamily.Any));
         }
         else
         {
             // Check existence of specific cards
-            return !playerCards.invocationCards.Exists(card => conditionInvocationCards.Contains(card.Title));
+            return !playerCards.invocationCards.Any(card => conditionInvocationCards.Contains(card.Title));
         }
  
     }

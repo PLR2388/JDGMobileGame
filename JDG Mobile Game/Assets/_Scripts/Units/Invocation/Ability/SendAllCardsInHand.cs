@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -16,10 +17,10 @@ public class SendAllCardsInHand : Ability
 
     private void RemoveAllCardExceptOne(PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
-        List<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.FindAll(card => card.Title != exceptedCardName);
-        List<InGameInvocationCard> opponentInvocationCard =
-            opponentPlayerCard.invocationCards.FindAll(card => card.Title != exceptedCardName);
+        IEnumerable<InGameInvocationCard> invocationCards =
+            playerCards.invocationCards.Where(card => card.Title != exceptedCardName);
+        IEnumerable<InGameInvocationCard> opponentInvocationCard =
+            opponentPlayerCard.invocationCards.Where(card => card.Title != exceptedCardName);
         foreach (var invocationCard in invocationCards)
         {
             playerCards.invocationCards.Remove(invocationCard);

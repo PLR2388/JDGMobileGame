@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
@@ -26,7 +27,7 @@ public class KillOpponentInvocationCardAbility : Ability
     
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        List<InGameInvocationCard> invocationCards = opponentPlayerCards.invocationCards;
+        ObservableCollection<InGameInvocationCard> invocationCards = opponentPlayerCards.invocationCards;
         if (invocationCards.Count > 0)
         {
             GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Action",

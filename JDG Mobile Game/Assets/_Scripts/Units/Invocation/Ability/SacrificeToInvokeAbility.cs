@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
@@ -51,7 +52,7 @@ public class SacrificeToInvokeAbility : Ability
                     else
                     {
                         InGameInvocationCard currentCard =
-                            playerCards.invocationCards.Find(card => card.Title == cardName);
+                            playerCards.invocationCards.First(card => card.Title == cardName);
                         playerCards.invocationCards.Remove(currentCard);
                         playerCards.yellowTrash.Add(currentCard);
                         playerCards.invocationCards.Add(invocationCard);

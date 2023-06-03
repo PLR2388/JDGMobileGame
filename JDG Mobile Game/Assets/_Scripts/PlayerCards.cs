@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
@@ -15,7 +17,7 @@ public class PlayerCards : MonoBehaviour
     public List<InGameCard> handCards = new List<InGameCard>();
     public List<InGameCard> yellowTrash = new List<InGameCard>();
     public InGameFieldCard field;
-    public List<InGameInvocationCard> invocationCards = new List<InGameInvocationCard>();
+    //public List<InGameInvocationCard> invocationCards = new List<InGameInvocationCard>();
     public List<InGameEffectCard> effectCards = new List<InGameEffectCard>();
 
     [SerializeField] private bool isPlayerOne;
@@ -32,18 +34,22 @@ public class PlayerCards : MonoBehaviour
 
 
     public string Tag => isPlayerOne ? "card1" : "card2";
-
-    private List<InGameInvocationCard> oldInvocationCards = new List<InGameInvocationCard>();
+    
     private InGameFieldCard oldField;
     private List<InGameCard> oldHandCards = new List<InGameCard>();
     private List<InGameCard> oldYellowTrash = new List<InGameCard>();
 
     public bool IsFieldDesactivate { get; private set; }
 
+    public ObservableCollection<InGameInvocationCard> invocationCards =
+        new ObservableCollection<InGameInvocationCard>();
+
+    private List<InGameInvocationCard> oldInvocations = new List<InGameInvocationCard>();
+
     // Start is called before the first frame update
     private void Start()
     {
-        invocationCards = new List<InGameInvocationCard>(4);
+        invocationCards = new ObservableCollection<InGameInvocationCard>();
         effectCards = new List<InGameEffectCard>(4);
         var gameStateGameObject = GameObject.Find("GameState");
         var gameState = gameStateGameObject.GetComponent<GameState>();
@@ -57,6 +63,30 @@ public class PlayerCards : MonoBehaviour
 
         deck.RemoveRange(deck.Count - 5, 5);
         cardLocation.HideCards(handCards);
+        
+        invocationCards.CollectionChanged += delegate(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)                    
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    OnInvocationCardAdded(invocationCards.Last());
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    var removedInvocationCard = oldInvocations.Except(invocationCards).First();
+                    OnInvocationCardsRemoved(removedInvocationCard);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            OnInvocationCardsChanged();
+            oldInvocations = invocationCards.ToList();
+        };
     }
 
     public void DesactivateFieldCardEffect()
@@ -96,22 +126,6 @@ public class PlayerCards : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (invocationCards.Count != oldInvocationCards.Count)
-        {
-            if (invocationCards.Count > oldInvocationCards.Count)
-            {
-                OnInvocationCardAdded(invocationCards.Last());
-            }
-            else
-            {
-                var removedInvocationCard = oldInvocationCards.Except(invocationCards).First();
-                OnInvocationCardsRemoved(removedInvocationCard);
-            }
-
-            oldInvocationCards = new List<InGameInvocationCard>(invocationCards);
-            OnInvocationCardsChanged();
-        }
-
         if (field != oldField)
         {
             for (var i = effectCards.Count - 1; i >= 0; i--)
@@ -754,9 +768,9 @@ public class PlayerCards : MonoBehaviour
 
     private void OnInvocationCardsRemoved(InGameInvocationCard removedInvocationCard)
     {
-        for (var j = oldInvocationCards.Count - 1; j >= 0; j--)
+        for (var j = oldInvocations.Count - 1; j >= 0; j--)
         {
-            var invocationCard = oldInvocationCards[j];
+            var invocationCard = oldInvocations[j];
 
             invocationCard.UnblockAttack();
 

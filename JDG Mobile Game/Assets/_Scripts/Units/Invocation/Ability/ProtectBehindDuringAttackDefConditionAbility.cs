@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
@@ -18,13 +19,14 @@ public class ProtectBehindDuringAttackDefConditionAbility : Ability
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards,
         PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
-        List<InGameInvocationCard> invocationCards =
-            opponentPlayerCards.invocationCards.FindAll(card => card.Defense > attackedCard.Defense);
-        if (attackedCard.Title == protegee && invocationCards.Count > 0)
+        IEnumerable<InGameInvocationCard> invocationCards =
+            opponentPlayerCards.invocationCards.Where(card => card.Defense > attackedCard.Defense);
+        var inGameInvocationCards = invocationCards.ToList();
+        if (attackedCard.Title == protegee && inGameInvocationCards.Any())
         {
-            if (invocationCards.Count == 1)
+            if (inGameInvocationCards.Count() == 1)
             {
-                InGameInvocationCard newAttackedCard = invocationCards[0];
+                InGameInvocationCard newAttackedCard = inGameInvocationCards[0];
                 base.OnCardAttacked(canvas, newAttackedCard, attacker, playerCards, opponentPlayerCards,
                     currentPlayerStatus, opponentPlayerStatus);
             }
@@ -32,7 +34,7 @@ public class ProtectBehindDuringAttackDefConditionAbility : Ability
             {
                 // Random choice for the moment
                 // TODO Change
-                InGameInvocationCard newAttackedCard = invocationCards[Random.Range(0, invocationCards.Count)];
+                InGameInvocationCard newAttackedCard = inGameInvocationCards[Random.Range(0, inGameInvocationCards.Count)];
                 base.OnCardAttacked(canvas, newAttackedCard, attacker, playerCards, opponentPlayerCards,
                     currentPlayerStatus, opponentPlayerStatus);
             }

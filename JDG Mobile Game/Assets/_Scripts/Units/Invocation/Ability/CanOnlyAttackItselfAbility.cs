@@ -1,4 +1,5 @@
 
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -15,6 +16,6 @@ public class CanOnlyAttackItselfAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        playerCards.invocationCards.Find(card => card.Title == cardName).Aggro = true;
+        playerCards.invocationCards.First(card => card.Title == cardName).Aggro = true;
     }
 }

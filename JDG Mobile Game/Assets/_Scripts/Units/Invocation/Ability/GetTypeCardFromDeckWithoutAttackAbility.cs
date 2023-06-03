@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
@@ -55,7 +56,7 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
                     {
                         playerCards.handCards.Add(card);
                         playerCards.deck.Remove(card);
-                        playerCards.invocationCards.Find(card => card.Title == cardName).SetRemainedAttackThisTurn(0);
+                        playerCards.invocationCards.First(card => card.Title == cardName).SetRemainedAttackThisTurn(0);
                         Object.Destroy(messageBox);
                         Object.Destroy(messageBox1);
                     }

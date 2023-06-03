@@ -1931,8 +1931,7 @@ namespace Cards.EffectCards
                     //cardLocation.AddPhysicalCard(superInvocationCard, playerName);
                     foreach (var invocationCard in invocationCards)
                     {
-                        var index1 = currentInvocationCards.FindIndex(0, currentInvocationCards.Count,
-                            card => card.Title == invocationCard.Title);
+                        var index1 = currentInvocationCards.IndexOf(invocationCard);
                         if (index1 <= -1) continue;
                         currentPlayerCard.SendToSecretHide(invocationCard);
                         currentPlayerCard.invocationCards.RemoveAt(index1);

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ public class LimitTurnExistenceAbility : Ability
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => card.Title == cardName);
+        InGameInvocationCard invocationCard = playerCards.invocationCards.First(card => card.Title == cardName);
         if (invocationCard.NumberOfTurnOnField >= numberOfTurn)
         {
             playerCards.yellowTrash.Add(invocationCard);

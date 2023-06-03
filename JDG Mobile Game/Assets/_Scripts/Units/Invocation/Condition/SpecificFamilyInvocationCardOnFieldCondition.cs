@@ -14,7 +14,7 @@ public class SpecificFamilyInvocationCardOnFieldCondition : Condition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return playerCards.invocationCards.Exists(card => card.Families.Contains(family));
+        return playerCards.invocationCards.Any(card => card.Families.Contains(family));
     }
 
 }

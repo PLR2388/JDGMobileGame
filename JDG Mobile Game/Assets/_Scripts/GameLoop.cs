@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
@@ -332,7 +333,8 @@ public class GameLoop : MonoBehaviour
     /**
      * Return the list of available opponents
      */
-    protected virtual void DisplayCards(List<InGameInvocationCard> invocationCards, List<InGameEffectCard> attackPlayerEffectCard)
+    protected virtual void DisplayCards(ObservableCollection<InGameInvocationCard> invocationCards,
+        List<InGameEffectCard> attackPlayerEffectCard)
     {
         var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title != null).Cast<InGameCard>().ToList();
 
@@ -1049,10 +1051,21 @@ public class GameLoop : MonoBehaviour
         roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";
     }
 
-    protected void DoDraw()
+    private void ApplyOnTurnStart(ObservableCollection<InGameInvocationCard> invocationCards, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        foreach (var invocationCardAbility in invocationCards.SelectMany(invocationCard => invocationCard.Abilities))
+        {
+            invocationCardAbility.OnTurnStart(canvas, playerCards, opponentPlayerCards);
+        }
+    }
+
+    private void DoDraw()
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         playerCards.ResetInvocationCardNewTurn();
+        
+        ApplyOnTurnStart(playerCards.invocationCards, playerCards, opponentPlayerCards);
 
         DrawPlayerCard(playerCards);
 

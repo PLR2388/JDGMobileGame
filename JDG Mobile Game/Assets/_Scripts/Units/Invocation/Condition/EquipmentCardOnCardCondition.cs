@@ -1,3 +1,5 @@
+using System.Linq;
+
 public class EquipmentCardOnCardCondition : Condition
 {
 
@@ -14,7 +16,7 @@ public class EquipmentCardOnCardCondition : Condition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return playerCards.invocationCards.Exists(card =>
+        return playerCards.invocationCards.Any(card =>
             card.Title == invocationCardName && card.EquipmentCard != null &&
             card.EquipmentCard.Title == equipmentCardName);
     }

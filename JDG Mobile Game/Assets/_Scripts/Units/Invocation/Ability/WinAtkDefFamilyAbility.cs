@@ -23,14 +23,14 @@ public class WinAtkDefFamilyAbility : Ability
     
     protected void IncrementAtkDefInvocationCard(PlayerCards playerCards, int numberCardInvocation)
     {
-        InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => card.Title == cardName);
+        InGameInvocationCard invocationCard = playerCards.invocationCards.First(card => card.Title == cardName);
         invocationCard.Attack += numberCardInvocation * attack;
         invocationCard.Defense += numberCardInvocation * defense;
     }
     
     protected void DecrementAtkDefInvocationCard(PlayerCards playerCards, int numberCardInvocation)
     {
-        InGameInvocationCard invocationCard = playerCards.invocationCards.Find(card => card.Title == cardName);
+        InGameInvocationCard invocationCard = playerCards.invocationCards.First(card => card.Title == cardName);
         invocationCard.Attack -= numberCardInvocation * attack;
         invocationCard.Defense -= numberCardInvocation * defense;
     }
@@ -38,7 +38,7 @@ public class WinAtkDefFamilyAbility : Ability
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         int numberCardInvocation = playerCards.invocationCards
-            .FindAll(card => card.Title != cardName && card.Families.Contains(family)).Count;
+            .Count(card => card.Title != cardName && card.Families.Contains(family));
         IncrementAtkDefInvocationCard(playerCards, numberCardInvocation);
     }
 

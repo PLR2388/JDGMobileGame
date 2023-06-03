@@ -1,3 +1,4 @@
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -18,10 +19,10 @@ public class CopyAtkDefAbility : Ability
     private void ApplyCopy(PlayerCards playerCards)
     {
         InGameInvocationCard invocationCardToCopy =
-            playerCards.invocationCards.Find(card => card.Title == cardToCopyName);
+            playerCards.invocationCards.First(card => card.Title == cardToCopyName);
         if (invocationCardToCopy != null)
         {
-            InGameInvocationCard originCard = playerCards.invocationCards.Find(card => card.Title == originCardName);
+            InGameInvocationCard originCard = playerCards.invocationCards.First(card => card.Title == originCardName);
             originCard.Attack = invocationCardToCopy.Attack;
             originCard.Defense = invocationCardToCopy.Defense;
         }
@@ -49,7 +50,7 @@ public class CopyAtkDefAbility : Ability
         if (removeCard.Title == cardToCopyName)
         {
             InGameInvocationCard originInvocationCard =
-                playerCards.invocationCards.Find(card => card.Title == originCardName);
+                playerCards.invocationCards.First(card => card.Title == originCardName);
             originInvocationCard.Attack = originInvocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
             originInvocationCard.Defense = originInvocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
         }
