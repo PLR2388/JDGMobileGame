@@ -20,6 +20,7 @@ public class SacrificeCardAbility : Ability
         if (invocationCard.EquipmentCard != null)
         {
             playerCards.yellowTrash.Add(invocationCard.EquipmentCard);
+            invocationCard.EquipmentCard = null;
         }
         playerCards.invocationCards.Remove(invocationCard);
         playerCards.yellowTrash.Add(invocationCard);

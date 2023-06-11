@@ -749,17 +749,17 @@ public class GameLoop : MonoBehaviour
         attacker.IncrementNumberDeaths();
         playerStatus.ChangePv(-diff);
         
-        var abilities = opponent.Abilities;
+        var abilities = attacker.Abilities;
         if (abilities.Count > 0)
         {
             foreach (var ability in abilities)
             {
-                ability.OnCardDeath(canvas, opponent, playerCards);
+                ability.OnCardDeath(canvas, attacker, playerCards);
             }
         }
         else
         {
-            playerCards.SendInvocationCardToYellowTrash(cardSelected as InGameInvocationCard);
+            playerCards.SendInvocationCardToYellowTrash(attacker);
         }
         
 

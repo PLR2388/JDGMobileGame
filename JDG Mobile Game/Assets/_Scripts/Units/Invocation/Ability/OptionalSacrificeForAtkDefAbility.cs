@@ -55,4 +55,11 @@ public class OptionalSacrificeForAtkDefAbility : Ability
             };
         }
     }
+
+    public override void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    {
+        deadCard.Attack = deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+        deadCard.Defense = deadCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+        base.OnCardDeath(canvas, deadCard, playerCards);
+    }
 }

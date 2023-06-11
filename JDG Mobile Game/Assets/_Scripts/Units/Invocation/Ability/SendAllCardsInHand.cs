@@ -18,9 +18,9 @@ public class SendAllCardsInHand : Ability
     private void RemoveAllCardExceptOne(PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
         IEnumerable<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.Where(card => card.Title != exceptedCardName);
+            playerCards.invocationCards.Where(card => card.Title != exceptedCardName).ToList();
         IEnumerable<InGameInvocationCard> opponentInvocationCard =
-            opponentPlayerCard.invocationCards.Where(card => card.Title != exceptedCardName);
+            opponentPlayerCard.invocationCards.Where(card => card.Title != exceptedCardName).ToList();
         foreach (var invocationCard in invocationCards)
         {
             playerCards.invocationCards.Remove(invocationCard);
