@@ -28,6 +28,12 @@ public class CantBeAttackAbility : Ability
         playerCards.invocationCards.First(card => card.Title == cardName).CantBeAttack = IsProtected(playerCards);
     }
 
+    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
+    {
+        playerCards.invocationCards.First(card => card.Title == cardName).CantBeAttack = IsProtected(playerCards);
+    }
+
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {

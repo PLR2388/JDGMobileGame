@@ -16,10 +16,6 @@ namespace _Scripts.Units.Invocation
         private CardFamily[] families;
         private InGameEquipementCard equipmentCard;
         private InvocationConditions invocationConditions;
-        private InvocationStartEffect invocationStartEffect;
-        private InvocationPermEffect invocationPermEffect;
-        private InvocationActionEffect invocationActionEffect;
-        private InvocationDeathEffect invocationDeathEffect;
         private int numberTurnOnField;
         private int numberDeaths;
         private bool blockAttackNextTurn;
@@ -48,15 +44,6 @@ namespace _Scripts.Units.Invocation
         public int NumberOfTurnOnField => numberTurnOnField;
 
         public int NumberOfDeaths => numberDeaths;
-        public InvocationStartEffect InvocationStartEffect => invocationStartEffect;
-        public InvocationPermEffect InvocationPermEffect => invocationPermEffect;
-
-        public InvocationActionEffect InvocationActionEffect
-        {
-            get => invocationActionEffect;
-            set => invocationActionEffect = value;
-        }
-        public InvocationDeathEffect InvocationDeathEffect => invocationDeathEffect;
 
         public InGameEquipementCard EquipmentCard
         {
@@ -113,10 +100,6 @@ namespace _Scripts.Units.Invocation
             defense = baseInvocationCard.BaseInvocationCardStats.Defense;
             families = baseInvocationCard.BaseInvocationCardStats.Families;
             equipmentCard = null;
-            invocationStartEffect = baseInvocationCard.BaseInvocationCardStats.InvocationStartEffect;
-            invocationPermEffect = baseInvocationCard.BaseInvocationCardStats.InvocationPermEffect;
-            invocationActionEffect = baseInvocationCard.BaseInvocationCardStats.InvocationActionEffect;
-            invocationDeathEffect = baseInvocationCard.BaseInvocationCardStats.InvocationDeathEffect;
             IsAffectedByEffectCard = baseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
             Conditions = baseInvocationCard.Conditions.Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
             Abilities = baseInvocationCard.Abilities.Select(abilityName => AbilityLibrary.Instance.abilityDictionary[abilityName]).ToList();
@@ -129,10 +112,6 @@ namespace _Scripts.Units.Invocation
 
         public void DeactivateEffect()
         {
-            invocationStartEffect = null;
-            invocationPermEffect = null;
-            invocationActionEffect = null;
-            invocationDeathEffect = null;
         }
 
         public void BlockAttack()
@@ -371,16 +350,6 @@ namespace _Scripts.Units.Invocation
         public float GetCurrentAttack()
         {
             return attack;
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
     }
 }

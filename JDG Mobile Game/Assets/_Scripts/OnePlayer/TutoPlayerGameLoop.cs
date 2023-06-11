@@ -270,7 +270,8 @@ namespace OnePlayer
                     {
                         attacker = invocationCard;
                         var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-                        var hasAction = attacker.InvocationActionEffect != null;
+                        //var hasAction = attacker.InvocationActionEffect != null;
+                        var hasAction = false;
                         invocationMenu.SetActive(true);
                         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
                         invocationMenu.transform.position = mousePosition;
@@ -321,7 +322,8 @@ namespace OnePlayer
 #endif
                         attacker = invocationCard;
                         var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-                        var hasAction = attacker.InvocationActionEffect != null;
+                        //var hasAction = attacker.InvocationActionEffect != null;
+                        var hasAction = false;
                         invocationMenu.SetActive(true);
                         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
                         invocationMenu.transform.position = mousePosition;

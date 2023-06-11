@@ -814,8 +814,6 @@ namespace Cards.InvocationCards
 
             if (size >= 4) return;
 
-            var invocationStartEffect = invocationCard.InvocationStartEffect;
-
             //  if (invocationConditionEffect != null)
             //{
             //  DealWithConditionInvocation(invocationConditionEffect);
@@ -827,11 +825,6 @@ namespace Cards.InvocationCards
             //    currentPlayerCard.invocationCards.Add(invocationCard);
             //    currentPlayerCard.handCards.Remove(invocationCard);
             //}
-
-            if (invocationStartEffect != null)
-            {
-                DealWithStartEffect(invocationCard, invocationStartEffect);
-            }
         }
 
         /// <summary>
@@ -1082,8 +1075,6 @@ namespace Cards.InvocationCards
                                 values.Add(card.Title);
                                 invocationActionEffect.Keys = keys;
                                 invocationActionEffect.Values = values;
-                                currentPlayerCard.invocationCards[indexCurrent].InvocationActionEffect =
-                                    invocationActionEffect;
                             }
                         }
                         else

@@ -58,14 +58,17 @@ public class GiveAtkDefFamilyAbility : Ability
         if (removeCard.Title != originCardName && removeCard.Families.Contains(family))
         {
             DecreaseAtkDef(removeCard);
-        } else if (removeCard.Title == originCardName)// Todo maybe make a OnCardDeath ?
-        {
-            IEnumerable<InGameInvocationCard> invocationCards =
-                playerCards.invocationCards.Where(card => card.Title != originCardName && card.Families.Contains(family));
-            foreach (var invocationCard in invocationCards)
-            {
-                DecreaseAtkDef(invocationCard);
-            }
         }
+    }
+
+    public override void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    {
+        IEnumerable<InGameInvocationCard> invocationCards =
+            playerCards.invocationCards.Where(card => card.Title != originCardName && card.Families.Contains(family));
+        foreach (var invocationCard in invocationCards)
+        {
+            DecreaseAtkDef(invocationCard);
+        }
+        base.OnCardDeath(canvas, deadCard, playerCards);
     }
 }

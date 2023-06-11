@@ -144,11 +144,11 @@ namespace Menu
             var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
-            deck2.Add(GetSpecificCard("Studio de scénaristes Canadien", deck2AllCard));
+            deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
             deck1.Add(GetSpecificCard("Granolax", deck1AllCard));
-            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
-            deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Vieux Sage", deck1AllCard));
+            deck1.Add(GetSpecificCard("Zozan Kebab", deck1AllCard));
+            deck1.Add(GetSpecificCard("L'Aigle De La Nuit", deck1AllCard));
+            deck1.Add(GetSpecificCard("Babs", deck1AllCard));
 
             while (deck1.Count != 30)
             {

@@ -16,7 +16,9 @@ public class PlayerCards : MonoBehaviour
     public List<InGameCard> deck = new List<InGameCard>();
     public List<InGameCard> handCards = new List<InGameCard>();
     public List<InGameCard> yellowTrash = new List<InGameCard>();
+
     public InGameFieldCard field;
+
     //public List<InGameInvocationCard> invocationCards = new List<InGameInvocationCard>();
     public List<InGameEffectCard> effectCards = new List<InGameEffectCard>();
 
@@ -34,7 +36,7 @@ public class PlayerCards : MonoBehaviour
 
 
     public string Tag => isPlayerOne ? "card1" : "card2";
-    
+
     private InGameFieldCard oldField;
     private List<InGameCard> oldHandCards = new List<InGameCard>();
     private List<InGameCard> oldYellowTrash = new List<InGameCard>();
@@ -63,8 +65,8 @@ public class PlayerCards : MonoBehaviour
 
         deck.RemoveRange(deck.Count - 5, 5);
         cardLocation.HideCards(handCards);
-        
-        invocationCards.CollectionChanged += delegate(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)                    
+
+        invocationCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -84,6 +86,7 @@ public class PlayerCards : MonoBehaviour
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             OnInvocationCardsChanged();
             oldInvocations = invocationCards.ToList();
         };
@@ -269,8 +272,14 @@ public class PlayerCards : MonoBehaviour
 
             cardLocation.RemovePhysicalCard(specificCardFound);
 
-            if (specificCardFound.InvocationDeathEffect == null) return;
-            var invocationDeathEffect = specificCardFound.InvocationDeathEffect;
+            var abilities = specificCardFound.Abilities;
+            foreach (var ability in abilities)
+            {
+                ability.OnCardDeath(canvas, specificCardFound, opponentPlayerCards);
+            }
+
+
+            /*var invocationDeathEffect = specificCardFound.InvocationDeathEffect;
             var keys = invocationDeathEffect.Keys;
             var values = invocationDeathEffect.Values;
 
@@ -294,7 +303,7 @@ public class PlayerCards : MonoBehaviour
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
+            }*/
         }
         else
         {
@@ -304,8 +313,14 @@ public class PlayerCards : MonoBehaviour
             {
                 yellowTrash.Add(equipmentCard);
             }
+            
+            var abilities = specificCardFound.Abilities;
+            foreach (var ability in abilities)
+            {
+                ability.OnCardDeath(canvas, specificCardFound, this);
+            }
 
-            if (specificCardFound.InvocationDeathEffect == null) return;
+            /*if (specificCardFound.InvocationDeathEffect == null) return;
             var invocationDeathEffect = specificCardFound.InvocationDeathEffect;
             var keys = invocationDeathEffect.Keys;
             var values = invocationDeathEffect.Values;
@@ -330,7 +345,7 @@ public class PlayerCards : MonoBehaviour
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
+            }*/
         }
 
         specificCardFound.FreeCard();
@@ -472,15 +487,25 @@ public class PlayerCards : MonoBehaviour
 
     private void OnInvocationCardAdded(InGameInvocationCard newInvocationCard)
     {
-        var opponentEffectCards = isPlayerOne
-            ? GameObject.Find("Player2").GetComponent<PlayerCards>().effectCards
-            : GameObject.Find("Player1").GetComponent<PlayerCards>().effectCards;
+        var opponentPlayerCard = isPlayerOne
+            ? GameObject.Find("Player2").GetComponent<PlayerCards>()
+            : GameObject.Find("Player1").GetComponent<PlayerCards>();
+
+        var opponentEffectCards = opponentPlayerCard.effectCards;
+
+        foreach (var inGameInvocationCard in invocationCards)
+        {
+            foreach (var ability in inGameInvocationCard.Abilities)
+            {
+                ability.OnCardAdded(canvas, newInvocationCard, this, opponentPlayerCard);
+            }
+        }
 
         var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.EffectCardEffect.Keys)
             .Any(keys => keys.Contains(Effect.SkipAttack));
 
 
-        for (var j = invocationCards.Count - 1; j >= 0; j--)
+        /*for (var j = invocationCards.Count - 1; j >= 0; j--)
         {
             var invocationCard = invocationCards[j];
 
@@ -543,7 +568,7 @@ public class PlayerCards : MonoBehaviour
                         break;
                 }
             }
-        }
+        }*/
 
         for (var i = effectCards.Count - 1; i >= 0; i--)
         {
@@ -768,121 +793,15 @@ public class PlayerCards : MonoBehaviour
 
     private void OnInvocationCardsRemoved(InGameInvocationCard removedInvocationCard)
     {
-        for (var j = oldInvocations.Count - 1; j >= 0; j--)
+        var opponentPlayerCard = isPlayerOne
+            ? GameObject.Find("Player2").GetComponent<PlayerCards>()
+            : GameObject.Find("Player1").GetComponent<PlayerCards>();
+
+        var cloneInvocationCards = invocationCards.ToList();
+        // Apply onCardRemove for invocation card that are still alive
+        foreach (var ability in cloneInvocationCards.SelectMany(inGameInvocationCard => inGameInvocationCard.Abilities))
         {
-            var invocationCard = oldInvocations[j];
-
-            invocationCard.UnblockAttack();
-
-            var permEffect = invocationCard.InvocationPermEffect;
-            var actionEffect = invocationCard.InvocationActionEffect;
-            if (permEffect != null)
-            {
-                var keys = permEffect.Keys;
-                var values = permEffect.Values;
-
-                var invocationCardsToChange = new List<InGameInvocationCard>();
-                var sameFamilyInvocationCards = new List<InGameInvocationCard>();
-
-                var mustHaveMiminumAtkdef = false;
-
-                for (var i = 0; i < keys.Count; i++)
-                {
-                    var value = values[i];
-                    switch (keys[i])
-                    {
-                        case PermEffect.GiveStat:
-                        {
-                            GiveStatPermEffectRemoved(removedInvocationCard, value, invocationCard,
-                                ref invocationCardsToChange);
-                        }
-                            break;
-                        case PermEffect.Family:
-                        {
-                            FamilyPermEffectRemoved(removedInvocationCard, value, invocationCard,
-                                ref sameFamilyInvocationCards);
-                        }
-                            break;
-                        case PermEffect.Condition:
-                        {
-                            ConditionPermEffectRemoved(removedInvocationCard, value, sameFamilyInvocationCards,
-                                invocationCard, ref mustHaveMiminumAtkdef);
-                        }
-                            break;
-                        case PermEffect.IncreaseAtk:
-                        {
-                            IncreaseAtkPermEffectRemoved(invocationCardsToChange, value, sameFamilyInvocationCards,
-                                ref invocationCard, mustHaveMiminumAtkdef);
-                        }
-                            break;
-                        case PermEffect.IncreaseDef:
-                        {
-                            IncreaseDefPermEffectRemoved(invocationCardsToChange, value, sameFamilyInvocationCards,
-                                ref invocationCard, mustHaveMiminumAtkdef);
-                        }
-                            break;
-                        case PermEffect.CanOnlyAttackIt:
-                            break;
-                        case PermEffect.PreventInvocationCards:
-                            break;
-                        case PermEffect.ProtectBehind:
-                            break;
-                        case PermEffect.ImpossibleAttackByInvocation:
-                            break;
-                        case PermEffect.ImpossibleToBeAffectedByEffect:
-                            break;
-                        case PermEffect.NumberTurn:
-                            break;
-                        case PermEffect.checkCardsOnField:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-            else if (actionEffect != null)
-            {
-                var keys = actionEffect.Keys;
-                var values = actionEffect.Values;
-
-                float atk = 0;
-                float def = 0;
-                List<int> indexToDelete = new List<int>();
-
-                for (var i = 0; i < keys.Count; i++)
-                {
-                    var value = values[i];
-                    switch (keys[i])
-                    {
-                        case ActionEffect.GiveAtk:
-                        {
-                            atk = float.Parse(value);
-                        }
-                            break;
-                        case ActionEffect.GiveDef:
-                        {
-                            def = float.Parse(value);
-                        }
-                            break;
-                        case ActionEffect.Beneficiary:
-                        {
-                            BeneficiaryActionEffect(removedInvocationCard, invocationCard, value, atk, def,
-                                ref indexToDelete, i);
-                        }
-                            break;
-                    }
-                }
-
-                if (indexToDelete.Count > 0)
-                {
-                    indexToDelete.Reverse();
-                    foreach (var index in indexToDelete)
-                    {
-                        actionEffect.Keys.RemoveAt(index);
-                        actionEffect.Values.RemoveAt(index);
-                    }
-                }
-            }
+            ability.OnCardRemove(canvas, removedInvocationCard, this, opponentPlayerCard);
         }
 
         for (var i = effectCards.Count - 1; i >= 0; i--)
@@ -895,7 +814,8 @@ public class PlayerCards : MonoBehaviour
                 {
                     if (field != null)
                     {
-                        removedInvocationCard.Families = removedInvocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
+                        removedInvocationCard.Families =
+                            removedInvocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
                     }
                 }
             }
@@ -1085,7 +1005,7 @@ public class PlayerCards : MonoBehaviour
 
     private void OnInvocationCardsChanged()
     {
-        for (var j = invocationCards.Count - 1; j >= 0; j--)
+        /*for (var j = invocationCards.Count - 1; j >= 0; j--)
         {
             var invocationCard = invocationCards[j];
             var permEffect = invocationCard.InvocationPermEffect;
@@ -1117,7 +1037,8 @@ public class PlayerCards : MonoBehaviour
                         break;
                 }
             }
-        }
+        }*/
+
         CardLocation.UpdateLocation.Invoke();
     }
 
@@ -1201,7 +1122,7 @@ public class PlayerCards : MonoBehaviour
             invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
             invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
             invocationCard.FreeCard();
-            invocationCard.ResetNewTurn(); 
+            invocationCard.ResetNewTurn();
         }
     }
 

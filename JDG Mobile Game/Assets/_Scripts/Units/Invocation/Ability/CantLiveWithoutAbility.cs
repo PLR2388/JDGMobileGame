@@ -26,7 +26,6 @@ public class CantLiveWithoutAbility : Ability
     {
         if (CantLive(playerCards))
         {
-            // TODO Add Observer on InvocationCards to know when card is dead
             InGameInvocationCard doomedCard = playerCards.invocationCards.First(card => card.Title == cardName);
             playerCards.invocationCards.Remove(doomedCard);
             playerCards.yellowTrash.Add(doomedCard);

@@ -105,8 +105,10 @@ public abstract class Ability
         }
     }
 
+    // Call when the current card having a ability die
     public virtual void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
     {
+        if (playerCards.yellowTrash.Contains(deadCard)) return;
         playerCards.yellowTrash.Add(deadCard);
         playerCards.invocationCards.Remove(deadCard);
     }

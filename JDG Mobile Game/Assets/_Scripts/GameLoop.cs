@@ -220,7 +220,7 @@ public class GameLoop : MonoBehaviour
                 {
                     attacker = invocationCard;
                     var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-                    var hasAction = attacker.InvocationActionEffect != null;
+                    var hasAction = false; // attacker.InvocationActionEffect != null;
                     invocationMenu.SetActive(true);
                     invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
                     invocationMenu.transform.position = mousePosition;
@@ -271,11 +271,11 @@ public class GameLoop : MonoBehaviour
 #endif
                     attacker = invocationCard;
                     var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-                    var hasAction = attacker.InvocationActionEffect != null;
+                    var hasAction = false; // attacker.InvocationActionEffect != null;
                     invocationMenu.SetActive(true);
                     invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
                     invocationMenu.transform.position = mousePosition;
-                    if (hasAction)
+                    if (hasAction) // TODO: not done right now
                     {
                         invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
                         invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable =
@@ -322,12 +322,14 @@ public class GameLoop : MonoBehaviour
 
     protected bool IsSpecialActionPossible()
     {
-        return invocationFunctions.IsSpecialActionPossible(attacker, attacker.InvocationActionEffect);
+        return true; // TODO: Refactor
+        //return invocationFunctions.IsSpecialActionPossible(attacker, attacker.InvocationActionEffect);
     }
 
     protected void UseSpecialAction()
     {
-        invocationFunctions.AskIfUserWantToUseActionEffect(attacker, attacker.InvocationActionEffect);
+        // TODO: Refactor
+        //invocationFunctions.AskIfUserWantToUseActionEffect(attacker, attacker.InvocationActionEffect);
     }
 
     /**
@@ -352,18 +354,7 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            var newList = new List<InGameCard>();
-            foreach (var card in notEmptyOpponent)
-            {
-                var invocationCard = card as InGameInvocationCard;
-                var permEffect = invocationCard?.InvocationPermEffect;
-                if (permEffect != null)
-                {
-                    newList.AddRange(from effect in permEffect.Keys
-                        where effect == PermEffect.CanOnlyAttackIt
-                        select card);
-                }
-            }
+            var newList = (from card in notEmptyOpponent let invocationCard = card as InGameInvocationCard where invocationCard?.Aggro == true select card).ToList();
 
             if (newList.Count > 0)
             {
@@ -375,9 +366,15 @@ public class GameLoop : MonoBehaviour
                 for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
                 {
                     var invocationCard = notEmptyOpponent[j] as InGameInvocationCard;
-                    var permEffect = invocationCard.InvocationPermEffect;
                     var equipmentCard = invocationCard.EquipmentCard;
-                    if (permEffect != null)
+
+                    if (invocationCard.CantBeAttack)
+                    {
+                        notEmptyOpponent.Remove(invocationCard);
+                        continue;
+                    }
+                    
+                    /*if (permEffect != null)
                     {
                         var keys = permEffect.Keys;
                         var values = permEffect.Values;
@@ -462,7 +459,7 @@ public class GameLoop : MonoBehaviour
                                     throw new ArgumentOutOfRangeException();
                             }
                         }
-                    }
+                    }*/
 
                     if (equipmentCard != null)
                     {
@@ -645,7 +642,23 @@ public class GameLoop : MonoBehaviour
 
         playerStatus.ChangePv(diff);
 
-        if (opponent.InvocationDeathEffect != null)
+        var abilities = opponent.Abilities;
+
+        if (abilities.Count > 0)
+        {
+                    
+            foreach (var ability in abilities)
+            {
+                ability.OnCardDeath(canvas, opponent, playerCards);
+            }
+        }
+        else
+        {
+            playerCards.SendInvocationCardToYellowTrash(opponent);
+        }
+
+        
+        /*if (opponent.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(opponent, !IsP1Turn);
             if (!opponent.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
@@ -662,7 +675,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             playerCards.SendInvocationCardToYellowTrash(opponent);
-        }
+        }*/
     }
 
     protected void ComputeGoodAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superOpponent)
@@ -677,7 +690,7 @@ public class GameLoop : MonoBehaviour
         foreach (var combineCard in superOpponent.invocationCards)
         {
             combineCard.IncrementNumberDeaths();
-            if (combineCard.InvocationDeathEffect != null)
+            /*if (combineCard.InvocationDeathEffect != null)
             {
                 DealWithDeathEffect(combineCard, !IsP1Turn);
                 if (!combineCard.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
@@ -694,7 +707,7 @@ public class GameLoop : MonoBehaviour
             else
             {
                 playerCards.SendCardToYellowTrash(combineCard);
-            }
+            }*/
         }
 
         playerCards.RemoveSuperInvocation(superOpponent);
@@ -735,7 +748,22 @@ public class GameLoop : MonoBehaviour
         if (IsProtectedByEquipment(attacker, IsP1Turn)) return;
         attacker.IncrementNumberDeaths();
         playerStatus.ChangePv(-diff);
-        if (attacker.InvocationDeathEffect != null)
+        
+        var abilities = opponent.Abilities;
+        if (abilities.Count > 0)
+        {
+            foreach (var ability in abilities)
+            {
+                ability.OnCardDeath(canvas, opponent, playerCards);
+            }
+        }
+        else
+        {
+            playerCards.SendInvocationCardToYellowTrash(cardSelected as InGameInvocationCard);
+        }
+        
+
+        /*if (attacker.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(attacker, IsP1Turn);
             if (!attacker.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
@@ -752,7 +780,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             playerCards.SendInvocationCardToYellowTrash(cardSelected as InGameInvocationCard);
-        }
+        }*/
     }
 
     protected void ComputeHurtAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superAttacker)
@@ -763,7 +791,7 @@ public class GameLoop : MonoBehaviour
             playerCards.yellowTrash);
         playerStatus.ChangePv(-diff);
 
-        foreach (var combineCard in superAttacker.invocationCards)
+        /*foreach (var combineCard in superAttacker.invocationCards)
         {
             combineCard.IncrementNumberDeaths();
             if (combineCard.InvocationDeathEffect != null)
@@ -784,7 +812,7 @@ public class GameLoop : MonoBehaviour
             {
                 playerCards.SendCardToYellowTrash(combineCard);
             }
-        }
+        }*/
 
         playerCards.RemoveSuperInvocation(superAttacker);
     }
@@ -860,7 +888,21 @@ public class GameLoop : MonoBehaviour
     protected void ComputeEqualityOpponent()
     {
         var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-        if (opponent.InvocationDeathEffect != null)
+  
+        var abilities = opponent.Abilities;
+        if (abilities.Count > 0)
+        {
+            foreach (var ability in abilities)
+            {
+                ability.OnCardDeath(canvas, opponent, playerCard);
+            }
+        }
+        else
+        {
+            playerCard.SendInvocationCardToYellowTrash(opponent);
+        }
+
+        /*if (opponent.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(opponent, !IsP1Turn);
             if (!opponent.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
@@ -877,13 +919,26 @@ public class GameLoop : MonoBehaviour
         else
         {
             playerCard.SendInvocationCardToYellowTrash(opponent);
-        }
+        }*/
     }
 
     protected void ComputeEqualityAttacker()
     {
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        if (attacker.InvocationDeathEffect != null)
+        
+        var abilities = attacker.Abilities;
+        if (abilities.Count > 0)
+        {
+            foreach (var ability in abilities)
+            {
+                ability.OnCardDeath(canvas, attacker, playerCard);
+            }
+        }
+        else
+        {
+            playerCard.SendInvocationCardToYellowTrash(attacker);
+        }
+        /*if (attacker.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(attacker, IsP1Turn);
             if (!attacker.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
@@ -900,7 +955,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             playerCard.SendInvocationCardToYellowTrash(attacker);
-        }
+        }*/
     }
 
     protected void ComputeEqualityAttackSuperAttacker(InGameInvocationCard combineCard)
@@ -909,7 +964,7 @@ public class GameLoop : MonoBehaviour
 
         RemoveCombineEffectCard(playerCard.effectCards,
             playerCard.yellowTrash);
-        if (combineCard.InvocationDeathEffect != null)
+        /*if (combineCard.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(combineCard, IsP1Turn);
             if (!combineCard.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
@@ -926,7 +981,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             playerCard.SendCardToYellowTrash(combineCard);
-        }
+        }*/
     }
 
     protected void ComputeEqualityAttackSuperOpponent(InGameInvocationCard combineCard)
@@ -935,7 +990,8 @@ public class GameLoop : MonoBehaviour
 
         RemoveCombineEffectCard(playerCard.effectCards,
             playerCard.yellowTrash);
-        if (combineCard.InvocationDeathEffect != null)
+        // TOOD
+        /*if (combineCard.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(combineCard, !IsP1Turn);
             if (!combineCard.InvocationDeathEffect.Keys.Contains(DeathEffect.ComeBackToHand))
@@ -952,7 +1008,7 @@ public class GameLoop : MonoBehaviour
         else
         {
             playerCard.SendCardToYellowTrash(combineCard);
-        }
+        }*/
     }
 
     /**
@@ -960,7 +1016,7 @@ public class GameLoop : MonoBehaviour
      */
     protected void DealWithDeathEffect(InGameInvocationCard invocationCard, bool isP1Card)
     {
-        var invocationDeathEffect = invocationCard.InvocationDeathEffect;
+        /*var invocationDeathEffect = invocationCard.InvocationDeathEffect;
         var keys = invocationDeathEffect.Keys;
         var values = invocationDeathEffect.Values;
 
@@ -981,7 +1037,7 @@ public class GameLoop : MonoBehaviour
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
+        }*/
     }
 
     protected void KillAlsoOtherCardDeathEffect()
@@ -1552,7 +1608,8 @@ public class GameLoop : MonoBehaviour
         }
 
         // Check if preventInvocationCards/NumberTurn is there
-        for (int k = currentPlayerCard.invocationCards.Count - 1; k >= 0; k--)
+        // TODO
+        /*for (int k = currentPlayerCard.invocationCards.Count - 1; k >= 0; k--)
         {
             var invocationCard = currentPlayerCard.invocationCards[k];
             var permEffect = invocationCard.InvocationPermEffect;
@@ -1607,7 +1664,7 @@ public class GameLoop : MonoBehaviour
             opponentPlayerCard.RemoveFromSecretHide(invocationCard);
             currentPlayerCard.invocationCards.Remove(invocationCard);
             currentPlayerCard.SendToSecretHide(invocationCard);
-        }
+        }*/
 
         foreach (var invocationCard in currentPlayerCard.invocationCards)
         {

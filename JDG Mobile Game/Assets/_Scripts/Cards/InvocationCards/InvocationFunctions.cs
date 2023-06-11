@@ -1065,8 +1065,6 @@ namespace Cards.InvocationCards
                                 values.Add(card.Title);
                                 invocationActionEffect.Keys = keys;
                                 invocationActionEffect.Values = values;
-                                currentPlayerCard.invocationCards[indexCurrent].InvocationActionEffect =
-                                    invocationActionEffect;
                             }
                         }
                         else
