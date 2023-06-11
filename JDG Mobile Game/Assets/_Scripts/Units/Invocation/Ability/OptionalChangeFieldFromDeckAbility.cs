@@ -58,6 +58,7 @@ public class OptionalChangeFieldFromDeckAbility : Ability
                             playerCards.field = fieldCard;
                         }
                     }
+                    Object.Destroy(messageBox1);
                 };
                 messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
                 {
