@@ -250,7 +250,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Lolhitler",
             0,
             0,
-            CardFamily.Japan,
+            CardFamily.Incarnation,
             2
         ),
         new DestroyFieldAtkDefAttackConditionAbility(

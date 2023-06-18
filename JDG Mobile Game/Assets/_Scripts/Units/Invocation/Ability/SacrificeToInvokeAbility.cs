@@ -55,8 +55,8 @@ public class SacrificeToInvokeAbility : Ability
                             playerCards.invocationCards.First(card => card.Title == cardName);
                         playerCards.invocationCards.Remove(currentCard);
                         playerCards.yellowTrash.Add(currentCard);
-                        playerCards.invocationCards.Add(invocationCard);
                         playerCards.yellowTrash.Remove(invocationCard);
+                        playerCards.invocationCards.Add(invocationCard);
                         Object.Destroy(messageBox);
                         Object.Destroy(messageBox1);
                     }

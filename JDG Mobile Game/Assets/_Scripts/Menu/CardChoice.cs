@@ -145,17 +145,17 @@ namespace Menu
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
             deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
-            deck1.Add(GetSpecificCard("Benzaie jeune", deck1AllCard));
-            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
-            deck1.Add(GetSpecificCard("Fourchette", deck1AllCard));
-            deck1.Add(GetSpecificCard("L'Aigle De La Nuit", deck1AllCard));
-            deck1.Add(GetSpecificCard("La Mort", deck1AllCard));
+            deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
+            deck1.Add(GetSpecificCard("Sheik Point", deck1AllCard));
+            deck1.Add(GetSpecificCard("Granolax", deck1AllCard));
+            deck1.Add(GetSpecificCard("Mecha-Granolax", deck1AllCard));
 
             while (deck1.Count != 30)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
-            // deck1.Add(GetSpecificCard("Canard-signal", deck1AllCard));
+            deck1.Add(GetSpecificCard("Benzaie jeune", deck1AllCard));
+            deck1.Add(GetSpecificCard("Joueur Du Grenier", deck1AllCard));
 
             deck1.Reverse();
 
