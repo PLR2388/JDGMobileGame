@@ -130,6 +130,8 @@ public abstract class Ability
             deadCard.EquipmentCard = null;
         }
 
+        deadCard.IncrementNumberDeaths();
+
         playerCards.yellowTrash.Add(deadCard);
         playerCards.invocationCards.Remove(deadCard);
         return true;

@@ -256,6 +256,7 @@ public class PlayerCards : MonoBehaviour
     public void SendInvocationCardToYellowTrash(InGameInvocationCard specificCardFound)
     {
         var equipmentCard = specificCardFound.EquipmentCard;
+        specificCardFound.IncrementNumberDeaths();
         if (specificCardFound.IsControlled)
         {
             var opponentPlayerCards = isPlayerOne
@@ -349,7 +350,7 @@ public class PlayerCards : MonoBehaviour
         }
 
         specificCardFound.FreeCard();
-        specificCardFound.Reset();
+        // specificCardFound.Reset();
     }
 
     public void RemoveSuperInvocation(InGameCard superInvocationCard)

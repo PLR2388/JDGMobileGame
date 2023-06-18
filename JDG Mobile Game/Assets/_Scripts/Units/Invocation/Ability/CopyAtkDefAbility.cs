@@ -1,10 +1,10 @@
+using System;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
 public class CopyAtkDefAbility : Ability
 {
-
     private string originCardName;
     private string cardToCopyName;
 
@@ -18,16 +18,21 @@ public class CopyAtkDefAbility : Ability
 
     private void ApplyCopy(PlayerCards playerCards)
     {
-        InGameInvocationCard invocationCardToCopy =
-            playerCards.invocationCards.First(card => card.Title == cardToCopyName);
-        if (invocationCardToCopy != null)
+        try
         {
+            InGameInvocationCard invocationCardToCopy =
+                playerCards.invocationCards.First(card => card.Title == cardToCopyName);
             InGameInvocationCard originCard = playerCards.invocationCards.First(card => card.Title == originCardName);
             originCard.Attack = invocationCardToCopy.Attack;
             originCard.Defense = invocationCardToCopy.Defense;
         }
+        catch (Exception e)
+        {
+            // invocation is not present amongs invocationCards
+            Console.WriteLine(e);
+        }
     }
-    
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         ApplyCopy(playerCards);
