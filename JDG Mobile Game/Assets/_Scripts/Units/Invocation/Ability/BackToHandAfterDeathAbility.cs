@@ -15,12 +15,15 @@ public class BackToHandAfterDeathAbility : Ability
         this.numberDeathMax = numberDeathMax;
     }
 
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
     {
-        if (removeCard.Title == cardName && (numberDeathMax == 0 || removeCard.NumberOfDeaths < numberDeathMax))
+        var value = base.OnCardDeath(canvas, deadCard, playerCards);
+        if (deadCard.Title == cardName && (numberDeathMax == 0 || deadCard.NumberOfDeaths < numberDeathMax))
         {
-            playerCards.handCards.Add(removeCard);
+            playerCards.yellowTrash.Remove(deadCard);
+            playerCards.handCards.Add(deadCard);
         }
+
+        return value;
     }
 }

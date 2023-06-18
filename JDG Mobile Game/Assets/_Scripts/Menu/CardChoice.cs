@@ -145,9 +145,11 @@ namespace Menu
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
             deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
-            deck1.Add(GetSpecificCard("Jérôme", deck1AllCard));
-            deck1.Add(GetSpecificCard("Jean-Philippe Hardfist", deck1AllCard));
-            deck1.Add(GetSpecificCard("Jean-Claude", deck1AllCard));
+            deck1.Add(GetSpecificCard("Benzaie jeune", deck1AllCard));
+            deck1.Add(GetSpecificCard("Cassette VHS", deck1AllCard));
+            deck1.Add(GetSpecificCard("Benzaie", deck1AllCard));
+            deck1.Add(GetSpecificCard("Alpha Man", deck1AllCard));
+            deck1.Add(GetSpecificCard("Jean-Marc Soul", deck1AllCard));
 
             while (deck1.Count != 30)
             {
