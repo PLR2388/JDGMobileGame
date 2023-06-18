@@ -610,7 +610,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected void RemoveCombineEffectCard(List<InGameEffectCard> effectCards, List<InGameCard> yellowCards)
+    protected void RemoveCombineEffectCard(List<InGameEffectCard> effectCards, ObservableCollection<InGameCard> yellowCards)
     {
         foreach (var effectCard in effectCards.Where(effectCard => effectCard.Title == "Attaque de la tour Eiffel"))
         {
@@ -685,7 +685,7 @@ public class GameLoop : MonoBehaviour
 
         playerStatus.ChangePv(diff);
         RemoveCombineEffectCard(playerCards.effectCards,
-            playerCards.yellowTrash);
+            playerCards.yellowCards);
 
         foreach (var combineCard in superOpponent.invocationCards)
         {
@@ -735,7 +735,7 @@ public class GameLoop : MonoBehaviour
         var instantEffectEquipment = invocationEquipment.EquipmentInstantEffect;
         if (!instantEffectEquipment.Keys.Contains(InstantEffect.ProtectInvocation)) return false;
         var playerCards = isP1 ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        playerCards.yellowTrash.Add(invocationEquipment);
+        playerCards.yellowCards.Add(invocationEquipment);
         invocationCard.SetEquipmentCard(null);
         return true;
     }
@@ -788,7 +788,7 @@ public class GameLoop : MonoBehaviour
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
         RemoveCombineEffectCard(playerCards.effectCards,
-            playerCards.yellowTrash);
+            playerCards.yellowCards);
         playerStatus.ChangePv(-diff);
 
         /*foreach (var combineCard in superAttacker.invocationCards)
@@ -963,7 +963,7 @@ public class GameLoop : MonoBehaviour
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
 
         RemoveCombineEffectCard(playerCard.effectCards,
-            playerCard.yellowTrash);
+            playerCard.yellowCards);
         /*if (combineCard.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(combineCard, IsP1Turn);
@@ -989,7 +989,7 @@ public class GameLoop : MonoBehaviour
         var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
 
         RemoveCombineEffectCard(playerCard.effectCards,
-            playerCard.yellowTrash);
+            playerCard.yellowCards);
         // TOOD
         /*if (combineCard.InvocationDeathEffect != null)
         {
@@ -1108,22 +1108,29 @@ public class GameLoop : MonoBehaviour
         roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";
     }
 
-    private void ApplyOnTurnStart(ObservableCollection<InGameInvocationCard> invocationCards, PlayerCards playerCards,
+    private void ApplyOnTurnStart(PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
-        foreach (var invocationCardAbility in invocationCards.SelectMany(invocationCard => invocationCard.Abilities))
+        var copyInvocationCards = playerCards.invocationCards.ToList();
+        var copyOpponentInvocationCards = opponentPlayerCards.invocationCards.ToList();
+        foreach (var invocationCardAbility in copyInvocationCards.SelectMany(invocationCard => invocationCard.Abilities))
         {
             invocationCardAbility.OnTurnStart(canvas, playerCards, opponentPlayerCards);
+        }
+        
+        foreach (var invocationCardAbility in copyOpponentInvocationCards.SelectMany(invocationCard => invocationCard.Abilities))
+        {
+            invocationCardAbility.OnTurnStart(canvas, opponentPlayerCards, playerCards);
         }
     }
 
     private void DoDraw()
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         playerCards.ResetInvocationCardNewTurn();
 
-        ApplyOnTurnStart(playerCards.invocationCards, playerCards, opponentPlayerCards);
+        ApplyOnTurnStart(playerCards, opponentPlayerCards);
 
         DrawPlayerCard(playerCards);
 
@@ -1145,7 +1152,7 @@ public class GameLoop : MonoBehaviour
                     invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
                 }
 
-                playerCards.yellowTrash.Add(effectCard);
+                playerCards.yellowCards.Add(effectCard);
                 playerCards.effectCards.Remove(effectCard);
             }
 
@@ -1273,7 +1280,7 @@ public class GameLoop : MonoBehaviour
             into invocationCard
             where invocationCard.Families.Contains(cardFamily)
             select invocationCard).Cast<InGameCard>().ToList();
-        familyCards.AddRange(from fieldCard in playerCards.yellowTrash
+        familyCards.AddRange(from fieldCard in playerCards.yellowCards
             where fieldCard.Type == CardType.Invocation
             select (InGameInvocationCard)fieldCard
             into invocationCard
@@ -1300,7 +1307,7 @@ public class GameLoop : MonoBehaviour
                     else
                     {
                         playerCards.handCards.Add(selectedCard);
-                        playerCards.yellowTrash.Remove(selectedCard);
+                        playerCards.yellowCards.Remove(selectedCard);
                     }
 
                     Destroy(messageBox);
@@ -1412,6 +1419,11 @@ public class GameLoop : MonoBehaviour
         foreach (var invocationCard in invocationCards)
         {
             invocationCard.UnblockAttack();
+        }
+        
+        foreach (var invocationCard in currentPlayerCard.invocationCards)
+        {
+            invocationCard.incrementNumberTurnOnField();
         }
 
         IsP1Turn = !IsP1Turn;
@@ -1667,11 +1679,6 @@ public class GameLoop : MonoBehaviour
             currentPlayerCard.invocationCards.Remove(invocationCard);
             currentPlayerCard.SendToSecretHide(invocationCard);
         }*/
-
-        foreach (var invocationCard in currentPlayerCard.invocationCards)
-        {
-            invocationCard.incrementNumberTurnOnField();
-        }
     }
 
     protected static void NumberTurnPermEffect(PlayerCards currentPlayerCard, string value,

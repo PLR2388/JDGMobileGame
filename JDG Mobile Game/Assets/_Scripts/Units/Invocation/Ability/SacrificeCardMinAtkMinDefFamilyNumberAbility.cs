@@ -56,7 +56,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
             foreach (var invocationCard in invocationCards)
             {
                 playerCards.invocationCards.Remove(invocationCard);
-                playerCards.yellowTrash.Add(invocationCard);
+                playerCards.yellowCards.Add(invocationCard);
             }
         }
         else
@@ -82,7 +82,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                         foreach (InGameInvocationCard invocationCard in cards)
                         {
                             playerCards.invocationCards.Remove(invocationCard);
-                            playerCards.yellowTrash.Add(invocationCard);
+                            playerCards.yellowCards.Add(invocationCard);
                         }
                         Object.Destroy(messageBox);
                     }
@@ -101,7 +101,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                     else
                     {
                         playerCards.invocationCards.Remove(invocationCard);
-                        playerCards.yellowTrash.Add(invocationCard);
+                        playerCards.yellowCards.Add(invocationCard);
                         Object.Destroy(messageBox);
                     }
                 }

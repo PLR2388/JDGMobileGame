@@ -30,9 +30,9 @@ public class SacrificeToInvokeAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        List<InGameCard> invocationCards = playerCards.yellowTrash.FindAll(card =>
+        List<InGameCard> invocationCards = playerCards.yellowCards.TakeWhile(card =>
             card.Type == CardType.Invocation &&
-            card.Collector == false);
+            card.Collector == false).ToList();
         if (invocationCards.Count > 0)
         {
             GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas,"Question",
@@ -54,8 +54,8 @@ public class SacrificeToInvokeAbility : Ability
                         InGameInvocationCard currentCard =
                             playerCards.invocationCards.First(card => card.Title == cardName);
                         playerCards.invocationCards.Remove(currentCard);
-                        playerCards.yellowTrash.Add(currentCard);
-                        playerCards.yellowTrash.Remove(invocationCard);
+                        playerCards.yellowCards.Add(currentCard);
+                        playerCards.yellowCards.Remove(invocationCard);
                         playerCards.invocationCards.Add(invocationCard);
                         Object.Destroy(messageBox);
                         Object.Destroy(messageBox1);

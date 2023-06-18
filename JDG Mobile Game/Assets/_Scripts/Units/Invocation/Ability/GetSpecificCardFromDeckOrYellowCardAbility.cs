@@ -1,3 +1,4 @@
+using System.Linq;
 using Cards;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         bool hasCardInDeck = playerCards.deck.Exists(card => card.Title == cardName);
-        bool hasCardInYellowTrash = playerCards.yellowTrash.Exists(card => card.Title == cardName);
+        bool hasCardInYellowTrash = playerCards.yellowCards.Any(card => card.Title == cardName);
         if (hasCardInDeck || hasCardInYellowTrash)
         {
             GameObject messageBox =
@@ -29,7 +30,7 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
                 }
                 else
                 {
-                    InGameCard card = playerCards.yellowTrash.Find(card => card.Title == cardName);
+                    InGameCard card = playerCards.yellowCards.First(card => card.Title == cardName);
                     playerCards.deck.Remove(card);
                     playerCards.handCards.Add(card);
                 }

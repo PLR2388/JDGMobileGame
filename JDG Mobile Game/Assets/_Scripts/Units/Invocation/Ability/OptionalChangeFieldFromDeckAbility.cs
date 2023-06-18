@@ -54,7 +54,7 @@ public class OptionalChangeFieldFromDeckAbility : Ability
                         }
                         else
                         {
-                            playerCards.yellowTrash.Add(playerCards.field);
+                            playerCards.yellowCards.Add(playerCards.field);
                             playerCards.field = fieldCard;
                         }
                     }

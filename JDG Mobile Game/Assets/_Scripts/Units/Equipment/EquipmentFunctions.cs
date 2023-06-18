@@ -302,7 +302,7 @@ namespace Cards.EquipmentCards
         private static void DealWithInstantEffectSwitchEquipment(InGameInvocationCard invocationCard)
         {
             if (invocationCard.EquipmentCard == null) return;
-            CurrentPlayerCard.yellowTrash.Add(invocationCard.EquipmentCard);
+            CurrentPlayerCard.yellowCards.Add(invocationCard.EquipmentCard);
             invocationCard.EquipmentCard = null;
             invocationCard.SetEquipmentCard(null);
         }

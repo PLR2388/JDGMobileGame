@@ -21,10 +21,10 @@ public class KillBothCardsIfAttackAbility : Ability
         if (attackedCard.Title == cardName)
         {
             base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
-            if (opponentPlayerCards.yellowTrash.Contains(attackedCard) && !playerCards.yellowTrash.Contains(attacker))
+            if (opponentPlayerCards.yellowCards.Contains(attackedCard) && !playerCards.yellowCards.Contains(attacker))
             {
                 playerCards.invocationCards.Remove(attacker);
-                playerCards.yellowTrash.Add(attacker);
+                playerCards.yellowCards.Add(attacker);
             }
         }
         else

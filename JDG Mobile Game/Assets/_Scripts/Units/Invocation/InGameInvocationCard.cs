@@ -92,7 +92,6 @@ namespace _Scripts.Units.Invocation
             numberTurnOnField = 0;
             numberDeaths = 0;
             remainedAttackThisTurn = 1;
-            numberTurnOnField = 0;
 
             isControlled = false;
 

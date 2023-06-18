@@ -15,7 +15,6 @@ public class PlayerCards : MonoBehaviour
 {
     public List<InGameCard> deck = new List<InGameCard>();
     public List<InGameCard> handCards = new List<InGameCard>();
-    public List<InGameCard> yellowTrash = new List<InGameCard>();
 
     public InGameFieldCard field;
 
@@ -45,6 +44,8 @@ public class PlayerCards : MonoBehaviour
 
     public ObservableCollection<InGameInvocationCard> invocationCards =
         new ObservableCollection<InGameInvocationCard>();
+
+    public ObservableCollection<InGameCard> yellowCards = new ObservableCollection<InGameCard>();
 
     private List<InGameInvocationCard> oldInvocations = new List<InGameInvocationCard>();
 
@@ -89,6 +90,28 @@ public class PlayerCards : MonoBehaviour
 
             OnInvocationCardsChanged();
             oldInvocations = invocationCards.ToList();
+        };
+        
+        yellowCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    OnYellowTrashAdded();
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            CardLocation.UpdateLocation.Invoke();
+            oldYellowTrash = yellowCards.ToList();
         };
     }
 
@@ -150,7 +173,7 @@ public class PlayerCards : MonoBehaviour
                 else
                 {
                     effectCards.Remove(effectCard);
-                    yellowTrash.Add(effectCard);
+                    yellowCards.Add(effectCard);
                 }
             }
 
@@ -182,17 +205,6 @@ public class PlayerCards : MonoBehaviour
             oldHandCards = new List<InGameCard>(handCards);
             CardLocation.UpdateLocation.Invoke();
         }
-
-        if (oldYellowTrash.Count != yellowTrash.Count)
-        {
-            if (yellowTrash.Count > oldYellowTrash.Count)
-            {
-                OnYellowTrashAdded();
-            }
-
-            oldYellowTrash = new List<InGameCard>(yellowTrash);
-            CardLocation.UpdateLocation.Invoke();
-        }
     }
 
     public void SendToSecretHide(InGameCard card)
@@ -218,7 +230,7 @@ public class PlayerCards : MonoBehaviour
                 foreach (var cardFromList in invocationListCards)
                 {
                     secretCards.Remove(cardFromList);
-                    yellowTrash.Add(cardFromList);
+                    yellowCards.Add(cardFromList);
                 }
 
                 invocationCards.Remove(superInvocationCard);
@@ -228,12 +240,12 @@ public class PlayerCards : MonoBehaviour
                 if (invocationCard.EquipmentCard != null)
                 {
                     var equipmentCard = invocationCard.EquipmentCard;
-                    yellowTrash.Add(equipmentCard);
+                    yellowCards.Add(equipmentCard);
                     invocationCard.SetEquipmentCard(null);
                 }
 
                 invocationCards.Remove((InGameInvocationCard)card);
-                yellowTrash.Add(card);
+                yellowCards.Add(card);
             }
         }
 
@@ -242,14 +254,14 @@ public class PlayerCards : MonoBehaviour
             if (effectCards[i].Title == card.Title)
             {
                 effectCards.Remove(card as InGameEffectCard);
-                yellowTrash.Add(card);
+                yellowCards.Add(card);
             }
         }
 
         if (field != null && field.Title == card.Title)
         {
             field = null;
-            yellowTrash.Add(card);
+            yellowCards.Add(card);
         }
     }
 
@@ -263,10 +275,10 @@ public class PlayerCards : MonoBehaviour
                 ? GameObject.Find("Player2").GetComponent<PlayerCards>()
                 : GameObject.Find("Player1").GetComponent<PlayerCards>();
             opponentPlayerCards.secretCards.Remove(specificCardFound);
-            opponentPlayerCards.yellowTrash.Add(specificCardFound);
+            opponentPlayerCards.yellowCards.Add(specificCardFound);
             if (equipmentCard != null)
             {
-                opponentPlayerCards.yellowTrash.Add(equipmentCard);
+                opponentPlayerCards.yellowCards.Add(equipmentCard);
             }
 
             invocationCards.Remove(specificCardFound);
@@ -309,10 +321,10 @@ public class PlayerCards : MonoBehaviour
         else
         {
             invocationCards.Remove(specificCardFound);
-            yellowTrash.Add(specificCardFound);
+            yellowCards.Add(specificCardFound);
             if (equipmentCard != null)
             {
-                yellowTrash.Add(equipmentCard);
+                yellowCards.Add(equipmentCard);
             }
             
             var abilities = specificCardFound.Abilities;
@@ -436,7 +448,7 @@ public class PlayerCards : MonoBehaviour
             }
             case "trash":
             {
-                var trash = yellowTrash;
+                var trash = yellowCards;
                 if (cardName != "")
                 {
                     var isFound = false;
@@ -1115,7 +1127,7 @@ public class PlayerCards : MonoBehaviour
 
     private void OnYellowTrashAdded()
     {
-        var newYellowTrashCard = yellowTrash.Last();
+        var newYellowTrashCard = yellowCards.Last();
         var invocationCard = newYellowTrashCard as InGameInvocationCard;
         if (invocationCard != null)
         {
@@ -1124,6 +1136,10 @@ public class PlayerCards : MonoBehaviour
             invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
             invocationCard.FreeCard();
             invocationCard.ResetNewTurn();
+            foreach (var t in invocationCard.Abilities)
+            {
+                t.OnCardDeath(canvas, invocationCard, this);
+            }
         }
     }
 

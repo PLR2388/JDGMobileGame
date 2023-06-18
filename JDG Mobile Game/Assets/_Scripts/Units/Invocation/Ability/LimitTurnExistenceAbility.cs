@@ -22,7 +22,7 @@ public class LimitTurnExistenceAbility : Ability
         InGameInvocationCard invocationCard = playerCards.invocationCards.First(card => card.Title == cardName);
         if (invocationCard.NumberOfTurnOnField >= numberOfTurn)
         {
-            playerCards.yellowTrash.Add(invocationCard);
+            playerCards.yellowCards.Add(invocationCard);
             playerCards.invocationCards.Remove(invocationCard);
         }
     }

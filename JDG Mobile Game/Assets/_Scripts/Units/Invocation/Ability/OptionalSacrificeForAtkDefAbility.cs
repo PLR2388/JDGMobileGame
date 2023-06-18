@@ -42,7 +42,7 @@ public class OptionalSacrificeForAtkDefAbility : Ability
                 InGameInvocationCard invocationCardToIncrement =
                     playerCards.invocationCards.First(card => card.Title == cardName);
                 playerCards.invocationCards.Remove(invocationCardToSacrifice);
-                playerCards.yellowTrash.Add(invocationCardToSacrifice);
+                playerCards.yellowCards.Add(invocationCardToSacrifice);
 
                 invocationCardToIncrement.Attack = newAtk;
                 invocationCardToIncrement.Defense = newDef;

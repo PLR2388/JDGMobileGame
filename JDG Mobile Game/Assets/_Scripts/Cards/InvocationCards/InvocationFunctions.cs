@@ -313,7 +313,7 @@ namespace Cards.InvocationCards
                 }
                 case "trash":
                 {
-                    var trash = currentPlayerCard.yellowTrash;
+                    var trash = currentPlayerCard.yellowCards;
                     if (cardName != "")
                     {
                         var isFound = false;
@@ -336,7 +336,7 @@ namespace Cards.InvocationCards
                             void PositiveAction()
                             {
                                 currentPlayerCard.handCards.Add(cards[0]);
-                                currentPlayerCard.yellowTrash.Remove(cards[0]);
+                                currentPlayerCard.yellowCards.Remove(cards[0]);
                                 inHandButton.SetActive(true);
                             }
 
@@ -525,12 +525,12 @@ namespace Cards.InvocationCards
                     if (fieldCardP1 != null && fieldCard.Title == fieldCardP1.Title)
                     {
                         p1.GetComponent<PlayerCards>().field = null;
-                        p1.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
+                        p1.GetComponent<PlayerCards>().yellowCards.Add(fieldCard);
                     }
                     else
                     {
                         p2.GetComponent<PlayerCards>().field = null;
-                        p2.GetComponent<PlayerCards>().yellowTrash.Add(fieldCard);
+                        p2.GetComponent<PlayerCards>().yellowCards.Add(fieldCard);
                     }
                 }
                 else
@@ -602,12 +602,12 @@ namespace Cards.InvocationCards
                         if (GameLoop.IsP1Turn)
                         {
                             p2.GetComponent<PlayerCards>().invocationCards.Remove(invocationCardSelected);
-                            p2.GetComponent<PlayerCards>().yellowTrash.Add(invocationCardSelected);
+                            p2.GetComponent<PlayerCards>().yellowCards.Add(invocationCardSelected);
                         }
                         else
                         {
                             p1.GetComponent<PlayerCards>().invocationCards.Remove(invocationCardSelected);
-                            p1.GetComponent<PlayerCards>().yellowTrash.Add(invocationCardSelected);
+                            p1.GetComponent<PlayerCards>().yellowCards.Add(invocationCardSelected);
                         }
 
                         currentInvocationCard.IncrementNumberDeaths();
@@ -776,7 +776,7 @@ namespace Cards.InvocationCards
             void PositiveAction()
             {
                 currentPlayerCard.invocationCards.Remove(cardToSacrifice);
-                currentPlayerCard.yellowTrash.Add(cardToSacrifice);
+                currentPlayerCard.yellowCards.Add(cardToSacrifice);
                 currentInvocationCard.Attack += incrementStat;
                 currentInvocationCard.Defense += incrementStat;
             }
@@ -886,7 +886,7 @@ namespace Cards.InvocationCards
         /// </summary>
         private bool ActionEffectBackToLifePossible(bool isPossible)
         {
-            var trash = currentPlayerCard.yellowTrash;
+            var trash = currentPlayerCard.yellowCards;
 
             var invocationCardDead =
                 trash.Where(card => card is InGameInvocationCard && !card.Collector).ToList();
@@ -1083,7 +1083,7 @@ namespace Cards.InvocationCards
 
         private void ActionEffectBackToLife(string cardName)
         {
-            var trash = currentPlayerCard.yellowTrash;
+            var trash = currentPlayerCard.yellowCards;
 
             var invocationCardDead =
                 trash.Where(card => card is InGameInvocationCard && !card.Collector).ToList();
@@ -1122,7 +1122,7 @@ namespace Cards.InvocationCards
                     if (invocationCardSelected != null)
                     {
                         currentPlayerCard.SendInvocationCardToYellowTrash(invocationCards[k]);
-                        currentPlayerCard.yellowTrash.Remove(invocationCardSelected);
+                        currentPlayerCard.yellowCards.Remove(invocationCardSelected);
                         currentPlayerCard.invocationCards.Add(invocationCardSelected);
                     }
                     else
@@ -1232,7 +1232,7 @@ namespace Cards.InvocationCards
 
         private static int CheckNumberInvocationCardInYellowTrash(PlayerCards currentPlayerCards)
         {
-            var trashCards = currentPlayerCards.yellowTrash;
+            var trashCards = currentPlayerCards.yellowCards;
 
             return trashCards.Count(card => card.Type == CardType.Invocation);
         }

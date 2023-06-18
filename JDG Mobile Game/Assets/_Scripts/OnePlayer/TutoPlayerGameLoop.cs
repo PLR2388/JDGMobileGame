@@ -256,7 +256,7 @@ namespace OnePlayer
             if (objectTag == personTag)
             {
                 cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                var isInYellowTrash = ownPlayerCards.yellowTrash.Contains(cardSelected);
+                var isInYellowTrash = ownPlayerCards.yellowCards.Contains(cardSelected);
                 if (Input.GetMouseButtonDown(0) && !isInYellowTrash)
                 {
                     totalDownTime = 0;

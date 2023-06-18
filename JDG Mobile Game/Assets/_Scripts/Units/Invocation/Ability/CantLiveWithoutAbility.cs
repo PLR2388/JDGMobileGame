@@ -28,7 +28,7 @@ public class CantLiveWithoutAbility : Ability
         {
             InGameInvocationCard doomedCard = playerCards.invocationCards.First(card => card.Title == cardName);
             playerCards.invocationCards.Remove(doomedCard);
-            playerCards.yellowTrash.Add(doomedCard);
+            playerCards.yellowCards.Add(doomedCard);
         }
     }
 

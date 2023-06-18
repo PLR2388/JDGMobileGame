@@ -148,12 +148,13 @@ namespace Menu
             deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
             deck1.Add(GetSpecificCard("Studio de développement", deck1AllCard));
             deck1.Add(GetSpecificCard("Benzaie jeune", deck1AllCard));
-            deck1.Add(GetSpecificCard("Nounours", deck1AllCard));
+            deck1.Add(GetSpecificCard("Papy Grenier", deck1AllCard));
 
             while (deck1.Count != 30)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
+            deck1.Add(GetSpecificCard("La Mort", deck1AllCard));
 
             deck1.Reverse();
 

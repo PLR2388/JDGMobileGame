@@ -20,7 +20,7 @@ public class BackToHandAfterDeathAbility : Ability
         var value = base.OnCardDeath(canvas, deadCard, playerCards);
         if (deadCard.Title == cardName && (numberDeathMax == 0 || deadCard.NumberOfDeaths < numberDeathMax))
         {
-            playerCards.yellowTrash.Remove(deadCard);
+            playerCards.yellowCards.Remove(deadCard);
             playerCards.handCards.Add(deadCard);
         }
 

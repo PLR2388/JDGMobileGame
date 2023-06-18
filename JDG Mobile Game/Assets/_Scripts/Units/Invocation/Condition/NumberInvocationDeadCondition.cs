@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Cards;
 using UnityEngine;
 
@@ -16,6 +17,6 @@ public class NumberInvocationDeadCondition : Condition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return playerCards.yellowTrash.FindAll(card => card.Type == CardType.Invocation).Count >= numberDeath;
+        return playerCards.yellowCards.Count(card => card.Type == CardType.Invocation) >= numberDeath;
     }
 }
