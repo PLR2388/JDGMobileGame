@@ -144,12 +144,12 @@ namespace Menu
             var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
-            deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
+            deck2.Add(GetSpecificCard("Fistiland", deck2AllCard));
             deck1.Add(GetSpecificCard("Benzaie jeune", deck1AllCard));
-            deck1.Add(GetSpecificCard("Cassette VHS", deck1AllCard));
-            deck1.Add(GetSpecificCard("Benzaie", deck1AllCard));
-            deck1.Add(GetSpecificCard("Alpha Man", deck1AllCard));
-            deck1.Add(GetSpecificCard("Jean-Marc Soul", deck1AllCard));
+            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
+            deck1.Add(GetSpecificCard("Fourchette", deck1AllCard));
+            deck1.Add(GetSpecificCard("Patate", deck1AllCard));
+            deck1.Add(GetSpecificCard("Koaloutre-Ornithambas Lapinzord nain de Californie", deck1AllCard));
 
             while (deck1.Count != 30)
             {

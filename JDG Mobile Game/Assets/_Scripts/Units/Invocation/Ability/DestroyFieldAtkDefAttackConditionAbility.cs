@@ -30,7 +30,10 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         {
             Object.Destroy(messageBox);
             Object.Destroy(messageBox1);
-            Object.Destroy(messageBox2);
+            if (messageBox2 != null)
+            {
+                Object.Destroy(messageBox2);
+            }
         };
     }
 
@@ -61,7 +64,7 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
 
         GameObject messageBox =
             MessageBox.CreateSimpleMessageBox(canvas, "Question",
-                "Veux-tu diviser " + condition + "par " + value + " pour détruire un terrain ?");
+                "Veux-tu diviser " + condition + " par " + value + " pour détruire un terrain ?");
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             List<InGameCard> fieldCardsToDestroy = new List<InGameCard>();
@@ -78,6 +81,7 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
             if (fieldCardsToDestroy.Count == 1)
             {
                 DestroyField(playerCards, opponentPlayerCards, fieldCardsToDestroy[0]);
+                Object.Destroy(messageBox);
             } else if (fieldCardsToDestroy.Count > 1)
             {
                 GameObject messageBox1 =
@@ -92,12 +96,18 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
                     else
                     {
                         DestroyField(playerCards, opponentPlayerCards, fieldCard);
+                        Object.Destroy(messageBox);
+                        Object.Destroy(messageBox1);
                     }
                 };
                 messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
                 {
                     DisplayOkMessage(canvas, messageBox, messageBox1);
                 };
+            }
+            else
+            {
+                DisplayOkMessage(canvas, messageBox, null);
             }
         };
         messageBox.GetComponent<MessageBox>().NegativeAction = () =>
