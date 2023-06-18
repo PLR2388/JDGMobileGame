@@ -39,6 +39,7 @@ public class KillOpponentInvocationCardAbility : Ability
                 {
                     opponentPlayerCards.invocationCards.Remove(invocationCards[0]);
                     opponentPlayerCards.yellowTrash.Add(invocationCards[0]);
+                    Object.Destroy(messageBox);
                 }
                 else
                 {
@@ -59,10 +60,11 @@ public class KillOpponentInvocationCardAbility : Ability
                         {
                             opponentPlayerCards.invocationCards.Remove(invocationCard);
                             opponentPlayerCards.yellowTrash.Add(invocationCard);
+                            Object.Destroy(messageBox);
+                            Object.Destroy(messageBox1);
                         }
                     };
                 }
-              
             };
             messageBox.GetComponent<MessageBox>().NegativeAction = () =>
             {
