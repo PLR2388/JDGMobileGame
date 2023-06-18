@@ -145,10 +145,10 @@ namespace Menu
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
             deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
-            deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
-            deck1.Add(GetSpecificCard("Merde magique en plastique rose", deck1AllCard));
-            deck1.Add(GetSpecificCard("Granolax", deck1AllCard));
-            deck1.Add(GetSpecificCard("Starlight Unicorn", deck1AllCard));
+            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
+            deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
+            deck1.Add(GetSpecificCard("Vieux Sage", deck1AllCard));
+            deck1.Add(GetSpecificCard("Studio de scénaristes Canadien", deck1AllCard));
 
             while (deck1.Count != 30)
             {

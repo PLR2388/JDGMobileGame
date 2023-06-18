@@ -132,8 +132,8 @@ public abstract class Ability
 
         deadCard.IncrementNumberDeaths();
 
-        playerCards.yellowCards.Add(deadCard);
         playerCards.invocationCards.Remove(deadCard);
+        playerCards.yellowCards.Add(deadCard);
         return true;
     }
 }
