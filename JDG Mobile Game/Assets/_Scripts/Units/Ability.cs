@@ -44,7 +44,7 @@ public enum AbilityName
     GetBenzaieJeuneFromDeck,
     ManuelGetEquipmentCardWithoutAttack,
     SacrificeGranolax,
-    SacrificeJDGOnStudioDevForAtkDef, 
+    SacrificeJDGOnStudioDevForAtkDef,
     MoiseCantLiveWithoutHuman,
     NounoursCopyBenzaieJeune,
     Papy1TurnSurvive,
@@ -70,28 +70,40 @@ public abstract class Ability
     protected string Description { get; set; }
 
     // Called when invocation card is put on field without special invocation
-    public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards){}
-    
+    public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+    }
+
     // Called when a turn start
-    public virtual void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards){}
+    public virtual void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+    }
 
     // Called when an invocation is added to field
     public virtual void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards) {}
+        PlayerCards opponentPlayerCards)
+    {
+    }
 
     // Called when an invocation is removed from field
     public virtual void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards) {}
+        PlayerCards opponentPlayerCards)
+    {
+    }
 
     // Called before an attack on a card (attacker belong to playerCards)
     public virtual void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
-        InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
+        InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards,
+        PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
         float resultAttack = attackedCard.Defense - attacker.Attack;
         if (resultAttack > 0)
         {
-            OnCardDeath(canvas, attacker, playerCards);
-            currentPlayerStatus.ChangePv(-resultAttack);
+            var value = OnCardDeath(canvas, attacker, playerCards);
+            if (value)
+            {
+                currentPlayerStatus.ChangePv(-resultAttack);
+            }
         }
         else if (resultAttack == 0)
         {
@@ -100,21 +112,26 @@ public abstract class Ability
         }
         else
         {
-            OnCardDeath(canvas, attackedCard, opponentPlayerCards);
-            opponentPlayerStatus.ChangePv(resultAttack);
+            var value = OnCardDeath(canvas, attackedCard, opponentPlayerCards);
+            if (value)
+            {
+                opponentPlayerStatus.ChangePv(resultAttack);
+            }
         }
     }
 
     // Call when the current card having a ability die
-    public virtual void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public virtual bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
     {
-        if (playerCards.yellowTrash.Contains(deadCard)) return;
+        if (playerCards.yellowTrash.Contains(deadCard)) return false;
         if (deadCard.EquipmentCard != null)
         {
             playerCards.yellowTrash.Add(deadCard.EquipmentCard);
             deadCard.EquipmentCard = null;
         }
+
         playerCards.yellowTrash.Add(deadCard);
         playerCards.invocationCards.Remove(deadCard);
+        return true;
     }
 }

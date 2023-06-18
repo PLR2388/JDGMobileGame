@@ -155,6 +155,8 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Starlight Unicorn",
             "Granolax"
         ),
+        // TODO : Not use right now as Canard-signal is a Contre card
+        // When this is done, add it to Inspecteur Magret
         new GetSpecificCardFromDeckAbility(
             AbilityName.GetCanardSignal,
             "Get Canard-signal from deck to hand",
@@ -162,7 +164,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
             AbilityName.JeanClaudeSacrificeDeveloper3Atk3Def,
-            "Jean Claude needs 2 developer sacrifce with at least 3 Atk or 3 Def",
+            "Jean Claude needs 2 developer sacrifice with at least 3 Atk or 3 Def",
             "Jean-Claude",
             3,
             3,

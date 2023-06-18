@@ -20,7 +20,7 @@ public class GameLoop : MonoBehaviour
     public static bool IsP1Turn;
 
     public int phaseId;
-    
+
     [SerializeField] protected GameObject playerText;
     [SerializeField] protected GameObject roundText;
     [SerializeField] protected TextMeshProUGUI healthP1Text;
@@ -31,18 +31,15 @@ public class GameLoop : MonoBehaviour
     [SerializeField] protected GameObject nextPhaseButton;
     [SerializeField] protected Transform canvas;
 
-    [SerializeField]
-    protected GameObject p1;
+    [SerializeField] protected GameObject p1;
 
-    [SerializeField]
-    protected GameObject p2;
+    [SerializeField] protected GameObject p2;
 
     protected InGameCard player;
     [SerializeField] protected InvocationCard playerInvocationCard;
     [SerializeField] protected GameObject inHandButton;
 
-    [SerializeField]
-    private GameObject playerCamera;
+    [SerializeField] private GameObject playerCamera;
 
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
 
@@ -354,7 +351,10 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            var newList = (from card in notEmptyOpponent let invocationCard = card as InGameInvocationCard where invocationCard?.Aggro == true select card).ToList();
+            var newList = (from card in notEmptyOpponent
+                let invocationCard = card as InGameInvocationCard
+                where invocationCard?.Aggro == true
+                select card).ToList();
 
             if (newList.Count > 0)
             {
@@ -373,7 +373,7 @@ public class GameLoop : MonoBehaviour
                         notEmptyOpponent.Remove(invocationCard);
                         continue;
                     }
-                    
+
                     /*if (permEffect != null)
                     {
                         var keys = permEffect.Keys;
@@ -544,65 +544,66 @@ public class GameLoop : MonoBehaviour
         var attack = attacker.GetCurrentAttack();
         var defenseOpponent = opponent.GetCurrentDefense();
 
+        var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+        var opponentPlayerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
+
         var diff = defenseOpponent - attack;
 
         attacker.AttackTurnDone();
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = attacker.CanAttack();
 
-        if (opponent.Title == "Player")
+        var opponentAbilities = opponent.Abilities;
+        if (opponentAbilities.Count > 0)
         {
-            // Directly attack the player
-            if (IsP1Turn)
+            for (var i = 0; i < opponentAbilities.Count; i++)
             {
-                var playerStatus = p2.GetComponent<PlayerStatus>();
-                if (playerStatus.NumberShield > 0)
-                {
-                    playerStatus.DecrementShield();
-                }
-                else
-                {
-                    playerStatus.ChangePv(diff);
-                }
-            }
-            else
-            {
-                var playerStatus = p1.GetComponent<PlayerStatus>();
-                if (playerStatus.NumberShield > 0)
-                {
-                    playerStatus.DecrementShield();
-                }
-                else
-                {
-                    playerStatus.ChangePv(diff);
-                }
+                opponentAbilities[i].OnCardAttacked(canvas, opponent, attacker, playerCard, opponentPlayerCard,
+                    playerStatus, opponentPlayerStatus);
             }
         }
         else
         {
-            if (diff > 0)
+            if (opponent.Title == "Player")
             {
-                DealWithHurtAttack(diff);
-            }
-            else if (diff == 0)
-            {
-                DealWithEqualityAttack();
+                // Directly attack the player
+                if (opponentPlayerStatus.NumberShield > 0)
+                {
+                    opponentPlayerStatus.DecrementShield();
+                }
+                else
+                {
+                    opponentPlayerStatus.ChangePv(diff);
+                }
             }
             else
             {
-                DealWithGoodAttack(diff);
+                if (diff > 0)
+                {
+                    DealWithHurtAttack(diff);
+                }
+                else if (diff == 0)
+                {
+                    DealWithEqualityAttack();
+                }
+                else
+                {
+                    DealWithGoodAttack(diff);
+                }
             }
         }
 
-        // Check if one player die
-        var p1Pv = p1.GetComponent<PlayerStatus>().GetCurrentPv();
-        var p2Pv = p2.GetComponent<PlayerStatus>().GetCurrentPv();
 
-        if (p1Pv <= 0)
+        // Check if one player die
+
+
+        if (playerStatus.GetCurrentPv() <= 0)
         {
             phaseId = 5;
             GameOver();
         }
-        else if (p2Pv <= 0)
+        else if (opponentPlayerStatus.GetCurrentPv() <= 0)
         {
             phaseId = 5;
             GameOver();
@@ -646,7 +647,6 @@ public class GameLoop : MonoBehaviour
 
         if (abilities.Count > 0)
         {
-                    
             foreach (var ability in abilities)
             {
                 ability.OnCardDeath(canvas, opponent, playerCards);
@@ -657,7 +657,7 @@ public class GameLoop : MonoBehaviour
             playerCards.SendInvocationCardToYellowTrash(opponent);
         }
 
-        
+
         /*if (opponent.InvocationDeathEffect != null)
         {
             DealWithDeathEffect(opponent, !IsP1Turn);
@@ -748,7 +748,7 @@ public class GameLoop : MonoBehaviour
         if (IsProtectedByEquipment(attacker, IsP1Turn)) return;
         attacker.IncrementNumberDeaths();
         playerStatus.ChangePv(-diff);
-        
+
         var abilities = attacker.Abilities;
         if (abilities.Count > 0)
         {
@@ -761,7 +761,7 @@ public class GameLoop : MonoBehaviour
         {
             playerCards.SendInvocationCardToYellowTrash(attacker);
         }
-        
+
 
         /*if (attacker.InvocationDeathEffect != null)
         {
@@ -888,7 +888,7 @@ public class GameLoop : MonoBehaviour
     protected void ComputeEqualityOpponent()
     {
         var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-  
+
         var abilities = opponent.Abilities;
         if (abilities.Count > 0)
         {
@@ -925,7 +925,7 @@ public class GameLoop : MonoBehaviour
     protected void ComputeEqualityAttacker()
     {
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        
+
         var abilities = attacker.Abilities;
         if (abilities.Count > 0)
         {
@@ -1048,7 +1048,8 @@ public class GameLoop : MonoBehaviour
         opponentPlayerCard.SendCardToYellowTrash(opponent);
     }
 
-    protected void ComeBackToHandDeathEffect(InGameInvocationCard invocationCard, bool isP1Card, IReadOnlyList<string> values,
+    protected void ComeBackToHandDeathEffect(InGameInvocationCard invocationCard, bool isP1Card,
+        IReadOnlyList<string> values,
         int i)
     {
         var isParsed = int.TryParse(values[i], out var number);
@@ -1107,7 +1108,8 @@ public class GameLoop : MonoBehaviour
         roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";
     }
 
-    private void ApplyOnTurnStart(ObservableCollection<InGameInvocationCard> invocationCards, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    private void ApplyOnTurnStart(ObservableCollection<InGameInvocationCard> invocationCards, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
     {
         foreach (var invocationCardAbility in invocationCards.SelectMany(invocationCard => invocationCard.Abilities))
         {
@@ -1120,7 +1122,7 @@ public class GameLoop : MonoBehaviour
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         playerCards.ResetInvocationCardNewTurn();
-        
+
         ApplyOnTurnStart(playerCards.invocationCards, playerCards, opponentPlayerCards);
 
         DrawPlayerCard(playerCards);
@@ -1682,7 +1684,8 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected static void PreventInvocationCardsPermEffect(PlayerCards currentPlayerCard, InGameInvocationCard invocationCard)
+    protected static void PreventInvocationCardsPermEffect(PlayerCards currentPlayerCard,
+        InGameInvocationCard invocationCard)
     {
         for (var j = currentPlayerCard.invocationCards.Count - 1; j >= 0; j--)
         {

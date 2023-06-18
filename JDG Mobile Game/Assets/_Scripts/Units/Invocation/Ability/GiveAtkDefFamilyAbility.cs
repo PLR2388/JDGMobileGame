@@ -61,7 +61,7 @@ public class GiveAtkDefFamilyAbility : Ability
         }
     }
 
-    public override void OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
     {
         IEnumerable<InGameInvocationCard> invocationCards =
             playerCards.invocationCards.Where(card => card.Title != originCardName && card.Families.Contains(family));
@@ -69,6 +69,6 @@ public class GiveAtkDefFamilyAbility : Ability
         {
             DecreaseAtkDef(invocationCard);
         }
-        base.OnCardDeath(canvas, deadCard, playerCards);
+        return base.OnCardDeath(canvas, deadCard, playerCards);
     }
 }
