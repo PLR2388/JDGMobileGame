@@ -146,15 +146,15 @@ namespace Menu
 
             deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
             deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
-            deck1.Add(GetSpecificCard("Studio de développement", deck1AllCard));
-            deck1.Add(GetSpecificCard("Benzaie jeune", deck1AllCard));
-            deck1.Add(GetSpecificCard("Papy Grenier", deck1AllCard));
+            deck1.Add(GetSpecificCard("Merde magique en plastique rose", deck1AllCard));
+            deck1.Add(GetSpecificCard("Granolax", deck1AllCard));
+            deck1.Add(GetSpecificCard("Starlight Unicorn", deck1AllCard));
 
             while (deck1.Count != 30)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
-            deck1.Add(GetSpecificCard("La Mort", deck1AllCard));
+            deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
 
             deck1.Reverse();
 

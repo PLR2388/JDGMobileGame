@@ -49,7 +49,7 @@ public class SkipOpponentAttackAbility : Ability
                     }
                     else
                     {
-                        invocationCard.SetRemainedAttackThisTurn(0); // TODO Examine maybe not working
+                        invocationCard.BlockAttack();
                         DisplayOkMessage(canvas, invocationCard.Title + " ne pourra pas attaquer au prochain tour",
                             messageBox, messageBox1);
                     }
@@ -72,6 +72,10 @@ public class SkipOpponentAttackAbility : Ability
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        ApplyEffect(canvas, opponentPlayerCards);
+        var tag = GameLoop.IsP1Turn ? "card1" : "card2";
+        if (tag == playerCards.Tag)
+        {
+            ApplyEffect(canvas, opponentPlayerCards);
+        }
     }
 }
