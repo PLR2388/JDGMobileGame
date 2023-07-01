@@ -61,13 +61,17 @@ public enum AbilityName
     ScenaristeCanadienComesBackFromDeath5times,
     TentaculesCantLiveWithoutJapon,
     CanOnlyAttackTentacules,
-    Draw2Cards
+    Draw2Cards,
+    GiveAktDefToRpgMember,
+    GiveAktDefToFistilandMember,
 }
 
 public abstract class Ability
 {
     public AbilityName Name { get; set; }
     protected string Description { get; set; }
+
+    public bool IsAction { get; protected set; }
 
     // Called when invocation card is put on field without special invocation
     public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
@@ -135,5 +139,16 @@ public abstract class Ability
         playerCards.invocationCards.Remove(deadCard);
         playerCards.yellowCards.Add(deadCard);
         return true;
+    }
+
+    public virtual bool IsActionPossible(InGameInvocationCard currentCard, PlayerCards playerCards,
+        PlayerCards opponentCards)
+    {
+        return true;
+    }
+
+    public virtual void OnCardActionTouched(Transform canvas, InGameInvocationCard currentCard, PlayerCards playerCards,
+        PlayerCards opponentCards)
+    {
     }
 }

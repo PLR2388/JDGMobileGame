@@ -24,6 +24,7 @@ namespace _Scripts.Units.Invocation
         private bool isControlled;
         private bool cantBeAttack = false;
         private bool attrackAttack = false;
+        private string receiver = null;
 
         public bool CantBeAttack
         {
@@ -50,7 +51,7 @@ namespace _Scripts.Units.Invocation
             get => equipmentCard;
             set => equipmentCard = value;
         }
-        
+
         public static InGameInvocationCard Init(InvocationCard invocationCard, CardOwner cardOwner)
         {
             InGameInvocationCard inGameInvocationCard = new InGameInvocationCard
@@ -80,6 +81,17 @@ namespace _Scripts.Units.Invocation
             set => defense = value;
         }
 
+        /// <summary>
+        /// This represent the card that receive the power from this card
+        /// only use for L'elfette and Sangoku right now that give their
+        /// atk and def
+        /// </summary>
+        public string Receiver
+        {
+            get => receiver;
+            set => receiver = value;
+        }
+
         public void Reset()
         {
             title = baseInvocationCard.Title;
@@ -100,8 +112,10 @@ namespace _Scripts.Units.Invocation
             families = baseInvocationCard.BaseInvocationCardStats.Families;
             equipmentCard = null;
             IsAffectedByEffectCard = baseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
-            Conditions = baseInvocationCard.Conditions.Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
-            Abilities = baseInvocationCard.Abilities.Select(abilityName => AbilityLibrary.Instance.abilityDictionary[abilityName]).ToList();
+            Conditions = baseInvocationCard.Conditions
+                .Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
+            Abilities = baseInvocationCard.Abilities
+                .Select(abilityName => AbilityLibrary.Instance.abilityDictionary[abilityName]).ToList();
         }
 
         public bool CanBeSummoned(PlayerCards playerCards)
@@ -160,6 +174,15 @@ namespace _Scripts.Units.Invocation
             }
 
             return remainedAttackThisTurn > 0 && !blockAttackNextTurn & !equipmentBlockedAttack;
+        }
+
+        /// <summary>
+        /// HasAction.
+        /// Return true if an in-game action is available for this card
+        /// </summary>
+        public bool HasAction()
+        {
+            return Abilities.Exists(elt => elt.IsAction);
         }
 
         /// <summary>
@@ -316,7 +339,8 @@ namespace _Scripts.Units.Invocation
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
-                var newBonusDefense = -(multiplicator - 1) * baseInvocationCard.BaseInvocationCardStats.Defense + defense;
+                var newBonusDefense =
+                    -(multiplicator - 1) * baseInvocationCard.BaseInvocationCardStats.Defense + defense;
             }
             else if (multiplicator < 0)
             {

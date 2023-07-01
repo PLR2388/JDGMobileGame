@@ -371,7 +371,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.TentaculesCantLiveWithoutJapon,
             "Tentacules cannot live without Japan invocation card",
             "Tentacules",
-            family:CardFamily.Japan
+            family: CardFamily.Japan
         ),
         new CanOnlyAttackItselfAbility(
             AbilityName.CanOnlyAttackTentacules,
@@ -382,6 +382,18 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.Draw2Cards,
             "Can draw maximum 2 card when invoke",
             2
+        ),
+        new GiveAtkDefToFamilyMemberAbility(
+            AbilityName.GiveAktDefToFistilandMember,
+            "Sangoku can give his atk and def to Fistiland member",
+            "Sangoku",
+            CardFamily.Fistiland
+        ),
+        new GiveAtkDefToFamilyMemberAbility(
+            AbilityName.GiveAktDefToRpgMember,
+            "L'Elfette can give his atk and def to Rpg member",
+            "L'Elfette",
+            CardFamily.Rpg
         )
     };
 }

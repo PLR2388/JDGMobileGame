@@ -82,6 +82,9 @@ public class GameLoop : MonoBehaviour
     {
         switch (phaseId)
         {
+            case 1:
+                SeeCardAndApplyAction();
+                break;
             case 2:
                 ChooseAttack();
                 break;
@@ -150,6 +153,26 @@ public class GameLoop : MonoBehaviour
         }
     }
 
+    protected void SeeCardAndApplyAction()
+    {
+        if (!Input.GetMouseButton(0) || phaseId != 1 || stopDetectClicking) return;
+#if UNITY_EDITOR
+        var position = Input.mousePosition;
+#elif UNITY_ANDROID
+        var position = Input.GetTouch(0).position;
+#endif
+        if (Camera.main == null) return;
+        var hit = Physics.Raycast(Camera.main.ScreenPointToRay(position), out var hitInfo);
+        if (hit)
+        {
+            HandleClickDuringDrawPhase(hitInfo);
+        }
+        else
+        {
+            bigImageCard.SetActive(false);
+        }
+    }
+
     protected void ChooseAttack()
     {
         AudioSystem.Instance.PlayMusic(Music.Fight);
@@ -193,10 +216,9 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected virtual void HandleClick(RaycastHit hitInfo)
+    protected void HandleClickDuringDrawPhase(RaycastHit hitInfo)
     {
         var objectTag = hitInfo.transform.gameObject.tag;
-        var ownPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var personTag = IsP1Turn ? p1.GetComponent<PlayerCards>().Tag : p2.GetComponent<PlayerCards>().Tag;
         var opponentTag = IsP1Turn ? p2.GetComponent<PlayerCards>().Tag : p1.GetComponent<PlayerCards>().Tag;
         var cardObject = hitInfo.transform.gameObject;
@@ -216,10 +238,9 @@ public class GameLoop : MonoBehaviour
                 if (cardSelected is InGameInvocationCard invocationCard)
                 {
                     attacker = invocationCard;
-                    var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-                    var hasAction = false; // attacker.InvocationActionEffect != null;
+                    var hasAction = attacker.HasAction();
                     invocationMenu.SetActive(true);
-                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
+                    invocationMenu.transform.GetChild(0).gameObject.SetActive(false);
                     invocationMenu.transform.position = mousePosition;
                     if (hasAction)
                     {
@@ -261,18 +282,16 @@ public class GameLoop : MonoBehaviour
                 var opponentInvocationCard = cardObject.GetComponent<PhysicalCardDisplay>().card;
                 if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
                 {
+                    attacker = invocationCard;
 #if UNITY_EDITOR
                     var mousePosition = Input.mousePosition;
 #elif UNITY_ANDROID
                             var mousePosition = Input.GetTouch(0).position;
 #endif
-                    attacker = invocationCard;
-                    var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-                    var hasAction = false; // attacker.InvocationActionEffect != null;
                     invocationMenu.SetActive(true);
-                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
+                    invocationMenu.transform.GetChild(0).gameObject.SetActive(false);
                     invocationMenu.transform.position = mousePosition;
-                    if (hasAction) // TODO: not done right now
+                    if (attacker.HasAction())
                     {
                         invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
                         invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable =
@@ -282,6 +301,102 @@ public class GameLoop : MonoBehaviour
                     {
                         invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
                     }
+                }
+            }
+
+            if (clicking && Input.GetMouseButton(0))
+            {
+                totalDownTime += Time.deltaTime;
+
+                if (totalDownTime >= ClickDuration)
+                {
+                    clicking = false;
+                    DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
+                }
+            }
+
+            if (clicking && Input.GetMouseButtonUp(0))
+            {
+                clicking = false;
+            }
+        }
+        else
+        {
+            bigImageCard.SetActive(false);
+        }
+    }
+
+    protected virtual void HandleClick(RaycastHit hitInfo)
+    {
+        var objectTag = hitInfo.transform.gameObject.tag;
+        var ownPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var personTag = IsP1Turn ? p1.GetComponent<PlayerCards>().Tag : p2.GetComponent<PlayerCards>().Tag;
+        var opponentTag = IsP1Turn ? p2.GetComponent<PlayerCards>().Tag : p1.GetComponent<PlayerCards>().Tag;
+        var cardObject = hitInfo.transform.gameObject;
+
+        if (objectTag == personTag)
+        {
+            cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
+            if (Input.GetMouseButtonDown(0))
+            {
+                totalDownTime = 0;
+                clicking = true;
+#if UNITY_EDITOR
+                var mousePosition = Input.mousePosition;
+#elif UNITY_ANDROID
+                var mousePosition = Input.GetTouch(0).position;
+#endif
+                if (cardSelected is InGameInvocationCard invocationCard)
+                {
+                    attacker = invocationCard;
+                    var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
+                    invocationMenu.SetActive(true);
+                    invocationMenu.transform.GetChild(0).gameObject.SetActive(true);
+                    invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
+                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
+                    invocationMenu.transform.position = mousePosition;
+                }
+            }
+
+            if (clicking && Input.GetMouseButton(0))
+            {
+                totalDownTime += Time.deltaTime;
+
+                if (totalDownTime >= ClickDuration)
+                {
+                    Debug.Log("Long click");
+                    clicking = false;
+                    invocationMenu.SetActive(false);
+                    DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
+                }
+            }
+
+            if (clicking && Input.GetMouseButtonUp(0))
+            {
+                clicking = false;
+            }
+        }
+        else if (objectTag == opponentTag)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                totalDownTime = 0;
+                clicking = true;
+                var opponentInvocationCard = cardObject.GetComponent<PhysicalCardDisplay>().card;
+                if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
+                {
+#if UNITY_EDITOR
+                    var mousePosition = Input.mousePosition;
+#elif UNITY_ANDROID
+                            var mousePosition = Input.GetTouch(0).position;
+#endif
+                    attacker = invocationCard;
+                    var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
+                    invocationMenu.SetActive(true);
+                    invocationMenu.transform.GetChild(0).gameObject.SetActive(true);
+                    invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
+                    invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
+                    invocationMenu.transform.position = mousePosition;
                 }
             }
 
@@ -319,14 +434,21 @@ public class GameLoop : MonoBehaviour
 
     protected bool IsSpecialActionPossible()
     {
-        return true; // TODO: Refactor
-        //return invocationFunctions.IsSpecialActionPossible(attacker, attacker.InvocationActionEffect);
+        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        return attacker.Abilities.TrueForAll(ability =>
+            ability.IsActionPossible(attacker, playerCards, opponentPlayerCards));
     }
 
     protected void UseSpecialAction()
     {
-        // TODO: Refactor
-        //invocationFunctions.AskIfUserWantToUseActionEffect(attacker, attacker.InvocationActionEffect);
+        var abilities = attacker.Abilities;
+        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        foreach (var ability in abilities)
+        {
+            ability.OnCardActionTouched(canvas, attacker, playerCards, opponentPlayerCards);
+        }
     }
 
     /**
