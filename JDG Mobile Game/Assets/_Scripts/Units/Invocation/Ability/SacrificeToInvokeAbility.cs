@@ -13,8 +13,9 @@ public class SacrificeToInvokeAbility : Ability
         Name = name;
         Description = description;
         this.cardName = cardName;
+        IsAction = true;
     }
-    
+
     protected static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
     {
         messageBox.SetActive(false);
@@ -28,6 +29,14 @@ public class SacrificeToInvokeAbility : Ability
         };
     }
 
+    public override bool IsActionPossible(InGameInvocationCard currentCard, PlayerCards playerCards,
+        PlayerCards opponentCards)
+    {
+        return playerCards.yellowCards.Any(card =>
+            card.Type == CardType.Invocation &&
+            card.Collector == false);
+    }
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         List<InGameCard> invocationCards = playerCards.yellowCards.TakeWhile(card =>
@@ -35,7 +44,7 @@ public class SacrificeToInvokeAbility : Ability
             card.Collector == false).ToList();
         if (invocationCards.Count > 0)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas,"Question",
+            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
                 "Veux-tu sacrifier " + cardName + " pour invoquer une carte non-brillante depuis la poubelle jaune ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
@@ -44,7 +53,8 @@ public class SacrificeToInvokeAbility : Ability
                     MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix carte à invoquer", invocationCards);
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
-                    InGameInvocationCard invocationCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
+                    InGameInvocationCard invocationCard =
+                        messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                     if (invocationCard == null)
                     {
                         DisplayOkMessage(canvas, messageBox, messageBox1);
@@ -66,10 +76,14 @@ public class SacrificeToInvokeAbility : Ability
                     DisplayOkMessage(canvas, messageBox1, messageBox);
                 };
             };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-            };
+            messageBox.GetComponent<MessageBox>().NegativeAction = () => { Object.Destroy(messageBox); };
         }
+    }
+
+    public override void OnCardActionTouched(Transform canvas, InGameInvocationCard currentCard,
+        PlayerCards playerCards,
+        PlayerCards opponentCards)
+    {
+        ApplyEffect(canvas, playerCards, opponentCards);
     }
 }
