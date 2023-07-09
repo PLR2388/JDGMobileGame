@@ -1,15 +1,18 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Cards.EffectCards
 {
     public class InGameEffectCard : InGameCard
     {
         private EffectCard baseEffectCard;
-        private EffectCardEffect effectCardEffect;
         private int lifeTime;
         public bool checkTurn;
 
         public float affectPv;
 
-        public EffectCardEffect EffectCardEffect => effectCardEffect;
+        public List<EffectAbility> EffectAbilities = new List<EffectAbility>();
+
 
         public int LifeTime
         {
@@ -37,10 +40,12 @@ namespace Cards.EffectCards
             type = baseEffectCard.Type;
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;
-            effectCardEffect = baseEffectCard.EffectCardEffect;
             lifeTime = baseEffectCard.LifeTime;
             checkTurn = baseEffectCard.checkTurn;
             affectPv = baseEffectCard.affectPv;
+            EffectAbilities = baseEffectCard.EffectAbilities.Select(
+                effectAbilityName => EffectAbilityLibrary.Instance.effectAbilityDictionary[effectAbilityName]
+            ).ToList();
         }
 
         public void DecrementLifeTime()

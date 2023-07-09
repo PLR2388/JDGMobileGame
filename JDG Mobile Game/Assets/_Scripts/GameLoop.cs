@@ -607,7 +607,7 @@ public class GameLoop : MonoBehaviour
                 else
                 {
                     // Check effect card
-                    if (attackPlayerEffectCard.Select(effectCard => effectCard.EffectCardEffect)
+                    /*if (attackPlayerEffectCard.Select(effectCard => effectCard.EffectCardEffect)
                         .Where(effectCardEffect => effectCardEffect != null).Any(effectCardEffect =>
                             effectCardEffect.Keys.Contains(Effect.AttackDirectly)))
                     {
@@ -615,7 +615,7 @@ public class GameLoop : MonoBehaviour
                         {
                             player
                         };
-                    }
+                    }*/
                 }
             }
         }
@@ -1568,7 +1568,7 @@ public class GameLoop : MonoBehaviour
                 effectCard.DecrementLifeTime();
                 effectCardsToDelete.Add(effectCard);
 
-                var effectCardEffect = effectCard.EffectCardEffect;
+                /*var effectCardEffect = effectCard.EffectCardEffect;
                 if (effectCardEffect == null) continue;
                 var keys = effectCardEffect.Keys;
 
@@ -1650,7 +1650,7 @@ public class GameLoop : MonoBehaviour
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                }
+                }*/
             }
             else if (effectCard.LifeTime > 1)
             {
@@ -1658,7 +1658,7 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                var effectCardEffect = effectCard.EffectCardEffect;
+                /*var effectCardEffect = effectCard.EffectCardEffect;
                 if (effectCardEffect == null) continue;
                 var keys = effectCardEffect.Keys;
 
@@ -1734,7 +1734,7 @@ public class GameLoop : MonoBehaviour
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                }
+                }*/
             }
         }
 

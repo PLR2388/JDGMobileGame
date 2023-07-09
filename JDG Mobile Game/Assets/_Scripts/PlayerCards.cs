@@ -21,7 +21,7 @@ public class PlayerCards : MonoBehaviour
     //public List<InGameInvocationCard> invocationCards = new List<InGameInvocationCard>();
     public List<InGameEffectCard> effectCards = new List<InGameEffectCard>();
 
-    [SerializeField] private bool isPlayerOne;
+    [SerializeField] public bool isPlayerOne;
 
     [SerializeField] private GameObject nextPhaseButton;
     [SerializeField] private GameObject inHandButton;
@@ -157,9 +157,9 @@ public class PlayerCards : MonoBehaviour
             for (var i = effectCards.Count - 1; i >= 0; i--)
             {
                 var effectCard = effectCards[i];
-                var effectCardEffect = effectCard.EffectCardEffect;
-                if (effectCardEffect == null) continue;
-                if (!effectCardEffect.Keys.Contains(Effect.SameFamily)) continue;
+                //var effectCardEffect = effectCard.EffectCardEffect;
+                //if (effectCardEffect == null) continue;
+                //if (!effectCardEffect.Keys.Contains(Effect.SameFamily)) continue;
                 if (field != null && !IsFieldDesactivate)
                 {
                     foreach (var invocationCard in invocationCards)
@@ -514,8 +514,8 @@ public class PlayerCards : MonoBehaviour
             }
         }
 
-        var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.EffectCardEffect.Keys)
-            .Any(keys => keys.Contains(Effect.SkipAttack));
+        //var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.EffectCardEffect.Keys)
+         //   .Any(keys => keys.Contains(Effect.SkipAttack));
 
 
         /*for (var j = invocationCards.Count - 1; j >= 0; j--)
@@ -586,8 +586,8 @@ public class PlayerCards : MonoBehaviour
         for (var i = effectCards.Count - 1; i >= 0; i--)
         {
             var effectCard = effectCards[i];
-            var effectCardEffect = effectCard.EffectCardEffect;
-            if (effectCardEffect != null)
+            //var effectCardEffect = effectCard.EffectCardEffect;
+            /*if (effectCardEffect != null)
             {
                 if (effectCardEffect.Keys.Contains(Effect.SameFamily))
                 {
@@ -606,7 +606,7 @@ public class PlayerCards : MonoBehaviour
                             effectCardEffect.Keys.FindIndex(effect => effect == Effect.NumberAttacks)]);
                     newInvocationCard.SetRemainedAttackThisTurn(value);
                 }
-            }
+            }*/
         }
 
         if (field != null && !IsFieldDesactivate)
@@ -820,7 +820,7 @@ public class PlayerCards : MonoBehaviour
         for (var i = effectCards.Count - 1; i >= 0; i--)
         {
             var effectCard = effectCards[i];
-            var effectCardEffect = effectCard.EffectCardEffect;
+            /*var effectCardEffect = effectCard.EffectCardEffect;
             if (effectCardEffect != null)
             {
                 if (effectCardEffect.Keys.Contains(Effect.SameFamily))
@@ -831,7 +831,7 @@ public class PlayerCards : MonoBehaviour
                             removedInvocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
                     }
                 }
-            }
+            }*/
         }
 
         if (field != null)

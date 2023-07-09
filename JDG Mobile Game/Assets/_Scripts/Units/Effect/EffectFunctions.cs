@@ -48,7 +48,7 @@ namespace Cards.EffectCards
 
             if (size < 4)
             {
-                ApplyEffectCard(effectCard, effectCard.EffectCardEffect);
+                //ApplyEffectCard(effectCard, effectCard.EffectCardEffect);
 
                 miniCardMenu.SetActive(false);
                 currentPlayerCard.handCards.Remove(effectCard);

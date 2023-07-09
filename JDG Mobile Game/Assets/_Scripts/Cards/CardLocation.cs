@@ -187,7 +187,7 @@ namespace Cards
                     UnitManager.Instance.AllPhysicalCards[index].GetComponent<PhysicalCardDisplay>().Display();
                 }
 
-                if (effectCard.EffectCardEffect.Keys.Contains(Effect.SameFamily))
+                /*if (effectCard.EffectCardEffect.Keys.Contains(Effect.SameFamily))
                 {
                     foreach (var invocationCard in invocationCards.Where(invocationCard => invocationCard != null)
                                  .Where(invocationCard => field != null && !playerCards.IsFieldDesactivate))
@@ -197,7 +197,7 @@ namespace Cards
                             field.GetFamily()
                         };
                     }
-                }
+                }*/
 
                 UnitManager.Instance.AllPhysicalCards[index].tag = cardTag;
             }
