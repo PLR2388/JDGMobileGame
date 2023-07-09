@@ -13,7 +13,7 @@ public class LimitHandCards : EffectAbility
         this.numberCards = numberCards;
     }
 
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
+    public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus, PlayerStatus opponentPlayerStatus)
     {
         ApplyPowerLimitHandCard(canvas, playerCards);
         ApplyPowerLimitHandCard(canvas, opponentPlayerCard);

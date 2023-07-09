@@ -50,7 +50,7 @@ namespace Cards.EffectCards
             {
                 foreach (var effectCardEffectAbility in effectCard.EffectAbilities)
                 {
-                    effectCardEffectAbility.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCard);
+                    effectCardEffectAbility.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCard, currentPlayerStatus, opponentPlayerStatus);
                 }
 
                 miniCardMenu.SetActive(false);

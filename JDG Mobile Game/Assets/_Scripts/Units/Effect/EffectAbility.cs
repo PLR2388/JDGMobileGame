@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum EffectAbilityName
 {
-    LimitHandCardTo5
+    LimitHandCardTo5,
+    Lose2Point5StarsByInvocations
 }
 
 public abstract class EffectAbility
@@ -17,7 +18,7 @@ public abstract class EffectAbility
         return true;
     }
 
-    public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
+    public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus, PlayerStatus opponentStatus)
     {
         
     }
