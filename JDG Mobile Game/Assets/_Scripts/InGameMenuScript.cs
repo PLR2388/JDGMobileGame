@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
@@ -97,8 +98,8 @@ public class InGameMenuScript : MonoBehaviour
             case CardType.Effect:
                 var effectCard = card as InGameEffectCard;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                //putCardButton.GetComponent<Button>().interactable =
-                   // effectFunctions.CanUseEffectCard(effectCard.EffectCardEffect);
+                putCardButton.GetComponent<Button>().interactable =
+                    effectCard.EffectAbilities.All(elt => elt.CanUseEffect(playerCard));
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";

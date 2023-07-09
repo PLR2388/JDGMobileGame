@@ -48,7 +48,10 @@ namespace Cards.EffectCards
 
             if (size < 4)
             {
-                //ApplyEffectCard(effectCard, effectCard.EffectCardEffect);
+                foreach (var effectCardEffectAbility in effectCard.EffectAbilities)
+                {
+                    effectCardEffectAbility.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCard);
+                }
 
                 miniCardMenu.SetActive(false);
                 currentPlayerCard.handCards.Remove(effectCard);

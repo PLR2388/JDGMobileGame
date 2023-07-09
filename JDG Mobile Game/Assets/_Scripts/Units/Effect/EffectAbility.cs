@@ -12,6 +12,11 @@ public abstract class EffectAbility
     public EffectAbilityName Name { get; set; }
     protected string Description { get; set; }
 
+    public virtual bool CanUseEffect(PlayerCards playerCards)
+    {
+        return true;
+    }
+
     public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
         
