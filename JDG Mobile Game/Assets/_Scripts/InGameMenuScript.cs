@@ -82,6 +82,10 @@ public class InGameMenuScript : MonoBehaviour
         var playerCard = GameLoop.IsP1Turn
             ? GameObject.Find("Player1").GetComponent<PlayerCards>()
             : GameObject.Find("Player2").GetComponent<PlayerCards>();
+        
+        var opponentPlayerStatus = GameLoop.IsP1Turn
+            ? GameObject.Find("Player2").GetComponent<PlayerStatus>()
+            : GameObject.Find("Player1").GetComponent<PlayerStatus>();
         switch (cardType)
         {
             case CardType.Invocation:
@@ -99,7 +103,7 @@ public class InGameMenuScript : MonoBehaviour
                 var effectCard = card as InGameEffectCard;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 putCardButton.GetComponent<Button>().interactable =
-                    effectCard.EffectAbilities.All(elt => elt.CanUseEffect(playerCard));
+                    effectCard.EffectAbilities.All(elt => elt.CanUseEffect(playerCard, opponentPlayerStatus));
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";

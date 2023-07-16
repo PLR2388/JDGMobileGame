@@ -35,6 +35,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             1,
             3,
             15
+        ),
+        new DirectAttackEffectAbility(
+            EffectAbilityName.DirectAttackIfUnder5HP,
+            "Can attack player if his HP is under 5",
+            5
         )
     };
 

@@ -148,7 +148,7 @@ namespace Menu
             deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
             deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
-            deck1.Add(GetSpecificCard("Demi-pizza", deck1AllCard));
+            deck1.Add(GetSpecificCard("Fatalité", deck1AllCard));
 
             while (deck1.Count != 30)
             {

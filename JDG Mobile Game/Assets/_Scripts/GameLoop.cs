@@ -600,7 +600,7 @@ public class GameLoop : MonoBehaviour
                     }
                 }
 
-                if (notEmptyOpponent.Count == 0 && !hypnoBoobOnly)
+                if ((notEmptyOpponent.Count == 0 && !hypnoBoobOnly) || attackPlayerEffectCard.Any(card => card.EffectAbilities.Any(ability => ability is DirectAttackEffectAbility)))
                 {
                     notEmptyOpponent.Add(player);
                 }

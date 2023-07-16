@@ -9,7 +9,8 @@ public enum EffectAbilityName
     Lose2Point5StarsByInvocations,
     ApplyFamilyFieldToInvocations,
     DestroyAllCardsUnderManyConditions,
-    GetHPFor1Sacrifice3ATKDEFCondition
+    GetHPFor1Sacrifice3ATKDEFCondition,
+    DirectAttackIfUnder5HP
 }
 
 public abstract class EffectAbility
@@ -17,7 +18,7 @@ public abstract class EffectAbility
     public EffectAbilityName Name { get; set; }
     protected string Description { get; set; }
 
-    public virtual bool CanUseEffect(PlayerCards playerCards)
+    public virtual bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
     {
         return true;
     }
