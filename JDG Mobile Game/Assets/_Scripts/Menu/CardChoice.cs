@@ -147,8 +147,8 @@ namespace Menu
             deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
             deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Sheik Point", deck1AllCard));
-            deck1.Add(GetSpecificCard("Bolossage gratuit", deck1AllCard));
+            deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
+            deck1.Add(GetSpecificCard("Convocation au lycée", deck1AllCard));
 
             while (deck1.Count != 30)
             {

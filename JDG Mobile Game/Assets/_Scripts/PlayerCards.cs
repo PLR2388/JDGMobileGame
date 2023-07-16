@@ -514,6 +514,11 @@ public class PlayerCards : MonoBehaviour
             }
         }
 
+        foreach (var effectAbility in effectCards.SelectMany(effectCard => effectCard.EffectAbilities))
+        {
+            effectAbility.OnInvocationCardAdded(this, newInvocationCard);
+        }
+
         //var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.EffectCardEffect.Keys)
          //   .Any(keys => keys.Contains(Effect.SkipAttack));
 
@@ -816,22 +821,10 @@ public class PlayerCards : MonoBehaviour
         {
             ability.OnCardRemove(canvas, removedInvocationCard, this, opponentPlayerCard);
         }
-
-        for (var i = effectCards.Count - 1; i >= 0; i--)
+        
+        foreach (var effectAbility in effectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
-            var effectCard = effectCards[i];
-            /*var effectCardEffect = effectCard.EffectCardEffect;
-            if (effectCardEffect != null)
-            {
-                if (effectCardEffect.Keys.Contains(Effect.SameFamily))
-                {
-                    if (field != null)
-                    {
-                        removedInvocationCard.Families =
-                            removedInvocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
-                    }
-                }
-            }*/
+            effectAbility.OnInvocationCardRemoved(this, removedInvocationCard);
         }
 
         if (field != null)

@@ -732,7 +732,8 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected void RemoveCombineEffectCard(List<InGameEffectCard> effectCards, ObservableCollection<InGameCard> yellowCards)
+    protected void RemoveCombineEffectCard(List<InGameEffectCard> effectCards,
+        ObservableCollection<InGameCard> yellowCards)
     {
         foreach (var effectCard in effectCards.Where(effectCard => effectCard.Title == "Attaque de la tour Eiffel"))
         {
@@ -1231,18 +1232,36 @@ public class GameLoop : MonoBehaviour
     }
 
     private void ApplyOnTurnStart(PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+        PlayerCards opponentPlayerCards,
+        PlayerStatus playerStatus,
+        PlayerStatus opponentPlayerStatus)
     {
         var copyInvocationCards = playerCards.invocationCards.ToList();
         var copyOpponentInvocationCards = opponentPlayerCards.invocationCards.ToList();
-        foreach (var invocationCardAbility in copyInvocationCards.SelectMany(invocationCard => invocationCard.Abilities))
+
+        var copyEffectCards = playerCards.effectCards.ToList();
+        var copyOpponentEffectCards = opponentPlayerCards.effectCards.ToList();
+
+        foreach (var invocationCardAbility in
+                 copyInvocationCards.SelectMany(invocationCard => invocationCard.Abilities))
         {
             invocationCardAbility.OnTurnStart(canvas, playerCards, opponentPlayerCards);
         }
-        
-        foreach (var invocationCardAbility in copyOpponentInvocationCards.SelectMany(invocationCard => invocationCard.Abilities))
+
+        foreach (var invocationCardAbility in copyOpponentInvocationCards.SelectMany(invocationCard =>
+                     invocationCard.Abilities))
         {
             invocationCardAbility.OnTurnStart(canvas, opponentPlayerCards, playerCards);
+        }
+
+        foreach (var effectCardAbility in copyEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
+        {
+            effectCardAbility.OnTurnStart(canvas, playerStatus, playerCards);
+        }
+
+        foreach (var effectCardAbility in copyOpponentEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
+        {
+            effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards);
         }
     }
 
@@ -1250,9 +1269,13 @@ public class GameLoop : MonoBehaviour
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+
+        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+        var opponentPlayerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
+
         playerCards.ResetInvocationCardNewTurn();
 
-        ApplyOnTurnStart(playerCards, opponentPlayerCards);
+        ApplyOnTurnStart(playerCards, opponentPlayerCards, playerStatus, opponentPlayerStatus);
 
         DrawPlayerCard(playerCards);
 
@@ -1542,7 +1565,7 @@ public class GameLoop : MonoBehaviour
         {
             invocationCard.UnblockAttack();
         }
-        
+
         foreach (var invocationCard in currentPlayerCard.invocationCards)
         {
             invocationCard.incrementNumberTurnOnField();

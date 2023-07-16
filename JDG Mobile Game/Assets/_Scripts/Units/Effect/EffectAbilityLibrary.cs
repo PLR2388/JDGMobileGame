@@ -14,6 +14,12 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.Lose2Point5StarsByInvocations,
             "Opponent will lose 2.5 Stars by invocations on our field",
             2.5f
+        ),
+        new FamilyFieldToInvocations(
+            EffectAbilityName.ApplyFamilyFieldToInvocations,
+            "Can apply field family to invocation cards by paying 0.5 HP per turn",
+            0.5f,
+            "Convocation au lycée"
         )
     };
 
