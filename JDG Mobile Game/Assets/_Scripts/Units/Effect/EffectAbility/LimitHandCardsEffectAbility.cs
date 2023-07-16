@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class LimitHandCards : EffectAbility
+public class LimitHandCardsEffectAbility : EffectAbility
 {
     private int numberCards;
 
-    public LimitHandCards(EffectAbilityName name, string description, int numberCards)
+    public LimitHandCardsEffectAbility(EffectAbilityName name, string description, int numberCards)
     {
         Name = name;
         Description = description;

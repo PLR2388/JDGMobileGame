@@ -5,21 +5,29 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
 {
     private List<EffectAbility> effectAbilities = new List<EffectAbility>
     {
-        new LimitHandCards(
+        new LimitHandCardsEffectAbility(
             EffectAbilityName.LimitHandCardTo5,
             "Limit the number of cards in the hands to 5",
             5
         ),
-        new ReduceOpponentStarsByInvocationCardsNumber(
+        new ReduceOpponentStarsByInvocationCardsNumberEffectAbility(
             EffectAbilityName.Lose2Point5StarsByInvocations,
             "Opponent will lose 2.5 Stars by invocations on our field",
             2.5f
         ),
-        new FamilyFieldToInvocations(
+        new FamilyFieldToInvocationsEffectAbility(
             EffectAbilityName.ApplyFamilyFieldToInvocations,
             "Can apply field family to invocation cards by paying 0.5 HP per turn",
             0.5f,
             "Convocation au lycée"
+        ),
+        new DestroyCardsEffectAbility(
+            EffectAbilityName.DestroyAllCardsUnderManyConditions,
+            "Destroy all cards on field if player sacrifice an invocation card, remove the first card on its deck and remove a card from his hand",
+            0,
+            true,
+            true,
+            true
         )
     };
 

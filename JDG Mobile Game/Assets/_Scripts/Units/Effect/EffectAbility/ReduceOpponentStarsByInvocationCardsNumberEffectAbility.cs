@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class ReduceOpponentStarsByInvocationCardsNumber : EffectAbility
+public class ReduceOpponentStarsByInvocationCardsNumberEffectAbility : EffectAbility
 {
     private float damage;
     
-    public ReduceOpponentStarsByInvocationCardsNumber(EffectAbilityName name, string description, float unitDamage)
+    public ReduceOpponentStarsByInvocationCardsNumberEffectAbility(EffectAbilityName name, string description, float unitDamage)
     {
         Name = name;
         Description = description;

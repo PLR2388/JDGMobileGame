@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
-public class FamilyFieldToInvocations : EffectAbility
+public class FamilyFieldToInvocationsEffectAbility : EffectAbility
 {
     private string cardName;
     private float costPerTurn;
 
-    public FamilyFieldToInvocations(EffectAbilityName name, string description, float costPerTurn, string cardName)
+    public FamilyFieldToInvocationsEffectAbility(EffectAbilityName name, string description, float costPerTurn, string cardName)
     {
         Name = name;
         Description = description;
