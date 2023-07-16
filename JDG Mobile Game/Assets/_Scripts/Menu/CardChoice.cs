@@ -147,14 +147,13 @@ namespace Menu
             deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
             deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
-            deck1.Add(GetSpecificCard("Fatalité", deck1AllCard));
+            deck1.Add(GetSpecificCard("Faux raccord", deck1AllCard));
 
             while (deck1.Count != 30)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
-
+            deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
             deck1.Reverse();
 
             while (deck2.Count != 30)

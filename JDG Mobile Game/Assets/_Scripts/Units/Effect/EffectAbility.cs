@@ -10,7 +10,8 @@ public enum EffectAbilityName
     ApplyFamilyFieldToInvocations,
     DestroyAllCardsUnderManyConditions,
     GetHPFor1Sacrifice3ATKDEFCondition,
-    DirectAttackIfUnder5HP
+    DirectAttackIfUnder5HP,
+    ChangeFieldCardFromDeck
 }
 
 public abstract class EffectAbility

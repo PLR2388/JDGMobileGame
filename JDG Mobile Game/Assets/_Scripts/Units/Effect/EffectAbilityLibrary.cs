@@ -40,6 +40,10 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.DirectAttackIfUnder5HP,
             "Can attack player if his HP is under 5",
             5
+        ),
+        new ChangeFieldCardEffectAbility(
+            EffectAbilityName.ChangeFieldCardFromDeck,
+            "Get field from deck and replace the one already there or put it if nothing"
         )
     };
 
