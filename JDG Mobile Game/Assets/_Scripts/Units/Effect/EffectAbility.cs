@@ -8,7 +8,8 @@ public enum EffectAbilityName
     LimitHandCardTo5,
     Lose2Point5StarsByInvocations,
     ApplyFamilyFieldToInvocations,
-    DestroyAllCardsUnderManyConditions
+    DestroyAllCardsUnderManyConditions,
+    GetHPFor1Sacrifice3ATKDEFCondition
 }
 
 public abstract class EffectAbility

@@ -28,6 +28,13 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             true,
             true,
             true
+        ),
+        new GetHPBackEffectAbility(
+            EffectAbilityName.GetHPFor1Sacrifice3ATKDEFCondition,
+            "Get 15HP for the sacrifice of 1 invocation card that has at least 3 ATK or 3 DEF",
+            1,
+            3,
+            15
         )
     };
 
