@@ -11,7 +11,8 @@ public enum EffectAbilityName
     DestroyAllCardsUnderManyConditions,
     GetHPFor1Sacrifice3ATKDEFCondition,
     DirectAttackIfUnder5HP,
-    ChangeFieldCardFromDeck
+    ChangeFieldCardFromDeck,
+    DestroyOneCardByRemovingOneHandCard
 }
 
 public abstract class EffectAbility

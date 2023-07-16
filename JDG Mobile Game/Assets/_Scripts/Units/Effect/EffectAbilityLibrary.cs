@@ -44,7 +44,15 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
         new ChangeFieldCardEffectAbility(
             EffectAbilityName.ChangeFieldCardFromDeck,
             "Get field from deck and replace the one already there or put it if nothing"
-        )
+        ),
+        new DestroyCardsEffectAbility(
+            EffectAbilityName.DestroyOneCardByRemovingOneHandCard,
+            "Destroy 1 card by removing one hand card",
+            1,
+            false,
+            false,
+            true
+            )
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;
