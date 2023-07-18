@@ -1256,12 +1256,12 @@ public class GameLoop : MonoBehaviour
 
         foreach (var effectCardAbility in copyEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
-            effectCardAbility.OnTurnStart(canvas, playerStatus, playerCards);
+            effectCardAbility.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus);
         }
 
         foreach (var effectCardAbility in copyOpponentEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
-            effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards);
+            effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards, opponentPlayerStatus);
         }
     }
 
@@ -1525,6 +1525,12 @@ public class GameLoop : MonoBehaviour
         else
         {
             phaseId += 1;
+        }
+
+        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+        if (phaseId == 2 && playerStatus.BlockAttack)
+        {
+            phaseId = 3;
         }
 
         switch (phaseId)

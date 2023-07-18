@@ -15,7 +15,8 @@ public enum EffectAbilityName
     DestroyOneCardByRemovingOneHandCard,
     DestroyFieldFor7HalfCost,
     Get7HalfHPFor1Sacrifice,
-    GetCardFromYellowDeck
+    GetCardFromYellowDeck,
+    ManiabilitePourrieSkipAttackForOpponent
 }
 
 public abstract class EffectAbility
@@ -33,7 +34,7 @@ public abstract class EffectAbility
         
     }
 
-    public virtual void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards)
+    public virtual void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
     {
         
     }

@@ -19,7 +19,15 @@ public class PlayerStatus : MonoBehaviour
 
     [SerializeField] private int numberShield = 0;
 
+    [SerializeField] private bool blockAttack = false;
+
     public int NumberShield => numberShield;
+
+    public bool BlockAttack
+    {
+        get => blockAttack;
+        set => blockAttack = value;
+    }
 
     public void ChangePv(float pv)
     {

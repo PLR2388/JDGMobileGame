@@ -71,6 +71,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             1,
             true,
             true
+        ),
+        new SkipOpponentAttackEffectAbility(
+            EffectAbilityName.ManiabilitePourrieSkipAttackForOpponent,
+            "Maniabilité pourrie skip opponent attack phase",
+            "Maniabilité pourrie"
         )
     };
 
