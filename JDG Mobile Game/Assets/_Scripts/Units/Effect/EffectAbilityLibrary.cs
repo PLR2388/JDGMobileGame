@@ -76,7 +76,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.ManiabilitePourrieSkipAttackForOpponent,
             "Maniabilité pourrie skip opponent attack phase",
             "Maniabilité pourrie"
-        )
+        ),
+        new SwitchAtkDefEffectAbility(
+            EffectAbilityName.SwitchAtkDef,
+            "Switch ATK and DEF during a turn"
+            )
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;
