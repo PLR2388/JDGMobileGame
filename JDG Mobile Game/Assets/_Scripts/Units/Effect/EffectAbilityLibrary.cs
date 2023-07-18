@@ -57,6 +57,13 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.DestroyFieldFor7HalfCost,
             "Destroy a field for 7.5 HP",
             7.5f
+        ),
+        new GetHPBackEffectAbility(
+            EffectAbilityName.Get7HalfHPFor1Sacrifice,
+            "Get 7.5 HP by sacrifing one invocation",
+            1,
+            0,
+            7.5f
         )
     };
 

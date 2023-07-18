@@ -13,7 +13,8 @@ public enum EffectAbilityName
     DirectAttackIfUnder5HP,
     ChangeFieldCardFromDeck,
     DestroyOneCardByRemovingOneHandCard,
-    DestroyFieldFor7HalfCost
+    DestroyFieldFor7HalfCost,
+    Get7HalfHPFor1Sacrifice
 }
 
 public abstract class EffectAbility

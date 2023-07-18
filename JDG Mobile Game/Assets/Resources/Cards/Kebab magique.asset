@@ -20,7 +20,7 @@ MonoBehaviour:
   type: 1
   materialCard: {fileID: 2100000, guid: a8a21a8a64b5a144fa7f46cb7906c0a5, type: 2}
   collector: 0
-  effectCardEffect: {fileID: 11400000, guid: 1219f86dcc3203649a3559359c243254, type: 2}
   lifeTime: 1
   checkTurn: 0
   affectPv: 0
+  EffectAbilities: 09000000
