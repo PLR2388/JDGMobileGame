@@ -64,6 +64,13 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             1,
             0,
             7.5f
+        ),
+        new GetCardFromDeckYellowEffectAbility(
+            EffectAbilityName.GetCardFromYellowDeck,
+            "Get a card from the yellow trash or the deck",
+            1,
+            true,
+            true
         )
     };
 

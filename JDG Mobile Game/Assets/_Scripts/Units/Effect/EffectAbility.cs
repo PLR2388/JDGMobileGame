@@ -14,7 +14,8 @@ public enum EffectAbilityName
     ChangeFieldCardFromDeck,
     DestroyOneCardByRemovingOneHandCard,
     DestroyFieldFor7HalfCost,
-    Get7HalfHPFor1Sacrifice
+    Get7HalfHPFor1Sacrifice,
+    GetCardFromYellowDeck
 }
 
 public abstract class EffectAbility
