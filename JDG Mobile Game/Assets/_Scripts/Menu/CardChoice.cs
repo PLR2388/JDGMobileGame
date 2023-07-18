@@ -147,7 +147,7 @@ namespace Menu
             deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
             deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Feuille", deck1AllCard));
+            deck1.Add(GetSpecificCard("Incendie", deck1AllCard));
 
             while (deck1.Count != 30)
             {

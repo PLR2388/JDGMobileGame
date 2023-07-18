@@ -52,7 +52,12 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             false,
             false,
             true
-            )
+        ),
+        new DestroyFieldCardAbility(
+            EffectAbilityName.DestroyFieldFor7HalfCost,
+            "Destroy a field for 7.5 HP",
+            7.5f
+        )
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;

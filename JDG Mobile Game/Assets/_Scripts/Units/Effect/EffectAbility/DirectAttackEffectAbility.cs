@@ -11,7 +11,7 @@ public class DirectAttackEffectAbility : EffectAbility
         this.limitHpOpponent = limitHpOpponent;
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return opponentPlayerStatus.GetCurrentPv() < limitHpOpponent;
     }

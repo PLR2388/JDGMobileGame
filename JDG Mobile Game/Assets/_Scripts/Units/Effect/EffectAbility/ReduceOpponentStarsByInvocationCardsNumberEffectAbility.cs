@@ -11,7 +11,7 @@ public class ReduceOpponentStarsByInvocationCardsNumberEffectAbility : EffectAbi
         damage = unitDamage;
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.invocationCards.Count > 0;
     }

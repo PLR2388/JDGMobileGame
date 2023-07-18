@@ -47,8 +47,7 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private GameObject putCardButton;
     [SerializeField] private GameObject inHandButton;
 
-    [SerializeField]
-    private GameObject backgroundInformation;
+    [SerializeField] private GameObject backgroundInformation;
 
     private InGameCard currentSelectedCard;
     [SerializeField] private GameObject invocationMenu;
@@ -82,7 +81,11 @@ public class InGameMenuScript : MonoBehaviour
         var playerCard = GameLoop.IsP1Turn
             ? GameObject.Find("Player1").GetComponent<PlayerCards>()
             : GameObject.Find("Player2").GetComponent<PlayerCards>();
-        
+
+        var opponentPlayerCard = GameLoop.IsP1Turn
+            ? GameObject.Find("Player2").GetComponent<PlayerCards>()
+            : GameObject.Find("Player1").GetComponent<PlayerCards>();
+
         var opponentPlayerStatus = GameLoop.IsP1Turn
             ? GameObject.Find("Player2").GetComponent<PlayerStatus>()
             : GameObject.Find("Player1").GetComponent<PlayerStatus>();
@@ -103,7 +106,8 @@ public class InGameMenuScript : MonoBehaviour
                 var effectCard = card as InGameEffectCard;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 putCardButton.GetComponent<Button>().interactable =
-                    effectCard.EffectAbilities.All(elt => elt.CanUseEffect(playerCard, opponentPlayerStatus));
+                    effectCard.EffectAbilities.All(elt =>
+                        elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus));
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
@@ -196,8 +200,10 @@ public class InGameMenuScript : MonoBehaviour
             miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
 
             detailButtonText.GetComponent<TextMeshProUGUI>().text = "Retour";
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard.baseCard;
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().inGameCard = currentSelectedCard;
+            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card =
+                currentSelectedCard.baseCard;
+            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().inGameCard =
+                currentSelectedCard;
             detailCardPanel.SetActive(true);
             inHandButton.SetActive(false);
         }

@@ -26,7 +26,7 @@ public class GetHPBackEffectAbility : EffectAbility
         MessageBox.CreateOkMessageBox(canvas, "Attention", "Il faut sélectionner un sacrifice");
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.invocationCards.Count(card =>
             card.Attack >= atkDefCondition || card.Defense >= atkDefCondition) >= numberInvocationToSacrifice;

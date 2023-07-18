@@ -12,7 +12,7 @@ public class ChangeFieldCardEffectAbility : EffectAbility
         Description = description;
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.deck.Any(card => card.Type == CardType.Field);
     }

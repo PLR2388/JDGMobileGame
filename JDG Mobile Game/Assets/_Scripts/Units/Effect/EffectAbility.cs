@@ -12,7 +12,8 @@ public enum EffectAbilityName
     GetHPFor1Sacrifice3ATKDEFCondition,
     DirectAttackIfUnder5HP,
     ChangeFieldCardFromDeck,
-    DestroyOneCardByRemovingOneHandCard
+    DestroyOneCardByRemovingOneHandCard,
+    DestroyFieldFor7HalfCost
 }
 
 public abstract class EffectAbility
@@ -20,7 +21,7 @@ public abstract class EffectAbility
     public EffectAbilityName Name { get; set; }
     protected string Description { get; set; }
 
-    public virtual bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public virtual bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus opponentPlayerStatus)
     {
         return true;
     }

@@ -26,7 +26,7 @@ public class DestroyCardsEffectAbility : EffectAbility
         this.mustThrowHandCard = mustThrowHandCard;
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         bool canThrowFirstDeck = !mustThrowFirstDeck || playerCards.deck.Count > 0;
         bool canSacrificeInvocation = !mustSacrificeInvocation || playerCards.invocationCards.Count > 0;

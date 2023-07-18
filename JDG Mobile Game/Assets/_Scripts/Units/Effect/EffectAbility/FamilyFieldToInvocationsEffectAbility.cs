@@ -25,7 +25,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
         }
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.field != null && playerCards.invocationCards.Count > 0;
     }
