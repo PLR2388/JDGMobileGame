@@ -144,10 +144,10 @@ namespace Menu
             var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
-            deck2.Add(GetSpecificCard("Feuille", deck2AllCard));
-            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
+            deck2.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck2AllCard));
+            deck1.Add(GetSpecificCard("Merde magique en plastique rose", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Musique de Mega Drive", deck1AllCard));
+            deck1.Add(GetSpecificCard("Pains aux raisins à la place des mains", deck1AllCard));
 
             while (deck1.Count != 30)
             {

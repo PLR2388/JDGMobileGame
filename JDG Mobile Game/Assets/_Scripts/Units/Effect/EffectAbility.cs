@@ -19,7 +19,8 @@ public enum EffectAbilityName
     ManiabilitePourrieSkipAttackForOpponent,
     SwitchAtkDef,
     LookAndOrderDeckCards,
-    LooseHPBasedOnNumberInvocation
+    LooseHPBasedOnNumberInvocation,
+    DestroyEquipmentCard
 }
 
 public abstract class EffectAbility

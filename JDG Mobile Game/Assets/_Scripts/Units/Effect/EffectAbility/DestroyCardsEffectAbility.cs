@@ -15,8 +15,14 @@ public class DestroyCardsEffectAbility : EffectAbility
     private bool mustSacrificeInvocation;
     private bool mustThrowHandCard;
 
+    private List<CardType> types = new List<CardType>
+    {
+        CardType.Effect, CardType.Equipment, CardType.Invocation, CardType.Field
+    };
+
     public DestroyCardsEffectAbility(EffectAbilityName name, string description, int numberCards,
-        bool mustThrowFirstDeck = false, bool mustSacrificeInvocation = false, bool mustThrowHandCard = false)
+        bool mustThrowFirstDeck = false, bool mustSacrificeInvocation = false, bool mustThrowHandCard = false,
+        List<CardType> types = null)
     {
         Name = name;
         Description = description;
@@ -24,14 +30,56 @@ public class DestroyCardsEffectAbility : EffectAbility
         this.mustThrowFirstDeck = mustThrowFirstDeck;
         this.mustSacrificeInvocation = mustSacrificeInvocation;
         this.mustThrowHandCard = mustThrowHandCard;
+        if (types != null)
+        {
+            this.types = types;
+        }
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards,
+        PlayerStatus opponentPlayerStatus)
     {
         bool canThrowFirstDeck = !mustThrowFirstDeck || playerCards.deck.Count > 0;
         bool canSacrificeInvocation = !mustSacrificeInvocation || playerCards.invocationCards.Count > 0;
         bool canThrowHandCard = !mustThrowHandCard || playerCards.handCards.Count > 0;
-        return canThrowFirstDeck && canSacrificeInvocation && canThrowHandCard;
+
+        bool haveCardsToDestroy = false;
+
+        foreach (var type in types)
+        {
+            switch (type)
+            {
+                case CardType.Contre:
+                    break;
+                case CardType.Effect:
+                    haveCardsToDestroy = haveCardsToDestroy || playerCards.effectCards.Count > 0 ||
+                                         opponentPlayerCards.effectCards.Count > 0;
+                    break;
+                case CardType.Equipment:
+                    haveCardsToDestroy = haveCardsToDestroy ||
+                                         playerCards.invocationCards.Count(card => card.EquipmentCard != null) > 0 ||
+                                         opponentPlayerCards.invocationCards.Count(card => card.EquipmentCard != null) >
+                                         0;
+                    break;
+                case CardType.Field:
+                    haveCardsToDestroy = haveCardsToDestroy || playerCards.field != null ||
+                                         opponentPlayerCards.field != null;
+                    break;
+                case CardType.Invocation:
+                    haveCardsToDestroy = haveCardsToDestroy || playerCards.invocationCards.Count > 0 ||
+                                         opponentPlayerCards.invocationCards.Count > 0;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            if (haveCardsToDestroy)
+            {
+                break;
+            }
+        }
+
+        return canThrowFirstDeck && canSacrificeInvocation && canThrowHandCard && haveCardsToDestroy;
     }
 
     private void DisplayOkMessage(Transform canvas)
@@ -141,6 +189,8 @@ public class DestroyCardsEffectAbility : EffectAbility
         }
         else if (numbers == 1)
         {
+            var cards = BuildAllPossibleCardsToDestroy(playerCards, opponentPlayerCard);
+
             if (mustThrowHandCard)
             {
                 var handCards = playerCards.handCards;
@@ -158,67 +208,97 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         playerCards.handCards.Remove(handCard);
                         playerCards.yellowCards.Add(handCard);
-
-                        var cards = new List<InGameCard>();
-
-                        if (playerCards.invocationCards.Count > 0)
-                        {
-                            cards.AddRange(playerCards.invocationCards);
-                        }
-
-                        if (playerCards.effectCards.Count > 0)
-                        {
-                            cards.AddRange(playerCards.effectCards);
-                        }
-
-                        if (playerCards.field != null)
-                        {
-                            cards.Add(playerCards.field);
-                        }
-                        
-                        if (opponentPlayerCard.invocationCards.Count > 0)
-                        {
-                            cards.AddRange(opponentPlayerCard.invocationCards);
-                        }
-
-                        if (opponentPlayerCard.effectCards.Count > 0)
-                        {
-                            cards.AddRange(opponentPlayerCard.effectCards);
-                        }
-
-                        if (opponentPlayerCard.field != null)
-                        {
-                            cards.Add(opponentPlayerCard.field);
-                        }
-
-                        var messageBox1 =
-                            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à détruire", cards);
-
-                        messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-                        {
-                            var card = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
-                            if (card == null)
-                            {
-                                DisplayOkMessage(canvas);
-                            }
-                            else
-                            {
-                                DestroyCard(playerCards, opponentPlayerCard, card, card.CardOwner == CardOwner.Player1);
-                                Object.Destroy(messageBox1);
-                            }
-                        };
-                        messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-                        {
-                            DisplayOkMessage(canvas);
-                        };
-                        
+                        DisplayMessageBoxToDestroyOneCard(canvas, playerCards, opponentPlayerCard, cards);
                         Object.Destroy(messageBox);
                     }
                 };
                 messageBox.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
             }
+            else
+            {
+                // No Condition case
+                DisplayMessageBoxToDestroyOneCard(canvas, playerCards, opponentPlayerCard, cards);
+            }
         }
     }
+
+    private void DisplayMessageBoxToDestroyOneCard(Transform canvas, PlayerCards playerCards,
+        PlayerCards opponentPlayerCard, List<InGameCard> cards)
+    {
+        var messageBox1 =
+            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à détruire", cards);
+
+        messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
+        {
+            var card = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
+            if (card == null)
+            {
+                DisplayOkMessage(canvas);
+            }
+            else
+            {
+                DestroyCard(playerCards, opponentPlayerCard, card, card.CardOwner == CardOwner.Player1);
+                Object.Destroy(messageBox1);
+            }
+        };
+        messageBox1.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
+    }
+
+    private List<InGameCard> BuildAllPossibleCardsToDestroy(PlayerCards playerCards, PlayerCards opponentPlayerCard)
+    {
+        var cards = new List<InGameCard>();
+
+        if (playerCards.invocationCards.Count > 0)
+        {
+            cards.AddRange(playerCards.invocationCards);
+
+            var equipmentCards = playerCards.invocationCards.Select(card => card.EquipmentCard)
+                .Where(elt => elt != null);
+            var inGameEquipementCards = equipmentCards.ToList();
+            if (inGameEquipementCards.Any())
+            {
+                cards.AddRange(inGameEquipementCards);
+            }
+        }
+
+        if (playerCards.effectCards.Count > 0)
+        {
+            cards.AddRange(playerCards.effectCards);
+        }
+
+        if (playerCards.field != null)
+        {
+            cards.Add(playerCards.field);
+        }
+
+        if (opponentPlayerCard.invocationCards.Count > 0)
+        {
+            cards.AddRange(opponentPlayerCard.invocationCards);
+
+            var equipmentCards = opponentPlayerCard.invocationCards.Select(card => card.EquipmentCard)
+                .Where(elt => elt != null);
+            var inGameEquipementCards = equipmentCards.ToList();
+            if (inGameEquipementCards.Any())
+            {
+                cards.AddRange(inGameEquipementCards);
+            }
+        }
+
+        if (opponentPlayerCard.effectCards.Count > 0)
+        {
+            cards.AddRange(opponentPlayerCard.effectCards);
+        }
+
+        if (opponentPlayerCard.field != null)
+        {
+            cards.Add(opponentPlayerCard.field);
+        }
+
+        cards = cards.Where(card => types.Contains(card.Type)).ToList();
+
+        return cards;
+    }
+
 
     private static void DestroyCard(PlayerCards playerCards, PlayerCards opponentPlayerCard, InGameCard card, bool isP1)
     {
@@ -235,7 +315,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         opponentPlayerCard.effectCards.Remove(card as InGameEffectCard);
                     }
-                   
+
                     break;
                 case CardType.Field:
                     if (isP1)
@@ -246,7 +326,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         opponentPlayerCard.field = null;
                     }
-                  
+
                     break;
                 case CardType.Invocation:
                     if (isP1)
@@ -257,7 +337,21 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         opponentPlayerCard.invocationCards.Remove(card as InGameInvocationCard);
                     }
-                  
+
+                    break;
+                case CardType.Equipment:
+                    if (isP1)
+                    {
+                        var invocationCard = playerCards.invocationCards.First(invocationCard =>
+                            invocationCard.EquipmentCard != null && invocationCard.EquipmentCard.Title == card.Title);
+                        invocationCard.EquipmentCard = null;
+                    }
+                    else
+                    {
+                        var invocationCard = opponentPlayerCard.invocationCards.First(invocationCard =>
+                            invocationCard.EquipmentCard != null && invocationCard.EquipmentCard.Title == card.Title);
+                        invocationCard.EquipmentCard = null;
+                    }
                     break;
             }
 
@@ -267,7 +361,7 @@ public class DestroyCardsEffectAbility : EffectAbility
             }
             else
             {
-                opponentPlayerCard.yellowCards.Add(card);   
+                opponentPlayerCard.yellowCards.Add(card);
             }
         }
         else
@@ -283,6 +377,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         playerCards.effectCards.Remove(card as InGameEffectCard);
                     }
+
                     break;
                 case CardType.Field:
                     if (isP1)
@@ -293,7 +388,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         playerCards.field = null;
                     }
-             
+
                     break;
                 case CardType.Invocation:
                     if (isP1)
@@ -304,7 +399,21 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         playerCards.invocationCards.Remove(card as InGameInvocationCard);
                     }
-                 
+
+                    break;
+                case CardType.Equipment:
+                    if (isP1)
+                    {
+                        var invocationCard = opponentPlayerCard.invocationCards.First(invocationCard =>
+                            invocationCard.EquipmentCard != null && invocationCard.EquipmentCard.Title == card.Title);
+                        invocationCard.EquipmentCard = null;
+                    }
+                    else
+                    {
+                        var invocationCard = playerCards.invocationCards.First(invocationCard =>
+                            invocationCard.EquipmentCard != null && invocationCard.EquipmentCard.Title == card.Title);
+                        invocationCard.EquipmentCard = null;
+                    }
                     break;
             }
 

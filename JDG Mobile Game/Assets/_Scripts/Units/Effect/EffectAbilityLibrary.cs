@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cards;
 
 public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
 {
@@ -89,7 +90,12 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
         new LooseHPOpponentEffectAbility(EffectAbilityName.LooseHPBasedOnNumberInvocation,
             "Opponent loose 2.5HP per invocation on his field",
             2.5f,
-            fromOpponentNumberInvocationCards: true)
+            fromOpponentNumberInvocationCards: true),
+        new DestroyCardsEffectAbility(
+            EffectAbilityName.DestroyEquipmentCard,
+            "Destroy one equipment card",
+            1,
+            types: new List<CardType> { CardType.Equipment })
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;
