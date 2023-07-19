@@ -17,7 +17,8 @@ public enum EffectAbilityName
     Get7HalfHPFor1Sacrifice,
     GetCardFromYellowDeck,
     ManiabilitePourrieSkipAttackForOpponent,
-    SwitchAtkDef
+    SwitchAtkDef,
+    LookAndOrderDeckCards
 }
 
 public abstract class EffectAbility

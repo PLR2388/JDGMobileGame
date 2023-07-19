@@ -80,7 +80,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
         new SwitchAtkDefEffectAbility(
             EffectAbilityName.SwitchAtkDef,
             "Switch ATK and DEF during a turn"
-            )
+        ),
+        new LookDeckCardsEffectAbility(EffectAbilityName.LookAndOrderDeckCards,
+            "Look at the next 5 deck cards from the opponent or from you and reorder them",
+            5
+        )
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;
