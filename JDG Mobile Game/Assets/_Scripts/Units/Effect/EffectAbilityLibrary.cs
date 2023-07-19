@@ -10,10 +10,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             "Limit the number of cards in the hands to 5",
             5
         ),
-        new ReduceOpponentStarsByInvocationCardsNumberEffectAbility(
+        new LooseHPOpponentEffectAbility(
             EffectAbilityName.Lose2Point5StarsByInvocations,
             "Opponent will lose 2.5 Stars by invocations on our field",
-            2.5f
+            2.5f,
+            fromCurrentNumberInvocationCards: true
         ),
         new FamilyFieldToInvocationsEffectAbility(
             EffectAbilityName.ApplyFamilyFieldToInvocations,
@@ -84,7 +85,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
         new LookDeckCardsEffectAbility(EffectAbilityName.LookAndOrderDeckCards,
             "Look at the next 5 deck cards from the opponent or from you and reorder them",
             5
-        )
+        ),
+        new LooseHPOpponentEffectAbility(EffectAbilityName.LooseHPBasedOnNumberInvocation,
+            "Opponent loose 2.5HP per invocation on his field",
+            2.5f,
+            fromOpponentNumberInvocationCards: true)
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;

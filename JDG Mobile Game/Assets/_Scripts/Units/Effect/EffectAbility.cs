@@ -18,7 +18,8 @@ public enum EffectAbilityName
     GetCardFromYellowDeck,
     ManiabilitePourrieSkipAttackForOpponent,
     SwitchAtkDef,
-    LookAndOrderDeckCards
+    LookAndOrderDeckCards,
+    LooseHPBasedOnNumberInvocation
 }
 
 public abstract class EffectAbility
