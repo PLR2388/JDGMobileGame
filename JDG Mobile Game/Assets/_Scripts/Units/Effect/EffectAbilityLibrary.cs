@@ -95,7 +95,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.DestroyEquipmentCard,
             "Destroy one equipment card",
             1,
-            types: new List<CardType> { CardType.Equipment })
+            types: new List<CardType> { CardType.Equipment }),
+        new LookHandCardsEffectAbility(
+            EffectAbilityName.LookOpponentHandCardsAndChangeIt,
+            "Look opponent hand cards and remove one of them by removing also one of them from player's handcards"
+        )
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;
