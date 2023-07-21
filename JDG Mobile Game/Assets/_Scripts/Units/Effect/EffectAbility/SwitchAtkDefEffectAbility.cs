@@ -20,9 +20,9 @@ public class SwitchAtkDefEffectAbility : EffectAbility
     }
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards,
-        PlayerStatus opponentPlayerStatus)
+        PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
-        base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus);
+        base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCards);
         foreach (var invocationCard in playerCards.invocationCards)
         {
             (invocationCard.Attack, invocationCard.Defense) = (invocationCard.Defense, invocationCard.Attack);

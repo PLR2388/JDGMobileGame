@@ -23,9 +23,9 @@ public class SkipOpponentAttackEffectAbility : EffectAbility
         opponentStatus.BlockAttack = true;
     }
 
-    public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
-        base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus);
+        base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCards);
         counter++;
         if (counter > numberTurn)
         {

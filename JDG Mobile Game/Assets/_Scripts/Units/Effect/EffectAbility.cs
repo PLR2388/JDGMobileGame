@@ -23,7 +23,8 @@ public enum EffectAbilityName
     DestroyEquipmentCard,
     LookOpponentHandCardsAndChangeIt,
     DoubleAttackPerTurn,
-    InvokeCardFromYellowTrash
+    InvokeCardFromYellowTrash,
+    DivideDEFOpponentBy2
 }
 
 public abstract class EffectAbility
@@ -41,7 +42,7 @@ public abstract class EffectAbility
         
     }
 
-    public virtual void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus)
+    public virtual void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCard)
     {
         
     }

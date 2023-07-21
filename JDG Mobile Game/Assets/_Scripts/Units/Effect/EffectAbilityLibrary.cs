@@ -109,6 +109,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.InvokeCardFromYellowTrash,
             "Invoke a card from the yellow trash",
             fromYellowTrash: true
+        ),
+        new DivideDEFOpponentEffectAbility(
+            EffectAbilityName.DivideDEFOpponentBy2,
+            "Divide opponent invocations DEF by 2 for one turn",
+            2.0f
         )
     };
 

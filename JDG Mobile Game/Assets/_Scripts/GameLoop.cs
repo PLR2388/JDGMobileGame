@@ -1256,12 +1256,12 @@ public class GameLoop : MonoBehaviour
 
         foreach (var effectCardAbility in copyEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
-            effectCardAbility.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus);
+            effectCardAbility.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCards);
         }
 
         foreach (var effectCardAbility in copyOpponentEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
-            effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards, opponentPlayerStatus);
+            effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards, opponentPlayerStatus, opponentPlayerCards);
         }
     }
 
