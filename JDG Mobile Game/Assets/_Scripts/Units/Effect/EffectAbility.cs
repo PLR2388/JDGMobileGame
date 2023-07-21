@@ -21,7 +21,8 @@ public enum EffectAbilityName
     LookAndOrderDeckCards,
     LooseHPBasedOnNumberInvocation,
     DestroyEquipmentCard,
-    LookOpponentHandCardsAndChangeIt
+    LookOpponentHandCardsAndChangeIt,
+    DoubleAttackPerTurn
 }
 
 public abstract class EffectAbility

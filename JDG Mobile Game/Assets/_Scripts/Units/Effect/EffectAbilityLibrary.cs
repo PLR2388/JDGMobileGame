@@ -99,6 +99,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
         new LookHandCardsEffectAbility(
             EffectAbilityName.LookOpponentHandCardsAndChangeIt,
             "Look opponent hand cards and remove one of them by removing also one of them from player's handcards"
+        ),
+        new IncrementNumberAttackEffectAbility(
+            EffectAbilityName.DoubleAttackPerTurn,
+            "Give 2 attacks for one turn",
+            2
         )
     };
 
