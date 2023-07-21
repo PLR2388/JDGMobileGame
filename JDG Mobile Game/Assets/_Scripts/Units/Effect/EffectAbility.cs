@@ -22,7 +22,8 @@ public enum EffectAbilityName
     LooseHPBasedOnNumberInvocation,
     DestroyEquipmentCard,
     LookOpponentHandCardsAndChangeIt,
-    DoubleAttackPerTurn
+    DoubleAttackPerTurn,
+    InvokeCardFromYellowTrash
 }
 
 public abstract class EffectAbility

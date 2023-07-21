@@ -104,6 +104,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.DoubleAttackPerTurn,
             "Give 2 attacks for one turn",
             2
+        ),
+        new InvokeCardFromDeckYellowEffectAbility(
+            EffectAbilityName.InvokeCardFromYellowTrash,
+            "Invoke a card from the yellow trash",
+            fromYellowTrash: true
         )
     };
 
