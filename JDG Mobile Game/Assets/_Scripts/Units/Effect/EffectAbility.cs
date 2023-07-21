@@ -24,7 +24,8 @@ public enum EffectAbilityName
     LookOpponentHandCardsAndChangeIt,
     DoubleAttackPerTurn,
     InvokeCardFromYellowTrash,
-    DivideDEFOpponentBy2
+    DivideDEFOpponentBy2,
+    Add3ShieldsForUser
 }
 
 public abstract class EffectAbility

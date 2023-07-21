@@ -114,6 +114,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.DivideDEFOpponentBy2,
             "Divide opponent invocations DEF by 2 for one turn",
             2.0f
+        ),
+        new AddShieldsForUserEffectAbility(
+            EffectAbilityName.Add3ShieldsForUser,
+            "Add 3 shields to protect the user",
+            3
         )
     };
 
