@@ -147,7 +147,7 @@ namespace Menu
             deck2.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck2AllCard));
             deck1.Add(GetSpecificCard("Merde magique en plastique rose", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Squalala !", deck1AllCard));
+            deck1.Add(GetSpecificCard("Torture Ninja", deck1AllCard));
 
             while (deck1.Count != 30)
             {

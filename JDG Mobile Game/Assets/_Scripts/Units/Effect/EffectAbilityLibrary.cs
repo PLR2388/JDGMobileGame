@@ -125,7 +125,13 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             "Destroy one invocation from opponent",
             1,
             types: new List<CardType> { CardType.Invocation },
-            fromCurrentPlayer: false)
+            fromCurrentPlayer: false),
+        new LooseHPOpponentEffectAbility(
+            EffectAbilityName.Loose1HPPerOpponentHandCards,
+            "Opponent loose 1HP per card in his hand",
+            1,
+            fromOpponentNumberHandCards: true
+        )
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;

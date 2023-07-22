@@ -26,7 +26,8 @@ public enum EffectAbilityName
     InvokeCardFromYellowTrash,
     DivideDEFOpponentBy2,
     Add3ShieldsForUser,
-    DestroyOpponentInvocationCard
+    DestroyOpponentInvocationCard,
+    Loose1HPPerOpponentHandCards
 }
 
 public abstract class EffectAbility
