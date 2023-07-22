@@ -148,7 +148,7 @@ namespace Menu
             deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
             deck1.Add(GetSpecificCard("Vieux Sage", deck1AllCard));
-            deck1.Add(GetSpecificCard("Un délicieux risotto", deck1AllCard));
+            deck1.Add(GetSpecificCard("Youtube Money", deck1AllCard));
 
             while (deck1.Count != 30)
             {

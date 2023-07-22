@@ -138,7 +138,11 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             1,
             5,
             0
-        )
+        ),
+        new ControlOpponentInvocationCardEffectAbility(
+            EffectAbilityName.Control1OpponentInvocationCard,
+            "Control an opponent invocation card during 1 turn"
+            )
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;
