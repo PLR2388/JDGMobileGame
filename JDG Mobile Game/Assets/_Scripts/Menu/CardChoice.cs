@@ -145,9 +145,10 @@ namespace Menu
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
             deck2.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck2AllCard));
-            deck1.Add(GetSpecificCard("Merde magique en plastique rose", deck1AllCard));
+            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Torture Ninja", deck1AllCard));
+            deck1.Add(GetSpecificCard("Vieux Sage", deck1AllCard));
+            deck1.Add(GetSpecificCard("Un délicieux risotto", deck1AllCard));
 
             while (deck1.Count != 30)
             {

@@ -9,6 +9,8 @@ public class GetHPBackEffectAbility : EffectAbility
 {
     private int numberInvocationToSacrifice;
     private float atkDefCondition;
+    
+    // 0 = MAX
     private float HPToRecover;
 
     public GetHPBackEffectAbility(EffectAbilityName name, string description, int numberInvocations,
@@ -57,7 +59,7 @@ public class GetHPBackEffectAbility : EffectAbility
                 {
                     playerCards.yellowCards.Add(invocationCard);
                     playerCards.invocationCards.Remove(invocationCard);
-                    playerStatus.ChangePv(HPToRecover);
+                    playerStatus.ChangePv(HPToRecover == 0 ? PlayerStatus.MaxPv : HPToRecover);
                     Object.Destroy(messageBox);
                 }
             };

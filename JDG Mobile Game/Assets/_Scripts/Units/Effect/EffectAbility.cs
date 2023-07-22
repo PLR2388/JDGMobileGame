@@ -27,7 +27,8 @@ public enum EffectAbilityName
     DivideDEFOpponentBy2,
     Add3ShieldsForUser,
     DestroyOpponentInvocationCard,
-    Loose1HPPerOpponentHandCards
+    Loose1HPPerOpponentHandCards,
+    GetBackAllHPBySacrifice5AtkDef
 }
 
 public abstract class EffectAbility

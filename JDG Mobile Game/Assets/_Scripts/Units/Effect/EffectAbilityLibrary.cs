@@ -131,6 +131,13 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             "Opponent loose 1HP per card in his hand",
             1,
             fromOpponentNumberHandCards: true
+        ),
+        new GetHPBackEffectAbility(
+            EffectAbilityName.GetBackAllHPBySacrifice5AtkDef,
+            "Sacrife a 5 atk or def invocation to get back all HP",
+            1,
+            5,
+            0
         )
     };
 
