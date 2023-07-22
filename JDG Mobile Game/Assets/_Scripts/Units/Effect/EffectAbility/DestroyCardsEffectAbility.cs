@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
@@ -14,6 +13,8 @@ public class DestroyCardsEffectAbility : EffectAbility
     private bool mustThrowFirstDeck;
     private bool mustSacrificeInvocation;
     private bool mustThrowHandCard;
+    private bool fromCurrentPlayer;
+    private bool fromOpponentPlayer;
 
     private List<CardType> types = new List<CardType>
     {
@@ -22,7 +23,7 @@ public class DestroyCardsEffectAbility : EffectAbility
 
     public DestroyCardsEffectAbility(EffectAbilityName name, string description, int numberCards,
         bool mustThrowFirstDeck = false, bool mustSacrificeInvocation = false, bool mustThrowHandCard = false,
-        List<CardType> types = null)
+        List<CardType> types = null, bool fromCurrentPlayer = true, bool fromOpponentPlayer = true)
     {
         Name = name;
         Description = description;
@@ -30,6 +31,8 @@ public class DestroyCardsEffectAbility : EffectAbility
         this.mustThrowFirstDeck = mustThrowFirstDeck;
         this.mustSacrificeInvocation = mustSacrificeInvocation;
         this.mustThrowHandCard = mustThrowHandCard;
+        this.fromCurrentPlayer = fromCurrentPlayer;
+        this.fromOpponentPlayer = fromOpponentPlayer;
         if (types != null)
         {
             this.types = types;
@@ -52,22 +55,22 @@ public class DestroyCardsEffectAbility : EffectAbility
                 case CardType.Contre:
                     break;
                 case CardType.Effect:
-                    haveCardsToDestroy = haveCardsToDestroy || playerCards.effectCards.Count > 0 ||
-                                         opponentPlayerCards.effectCards.Count > 0;
+                    haveCardsToDestroy = haveCardsToDestroy || (fromCurrentPlayer && playerCards.effectCards.Count > 0) ||
+                                         (fromOpponentPlayer && opponentPlayerCards.effectCards.Count > 0);
                     break;
                 case CardType.Equipment:
                     haveCardsToDestroy = haveCardsToDestroy ||
-                                         playerCards.invocationCards.Count(card => card.EquipmentCard != null) > 0 ||
-                                         opponentPlayerCards.invocationCards.Count(card => card.EquipmentCard != null) >
-                                         0;
+                                         (fromCurrentPlayer && playerCards.invocationCards.Count(card => card.EquipmentCard != null) > 0) ||
+                                         (fromOpponentPlayer && opponentPlayerCards.invocationCards.Count(card => card.EquipmentCard != null) >
+                                         0);
                     break;
                 case CardType.Field:
-                    haveCardsToDestroy = haveCardsToDestroy || playerCards.field != null ||
-                                         opponentPlayerCards.field != null;
+                    haveCardsToDestroy = haveCardsToDestroy || (fromCurrentPlayer && playerCards.field != null) ||
+                                         (fromOpponentPlayer && opponentPlayerCards.field != null);
                     break;
                 case CardType.Invocation:
-                    haveCardsToDestroy = haveCardsToDestroy || playerCards.invocationCards.Count > 0 ||
-                                         opponentPlayerCards.invocationCards.Count > 0;
+                    haveCardsToDestroy = haveCardsToDestroy || (fromCurrentPlayer && playerCards.invocationCards.Count > 0) ||
+                                         (fromOpponentPlayer && opponentPlayerCards.invocationCards.Count > 0);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -248,50 +251,56 @@ public class DestroyCardsEffectAbility : EffectAbility
     {
         var cards = new List<InGameCard>();
 
-        if (playerCards.invocationCards.Count > 0)
+        if (fromCurrentPlayer)
         {
-            cards.AddRange(playerCards.invocationCards);
-
-            var equipmentCards = playerCards.invocationCards.Select(card => card.EquipmentCard)
-                .Where(elt => elt != null);
-            var inGameEquipementCards = equipmentCards.ToList();
-            if (inGameEquipementCards.Any())
+            if (playerCards.invocationCards.Count > 0)
             {
-                cards.AddRange(inGameEquipementCards);
+                cards.AddRange(playerCards.invocationCards);
+
+                var equipmentCards = playerCards.invocationCards.Select(card => card.EquipmentCard)
+                    .Where(elt => elt != null);
+                var inGameEquipementCards = equipmentCards.ToList();
+                if (inGameEquipementCards.Any())
+                {
+                    cards.AddRange(inGameEquipementCards);
+                }
+            }
+
+            if (playerCards.effectCards.Count > 0)
+            {
+                cards.AddRange(playerCards.effectCards);
+            }
+
+            if (playerCards.field != null)
+            {
+                cards.Add(playerCards.field);
             }
         }
 
-        if (playerCards.effectCards.Count > 0)
+        if (fromOpponentPlayer)
         {
-            cards.AddRange(playerCards.effectCards);
-        }
-
-        if (playerCards.field != null)
-        {
-            cards.Add(playerCards.field);
-        }
-
-        if (opponentPlayerCard.invocationCards.Count > 0)
-        {
-            cards.AddRange(opponentPlayerCard.invocationCards);
-
-            var equipmentCards = opponentPlayerCard.invocationCards.Select(card => card.EquipmentCard)
-                .Where(elt => elt != null);
-            var inGameEquipementCards = equipmentCards.ToList();
-            if (inGameEquipementCards.Any())
+            if (opponentPlayerCard.invocationCards.Count > 0)
             {
-                cards.AddRange(inGameEquipementCards);
+                cards.AddRange(opponentPlayerCard.invocationCards);
+
+                var equipmentCards = opponentPlayerCard.invocationCards.Select(card => card.EquipmentCard)
+                    .Where(elt => elt != null);
+                var inGameEquipementCards = equipmentCards.ToList();
+                if (inGameEquipementCards.Any())
+                {
+                    cards.AddRange(inGameEquipementCards);
+                }
             }
-        }
 
-        if (opponentPlayerCard.effectCards.Count > 0)
-        {
-            cards.AddRange(opponentPlayerCard.effectCards);
-        }
+            if (opponentPlayerCard.effectCards.Count > 0)
+            {
+                cards.AddRange(opponentPlayerCard.effectCards);
+            }
 
-        if (opponentPlayerCard.field != null)
-        {
-            cards.Add(opponentPlayerCard.field);
+            if (opponentPlayerCard.field != null)
+            {
+                cards.Add(opponentPlayerCard.field);
+            }
         }
 
         cards = cards.Where(card => types.Contains(card.Type)).ToList();

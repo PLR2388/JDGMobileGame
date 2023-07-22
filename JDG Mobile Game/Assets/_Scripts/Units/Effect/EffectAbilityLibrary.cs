@@ -119,7 +119,13 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.Add3ShieldsForUser,
             "Add 3 shields to protect the user",
             3
-        )
+        ),
+        new DestroyCardsEffectAbility(
+            EffectAbilityName.DestroyOpponentInvocationCard,
+            "Destroy one invocation from opponent",
+            1,
+            types: new List<CardType> { CardType.Invocation },
+            fromCurrentPlayer: false)
     };
 
     public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;

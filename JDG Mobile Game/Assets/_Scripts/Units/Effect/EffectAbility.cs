@@ -25,7 +25,8 @@ public enum EffectAbilityName
     DoubleAttackPerTurn,
     InvokeCardFromYellowTrash,
     DivideDEFOpponentBy2,
-    Add3ShieldsForUser
+    Add3ShieldsForUser,
+    DestroyOpponentInvocationCard
 }
 
 public abstract class EffectAbility
