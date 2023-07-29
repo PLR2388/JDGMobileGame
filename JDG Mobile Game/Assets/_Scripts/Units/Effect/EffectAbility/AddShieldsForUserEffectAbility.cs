@@ -10,6 +10,7 @@ public class AddShieldsForUserEffectAbility : EffectAbility
         Name = name;
         Description = description;
         this.numberShields = numberShields;
+        NumberOfTurn = 0;
     }
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus opponentPlayerStatus)
@@ -27,7 +28,6 @@ public class AddShieldsForUserEffectAbility : EffectAbility
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards,
         PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCard)
     {
-        base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCard);
         if (playerStatus.NumberShield == 0)
         {
             var effectCard = playerCards.effectCards.First(card => card.EffectAbilities.Contains(this));

@@ -448,18 +448,7 @@ namespace OnePlayer
             }
 
             if (phaseId != 3) return;
-            PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-            PlayerCards opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-            PlayerStatus currentPlayerStatus =
-                IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
-            PlayerStatus opponentPlayerStatus =
-                IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
-            List<InGameEffectCard> effectCards = currentPlayerCard.effectCards;
-            List<InGameEffectCard> opponentEffectCards = opponentPlayerCard.effectCards;
-
-            DealWithEndEffect(currentPlayerCard, opponentPlayerCard, currentPlayerStatus, effectCards);
-            DealWithEndEffect(opponentPlayerCard, currentPlayerCard, opponentPlayerStatus, opponentEffectCards);
-
+            
             var invocationCards = IsP1Turn
                 ? p1.GetComponent<PlayerCards>().invocationCards
                 : p2.GetComponent<PlayerCards>().invocationCards;

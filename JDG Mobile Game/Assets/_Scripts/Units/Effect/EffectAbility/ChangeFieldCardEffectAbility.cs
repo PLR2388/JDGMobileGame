@@ -6,10 +6,11 @@ using UnityEngine;
 
 public class ChangeFieldCardEffectAbility : EffectAbility
 {
-    public ChangeFieldCardEffectAbility(EffectAbilityName name, string description)
+    public ChangeFieldCardEffectAbility(EffectAbilityName name, string description, int numberTurn)
     {
         Name = name;
         Description = description;
+        NumberOfTurn = numberTurn;
     }
 
     public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)

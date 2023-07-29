@@ -6,19 +6,11 @@ namespace Cards.EffectCards
     public class InGameEffectCard : InGameCard
     {
         private EffectCard baseEffectCard;
-        private int lifeTime;
         public bool checkTurn;
 
         public float affectPv;
 
         public List<EffectAbility> EffectAbilities = new List<EffectAbility>();
-
-
-        public int LifeTime
-        {
-            get => lifeTime;
-            set => lifeTime = value;
-        }
 
         public static InGameEffectCard Init(EffectCard effectCard, CardOwner cardOwner)
         {
@@ -40,17 +32,11 @@ namespace Cards.EffectCards
             type = baseEffectCard.Type;
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;
-            lifeTime = baseEffectCard.LifeTime;
             checkTurn = baseEffectCard.checkTurn;
             affectPv = baseEffectCard.affectPv;
             EffectAbilities = baseEffectCard.EffectAbilities.Select(
                 effectAbilityName => EffectAbilityLibrary.Instance.effectAbilityDictionary[effectAbilityName]
             ).ToList();
-        }
-
-        public void DecrementLifeTime()
-        {
-            lifeTime -= 1;
         }
     }
 }

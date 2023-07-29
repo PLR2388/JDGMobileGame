@@ -5,15 +5,13 @@ using UnityEngine;
 
 public class SkipOpponentAttackEffectAbility : EffectAbility
 {
-    private int numberTurn;
     private string cardName;
-    private int counter = 0;
     public SkipOpponentAttackEffectAbility(EffectAbilityName name, string description, string cardName, int numberTurn = 1)
     {
         Name = name;
         Description = description;
         this.cardName = cardName;
-        this.numberTurn = numberTurn;
+        NumberOfTurn = numberTurn;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
@@ -25,9 +23,8 @@ public class SkipOpponentAttackEffectAbility : EffectAbility
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
-        base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCards);
         counter++;
-        if (counter > numberTurn)
+        if (counter > NumberOfTurn)
         {
             counter = 0;
             opponentPlayerStatus.BlockAttack = false;
