@@ -16,8 +16,6 @@ public class PlayerCards : MonoBehaviour
     public List<InGameCard> deck = new List<InGameCard>();
     public List<InGameCard> handCards = new List<InGameCard>();
 
-    public InGameFieldCard field;
-
     //public List<InGameInvocationCard> invocationCards = new List<InGameInvocationCard>();
     public List<InGameEffectCard> effectCards = new List<InGameEffectCard>();
 
@@ -35,12 +33,31 @@ public class PlayerCards : MonoBehaviour
 
 
     public string Tag => isPlayerOne ? "card1" : "card2";
-
-    private InGameFieldCard oldField;
+    
     private List<InGameCard> oldHandCards = new List<InGameCard>();
     private List<InGameCard> oldYellowTrash = new List<InGameCard>();
 
     public bool IsFieldDesactivate { get; private set; }
+
+    private InGameFieldCard _fieldCard;
+
+    public InGameFieldCard FieldCard
+    {
+        get { return _fieldCard; }
+        set
+        {
+            if (_fieldCard != value && _fieldCard != null)
+            {
+                foreach (var fieldCardFieldAbility in _fieldCard.FieldAbilities)
+                {
+                    fieldCardFieldAbility.OnFieldCardRemoved(this);
+                }
+            }
+            _fieldCard = value;
+            CardLocation.UpdateLocation.Invoke();
+         
+        }
+    }
 
     public ObservableCollection<InGameInvocationCard> invocationCards =
         new ObservableCollection<InGameInvocationCard>();
@@ -115,11 +132,11 @@ public class PlayerCards : MonoBehaviour
         };
     }
 
-    public void DesactivateFieldCardEffect()
+    /*public void DesactivateFieldCardEffect()
     {
-        if (field != null)
+        if (FieldCard != null)
         {
-            OnFieldCardDesactivate(field);
+            OnFieldCardDesactivate(FieldCard);
         }
 
         IsFieldDesactivate = true;
@@ -128,11 +145,11 @@ public class PlayerCards : MonoBehaviour
     public void ActivateFieldCardEffect()
     {
         IsFieldDesactivate = false;
-        if (field != null)
+        if (FieldCard != null)
         {
             FieldFunctions.ApplyFieldCardEffect(field, this);
         }
-    }
+    }*/
 
 
     public void ResetInvocationCardNewTurn()
@@ -152,35 +169,6 @@ public class PlayerCards : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (field != oldField)
-        {
-            for (var i = effectCards.Count - 1; i >= 0; i--)
-            {
-                var effectCard = effectCards[i];
-                //var effectCardEffect = effectCard.EffectCardEffect;
-                //if (effectCardEffect == null) continue;
-                //if (!effectCardEffect.Keys.Contains(Effect.SameFamily)) continue;
-                if (field != null && !IsFieldDesactivate)
-                {
-                    foreach (var invocationCard in invocationCards)
-                    {
-                        invocationCard.Families = new[]
-                        {
-                            field.GetFamily()
-                        };
-                    }
-                }
-                else
-                {
-                    effectCards.Remove(effectCard);
-                    yellowCards.Add(effectCard);
-                }
-            }
-
-            OnFieldCardChanged(oldField);
-            oldField = field;
-        }
-
         if (oldHandCards.Count != handCards.Count)
         {
             foreach (var invocationCard in invocationCards)
@@ -258,9 +246,9 @@ public class PlayerCards : MonoBehaviour
             }
         }
 
-        if (field != null && field.Title == card.Title)
+        if (FieldCard != null && FieldCard.Title == card.Title)
         {
-            field = null;
+            FieldCard = null;
             yellowCards.Add(card);
         }
     }
@@ -519,6 +507,15 @@ public class PlayerCards : MonoBehaviour
             effectAbility.OnInvocationCardAdded(this, newInvocationCard);
         }
 
+        if (FieldCard?.FieldAbilities != null)
+        {
+            foreach (var fieldAbility in FieldCard.FieldAbilities)
+            {
+                fieldAbility.OnInvocationCardAdded(newInvocationCard);
+            }
+        }
+    
+
         //var mustSkipAttack = opponentEffectCards.Select(effectCard => effectCard.EffectCardEffect.Keys)
          //   .Any(keys => keys.Contains(Effect.SkipAttack));
 
@@ -614,9 +611,9 @@ public class PlayerCards : MonoBehaviour
             }*/
         }
 
-        if (field != null && !IsFieldDesactivate)
+        if (FieldCard != null && !IsFieldDesactivate)
         {
-            var fieldCardEffect = field.FieldCardEffect;
+           /* var fieldCardEffect = field.FieldCardEffect;
 
             var fieldKeys = fieldCardEffect.Keys;
             var fieldValues = fieldCardEffect.Values;
@@ -651,7 +648,7 @@ public class PlayerCards : MonoBehaviour
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
+            }*/
         }
     }
 
@@ -827,14 +824,10 @@ public class PlayerCards : MonoBehaviour
             effectAbility.OnInvocationCardRemoved(this, removedInvocationCard);
         }
 
-        if (field != null)
+        if (FieldCard != null)
         {
-            var fieldCardEffect = field.FieldCardEffect;
 
-            var fieldKeys = fieldCardEffect.Keys;
-            var fieldValues = fieldCardEffect.Values;
-
-            for (var i = 0; i < fieldKeys.Count; i++)
+            /*for (var i = 0; i < fieldKeys.Count; i++)
             {
                 switch (fieldKeys[i])
                 {
@@ -856,7 +849,7 @@ public class PlayerCards : MonoBehaviour
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
+            }*/
         }
     }
 
@@ -1080,12 +1073,10 @@ public class PlayerCards : MonoBehaviour
 
     private void OnFieldCardDesactivate(InGameFieldCard oldFieldCard)
     {
-        var fieldCardEffect = oldFieldCard.FieldCardEffect;
+    
+        
 
-        var fieldKeys = fieldCardEffect.Keys;
-        var fieldValues = fieldCardEffect.Values;
-
-        var family = oldFieldCard.GetFamily();
+       /* var family = oldFieldCard.GetFamily();
         for (var i = 0; i < fieldKeys.Count; i++)
         {
             var fieldValue = fieldValues[i];
@@ -1115,7 +1106,7 @@ public class PlayerCards : MonoBehaviour
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
+        }*/
     }
 
     private void OnYellowTrashAdded()
@@ -1138,18 +1129,13 @@ public class PlayerCards : MonoBehaviour
 
     private void OnFieldCardChanged(InGameFieldCard oldFieldCard)
     {
-        CardLocation.UpdateLocation.Invoke();
+
         if (oldFieldCard == null) return;
 
         SendInvocationCardToYellowTrashAfterFieldDestruction(oldFieldCard);
-
-
-        var fieldCardEffect = oldFieldCard.FieldCardEffect;
-
-        var fieldKeys = fieldCardEffect.Keys;
-        var fieldValues = fieldCardEffect.Values;
-
-        var family = oldFieldCard.GetFamily();
+        
+        
+        /*var family = oldFieldCard.GetFamily();
         for (var i = 0; i < fieldKeys.Count; i++)
         {
             var fieldValue = fieldValues[i];
@@ -1179,12 +1165,12 @@ public class PlayerCards : MonoBehaviour
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
+        }*/
     }
 
     private void SendInvocationCardToYellowTrashAfterFieldDestruction(InGameFieldCard oldFieldCard)
     {
-        if (oldField.Title == "Le grenier")
+        /*if (oldField.Title == "Le grenier")
         {
             // Destroy all invocation cards
             for (var i = invocationCards.Count - 1; i >= 0; i--)
@@ -1201,7 +1187,7 @@ public class PlayerCards : MonoBehaviour
             {
                 SendInvocationCardToYellowTrash(familySpecificCard[i]);
             }
-        }
+        }*/
     }
 
     private void ChangeFieldEffect(string fieldValue)

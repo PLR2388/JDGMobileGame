@@ -117,7 +117,7 @@ public class InGameMenuScript : MonoBehaviour
                 break;
             case CardType.Field:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                putCardButton.GetComponent<Button>().interactable = playerCard.field == null;
+                putCardButton.GetComponent<Button>().interactable = playerCard.FieldCard == null;
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

@@ -131,7 +131,7 @@ namespace OnePlayer
                             }
                             else if (card is InGameFieldCard fieldCard)
                             {
-                                playerCards.field = fieldCard;
+                                playerCards.FieldCard = fieldCard;
                                 playerCards.handCards.Remove(fieldCard);
                                 FieldFunctions.ApplyFieldCardEffect(fieldCard, playerCards);
                             }

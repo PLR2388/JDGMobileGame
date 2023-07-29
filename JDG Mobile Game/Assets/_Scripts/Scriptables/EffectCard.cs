@@ -13,8 +13,6 @@ namespace Cards.EffectCards
         [FormerlySerializedAs("affectPV")] [SerializeField]
         public float affectPv;
 
-        public int LifeTime => lifeTime;
-
         public List<EffectAbilityName> EffectAbilities = new List<EffectAbilityName>();
 
         private void Awake()

@@ -21,14 +21,14 @@ public class DestroyFieldCardAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var cards = new List<InGameCard>();
-        if (playerCards.field != null)
+        if (playerCards.FieldCard != null)
         {
-            cards.Add(playerCards.field);
+            cards.Add(playerCards.FieldCard);
         }
 
-        if (opponentPlayerCard.field != null)
+        if (opponentPlayerCard.FieldCard != null)
         {
-            cards.Add(opponentPlayerCard.field);
+            cards.Add(opponentPlayerCard.FieldCard);
         }
 
         var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte terrain à détruire", cards);
@@ -47,12 +47,12 @@ public class DestroyFieldCardAbility : EffectAbility
                     if (playerCards.isPlayerOne)
                     {
                         playerCards.yellowCards.Add(card);
-                        playerCards.field = null;
+                        playerCards.FieldCard = null;
                     }
                     else
                     {
                         opponentPlayerCard.yellowCards.Add(card);
-                        opponentPlayerCard.field = null;
+                        opponentPlayerCard.FieldCard = null;
                     }
                 }
                 else
@@ -60,12 +60,12 @@ public class DestroyFieldCardAbility : EffectAbility
                     if (playerCards.isPlayerOne)
                     {
                         opponentPlayerCard.yellowCards.Add(card);
-                        opponentPlayerCard.field = null;
+                        opponentPlayerCard.FieldCard = null;
                     }
                     else
                     {
                         playerCards.yellowCards.Add(card);
-                        playerCards.field = null;
+                        playerCards.FieldCard = null;
                     }
                 }
                 playerStatus.ChangePv(-costHealth);
@@ -82,6 +82,6 @@ public class DestroyFieldCardAbility : EffectAbility
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards,
         PlayerStatus opponentPlayerStatus)
     {
-        return playerCards.field != null || opponentPlayerCards.field != null;
+        return playerCards.FieldCard != null || opponentPlayerCards.FieldCard != null;
     }
 }

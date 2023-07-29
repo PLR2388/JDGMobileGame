@@ -39,15 +39,15 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
 
     private void DestroyField(PlayerCards playerCards, PlayerCards opponentPlayerCards, InGameCard fieldCard)
     {
-        if (playerCards.field == fieldCard)
+        if (playerCards.FieldCard == fieldCard)
         {
             playerCards.yellowCards.Add(fieldCard);
-            playerCards.field = null;
+            playerCards.FieldCard = null;
         }
         else
         {
             opponentPlayerCards.yellowCards.Add(fieldCard);
-            opponentPlayerCards.field = null;
+            opponentPlayerCards.FieldCard = null;
         }
 
         InGameInvocationCard applyNonBonusInvocationCard =
@@ -68,14 +68,14 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             List<InGameCard> fieldCardsToDestroy = new List<InGameCard>();
-            if (playerCards.field != null)
+            if (playerCards.FieldCard != null)
             {
-                fieldCardsToDestroy.Add(playerCards.field);
+                fieldCardsToDestroy.Add(playerCards.FieldCard);
             }
 
-            if (opponentPlayerCards.field != null)
+            if (opponentPlayerCards.FieldCard != null)
             {
-                fieldCardsToDestroy.Add(opponentPlayerCards.field);
+                fieldCardsToDestroy.Add(opponentPlayerCards.FieldCard);
             }
 
             if (fieldCardsToDestroy.Count == 1)

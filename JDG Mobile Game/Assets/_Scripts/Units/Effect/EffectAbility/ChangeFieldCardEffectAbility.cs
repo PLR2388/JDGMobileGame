@@ -39,14 +39,14 @@ public class ChangeFieldCardEffectAbility : EffectAbility
             }
             else
             {
-                if (playerCards.field == null)
+                if (playerCards.FieldCard == null)
                 {
-                    playerCards.field = fieldCard;
+                    playerCards.FieldCard = fieldCard;
                 }
                 else
                 {
-                    playerCards.yellowCards.Add(playerCards.field);
-                    playerCards.field = fieldCard;
+                    playerCards.yellowCards.Add(playerCards.FieldCard);
+                    playerCards.FieldCard = fieldCard;
                 }
                 Object.Destroy(messageBox);
             }

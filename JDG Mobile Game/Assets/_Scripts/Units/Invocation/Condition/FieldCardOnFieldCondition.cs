@@ -14,6 +14,6 @@ public class FieldCardOnFieldCondition : Condition
     private readonly string fieldName;
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return playerCards.field != null && playerCards.field.Title == fieldName;
+        return playerCards.FieldCard != null && playerCards.FieldCard.Title == fieldName;
     }
 }

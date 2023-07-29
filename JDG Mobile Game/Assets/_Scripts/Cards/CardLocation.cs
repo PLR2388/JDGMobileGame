@@ -144,7 +144,7 @@ namespace Cards
             var effectCards = playerCards.effectCards;
             var deck = playerCards.deck;
             var yellowTrash = playerCards.yellowCards;
-            var field = playerCards.field;
+            var field = playerCards.FieldCard;
             var secretCards = playerCards.secretCards;
             for (var i = 0; i < invocationCards.Count; i++)
             {

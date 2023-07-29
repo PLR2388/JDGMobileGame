@@ -11,6 +11,7 @@ namespace Cards.FieldCards
         private GameObject p2;
 
         [SerializeField] private GameObject miniCardMenu;
+        [SerializeField] private Transform canvas;
 
         // Start is called before the first frame update
         private void Start()
@@ -30,11 +31,14 @@ namespace Cards.FieldCards
         /// </summary>
         private void PutFieldCard(InGameFieldCard fieldCard)
         {
-            if (currentPlayerCard.field != null) return;
+            if (currentPlayerCard.FieldCard != null) return;
             miniCardMenu.SetActive(false);
-            currentPlayerCard.field = fieldCard;
+            currentPlayerCard.FieldCard = fieldCard;
             currentPlayerCard.handCards.Remove(fieldCard);
-            ApplyFieldCardEffect(fieldCard, currentPlayerCard);
+            foreach (var ability in fieldCard.FieldAbilities)
+            {
+                ability.ApplyEffect(canvas, currentPlayerCard);
+            }
         }
 
         /// <summary>
@@ -44,7 +48,8 @@ namespace Cards.FieldCards
         /// </summary>
         public static void ApplyFieldCardEffect(InGameFieldCard fieldCard, PlayerCards playerCards)
         {
-            var fieldCardEffect = fieldCard.FieldCardEffect;
+            
+            /*var fieldCardEffect = fieldCard.FieldCardEffect;
 
             var keys = fieldCardEffect.Keys;
             var values = fieldCardEffect.Values;
@@ -76,7 +81,7 @@ namespace Cards.FieldCards
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
+            }*/
         }
 
         /// <summary>

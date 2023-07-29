@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Cards.FieldCards
 {
@@ -10,6 +11,8 @@ namespace Cards.FieldCards
 
         public FieldCardEffect FieldCardEffect => fieldCardEffect;
         public CardFamily Family => family;
+
+        public List<FieldAbilityName> FieldAbilities = new List<FieldAbilityName>();
 
         private void Awake()
         {

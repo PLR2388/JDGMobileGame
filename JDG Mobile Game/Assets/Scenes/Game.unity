@@ -1379,6 +1379,7 @@ MonoBehaviour:
   currentPv: 30
   isP1: 1
   numberShield: 0
+  blockAttack: 0
 --- !u!1 &244790276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1650,6 +1651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
+  canvas: {fileID: 244790280}
 --- !u!114 &397230407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5470,6 +5472,7 @@ MonoBehaviour:
   currentPv: 30
   isP1: 0
   numberShield: 0
+  blockAttack: 0
 --- !u!1 &2094974137
 GameObject:
   m_ObjectHideFlags: 0

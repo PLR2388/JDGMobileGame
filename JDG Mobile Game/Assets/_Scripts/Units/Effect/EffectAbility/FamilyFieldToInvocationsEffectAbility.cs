@@ -18,7 +18,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
 
     private void ApplyPower(PlayerCards playerCards)
     {
-        var fieldFamily = playerCards.field.GetFamily();
+        var fieldFamily = playerCards.FieldCard.GetFamily();
         foreach (var invocationCard in playerCards.invocationCards)
         {
             invocationCard.Families = new[] { fieldFamily };
@@ -27,7 +27,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
-        return playerCards.field != null && playerCards.invocationCards.Count > 0;
+        return playerCards.FieldCard != null && playerCards.invocationCards.Count > 0;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -65,7 +65,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
     public override void OnInvocationCardAdded(PlayerCards playerCards, InGameInvocationCard invocationCard)
     {
         base.OnInvocationCardAdded(playerCards, invocationCard);
-        invocationCard.Families = new[] { playerCards.field.GetFamily() };
+        invocationCard.Families = new[] { playerCards.FieldCard.GetFamily() };
     }
 
     public override void OnInvocationCardRemoved(PlayerCards playerCards, InGameInvocationCard invocationCard)

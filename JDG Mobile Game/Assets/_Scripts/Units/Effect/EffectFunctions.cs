@@ -288,8 +288,8 @@ namespace Cards.EffectCards
                 case "field":
                 {
                     var fieldCards = new List<InGameCard>();
-                    var fieldCard1 = currentPlayerCard.field;
-                    var fieldCard2 = opponentPlayerCard.field;
+                    var fieldCard1 = currentPlayerCard.FieldCard;
+                    var fieldCard2 = opponentPlayerCard.FieldCard;
                     if (fieldCard1 != null)
                     {
                         fieldCards.Add(fieldCard1);
@@ -315,8 +315,8 @@ namespace Cards.EffectCards
                     break;
                 case "1":
                 {
-                    var fieldCard1 = currentPlayerCard.field;
-                    var fieldCard2 = opponentPlayerCard.field;
+                    var fieldCard1 = currentPlayerCard.FieldCard;
+                    var fieldCard2 = opponentPlayerCard.FieldCard;
                     var effectCards1 = currentPlayerCard.effectCards;
                     var effectCards2 = opponentPlayerCard.effectCards;
                     var invocationCards1 = currentPlayerCard.invocationCards;
@@ -418,7 +418,7 @@ namespace Cards.EffectCards
         /// <returns>A boolean indicating if effect card is usable</returns>
         private bool CanUseSameFamily()
         {
-            var fieldCard = currentPlayerCard.field;
+            var fieldCard = currentPlayerCard.FieldCard;
             return fieldCard != null && fieldCard.IsValid();
         }
 
@@ -528,7 +528,7 @@ namespace Cards.EffectCards
         /// <returns>A boolean indicating if effect card is usable</returns>
         private bool CanUseSkipFieldsEffect()
         {
-            return currentPlayerCard.field != null || opponentPlayerCard.field != null;
+            return currentPlayerCard.FieldCard != null || opponentPlayerCard.FieldCard != null;
         }
 
         /// <summary>
@@ -744,7 +744,7 @@ namespace Cards.EffectCards
         /// </summary>
         private void ApplySameFamily()
         {
-            var fieldCard = currentPlayerCard.field;
+            var fieldCard = currentPlayerCard.FieldCard;
             if (fieldCard.IsValid())
             {
                 var familyField = fieldCard.GetFamily();
@@ -855,13 +855,13 @@ namespace Cards.EffectCards
                         var fieldCard = messageBox.GetComponent<MessageBox>().GetSelectedCard() as InGameFieldCard;
                         if (fieldCard != null)
                         {
-                            if (currentPlayerCard.field != null)
+                            if (currentPlayerCard.FieldCard != null)
                             {
-                                currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.field);
-                                currentPlayerCard.field = null;
+                                currentPlayerCard.SendCardToYellowTrash(currentPlayerCard.FieldCard);
+                                currentPlayerCard.FieldCard = null;
                             }
 
-                            currentPlayerCard.field = fieldCard;
+                            currentPlayerCard.FieldCard = fieldCard;
                             Destroy(messageBox);
                         }
                         else
@@ -1548,8 +1548,8 @@ namespace Cards.EffectCards
         /// </summary>
         private void ApplySkipFieldsEffect()
         {
-            currentPlayerCard.DesactivateFieldCardEffect();
-            opponentPlayerCard.DesactivateFieldCardEffect();
+            //currentPlayerCard.DesactivateFieldCardEffect();
+            //opponentPlayerCard.DesactivateFieldCardEffect();
         }
 
         private void ChangePlayer()

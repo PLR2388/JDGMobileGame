@@ -429,7 +429,7 @@ namespace Cards.InvocationCards
         private void StartEffectPutField(List<InGameCard> cardFound)
         {
             if (cardFound.Count <= 0) return;
-            if (currentPlayerCard.field == null)
+            if (currentPlayerCard.FieldCard == null)
             {
                 var message = CreateMessageBoxSelectorCard("Choix du terrain à poser", cardFound);
 
@@ -440,7 +440,7 @@ namespace Cards.InvocationCards
 
                     if (fieldCard != null)
                     {
-                        currentPlayerCard.field = fieldCard;
+                        currentPlayerCard.FieldCard = fieldCard;
                         currentPlayerCard.deck.Remove(fieldCard);
                     }
                     else
@@ -502,8 +502,8 @@ namespace Cards.InvocationCards
             bool mustDivideAttack,
             bool mustDivideDefense)
         {
-            var fieldCardP1 = p1.GetComponent<PlayerCards>().field;
-            var fieldCardP2 = p2.GetComponent<PlayerCards>().field;
+            var fieldCardP1 = p1.GetComponent<PlayerCards>().FieldCard;
+            var fieldCardP2 = p2.GetComponent<PlayerCards>().FieldCard;
 
             if (fieldCardP1 != null)
             {
@@ -538,12 +538,12 @@ namespace Cards.InvocationCards
 
                     if (fieldCardP1 != null && fieldCard.Title == fieldCardP1.Title)
                     {
-                        p1.GetComponent<PlayerCards>().field = null;
+                        p1.GetComponent<PlayerCards>().FieldCard = null;
                         p1.GetComponent<PlayerCards>().yellowCards.Add(fieldCard);
                     }
                     else
                     {
-                        p2.GetComponent<PlayerCards>().field = null;
+                        p2.GetComponent<PlayerCards>().FieldCard = null;
                         p2.GetComponent<PlayerCards>().yellowCards.Add(fieldCard);
                     }
                 }
@@ -766,7 +766,7 @@ namespace Cards.InvocationCards
             var field = elements[1];
             var incrementStat = float.Parse(elements[2]);
 
-            var currentField = currentPlayerCard.field;
+            var currentField = currentPlayerCard.FieldCard;
             if (currentField == null || field != currentField.Title) return;
             var invocationCardOnField = currentPlayerCard.invocationCards;
             var k = 0;
@@ -1207,7 +1207,7 @@ namespace Cards.InvocationCards
         private static bool CheckSpecificField(string fieldName, PlayerCards currentPlayerCards)
         {
             var isCorrectField = false;
-            var fieldCard = currentPlayerCards.field;
+            var fieldCard = currentPlayerCards.FieldCard;
             if (fieldCard != null)
             {
                 isCorrectField = fieldCard.Title == fieldName;
@@ -1506,7 +1506,7 @@ namespace Cards.InvocationCards
         private void ConditionSpecificField(string value, InGameInvocationCard specificCardFound)
         {
             if (specificCardFound == null) return;
-            var fieldCard = currentPlayerCard.field;
+            var fieldCard = currentPlayerCard.FieldCard;
             if (fieldCard != null && fieldCard.Title == value)
             {
                 currentPlayerCard.SendInvocationCardToYellowTrash(specificCardFound);

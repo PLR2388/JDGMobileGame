@@ -65,8 +65,8 @@ public class DestroyCardsEffectAbility : EffectAbility
                                          0);
                     break;
                 case CardType.Field:
-                    haveCardsToDestroy = haveCardsToDestroy || (fromCurrentPlayer && playerCards.field != null) ||
-                                         (fromOpponentPlayer && opponentPlayerCards.field != null);
+                    haveCardsToDestroy = haveCardsToDestroy || (fromCurrentPlayer && playerCards.FieldCard != null) ||
+                                         (fromOpponentPlayer && opponentPlayerCards.FieldCard != null);
                     break;
                 case CardType.Invocation:
                     haveCardsToDestroy = haveCardsToDestroy || (fromCurrentPlayer && playerCards.invocationCards.Count > 0) ||
@@ -168,16 +168,16 @@ public class DestroyCardsEffectAbility : EffectAbility
                                     playerCards.effectCards.Add(inGameEffectCard);
                                 }
 
-                                if (playerCards.field != null)
+                                if (playerCards.FieldCard != null)
                                 {
-                                    playerCards.yellowCards.Add(playerCards.field);
-                                    playerCards.field = null;
+                                    playerCards.yellowCards.Add(playerCards.FieldCard);
+                                    playerCards.FieldCard = null;
                                 }
 
-                                if (opponentPlayerCard.field != null)
+                                if (opponentPlayerCard.FieldCard != null)
                                 {
-                                    opponentPlayerCard.yellowCards.Add(opponentPlayerCard.field);
-                                    opponentPlayerCard.field = null;
+                                    opponentPlayerCard.yellowCards.Add(opponentPlayerCard.FieldCard);
+                                    opponentPlayerCard.FieldCard = null;
                                 }
 
                                 Object.Destroy(messageBox);
@@ -271,9 +271,9 @@ public class DestroyCardsEffectAbility : EffectAbility
                 cards.AddRange(playerCards.effectCards);
             }
 
-            if (playerCards.field != null)
+            if (playerCards.FieldCard != null)
             {
-                cards.Add(playerCards.field);
+                cards.Add(playerCards.FieldCard);
             }
         }
 
@@ -297,9 +297,9 @@ public class DestroyCardsEffectAbility : EffectAbility
                 cards.AddRange(opponentPlayerCard.effectCards);
             }
 
-            if (opponentPlayerCard.field != null)
+            if (opponentPlayerCard.FieldCard != null)
             {
-                cards.Add(opponentPlayerCard.field);
+                cards.Add(opponentPlayerCard.FieldCard);
             }
         }
 
@@ -329,11 +329,11 @@ public class DestroyCardsEffectAbility : EffectAbility
                 case CardType.Field:
                     if (isP1)
                     {
-                        playerCards.field = null;
+                        playerCards.FieldCard = null;
                     }
                     else
                     {
-                        opponentPlayerCard.field = null;
+                        opponentPlayerCard.FieldCard = null;
                     }
 
                     break;
@@ -391,11 +391,11 @@ public class DestroyCardsEffectAbility : EffectAbility
                 case CardType.Field:
                     if (isP1)
                     {
-                        opponentPlayerCard.field = null;
+                        opponentPlayerCard.FieldCard = null;
                     }
                     else
                     {
-                        playerCards.field = null;
+                        playerCards.FieldCard = null;
                     }
 
                     break;

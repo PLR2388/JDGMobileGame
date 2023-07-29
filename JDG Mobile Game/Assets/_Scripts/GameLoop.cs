@@ -111,7 +111,7 @@ public class GameLoop : MonoBehaviour
 
     private void ChoosePhaseMusic()
     {
-        var currentFieldCard = IsP1Turn ? p1.GetComponent<PlayerCards>().field : p2.GetComponent<PlayerCards>().field;
+        var currentFieldCard = IsP1Turn ? p1.GetComponent<PlayerCards>().FieldCard : p2.GetComponent<PlayerCards>().FieldCard;
         if (currentFieldCard == null)
         {
             AudioSystem.Instance.PlayMusic(Music.DrawPhase);
@@ -1311,7 +1311,7 @@ public class GameLoop : MonoBehaviour
     {
         var canSkipDraw = false;
 
-        if (playerCards.field != null && !playerCards.IsFieldDesactivate)
+        /*if (playerCards.field != null && !playerCards.IsFieldDesactivate)
         {
             var fieldCardEffect = playerCards.field.FieldCardEffect;
 
@@ -1348,7 +1348,7 @@ public class GameLoop : MonoBehaviour
                         throw new ArgumentOutOfRangeException();
                 }
             }
-        }
+        }*/
 
         if (canSkipDraw) return;
         {
@@ -1367,23 +1367,6 @@ public class GameLoop : MonoBehaviour
                 phaseId = 5;
                 GameOver();
             }
-        }
-    }
-
-    protected void LifeFieldEffect(PlayerCards playerCards, string value)
-    {
-        var pvPerAlly = float.Parse(value);
-        var family = playerCards.field.GetFamily();
-        var numberFamilyOnField =
-            playerCards.invocationCards.Count(invocationCard =>
-                invocationCard.Families.Contains(family));
-        if (IsP1Turn)
-        {
-            p1.GetComponent<PlayerStatus>().ChangePv(pvPerAlly * numberFamilyOnField);
-        }
-        else
-        {
-            p2.GetComponent<PlayerStatus>().ChangePv(pvPerAlly * numberFamilyOnField);
         }
     }
 
@@ -1600,8 +1583,8 @@ public class GameLoop : MonoBehaviour
 
     protected static void SkipFieldsEffect(PlayerCards currentPlayerCard, PlayerCards opponentPlayerCard)
     {
-        currentPlayerCard.ActivateFieldCardEffect();
-        opponentPlayerCard.ActivateFieldCardEffect();
+        //currentPlayerCard.ActivateFieldCardEffect();
+        //opponentPlayerCard.ActivateFieldCardEffect();
     }
 
     protected static void ProtectAttackEffect(PlayerStatus playerStatus, List<InGameEffectCard> effectCardsToDelete,

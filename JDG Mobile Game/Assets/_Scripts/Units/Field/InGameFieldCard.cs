@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Cards;
 using Cards.FieldCards;
 
@@ -5,9 +7,8 @@ public class InGameFieldCard : InGameCard
 {
     private FieldCard baseFieldCard;
     private CardFamily family;
-    private FieldCardEffect fieldCardEffect;
 
-    public FieldCardEffect FieldCardEffect => fieldCardEffect;
+    public List<FieldAbility> FieldAbilities = new List<FieldAbility>();
 
 
     public static InGameFieldCard Init(FieldCard fieldCard, CardOwner cardOwner)
@@ -31,7 +32,9 @@ public class InGameFieldCard : InGameCard
         materialCard = baseFieldCard.MaterialCard;
         collector = baseFieldCard.Collector;
         family = baseFieldCard.Family;
-        fieldCardEffect = baseFieldCard.FieldCardEffect;
+        FieldAbilities = baseFieldCard.FieldAbilities.Select(
+            fieldAbilityName => FieldAbilityLibrary.Instance.fieldAbilityDictionary[fieldAbilityName]
+        ).ToList();
     }
 
     public CardFamily GetFamily()
