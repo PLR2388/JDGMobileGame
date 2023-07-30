@@ -1268,15 +1268,7 @@ public class GameLoop : MonoBehaviour
         {
             foreach (var fieldCardFieldAbility in playerCards.FieldCard.FieldAbilities)
             {
-               fieldCardFieldAbility.OnTurnStart(playerCards, playerStatus, true); 
-            }
-        }
-
-        if (opponentPlayerCards.FieldCard != null)
-        {
-            foreach (var fieldCardFieldAbility in opponentPlayerCards.FieldCard.FieldAbilities)
-            {
-                fieldCardFieldAbility.OnTurnStart(opponentPlayerCards, opponentPlayerStatus, false); 
+               fieldCardFieldAbility.OnTurnStart(playerCards, playerStatus); 
             }
         }
     }

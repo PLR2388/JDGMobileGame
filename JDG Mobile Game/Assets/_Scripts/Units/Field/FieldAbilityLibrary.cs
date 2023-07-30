@@ -60,6 +60,11 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             1.5f,
             -0.5f,
             CardFamily.HardCorner
+        ),
+        new DrawMoreCardsAbility(
+            FieldAbilityName.DrawOneMoreCard,
+            "Player can draw 2 cards per turn (1 additional)",
+            1
         )
     };
 

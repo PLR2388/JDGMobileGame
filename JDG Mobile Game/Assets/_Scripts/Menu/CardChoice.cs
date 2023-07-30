@@ -148,7 +148,7 @@ namespace Menu
             deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
             deck1.Add(GetSpecificCard("Maman", deck1AllCard));
-            deck1.Add(GetSpecificCard("Le Hard Corner", deck1AllCard));
+            deck1.Add(GetSpecificCard("Le grenier", deck1AllCard));
 
             while (deck1.Count != 30)
             {

@@ -13,7 +13,8 @@ public enum FieldAbilityName
     Earn2DEFAndMinusOneATKForIncarnationFamily,
     EarnHalfHPPerWizardInvocationEachTurn,
     Earn1ATKForJapanFamily,
-    Earn1HalfATKAndMinusHalfDEFForHCFamily
+    Earn1HalfATKAndMinusHalfDEFForHCFamily,
+    DrawOneMoreCard
 }
 
 public abstract class FieldAbility
@@ -42,7 +43,7 @@ public abstract class FieldAbility
         
     }
 
-    public virtual void OnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus, bool isPlayerTurn)
+    public virtual void OnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus)
     {
         
     }
