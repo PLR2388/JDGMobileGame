@@ -9,7 +9,8 @@ public enum FieldAbilityName
     Earn1DEFForSpatialFamily,
     Earn1HalfDEFAndMinusHalfATKForDevFamily,
     ChangePatronInfogramFamilyToDev,
-    ChangeJMBruitagesFamilyToDev
+    ChangeJMBruitagesFamilyToDev,
+    Earn2DEFAndMinusOneATKForIncarnationFamily
 }
 
 public abstract class FieldAbility

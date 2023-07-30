@@ -17,7 +17,7 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
         ),
         new EarnATKDEFForFamilyAbility(
             FieldAbilityName.Earn1HalfDEFAndMinusHalfATKForDevFamily,
-            "Invocations whose family is Developper earn 1.5 DEF and -0.5ATK",
+            "Invocations whose family is Developper earn 1.5 DEF and -0.5 ATK",
             -0.5f,
             1.5f,
             CardFamily.Developer
@@ -34,6 +34,13 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             "Patron D'Infogrames",
             CardFamily.Developer
         ),
+        new EarnATKDEFForFamilyAbility(
+            FieldAbilityName.Earn2DEFAndMinusOneATKForIncarnationFamily,
+            "Invocations whose family is Incarnation earn 2 DEF and -1 ATK",
+            -1,
+            2,
+            CardFamily.Incarnation
+            )
     };
 
     public Dictionary<FieldAbilityName, FieldAbility> fieldAbilityDictionary;
