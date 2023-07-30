@@ -40,7 +40,13 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             -1,
             2,
             CardFamily.Incarnation
-            )
+        ),
+        new EarnHPPerFamilyOnTurnStartAbility(
+            FieldAbilityName.EarnHalfHPPerWizardInvocationEachTurn,
+            "Player recover 0.5 HP per invocations whose family is Wizard at each turn for which it plays",
+            0.5f,
+            CardFamily.Wizard
+        )
     };
 
     public Dictionary<FieldAbilityName, FieldAbility> fieldAbilityDictionary;

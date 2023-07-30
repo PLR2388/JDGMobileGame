@@ -1263,6 +1263,22 @@ public class GameLoop : MonoBehaviour
         {
             effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards, opponentPlayerStatus, playerCards);
         }
+
+        if (playerCards.FieldCard != null)
+        {
+            foreach (var fieldCardFieldAbility in playerCards.FieldCard.FieldAbilities)
+            {
+               fieldCardFieldAbility.OnTurnStart(playerCards, playerStatus, true); 
+            }
+        }
+
+        if (opponentPlayerCards.FieldCard != null)
+        {
+            foreach (var fieldCardFieldAbility in opponentPlayerCards.FieldCard.FieldAbilities)
+            {
+                fieldCardFieldAbility.OnTurnStart(opponentPlayerCards, opponentPlayerStatus, false); 
+            }
+        }
     }
 
     private void DoDraw()

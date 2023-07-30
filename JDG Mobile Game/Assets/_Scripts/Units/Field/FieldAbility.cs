@@ -10,7 +10,8 @@ public enum FieldAbilityName
     Earn1HalfDEFAndMinusHalfATKForDevFamily,
     ChangePatronInfogramFamilyToDev,
     ChangeJMBruitagesFamilyToDev,
-    Earn2DEFAndMinusOneATKForIncarnationFamily
+    Earn2DEFAndMinusOneATKForIncarnationFamily,
+    EarnHalfHPPerWizardInvocationEachTurn
 }
 
 public abstract class FieldAbility
@@ -35,6 +36,11 @@ public abstract class FieldAbility
     }
 
     public virtual void OnInvocationChangeFamily(CardFamily[]  previousFamilies, InGameInvocationCard invocationCard)
+    {
+        
+    }
+
+    public virtual void OnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus, bool isPlayerTurn)
     {
         
     }
