@@ -53,6 +53,13 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             1,
             0,
             CardFamily.Japan
+        ),
+        new EarnATKDEFForFamilyAbility(
+            FieldAbilityName.Earn1HalfATKAndMinusHalfDEFForHCFamily,
+            "Invocations whose family is Hard Corner earn 1.5 ATK and -0.5 DEF",
+            1.5f,
+            -0.5f,
+            CardFamily.HardCorner
         )
     };
 
