@@ -65,6 +65,13 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             FieldAbilityName.DrawOneMoreCard,
             "Player can draw 2 cards per turn (1 additional)",
             1
+        ),
+        new EarnATKDEFForFamilyAbility(
+            FieldAbilityName.EarnHalfATKAndDefForRpgFamily,
+            "Invocations whose family is Rpg earn 0.5 ATK and 0.5 DEF",
+            0.5f,
+            0.5f,
+            CardFamily.Rpg
         )
     };
 

@@ -147,8 +147,8 @@ namespace Menu
             deck1.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck1AllCard));
             deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Maman", deck1AllCard));
-            deck1.Add(GetSpecificCard("Le grenier", deck1AllCard));
+            deck1.Add(GetSpecificCard("Jean-Marc Soul", deck1AllCard));
+            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
 
             while (deck1.Count != 30)
             {

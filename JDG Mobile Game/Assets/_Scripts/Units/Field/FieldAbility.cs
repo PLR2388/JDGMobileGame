@@ -14,7 +14,8 @@ public enum FieldAbilityName
     EarnHalfHPPerWizardInvocationEachTurn,
     Earn1ATKForJapanFamily,
     Earn1HalfATKAndMinusHalfDEFForHCFamily,
-    DrawOneMoreCard
+    DrawOneMoreCard,
+    EarnHalfATKAndDefForRpgFamily
 }
 
 public abstract class FieldAbility
