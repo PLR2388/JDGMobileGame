@@ -40,9 +40,9 @@ public class EarnATKDEFForFamilyAbility : FieldAbility
         }
     }
 
-    public override void OnInvocationCardAdded(InGameInvocationCard invocationCard)
+    public override void OnInvocationCardAdded(InGameInvocationCard invocationCard, PlayerCards playerCards)
     {
-        base.OnInvocationCardAdded(invocationCard);
+        base.OnInvocationCardAdded(invocationCard, playerCards);
         if (family != CardFamily.Any && !invocationCard.Families.Contains(family)) return;
         invocationCard.Attack += bonusAttack;
         invocationCard.Defense += bonusDefense;
@@ -56,6 +56,26 @@ public class EarnATKDEFForFamilyAbility : FieldAbility
         {
             invocationCard.Attack -= bonusAttack;
             invocationCard.Defense -= bonusDefense;
+        }
+    }
+
+    public override void OnInvocationChangeFamily(CardFamily[] previousFamilies, InGameInvocationCard invocationCard)
+    {
+        base.OnInvocationChangeFamily(previousFamilies, invocationCard);
+
+        if (family != CardFamily.Any)
+        {
+            if (invocationCard.Families.Contains(family) && !previousFamilies.Contains(family))
+            {
+                invocationCard.Attack += bonusAttack;
+                invocationCard.Defense += bonusDefense;
+            }
+
+            if (!invocationCard.Families.Contains(family) && previousFamilies.Contains(family))
+            {
+                invocationCard.Attack -= bonusAttack;
+                invocationCard.Defense -= bonusDefense;
+            }
         }
     }
 }

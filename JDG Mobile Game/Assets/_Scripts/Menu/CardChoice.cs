@@ -144,11 +144,11 @@ namespace Menu
             var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
-            deck2.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck2AllCard));
-            deck1.Add(GetSpecificCard("Forêt des elfes sylvains", deck1AllCard));
+            deck1.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck1AllCard));
+            deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck1AllCard));
-            deck1.Add(GetSpecificCard("Zozan Kebab", deck1AllCard));
+            deck1.Add(GetSpecificCard("Jean-Michel Bruitages", deck1AllCard));
+            deck1.Add(GetSpecificCard("Studio de développement", deck1AllCard));
 
             while (deck1.Count != 30)
             {

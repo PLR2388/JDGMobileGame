@@ -511,7 +511,7 @@ public class PlayerCards : MonoBehaviour
         {
             foreach (var fieldAbility in FieldCard.FieldAbilities)
             {
-                fieldAbility.OnInvocationCardAdded(newInvocationCard);
+                fieldAbility.OnInvocationCardAdded(newInvocationCard, this);
             }
         }
     
