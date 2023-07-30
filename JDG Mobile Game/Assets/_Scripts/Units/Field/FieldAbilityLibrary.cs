@@ -72,6 +72,11 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             0.5f,
             0.5f,
             CardFamily.Rpg
+        ),
+        new GetCardFromFamilyIfSkipDrawAbility(
+            FieldAbilityName.SkipDrawToGetFistilandInvocation,
+            "Skip draw phase to get a Fistiland invocation from deck or yellow trash",
+            CardFamily.Fistiland
         )
     };
 

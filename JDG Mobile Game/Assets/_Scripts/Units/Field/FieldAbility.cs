@@ -15,7 +15,8 @@ public enum FieldAbilityName
     Earn1ATKForJapanFamily,
     Earn1HalfATKAndMinusHalfDEFForHCFamily,
     DrawOneMoreCard,
-    EarnHalfATKAndDefForRpgFamily
+    EarnHalfATKAndDefForRpgFamily,
+    SkipDrawToGetFistilandInvocation
 }
 
 public abstract class FieldAbility
@@ -44,7 +45,7 @@ public abstract class FieldAbility
         
     }
 
-    public virtual void OnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus)
+    public virtual void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerStatus playerStatus)
     {
         
     }

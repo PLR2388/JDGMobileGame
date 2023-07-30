@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 public class DrawMoreCardsAbility : FieldAbility
 {
@@ -12,9 +13,9 @@ public class DrawMoreCardsAbility : FieldAbility
         numberAdditionalCards = numberAdditionalCard;
     }
 
-    public override void OnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus)
+    public override void OnTurnStart(Transform canvas,PlayerCards playerCards, PlayerStatus playerStatus)
     {
-        base.OnTurnStart(playerCards, playerStatus);
+        base.OnTurnStart(canvas, playerCards, playerStatus);
         var size = playerCards.deck.Count;
         if (size > 0)
         {

@@ -1268,7 +1268,7 @@ public class GameLoop : MonoBehaviour
         {
             foreach (var fieldCardFieldAbility in playerCards.FieldCard.FieldAbilities)
             {
-               fieldCardFieldAbility.OnTurnStart(playerCards, playerStatus); 
+               fieldCardFieldAbility.OnTurnStart(canvas, playerCards, playerStatus); 
             }
         }
     }
@@ -1285,7 +1285,7 @@ public class GameLoop : MonoBehaviour
 
         ApplyOnTurnStart(playerCards, opponentPlayerCards, playerStatus, opponentPlayerStatus);
 
-        DrawPlayerCard(playerCards);
+        DrawPlayerCard(playerCards, playerStatus);
 
         var invocationCards = playerCards.invocationCards;
         var effectCards = playerCards.effectCards;
@@ -1315,9 +1315,8 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected void DrawPlayerCard(PlayerCards playerCards)
+    protected void DrawPlayerCard(PlayerCards playerCards, PlayerStatus playerStatus)
     {
-        var canSkipDraw = false;
 
         /*if (playerCards.field != null && !playerCards.IsFieldDesactivate)
         {
@@ -1358,7 +1357,11 @@ public class GameLoop : MonoBehaviour
             }
         }*/
 
-        if (canSkipDraw) return;
+        if (playerStatus.SkipCurrentDraw)
+        {
+            playerStatus.SkipCurrentDraw = false;
+        }
+        else
         {
             var size = playerCards.deck.Count;
             if (size > 0)

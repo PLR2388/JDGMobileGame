@@ -21,6 +21,14 @@ public class PlayerStatus : MonoBehaviour
 
     [SerializeField] private bool blockAttack = false;
 
+    private bool skipCurrentDraw = false;
+
+    public bool SkipCurrentDraw
+    {
+        get => skipCurrentDraw;
+        set => skipCurrentDraw = value;
+    }
+
     public int NumberShield => numberShield;
 
     public bool BlockAttack
