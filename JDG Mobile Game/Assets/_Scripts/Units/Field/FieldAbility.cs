@@ -11,7 +11,8 @@ public enum FieldAbilityName
     ChangePatronInfogramFamilyToDev,
     ChangeJMBruitagesFamilyToDev,
     Earn2DEFAndMinusOneATKForIncarnationFamily,
-    EarnHalfHPPerWizardInvocationEachTurn
+    EarnHalfHPPerWizardInvocationEachTurn,
+    Earn1ATKForJapanFamily
 }
 
 public abstract class FieldAbility

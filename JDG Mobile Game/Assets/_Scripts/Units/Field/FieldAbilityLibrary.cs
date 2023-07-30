@@ -46,6 +46,13 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             "Player recover 0.5 HP per invocations whose family is Wizard at each turn for which it plays",
             0.5f,
             CardFamily.Wizard
+        ),
+        new EarnATKDEFForFamilyAbility(
+            FieldAbilityName.Earn1ATKForJapanFamily,
+            "Invocations whose family is Japan earn 1 ATK",
+            1,
+            0,
+            CardFamily.Japan
         )
     };
 

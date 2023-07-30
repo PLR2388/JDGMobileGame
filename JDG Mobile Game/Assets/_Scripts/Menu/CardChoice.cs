@@ -147,8 +147,8 @@ namespace Menu
             deck1.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck1AllCard));
             deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Gérard Choixpeau", deck1AllCard));
-            deck1.Add(GetSpecificCard("Lycée magique Georges Pompidou", deck1AllCard));
+            deck1.Add(GetSpecificCard("Fourchette", deck1AllCard));
+            deck1.Add(GetSpecificCard("Le Japon", deck1AllCard));
 
             while (deck1.Count != 30)
             {
