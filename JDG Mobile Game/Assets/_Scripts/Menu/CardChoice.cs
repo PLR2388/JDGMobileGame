@@ -147,14 +147,13 @@ namespace Menu
             deck1.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck1AllCard));
             deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
-            deck1.Add(GetSpecificCard("Jean-Marc Soul", deck1AllCard));
-            deck1.Add(GetSpecificCard("Fistiland", deck1AllCard));
+            deck1.Add(GetSpecificCard("Captain URSSAF", deck1AllCard));
+            deck1.Add(GetSpecificCard("Canardcity", deck1AllCard));
 
             while (deck1.Count != 30)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
-            deck1.Add(GetSpecificCard("Fisti", deck1AllCard));
             deck1.Reverse();
 
             while (deck2.Count != 30)

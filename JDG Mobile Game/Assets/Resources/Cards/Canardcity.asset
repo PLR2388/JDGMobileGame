@@ -21,3 +21,4 @@ MonoBehaviour:
   collector: 0
   family: 0
   fieldCardEffect: {fileID: 11400000, guid: 06cc355649fb0894b8266c51fdd3e50d, type: 2}
+  FieldAbilities: 0b000000

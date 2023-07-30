@@ -16,7 +16,8 @@ public enum FieldAbilityName
     Earn1HalfATKAndMinusHalfDEFForHCFamily,
     DrawOneMoreCard,
     EarnHalfATKAndDefForRpgFamily,
-    SkipDrawToGetFistilandInvocation
+    SkipDrawToGetFistilandInvocation,
+    Earn2ATKAndMinus1DEFForComicsFamily
 }
 
 public abstract class FieldAbility

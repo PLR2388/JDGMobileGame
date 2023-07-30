@@ -77,6 +77,13 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
             FieldAbilityName.SkipDrawToGetFistilandInvocation,
             "Skip draw phase to get a Fistiland invocation from deck or yellow trash",
             CardFamily.Fistiland
+        ),
+        new EarnATKDEFForFamilyAbility(
+            FieldAbilityName.Earn2ATKAndMinus1DEFForComicsFamily,
+            "Invocations whose family is Comics earn 2 ATK and -1 DEF",
+            2,
+            -1,
+            CardFamily.Comics
         )
     };
 
