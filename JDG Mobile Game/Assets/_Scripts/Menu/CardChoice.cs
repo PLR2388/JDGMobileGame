@@ -148,7 +148,7 @@ namespace Menu
             deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
             deck1.Add(GetSpecificCard("Captain URSSAF", deck1AllCard));
-            deck1.Add(GetSpecificCard("Canardcity", deck1AllCard));
+            deck1.Add(GetSpecificCard("Armure trop lourde", deck1AllCard));
 
             while (deck1.Count != 30)
             {

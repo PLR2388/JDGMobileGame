@@ -1,15 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Cards.EquipmentCards
 {
     [CreateAssetMenu(fileName = "New Card", menuName = "EquipmentCard")]
     public class EquipmentCard : Card
     {
-        [SerializeField] private EquipmentInstantEffect equipmentInstantEffect;
-        [SerializeField] private EquipmentPermEffect equipmentPermEffect;
-
-        public EquipmentInstantEffect EquipmentInstantEffect => equipmentInstantEffect;
-        public EquipmentPermEffect EquipmentPermEffect => equipmentPermEffect;
+        public List<EquipmentAbilityName> EquipmentAbilities = new List<EquipmentAbilityName>();
 
         private void Awake()
         {

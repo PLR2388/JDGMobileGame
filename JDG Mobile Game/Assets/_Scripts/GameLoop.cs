@@ -196,7 +196,7 @@ public class GameLoop : MonoBehaviour
 
     protected void BlockCardJustInvokeIfNeeded()
     {
-        var ownInvocations = IsP1Turn
+        /*var ownInvocations = IsP1Turn
             ? p1.GetComponent<PlayerCards>().invocationCards
             : p2.GetComponent<PlayerCards>().invocationCards;
         var invocationsOpponent = IsP1Turn
@@ -213,7 +213,7 @@ public class GameLoop : MonoBehaviour
                  select ownInvocationCard)
         {
             ownInvocationCard.BlockAttack();
-        }
+        }*/
     }
 
     protected void HandleClickDuringDrawPhase(RaycastHit hitInfo)
@@ -463,14 +463,14 @@ public class GameLoop : MonoBehaviour
         {
             notEmptyOpponent.Add(player);
         }
-        else if (attacker.EquipmentCard != null && attacker.EquipmentCard.EquipmentInstantEffect != null &&
+        /*else if (attacker.EquipmentCard != null && attacker.EquipmentCard.EquipmentInstantEffect != null &&
                  attacker.EquipmentCard.EquipmentInstantEffect.Keys.Contains(InstantEffect.DirectAtk))
         {
             notEmptyOpponent = new List<InGameCard>
             {
                 player
             };
-        }
+        }*/
         else
         {
             var newList = (from card in notEmptyOpponent
@@ -585,7 +585,7 @@ public class GameLoop : MonoBehaviour
 
                     if (equipmentCard != null)
                     {
-                        var permEquipmentEffect = equipmentCard.EquipmentPermEffect;
+                        /*var permEquipmentEffect = equipmentCard.EquipmentPermEffect;
                         if (permEquipmentEffect != null)
                         {
                             if (permEquipmentEffect.Keys.Contains(PermanentEffect.PreventAttackOnInvocation))
@@ -596,7 +596,7 @@ public class GameLoop : MonoBehaviour
                                     hypnoBoobOnly = notEmptyOpponent.Count == 0;
                                 }
                             }
-                        }
+                        } */
                     }
                 }
 
@@ -855,8 +855,8 @@ public class GameLoop : MonoBehaviour
     {
         var invocationEquipment = invocationCard.EquipmentCard;
         if (invocationEquipment == null) return false;
-        var instantEffectEquipment = invocationEquipment.EquipmentInstantEffect;
-        if (!instantEffectEquipment.Keys.Contains(InstantEffect.ProtectInvocation)) return false;
+        //var instantEffectEquipment = invocationEquipment.EquipmentInstantEffect;
+        //if (!instantEffectEquipment.Keys.Contains(InstantEffect.ProtectInvocation)) return false;
         var playerCards = isP1 ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         playerCards.yellowCards.Add(invocationEquipment);
         invocationCard.SetEquipmentCard(null);
@@ -1239,19 +1239,44 @@ public class GameLoop : MonoBehaviour
         var copyInvocationCards = playerCards.invocationCards.ToList();
         var copyOpponentInvocationCards = opponentPlayerCards.invocationCards.ToList();
 
+        var equipmentCardsAbilities = copyInvocationCards.Where(invocationCard => invocationCard.EquipmentCard != null)
+            .SelectMany(invocationCard => invocationCard.EquipmentCard.EquipmentAbilities).ToList();
+        var opponentEquipmentCardsAbilities = copyOpponentInvocationCards.Where(invocationCard => invocationCard.EquipmentCard != null)
+            .SelectMany(invocationCard => invocationCard.EquipmentCard.EquipmentAbilities).ToList();
+
         var copyEffectCards = playerCards.effectCards.ToList();
         var copyOpponentEffectCards = opponentPlayerCards.effectCards.ToList();
 
-        foreach (var invocationCardAbility in
-                 copyInvocationCards.SelectMany(invocationCard => invocationCard.Abilities))
+        foreach (var invocationCard in copyInvocationCards)
         {
-            invocationCardAbility.OnTurnStart(canvas, playerCards, opponentPlayerCards);
-        }
+            foreach (var invocationCardAbility in invocationCard.Abilities)
+            {
+                invocationCardAbility.OnTurnStart(canvas, playerCards, opponentPlayerCards);
+            }
 
-        foreach (var invocationCardAbility in copyOpponentInvocationCards.SelectMany(invocationCard =>
-                     invocationCard.Abilities))
+            if (invocationCard.EquipmentCard != null)
+            {
+                foreach (var equipmentCardEquipmentAbility in invocationCard.EquipmentCard.EquipmentAbilities)
+                {
+                    equipmentCardEquipmentAbility.OnTurnStart(invocationCard);
+                }
+            }
+        }
+        
+        foreach (var invocationCard in copyOpponentInvocationCards)
         {
-            invocationCardAbility.OnTurnStart(canvas, opponentPlayerCards, playerCards);
+            foreach (var invocationCardAbility in invocationCard.Abilities)
+            {
+                invocationCardAbility.OnTurnStart(canvas, opponentPlayerCards, playerCards);
+            }
+
+            if (invocationCard.EquipmentCard != null)
+            {
+                foreach (var equipmentCardEquipmentAbility in invocationCard.EquipmentCard.EquipmentAbilities)
+                {
+                    equipmentCardEquipmentAbility.OnTurnStart(invocationCard);
+                }
+            }
         }
 
         foreach (var effectCardAbility in copyEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))

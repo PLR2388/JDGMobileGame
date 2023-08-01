@@ -113,7 +113,12 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
                 var equipmentCard = card as InGameEquipementCard;
                 putCardButton.GetComponent<Button>().interactable =
-                    InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
+                    playerCard.invocationCards.Count(inGameInvocationCard =>
+                        inGameInvocationCard.EquipmentCard == null) > 0 ||
+                    opponentPlayerCard.invocationCards.Count(inGameInvocationCard =>
+                        inGameInvocationCard.EquipmentCard == null) > 0;
+                    // TODO Add here special case for switch equipment ability
+                //  InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
                 break;
             case CardType.Field:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";

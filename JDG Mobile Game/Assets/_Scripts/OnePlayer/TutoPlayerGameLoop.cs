@@ -100,7 +100,7 @@ namespace OnePlayer
 
                         if (equipmentCard != null)
                         {
-                            var instantEffect = equipmentCard.EquipmentInstantEffect;
+                            /*var instantEffect = equipmentCard.EquipmentInstantEffect;
                             var permEffect = equipmentCard.EquipmentPermEffect;
 
                             if (instantEffect != null)
@@ -111,7 +111,7 @@ namespace OnePlayer
                             if (permEffect != null)
                             {
                                 EquipmentFunctions.DealWithPermEffect(invocationCard, permEffect);
-                            }
+                            }*/
                         }
 
                         invocationCard.SetEquipmentCard(equipmentCard);

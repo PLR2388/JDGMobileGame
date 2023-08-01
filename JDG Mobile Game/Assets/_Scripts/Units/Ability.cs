@@ -128,9 +128,14 @@ public abstract class Ability
     public virtual bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
     {
         if (playerCards.yellowCards.Contains(deadCard)) return false;
-        if (deadCard.EquipmentCard != null)
+        var equipmentCard = deadCard.EquipmentCard;
+        if (equipmentCard != null)
         {
-            playerCards.yellowCards.Add(deadCard.EquipmentCard);
+            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+            {
+                equipmentCardEquipmentAbility.RemoveEffect(deadCard);
+            }
+            playerCards.yellowCards.Add(equipmentCard);
             deadCard.EquipmentCard = null;
         }
 

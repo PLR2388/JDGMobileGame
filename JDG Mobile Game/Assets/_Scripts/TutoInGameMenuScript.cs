@@ -97,8 +97,8 @@ public class TutoInGameMenuScript : MonoBehaviour
                 case CardType.Equipment:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
                     var equipmentCard = card as InGameEquipementCard;
-                    putCardButton.GetComponent<Button>().interactable =
-                        InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
+                    putCardButton.GetComponent<Button>().interactable = true;
+                        //InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
                     break;
                 case CardType.Field:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";

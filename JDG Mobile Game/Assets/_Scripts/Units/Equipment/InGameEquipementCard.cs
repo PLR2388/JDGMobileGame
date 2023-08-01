@@ -9,11 +9,8 @@ using UnityEngine;
 public class InGameEquipementCard : InGameCard
 {
     private EquipmentCard baseEquipmentCard;
-    private EquipmentInstantEffect equipmentInstantEffect;
-    private EquipmentPermEffect equipmentPermEffect;
 
-    public EquipmentInstantEffect EquipmentInstantEffect => equipmentInstantEffect;
-    public EquipmentPermEffect EquipmentPermEffect => equipmentPermEffect;
+    public List<EquipmentAbility> EquipmentAbilities = new List<EquipmentAbility>();
 
 
     public static InGameEquipementCard Init(EquipmentCard equipmentCard, CardOwner cardOwner)
@@ -36,10 +33,11 @@ public class InGameEquipementCard : InGameCard
         type = baseEquipmentCard.Type;
         materialCard = baseEquipmentCard.MaterialCard;
         collector = baseEquipmentCard.Collector;
-        equipmentInstantEffect = baseEquipmentCard.EquipmentInstantEffect;
-        equipmentPermEffect = baseEquipmentCard.EquipmentPermEffect;
+        EquipmentAbilities = baseEquipmentCard.EquipmentAbilities.Select(
+            equipmentAbilityName => EquipmentAbilityLibrary.Instance.equipmentAbilityDictionary[equipmentAbilityName]
+        ).ToList();
     }
-    
+
     /// <summary>
     /// IsEquipmentPossible.
     /// Test if user can put an equipment on at least one invocation card on field.
@@ -51,7 +49,8 @@ public class InGameEquipementCard : InGameCard
                                      InstantEffect.SwitchEquipment);
         var player1 = GameObject.Find("Player1");
         var player2 = GameObject.Find("Player2");
-        return HasEnoughInvocationCard(player1, canSwitchEquipment) || HasEnoughInvocationCard(player2, canSwitchEquipment);
+        return HasEnoughInvocationCard(player1, canSwitchEquipment) ||
+               HasEnoughInvocationCard(player2, canSwitchEquipment);
     }
 
     /// <summary>

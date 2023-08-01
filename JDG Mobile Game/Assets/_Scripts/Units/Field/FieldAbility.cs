@@ -26,7 +26,7 @@ public abstract class FieldAbility
 
     protected string Description { get; set; }
 
-    public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards)
+    public virtual void ApplyEffect(PlayerCards playerCards)
     {
         
     }

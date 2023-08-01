@@ -70,26 +70,19 @@ namespace Cards.EquipmentCards
             var currentInvocationCards = playerCards.invocationCards;
             var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
 
-            var message = DisplayEquipmentMessageBox(invocationCards, equipmentCard.EquipmentInstantEffect);
+            var message = DisplayEquipmentMessageBox(invocationCards);
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var currentSelectedInvocationCard = message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
+                var currentSelectedInvocationCard =
+                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
                 if (currentSelectedInvocationCard != null)
                 {
                     miniCardMenu.SetActive(false);
-
-                    var instantEffect = equipmentCard.EquipmentInstantEffect;
-                    var permEffect = equipmentCard.EquipmentPermEffect;
-
-                    if (instantEffect != null)
+                    
+                    foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
                     {
-                        DealWithInstantEffect(currentSelectedInvocationCard, instantEffect);
-                    }
-
-                    if (permEffect != null)
-                    {
-                        DealWithPermEffect(currentSelectedInvocationCard, permEffect);
+                        equipmentCardEquipmentAbility.ApplyEffect(currentSelectedInvocationCard);
                     }
 
                     currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
@@ -111,30 +104,16 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCards">invocation card allow to receive equipment card</param>
         /// <param name="equipmentInstantEffect">equipmentCard instant effect to test if it authorizes invocations with equipment</param>
         /// </summary>
-        private GameObject DisplayEquipmentMessageBox(IEnumerable<InGameInvocationCard> invocationCards,
-            EquipmentInstantEffect equipmentInstantEffect)
+        private GameObject DisplayEquipmentMessageBox(IEnumerable<InGameInvocationCard> invocationCards)
         {
             var cards = new List<InGameCard>();
-            if (equipmentInstantEffect != null)
+            foreach (var invocationCard in invocationCards)
             {
-                foreach (var invocationCard in invocationCards)
+                if (invocationCard.EquipmentCard == null)
                 {
-                    if (invocationCard.EquipmentCard == null)
-                    {
-                        cards.Add(invocationCard);
-                    }
-                    else if (equipmentInstantEffect.Keys.Contains(InstantEffect.SwitchEquipment))
-                    {
-                        cards.Add(invocationCard);
-                    }
+                    cards.Add(invocationCard);
                 }
             }
-            else
-            {
-                cards = invocationCards.Cast<InGameCard>().ToList();
-            }
-
-
             return MessageBox.CreateMessageBoxWithCardSelector(canvas,
                 "Choisis l'invocation auquelle associée l'équipement :", cards);
         }
@@ -242,7 +221,8 @@ namespace Cards.EquipmentCards
             var multiplicator = int.Parse(value);
             if (multiplicator > 1)
             {
-                var newBonusAttack = (multiplicator - 1) * invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                var newBonusAttack = (multiplicator - 1) *
+                                     invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
                 invocationCard.Attack += newBonusAttack;
             }
         }
@@ -264,7 +244,8 @@ namespace Cards.EquipmentCards
             }
             else if (multiplicator < 0)
             {
-                var newBonusDefense = (invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense / multiplicator);
+                var newBonusDefense =
+                    (invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense / multiplicator);
                 invocationCard.Defense += newBonusDefense;
             }
         }
@@ -312,7 +293,8 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
         /// <param name="equipmentPermEffect">equipment perm effect of equipment card</param>
         /// </summary>
-        public static void DealWithPermEffect(InGameInvocationCard invocationCard, EquipmentPermEffect equipmentPermEffect)
+        public static void DealWithPermEffect(InGameInvocationCard invocationCard,
+            EquipmentPermEffect equipmentPermEffect)
         {
             var keys = equipmentPermEffect.Keys;
             var values = equipmentPermEffect.Values;

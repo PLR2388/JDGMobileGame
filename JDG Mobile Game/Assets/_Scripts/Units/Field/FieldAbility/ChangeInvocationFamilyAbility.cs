@@ -29,9 +29,9 @@ public class ChangeInvocationFamilyAbility : FieldAbility
         }
     }
 
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards)
+    public override void ApplyEffect(PlayerCards playerCards)
     {
-        base.ApplyEffect(canvas, playerCards);
+        base.ApplyEffect(playerCards);
         var invocationCard = playerCards.invocationCards.FirstOrDefault(card => card.Title == invocationName);
         if (invocationCard != null)
         {

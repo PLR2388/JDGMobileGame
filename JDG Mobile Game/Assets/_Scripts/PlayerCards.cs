@@ -171,7 +171,7 @@ public class PlayerCards : MonoBehaviour
     {
         if (oldHandCards.Count != handCards.Count)
         {
-            foreach (var invocationCard in invocationCards)
+            /*foreach (var invocationCard in invocationCards)
             {
                 if (invocationCard.EquipmentCard == null ||
                     invocationCard.EquipmentCard.EquipmentPermEffect == null) continue;
@@ -188,7 +188,7 @@ public class PlayerCards : MonoBehaviour
                         permEffect.Keys.FindIndex(key => key == PermanentEffect.AddDefBaseOnHandCards)]);
                     invocationCard.Defense += (handCards.Count - oldHandCards.Count) * value;
                 }
-            }
+            }*/
 
             oldHandCards = new List<InGameCard>(handCards);
             CardLocation.UpdateLocation.Invoke();
@@ -267,6 +267,10 @@ public class PlayerCards : MonoBehaviour
             if (equipmentCard != null)
             {
                 opponentPlayerCards.yellowCards.Add(equipmentCard);
+                foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+                {
+                    equipmentCardEquipmentAbility.RemoveEffect(specificCardFound);
+                }
             }
 
             invocationCards.Remove(specificCardFound);
@@ -313,6 +317,10 @@ public class PlayerCards : MonoBehaviour
             if (equipmentCard != null)
             {
                 yellowCards.Add(equipmentCard);
+                foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+                {
+                    equipmentCardEquipmentAbility.RemoveEffect(specificCardFound);
+                }
             }
             
             var abilities = specificCardFound.Abilities;

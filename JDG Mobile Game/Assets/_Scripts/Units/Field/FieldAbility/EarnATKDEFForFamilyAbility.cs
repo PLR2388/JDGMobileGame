@@ -29,9 +29,9 @@ public class EarnATKDEFForFamilyAbility : FieldAbility
         return invocationsList.ToList();
     }
 
-    public override void ApplyEffect(Transform canvas, PlayerCards playerCards)
+    public override void ApplyEffect(PlayerCards playerCards)
     {
-        base.ApplyEffect(canvas, playerCards);
+        base.ApplyEffect(playerCards);
         var invocationCards = BuildValidInvocationCards(playerCards);
         foreach (var invocationCard in invocationCards)
         {

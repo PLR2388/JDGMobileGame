@@ -166,14 +166,14 @@ namespace _Scripts.Units.Invocation
         public bool CanAttack()
         {
             if (equipmentCard == null) return remainedAttackThisTurn > 0 && !blockAttackNextTurn;
-            var instantEffect = equipmentCard.EquipmentInstantEffect;
+            /*var instantEffect = equipmentCard.EquipmentInstantEffect;
             var equipmentBlockedAttack = false;
             if (instantEffect != null)
             {
                 equipmentBlockedAttack = instantEffect.Keys.Contains(InstantEffect.BlockAtk);
-            }
+            }*/
 
-            return remainedAttackThisTurn > 0 && !blockAttackNextTurn & !equipmentBlockedAttack;
+            return remainedAttackThisTurn > 0 && !blockAttackNextTurn; //& !equipmentBlockedAttack;
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace _Scripts.Units.Invocation
         {
             if (equipmentCard != null && card == null)
             {
-                RemoveEquipmentCardEffect(equipmentCard.EquipmentInstantEffect);
+                // RemoveEquipmentCardEffect(equipmentCard.EquipmentInstantEffect);
             }
 
             equipmentCard = card;

@@ -37,7 +37,7 @@ namespace Cards.FieldCards
             currentPlayerCard.handCards.Remove(fieldCard);
             foreach (var ability in fieldCard.FieldAbilities)
             {
-                ability.ApplyEffect(canvas, currentPlayerCard);
+                ability.ApplyEffect(currentPlayerCard);
             }
         }
 
