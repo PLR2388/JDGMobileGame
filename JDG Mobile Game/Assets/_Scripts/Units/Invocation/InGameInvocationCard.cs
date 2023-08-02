@@ -26,6 +26,14 @@ namespace _Scripts.Units.Invocation
         private bool attrackAttack = false;
         private string receiver = null;
 
+        private bool directAttackPossible = false;
+
+        public bool CanDirectAttack
+        {
+            get => directAttackPossible;
+            set => directAttackPossible = value;
+        }
+
         public bool CantBeAttack
         {
             get => cantBeAttack;

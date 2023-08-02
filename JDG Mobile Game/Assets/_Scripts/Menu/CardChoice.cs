@@ -144,11 +144,11 @@ namespace Menu
             var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
-            deck1.Add(GetSpecificCard("Merde tournoyante en plastique bleu", deck1AllCard));
+            deck2.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck2AllCard));
             deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Seb Du Grenier", deck1AllCard));
             deck1.Add(GetSpecificCard("Captain URSSAF", deck1AllCard));
-            deck1.Add(GetSpecificCard("Armure trop lourde", deck1AllCard));
+            deck1.Add(GetSpecificCard("Canarang", deck1AllCard));
 
             while (deck1.Count != 30)
             {

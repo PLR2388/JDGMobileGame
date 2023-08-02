@@ -111,7 +111,8 @@ public class GameLoop : MonoBehaviour
 
     private void ChoosePhaseMusic()
     {
-        var currentFieldCard = IsP1Turn ? p1.GetComponent<PlayerCards>().FieldCard : p2.GetComponent<PlayerCards>().FieldCard;
+        var currentFieldCard =
+            IsP1Turn ? p1.GetComponent<PlayerCards>().FieldCard : p2.GetComponent<PlayerCards>().FieldCard;
         if (currentFieldCard == null)
         {
             AudioSystem.Instance.PlayMusic(Music.DrawPhase);
@@ -600,7 +601,8 @@ public class GameLoop : MonoBehaviour
                     }
                 }
 
-                if ((notEmptyOpponent.Count == 0 && !hypnoBoobOnly) || attackPlayerEffectCard.Any(card => card.EffectAbilities.Any(ability => ability is DirectAttackEffectAbility)))
+                if ((notEmptyOpponent.Count == 0 && !hypnoBoobOnly) || attackPlayerEffectCard.Any(card =>
+                        card.EffectAbilities.Any(ability => ability is DirectAttackEffectAbility)))
                 {
                     notEmptyOpponent.Add(player);
                 }
@@ -618,6 +620,11 @@ public class GameLoop : MonoBehaviour
                     }*/
                 }
             }
+        }
+
+        if (!notEmptyOpponent.Contains(player) && attacker.CanDirectAttack)
+        {
+            notEmptyOpponent.Add(player);
         }
 
         DisplayOpponentMessageBox(notEmptyOpponent);
@@ -752,7 +759,7 @@ public class GameLoop : MonoBehaviour
         {
             ComputeGoodAttackSuperInvocationCard(diff, superOpponent);
         }
-        else if (!IsProtectedByEquipment(opponent, !IsP1Turn))
+        else
         {
             opponent.IncrementNumberDeaths();
             ComputeGoodAttack(diff);
@@ -851,24 +858,11 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected bool IsProtectedByEquipment(InGameInvocationCard invocationCard, bool isP1)
-    {
-        var invocationEquipment = invocationCard.EquipmentCard;
-        if (invocationEquipment == null) return false;
-        //var instantEffectEquipment = invocationEquipment.EquipmentInstantEffect;
-        //if (!instantEffectEquipment.Keys.Contains(InstantEffect.ProtectInvocation)) return false;
-        var playerCards = isP1 ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        playerCards.yellowCards.Add(invocationEquipment);
-        invocationCard.SetEquipmentCard(null);
-        return true;
-    }
-
     protected void ComputeHurtAttack(float diff)
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
 
-        if (IsProtectedByEquipment(attacker, IsP1Turn)) return;
         attacker.IncrementNumberDeaths();
         playerStatus.ChangePv(-diff);
 
@@ -963,7 +957,7 @@ public class GameLoop : MonoBehaviour
                     p2.GetComponent<PlayerCards>().RemoveSuperInvocation(superAttacker);
                 }
             }
-            else if (!IsProtectedByEquipment(attacker, IsP1Turn))
+            else
             {
                 attacker.IncrementNumberDeaths();
                 ComputeEqualityAttacker();
@@ -986,7 +980,7 @@ public class GameLoop : MonoBehaviour
                     p1.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
                 }
             }
-            else if (!IsProtectedByEquipment(opponent, !IsP1Turn))
+            else
             {
                 opponent.IncrementNumberDeaths();
                 ComputeEqualityOpponent();
@@ -994,17 +988,12 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            if (!IsProtectedByEquipment(attacker, IsP1Turn))
-            {
-                attacker.IncrementNumberDeaths();
-                ComputeEqualityAttacker();
-            }
+            attacker.IncrementNumberDeaths();
+            ComputeEqualityAttacker();
 
-            if (!IsProtectedByEquipment(opponent, !IsP1Turn))
-            {
-                opponent.IncrementNumberDeaths();
-                ComputeEqualityOpponent();
-            }
+
+            opponent.IncrementNumberDeaths();
+            ComputeEqualityOpponent();
         }
     }
 
@@ -1241,7 +1230,8 @@ public class GameLoop : MonoBehaviour
 
         var equipmentCardsAbilities = copyInvocationCards.Where(invocationCard => invocationCard.EquipmentCard != null)
             .SelectMany(invocationCard => invocationCard.EquipmentCard.EquipmentAbilities).ToList();
-        var opponentEquipmentCardsAbilities = copyOpponentInvocationCards.Where(invocationCard => invocationCard.EquipmentCard != null)
+        var opponentEquipmentCardsAbilities = copyOpponentInvocationCards
+            .Where(invocationCard => invocationCard.EquipmentCard != null)
             .SelectMany(invocationCard => invocationCard.EquipmentCard.EquipmentAbilities).ToList();
 
         var copyEffectCards = playerCards.effectCards.ToList();
@@ -1262,7 +1252,7 @@ public class GameLoop : MonoBehaviour
                 }
             }
         }
-        
+
         foreach (var invocationCard in copyOpponentInvocationCards)
         {
             foreach (var invocationCardAbility in invocationCard.Abilities)
@@ -1286,14 +1276,15 @@ public class GameLoop : MonoBehaviour
 
         foreach (var effectCardAbility in copyOpponentEffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
-            effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards, opponentPlayerStatus, playerCards);
+            effectCardAbility.OnTurnStart(canvas, opponentPlayerStatus, opponentPlayerCards, opponentPlayerStatus,
+                playerCards);
         }
 
         if (playerCards.FieldCard != null)
         {
             foreach (var fieldCardFieldAbility in playerCards.FieldCard.FieldAbilities)
             {
-               fieldCardFieldAbility.OnTurnStart(canvas, playerCards, playerStatus); 
+                fieldCardFieldAbility.OnTurnStart(canvas, playerCards, playerStatus);
             }
         }
     }
@@ -1342,7 +1333,6 @@ public class GameLoop : MonoBehaviour
 
     protected void DrawPlayerCard(PlayerCards playerCards, PlayerStatus playerStatus)
     {
-
         /*if (playerCards.field != null && !playerCards.IsFieldDesactivate)
         {
             var fieldCardEffect = playerCards.field.FieldCardEffect;

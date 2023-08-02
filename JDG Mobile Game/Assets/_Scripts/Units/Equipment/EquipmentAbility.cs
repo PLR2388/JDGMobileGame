@@ -4,7 +4,9 @@ using _Scripts.Units.Invocation;
 
 public enum EquipmentAbilityName
 {
-    MultiplyDefBy2ButPreventAttack
+    MultiplyDefBy2ButPreventAttack,
+    Earn1ATKAndMinus1DEF,
+    DirectAttack
 }
 
 public abstract class EquipmentAbility

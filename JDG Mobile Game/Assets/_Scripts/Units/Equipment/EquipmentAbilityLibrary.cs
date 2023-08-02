@@ -10,7 +10,17 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             "Multiply DEF by 2 but the invocation cannot attack",
             defenseFactor: 2f,
             preventAttack: true
-        )
+        ),
+        new EarnAtkDefAbility(
+            EquipmentAbilityName.Earn1ATKAndMinus1DEF,
+            "The invocation earns 1 ATK and -1 DEF",
+            1,
+            -1
+        ),
+        new DirectAttackAbility(
+            EquipmentAbilityName.DirectAttack,
+            "Invocation card can directly attack player"
+            )
     };
 
     public Dictionary<EquipmentAbilityName, EquipmentAbility> equipmentAbilityDictionary;
