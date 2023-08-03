@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -41,7 +42,7 @@ public class LimitHandCardsEffectAbility : EffectAbility
             var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
                 canvas,
                 "Joueur " + (playerCards.isPlayerOne ? "1" : "2") + " doit enlever " + number + " cartes de sa main",
-                playerCards.handCards,
+                playerCards.handCards.ToList(),
                 multipleCardSelection: true,
                 numberCardInSelection: number
             );

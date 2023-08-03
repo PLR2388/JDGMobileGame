@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LookHandCardsEffectAbility : EffectAbility
@@ -28,7 +29,7 @@ public class LookHandCardsEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var messageBox =
-            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte de l'adversaire", opponentPlayerCard.handCards);
+            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte de l'adversaire", opponentPlayerCard.handCards.ToList());
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             if (playerCards.handCards.Count > 0)
@@ -62,7 +63,7 @@ public class LookHandCardsEffectAbility : EffectAbility
         messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var messageBox2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Carte de l'adversaire à défausser", opponentPlayerCard.handCards);
+                "Carte de l'adversaire à défausser", opponentPlayerCard.handCards.ToList());
             messageBox2.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var opponentCard = messageBox2.GetComponent<MessageBox>().GetSelectedCard();
@@ -74,7 +75,7 @@ public class LookHandCardsEffectAbility : EffectAbility
                 {
                     var messageBox3 =
                         MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à défausser",
-                            playerCards.handCards);
+                            playerCards.handCards.ToList());
                     messageBox3.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var playerCard = messageBox3.GetComponent<MessageBox>().GetSelectedCard();

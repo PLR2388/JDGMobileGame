@@ -82,7 +82,7 @@ namespace Cards.EquipmentCards
                     
                     foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
                     {
-                        equipmentCardEquipmentAbility.ApplyEffect(currentSelectedInvocationCard);
+                        equipmentCardEquipmentAbility.ApplyEffect(currentSelectedInvocationCard, playerCards);
                     }
 
                     currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);

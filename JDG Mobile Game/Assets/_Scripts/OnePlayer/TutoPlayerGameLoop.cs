@@ -94,9 +94,9 @@ namespace OnePlayer
                         var cardNames = putCard.Split('>');
                         PlayerCards playerCards = p1.GetComponent<PlayerCards>();
                         InGameEquipementCard equipmentCard =
-                            playerCards.handCards.Find(elt => elt.Title == cardNames[0]) as InGameEquipementCard;
+                            playerCards.handCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipementCard;
                         InGameInvocationCard invocationCard =
-                            playerCards.invocationCards.First(elt => elt.Title == cardNames[1]);
+                            playerCards.invocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
 
                         if (equipmentCard != null)
                         {
@@ -123,7 +123,7 @@ namespace OnePlayer
                         PlayerCards playerCards = p1.GetComponent<PlayerCards>();
                         foreach (var name in cardNames)
                         {
-                            InGameCard card = playerCards.handCards.Find(elt => elt.Title == name);
+                            InGameCard card = playerCards.handCards.First(elt => elt.Title == name);
                             if (card is InGameInvocationCard invocationCard)
                             {
                                 playerCards.handCards.Remove(card);

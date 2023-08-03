@@ -929,7 +929,7 @@ namespace Cards.EffectCards
                 var numberToGet = handCard1.Count - handCardsNumber;
                 var message = MessageBox.CreateMessageBoxWithCardSelector(canvas,
                     "Choisis " + numberToGet + " cartes à enlever",
-                    handCard1, multipleCardSelection: true, numberCardInSelection: numberToGet);
+                    handCard1.ToList(), multipleCardSelection: true, numberCardInSelection: numberToGet);
 
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
@@ -945,7 +945,7 @@ namespace Cards.EffectCards
                                 currentPlayerCard.yellowCards.Add(card);
                             }
 
-                            ReduceHandOpponentPlayer(handCard2, handCardsNumber);
+                            ReduceHandOpponentPlayer(handCard2.ToList(), handCardsNumber);
                             Destroy(message);
                         }
                         else
@@ -1074,7 +1074,7 @@ namespace Cards.EffectCards
         {
             var handCardOpponent = opponentPlayerCard.handCards;
             MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Voici les cartes de l'adversaire", handCardOpponent, okButton: true);
+                "Voici les cartes de l'adversaire", handCardOpponent.ToList(), okButton: true);
         }
 
         /// <summary>
@@ -1092,7 +1092,7 @@ namespace Cards.EffectCards
                 Destroy(message);
                 var handCardOpponent = opponentPlayerCard.handCards;
                 var message1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                    "Quel carte veux-tu enlever à l'adversaire ?", handCardOpponent);
+                    "Quel carte veux-tu enlever à l'adversaire ?", handCardOpponent.ToList());
                 message1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var cardOpponent = message1.GetComponent<MessageBox>().GetSelectedCard();
@@ -1100,7 +1100,7 @@ namespace Cards.EffectCards
                     Destroy(message1);
                     var handCardPlayer = currentPlayerCard.handCards;
                     var message2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                        "Quel carte veux-tu te défausser?", handCardPlayer);
+                        "Quel carte veux-tu te défausser?", handCardPlayer.ToList());
 
                     message2.GetComponent<MessageBox>().PositiveAction = () =>
                     {

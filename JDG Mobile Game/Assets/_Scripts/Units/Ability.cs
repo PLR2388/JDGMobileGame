@@ -133,7 +133,7 @@ public abstract class Ability
         {
             foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
             {
-                equipmentCardEquipmentAbility.RemoveEffect(deadCard);
+                equipmentCardEquipmentAbility.RemoveEffect(deadCard, playerCards);
             }
             playerCards.yellowCards.Add(equipmentCard);
             deadCard.EquipmentCard = null;

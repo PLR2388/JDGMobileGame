@@ -6,7 +6,8 @@ public enum EquipmentAbilityName
 {
     MultiplyDefBy2ButPreventAttack,
     Earn1ATKAndMinus1DEF,
-    DirectAttack
+    DirectAttack,
+    EarnOneQuarterATKPerHandCards
 }
 
 public abstract class EquipmentAbility
@@ -15,7 +16,7 @@ public abstract class EquipmentAbility
 
     protected string Description { get; set; }
 
-    public virtual void ApplyEffect(InGameInvocationCard invocationCard)
+    public virtual void ApplyEffect(InGameInvocationCard invocationCar, PlayerCards playerCards)
     {
         
     }
@@ -25,7 +26,12 @@ public abstract class EquipmentAbility
         
     }
 
-    public virtual void RemoveEffect(InGameInvocationCard invocationCard)
+    public virtual void OnHandCardsChange(InGameInvocationCard invocationCard, PlayerCards playerCards, int delta)
+    {
+        
+    }
+
+    public virtual void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
     {
         
     }

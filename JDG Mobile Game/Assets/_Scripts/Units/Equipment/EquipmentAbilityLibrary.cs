@@ -20,7 +20,14 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
         new DirectAttackAbility(
             EquipmentAbilityName.DirectAttack,
             "Invocation card can directly attack player"
-            )
+        ),
+        new EarnAtkDefAbility(
+            EquipmentAbilityName.EarnOneQuarterATKPerHandCards,
+            "Invocation earns 0.25 ATK per hands in his hand",
+            0.25f,
+            0f,
+            true
+        )
     };
 
     public Dictionary<EquipmentAbilityName, EquipmentAbility> equipmentAbilityDictionary;

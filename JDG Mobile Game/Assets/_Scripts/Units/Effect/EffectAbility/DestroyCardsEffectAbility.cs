@@ -124,7 +124,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                     {
                         var messageBox1 =
                             MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à enlever de la main",
-                                handCards);
+                                handCards.ToList());
                         messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                         {
                             var handCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
@@ -199,7 +199,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                 var handCards = playerCards.handCards;
                 var messageBox =
                     MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à enlever de la main",
-                        handCards);
+                        handCards.ToList());
                 messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var handCard = messageBox.GetComponent<MessageBox>().GetSelectedCard();

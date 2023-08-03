@@ -7,26 +7,55 @@ public class EarnAtkDefAbility : EquipmentAbility
 {
     private float defense;
     private float attack;
+
+    private bool handCardNumber;
     
-    public EarnAtkDefAbility(EquipmentAbilityName name, string description, float bonusAtk, float bonusDef)
+    public EarnAtkDefAbility(EquipmentAbilityName name, string description, float bonusAtk, float bonusDef, bool handCardNumber = false)
     {
         Name = name;
         Description = description;
         defense = bonusDef;
         attack = bonusAtk;
+        this.handCardNumber = handCardNumber;
     }
 
-    public override void ApplyEffect(InGameInvocationCard invocationCard)
+    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
     {
-        base.ApplyEffect(invocationCard);
-        invocationCard.Attack += attack;
-        invocationCard.Defense += defense;
+        base.ApplyEffect(invocationCard, playerCards);
+        if (handCardNumber)
+        {
+            invocationCard.Attack += attack * playerCards.handCards.Count;
+            invocationCard.Defense += defense * playerCards.handCards.Count;
+        }
+        else
+        {
+            invocationCard.Attack += attack;
+            invocationCard.Defense += defense;
+        }
     }
 
-    public override void RemoveEffect(InGameInvocationCard invocationCard)
+    public override void OnHandCardsChange(InGameInvocationCard invocationCard, PlayerCards playerCards, int delta)
     {
-        base.RemoveEffect(invocationCard);
-        invocationCard.Attack -= attack;
-        invocationCard.Defense -= defense;
+        base.OnHandCardsChange(invocationCard, playerCards, delta);
+        if (handCardNumber)
+        {
+            invocationCard.Attack += attack * delta;
+            invocationCard.Defense += defense * delta;
+        }
+    }
+
+    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    {
+        base.RemoveEffect(invocationCard, playerCards);
+        if (handCardNumber)
+        {
+            invocationCard.Attack += attack * playerCards.handCards.Count;
+            invocationCard.Defense += defense * playerCards.handCards.Count;
+        }
+        else
+        {
+            invocationCard.Attack -= attack;
+            invocationCard.Defense -= defense;
+        }
     }
 }
