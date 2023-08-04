@@ -30,7 +30,14 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
         ),
         new PreventAttackNewOpponentInvocationAbility(
             EquipmentAbilityName.PreventNewOpponentToAttack,
-            "Prevent a freshly opponent invoke invocation to attack")
+            "Prevent a freshly opponent invoke invocation to attack"
+        ),
+        new EarnAtkDefAbility(
+            EquipmentAbilityName.Remove1ATKAnd1DEF,
+            "Invocation looses 1 ATK and 1 DEF",
+            -1,
+            -1
+        )
     };
 
     public Dictionary<EquipmentAbilityName, EquipmentAbility> equipmentAbilityDictionary;

@@ -8,7 +8,8 @@ public enum EquipmentAbilityName
     Earn1ATKAndMinus1DEF,
     DirectAttack,
     EarnOneQuarterATKPerHandCards,
-    PreventNewOpponentToAttack
+    PreventNewOpponentToAttack,
+    Remove1ATKAnd1DEF
 }
 
 public abstract class EquipmentAbility
