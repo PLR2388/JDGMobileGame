@@ -294,11 +294,11 @@ public class PlayerCards : MonoBehaviour
     {
         var equipmentCard = specificCardFound.EquipmentCard;
         specificCardFound.IncrementNumberDeaths();
+        var opponentPlayerCards = isPlayerOne
+            ? GameObject.Find("Player2").GetComponent<PlayerCards>()
+            : GameObject.Find("Player1").GetComponent<PlayerCards>();
         if (specificCardFound.IsControlled)
         {
-            var opponentPlayerCards = isPlayerOne
-                ? GameObject.Find("Player2").GetComponent<PlayerCards>()
-                : GameObject.Find("Player1").GetComponent<PlayerCards>();
             opponentPlayerCards.secretCards.Remove(specificCardFound);
             opponentPlayerCards.yellowCards.Add(specificCardFound);
             if (equipmentCard != null)
@@ -306,7 +306,7 @@ public class PlayerCards : MonoBehaviour
                 opponentPlayerCards.yellowCards.Add(equipmentCard);
                 foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
                 {
-                    equipmentCardEquipmentAbility.RemoveEffect(specificCardFound, this);
+                    equipmentCardEquipmentAbility.RemoveEffect(specificCardFound, this, opponentPlayerCards);
                 }
             }
 
@@ -317,7 +317,7 @@ public class PlayerCards : MonoBehaviour
             var abilities = specificCardFound.Abilities;
             foreach (var ability in abilities)
             {
-                ability.OnCardDeath(canvas, specificCardFound, opponentPlayerCards);
+                ability.OnCardDeath(canvas, specificCardFound, opponentPlayerCards, this);
             }
 
 
@@ -356,14 +356,14 @@ public class PlayerCards : MonoBehaviour
                 yellowCards.Add(equipmentCard);
                 foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
                 {
-                    equipmentCardEquipmentAbility.RemoveEffect(specificCardFound, this);
+                    equipmentCardEquipmentAbility.RemoveEffect(specificCardFound, this, opponentPlayerCards);
                 }
             }
 
             var abilities = specificCardFound.Abilities;
             foreach (var ability in abilities)
             {
-                ability.OnCardDeath(canvas, specificCardFound, this);
+                ability.OnCardDeath(canvas, specificCardFound, this, opponentPlayerCards);
             }
 
             /*if (specificCardFound.InvocationDeathEffect == null) return;
@@ -536,6 +536,16 @@ public class PlayerCards : MonoBehaviour
         var opponentPlayerCard = isPlayerOne
             ? GameObject.Find("Player2").GetComponent<PlayerCards>()
             : GameObject.Find("Player1").GetComponent<PlayerCards>();
+
+        foreach (var inGameInvocationCard in opponentPlayerCard.invocationCards)
+        {
+            var equipmentCard = inGameInvocationCard.EquipmentCard;
+            if (equipmentCard == null) continue;
+            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+            {
+                equipmentCardEquipmentAbility.OnOpponentInvocationCardAdded(newInvocationCard);
+            }
+        }
 
         var opponentEffectCards = opponentPlayerCard.effectCards;
 
@@ -1161,9 +1171,12 @@ public class PlayerCards : MonoBehaviour
             invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
             invocationCard.FreeCard();
             invocationCard.ResetNewTurn();
+            var opponentPlayerCard = isPlayerOne
+                ? GameObject.Find("Player2").GetComponent<PlayerCards>()
+                : GameObject.Find("Player1").GetComponent<PlayerCards>();
             foreach (var t in invocationCard.Abilities)
             {
-                t.OnCardDeath(canvas, invocationCard, this);
+                t.OnCardDeath(canvas, invocationCard, this, opponentPlayerCard);
             }
         }
     }

@@ -769,6 +769,7 @@ public class GameLoop : MonoBehaviour
     protected void ComputeGoodAttack(float diff)
     {
         var playerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
 
         playerStatus.ChangePv(diff);
@@ -779,7 +780,7 @@ public class GameLoop : MonoBehaviour
         {
             foreach (var ability in abilities)
             {
-                ability.OnCardDeath(canvas, opponent, playerCards);
+                ability.OnCardDeath(canvas, opponent, playerCards, opponentPlayerCards);
             }
         }
         else
@@ -861,6 +862,7 @@ public class GameLoop : MonoBehaviour
     protected void ComputeHurtAttack(float diff)
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
 
         attacker.IncrementNumberDeaths();
@@ -871,7 +873,7 @@ public class GameLoop : MonoBehaviour
         {
             foreach (var ability in abilities)
             {
-                ability.OnCardDeath(canvas, attacker, playerCards);
+                ability.OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
             }
         }
         else
@@ -1000,13 +1002,14 @@ public class GameLoop : MonoBehaviour
     protected void ComputeEqualityOpponent()
     {
         var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
 
         var abilities = opponent.Abilities;
         if (abilities.Count > 0)
         {
             foreach (var ability in abilities)
             {
-                ability.OnCardDeath(canvas, opponent, playerCard);
+                ability.OnCardDeath(canvas, opponent, playerCard, opponentPlayerCards);
             }
         }
         else
@@ -1037,13 +1040,14 @@ public class GameLoop : MonoBehaviour
     protected void ComputeEqualityAttacker()
     {
         var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
 
         var abilities = attacker.Abilities;
         if (abilities.Count > 0)
         {
             foreach (var ability in abilities)
             {
-                ability.OnCardDeath(canvas, attacker, playerCard);
+                ability.OnCardDeath(canvas, attacker, playerCard, opponentPlayerCards);
             }
         }
         else

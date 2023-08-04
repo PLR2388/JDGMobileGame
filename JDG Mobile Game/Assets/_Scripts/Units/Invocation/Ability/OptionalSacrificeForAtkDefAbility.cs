@@ -34,7 +34,8 @@ public class OptionalSacrificeForAtkDefAbility : Ability
         {
             GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Augmentation de stats",
                 "Veux-tu sacrifier " +
-                cardNameToSacrifice + " pour augmenter l'attaque à " + newAtk + " et la défense à " + newDef + " de "+ cardName +" ?");
+                cardNameToSacrifice + " pour augmenter l'attaque à " + newAtk + " et la défense à " + newDef + " de " +
+                cardName + " ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 InGameInvocationCard invocationCardToSacrifice =
@@ -49,17 +50,15 @@ public class OptionalSacrificeForAtkDefAbility : Ability
 
                 Object.Destroy(messageBox);
             };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-            };
+            messageBox.GetComponent<MessageBox>().NegativeAction = () => { Object.Destroy(messageBox); };
         }
     }
 
-    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
     {
         deadCard.Attack = deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;
         deadCard.Defense = deadCard.baseInvocationCard.BaseInvocationCardStats.Defense;
-        return base.OnCardDeath(canvas, deadCard, playerCards);
+        return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
     }
 }

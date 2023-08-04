@@ -44,9 +44,9 @@ public class MultiplyAtkDefAbility : EquipmentAbility
         }
     }
 
-    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        base.RemoveEffect(invocationCard, playerCards);
+        base.RemoveEffect(invocationCard, playerCards, opponentPlayerCards);
         
         invocationCard.Attack /= atkFactor;
         invocationCard.Defense /= defenseFactor;

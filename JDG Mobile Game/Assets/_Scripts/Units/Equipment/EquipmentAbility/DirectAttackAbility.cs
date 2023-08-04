@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class DirectAttackAbility : EquipmentAbility
 {
-
     public DirectAttackAbility(EquipmentAbilityName name, string description)
     {
         Name = name;
@@ -18,9 +17,10 @@ public class DirectAttackAbility : EquipmentAbility
         invocationCard.CanDirectAttack = true;
     }
 
-    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
     {
-        base.RemoveEffect(invocationCard, playerCards);
+        base.RemoveEffect(invocationCard, playerCards, opponentPlayerCards);
         invocationCard.CanDirectAttack = true;
     }
 }

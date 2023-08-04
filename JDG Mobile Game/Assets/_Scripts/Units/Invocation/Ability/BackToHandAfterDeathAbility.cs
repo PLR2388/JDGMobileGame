@@ -15,9 +15,9 @@ public class BackToHandAfterDeathAbility : Ability
         this.numberDeathMax = numberDeathMax;
     }
 
-    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
     {
-        var value = base.OnCardDeath(canvas, deadCard, playerCards);
+        var value = base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
         if (deadCard.Title == cardName && (numberDeathMax == 0 || deadCard.NumberOfDeaths < numberDeathMax) && !playerCards.handCards.Contains(deadCard))
         {
             playerCards.yellowCards.Remove(deadCard);

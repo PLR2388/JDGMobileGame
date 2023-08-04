@@ -27,7 +27,10 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             0.25f,
             0f,
             true
-        )
+        ),
+        new PreventAttackNewOpponentInvocationAbility(
+            EquipmentAbilityName.PreventNewOpponentToAttack,
+            "Prevent a freshly opponent invoke invocation to attack")
     };
 
     public Dictionary<EquipmentAbilityName, EquipmentAbility> equipmentAbilityDictionary;

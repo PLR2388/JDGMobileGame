@@ -81,17 +81,17 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         };
     }
 
-    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
     {
         if (deadCard.Receiver != null)
         {
             var receiverInvocationCard =
                 playerCards.invocationCards.FirstOrDefault(card => card.Title == deadCard.Receiver);
             deadCard.Receiver = null;
-            if (receiverInvocationCard == null) return base.OnCardDeath(canvas, deadCard, playerCards);
+            if (receiverInvocationCard == null) return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
             receiverInvocationCard.Attack -= deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;
             receiverInvocationCard.Defense -= deadCard.baseInvocationCard.BaseInvocationCardStats.Defense;
         }
-        return base.OnCardDeath(canvas, deadCard, playerCards);
+        return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
     }
 }

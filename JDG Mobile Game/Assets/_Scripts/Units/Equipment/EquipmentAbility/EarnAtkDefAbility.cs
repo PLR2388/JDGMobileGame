@@ -44,9 +44,9 @@ public class EarnAtkDefAbility : EquipmentAbility
         }
     }
 
-    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
     {
-        base.RemoveEffect(invocationCard, playerCards);
+        base.RemoveEffect(invocationCard, playerCards, opponentPlayerCards);
         if (handCardNumber)
         {
             invocationCard.Attack += attack * playerCards.handCards.Count;

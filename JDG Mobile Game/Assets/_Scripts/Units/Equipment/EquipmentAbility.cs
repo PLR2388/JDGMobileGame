@@ -7,7 +7,8 @@ public enum EquipmentAbilityName
     MultiplyDefBy2ButPreventAttack,
     Earn1ATKAndMinus1DEF,
     DirectAttack,
-    EarnOneQuarterATKPerHandCards
+    EarnOneQuarterATKPerHandCards,
+    PreventNewOpponentToAttack
 }
 
 public abstract class EquipmentAbility
@@ -31,7 +32,12 @@ public abstract class EquipmentAbility
         
     }
 
-    public virtual void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public virtual void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,  PlayerCards opponentPlayerCards)
+    {
+        
+    }
+
+    public virtual void OnOpponentInvocationCardAdded(InGameInvocationCard invocationCard)
     {
         
     }

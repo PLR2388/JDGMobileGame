@@ -17,7 +17,7 @@ public class GetSpecificCardAfterDeathAbility : GetSpecificCardFromDeckAbility
     {
     }
 
-    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
     {
         // TODO: Test if "if" can be removed
         if (deadCard.Title == cardWhichDeadName)
@@ -25,6 +25,6 @@ public class GetSpecificCardAfterDeathAbility : GetSpecificCardFromDeckAbility
             GetSpecificCard(canvas, playerCards);
         }
 
-        return base.OnCardDeath(canvas, deadCard, playerCards);
+        return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
     }
 }

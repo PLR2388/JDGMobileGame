@@ -103,7 +103,7 @@ public abstract class Ability
         float resultAttack = attackedCard.Defense - attacker.Attack;
         if (resultAttack > 0)
         {
-            var value = OnCardDeath(canvas, attacker, playerCards);
+            var value = OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
             if (value)
             {
                 currentPlayerStatus.ChangePv(-resultAttack);
@@ -111,12 +111,12 @@ public abstract class Ability
         }
         else if (resultAttack == 0)
         {
-            OnCardDeath(canvas, attacker, playerCards);
-            OnCardDeath(canvas, attackedCard, opponentPlayerCards);
+            OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
+            OnCardDeath(canvas, attackedCard, opponentPlayerCards, playerCards);
         }
         else
         {
-            var value = OnCardDeath(canvas, attackedCard, opponentPlayerCards);
+            var value = OnCardDeath(canvas, attackedCard, opponentPlayerCards, playerCards);
             if (value)
             {
                 opponentPlayerStatus.ChangePv(resultAttack);
@@ -125,7 +125,7 @@ public abstract class Ability
     }
 
     // Call when the current card having a ability die
-    public virtual bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards)
+    public virtual bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         if (playerCards.yellowCards.Contains(deadCard)) return false;
         var equipmentCard = deadCard.EquipmentCard;
@@ -133,7 +133,7 @@ public abstract class Ability
         {
             foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
             {
-                equipmentCardEquipmentAbility.RemoveEffect(deadCard, playerCards);
+                equipmentCardEquipmentAbility.RemoveEffect(deadCard, playerCards, opponentPlayerCards);
             }
             playerCards.yellowCards.Add(equipmentCard);
             deadCard.EquipmentCard = null;
