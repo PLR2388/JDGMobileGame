@@ -56,6 +56,12 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             EquipmentAbilityName.SetDefToZero,
             "Invocation now has a DEF of 0",
             def: 0
+        ),
+        new EarnAtkDefAbility(
+            EquipmentAbilityName.Earn2ATK,
+            "Invocation earns 2 ATK",
+            2,
+            0
         )
     };
 

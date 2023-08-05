@@ -13,7 +13,8 @@ public enum EquipmentAbilityName
     SetATKToOne,
     CantBeAttackByOtherInvocations,
     SetDefToZero,
-    MultiplyAtkBy3
+    MultiplyAtkBy3,
+    Earn2ATK
 }
 
 public abstract class EquipmentAbility
