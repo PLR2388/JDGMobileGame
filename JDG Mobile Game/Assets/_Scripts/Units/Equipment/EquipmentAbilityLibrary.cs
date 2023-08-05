@@ -46,6 +46,16 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
         new CantBeAttackDestroyByInvocationAbility(
             EquipmentAbilityName.CantBeAttackByOtherInvocations,
             "Invocation can't be attacked or destroyed by another invocation"
+        ),
+        new MultiplyAtkDefAbility(
+            EquipmentAbilityName.MultiplyAtkBy3,
+            "Multiply ATK by 3",
+            3
+        ),
+        new SetAtkDefAbility(
+            EquipmentAbilityName.SetDefToZero,
+            "Invocation now has a DEF of 0",
+            def: 0
         )
     };
 

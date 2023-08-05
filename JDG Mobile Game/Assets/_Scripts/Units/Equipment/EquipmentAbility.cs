@@ -11,7 +11,9 @@ public enum EquipmentAbilityName
     PreventNewOpponentToAttack,
     Remove1ATKAnd1DEF,
     SetATKToOne,
-    CantBeAttackByOtherInvocations
+    CantBeAttackByOtherInvocations,
+    SetDefToZero,
+    MultiplyAtkBy3
 }
 
 public abstract class EquipmentAbility
