@@ -9,7 +9,8 @@ public enum EquipmentAbilityName
     DirectAttack,
     EarnOneQuarterATKPerHandCards,
     PreventNewOpponentToAttack,
-    Remove1ATKAnd1DEF
+    Remove1ATKAnd1DEF,
+    SetATKToOne
 }
 
 public abstract class EquipmentAbility
@@ -18,7 +19,7 @@ public abstract class EquipmentAbility
 
     protected string Description { get; set; }
 
-    public virtual void ApplyEffect(InGameInvocationCard invocationCar, PlayerCards playerCards)
+    public virtual void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
     {
         
     }

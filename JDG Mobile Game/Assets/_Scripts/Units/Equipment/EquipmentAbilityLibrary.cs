@@ -37,6 +37,11 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             "Invocation looses 1 ATK and 1 DEF",
             -1,
             -1
+        ),
+        new SetAtkDefAbility(
+            EquipmentAbilityName.SetATKToOne,
+            "Invocation now has an ATK of 1",
+            1f
         )
     };
 
