@@ -74,6 +74,12 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             "Invocation earns 1 ATK and 1 DEF",
             1,
             1
+        ),
+        new MultiplyAtkDefAbility(
+            EquipmentAbilityName.MultiplyAtkBy2AndDefByHalf,
+            "Multiply ATK by 2 and DEF by 1/2",
+            2,
+            0.5f
         )
     };
 
