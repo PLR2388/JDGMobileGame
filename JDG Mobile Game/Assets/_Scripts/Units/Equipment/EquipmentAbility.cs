@@ -15,7 +15,8 @@ public enum EquipmentAbilityName
     SetDefToZero,
     MultiplyAtkBy3,
     Earn2ATK,
-    Earn3ATKAndMinus1DEF
+    Earn3ATKAndMinus1DEF,
+    Earn1ATKAnd1DEF
 }
 
 public abstract class EquipmentAbility

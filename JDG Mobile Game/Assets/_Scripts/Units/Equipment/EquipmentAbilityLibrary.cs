@@ -65,9 +65,15 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
         ),
         new EarnAtkDefAbility(
             EquipmentAbilityName.Earn3ATKAndMinus1DEF,
-            "Invocations ears 3 ATK and -1 DEF",
+            "Invocation ears 3 ATK and -1 DEF",
             3,
             -1
+        ),
+        new EarnAtkDefAbility(
+            EquipmentAbilityName.Earn1ATKAnd1DEF,
+            "Invocation earns 1 ATK and 1 DEF",
+            1,
+            1
         )
     };
 
