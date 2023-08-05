@@ -42,6 +42,10 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             EquipmentAbilityName.SetATKToOne,
             "Invocation now has an ATK of 1",
             1f
+        ),
+        new CantBeAttackDestroyByInvocationAbility(
+            EquipmentAbilityName.CantBeAttackByOtherInvocations,
+            "Invocation can't be attacked or destroyed by another invocation"
         )
     };
 

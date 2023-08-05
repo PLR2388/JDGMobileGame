@@ -10,7 +10,8 @@ public enum EquipmentAbilityName
     EarnOneQuarterATKPerHandCards,
     PreventNewOpponentToAttack,
     Remove1ATKAnd1DEF,
-    SetATKToOne
+    SetATKToOne,
+    CantBeAttackByOtherInvocations
 }
 
 public abstract class EquipmentAbility
