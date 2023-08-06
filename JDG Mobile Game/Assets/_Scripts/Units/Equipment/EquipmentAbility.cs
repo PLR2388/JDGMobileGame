@@ -17,7 +17,8 @@ public enum EquipmentAbilityName
     Earn2ATK,
     Earn3ATKAndMinus1DEF,
     Earn1ATKAnd1DEF,
-    MultiplyAtkBy2AndDefByHalf
+    MultiplyAtkBy2AndDefByHalf,
+    EarnOneQuarterDEFPerHandCards,
 }
 
 public abstract class EquipmentAbility

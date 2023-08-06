@@ -19,6 +19,4 @@ MonoBehaviour:
   type: 2
   materialCard: {fileID: 2100000, guid: 58f90f48908bf27479e8e046a2e1407b, type: 2}
   collector: 0
-  equipmentInstantEffect: {fileID: 0}
-  equipmentPermEffect: {fileID: 11400000, guid: 3d71e077697b8f04dbe8be8420faf31f,
-    type: 2}
+  EquipmentAbilities: 0e000000

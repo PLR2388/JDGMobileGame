@@ -80,6 +80,13 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             "Multiply ATK by 2 and DEF by 1/2",
             2,
             0.5f
+        ),
+        new EarnAtkDefAbility(
+            EquipmentAbilityName.EarnOneQuarterDEFPerHandCards,
+            "Invocation earns 0.25 DEF per hands in his hand",
+            0,
+            0.25f,
+            true
         )
     };
 
