@@ -116,9 +116,9 @@ public class InGameMenuScript : MonoBehaviour
                     playerCard.invocationCards.Count(inGameInvocationCard =>
                         inGameInvocationCard.EquipmentCard == null) > 0 ||
                     opponentPlayerCard.invocationCards.Count(inGameInvocationCard =>
-                        inGameInvocationCard.EquipmentCard == null) > 0;
-                    // TODO Add here special case for switch equipment ability
-                //  InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
+                        inGameInvocationCard.EquipmentCard == null) > 0 ||
+                    equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut)
+                    ;
                 break;
             case CardType.Field:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";

@@ -19,9 +19,9 @@ public class EarnAtkDefAbility : EquipmentAbility
         this.handCardNumber = handCardNumber;
     }
 
-    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        base.ApplyEffect(invocationCard, playerCards);
+        base.ApplyEffect(invocationCard, playerCards, opponentPlayerCards);
         if (handCardNumber)
         {
             invocationCard.Attack += attack * playerCards.handCards.Count;
@@ -49,8 +49,8 @@ public class EarnAtkDefAbility : EquipmentAbility
         base.RemoveEffect(invocationCard, playerCards, opponentPlayerCards);
         if (handCardNumber)
         {
-            invocationCard.Attack += attack * playerCards.handCards.Count;
-            invocationCard.Defense += defense * playerCards.handCards.Count;
+            invocationCard.Attack -= attack * playerCards.handCards.Count;
+            invocationCard.Defense -= defense * playerCards.handCards.Count;
         }
         else
         {

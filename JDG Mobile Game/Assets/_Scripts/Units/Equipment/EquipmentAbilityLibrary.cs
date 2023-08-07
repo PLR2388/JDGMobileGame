@@ -87,7 +87,11 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             0,
             0.25f,
             true
-        )
+        ),
+        new SwitchEquipmentCardAbility(
+            EquipmentAbilityName.SwitchEquipmentCard,
+            "Player can replace an equipment card by this one and add the previous to the yellow trash"
+            )
     };
 
     public Dictionary<EquipmentAbilityName, EquipmentAbility> equipmentAbilityDictionary;

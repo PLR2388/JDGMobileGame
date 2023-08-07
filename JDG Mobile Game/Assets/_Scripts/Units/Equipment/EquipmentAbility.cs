@@ -1,5 +1,3 @@
-
-
 using _Scripts.Units.Invocation;
 
 public enum EquipmentAbilityName
@@ -19,6 +17,7 @@ public enum EquipmentAbilityName
     Earn1ATKAnd1DEF,
     MultiplyAtkBy2AndDefByHalf,
     EarnOneQuarterDEFPerHandCards,
+    SwitchEquipmentCard
 }
 
 public abstract class EquipmentAbility
@@ -27,28 +26,28 @@ public abstract class EquipmentAbility
 
     protected string Description { get; set; }
 
-    public virtual void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public bool CanAlwaysBePut = false;
+
+    public virtual void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
+
     {
-        
     }
 
     public virtual void OnTurnStart(InGameInvocationCard invocationCard)
     {
-        
     }
 
     public virtual void OnHandCardsChange(InGameInvocationCard invocationCard, PlayerCards playerCards, int delta)
     {
-        
     }
 
-    public virtual void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,  PlayerCards opponentPlayerCards)
+    public virtual void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
     {
-        
     }
 
     public virtual void OnOpponentInvocationCardAdded(InGameInvocationCard invocationCard)
     {
-        
     }
 }

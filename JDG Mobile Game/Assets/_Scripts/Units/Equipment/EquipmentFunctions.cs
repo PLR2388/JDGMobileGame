@@ -70,7 +70,7 @@ namespace Cards.EquipmentCards
             var currentInvocationCards = playerCards.invocationCards;
             var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
 
-            var message = DisplayEquipmentMessageBox(invocationCards);
+            var message = DisplayEquipmentMessageBox(invocationCards, equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut));
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
@@ -82,7 +82,7 @@ namespace Cards.EquipmentCards
                     
                     foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
                     {
-                        equipmentCardEquipmentAbility.ApplyEffect(currentSelectedInvocationCard, playerCards);
+                        equipmentCardEquipmentAbility.ApplyEffect(currentSelectedInvocationCard, playerCards, OpponentPlayerCard);
                     }
 
                     currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
@@ -104,12 +104,12 @@ namespace Cards.EquipmentCards
         /// <param name="invocationCards">invocation card allow to receive equipment card</param>
         /// <param name="equipmentInstantEffect">equipmentCard instant effect to test if it authorizes invocations with equipment</param>
         /// </summary>
-        private GameObject DisplayEquipmentMessageBox(IEnumerable<InGameInvocationCard> invocationCards)
+        private GameObject DisplayEquipmentMessageBox(IEnumerable<InGameInvocationCard> invocationCards, bool addAll)
         {
             var cards = new List<InGameCard>();
             foreach (var invocationCard in invocationCards)
             {
-                if (invocationCard.EquipmentCard == null)
+                if (addAll || invocationCard.EquipmentCard == null)
                 {
                     cards.Add(invocationCard);
                 }

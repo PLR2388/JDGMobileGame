@@ -19,9 +19,10 @@ public class SetAtkDefAbility : EquipmentAbility
         this.def = def;
     }
 
-    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
     {
-        base.ApplyEffect(invocationCard, playerCards);
+        base.ApplyEffect(invocationCard, playerCards, opponentPlayerCards);
         previousAtk = invocationCard.Attack;
         previousDef = invocationCard.Defense;
         if (atk != null)
@@ -35,7 +36,8 @@ public class SetAtkDefAbility : EquipmentAbility
         }
     }
 
-    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
     {
         base.RemoveEffect(invocationCard, playerCards, opponentPlayerCards);
         if (atk != null)

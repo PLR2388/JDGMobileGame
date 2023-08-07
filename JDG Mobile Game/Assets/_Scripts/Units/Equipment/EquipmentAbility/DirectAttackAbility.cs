@@ -11,9 +11,9 @@ public class DirectAttackAbility : EquipmentAbility
         Description = description;
     }
 
-    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        base.ApplyEffect(invocationCard, playerCards);
+        base.ApplyEffect(invocationCard, playerCards,opponentPlayerCards);
         invocationCard.CanDirectAttack = true;
     }
 

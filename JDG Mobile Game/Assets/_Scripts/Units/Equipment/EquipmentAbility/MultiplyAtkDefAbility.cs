@@ -21,9 +21,9 @@ public class MultiplyAtkDefAbility : EquipmentAbility
         this.preventAttack = preventAttack;
     }
 
-    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    public override void ApplyEffect(InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        base.ApplyEffect(invocationCard, playerCards);
+        base.ApplyEffect(invocationCard, playerCards, opponentPlayerCards);
         
         invocationCard.Attack *= atkFactor;
         invocationCard.Defense *= defenseFactor;
