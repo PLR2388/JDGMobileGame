@@ -91,7 +91,13 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
         new SwitchEquipmentCardAbility(
             EquipmentAbilityName.SwitchEquipmentCard,
             "Player can replace an equipment card by this one and add the previous to the yellow trash"
-            )
+        ),
+        new EarnAtkDefAbility(
+            EquipmentAbilityName.Loose2ATK,
+            "Invocation looses 2 ATK",
+            -2,
+            0
+        )
     };
 
     public Dictionary<EquipmentAbilityName, EquipmentAbility> equipmentAbilityDictionary;

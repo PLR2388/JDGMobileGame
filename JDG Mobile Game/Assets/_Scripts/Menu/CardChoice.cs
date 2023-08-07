@@ -148,7 +148,7 @@ namespace Menu
             deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
             deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
             deck1.Add(GetSpecificCard("Captain URSSAF", deck1AllCard));
-            deck1.Add(GetSpecificCard("Parachute doré", deck1AllCard));
+            deck1.Add(GetSpecificCard("Tatouage goldé", deck1AllCard));
 
             while (deck1.Count != 30)
             {
