@@ -1,3 +1,4 @@
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -103,25 +104,56 @@ public abstract class Ability
         float resultAttack = attackedCard.Defense - attacker.Attack;
         if (resultAttack > 0)
         {
-            var value = OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
-            if (value)
+            var isProtected = IsEquipmentCardProtect(attacker, playerCards);
+
+            if (isProtected == false)
             {
-                currentPlayerStatus.ChangePv(-resultAttack);
+                var value = OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
+                if (value)
+                {
+                    currentPlayerStatus.ChangePv(-resultAttack);
+                }
             }
         }
         else if (resultAttack == 0)
         {
-            OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
-            OnCardDeath(canvas, attackedCard, opponentPlayerCards, playerCards);
+            var isProtectedAttacker = IsEquipmentCardProtect(attacker, playerCards);
+            var isProtectedAttacked = IsEquipmentCardProtect(attackedCard, opponentPlayerCards);
+            if (!isProtectedAttacked)
+            {
+                OnCardDeath(canvas, attackedCard, opponentPlayerCards, playerCards);
+            }
+
+            if (!isProtectedAttacker)
+            {
+                OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
+            }
         }
         else
         {
-            var value = OnCardDeath(canvas, attackedCard, opponentPlayerCards, playerCards);
-            if (value)
+            var isProtected = IsEquipmentCardProtect(attackedCard, opponentPlayerCards);
+            if (!isProtected)
             {
-                opponentPlayerStatus.ChangePv(resultAttack);
+                var value = OnCardDeath(canvas, attackedCard, opponentPlayerCards, playerCards);
+                if (value)
+                {
+                    opponentPlayerStatus.ChangePv(resultAttack);
+                }
             }
+   
         }
+    }
+
+    private bool IsEquipmentCardProtect(InGameInvocationCard attacker, PlayerCards playerCards)
+    {
+        var equipmentCard = attacker.EquipmentCard;
+        var isProtected = false;
+        if (equipmentCard != null)
+        {
+            isProtected = equipmentCard.EquipmentAbilities.Any(ability => ability.OnInvocationPreDestroy(attacker, playerCards) == false);
+        }
+
+        return isProtected;
     }
 
     // Call when the current card having a ability die

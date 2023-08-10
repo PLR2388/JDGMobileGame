@@ -144,11 +144,11 @@ namespace Menu
             var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
             var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
 
-            deck2.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck2AllCard));
-            deck1.Add(GetSpecificCard("Patron D'Infogrames", deck1AllCard));
+            deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck1AllCard));
+            deck1.Add(GetSpecificCard("Mohammad", deck1AllCard));
             deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
             deck1.Add(GetSpecificCard("Captain URSSAF", deck1AllCard));
-            deck1.Add(GetSpecificCard("Tatouage goldé", deck1AllCard));
+            deck1.Add(GetSpecificCard("Turbo Cradozaure", deck1AllCard));
 
             while (deck1.Count != 30)
             {

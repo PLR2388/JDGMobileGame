@@ -18,7 +18,8 @@ public enum EquipmentAbilityName
     MultiplyAtkBy2AndDefByHalf,
     EarnOneQuarterDEFPerHandCards,
     SwitchEquipmentCard,
-    Loose2ATK
+    Loose2ATK,
+    ProtectOneTimeFromDestruction
 }
 
 public abstract class EquipmentAbility
@@ -50,5 +51,13 @@ public abstract class EquipmentAbility
 
     public virtual void OnOpponentInvocationCardAdded(InGameInvocationCard invocationCard)
     {
+    }
+
+    /**
+     * Return true if invocation is destroyed
+     */
+    public virtual bool OnInvocationPreDestroy(InGameInvocationCard invocationCard, PlayerCards playerCards)
+    {
+        return true;
     }
 }

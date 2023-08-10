@@ -97,6 +97,10 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             "Invocation looses 2 ATK",
             -2,
             0
+        ),
+        new ProtectFromDestructionAbility(
+            EquipmentAbilityName.ProtectOneTimeFromDestruction,
+            "Equipment is destroyed instead of the invocation if the invocationCard should be destroyed"
         )
     };
 
