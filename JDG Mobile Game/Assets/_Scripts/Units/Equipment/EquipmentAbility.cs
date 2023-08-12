@@ -19,7 +19,8 @@ public enum EquipmentAbilityName
     EarnOneQuarterDEFPerHandCards,
     SwitchEquipmentCard,
     Loose2ATK,
-    ProtectOneTimeFromDestruction
+    ProtectOneTimeFromDestruction,
+    CancelInvocationAbility
 }
 
 public abstract class EquipmentAbility

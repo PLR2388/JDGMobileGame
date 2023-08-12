@@ -101,6 +101,10 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
         new ProtectFromDestructionAbility(
             EquipmentAbilityName.ProtectOneTimeFromDestruction,
             "Equipment is destroyed instead of the invocation if the invocationCard should be destroyed"
+        ),
+        new CancelInvocationAbility(
+            EquipmentAbilityName.CancelInvocationAbility,
+            "Invocation whose has this equipment card loose its abilities"
         )
     };
 

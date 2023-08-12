@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
@@ -74,9 +75,21 @@ public abstract class Ability
 
     public bool IsAction { get; protected set; }
 
+    protected InGameInvocationCard invocationCard;
+
+    public InGameInvocationCard InvocationCard
+    {
+        set => invocationCard = value;
+    }
+
     // Called when invocation card is put on field without special invocation
     public virtual void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
+    }
+
+    public virtual void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        
     }
 
     // Called when a turn start
@@ -140,7 +153,6 @@ public abstract class Ability
                     opponentPlayerStatus.ChangePv(resultAttack);
                 }
             }
-   
         }
     }
 
@@ -181,7 +193,7 @@ public abstract class Ability
     public virtual bool IsActionPossible(InGameInvocationCard currentCard, PlayerCards playerCards,
         PlayerCards opponentCards)
     {
-        return true;
+        return !invocationCard.CancelEffect;
     }
 
     public virtual void OnCardActionTouched(Transform canvas, InGameInvocationCard currentCard, PlayerCards playerCards,

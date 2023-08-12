@@ -33,7 +33,7 @@ public class SendAllCardsInHand : Ability
             opponentPlayerCard.handCards.Add(invocationCard);
         }
     }
-    
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         RemoveAllCardExceptOne(playerCards, opponentPlayerCards);

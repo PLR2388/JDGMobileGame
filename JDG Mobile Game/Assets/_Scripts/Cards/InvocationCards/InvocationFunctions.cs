@@ -9,6 +9,12 @@ using UnityEngine.UI;
 
 namespace Cards.InvocationCards
 {
+    
+    [Serializable]
+    public class CancelInvocationEvent : UnityEvent<InGameInvocationCard>
+    {
+    }
+    
     public class InvocationFunctions : MonoBehaviour
     {
         private PlayerCards currentPlayerCard;
@@ -19,11 +25,14 @@ namespace Cards.InvocationCards
         [SerializeField] private Transform canvas;
         [SerializeField] private GameObject invocationMenu;
 
+        public static readonly CancelInvocationEvent cancelInvocationEvent = new CancelInvocationEvent();
+
         private void Start()
         {
             GameLoop.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
             TutoInGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
+            cancelInvocationEvent.AddListener(OnCancelEffect);
             p1 = GameObject.Find("Player1");
             p2 = GameObject.Find("Player2");
             currentPlayerCard = p1.GetComponent<PlayerCards>();
@@ -34,6 +43,24 @@ namespace Cards.InvocationCards
         {
             currentPlayerCard = GameLoop.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
             opponentPlayerCards = GameLoop.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        }
+
+        private void OnCancelEffect(InGameInvocationCard invocationCard)
+        {
+            if (invocationCard.CancelEffect)
+            {
+                foreach (var ability in invocationCard.Abilities)
+                {
+                    
+                }
+            }
+            else
+            {
+                foreach (var ability in invocationCard.Abilities)
+                {
+                    ability.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCards);
+                }
+            }
         }
 
         /// <summary>

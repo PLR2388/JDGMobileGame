@@ -40,18 +40,33 @@ public class CopyAtkDefAbility : Ability
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
+
         ApplyCopy(playerCards);
     }
 
     public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
+
         ApplyCopy(playerCards);
     }
 
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
+
         if (removeCard.Title == cardToCopyName)
         {
             InGameInvocationCard originInvocationCard =

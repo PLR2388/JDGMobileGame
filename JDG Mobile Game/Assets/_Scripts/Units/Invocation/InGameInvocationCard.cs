@@ -25,8 +25,19 @@ namespace _Scripts.Units.Invocation
         private bool cantBeAttack = false;
         private bool attrackAttack = false;
         private string receiver = null;
+        private bool cancelEffect = false;
 
         private bool directAttackPossible = false;
+
+        public bool CancelEffect
+        {
+            get => cancelEffect;
+            set
+            {
+                cancelEffect = value;
+                InvocationFunctions.cancelInvocationEvent.Invoke(this);
+            }
+        }
 
         public bool CanDirectAttack
         {
@@ -124,6 +135,10 @@ namespace _Scripts.Units.Invocation
                 .Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
             Abilities = baseInvocationCard.Abilities
                 .Select(abilityName => AbilityLibrary.Instance.abilityDictionary[abilityName]).ToList();
+            foreach (var ability in Abilities)
+            {
+                ability.InvocationCard = this;
+            }
         }
 
         public bool CanBeSummoned(PlayerCards playerCards)

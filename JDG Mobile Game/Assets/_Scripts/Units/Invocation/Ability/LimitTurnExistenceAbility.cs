@@ -25,5 +25,6 @@ public class LimitTurnExistenceAbility : Ability
             playerCards.yellowCards.Add(invocationCard);
             playerCards.invocationCards.Remove(invocationCard);
         }
+        
     }
 }
