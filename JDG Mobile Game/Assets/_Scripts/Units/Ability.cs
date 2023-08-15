@@ -89,6 +89,11 @@ public abstract class Ability
         
     }
 
+    public virtual void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        
+    }
+
     // Called when a turn start
     public virtual void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {

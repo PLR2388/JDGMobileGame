@@ -438,7 +438,7 @@ public class GameLoop : MonoBehaviour
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         return attacker.Abilities.TrueForAll(ability =>
-            ability.IsActionPossible(attacker, playerCards, opponentPlayerCards));
+            ability.IsActionPossible(attacker, playerCards, opponentPlayerCards)) && !attacker.CancelEffect;
     }
 
     protected void UseSpecialAction()

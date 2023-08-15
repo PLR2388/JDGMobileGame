@@ -33,6 +33,11 @@ public class GiveAtkDefFamilyAbility : Ability
     
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
+        ApplyPower(playerCards);
+    }
+
+    private void ApplyPower(PlayerCards playerCards)
+    {
         IEnumerable<InGameInvocationCard> invocationCards =
             playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
         foreach (var inGameInvocationCard in invocationCards)
@@ -41,9 +46,30 @@ public class GiveAtkDefFamilyAbility : Ability
         }
     }
 
+    public override void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.CancelEffect(playerCards, opponentPlayerCards);
+        IEnumerable<InGameInvocationCard> invocationCards =
+            playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
+        foreach (var inGameInvocationCard in invocationCards)
+        {
+            DecreaseAtkDef(inGameInvocationCard);
+        }
+    }
+
+    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        ApplyPower(playerCards);
+    }
+
     public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         if (newCard.Title != invocationCard.Title && newCard.Families.Contains(family))
         {
             IncreaseAtkDef(newCard);

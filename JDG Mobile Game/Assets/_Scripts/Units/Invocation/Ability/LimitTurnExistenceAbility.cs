@@ -13,6 +13,10 @@ public class LimitTurnExistenceAbility : Ability
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         if (invocationCard.NumberOfTurnOnField >= numberOfTurn)
         {
             playerCards.yellowCards.Add(invocationCard);

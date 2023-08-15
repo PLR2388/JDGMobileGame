@@ -71,6 +71,10 @@ public class SkipOpponentAttackAbility : Ability
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         var tag = GameLoop.IsP1Turn ? "card1" : "card2";
         if (tag == playerCards.Tag)
         {

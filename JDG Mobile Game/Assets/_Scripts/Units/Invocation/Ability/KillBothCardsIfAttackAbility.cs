@@ -13,6 +13,10 @@ public class KillBothCardsIfAttackAbility : Ability
     public override void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
+        if (invocationCard.CancelEffect)
+        {
+            base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
+        }
         if (attackedCard.Title == invocationCard.Title)
         {
             base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);

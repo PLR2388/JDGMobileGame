@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 
 public class CanOnlyAttackItselfAbility : Ability
@@ -11,6 +10,18 @@ public class CanOnlyAttackItselfAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        playerCards.invocationCards.First(card => card.Title == invocationCard.Title).Aggro = true;
+        invocationCard.Aggro = true;
+    }
+
+    public override void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.CancelEffect(playerCards, opponentPlayerCards);
+        invocationCard.Aggro = false;
+    }
+
+    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        invocationCard.Aggro = true;
     }
 }

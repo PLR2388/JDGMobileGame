@@ -80,6 +80,10 @@ public class SacrificeToInvokeAbility : Ability
         PlayerCards playerCards,
         PlayerCards opponentCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         ApplyEffect(canvas, playerCards, opponentCards);
     }
 }

@@ -16,6 +16,11 @@ public class ProtectBehindDuringAttackDefConditionAbility : Ability
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards,
         PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
+        if (invocationCard.CancelEffect)
+        {
+            base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus,
+                opponentPlayerStatus);
+        }
         IEnumerable<InGameInvocationCard> invocationCards =
             opponentPlayerCards.invocationCards.Where(card => card.Defense > attackedCard.Defense);
         var inGameInvocationCards = invocationCards.ToList();

@@ -38,6 +38,10 @@ public class SendAllCardsInHand : Ability
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         RemoveAllCardExceptOne(playerCards, opponentPlayerCards);
     }
 }

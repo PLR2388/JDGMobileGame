@@ -40,6 +40,10 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         PlayerCards playerCards,
         PlayerCards opponentCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Confirmation",
             "Veux-tu transfèrer tes points d'ATK et de DEF à une carte de la même famille ?");
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
@@ -78,6 +82,10 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
 
     public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
+        }
         if (deadCard.Receiver != null)
         {
             var receiverInvocationCard =

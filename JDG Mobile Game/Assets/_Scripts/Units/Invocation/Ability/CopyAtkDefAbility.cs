@@ -35,6 +35,19 @@ public class CopyAtkDefAbility : Ability
         ApplyCopy(playerCards);
     }
 
+    public override void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.CancelEffect(playerCards, opponentPlayerCards);
+        invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+        invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+    }
+
+    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        ApplyCopy(playerCards);
+    }
+
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         if (invocationCard.CancelEffect)

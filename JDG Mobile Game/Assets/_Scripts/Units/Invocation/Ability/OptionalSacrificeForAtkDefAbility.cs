@@ -52,6 +52,10 @@ public class OptionalSacrificeForAtkDefAbility : Ability
     public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
+        if (deadCard.CancelEffect)
+        {
+            return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
+        }
         deadCard.Attack = deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;
         deadCard.Defense = deadCard.baseInvocationCard.BaseInvocationCardStats.Defense;
         return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);

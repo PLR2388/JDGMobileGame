@@ -17,15 +17,39 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
+        ApplyPower(playerCards);
+    }
+
+    private void ApplyPower(PlayerCards playerCards)
+    {
         int numberCardInvocation = playerCards.invocationCards
             .Count(card => card.Title != invocationCard.Title && card.Families.Contains(family) &&
-                             card.Defense == invocationDefCondition && card.Attack == invocationAtkCondition);
+                           card.Defense == invocationDefCondition && card.Attack == invocationAtkCondition);
         IncrementAtkDefInvocationCard(playerCards, numberCardInvocation);
     }
-    
+
+    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        ApplyPower(playerCards);
+    }
+
+    public override void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.CancelEffect(playerCards, opponentPlayerCards);
+        int numberCardInvocation = playerCards.invocationCards
+            .Count(card => card.Title != invocationCard.Title && card.Families.Contains(family) &&
+                           card.Defense == invocationDefCondition && card.Attack == invocationAtkCondition);
+        DecrementAtkDefInvocationCard(playerCards, numberCardInvocation);
+    }
+
     public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         if (newCard.Title != invocationCard.Title && newCard.Families.Contains(family) &&
             newCard.Attack == invocationAtkCondition && newCard.Defense == invocationDefCondition)
         {
@@ -36,6 +60,10 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            
+        }
         if (removeCard.Title != invocationCard.Title && removeCard.Families.Contains(family) &&
             removeCard.Attack == invocationAtkCondition && removeCard.Defense == invocationDefCondition)
         {

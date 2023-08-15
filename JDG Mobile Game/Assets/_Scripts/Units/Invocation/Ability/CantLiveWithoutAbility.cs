@@ -23,9 +23,8 @@ public class CantLiveWithoutAbility : Ability
     {
         if (CantLive(playerCards))
         {
-            InGameInvocationCard doomedCard = playerCards.invocationCards.First(card => card.Title == invocationCard.Title);
-            playerCards.invocationCards.Remove(doomedCard);
-            playerCards.yellowCards.Add(doomedCard);
+            playerCards.invocationCards.Remove(invocationCard);
+            playerCards.yellowCards.Add(invocationCard);
         }
     }
 
@@ -51,9 +50,19 @@ public class CantLiveWithoutAbility : Ability
         ApplyPower(playerCards);
     }
 
+    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    {
+        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        ApplyPower(playerCards);
+    }
+
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
+        if (invocationCard.CancelEffect)
+        {
+            return;
+        }
         if (removeCard.Title != invocationCard.Title)
         {
             ApplyPower(playerCards);    
