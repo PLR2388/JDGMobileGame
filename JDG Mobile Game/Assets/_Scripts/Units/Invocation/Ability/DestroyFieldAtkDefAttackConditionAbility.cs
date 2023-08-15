@@ -1,22 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
 
 public class DestroyFieldAtkDefAttackConditionAbility : Ability
 {
-    private string cardName;
     private int divideAtkFactor;
     private int divideDefFactor;
 
-    public DestroyFieldAtkDefAttackConditionAbility(AbilityName name, string description, string cardName,
+    public DestroyFieldAtkDefAttackConditionAbility(AbilityName name, string description,
         int divideAtkFactor, int divideDefFactor)
     {
         Name = name;
         Description = description;
-        this.cardName = cardName;
         this.divideAtkFactor = divideAtkFactor;
         this.divideDefFactor = divideDefFactor;
     }
@@ -49,12 +44,10 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
             opponentPlayerCards.yellowCards.Add(fieldCard);
             opponentPlayerCards.FieldCard = null;
         }
-
-        InGameInvocationCard applyNonBonusInvocationCard =
-            playerCards.invocationCards.First(invocationCard => invocationCard.Title == cardName);
-        applyNonBonusInvocationCard.Attack /= divideAtkFactor;
-        applyNonBonusInvocationCard.Defense /= divideDefFactor;
-        applyNonBonusInvocationCard.SetRemainedAttackThisTurn(0);
+        
+        invocationCard.Attack /= divideAtkFactor;
+        invocationCard.Defense /= divideDefFactor;
+        invocationCard.SetRemainedAttackThisTurn(0);
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)

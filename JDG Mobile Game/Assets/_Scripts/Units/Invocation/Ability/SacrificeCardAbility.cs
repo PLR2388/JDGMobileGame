@@ -15,14 +15,14 @@ public class SacrificeCardAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        InGameInvocationCard invocationCard = playerCards.invocationCards.First(card => cardName == card.Title);
+        InGameInvocationCard invocationCardToSacrifice = playerCards.invocationCards.First(card => cardName == card.Title);
         // TODO Centralize death invocation Card
-        if (invocationCard.EquipmentCard != null)
+        if (invocationCardToSacrifice.EquipmentCard != null)
         {
-            playerCards.yellowCards.Add(invocationCard.EquipmentCard);
-            invocationCard.EquipmentCard = null;
+            playerCards.yellowCards.Add(invocationCardToSacrifice.EquipmentCard);
+            invocationCardToSacrifice.EquipmentCard = null;
         }
-        playerCards.invocationCards.Remove(invocationCard);
-        playerCards.yellowCards.Add(invocationCard);
+        playerCards.invocationCards.Remove(invocationCardToSacrifice);
+        playerCards.yellowCards.Add(invocationCardToSacrifice);
     }
 }

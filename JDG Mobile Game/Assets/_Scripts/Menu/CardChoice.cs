@@ -148,7 +148,7 @@ namespace Menu
             deck1.Add(GetSpecificCard("Mohammad", deck1AllCard));
             deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
             deck1.Add(GetSpecificCard("Captain URSSAF", deck1AllCard));
-            deck1.Add(GetSpecificCard("Turbo Cradozaure", deck1AllCard));
+            deck1.Add(GetSpecificCard("Jean-Marc Soul", deck1AllCard));
 
             while (deck1.Count != 30)
             {

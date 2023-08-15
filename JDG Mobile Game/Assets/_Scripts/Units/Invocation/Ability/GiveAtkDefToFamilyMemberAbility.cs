@@ -6,16 +6,13 @@ using UnityEngine;
 
 public class GiveAtkDefToFamilyMemberAbility : Ability
 {
-    private string originCardName;
     private CardFamily family;
-
-
-    public GiveAtkDefToFamilyMemberAbility(AbilityName name, string description, string cardName, CardFamily family)
+    
+    public GiveAtkDefToFamilyMemberAbility(AbilityName name, string description, CardFamily family)
     {
         Name = name;
         Description = description;
         IsAction = true;
-        originCardName = cardName;
         this.family = family;
     }
 
@@ -35,9 +32,8 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         PlayerCards opponentCards)
     {
         var invocationCards = playerCards.invocationCards;
-        var currentInvocation = playerCards.invocationCards.First(card => card.Title == originCardName);
-        return currentInvocation.Receiver == null &&
-               invocationCards.Any(elt => elt.Families.Contains(family) && elt.Title != originCardName);
+        return invocationCard.Receiver == null &&
+               invocationCards.Any(elt => elt.Families.Contains(family) && elt.Title != invocationCard.Title);
     }
 
     public override void OnCardActionTouched(Transform canvas, InGameInvocationCard currentCard,
@@ -48,8 +44,8 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
             "Veux-tu transfèrer tes points d'ATK et de DEF à une carte de la même famille ?");
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
-            var invocationsCardsValid = new List<InGameCard>(playerCards.invocationCards.Where(invocationCard =>
-                invocationCard.Families.Contains(family) && invocationCard.Title != originCardName).ToList());
+            var invocationsCardsValid = new List<InGameCard>(playerCards.invocationCards.Where(inGameInvocationCard =>
+                inGameInvocationCard.Families.Contains(family) && inGameInvocationCard.Title != invocationCard.Title).ToList());
             var messageBox1 =
                 MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte récepteur",
                     invocationsCardsValid);
@@ -63,13 +59,12 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
                 }
                 else
                 {
-                    var giver = playerCards.invocationCards.First(elt => elt.Title == originCardName);
                     // TODO: Think of a better way if dead card has more atk and def due to power-up
-                    chosenInvocationCard.Attack += giver.baseInvocationCard.BaseInvocationCardStats.Attack;
-                    chosenInvocationCard.Defense += giver.baseInvocationCard.BaseInvocationCardStats.Defense;
-                    giver.Attack -= giver.baseInvocationCard.BaseInvocationCardStats.Attack;
-                    giver.Defense -= giver.baseInvocationCard.BaseInvocationCardStats.Defense;
-                    giver.Receiver = chosenInvocationCard.Title;
+                    chosenInvocationCard.Attack += invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                    chosenInvocationCard.Defense += invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+                    invocationCard.Attack -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                    invocationCard.Defense -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+                    invocationCard.Receiver = chosenInvocationCard.Title;
                     Object.Destroy(messageBox);
                     Object.Destroy(messageBox1);
                 }

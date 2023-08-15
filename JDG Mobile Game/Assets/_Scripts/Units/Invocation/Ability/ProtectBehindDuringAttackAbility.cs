@@ -4,22 +4,20 @@ using UnityEngine;
 
 public class ProtectBehindDuringAttackAbility : Ability
 {
-
-    private string protegeeName;
+    
     private string protectorName;
     
-    public ProtectBehindDuringAttackAbility(AbilityName name, string description, string protector, string protegee)
+    public ProtectBehindDuringAttackAbility(AbilityName name, string description, string protector)
     {
         Name = name;
         Description = description;
         protectorName = protector;
-        protegeeName = protegee;
     }
 
     public override void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
-        if (attackedCard.Title == protegeeName &&
+        if (attackedCard.Title == invocationCard.Title &&
             opponentPlayerCards.invocationCards.Any(card => card.Title == protectorName))
         {
             InGameInvocationCard newAttackedCard =

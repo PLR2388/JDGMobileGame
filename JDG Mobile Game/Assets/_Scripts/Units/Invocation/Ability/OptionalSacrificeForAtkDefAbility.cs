@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class OptionalSacrificeForAtkDefAbility : Ability
 {
-    private string cardName;
-
     private string cardNameToSacrifice;
 
     private string requiredField;
@@ -13,12 +11,11 @@ public class OptionalSacrificeForAtkDefAbility : Ability
     private float newAtk;
     private float newDef;
 
-    public OptionalSacrificeForAtkDefAbility(AbilityName name, string description, string cardName,
+    public OptionalSacrificeForAtkDefAbility(AbilityName name, string description,
         string cardNameToSacrifice, string requiredField, float newAtk, float newDef)
     {
         Name = name;
         Description = description;
-        this.cardName = cardName;
         this.cardNameToSacrifice = cardNameToSacrifice;
         this.requiredField = requiredField;
         this.newAtk = newAtk;
@@ -35,18 +32,16 @@ public class OptionalSacrificeForAtkDefAbility : Ability
             GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Augmentation de stats",
                 "Veux-tu sacrifier " +
                 cardNameToSacrifice + " pour augmenter l'attaque à " + newAtk + " et la défense à " + newDef + " de " +
-                cardName + " ?");
+                invocationCard.Title + " ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 InGameInvocationCard invocationCardToSacrifice =
                     playerCards.invocationCards.First(card => card.Title == cardNameToSacrifice);
-                InGameInvocationCard invocationCardToIncrement =
-                    playerCards.invocationCards.First(card => card.Title == cardName);
                 playerCards.invocationCards.Remove(invocationCardToSacrifice);
                 playerCards.yellowCards.Add(invocationCardToSacrifice);
 
-                invocationCardToIncrement.Attack = newAtk;
-                invocationCardToIncrement.Defense = newDef;
+                invocationCard.Attack = newAtk;
+                invocationCard.Defense = newDef;
 
                 Object.Destroy(messageBox);
             };

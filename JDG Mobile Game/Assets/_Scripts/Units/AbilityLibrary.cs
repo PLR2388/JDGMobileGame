@@ -18,8 +18,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
     {
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune,
-            "Alpha man can't live without Benzaie or Benzaie jeune",
-            "Alpha Man",
+            "Invocation can't live without Benzaie or Benzaie jeune",
             list: new List<string>
             {
                 "Benzaie jeune",
@@ -27,9 +26,8 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             }
         ),
         new CanOnlyAttackItselfAbility(
-            AbilityName.CanOnlyAttackAlphaMan,
-            "Opponent can only attack Alpha Man",
-            "Alpha Man"
+            AbilityName.CanOnlyAttackItself,
+            "Opponent can only attack this card"
         ),
         new GetFamilyInDeckAbility(
             AbilityName.AddSpatialFromDeck,
@@ -42,23 +40,20 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Archibald Von Grenier"
         ),
         new CantBeAttackAbility(
-            AbilityName.BabsCantBeAttackIfComics,
-            "Babs can't be attack if there is another card on the field belonging to Comics family",
-            "Babs",
+            AbilityName.CantBeAttackIfComics,
+            "Invocation can't be attack if there is another card on the field belonging to Comics family",
             CardFamily.Comics
         ),
         new GiveAtkDefFamilyAbility(
-            AbilityName.BabsGiveAtkDefToComics,
-            "Babs give 0.5 Atk and 0.5 Def to comic invocation card on field",
-            "Babs",
+            AbilityName.GiveAtkDefToComics,
+            "Invocation give 0.5 Atk and 0.5 Def to comic invocation card on field",
             CardFamily.Comics,
             0.5f,
             0.5f
         ),
         new SendAllCardsInHand(
-            AbilityName.BebeSendAllCardToHands,
-            "Bébé Terreur-Nocturne send all card from fields to hands",
-            "Bébé Terreur-Nocturne"
+            AbilityName.SendAllCardToHands,
+            "Invocation send all card from fields to hands except itself"
         ),
         new SacrificeCardAbility(
             AbilityName.SacrificeBenzaieJeune,
@@ -93,24 +88,21 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         new OptionalSacrificeForAtkDefAbility(
             AbilityName.SacrificeSebDuGrenierOnHardCornerForAtkDef,
             "Sacrifice Seb du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
-            "Daffy",
             "Seb Du Grenier",
             "Le Hard Corner",
             4.5f,
             4.5f
         ),
         new WinAtkDefFamilyAbility(
-            AbilityName.DavidGnoufWin1Atk1DefDeveloper,
+            AbilityName.Win1Atk1DefDeveloper,
             "Win 1 ATK and 1 DEF for every Developer on Field",
-            "David Gnouf",
             CardFamily.Developer,
             1,
             1
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.DictateurSympaSacrifice3Atk3Def,
-            "Dictateur Sympa needs a sacrifice of an invocation that has at least 3 atk or 3 def",
-            "Dictateur Sympa",
+            AbilityName.Sacrifice3Atk3Def,
+            "Invocation needs a sacrifice of an invocation that has at least 3 atk or 3 def",
             3,
             3
         ),
@@ -119,9 +111,8 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Change current field with field from deck"
         ),
         new WinAtkDefFamilityAtkDefConditionAbility(
-            AbilityName.DresseurBidulmonWin1ATK1DefJaponWith2ATK2DEFCondition,
-            "Win 1 ATK and 1 DEF for every japon invocard card with 2 ATK and 2 DEF",
-            "Dresseur de Bidulmon",
+            AbilityName.Win1ATK1DefJaponWith2ATK2DEFCondition,
+            "Win 1 ATK and 1 DEF for every japon invocation card with 2 ATK and 2 DEF",
             CardFamily.Japan,
             1,
             1,
@@ -139,9 +130,8 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Zozan Kebab"
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.GeorgesSacrificeWizard,
-            "Georges Tuséki need a sacrifice of a wizard invocation card",
-            "Georges Tuséki",
+            AbilityName.SacrificeWizard,
+            "Invocation needs a sacrifice of a wizard invocation card",
             cardFamily: CardFamily.Wizard
         ),
         new GetSpecificCardFromDeckAbility(
@@ -150,10 +140,9 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Convocation au lycée"
         ),
         new ProtectBehindDuringAttackAbility(
-            AbilityName.GranolaxProtectedBehindStarlightUnicorn,
-            "Granolax protect himself behind Starlight Unicorn if present",
-            "Starlight Unicorn",
-            "Granolax"
+            AbilityName.ProtectedBehindStarlightUnicorn,
+            "Invocation protects himself behind Starlight Unicorn if present",
+            "Starlight Unicorn"
         ),
         // TODO : Not use right now as Canard-signal is a Contre card
         // When this is done, add it to Inspecteur Magret
@@ -163,66 +152,54 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Canard-signal"
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.JeanClaudeSacrificeDeveloper3Atk3Def,
-            "Jean Claude needs 2 developer sacrifice with at least 3 Atk or 3 Def",
-            "Jean-Claude",
+            AbilityName.SacrificeDeveloper3Atk3Def,
+            "Invocation needs 2 developer sacrifice with at least 3 Atk or 3 Def",
             3,
             3,
             CardFamily.Developer,
             2
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.JeanGuySacrificeHardCornerAtk3Def,
-            "Jean Guy needs 2 hard corner sacrifce with at least 3 Atk or 3 Def",
-            "Jean-Guy",
+            AbilityName.SacrificeHardCorner3Atk3Def,
+            "Invocation needs 2 hard corner sacrifce with at least 3 Atk or 3 Def",
             3,
             3,
             CardFamily.HardCorner,
             2
         ),
         new CantBeAttackAbility(
-            AbilityName.JeanLouisCantBeAttackKill,
-            "Jean-Louis La Chaussette can't be attacked or killed by other invocation cards",
-            "Jean-Louis La Chaussette"
+            AbilityName.CantBeAttackKill,
+            "Invocation can't be attacked or killed by other invocation cards"
         ),
         new BackToHandAfterDeathAbility(
-            AbilityName.JeanMarcComesBackFromDeath,
-            "Jean-Marc Soul comes back to player hand everytime he died",
-            "Jean-Marc Soul"
+            AbilityName.ComesBackFromDeath,
+            "Invocation comes back to player hand everytime he died"
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.Koaloutre2JapanSacrifice,
-            "Koaloutre-Ornithambas Lapinzord nain de Californie needs 2 Japan sacrifice to be invoke",
-            "Koaloutre-Ornithambas Lapinzord nain de Californie",
+            AbilityName.Sacrifice2Japan,
+            "Invocation needs 2 Japan sacrifice to be invoke",
             0,
             0,
             CardFamily.Japan,
             2
         ),
         new DestroyFieldAtkDefAttackConditionAbility(
-            AbilityName.KoaloutreDestroyField,
-            "Koaloutre-Ornithambas Lapinzord nain de Californie can destroy a field but divide Atk by 2",
-            "Koaloutre-Ornithambas Lapinzord nain de Californie",
+            AbilityName.DestroyFieldATK,
+            "Invocation can destroy a field but divide Atk by 2",
             2,
             1
         ),
         new KillOpponentInvocationCardAbility(
-            AbilityName.KillOponentInvocation,
+            AbilityName.KillOpponentInvocation,
             "Kill an invocation opponent when invoke"
         ),
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutJDG,
-            "La Petite Fille can't live without Joueur Du Grenier",
-            "La Petite Fille",
+            "Invocation can't live without Joueur Du Grenier",
             list: new List<string>
             {
                 "Joueur Du Grenier"
             }
-        ),
-        new CanOnlyAttackItselfAbility(
-            AbilityName.CanOnlyAttackPetiteFille,
-            "Opponent can only attack La Petite Fille",
-            "La Petite Fille"
         ),
         new GetSpecificCardFromDeckAbility(
             AbilityName.GetForetElfesSylvains,
@@ -239,24 +216,21 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             }
         ),
         new CantLiveWithoutAbility(
-            AbilityName.BananeCantLiveWithoutComics,
-            "L'homme-banane cannot live without Comic invocation card",
-            "L'homme-banane",
+            AbilityName.CantLiveWithoutComics,
+            "Invocation cannot live without Comic invocation card",
             family: CardFamily.Comics
         ),
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.Lolhitler2IncarnationSacrifice,
-            "Lolhitler needs 2 Incarnation sacrifice to be invoke",
-            "Lolhitler",
+            AbilityName.Sacrifice2Incarnation,
+            "Invocation needs 2 Incarnation sacrifice to be invoke",
             0,
             0,
             CardFamily.Incarnation,
             2
         ),
         new DestroyFieldAtkDefAttackConditionAbility(
-            AbilityName.LolhitlerDestroyField,
-            "Lolhitler can destroy a field but divide Def by 2",
-            "Lolhitler",
+            AbilityName.DestroyFieldDEF,
+            "Invocation can destroy a field but divide Def by 2",
             1,
             2
         ),
@@ -266,9 +240,8 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Benzaie jeune"
         ),
         new GetTypeCardFromDeckWithoutAttackAbility(
-            AbilityName.ManuelGetEquipmentCardWithoutAttack,
-            "Manuel Ferrara can get Equipment card and loose its attack phase",
-            "Manuel Ferrara",
+            AbilityName.GetEquipmentCardWithoutAttack,
+            "Invocation can get Equipment card and loose its attack phase",
             CardType.Equipment
         ),
         new SacrificeCardAbility(
@@ -279,40 +252,34 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         new OptionalSacrificeForAtkDefAbility(
             AbilityName.SacrificeJDGOnStudioDevForAtkDef,
             "Sacrifice Joueur Du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
-            "Mohammad",
             "Joueur Du Grenier",
             "Studio de développement",
             4.5f,
             4.5f
         ),
         new CantLiveWithoutAbility(
-            AbilityName.MoiseCantLiveWithoutHuman,
-            "Moïse, le plus grand de tous les hébreux cannot live without Human invocation card",
-            "Moïse, le plus grand de tous les hébreux",
+            AbilityName.CantLiveWithoutHuman,
+            "Invocation cannot live without Human invocation card",
             family: CardFamily.Human
         ),
         new CopyAtkDefAbility(
-            AbilityName.NounoursCopyBenzaieJeune,
-            "Nounours copy atk and def Benzaie jeune",
-            "Nounours",
+            AbilityName.CopyBenzaieJeune,
+            "Invocation copy atk and def Benzaie jeune",
             "Benzaie jeune"
         ),
         new LimitTurnExistenceAbility(
-            AbilityName.Papy1TurnSurvive,
-            "Papy Grenier survive only one turn",
-            "Papy Grenier",
+            AbilityName.SurviveOneTurn,
+            "Invocation survive only one turn",
             1
         ),
         new GetSpecificCardAfterDeathAbility(
-            AbilityName.PapyGiveDeathWhenDie,
-            "Papy Grenier gives La Mort from deck to hand when he die",
-            "La Mort",
-            "Papy Grenier"
+            AbilityName.GiveDeathWhenDie,
+            "Invocation gives La Mort from deck to hand when he die",
+            "La Mort"
         ),
         new ProtectBehindDuringAttackDefConditionAbility(
-            AbilityName.PatateProtectBehindGreaterDef,
-            "Patate protect itself behind invocation card with greater def",
-            "Patate"
+            AbilityName.ProtectBehindGreaterDef,
+            "Invocation protect itself behind invocation card with greater def"
         ),
         new SacrificeCardAbility(
             AbilityName.SacrificeSebDuGrenier,
@@ -320,9 +287,8 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Seb Du Grenier"
         ),
         new WinAtkDefFamilyAbility(
-            AbilityName.ProprioFistiliandWin1Atk1DefFistiland,
-            "Propriétaire De Fistiland win 1 ATK and 1 DEF for every Fistiland on Field",
-            "Propriétaire De Fistiland",
+            AbilityName.Win1Atk1DefFistiland,
+            "Invocation wins 1 ATK and 1 DEF for every Fistiland on Field",
             CardFamily.Fistiland,
             1,
             1
@@ -333,14 +299,12 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Cliché Raciste"
         ),
         new KillBothCardsIfAttackAbility(
-            AbilityName.SandrineKillEnemyIfDestroy,
-            "Sandrine le porte-manteau extraterrestre kill its opponent if detroy by another invocation card",
-            "Sandrine le porte-manteau extraterrestre"
+            AbilityName.KillEnemyIfDestroy,
+            "Invocation kills its opponent if detroy by another invocation card"
         ),
         new SacrificeToInvokeAbility(
-            AbilityName.SheikPointSacrificeToInvoke,
-            "Sacrifice Sheik Point to invoke non-collector card from yellow trash",
-            "Sheik Point"
+            AbilityName.SacrificeToInvoke,
+            "Sacrifice Sheik Point to invoke non-collector card from yellow trash"
         ),
         new GetSpecificCardFromDeckOrYellowCardAbility(
             AbilityName.GetPatronInfogramesFromDeckYellowTrash,
@@ -349,8 +313,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutGranolaxOrMechaGranolax,
-            "Starlight Unicorn can't live without Granolax or Mecha-Granolax",
-            "Starlight Unicorn",
+            "Invocation can't live without Granolax or Mecha-Granolax",
             list: new List<string>
             {
                 "Granolax",
@@ -362,21 +325,14 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Player can choose to skip attack of one of his opponent invocation cards"
         ),
         new BackToHandAfterDeathAbility(
-            AbilityName.ScenaristeCanadienComesBackFromDeath5times,
-            "Studio de scénaristes Canadien comes back to player hand everytime he died",
-            "Studio de scénaristes Canadien",
+            AbilityName.ComesBackFromDeath5Times,
+            "Invocation comes back to player hand 5 times everytime he died",
             5
         ),
         new CantLiveWithoutAbility(
-            AbilityName.TentaculesCantLiveWithoutJapon,
+            AbilityName.CantLiveWithoutJapon,
             "Tentacules cannot live without Japan invocation card",
-            "Tentacules",
             family: CardFamily.Japan
-        ),
-        new CanOnlyAttackItselfAbility(
-            AbilityName.CanOnlyAttackTentacules,
-            "Opponent can only attack Tentacules",
-            "Tentacules"
         ),
         new DrawCardsAbility(
             AbilityName.Draw2Cards,
@@ -385,14 +341,12 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         new GiveAtkDefToFamilyMemberAbility(
             AbilityName.GiveAktDefToFistilandMember,
-            "Sangoku can give his atk and def to Fistiland member",
-            "Sangoku",
+            "Invocation can give his atk and def to Fistiland member",
             CardFamily.Fistiland
         ),
         new GiveAtkDefToFamilyMemberAbility(
             AbilityName.GiveAktDefToRpgMember,
-            "L'Elfette can give his atk and def to Rpg member",
-            "L'Elfette",
+            "Invocation can give his atk and def to Rpg member",
             CardFamily.Rpg
         )
     };

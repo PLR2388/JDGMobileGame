@@ -23,12 +23,6 @@ MonoBehaviour:
     Attack: 4
     Defense: 2.5
     Families: 05000000
-    InvocationConditions: {fileID: 11400000, guid: d76bd398b170f0c418214aae7d05b35c,
-      type: 2}
-    InvocationStartEffect: {fileID: 0}
-    InvocationPermEffect: {fileID: 0}
-    InvocationActionEffect: {fileID: 0}
-    InvocationDeathEffect: {fileID: 0}
     AffectedByEffect: 1
   Conditions: 11000000
-  Abilities: 2a000000
+  Abilities: 29000000

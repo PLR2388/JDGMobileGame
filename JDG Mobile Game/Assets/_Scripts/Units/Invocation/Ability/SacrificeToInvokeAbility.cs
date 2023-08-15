@@ -6,13 +6,11 @@ using UnityEngine;
 
 public class SacrificeToInvokeAbility : Ability
 {
-    private string cardName;
 
-    public SacrificeToInvokeAbility(AbilityName name, string description, string cardName)
+    public SacrificeToInvokeAbility(AbilityName name, string description)
     {
         Name = name;
         Description = description;
-        this.cardName = cardName;
         IsAction = true;
     }
 
@@ -45,7 +43,7 @@ public class SacrificeToInvokeAbility : Ability
         if (invocationCards.Count > 0)
         {
             GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
-                "Veux-tu sacrifier " + cardName + " pour invoquer une carte non-brillante depuis la poubelle jaune ?");
+                "Veux-tu sacrifier " + invocationCard.Title + " pour invoquer une carte non-brillante depuis la poubelle jaune ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 messageBox.SetActive(false);
@@ -53,20 +51,18 @@ public class SacrificeToInvokeAbility : Ability
                     MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix carte à invoquer", invocationCards);
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
-                    InGameInvocationCard invocationCard =
+                    InGameInvocationCard newlyInvoke =
                         messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
-                    if (invocationCard == null)
+                    if (newlyInvoke == null)
                     {
                         DisplayOkMessage(canvas, messageBox, messageBox1);
                     }
                     else
                     {
-                        InGameInvocationCard currentCard =
-                            playerCards.invocationCards.First(card => card.Title == cardName);
-                        playerCards.invocationCards.Remove(currentCard);
-                        playerCards.yellowCards.Add(currentCard);
-                        playerCards.yellowCards.Remove(invocationCard);
-                        playerCards.invocationCards.Add(invocationCard);
+                        playerCards.invocationCards.Remove(invocationCard);
+                        playerCards.yellowCards.Add(invocationCard);
+                        playerCards.yellowCards.Remove(newlyInvoke);
+                        playerCards.invocationCards.Add(newlyInvoke);
                         Object.Destroy(messageBox);
                         Object.Destroy(messageBox1);
                     }

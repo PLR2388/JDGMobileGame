@@ -1,20 +1,16 @@
 using System.Collections.Generic;
-using System.Linq;
-using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
 
 public class GetTypeCardFromDeckWithoutAttackAbility : Ability
 {
     private CardType type;
-    private string cardName;
-    
-    public GetTypeCardFromDeckWithoutAttackAbility(AbilityName name, string description, string originName, CardType cardType)
+
+    public GetTypeCardFromDeckWithoutAttackAbility(AbilityName name, string description, CardType cardType)
     {
         Name = name;
         Description = description;
         type = cardType;
-        cardName = originName;
     }
     
     protected static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
@@ -56,7 +52,7 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
                     {
                         playerCards.handCards.Add(card);
                         playerCards.deck.Remove(card);
-                        playerCards.invocationCards.First(card => card.Title == cardName).SetRemainedAttackThisTurn(0);
+                        invocationCard.SetRemainedAttackThisTurn(0);
                         Object.Destroy(messageBox);
                         Object.Destroy(messageBox1);
                     }

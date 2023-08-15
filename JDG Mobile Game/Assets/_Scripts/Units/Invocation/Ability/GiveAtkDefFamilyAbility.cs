@@ -9,44 +9,42 @@ public class GiveAtkDefFamilyAbility : Ability
     private CardFamily family;
     private float attack;
     private float defense;
-    private string originCardName;
 
-    public GiveAtkDefFamilyAbility(AbilityName name, string description, string cardName, CardFamily cardFamily, float attack, float defense)
+    public GiveAtkDefFamilyAbility(AbilityName name, string description, CardFamily cardFamily, float attack, float defense)
     {
         Name = name;
         Description = description;
         family = cardFamily;
         this.attack = attack;
         this.defense = defense;
-        originCardName = cardName;
     }
 
-    private void IncreaseAtkDef(InGameInvocationCard invocationCard)
+    private void IncreaseAtkDef(InGameInvocationCard inGameInvocationCard)
     {
-        invocationCard.Defense += defense;
-        invocationCard.Attack += attack;
+        inGameInvocationCard.Defense += defense;
+        inGameInvocationCard.Attack += attack;
     }
 
-    private void DecreaseAtkDef(InGameInvocationCard invocationCard)
+    private void DecreaseAtkDef(InGameInvocationCard inGameInvocationCard)
     {
-        invocationCard.Defense -= defense;
-        invocationCard.Attack -= attack;
+        inGameInvocationCard.Defense -= defense;
+        inGameInvocationCard.Attack -= attack;
     }
     
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         IEnumerable<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.Where(card => card.Title != originCardName && card.Families.Contains(family));
-        foreach (var invocationCard in invocationCards)
+            playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
+        foreach (var inGameInvocationCard in invocationCards)
         {
-            IncreaseAtkDef(invocationCard);
+            IncreaseAtkDef(inGameInvocationCard);
         }
     }
 
     public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
-        if (newCard.Title != originCardName && newCard.Families.Contains(family))
+        if (newCard.Title != invocationCard.Title && newCard.Families.Contains(family))
         {
             IncreaseAtkDef(newCard);
         }
@@ -55,7 +53,7 @@ public class GiveAtkDefFamilyAbility : Ability
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
-        if (removeCard.Title != originCardName && removeCard.Families.Contains(family))
+        if (removeCard.Title != invocationCard.Title && removeCard.Families.Contains(family))
         {
             DecreaseAtkDef(removeCard);
         }
@@ -64,10 +62,10 @@ public class GiveAtkDefFamilyAbility : Ability
     public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
     {
         IEnumerable<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.Where(card => card.Title != originCardName && card.Families.Contains(family));
-        foreach (var invocationCard in invocationCards)
+            playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
+        foreach (var inGameInvocationCard in invocationCards)
         {
-            DecreaseAtkDef(invocationCard);
+            DecreaseAtkDef(inGameInvocationCard);
         }
         return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
     }

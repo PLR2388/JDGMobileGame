@@ -1,18 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
-using Cards;
 using UnityEngine;
 
 public class ProtectBehindDuringAttackDefConditionAbility : Ability
 {
-    private string protegee;
 
-    public ProtectBehindDuringAttackDefConditionAbility(AbilityName name, string description, string protegee)
+    public ProtectBehindDuringAttackDefConditionAbility(AbilityName name, string description)
     {
         Name = name;
         Description = description;
-        this.protegee = protegee;
     }
 
     public override void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
@@ -22,7 +19,7 @@ public class ProtectBehindDuringAttackDefConditionAbility : Ability
         IEnumerable<InGameInvocationCard> invocationCards =
             opponentPlayerCards.invocationCards.Where(card => card.Defense > attackedCard.Defense);
         var inGameInvocationCards = invocationCards.ToList();
-        if (attackedCard.Title == protegee && inGameInvocationCards.Any())
+        if (attackedCard.Title == invocationCard.Title && inGameInvocationCards.Any())
         {
             if (inGameInvocationCards.Count() == 1)
             {

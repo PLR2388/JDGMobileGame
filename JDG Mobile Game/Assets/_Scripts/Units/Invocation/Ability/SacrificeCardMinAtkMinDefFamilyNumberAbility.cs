@@ -6,18 +6,16 @@ using UnityEngine;
 
 public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
 {
-    private string originCardName;
     private float minAtk;
     private float minDef;
     private CardFamily family;
     private int numberCard;
 
-    public SacrificeCardMinAtkMinDefFamilyNumberAbility(AbilityName name, string description, string cardName,
+    public SacrificeCardMinAtkMinDefFamilyNumberAbility(AbilityName name, string description,
         float atk = 0f, float def = 0f, CardFamily cardFamily = CardFamily.Any, int number = 1)
     {
         Name = name;
         Description = description;
-        originCardName = cardName;
         minAtk = atk;
         minDef = def;
         family = cardFamily;
@@ -27,7 +25,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
     private List<InGameInvocationCard> GetValidInvocationCards(PlayerCards playerCards)
     {
         return playerCards.invocationCards.Where(card =>
-            card.Title != originCardName &&
+            card.Title != invocationCard.Title &&
             (card.Attack >= minAtk || card.Defense >= minDef) &&
             (family == CardFamily.Any || card.Families.Contains(family))).ToList();
     }

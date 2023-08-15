@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
@@ -6,21 +5,19 @@ using UnityEngine;
 
 public class SendAllCardsInHand : Ability
 {
-    private string exceptedCardName;
 
-    public SendAllCardsInHand(AbilityName name, string description, string cardName)
+    public SendAllCardsInHand(AbilityName name, string description)
     {
         Name = name;
         Description = description;
-        exceptedCardName = cardName;
     }
 
     private void RemoveAllCardExceptOne(PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
         IEnumerable<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.Where(card => card.Title != exceptedCardName).ToList();
+            playerCards.invocationCards.Where(card => card.Title != invocationCard.Title).ToList();
         IEnumerable<InGameInvocationCard> opponentInvocationCard =
-            opponentPlayerCard.invocationCards.Where(card => card.Title != exceptedCardName).ToList();
+            opponentPlayerCard.invocationCards.Where(card => card.Title != invocationCard.Title).ToList();
         foreach (var invocationCard in invocationCards)
         {
             playerCards.invocationCards.Remove(invocationCard);

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
@@ -7,16 +6,14 @@ using UnityEngine;
 
 public class CantLiveWithoutAbility : Ability
 {
-    private string cardName;
     private List<string> conditionInvocationCards;
     private CardFamily family;
 
-    public CantLiveWithoutAbility(AbilityName name, string description, string originCardName, List<string> list = null,
+    public CantLiveWithoutAbility(AbilityName name, string description, List<string> list = null,
         CardFamily family = CardFamily.Any)
     {
         Name = name;
         Description = description;
-        cardName = originCardName;
         conditionInvocationCards = list;
         this.family = family;
     }
@@ -26,7 +23,7 @@ public class CantLiveWithoutAbility : Ability
     {
         if (CantLive(playerCards))
         {
-            InGameInvocationCard doomedCard = playerCards.invocationCards.First(card => card.Title == cardName);
+            InGameInvocationCard doomedCard = playerCards.invocationCards.First(card => card.Title == invocationCard.Title);
             playerCards.invocationCards.Remove(doomedCard);
             playerCards.yellowCards.Add(doomedCard);
         }
@@ -38,7 +35,7 @@ public class CantLiveWithoutAbility : Ability
         {
             // Check Family
             return !playerCards.invocationCards.Any(card =>
-                card.Title != cardName &&
+                card.Title != invocationCard.Title &&
                 (card.Families.Contains(family) || family == CardFamily.Any));
         }
         else
@@ -57,7 +54,7 @@ public class CantLiveWithoutAbility : Ability
     public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
         PlayerCards opponentPlayerCards)
     {
-        if (removeCard.Title != cardName)
+        if (removeCard.Title != invocationCard.Title)
         {
             ApplyPower(playerCards);    
         }

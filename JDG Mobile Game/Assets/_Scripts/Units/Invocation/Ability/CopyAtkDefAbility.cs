@@ -5,14 +5,12 @@ using UnityEngine;
 
 public class CopyAtkDefAbility : Ability
 {
-    private string originCardName;
     private string cardToCopyName;
 
-    public CopyAtkDefAbility(AbilityName name, string description, string originCard, string copiedCard)
+    public CopyAtkDefAbility(AbilityName name, string description, string copiedCard)
     {
         Name = name;
         Description = description;
-        originCardName = originCard;
         cardToCopyName = copiedCard;
     }
 
@@ -22,9 +20,8 @@ public class CopyAtkDefAbility : Ability
         {
             InGameInvocationCard invocationCardToCopy =
                 playerCards.invocationCards.First(card => card.Title == cardToCopyName);
-            InGameInvocationCard originCard = playerCards.invocationCards.First(card => card.Title == originCardName);
-            originCard.Attack = invocationCardToCopy.Attack;
-            originCard.Defense = invocationCardToCopy.Defense;
+            invocationCard.Attack = invocationCardToCopy.Attack;
+            invocationCard.Defense = invocationCardToCopy.Defense;
         }
         catch (Exception e)
         {
@@ -69,10 +66,8 @@ public class CopyAtkDefAbility : Ability
 
         if (removeCard.Title == cardToCopyName)
         {
-            InGameInvocationCard originInvocationCard =
-                playerCards.invocationCards.First(card => card.Title == originCardName);
-            originInvocationCard.Attack = originInvocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-            originInvocationCard.Defense = originInvocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+            invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+            invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
         }
     }
 }
