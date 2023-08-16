@@ -38,20 +38,6 @@ public class InGameEquipementCard : InGameCard
         ).ToList();
     }
 
-    /// <summary>
-    /// IsEquipmentPossible.
-    /// Test if user can put an equipment on at least one invocation card on field.
-    /// </summary>
-    public static bool IsEquipmentPossible(EquipmentInstantEffect equipmentInstantEffect)
-    {
-        var canSwitchEquipment = equipmentInstantEffect != null &&
-                                 equipmentInstantEffect.Keys.Contains(
-                                     InstantEffect.SwitchEquipment);
-        var player1 = GameObject.Find("Player1");
-        var player2 = GameObject.Find("Player2");
-        return HasEnoughInvocationCard(player1, canSwitchEquipment) ||
-               HasEnoughInvocationCard(player2, canSwitchEquipment);
-    }
 
     /// <summary>
     /// IsEquipmentPossible.

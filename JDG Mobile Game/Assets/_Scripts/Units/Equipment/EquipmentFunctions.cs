@@ -119,76 +119,6 @@ namespace Cards.EquipmentCards
         }
 
         /// <summary>
-        /// Apply Instant effect.
-        /// <param name="invocationCards">invocation card allow to receive equipment card</param>
-        /// <param name="equipmentInstantEffect">equipmentCard instant effect to test if it authorizes invocations with equipment</param>
-        /// </summary>
-        public static void DealWithInstantEffect(InGameInvocationCard invocationCard,
-            EquipmentInstantEffect equipmentInstantEffect)
-        {
-            var keys = equipmentInstantEffect.Keys;
-            var values = equipmentInstantEffect.Values;
-
-            for (var i = 0; i < keys.Count; i++)
-            {
-                switch (keys[i])
-                {
-                    case InstantEffect.AddAtk:
-                    {
-                        DealWithInstantEffectAddAtk(invocationCard, values[i]);
-                    }
-                        break;
-                    case InstantEffect.AddDef:
-                    {
-                        DealWithInstantEffectAddDef(invocationCard, values[i]);
-                    }
-                        break;
-                    case InstantEffect.MultiplyAtk:
-                    {
-                        DealWithInstantEffectMultiplyAtk(invocationCard, values[i]);
-                    }
-                        break;
-                    case InstantEffect.MultiplyDef:
-                    {
-                        DealWithInstantEffectMultiplyDef(invocationCard, values[i]);
-                    }
-                        break;
-                    case InstantEffect.SetAtk:
-                    {
-                        DealWithInstantEffectSetAtk(invocationCard, values[i]);
-                    }
-                        break;
-                    case InstantEffect.SetDef:
-                    {
-                        DealWithInstantEffectSetDef(invocationCard, values[i]);
-                    }
-                        break;
-                    case InstantEffect.BlockAtk:
-                    {
-                        invocationCard.BlockAttack();
-                    }
-                        break;
-                    case InstantEffect.SwitchEquipment:
-                    {
-                        DealWithInstantEffectSwitchEquipment(invocationCard);
-                    }
-                        break;
-                    case InstantEffect.DisableBonus:
-                    {
-                        invocationCard.DeactivateEffect(); // TODO: Think about it when over
-                    }
-                        break;
-                    case InstantEffect.DirectAtk:
-                        break;
-                    case InstantEffect.ProtectInvocation:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
-        /// <summary>
         /// Apply AddAtk Instant effect.
         /// Increment invocation's ATK
         /// <param name="invocationCard">invocation card that receive the equipment card</param>
@@ -286,41 +216,6 @@ namespace Cards.EquipmentCards
             CurrentPlayerCard.yellowCards.Add(invocationCard.EquipmentCard);
             invocationCard.EquipmentCard = null;
             invocationCard.SetEquipmentCard(null);
-        }
-
-        /// <summary>
-        /// Apply Perm effect.
-        /// <param name="invocationCard">invocation card that receive the equipment card</param>
-        /// <param name="equipmentPermEffect">equipment perm effect of equipment card</param>
-        /// </summary>
-        public static void DealWithPermEffect(InGameInvocationCard invocationCard,
-            EquipmentPermEffect equipmentPermEffect)
-        {
-            var keys = equipmentPermEffect.Keys;
-            var values = equipmentPermEffect.Values;
-
-            for (var i = 0; i < keys.Count; i++)
-            {
-                switch (keys[i])
-                {
-                    case PermanentEffect.AddAtkBaseOnHandCards:
-                    {
-                        DealWithPermEffectAddAtkBaseOnHandCards(invocationCard, values[i]);
-                    }
-                        break;
-                    case PermanentEffect.AddDefBaseOnHandCards:
-                    {
-                        DealWithPermEffectAddDefBaseOnHandCards(invocationCard, values[i]);
-                    }
-                        break;
-                    case PermanentEffect.BlockOpponentDuringInvocation:
-                        break;
-                    case PermanentEffect.PreventAttackOnInvocation:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
         }
 
         /// <summary>

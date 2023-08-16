@@ -5,15 +5,11 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
-using Cards.EquipmentCards;
 using Cards.FieldCards;
-using Cards.InvocationCards;
 using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace OnePlayer
@@ -97,22 +93,6 @@ namespace OnePlayer
                             playerCards.handCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipementCard;
                         InGameInvocationCard invocationCard =
                             playerCards.invocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
-
-                        if (equipmentCard != null)
-                        {
-                            /*var instantEffect = equipmentCard.EquipmentInstantEffect;
-                            var permEffect = equipmentCard.EquipmentPermEffect;
-
-                            if (instantEffect != null)
-                            {
-                                EquipmentFunctions.DealWithInstantEffect(invocationCard, instantEffect);
-                            }
-
-                            if (permEffect != null)
-                            {
-                                EquipmentFunctions.DealWithPermEffect(invocationCard, permEffect);
-                            }*/
-                        }
 
                         invocationCard.SetEquipmentCard(equipmentCard);
                         playerCards.handCards.Remove(equipmentCard);

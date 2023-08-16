@@ -65,190 +65,6 @@ namespace Cards.EffectCards
         }
 
         /// <summary>
-        /// Returns a boolean to indicate if the effect card is usable for the current user
-        /// </summary>
-        /// <param name="effectCardEffect">The effect of the effect card</param>
-        /// <returns>A boolean indicating if effect card is usable</returns>
-        public bool CanUseEffectCard(EffectCardEffect effectCardEffect)
-        {
-            var keys = effectCardEffect.Keys;
-            var values = effectCardEffect.Values;
-
-            var pvAffected = 0f;
-            var affectOpponent = false;
-            var changeField = false;
-            var handCard = 0;
-
-            for (var i = 0; i < keys.Count; i++)
-            {
-                var effect = keys[i];
-                var value = values[i];
-                switch (effect)
-                {
-                    case Effect.AffectOpponent:
-                    {
-                        if (!CanUseAffectOpponent(value, pvAffected, out affectOpponent))
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.DestroyCards:
-                    {
-                        if (!CanUseDestroyCards(value, affectOpponent))
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.SacrificeInvocation:
-                    {
-                        if (!CanUseSacrificeInvocation(value))
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.SameFamily:
-                    {
-                        if (!CanUseSameFamily())
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.RemoveDeck:
-                    {
-                        if (!CanUseRemoveDeck())
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.SpecialInvocation:
-                    {
-                        if (!CanUseSpecialInvocation())
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.Combine:
-                    {
-                        if (!CanUseCombine(value))
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.TakeControl:
-                    {
-                        if (!CanUseTakeControl())
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.NumberAttacks:
-                    {
-                        if (!CanUseNumberAttacks())
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.AttackDirectly:
-                    {
-                        if (!CanUseAttackDirectly(value))
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.ProtectAttack:
-                    {
-                        if (!CanUseProtectAttack())
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.SkipFieldsEffect:
-                    {
-                        if (!CanUseSkipFieldsEffect())
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.ChangeField:
-                    {
-                        changeField = true;
-                    }
-                        break;
-                    case Effect.RemoveHand:
-                    {
-                        if (!CanUseRemoveHand(value))
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.AffectPv:
-                    {
-                        CanUseAffectPv(value, out pvAffected);
-                    }
-                        break;
-                    case Effect.Sources:
-                    {
-                        if (!CanUseSources(changeField, value, handCard))
-                        {
-                            return false;
-                        }
-                    }
-                        break;
-                    case Effect.ChangeHandCards:
-                    {
-                        handCard = int.Parse(value);
-                    }
-                        break;
-                    case Effect.NumberInvocationCard:
-                        break;
-                    case Effect.NumberInvocationCardAttacker:
-                        break;
-                    case Effect.NumberHandCard:
-                        break;
-                    case Effect.SeeOpponentHand:
-                        break;
-                    case Effect.RemoveCardOption:
-                        break;
-                    case Effect.DivideInvocation:
-                        break;
-                    case Effect.RevertStat:
-                        break;
-                    case Effect.SkipContre:
-                        break;
-                    case Effect.HandMax:
-                        break;
-                    case Effect.CheckTurn:
-                        break;
-                    case Effect.SkipAttack:
-                        break;
-                    case Effect.SeeCards:
-                        break;
-                    case Effect.ChangeOrder:
-                        break;
-                    case Effect.Duration:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Returns a boolean to indicate if the AffectOpponent effect can be use.
         /// It is not usable if the effectCard make the user loose more HP than he has.
         /// Cards that use it : Convocation au lycée, Demi-pizza, Incendie, Kebab magique, Maniabilité pourrie, Musique de Mega Drive, Squalala, Torture Ninja, Un délicieux risotto.
@@ -1274,13 +1090,7 @@ namespace Cards.EffectCards
                 if (currentCards != null && currentCards.Count > 0)
                 {
                     var invocationCards = currentCards.Cast<InGameInvocationCard>().ToList();
-
-                    var superInvocationCard =
-                        ScriptableObject.CreateInstance<SuperInvocationCard>();
-                    //superInvocationCard.Init(invocationCards);
-
-                    var playerName = GameLoop.IsP1Turn ? "P1" : "P2";
-                    //cardLocation.AddPhysicalCard(superInvocationCard, playerName);
+                    
                     foreach (var invocationCard in invocationCards)
                     {
                         var index1 = currentInvocationCards.IndexOf(invocationCard);
@@ -1288,8 +1098,6 @@ namespace Cards.EffectCards
                         currentPlayerCard.SendToSecretHide(invocationCard);
                         currentPlayerCard.invocationCards.RemoveAt(index1);
                     }
-
-                    //currentInvocationCards.Add(superInvocationCard);
 
                     Destroy(messageBox);
                 }

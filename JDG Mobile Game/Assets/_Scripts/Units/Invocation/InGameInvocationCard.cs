@@ -15,7 +15,6 @@ namespace _Scripts.Units.Invocation
         protected float defense;
         private CardFamily[] families;
         private InGameEquipementCard equipmentCard;
-        private InvocationConditions invocationConditions;
         private int numberTurnOnField;
         private int numberDeaths;
         private bool blockAttackNextTurn;
@@ -252,70 +251,6 @@ namespace _Scripts.Units.Invocation
             }
 
             equipmentCard = card;
-        }
-
-        /// <summary>
-        /// RemoveEquipmentCardEffect.
-        /// Disable equipment card effect on the invocation card.
-        /// <param name="equipmentCardEquipmentInstantEffect">instant effect of the previous equipment card</param>
-        /// </summary>
-        private void RemoveEquipmentCardEffect(EquipmentInstantEffect equipmentCardEquipmentInstantEffect)
-        {
-            if (equipmentCardEquipmentInstantEffect == null) return;
-            var keys = equipmentCardEquipmentInstantEffect.Keys;
-            var values = equipmentCardEquipmentInstantEffect.Values;
-            for (var i = 0; i < keys.Count; i++)
-            {
-                var value = values[i];
-                switch (keys[i])
-                {
-                    case InstantEffect.AddAtk:
-                    {
-                        RemoveAddAtkEffect(value);
-                    }
-                        break;
-                    case InstantEffect.AddDef:
-                    {
-                        RemoveAddDefEffect(value);
-                    }
-                        break;
-                    case InstantEffect.MultiplyAtk:
-                    {
-                        RemoveMultiplyAtkEffect(value);
-                    }
-                        break;
-                    case InstantEffect.MultiplyDef:
-                    {
-                        RemoveMultiplyDefEffect(value);
-                    }
-                        break;
-                    case InstantEffect.SetAtk:
-                    {
-                        attack = baseInvocationCard.BaseInvocationCardStats.Attack;
-                    }
-                        break;
-                    case InstantEffect.SetDef:
-                    {
-                        defense = baseInvocationCard.BaseInvocationCardStats.Defense;
-                    }
-                        break;
-                    case InstantEffect.BlockAtk:
-                    {
-                        UnblockAttack();
-                    }
-                        break;
-                    case InstantEffect.DirectAtk:
-                        break;
-                    case InstantEffect.SwitchEquipment:
-                        break;
-                    case InstantEffect.DisableBonus:
-                        break;
-                    case InstantEffect.ProtectInvocation:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
         }
 
         /// <summary>

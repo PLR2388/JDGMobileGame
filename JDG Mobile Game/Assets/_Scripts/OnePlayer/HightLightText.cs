@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using OnePlayer;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class HightLightText : MonoBehaviour
 {

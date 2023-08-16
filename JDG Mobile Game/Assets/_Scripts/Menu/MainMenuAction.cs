@@ -38,6 +38,4 @@ public class MainMenuAction : MonoBehaviour
     {
         AudioSystem.Instance.PlayBackSound();
     }
-
-
 }

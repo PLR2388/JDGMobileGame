@@ -7,9 +7,6 @@ namespace Cards.FieldCards
     public class FieldCard : Card
     {
         [SerializeField] private CardFamily family;
-        [SerializeField] private FieldCardEffect fieldCardEffect;
-
-        public FieldCardEffect FieldCardEffect => fieldCardEffect;
         public CardFamily Family => family;
 
         public List<FieldAbilityName> FieldAbilities = new List<FieldAbilityName>();
