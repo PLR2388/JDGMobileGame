@@ -41,10 +41,5 @@ namespace Cards
                 _ => null
             };
         }
-
-        public bool IsValid()
-        {
-            return !string.IsNullOrEmpty(title);
-        }
     }
 }

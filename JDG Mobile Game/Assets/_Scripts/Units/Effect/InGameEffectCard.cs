@@ -6,9 +6,6 @@ namespace Cards.EffectCards
     public class InGameEffectCard : InGameCard
     {
         private EffectCard baseEffectCard;
-        public bool checkTurn;
-
-        public float affectPv;
 
         public List<EffectAbility> EffectAbilities = new List<EffectAbility>();
 
@@ -32,8 +29,6 @@ namespace Cards.EffectCards
             type = baseEffectCard.Type;
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;
-            checkTurn = baseEffectCard.checkTurn;
-            affectPv = baseEffectCard.affectPv;
             EffectAbilities = baseEffectCard.EffectAbilities.Select(
                 effectAbilityName => EffectAbilityLibrary.Instance.effectAbilityDictionary[effectAbilityName]
             ).ToList();

@@ -13,15 +13,15 @@ public class CanOnlyAttackItselfAbility : Ability
         invocationCard.Aggro = true;
     }
 
-    public override void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void CancelEffect(PlayerCards playerCards)
     {
-        base.CancelEffect(playerCards, opponentPlayerCards);
+        base.CancelEffect(playerCards);
         invocationCard.Aggro = false;
     }
 
-    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void ReactivateEffect(PlayerCards playerCards)
     {
-        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        base.ReactivateEffect(playerCards);
         invocationCard.Aggro = true;
     }
 }

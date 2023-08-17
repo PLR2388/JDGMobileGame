@@ -47,14 +47,14 @@ namespace Cards.InvocationCards
             {
                 foreach (var ability in invocationCard.Abilities)
                 {
-                    ability.CancelEffect(currentPlayerCard, opponentPlayerCards);
+                    ability.CancelEffect(currentPlayerCard);
                 }
             }
             else
             {
                 foreach (var ability in invocationCard.Abilities)
                 {
-                    ability.ReactivateEffect(currentPlayerCard, opponentPlayerCards);
+                    ability.ReactivateEffect(currentPlayerCard);
                 }
             }
         }

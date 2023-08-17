@@ -28,19 +28,17 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         };
     }
 
-    public override bool IsActionPossible(InGameInvocationCard currentCard, PlayerCards playerCards,
-        PlayerCards opponentCards)
+    public override bool IsActionPossible(PlayerCards playerCards)
     {
         var invocationCards = playerCards.invocationCards;
         return invocationCard.Receiver == null &&
                invocationCards.Any(elt => elt.Families.Contains(family) && elt.Title != invocationCard.Title);
     }
 
-    public override void OnCardActionTouched(Transform canvas, InGameInvocationCard currentCard,
-        PlayerCards playerCards,
-        PlayerCards opponentCards)
+    public override void OnCardActionTouched(Transform canvas, PlayerCards playerCards, PlayerCards opponentCards)
     {
-        if (invocationCard.CancelEffect)
+        base.OnCardActionTouched(canvas, playerCards, opponentCards);
+                if (invocationCard.CancelEffect)
         {
             return;
         }

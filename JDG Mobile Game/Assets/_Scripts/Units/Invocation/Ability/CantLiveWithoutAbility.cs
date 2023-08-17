@@ -50,15 +50,15 @@ public class CantLiveWithoutAbility : Ability
         ApplyPower(playerCards);
     }
 
-    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void ReactivateEffect(PlayerCards playerCards)
     {
-        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        base.ReactivateEffect(playerCards);
         ApplyPower(playerCards);
     }
 
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public override void OnCardRemove(InGameInvocationCard removeCard, PlayerCards playerCards)
     {
+        base.OnCardRemove(removeCard, playerCards);
         if (invocationCard.CancelEffect)
         {
             return;

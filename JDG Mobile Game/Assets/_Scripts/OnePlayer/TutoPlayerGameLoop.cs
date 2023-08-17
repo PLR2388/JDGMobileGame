@@ -113,7 +113,6 @@ namespace OnePlayer
                             {
                                 playerCards.FieldCard = fieldCard;
                                 playerCards.handCards.Remove(fieldCard);
-                                FieldFunctions.ApplyFieldCardEffect(fieldCard, playerCards);
                             }
                         }
                     }

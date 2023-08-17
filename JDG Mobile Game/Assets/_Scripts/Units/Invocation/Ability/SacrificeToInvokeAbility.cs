@@ -27,8 +27,7 @@ public class SacrificeToInvokeAbility : Ability
         };
     }
 
-    public override bool IsActionPossible(InGameInvocationCard currentCard, PlayerCards playerCards,
-        PlayerCards opponentCards)
+    public override bool IsActionPossible(PlayerCards playerCards)
     {
         return playerCards.yellowCards.Any(card =>
             card.Type == CardType.Invocation &&
@@ -76,10 +75,9 @@ public class SacrificeToInvokeAbility : Ability
         }
     }
 
-    public override void OnCardActionTouched(Transform canvas, InGameInvocationCard currentCard,
-        PlayerCards playerCards,
-        PlayerCards opponentCards)
+    public override void OnCardActionTouched(Transform canvas, PlayerCards playerCards, PlayerCards opponentCards)
     {
+        base.OnCardActionTouched(canvas, playerCards, opponentCards);
         if (invocationCard.CancelEffect)
         {
             return;

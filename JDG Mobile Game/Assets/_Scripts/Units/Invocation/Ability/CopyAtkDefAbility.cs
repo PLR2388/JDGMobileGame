@@ -35,16 +35,16 @@ public class CopyAtkDefAbility : Ability
         ApplyCopy(playerCards);
     }
 
-    public override void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void CancelEffect(PlayerCards playerCards)
     {
-        base.CancelEffect(playerCards, opponentPlayerCards);
+        base.CancelEffect(playerCards);
         invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
         invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
     }
 
-    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void ReactivateEffect(PlayerCards playerCards)
     {
-        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        base.ReactivateEffect(playerCards);
         ApplyCopy(playerCards);
     }
 
@@ -58,9 +58,9 @@ public class CopyAtkDefAbility : Ability
         ApplyCopy(playerCards);
     }
 
-    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public override void OnCardAdded(InGameInvocationCard newCard, PlayerCards playerCards)
     {
+        base.OnCardAdded(newCard, playerCards);
         if (invocationCard.CancelEffect)
         {
             return;
@@ -69,9 +69,9 @@ public class CopyAtkDefAbility : Ability
         ApplyCopy(playerCards);
     }
 
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public override void OnCardRemove(InGameInvocationCard removeCard, PlayerCards playerCards)
     {
+        base.OnCardRemove(removeCard, playerCards);
         if (invocationCard.CancelEffect)
         {
             return;
@@ -83,4 +83,5 @@ public class CopyAtkDefAbility : Ability
             invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
         }
     }
+    
 }

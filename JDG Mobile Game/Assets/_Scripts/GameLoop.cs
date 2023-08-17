@@ -438,7 +438,7 @@ public class GameLoop : MonoBehaviour
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         return attacker.Abilities.TrueForAll(ability =>
-            ability.IsActionPossible(attacker, playerCards, opponentPlayerCards)) && !attacker.CancelEffect;
+            ability.IsActionPossible(playerCards)) && !attacker.CancelEffect;
     }
 
     protected void UseSpecialAction()
@@ -448,7 +448,7 @@ public class GameLoop : MonoBehaviour
         var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         foreach (var ability in abilities)
         {
-            ability.OnCardActionTouched(canvas, attacker, playerCards, opponentPlayerCards);
+            ability.OnCardActionTouched(canvas, playerCards, opponentPlayerCards);
         }
     }
 
@@ -1306,33 +1306,6 @@ public class GameLoop : MonoBehaviour
         ApplyOnTurnStart(playerCards, opponentPlayerCards, playerStatus, opponentPlayerStatus);
 
         DrawPlayerCard(playerCards, playerStatus);
-
-        var invocationCards = playerCards.invocationCards;
-        var effectCards = playerCards.effectCards;
-
-        foreach (var effectCard in effectCards.Where(effectCard => effectCard.checkTurn))
-        {
-            void PositiveAction()
-            {
-                var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
-                playerStatus.ChangePv(effectCard.affectPv);
-            }
-
-            void NegativeAction()
-            {
-                foreach (var invocationCard in invocationCards)
-                {
-                    invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
-                }
-
-                playerCards.yellowCards.Add(effectCard);
-                playerCards.effectCards.Remove(effectCard);
-            }
-
-            MessageBox.CreateSimpleMessageBox(canvas, "Action requise",
-                "Veux-tu prolonger l'effet de " + effectCard.Title + " pour 1 tour pour " + effectCard.affectPv +
-                " points de vie ?", PositiveAction, NegativeAction);
-        }
     }
 
     protected void DrawPlayerCard(PlayerCards playerCards, PlayerStatus playerStatus)

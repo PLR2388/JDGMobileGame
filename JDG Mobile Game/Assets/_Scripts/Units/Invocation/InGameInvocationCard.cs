@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
-using Cards.EquipmentCards;
 using Cards.InvocationCards;
 using UnityEngine;
 
@@ -145,10 +143,6 @@ namespace _Scripts.Units.Invocation
             return Conditions.Count == 0 || Conditions.TrueForAll(condition => condition.CanBeSummoned(playerCards));
         }
 
-        public void DeactivateEffect()
-        {
-        }
-
         public void BlockAttack()
         {
             blockAttackNextTurn = true;
@@ -251,59 +245,6 @@ namespace _Scripts.Units.Invocation
             }
 
             equipmentCard = card;
-        }
-
-        /// <summary>
-        /// RemoveAddAtkEffect.
-        /// Disable equipment card effect on the invocation card.
-        /// <param name="value">value is a string that represent the bonus atk</param>
-        /// </summary>
-        private void RemoveAddAtkEffect(string value)
-        {
-            attack -= float.Parse(value);
-        }
-
-        /// <summary>
-        /// RemoveAddDefEffect.
-        /// Disable equipment card effect on the invocation card.
-        /// <param name="value">value is a string that represent the bonus def</param>
-        /// </summary>
-        private void RemoveAddDefEffect(string value)
-        {
-            defense -= float.Parse(value);
-        }
-
-        /// <summary>
-        /// RemoveMultiplyAtkEffect.
-        /// Disable equipment card effect on the invocation card.
-        /// <param name="value">value is a string that represent the multiplicator atk</param>
-        /// </summary>
-        private void RemoveMultiplyAtkEffect(string value)
-        {
-            var multiplicator = int.Parse(value);
-            if (multiplicator > 1)
-            {
-                var newBonusAttack = -(multiplicator - 1) * baseInvocationCard.BaseInvocationCardStats.Attack + attack;
-            }
-        }
-
-        /// <summary>
-        /// RemoveMultiplyDefEffect.
-        /// Disable equipment card effect on the invocation card.
-        /// <param name="value">value is a string that represent the multiplicator def</param>
-        /// </summary>
-        private void RemoveMultiplyDefEffect(string value)
-        {
-            var multiplicator = int.Parse(value);
-            if (multiplicator > 1)
-            {
-                var newBonusDefense =
-                    -(multiplicator - 1) * baseInvocationCard.BaseInvocationCardStats.Defense + defense;
-            }
-            else if (multiplicator < 0)
-            {
-                var newBonusDefense = -(baseInvocationCard.BaseInvocationCardStats.Defense / multiplicator) + defense;
-            }
         }
 
         public bool IsControlled => isControlled;

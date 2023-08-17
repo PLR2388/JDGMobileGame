@@ -84,12 +84,12 @@ public abstract class Ability
     {
     }
 
-    public virtual void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public virtual void CancelEffect(PlayerCards playerCards)
     {
         
     }
 
-    public virtual void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public virtual void ReactivateEffect(PlayerCards playerCards)
     {
         
     }
@@ -100,14 +100,12 @@ public abstract class Ability
     }
 
     // Called when an invocation is added to field
-    public virtual void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public virtual void OnCardAdded(InGameInvocationCard newCard, PlayerCards playerCards)
     {
     }
 
     // Called when an invocation is removed from field
-    public virtual void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public virtual void OnCardRemove(InGameInvocationCard removeCard, PlayerCards playerCards)
     {
     }
 
@@ -192,13 +190,12 @@ public abstract class Ability
         return true;
     }
 
-    public virtual bool IsActionPossible(InGameInvocationCard currentCard, PlayerCards playerCards,
-        PlayerCards opponentCards)
+    public virtual bool IsActionPossible(PlayerCards playerCards)
     {
         return !invocationCard.CancelEffect;
     }
 
-    public virtual void OnCardActionTouched(Transform canvas, InGameInvocationCard currentCard, PlayerCards playerCards,
+    public virtual void OnCardActionTouched(Transform canvas, PlayerCards playerCards,
         PlayerCards opponentCards)
     {
     }

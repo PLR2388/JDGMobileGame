@@ -46,9 +46,9 @@ public class GiveAtkDefFamilyAbility : Ability
         }
     }
 
-    public override void CancelEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void CancelEffect(PlayerCards playerCards)
     {
-        base.CancelEffect(playerCards, opponentPlayerCards);
+        base.CancelEffect(playerCards);
         IEnumerable<InGameInvocationCard> invocationCards =
             playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
         foreach (var inGameInvocationCard in invocationCards)
@@ -57,15 +57,15 @@ public class GiveAtkDefFamilyAbility : Ability
         }
     }
 
-    public override void ReactivateEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards)
+    public override void ReactivateEffect(PlayerCards playerCards)
     {
-        base.ReactivateEffect(playerCards, opponentPlayerCards);
+        base.ReactivateEffect(playerCards);
         ApplyPower(playerCards);
     }
 
-    public override void OnCardAdded(Transform canvas, InGameInvocationCard newCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public override void OnCardAdded(InGameInvocationCard newCard, PlayerCards playerCards)
     {
+        base.OnCardAdded(newCard, playerCards);
         if (invocationCard.CancelEffect)
         {
             return;
@@ -76,9 +76,9 @@ public class GiveAtkDefFamilyAbility : Ability
         }
     }
 
-    public override void OnCardRemove(Transform canvas, InGameInvocationCard removeCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
+    public override void OnCardRemove(InGameInvocationCard removeCard, PlayerCards playerCards)
     {
+        base.OnCardRemove(removeCard, playerCards);
         if (removeCard.Title != invocationCard.Title && removeCard.Families.Contains(family))
         {
             DecreaseAtkDef(removeCard);

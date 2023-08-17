@@ -553,7 +553,7 @@ public class PlayerCards : MonoBehaviour
         {
             foreach (var ability in inGameInvocationCard.Abilities)
             {
-                ability.OnCardAdded(canvas, newInvocationCard, this, opponentPlayerCard);
+                ability.OnCardAdded(newInvocationCard, this);
             }
         }
 
@@ -871,7 +871,7 @@ public class PlayerCards : MonoBehaviour
         // Apply onCardRemove for invocation card that are still alive
         foreach (var ability in cloneInvocationCards.SelectMany(inGameInvocationCard => inGameInvocationCard.Abilities))
         {
-            ability.OnCardRemove(canvas, removedInvocationCard, this, opponentPlayerCard);
+            ability.OnCardRemove(removedInvocationCard, this);
         }
 
         foreach (var effectAbility in effectCards.SelectMany(effectCard => effectCard.EffectAbilities))
