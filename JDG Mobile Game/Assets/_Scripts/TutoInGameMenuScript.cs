@@ -2,12 +2,9 @@
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
-using Cards.FieldCards;
-using Cards.InvocationCards;
 using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -41,8 +38,6 @@ public class TutoInGameMenuScript : MonoBehaviour
     private readonly Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
     private readonly Vector3 padding = new Vector3(490, -350, 0);
 
-    private EffectFunctions effectFunctions;
-
     private int currentDialogIndex = 0;
 
     private void Awake()
@@ -57,7 +52,6 @@ public class TutoInGameMenuScript : MonoBehaviour
 
     private void Start()
     {
-        effectFunctions = gameLoop.GetComponent<EffectFunctions>();
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
         EventClick.AddListener(ClickOnCard);
@@ -79,7 +73,7 @@ public class TutoInGameMenuScript : MonoBehaviour
             {
                 case CardType.Invocation:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                    var invocationCard = card as InGameInvocationCard;
+                    var invocationCard =(InGameInvocationCard) card;
                     putCardButton.GetComponent<Button>().interactable =
                         invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
 
@@ -89,16 +83,11 @@ public class TutoInGameMenuScript : MonoBehaviour
                     putCardButton.GetComponent<Button>().interactable = true;
                     break;
                 case CardType.Effect:
-                    var effectCard = card as InGameEffectCard;
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                    //putCardButton.GetComponent<Button>().interactable =
-                     //   effectFunctions.CanUseEffectCard(effectCard.EffectCardEffect);
                     break;
                 case CardType.Equipment:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
-                    var equipmentCard = card as InGameEquipementCard;
                     putCardButton.GetComponent<Button>().interactable = true;
-                        //InGameEquipementCard.IsEquipmentPossible(equipmentCard.EquipmentInstantEffect);
                     break;
                 case CardType.Field:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";

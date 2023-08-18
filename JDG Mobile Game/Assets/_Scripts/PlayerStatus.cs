@@ -15,13 +15,13 @@ public class PlayerStatus : MonoBehaviour
     [FormerlySerializedAs("currentPV")] [SerializeField]
     private float currentPv = 30f;
 
-    [SerializeField] private bool isP1 = false;
+    [SerializeField] private bool isP1;
 
-    [SerializeField] private int numberShield = 0;
+    [SerializeField] private int numberShield;
 
-    [SerializeField] private bool blockAttack = false;
+    [SerializeField] private bool blockAttack;
 
-    private bool skipCurrentDraw = false;
+    private bool skipCurrentDraw;
 
     public bool SkipCurrentDraw
     {

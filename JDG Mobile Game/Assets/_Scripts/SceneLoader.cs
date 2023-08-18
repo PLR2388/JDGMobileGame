@@ -1,5 +1,4 @@
-﻿using System;
-using Sound;
+﻿using Sound;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

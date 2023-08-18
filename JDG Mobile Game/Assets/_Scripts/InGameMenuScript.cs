@@ -3,8 +3,6 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
-using Cards.FieldCards;
-using Cards.InvocationCards;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -64,11 +62,8 @@ public class InGameMenuScript : MonoBehaviour
     private readonly Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
     private readonly Vector3 padding = new Vector3(490, -350, 0);
 
-    private EffectFunctions effectFunctions;
-
     private void Start()
     {
-        effectFunctions = gameLoop.GetComponent<EffectFunctions>();
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
         EventClick.AddListener(ClickOnCard);
@@ -93,7 +88,7 @@ public class InGameMenuScript : MonoBehaviour
         {
             case CardType.Invocation:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
-                var invocationCard = card as InGameInvocationCard;
+                var invocationCard = (InGameInvocationCard) card;
                 putCardButton.GetComponent<Button>().interactable =
                     invocationCard.CanBeSummoned(playerCard) && playerCard.invocationCards.Count < 4;
 
@@ -103,7 +98,7 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButton.GetComponent<Button>().interactable = true;
                 break;
             case CardType.Effect:
-                var effectCard = card as InGameEffectCard;
+                var effectCard = (InGameEffectCard) card;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
                 putCardButton.GetComponent<Button>().interactable =
                     effectCard.EffectAbilities.All(elt =>
@@ -111,7 +106,7 @@ public class InGameMenuScript : MonoBehaviour
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
-                var equipmentCard = card as InGameEquipementCard;
+                var equipmentCard = (InGameEquipementCard) card;
                 putCardButton.GetComponent<Button>().interactable =
                     playerCard.invocationCards.Count(inGameInvocationCard =>
                         inGameInvocationCard.EquipmentCard == null) > 0 ||

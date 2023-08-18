@@ -421,7 +421,6 @@ namespace OnePlayer
                     break;
                 case 2:
                     inHandButton.SetActive(false);
-                    BlockCardJustInvokeIfNeeded();
                     roundText.GetComponent<TextMeshProUGUI>().text = "Phase d'attaque";
                     break;
             }
