@@ -17,6 +17,9 @@ public class GameLoop : MonoBehaviour
         Draw();
     }
 
+    /// <summary>
+    /// Action when back is pressed
+    /// </summary>
     private void OnBackPressed()
     {
         void PositiveAction()
@@ -27,11 +30,17 @@ public class GameLoop : MonoBehaviour
         UIManager.Instance.DisplayPauseMenu(PositiveAction);
     }
 
+    /// <summary>
+    /// When user just stops to touch the screen
+    /// </summary>
     private void OnReleaseTouch()
     {
         UIManager.Instance.HideBigImage();
     }
 
+    /// <summary>
+    /// When user just touches the screen
+    /// </summary>
     private void OnTouch()
     {
         var cardTouch = RaycastManager.GetCardTouch();
@@ -54,6 +63,13 @@ public class GameLoop : MonoBehaviour
             }
         }
     }
+    
+    /// <summary>
+    /// Display a menu and set attacker if user touches a card he owns
+    /// </summary>
+    /// <param name="cardTouch">Current card touched</param>
+    /// <param name="currentOwner">Owner associated to the current player</param>
+    /// <param name="isAttackPhase">Is the touch happen during attack phase</param>
     private static void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
     {
 
@@ -67,7 +83,9 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Called when user touches during a long time
+    /// </summary>
     private void OnLongTouch()
     {
         UIManager.Instance.HideInvocationMenu();
@@ -78,12 +96,18 @@ public class GameLoop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when choose phase starts
+    /// </summary>
     private void ChoosePhase()
     {
         UIManager.Instance.EnableInvocationMenu();
         ChoosePhaseMusic();
     }
 
+    /// <summary>
+    /// Choose the right Choose music
+    /// </summary>
     private void ChoosePhaseMusic()
     {
         var currentFieldCard = CardManager.Instance.GetCurrentPlayerCards().FieldCard;
@@ -97,16 +121,25 @@ public class GameLoop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Redirect player after a Gameover
+    /// </summary>
     private static void GameOver()
     {
         SceneLoaderManager.LoadMainScreen();
     }
 
+    /// <summary>
+    /// Play the attack music
+    /// </summary>
     private void PlayAttackMusic()
     {
       AudioSystem.Instance.PlayMusic(Music.Fight);
     }
 
+    /// <summary>
+    /// Display all available opponent after pressing Attack button
+    /// </summary>
     protected void DisplayAvailableOpponent()
     {
         var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
@@ -114,6 +147,10 @@ public class GameLoop : MonoBehaviour
         InputManager.Instance.DisableDetectionTouch();
     }
 
+    /// <summary>
+    /// Display the MessageBox with the available opponents
+    /// </summary>
+    /// <param name="invocationCards">Available opponents list</param>
     private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
     {
         void PositiveAction(InGameInvocationCard invocationCard)
@@ -134,6 +171,9 @@ public class GameLoop : MonoBehaviour
         UIManager.Instance.DisplayOpponentAvailableMessageBox(invocationCards, PositiveAction, NegativeAction);
     }
 
+    /// <summary>
+    /// Compute Attack after player chooses an opponent
+    /// </summary>
     private void ComputeAttack()
     {
         CardManager.Instance.HandleAttack();
@@ -155,6 +195,9 @@ public class GameLoop : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Draw a card during draw phase
+    /// </summary>
     private void Draw()
     {
         DoDraw();
@@ -165,6 +208,9 @@ public class GameLoop : MonoBehaviour
         UIManager.Instance.SetRoundText("Phase de pose");
     }
 
+    /// <summary>
+    /// Do the actual draw
+    /// </summary>
     private void DoDraw()
     {
         CardManager.Instance.OnTurnStart();
@@ -178,6 +224,9 @@ public class GameLoop : MonoBehaviour
         CardManager.Instance.Draw(OnNoCards);
     }
 
+    /// <summary>
+    /// Called when user presses the next phase button
+    /// </summary>
     protected virtual void NextRound()
     {
         UIManager.Instance.HideInvocationMenu();
@@ -207,8 +256,11 @@ public class GameLoop : MonoBehaviour
                 EndTurnPhase();
                 break;
         }
-
     }
+    
+    /// <summary>
+    /// Called when a turn end for a player
+    /// </summary>
     private void EndTurnPhase()
     {
         CardManager.Instance.HandleEndTurn();
