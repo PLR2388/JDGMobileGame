@@ -625,7 +625,7 @@ public class GameLoop : MonoBehaviour
     /**
      * Attack that kill the opponent
      */
-    protected void DealWithGoodAttack(float diff)
+    protected void HandleSuccessfulAttack(float diff)
     {
         if (opponent is InGameSuperInvocationCard superOpponent)
         {
@@ -679,7 +679,7 @@ public class GameLoop : MonoBehaviour
     /**
      * Attack that kill the attacker
      */
-    protected void DealWithHurtAttack(float diff)
+    protected void HandleHurtfulAttack(float diff)
     {
         if (attacker is InGameSuperInvocationCard superAttacker)
         {
@@ -722,7 +722,7 @@ public class GameLoop : MonoBehaviour
         playerCards.RemoveSuperInvocation(superAttacker);
     }
 
-    protected void DealWithEqualityAttack()
+    protected void HandleEqualityAttack()
     {
         if (attacker is InGameSuperInvocationCard || opponent is InGameSuperInvocationCard)
         {
