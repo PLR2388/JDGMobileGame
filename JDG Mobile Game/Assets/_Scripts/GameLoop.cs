@@ -78,7 +78,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected void ChoosePhase()
+    private void ChoosePhase()
     {
         UIManager.Instance.EnableInvocationMenu();
         ChoosePhaseMusic();
@@ -97,12 +97,12 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected static void GameOver()
+    private static void GameOver()
     {
         SceneLoaderManager.LoadMainScreen();
     }
 
-    protected void PlayAttackMusic()
+    private void PlayAttackMusic()
     {
       AudioSystem.Instance.PlayMusic(Music.Fight);
     }
@@ -114,7 +114,7 @@ public class GameLoop : MonoBehaviour
         InputManager.Instance.DisableDetectionTouch();
     }
 
-    protected void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
+    private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
     {
         void PositiveAction(InGameInvocationCard invocationCard)
         {
@@ -134,7 +134,7 @@ public class GameLoop : MonoBehaviour
         UIManager.Instance.DisplayOpponentAvailableMessageBox(invocationCards, PositiveAction, NegativeAction);
     }
 
-    protected void ComputeAttack()
+    private void ComputeAttack()
     {
         CardManager.Instance.HandleAttack();
         UIManager.Instance.UpdateAttackButton(GameStateManager.Instance.IsP1Turn);
@@ -155,7 +155,7 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected void Draw()
+    private void Draw()
     {
         DoDraw();
         GameStateManager.Instance.IncrementNumberOfTurn();
