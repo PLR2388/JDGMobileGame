@@ -17,6 +17,8 @@ public class GameLoop : MonoBehaviour
         Draw();
     }
 
+    #region UI Interaction
+    
     /// <summary>
     /// Action when back is pressed
     /// </summary>
@@ -95,7 +97,45 @@ public class GameLoop : MonoBehaviour
             UIManager.Instance.DisplayCardInBigImage(cardTouch);
         }
     }
+    
+    /// <summary>
+    /// Called when user presses the next phase button
+    /// </summary>
+    protected virtual void NextRound()
+    {
+        UIManager.Instance.HideInvocationMenu();
+        if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
+        {
+            GameStateManager.Instance.SetPhase(Phase.End);
+        }
+        else
+        {
+            GameStateManager.Instance.NextPhase();
+        }
 
+        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
+        if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
+        {
+            GameStateManager.Instance.SetPhase(Phase.End);
+        }
+
+        UIManager.Instance.AdaptUIToPhaseIdInNextRound();
+
+        switch (GameStateManager.Instance.Phase) 
+        {
+            case Phase.Attack:
+                PlayAttackMusic();
+                break;
+            case Phase.End:
+                EndTurnPhase();
+                break;
+        }
+    }
+    
+    #endregion
+
+    #region Phase Behavior
+    
     /// <summary>
     /// Called when choose phase starts
     /// </summary>
@@ -126,6 +166,7 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private static void GameOver()
     {
+        GameStateManager.Instance.SetPhase(Phase.GameOver);
         SceneLoaderManager.LoadMainScreen();
     }
 
@@ -178,19 +219,23 @@ public class GameLoop : MonoBehaviour
     {
         CardManager.Instance.HandleAttack();
         UIManager.Instance.UpdateAttackButton(GameStateManager.Instance.IsP1Turn);
-
+        HandlePlayerDeath();
+    }
+    
+    /// <summary>
+    /// Check if one of the player die
+    /// </summary>
+    private static void HandlePlayerDeath()
+    {
         // Check if one player die
-
         var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
         var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
         if (playerStatus.GetCurrentPv() <= 0)
         {
-            GameStateManager.Instance.SetPhase(Phase.GameOver);
             GameOver();
         }
         else if (opponentPlayerStatus.GetCurrentPv() <= 0)
         {
-            GameStateManager.Instance.SetPhase(Phase.GameOver);
             GameOver();
         }
     }
@@ -217,47 +262,12 @@ public class GameLoop : MonoBehaviour
 
         void OnNoCards()
         {
-            GameStateManager.Instance.SetPhase(Phase.GameOver);
             GameOver();
         }
 
         CardManager.Instance.Draw(OnNoCards);
     }
 
-    /// <summary>
-    /// Called when user presses the next phase button
-    /// </summary>
-    protected virtual void NextRound()
-    {
-        UIManager.Instance.HideInvocationMenu();
-        if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
-        {
-            GameStateManager.Instance.SetPhase(Phase.End);
-        }
-        else
-        {
-            GameStateManager.Instance.NextPhase();
-        }
-
-        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
-        {
-            GameStateManager.Instance.SetPhase(Phase.End);
-        }
-
-        UIManager.Instance.AdaptUIToPhaseIdInNextRound();
-
-        switch (GameStateManager.Instance.Phase) 
-        {
-            case Phase.Attack:
-                PlayAttackMusic();
-                break;
-            case Phase.End:
-                EndTurnPhase();
-                break;
-        }
-    }
-    
     /// <summary>
     /// Called when a turn end for a player
     /// </summary>
@@ -267,4 +277,6 @@ public class GameLoop : MonoBehaviour
         GameStateManager.Instance.HandleEndTurn();
         Draw();
     }
+    #endregion
+    
 }
