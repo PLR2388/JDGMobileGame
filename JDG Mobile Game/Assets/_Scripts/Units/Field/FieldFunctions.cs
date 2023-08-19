@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Sound;
+using UnityEngine;
 
 namespace Cards.FieldCards
 {
@@ -36,6 +37,7 @@ namespace Cards.FieldCards
             {
                 ability.ApplyEffect(currentPlayerCard);
             }
+            AudioSystem.Instance.PlayFamilyMusic(fieldCard.GetFamily());
         }
 
         /// <summary>
