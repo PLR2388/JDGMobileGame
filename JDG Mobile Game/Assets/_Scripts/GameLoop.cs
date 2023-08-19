@@ -3,7 +3,6 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Sound;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameLoop : MonoBehaviour
 {
@@ -22,7 +21,7 @@ public class GameLoop : MonoBehaviour
     {
         void PositiveAction()
         {
-            SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
+            SceneLoaderManager.LoadMainScreen();
         }
 
         UIManager.Instance.DisplayPauseMenu(PositiveAction);
@@ -100,7 +99,7 @@ public class GameLoop : MonoBehaviour
 
     protected static void GameOver()
     {
-        SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
+        SceneLoaderManager.LoadMainScreen();
     }
 
     protected void PlayAttackMusic()
