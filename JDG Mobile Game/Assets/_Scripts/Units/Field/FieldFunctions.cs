@@ -13,7 +13,7 @@ namespace Cards.FieldCards
         // Start is called before the first frame update
         private void Start()
         {
-            GameLoop.ChangePlayer.AddListener(ChangePlayer);
+            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
             TutoInGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
             p1 = GameObject.Find("Player1");

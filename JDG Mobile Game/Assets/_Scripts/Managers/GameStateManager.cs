@@ -1,3 +1,5 @@
+using UnityEngine.Events;
+
 public class GameStateManager : Singleton<GameStateManager>
 {
     public bool IsP1Turn => isP1Turn;
@@ -7,6 +9,8 @@ public class GameStateManager : Singleton<GameStateManager>
     private bool isP1Turn = true;
     private int phaseId = 0;
     private int numberOfTurn = 0;
+    
+    public static readonly UnityEvent ChangePlayer = new UnityEvent();
 
     protected override void Awake()
     {
@@ -19,6 +23,7 @@ public class GameStateManager : Singleton<GameStateManager>
     public void ToggleTurn()
     {
         isP1Turn = !isP1Turn;
+        ChangePlayer.Invoke();
     }
 
     public void SetPhase(int newPhaseId)
@@ -29,5 +34,11 @@ public class GameStateManager : Singleton<GameStateManager>
     public void IncrementNumberOfTurn()
     {
         numberOfTurn++;
+    }
+
+    public void HandleEndTurn()
+    {
+        ToggleTurn();
+        SetPhase(0);
     }
 }

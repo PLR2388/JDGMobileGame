@@ -1,54 +1,82 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
 using Sound;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class GameLoop : MonoBehaviour
 {
-    public static readonly UnityEvent ChangePlayer = new UnityEvent();
-
-    protected const float ClickDuration = 2;
-    
-    protected bool stopDetectClicking;
-    protected bool clicking;
-    protected float totalDownTime;
 
     // Start is called before the first frame update
     protected void Start()
     {
+        InputManager.OnLongTouch.AddListener(OnLongTouch);
+        InputManager.OnTouch.AddListener(OnTouch);
+        InputManager.OnReleaseTouch.AddListener(OnReleaseTouch);
+        InputManager.OnBackPressed.AddListener(OnBackPressed);
         Draw();
     }
 
-    // Update is called once per frame
-    private void Update()
+    private void OnBackPressed()
     {
-        switch (GameStateManager.Instance.PhaseId)
-        {
-            case 1:
-                SeeCardAndApplyAction();
-                break;
-            case 2:
-                ChooseAttack();
-                break;
-        }
-
-        // Make sure user is on Android platform
-        if (Application.platform != RuntimePlatform.Android) return;
-        // Check if Back was pressed this frame
-        if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
         void PositiveAction()
         {
             SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
         }
 
         UIManager.Instance.DisplayPauseMenu(PositiveAction);
+    }
+
+    private void OnReleaseTouch()
+    {
+        UIManager.Instance.HideBigImage();
+    }
+
+    private void OnTouch()
+    {
+        var cardTouch = RaycastManager.GetCardTouch();
+        var currentOwner = GameStateManager.Instance.IsP1Turn ? CardOwner.Player1 : CardOwner.Player2;
+        if (cardTouch != null)
+        {
+            switch (GameStateManager.Instance.PhaseId)
+            {
+                case 1:
+                {
+                    HandleSingleTouch(cardTouch, currentOwner, false);
+                }
+                    break;
+                case 2:
+                {
+                    HandleSingleTouch(cardTouch, currentOwner, true);
+                }
+
+                    break;
+            }
+        }
+    }
+    private static void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
+    {
+
+        if (cardTouch is InGameInvocationCard invocationCard)
+        {
+            if (invocationCard.CardOwner == currentOwner || invocationCard.IsControlled)
+            {
+                CardManager.Instance.SetAttacker(invocationCard);
+                UIManager.Instance.DisplayInvocationMenu(isAttackPhase);
+            }
+        }
+    }
+
+
+    private void OnLongTouch()
+    {
+        UIManager.Instance.HideInvocationMenu();
+        var cardTouch = RaycastManager.GetCardTouch();
+        if (cardTouch != null)
+        {
+            UIManager.Instance.DisplayCardInBigImage(cardTouch);
+        }
     }
 
     protected void ChoosePhase()
@@ -89,203 +117,17 @@ public class GameLoop : MonoBehaviour
         SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
     }
 
-    protected void SeeCardAndApplyAction()
+    protected void PlayAttackMusic()
     {
-        if (!Input.GetMouseButton(0) || GameStateManager.Instance.PhaseId != 1 || stopDetectClicking) return;
-        var position = InputManager.TouchPosition;
-        if (Camera.main == null) return;
-        var hit = Physics.Raycast(Camera.main.ScreenPointToRay(position), out var hitInfo);
-        if (hit)
-        {
-            HandleClickDuringDrawPhase(hitInfo);
-        }
-        else
-        {
-            UIManager.Instance.HideBigImage();
-        }
-    }
-
-    protected void ChooseAttack()
-    {
-        AudioSystem.Instance.PlayMusic(Music.Fight);
-        if (!Input.GetMouseButton(0) || GameStateManager.Instance.PhaseId != 2 || stopDetectClicking) return;
-        var position = InputManager.TouchPosition;
-        if (Camera.main == null) return;
-        var hit = Physics.Raycast(Camera.main.ScreenPointToRay(position), out var hitInfo);
-        if (hit)
-        {
-            HandleClick(hitInfo);
-        }
-        else
-        {
-            UIManager.Instance.HideBigImage();
-        }
-    }
-
-    protected void HandleClickDuringDrawPhase(RaycastHit hitInfo)
-    {
-        var objectTag = hitInfo.transform.gameObject.tag;
-        var personTag = CardManager.Instance.GetCurrentPlayerCards().Tag;
-        var opponentTag = CardManager.Instance.GetOpponentPlayerCards().Tag;
-        var cardObject = hitInfo.transform.gameObject;
-
-        if (objectTag == personTag)
-        {
-            var cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
-            if (Input.GetMouseButtonDown(0))
-            {
-                totalDownTime = 0;
-                clicking = true;
-                var mousePosition = InputManager.TouchPosition;
-                if (cardSelected is InGameInvocationCard invocationCard)
-                {
-                    CardManager.Instance.SetAttacker(invocationCard);
-                    UIManager.Instance.DisplayInvocationMenu(mousePosition, false, GameStateManager.Instance.IsP1Turn);
-
-                }
-            }
-
-            if (clicking && Input.GetMouseButton(0))
-            {
-                totalDownTime += Time.deltaTime;
-
-                if (totalDownTime >= ClickDuration)
-                {
-                    Debug.Log("Long click");
-                    clicking = false;
-                    UIManager.Instance.HideInvocationMenu();
-                    UIManager.Instance.DisplayCardInBigImage(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                }
-            }
-
-            if (clicking && Input.GetMouseButtonUp(0))
-            {
-                clicking = false;
-            }
-        }
-        else if (objectTag == opponentTag)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                totalDownTime = 0;
-                clicking = true;
-                var opponentInvocationCard = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
-                {
-                    CardManager.Instance.SetAttacker(invocationCard);
-                    var mousePosition = InputManager.TouchPosition;
-                    UIManager.Instance.DisplayInvocationMenu(mousePosition, false, GameStateManager.Instance.IsP1Turn);
-                }
-            }
-
-            if (clicking && Input.GetMouseButton(0))
-            {
-                totalDownTime += Time.deltaTime;
-
-                if (totalDownTime >= ClickDuration)
-                {
-                    clicking = false;
-                    UIManager.Instance.DisplayCardInBigImage(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                }
-            }
-
-            if (clicking && Input.GetMouseButtonUp(0))
-            {
-                clicking = false;
-            }
-        }
-        else
-        {
-            UIManager.Instance.HideBigImage();
-        }
-    }
-
-    protected void HandleClick(RaycastHit hitInfo)
-    {
-        var objectTag = hitInfo.transform.gameObject.tag;
-
-        var ownPlayerCards = CardManager.Instance.GetCurrentPlayerCards();
-        var personTag = ownPlayerCards.Tag;
-        var opponentTag = CardManager.Instance.GetOpponentPlayerCards().Tag;
-        var cardObject = hitInfo.transform.gameObject;
-
-        if (objectTag == personTag)
-        {
-            var cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
-            if (Input.GetMouseButtonDown(0))
-            {
-                totalDownTime = 0;
-                clicking = true;
-                var mousePosition = InputManager.TouchPosition;
-                if (cardSelected is InGameInvocationCard invocationCard)
-                {
-                    CardManager.Instance.SetAttacker(invocationCard);
-                    UIManager.Instance.DisplayInvocationMenu(mousePosition, true, GameStateManager.Instance.IsP1Turn);
-                }
-            }
-
-            if (clicking && Input.GetMouseButton(0))
-            {
-                totalDownTime += Time.deltaTime;
-
-                if (totalDownTime >= ClickDuration)
-                {
-                    Debug.Log("Long click");
-                    clicking = false;
-                    UIManager.Instance.HideInvocationMenu();
-                    UIManager.Instance.DisplayCardInBigImage(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                }
-            }
-
-            if (clicking && Input.GetMouseButtonUp(0))
-            {
-                clicking = false;
-            }
-        }
-        else if (objectTag == opponentTag)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                totalDownTime = 0;
-                clicking = true;
-                var opponentInvocationCard = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
-                {
-                    var mousePosition = InputManager.TouchPosition;
-                    CardManager.Instance.SetAttacker(invocationCard);
-                    UIManager.Instance.DisplayInvocationMenu(mousePosition, true, GameStateManager.Instance.IsP1Turn);
-                }
-            }
-
-            if (clicking && Input.GetMouseButton(0))
-            {
-                totalDownTime += Time.deltaTime;
-
-                if (totalDownTime >= ClickDuration)
-                {
-                    clicking = false;
-                    UIManager.Instance.DisplayCardInBigImage(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                }
-            }
-
-            if (clicking && Input.GetMouseButtonUp(0))
-            {
-                clicking = false;
-            }
-        }
-        else
-        {
-            UIManager.Instance.HideBigImage();
-        }
+      AudioSystem.Instance.PlayMusic(Music.Fight);
     }
 
     protected void DisplayAvailableOpponent()
     {
         var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
         DisplayOpponentMessageBox(notEmptyOpponent);
-        stopDetectClicking = true;
+        InputManager.Instance.DisableDetectionTouch();
     }
-
 
     protected void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
     {
@@ -296,12 +138,12 @@ public class GameLoop : MonoBehaviour
                 CardManager.Instance.SetOpponent(invocationCard);
                 ComputeAttack();
             }
-            stopDetectClicking = false;
+            InputManager.Instance.EnableDetectionTouch();
         }
 
         void NegativeAction()
         {
-            stopDetectClicking = false;
+            InputManager.Instance.EnableDetectionTouch();
         }
 
         UIManager.Instance.DisplayOpponentAvailableMessageBox(invocationCards, PositiveAction, NegativeAction);
@@ -328,17 +170,6 @@ public class GameLoop : MonoBehaviour
         }
     }
 
-    protected void RemoveCombineEffectCard(List<InGameEffectCard> effectCards,
-        ObservableCollection<InGameCard> yellowCards)
-    {
-        foreach (var effectCard in effectCards.Where(effectCard => effectCard.Title == "Attaque de la tour Eiffel"))
-        {
-            effectCards.Remove(effectCard);
-            yellowCards.Add(effectCard);
-            break;
-        }
-    }
-
     protected void Draw()
     {
         DoDraw();
@@ -350,12 +181,13 @@ public class GameLoop : MonoBehaviour
     private void DoDraw()
     {
         CardManager.Instance.OnTurnStart();
+
         void OnNoCards()
         {
             GameStateManager.Instance.SetPhase(5);
             GameOver();
         }
-        
+
         CardManager.Instance.Draw(OnNoCards);
     }
 
@@ -376,29 +208,27 @@ public class GameLoop : MonoBehaviour
         {
             GameStateManager.Instance.SetPhase(3);
         }
-        
+
         UIManager.Instance.AdaptUIToPhaseIdInNextRound(GameStateManager.Instance.PhaseId);
 
-        if (GameStateManager.Instance.PhaseId == 1)
+        switch (GameStateManager.Instance.PhaseId) 
         {
-            ChoosePhase();
+            case 1:
+                ChoosePhase();
+                break;
+            case 2:
+                PlayAttackMusic();
+                break;
+            case 3:
+                EndTurnPhase();
+                break;
         }
 
-        if (GameStateManager.Instance.PhaseId != 3) return;
-        PlayerCards currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
-
-        var invocationCards = currentPlayerCard.invocationCards;
-
-        foreach (var invocationCard in invocationCards)
-        {
-            invocationCard.UnblockAttack();
-            invocationCard.incrementNumberTurnOnField();
-        }
-
-        GameStateManager.Instance.ToggleTurn();
-        ChangePlayer.Invoke();
-
-        GameStateManager.Instance.SetPhase(0);
+    }
+    private void EndTurnPhase()
+    {
+        CardManager.Instance.HandleEndTurn();
+        GameStateManager.Instance.HandleEndTurn();
         Draw();
     }
 }

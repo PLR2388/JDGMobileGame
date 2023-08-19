@@ -1577,6 +1577,8 @@ GameObject:
   - component: {fileID: 397230411}
   - component: {fileID: 397230412}
   - component: {fileID: 397230413}
+  - component: {fileID: 397230415}
+  - component: {fileID: 397230414}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1745,6 +1747,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 907416676358bcd4eb31e8c222df3e40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &397230414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73f8f8b8b1696a34eab6cef696916f1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &397230415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e9b2367def2e544e9df1e3aa982c8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &414799418

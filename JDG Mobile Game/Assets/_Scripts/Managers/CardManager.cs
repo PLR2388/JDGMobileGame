@@ -243,4 +243,17 @@ public class CardManager : Singleton<CardManager>
             }
         }
     }
+
+    public void HandleEndTurn()
+    {
+        PlayerCards currentPlayerCard = GetCurrentPlayerCards();
+
+        var invocationCards = currentPlayerCard.invocationCards;
+
+        foreach (var invocationCard in invocationCards)
+        {
+            invocationCard.UnblockAttack();
+            invocationCard.incrementNumberTurnOnField();
+        }
+    }
 }

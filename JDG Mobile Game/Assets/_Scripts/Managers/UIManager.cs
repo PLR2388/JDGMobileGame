@@ -61,8 +61,9 @@ public class UIManager : Singleton<UIManager>
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = CardManager.Instance.CanAttackerAttack();
     }
 
-    public void DisplayInvocationMenu(Vector3 mousePosition, bool isAttackPhase, bool isP1Turn)
+    public void DisplayInvocationMenu(bool isAttackPhase)
     {
+        var mousePosition = InputManager.TouchPosition;
         invocationMenu.SetActive(true);
         var attackButton = invocationMenu.transform.GetChild(0);
         var actionButton = invocationMenu.transform.GetChild(1);

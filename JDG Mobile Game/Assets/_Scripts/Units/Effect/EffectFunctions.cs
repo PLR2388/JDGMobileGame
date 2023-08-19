@@ -24,8 +24,7 @@ namespace Cards.EffectCards
         // Start is called before the first frame update
         private void Start()
         {
-            TutoPlayerGameLoop.ChangePlayer.AddListener(ChangePlayer);
-            GameLoop.ChangePlayer.AddListener(ChangePlayer);
+            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
             TutoInGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
             p1 = GameObject.Find("Player1");

@@ -25,7 +25,7 @@ namespace Cards.InvocationCards
 
         private void Start()
         {
-            GameLoop.ChangePlayer.AddListener(ChangePlayer);
+            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
             TutoInGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
             cancelInvocationEvent.AddListener(OnCancelEffect);

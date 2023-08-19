@@ -16,7 +16,7 @@ namespace Cards.InvocationCards
 
         private void Start()
         {
-            TutoPlayerGameLoop.ChangePlayer.AddListener(ChangePlayer);
+            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             TutoInGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
             p1 = GameObject.Find("Player1");
             p2 = GameObject.Find("Player2");
