@@ -92,11 +92,7 @@ public class GameLoop : MonoBehaviour
     protected void SeeCardAndApplyAction()
     {
         if (!Input.GetMouseButton(0) || GameStateManager.Instance.PhaseId != 1 || stopDetectClicking) return;
-#if UNITY_EDITOR
-        var position = Input.mousePosition;
-#elif UNITY_ANDROID
-        var position = Input.GetTouch(0).position;
-#endif
+        var position = InputManager.TouchPosition;
         if (Camera.main == null) return;
         var hit = Physics.Raycast(Camera.main.ScreenPointToRay(position), out var hitInfo);
         if (hit)
@@ -113,11 +109,7 @@ public class GameLoop : MonoBehaviour
     {
         AudioSystem.Instance.PlayMusic(Music.Fight);
         if (!Input.GetMouseButton(0) || GameStateManager.Instance.PhaseId != 2 || stopDetectClicking) return;
-#if UNITY_EDITOR
-        var position = Input.mousePosition;
-#elif UNITY_ANDROID
-        var position = Input.GetTouch(0).position;
-#endif
+        var position = InputManager.TouchPosition;
         if (Camera.main == null) return;
         var hit = Physics.Raycast(Camera.main.ScreenPointToRay(position), out var hitInfo);
         if (hit)
@@ -144,11 +136,7 @@ public class GameLoop : MonoBehaviour
             {
                 totalDownTime = 0;
                 clicking = true;
-#if UNITY_EDITOR
-                var mousePosition = Input.mousePosition;
-#elif UNITY_ANDROID
-                var mousePosition = Input.GetTouch(0).position;
-#endif
+                var mousePosition = InputManager.TouchPosition;
                 if (cardSelected is InGameInvocationCard invocationCard)
                 {
                     CardManager.Instance.SetAttacker(invocationCard);
@@ -185,11 +173,7 @@ public class GameLoop : MonoBehaviour
                 if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
                 {
                     CardManager.Instance.SetAttacker(invocationCard);
-#if UNITY_EDITOR
-                    var mousePosition = Input.mousePosition;
-#elif UNITY_ANDROID
-                    var mousePosition = Input.GetTouch(0).position;
-#endif
+                    var mousePosition = InputManager.TouchPosition;
                     UIManager.Instance.DisplayInvocationMenu(mousePosition, false, GameStateManager.Instance.IsP1Turn);
                 }
             }
@@ -232,11 +216,7 @@ public class GameLoop : MonoBehaviour
             {
                 totalDownTime = 0;
                 clicking = true;
-#if UNITY_EDITOR
-                var mousePosition = Input.mousePosition;
-#elif UNITY_ANDROID
-                var mousePosition = Input.GetTouch(0).position;
-#endif
+                var mousePosition = InputManager.TouchPosition;
                 if (cardSelected is InGameInvocationCard invocationCard)
                 {
                     CardManager.Instance.SetAttacker(invocationCard);
@@ -271,11 +251,7 @@ public class GameLoop : MonoBehaviour
                 var opponentInvocationCard = cardObject.GetComponent<PhysicalCardDisplay>().card;
                 if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
                 {
-#if UNITY_EDITOR
-                    var mousePosition = Input.mousePosition;
-#elif UNITY_ANDROID
-                            var mousePosition = Input.GetTouch(0).position;
-#endif
+                    var mousePosition = InputManager.TouchPosition;
                     CardManager.Instance.SetAttacker(invocationCard);
                     UIManager.Instance.DisplayInvocationMenu(mousePosition, true, GameStateManager.Instance.IsP1Turn);
                 }
