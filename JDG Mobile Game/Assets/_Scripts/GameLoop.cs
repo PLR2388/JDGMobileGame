@@ -39,14 +39,14 @@ public class GameLoop : MonoBehaviour
         var currentOwner = GameStateManager.Instance.IsP1Turn ? CardOwner.Player1 : CardOwner.Player2;
         if (cardTouch != null)
         {
-            switch (GameStateManager.Instance.PhaseId)
+            switch (GameStateManager.Instance.Phase)
             {
-                case 1:
+                case Phase.Choose:
                 {
                     HandleSingleTouch(cardTouch, currentOwner, false);
                 }
                     break;
-                case 2:
+                case Phase.Attack:
                 {
                     HandleSingleTouch(cardTouch, currentOwner, true);
                 }
@@ -160,12 +160,12 @@ public class GameLoop : MonoBehaviour
         var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
         if (playerStatus.GetCurrentPv() <= 0)
         {
-            GameStateManager.Instance.SetPhase(5);
+            GameStateManager.Instance.SetPhase(Phase.GameOver);
             GameOver();
         }
         else if (opponentPlayerStatus.GetCurrentPv() <= 0)
         {
-            GameStateManager.Instance.SetPhase(5);
+            GameStateManager.Instance.SetPhase(Phase.GameOver);
             GameOver();
         }
     }
@@ -174,7 +174,7 @@ public class GameLoop : MonoBehaviour
     {
         DoDraw();
         GameStateManager.Instance.IncrementNumberOfTurn();
-        GameStateManager.Instance.SetPhase(GameStateManager.Instance.PhaseId + 1);
+        GameStateManager.Instance.NextPhase();
         UIManager.Instance.SetRoundText("Phase de pose");
     }
 
@@ -184,7 +184,7 @@ public class GameLoop : MonoBehaviour
 
         void OnNoCards()
         {
-            GameStateManager.Instance.SetPhase(5);
+            GameStateManager.Instance.SetPhase(Phase.GameOver);
             GameOver();
         }
 
@@ -196,30 +196,30 @@ public class GameLoop : MonoBehaviour
         UIManager.Instance.HideInvocationMenu();
         if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
         {
-            GameStateManager.Instance.SetPhase(3);
+            GameStateManager.Instance.SetPhase(Phase.End);
         }
         else
         {
-            GameStateManager.Instance.SetPhase(GameStateManager.Instance.PhaseId + 1);
+            GameStateManager.Instance.NextPhase();
         }
 
         var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        if (GameStateManager.Instance.PhaseId == 2 && playerStatus.BlockAttack)
+        if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
         {
-            GameStateManager.Instance.SetPhase(3);
+            GameStateManager.Instance.SetPhase(Phase.End);
         }
 
-        UIManager.Instance.AdaptUIToPhaseIdInNextRound(GameStateManager.Instance.PhaseId);
+        UIManager.Instance.AdaptUIToPhaseIdInNextRound(GameStateManager.Instance.Phase);
 
-        switch (GameStateManager.Instance.PhaseId) 
+        switch (GameStateManager.Instance.Phase) 
         {
-            case 1:
+            case Phase.Choose:
                 ChoosePhase();
                 break;
-            case 2:
+            case Phase.Attack:
                 PlayAttackMusic();
                 break;
-            case 3:
+            case Phase.End:
                 EndTurnPhase();
                 break;
         }

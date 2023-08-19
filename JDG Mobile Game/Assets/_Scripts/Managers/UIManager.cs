@@ -113,21 +113,21 @@ public class UIManager : Singleton<UIManager>
         invocationMenu.SetActive(false);
     }
 
-    public void AdaptUIToPhaseIdInNextRound(int phaseId)
+    public void AdaptUIToPhaseIdInNextRound(Phase phaseId)
     {
         switch (phaseId)
         {
-            case 3:
+            case Phase.End:
                 inHandButton.SetActive(true);
                 SetRoundText("Phase de pioche");
                 playerCamera.transform.Rotate(cameraRotation);
                 playerText.GetComponent<TextMeshProUGUI>().text = GameStateManager.Instance.IsP1Turn ? "Joueur 1" : "Joueur 2";
                 break;
-            case 1:
+            case Phase.Choose:
                 inHandButton.SetActive(true);
                 SetRoundText("Phase de pose");
                 break;
-            case 2:
+            case Phase.Attack:
                 inHandButton.SetActive(false);
                 SetRoundText("Phase d'attaque");
                 break;
