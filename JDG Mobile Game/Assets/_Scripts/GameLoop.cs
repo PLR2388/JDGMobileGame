@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using _Scripts.Units.Invocation;
@@ -53,7 +53,7 @@ public class GameLoop : MonoBehaviour
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
-    private void Awake()
+    protected virtual void Awake()
     {
         player = InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
     }
@@ -408,7 +408,6 @@ public class GameLoop : MonoBehaviour
     protected bool IsSpecialActionPossible()
     {
         var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         return attacker.Abilities.TrueForAll(ability =>
             ability.IsActionPossible(playerCards)) && !attacker.CancelEffect;
     }
@@ -451,7 +450,7 @@ public class GameLoop : MonoBehaviour
             {
                 for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
                 {
-                    var invocationCard = (InGameInvocationCard) notEmptyOpponent[j];
+                    var invocationCard = (InGameInvocationCard)notEmptyOpponent[j];
 
                     if (invocationCard.CantBeAttack)
                     {
@@ -529,44 +528,49 @@ public class GameLoop : MonoBehaviour
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = attacker.CanAttack();
 
         var opponentAbilities = opponent.Abilities;
-        if (opponentAbilities.Count > 0)
+        var attackerAbilities = attacker.Abilities;
+        if (opponent.Title == "Player")
         {
-            for (var i = 0; i < opponentAbilities.Count; i++)
+            // Directly attack the player
+            if (opponentPlayerStatus.NumberShield > 0)
             {
-                opponentAbilities[i].OnCardAttacked(canvas, opponent, attacker, playerCard, opponentPlayerCard,
-                    playerStatus, opponentPlayerStatus);
+                opponentPlayerStatus.DecrementShield();
+            }
+            else
+            {
+                opponentPlayerStatus.ChangePv(diff);
             }
         }
         else
         {
-            if (opponent.Title == "Player")
+            foreach (var ability in opponentAbilities)
             {
-                // Directly attack the player
-                if (opponentPlayerStatus.NumberShield > 0)
-                {
-                    opponentPlayerStatus.DecrementShield();
-                }
-                else
-                {
-                    opponentPlayerStatus.ChangePv(diff);
-                }
+                ability.OnCardAttacked(canvas, opponent, attacker, playerCard, opponentPlayerCard,
+                    playerStatus, opponentPlayerStatus);
+            }
+
+            foreach (var abiliy in attackerAbilities)
+            {
+                abiliy.OnAttackCard(opponent, attacker, playerCard, opponentPlayerCard);
+            }
+        }
+
+
+        /*else
+        {
+            if (diff > 0)
+            {
+                DealWithHurtAttack(diff);
+            }
+            else if (diff == 0)
+            {
+                DealWithEqualityAttack();
             }
             else
             {
-                if (diff > 0)
-                {
-                    DealWithHurtAttack(diff);
-                }
-                else if (diff == 0)
-                {
-                    DealWithEqualityAttack();
-                }
-                else
-                {
-                    DealWithGoodAttack(diff);
-                }
+                DealWithGoodAttack(diff);
             }
-        }
+        }*/
 
 
         // Check if one player die
@@ -621,17 +625,15 @@ public class GameLoop : MonoBehaviour
 
         var abilities = opponent.Abilities;
 
-        if (abilities.Count > 0)
+        foreach (var ability in abilities)
         {
-            foreach (var ability in abilities)
-            {
-                ability.OnCardDeath(canvas, opponent, playerCards, opponentPlayerCards);
-            }
+            ability.OnCardDeath(canvas, opponent, playerCards, opponentPlayerCards);
         }
-        else
+
+        /*else
         {
             playerCards.SendInvocationCardToYellowTrash(opponent);
-        }
+        }*/
     }
 
     protected void ComputeGoodAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superOpponent)
@@ -676,17 +678,15 @@ public class GameLoop : MonoBehaviour
         playerStatus.ChangePv(-diff);
 
         var abilities = attacker.Abilities;
-        if (abilities.Count > 0)
+        foreach (var ability in abilities)
         {
-            foreach (var ability in abilities)
-            {
-                ability.OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
-            }
+            ability.OnCardDeath(canvas, attacker, playerCards, opponentPlayerCards);
         }
-        else
+
+        /*else
         {
             playerCards.SendInvocationCardToYellowTrash(attacker);
-        }
+        }*/
     }
 
     protected void ComputeHurtAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superAttacker)
@@ -704,7 +704,7 @@ public class GameLoop : MonoBehaviour
         if (attacker is InGameSuperInvocationCard || opponent is InGameSuperInvocationCard)
         {
             var superAttacker = (InGameSuperInvocationCard)attacker;
-            var superOpponent = (InGameSuperInvocationCard) opponent;
+            var superOpponent = (InGameSuperInvocationCard)opponent;
             if (superAttacker != null)
             {
                 foreach (var combineCard in superAttacker.invocationCards)
@@ -768,17 +768,16 @@ public class GameLoop : MonoBehaviour
         var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
 
         var abilities = opponent.Abilities;
-        if (abilities.Count > 0)
+
+        foreach (var ability in abilities)
         {
-            foreach (var ability in abilities)
-            {
-                ability.OnCardDeath(canvas, opponent, playerCard, opponentPlayerCards);
-            }
+            ability.OnCardDeath(canvas, opponent, playerCard, opponentPlayerCards);
         }
-        else
+
+        /*else
         {
             playerCard.SendInvocationCardToYellowTrash(opponent);
-        }
+        }*/
     }
 
     protected void ComputeEqualityAttacker()
@@ -787,17 +786,16 @@ public class GameLoop : MonoBehaviour
         var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
 
         var abilities = attacker.Abilities;
-        if (abilities.Count > 0)
+
+        foreach (var ability in abilities)
         {
-            foreach (var ability in abilities)
-            {
-                ability.OnCardDeath(canvas, attacker, playerCard, opponentPlayerCards);
-            }
+            ability.OnCardDeath(canvas, attacker, playerCard, opponentPlayerCards);
         }
-        else
+
+        /*else
         {
             playerCard.SendInvocationCardToYellowTrash(attacker);
-        }
+        }*/
     }
 
     protected void ComputeEqualityAttackSuperAttacker(InGameInvocationCard combineCard)

@@ -23,9 +23,6 @@ MonoBehaviour:
     Attack: 3
     Defense: 2
     Families: 0600000005000000
-    InvocationConditions: {fileID: 0}
-    InvocationStartEffect: {fileID: 0}
-    InvocationPermEffect: {fileID: 0}
-    InvocationActionEffect: {fileID: 0}
-    InvocationDeathEffect: {fileID: 0}
     AffectedByEffect: 1
+  Conditions: 
+  Abilities: 3b000000

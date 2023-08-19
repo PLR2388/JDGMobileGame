@@ -10,6 +10,19 @@ public class KillBothCardsIfAttackAbility : Ability
         Description = description;
     }
 
+    public override void OnAttackCard(InGameInvocationCard attackedCard, InGameInvocationCard attacker, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
+    {
+        if (attacker.Title == invocationCard.Title)
+        {
+            if (playerCards.yellowCards.Contains(attacker) && !opponentPlayerCards.yellowCards.Contains(attackedCard))
+            {
+                opponentPlayerCards.invocationCards.Remove(attackedCard);
+                opponentPlayerCards.yellowCards.Add(attackedCard);
+            }
+        }
+    }
+
     public override void OnCardAttacked(Transform canvas, InGameInvocationCard attackedCard,
         InGameInvocationCard attacker, PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus currentPlayerStatus, PlayerStatus opponentPlayerStatus)
     {
@@ -30,5 +43,11 @@ public class KillBothCardsIfAttackAbility : Ability
         {
             base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
         }
+    }
+
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
+    {
+        return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
     }
 }

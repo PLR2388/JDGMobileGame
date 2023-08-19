@@ -20,10 +20,10 @@ namespace OnePlayer
 
         private ActionScenario[] actionScenarios;
 
-        private void Awake()
+        protected override void Awake()
         {
             // The opponent is player2 (only the AI attacks the player directly)
-            player = InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
+            base.Awake();
             actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
             DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
         }

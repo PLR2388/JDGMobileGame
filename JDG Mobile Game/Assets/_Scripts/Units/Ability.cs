@@ -63,6 +63,7 @@ public enum AbilityName
     Draw2Cards,
     GiveAktDefToRpgMember,
     GiveAktDefToFistilandMember,
+    Default
 }
 
 public abstract class Ability
@@ -107,6 +108,12 @@ public abstract class Ability
     // Called when an invocation is removed from field
     public virtual void OnCardRemove(InGameInvocationCard removeCard, PlayerCards playerCards)
     {
+    }
+
+    public virtual void OnAttackCard(InGameInvocationCard attackedCard, InGameInvocationCard attacker, PlayerCards playerCards,
+        PlayerCards opponentPlayerCards)
+    {
+        // Only for Sandrine (KillBothCardsIfAttackAbility)
     }
 
     // Called before an attack on a card (attacker belong to playerCards)

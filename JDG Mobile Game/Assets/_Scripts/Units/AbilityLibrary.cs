@@ -347,6 +347,10 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.GiveAktDefToRpgMember,
             "Invocation can give his atk and def to Rpg member",
             CardFamily.Rpg
+        ),
+        new DefaultAbility(
+            AbilityName.Default,
+            "Default ability for invocation without power"
         )
     };
 }
