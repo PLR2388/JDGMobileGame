@@ -28,10 +28,10 @@ public class TutoHandCardDisplay : MonoBehaviour
 
     private void Update()
     {
-        DisplayHandCard();
+        //DisplayHandCard();
     }
 
-    private void DisplayHandCard()
+    /*private void DisplayHandCard()
     {
         var handCards = GameLoop.IsP1Turn
             ? player1.GetComponent<PlayerCards>().handCards
@@ -69,7 +69,7 @@ public class TutoHandCardDisplay : MonoBehaviour
 
             createdCards.Clear();
         }
-    }
+    }*/
 
     private void OnDisable()
     {

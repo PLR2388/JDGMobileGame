@@ -19,6 +19,14 @@ public class PlayerCards : MonoBehaviour
     [SerializeField] private CardLocation cardLocation;
 
     private UnitManager unitManager;
+    
+    
+    private bool skipCurrentDraw;
+    public bool SkipCurrentDraw
+    {
+        get => skipCurrentDraw;
+        set => skipCurrentDraw = value;
+    }
 
     public List<InGameCard> secretCards = new List<InGameCard>(); // Where combine card go
 

@@ -225,7 +225,7 @@ namespace _Scripts.Units.Invocation
         /// </summary>
         public bool IsInvocationPossible()
         {
-            var playerCards = GameLoop.IsP1Turn
+            var playerCards = GameStateManager.Instance.IsP1Turn
                 ? GameObject.Find("Player1").GetComponent<PlayerCards>()
                 : GameObject.Find("Player2").GetComponent<PlayerCards>();
             return CanBeSummoned(playerCards);

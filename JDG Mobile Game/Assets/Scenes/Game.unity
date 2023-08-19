@@ -1265,8 +1265,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 397230404}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 397230410}
+        m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: UseSpecialAction
         m_Mode: 1
         m_Arguments:
@@ -1360,8 +1360,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerOne: 1
-  nextPhaseButton: {fileID: 1957640249}
-  inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 397230409}
 --- !u!114 &230530445
@@ -1575,6 +1573,10 @@ GameObject:
   - component: {fileID: 397230407}
   - component: {fileID: 397230408}
   - component: {fileID: 397230409}
+  - component: {fileID: 397230410}
+  - component: {fileID: 397230411}
+  - component: {fileID: 397230412}
+  - component: {fileID: 397230413}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1608,21 +1610,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5386545e4a6177d49b6c208a7e67e69c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseId: 0
-  playerText: {fileID: 1024667568}
-  roundText: {fileID: 138997257}
-  healthP1Text: {fileID: 29170108}
-  healthP2Text: {fileID: 1349726584}
-  bigImageCard: {fileID: 793464781}
-  invocationMenu: {fileID: 1982540492}
-  nextPhaseButton: {fileID: 1957640249}
-  canvas: {fileID: 244790280}
-  p1: {fileID: 230530442}
-  p2: {fileID: 2017354827}
-  playerInvocationCard: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544,
-    type: 2}
-  inHandButton: {fileID: 829748139}
-  playerCamera: {fileID: 1233983595}
 --- !u!114 &397230405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1651,7 +1638,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
-  canvas: {fileID: 244790280}
 --- !u!114 &397230407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1666,7 +1652,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
   canvas: {fileID: 244790280}
-  cardLocation: {fileID: 0}
 --- !u!114 &397230408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1697,6 +1682,71 @@ MonoBehaviour:
     type: 3}
   player1: {fileID: 230530442}
   player2: {fileID: 2017354827}
+--- !u!114 &397230410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1e1bfbd5c2a4de409f33f5382014417, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInvocationCard: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544,
+    type: 2}
+  canvas: {fileID: 244790280}
+  p1: {fileID: 230530442}
+  p2: {fileID: 2017354827}
+--- !u!114 &397230411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57665ca15eac9a04bbe13519a258b5db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  p1: {fileID: 230530442}
+  p2: {fileID: 2017354827}
+--- !u!114 &397230412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5133ba8f6b481b4880b259155ca519f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerText: {fileID: 1024667568}
+  roundText: {fileID: 138997257}
+  healthP1Text: {fileID: 29170108}
+  healthP2Text: {fileID: 1349726584}
+  bigImageCard: {fileID: 793464781}
+  invocationMenu: {fileID: 1982540492}
+  nextPhaseButton: {fileID: 1957640249}
+  canvas: {fileID: 244790280}
+  inHandButton: {fileID: 829748139}
+  playerCamera: {fileID: 1233983595}
+--- !u!114 &397230413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 907416676358bcd4eb31e8c222df3e40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0
@@ -5453,8 +5503,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerOne: 0
-  nextPhaseButton: {fileID: 1957640249}
-  inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 397230409}
 --- !u!114 &2017354830

@@ -25,7 +25,7 @@ public class HandCardDisplay : MonoBehaviour
 
     private void DisplayHandCard()
     {
-        var handCards = GameLoop.IsP1Turn
+        var handCards = GameStateManager.Instance.IsP1Turn
             ? player1.GetComponent<PlayerCards>().handCards
             : player2.GetComponent<PlayerCards>().handCards;
         if (createdCards.Count < handCards.Count)

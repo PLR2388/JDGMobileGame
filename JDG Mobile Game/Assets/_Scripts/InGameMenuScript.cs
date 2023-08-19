@@ -73,15 +73,15 @@ public class InGameMenuScript : MonoBehaviour
     {
         currentSelectedCard = card;
         var cardType = currentSelectedCard.Type;
-        var playerCard = GameLoop.IsP1Turn
+        var playerCard = GameStateManager.Instance.IsP1Turn
             ? GameObject.Find("Player1").GetComponent<PlayerCards>()
             : GameObject.Find("Player2").GetComponent<PlayerCards>();
 
-        var opponentPlayerCard = GameLoop.IsP1Turn
+        var opponentPlayerCard = GameStateManager.Instance.IsP1Turn
             ? GameObject.Find("Player2").GetComponent<PlayerCards>()
             : GameObject.Find("Player1").GetComponent<PlayerCards>();
 
-        var opponentPlayerStatus = GameLoop.IsP1Turn
+        var opponentPlayerStatus = GameStateManager.Instance.IsP1Turn
             ? GameObject.Find("Player2").GetComponent<PlayerStatus>()
             : GameObject.Find("Player1").GetComponent<PlayerStatus>();
         switch (cardType)

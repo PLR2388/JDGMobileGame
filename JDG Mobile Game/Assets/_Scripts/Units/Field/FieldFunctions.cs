@@ -44,7 +44,7 @@ namespace Cards.FieldCards
         /// </summary>
         private void ChangePlayer()
         {
-            currentPlayerCard = GameLoop.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+            currentPlayerCard = GameStateManager.Instance.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         }
     }
 }

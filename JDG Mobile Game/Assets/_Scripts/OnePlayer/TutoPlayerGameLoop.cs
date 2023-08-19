@@ -15,7 +15,7 @@ namespace OnePlayer
 {
     public class TutoPlayerGameLoop : GameLoop
     {
-        [SerializeField] private GameObject tutoImage;
+        /*[SerializeField] private GameObject tutoImage;
         [SerializeField] private GameObject tutoVideo;
 
         private ActionScenario[] actionScenarios;
@@ -342,7 +342,7 @@ namespace OnePlayer
         /**
      * Return the list of available opponents
      */
-        protected override void DisplayCards(ObservableCollection<InGameInvocationCard> invocationCards,
+       /* protected override void DisplayCards(ObservableCollection<InGameInvocationCard> invocationCards,
             List<InGameEffectCard> attackPlayerEffectCard)
         {
             var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title == "Jean-Michel Bruitages")
@@ -440,6 +440,6 @@ namespace OnePlayer
             playerText.GetComponent<TextMeshProUGUI>().text = IsP1Turn ? "Joueur 1" : "Joueur 2";
             phaseId = 0;
             nextPhaseButton.GetComponent<Button>().interactable = false;
-        }
+        }*/
     }
 }

@@ -75,7 +75,7 @@ public class SkipOpponentAttackAbility : Ability
         {
             return;
         }
-        var tag = GameLoop.IsP1Turn ? "card1" : "card2";
+        var tag = GameStateManager.Instance.IsP1Turn ? "card1" : "card2";
         if (tag == playerCards.Tag)
         {
             ApplyEffect(canvas, opponentPlayerCards);

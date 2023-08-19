@@ -65,7 +65,7 @@ namespace Cards.EffectCards
 
         private void ChangePlayer()
         {
-            if (GameLoop.IsP1Turn)
+            if (GameStateManager.Instance.IsP1Turn)
             {
                 currentPlayerCard = p1.GetComponent<PlayerCards>();
                 currentPlayerStatus = p1.GetComponent<PlayerStatus>();

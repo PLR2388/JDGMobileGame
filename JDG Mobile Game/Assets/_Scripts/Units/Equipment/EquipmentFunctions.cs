@@ -21,7 +21,7 @@ namespace Cards.EquipmentCards
             get
             {
                 PlayerCards currentPlayerCard;
-                if (GameLoop.IsP1Turn)
+                if (GameStateManager.Instance.IsP1Turn)
                 {
                     var player = GameObject.Find("Player1");
                     currentPlayerCard = player.GetComponent<PlayerCards>();
@@ -41,7 +41,7 @@ namespace Cards.EquipmentCards
             get
             {
                 PlayerCards opponentPlayerCard;
-                if (GameLoop.IsP1Turn)
+                if (GameStateManager.Instance.IsP1Turn)
                 {
                     var player = GameObject.Find("Player2");
                     opponentPlayerCard = player.GetComponent<PlayerCards>();

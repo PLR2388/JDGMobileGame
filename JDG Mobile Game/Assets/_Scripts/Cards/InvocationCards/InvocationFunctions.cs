@@ -37,8 +37,8 @@ namespace Cards.InvocationCards
 
         private void ChangePlayer()
         {
-            currentPlayerCard = GameLoop.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-            opponentPlayerCards = GameLoop.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+            currentPlayerCard = GameStateManager.Instance.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+            opponentPlayerCards = GameStateManager.Instance.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         }
 
         private void OnCancelEffect(InGameInvocationCard invocationCard)

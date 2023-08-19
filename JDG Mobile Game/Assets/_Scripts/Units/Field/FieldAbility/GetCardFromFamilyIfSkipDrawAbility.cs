@@ -55,7 +55,7 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
                             playerCards.handCards.Add(invocationCard);
                         }
 
-                        playerStatus.SkipCurrentDraw = true;
+                        playerCards.SkipCurrentDraw = true;
                         Object.Destroy(messageBox1);
                         Object.Destroy(messageBox);
                     }

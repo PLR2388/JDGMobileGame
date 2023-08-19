@@ -61,7 +61,7 @@ public class TutoInGameMenuScript : MonoBehaviour
     {
         currentSelectedCard = card;
         var cardType = currentSelectedCard.Type;
-        var playerCard = GameLoop.IsP1Turn
+        var playerCard = GameStateManager.Instance.IsP1Turn
             ? GameObject.Find("Player1").GetComponent<PlayerCards>()
             : GameObject.Find("Player2").GetComponent<PlayerCards>();
 
