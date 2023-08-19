@@ -53,6 +53,31 @@ public class GameLoop : MonoBehaviour
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
+    private PlayerCards playerCards1;
+    private PlayerCards playerCards2;
+    private PlayerStatus playerStatus1;
+    private PlayerStatus playerStatus2;
+
+    private PlayerCards GetCurrentPlayerCards()
+    {
+        return IsP1Turn ? playerCards1 : playerCards2;
+    }
+
+    private PlayerCards GetOpponentPlayerCards()
+    {
+        return IsP1Turn ? playerCards2 : playerCards1;
+    }
+
+    private PlayerStatus GetCurrentPlayerStatus()
+    {
+        return IsP1Turn ? playerStatus1 : playerStatus2;
+    }
+
+    private PlayerStatus GetOpponentPlayerStatus()
+    {
+        return IsP1Turn ? playerStatus2 : playerStatus1;
+    }
+
     protected virtual void Awake()
     {
         player = InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
@@ -68,6 +93,10 @@ public class GameLoop : MonoBehaviour
         p1.GetComponent<PlayerStatus>().SetNumberShield(0);
         p2.GetComponent<PlayerStatus>().SetNumberShield(0);
         PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
+        playerCards1 = p1.GetComponent<PlayerCards>();
+        playerCards2 = p2.GetComponent<PlayerCards>();
+        playerStatus1 = p1.GetComponent<PlayerStatus>();
+        playerStatus2 = p2.GetComponent<PlayerStatus>();
         Draw();
     }
 
@@ -105,8 +134,7 @@ public class GameLoop : MonoBehaviour
 
     private void ChoosePhaseMusic()
     {
-        var currentFieldCard =
-            IsP1Turn ? p1.GetComponent<PlayerCards>().FieldCard : p2.GetComponent<PlayerCards>().FieldCard;
+        var currentFieldCard = GetCurrentPlayerCards().FieldCard;
         if (currentFieldCard == null)
         {
             AudioSystem.Instance.PlayMusic(Music.DrawPhase);
@@ -192,8 +220,8 @@ public class GameLoop : MonoBehaviour
     protected void HandleClickDuringDrawPhase(RaycastHit hitInfo)
     {
         var objectTag = hitInfo.transform.gameObject.tag;
-        var personTag = IsP1Turn ? p1.GetComponent<PlayerCards>().Tag : p2.GetComponent<PlayerCards>().Tag;
-        var opponentTag = IsP1Turn ? p2.GetComponent<PlayerCards>().Tag : p1.GetComponent<PlayerCards>().Tag;
+        var personTag = GetCurrentPlayerCards().Tag;
+        var opponentTag = GetOpponentPlayerCards().Tag;
         var cardObject = hitInfo.transform.gameObject;
 
         if (objectTag == personTag)
@@ -302,9 +330,10 @@ public class GameLoop : MonoBehaviour
     protected virtual void HandleClick(RaycastHit hitInfo)
     {
         var objectTag = hitInfo.transform.gameObject.tag;
-        var ownPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var personTag = IsP1Turn ? p1.GetComponent<PlayerCards>().Tag : p2.GetComponent<PlayerCards>().Tag;
-        var opponentTag = IsP1Turn ? p2.GetComponent<PlayerCards>().Tag : p1.GetComponent<PlayerCards>().Tag;
+
+        var ownPlayerCards = GetCurrentPlayerCards();
+        var personTag = ownPlayerCards.Tag;
+        var opponentTag = GetOpponentPlayerCards().Tag;
         var cardObject = hitInfo.transform.gameObject;
 
         if (objectTag == personTag)
@@ -397,29 +426,23 @@ public class GameLoop : MonoBehaviour
 
     protected void DisplayAvailableOpponent()
     {
-        var opponentCards = IsP1Turn
-            ? p2.GetComponent<PlayerCards>().invocationCards
-            : p1.GetComponent<PlayerCards>().invocationCards;
-        var attackerEffectCards =
-            IsP1Turn ? p1.GetComponent<PlayerCards>().effectCards : p2.GetComponent<PlayerCards>().effectCards;
+        var opponentCards = GetOpponentPlayerCards().invocationCards;
+        var attackerEffectCards = GetCurrentPlayerCards().effectCards;
         DisplayCards(opponentCards, attackerEffectCards);
     }
 
     protected bool IsSpecialActionPossible()
     {
-        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         return attacker.Abilities.TrueForAll(ability =>
-            ability.IsActionPossible(playerCards)) && !attacker.CancelEffect;
+            ability.IsActionPossible(GetCurrentPlayerCards())) && !attacker.CancelEffect;
     }
 
     protected void UseSpecialAction()
     {
         var abilities = attacker.Abilities;
-        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
         foreach (var ability in abilities)
         {
-            ability.OnCardActionTouched(canvas, playerCards, opponentPlayerCards);
+            ability.OnCardActionTouched(canvas, GetCurrentPlayerCards(), GetOpponentPlayerCards());
         }
     }
 
@@ -486,7 +509,7 @@ public class GameLoop : MonoBehaviour
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCard =
-                    message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
+                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
 
                 if (invocationCard != null)
                 {
@@ -517,10 +540,10 @@ public class GameLoop : MonoBehaviour
         var attack = attacker.GetCurrentAttack();
         var defenseOpponent = opponent.GetCurrentDefense();
 
-        var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
-        var opponentPlayerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
+        var playerCard = GetCurrentPlayerCards();
+        var opponentPlayerCard = GetOpponentPlayerCards();
+        var playerStatus = GetCurrentPlayerStatus();
+        var opponentPlayerStatus = GetOpponentPlayerStatus();
 
         var diff = defenseOpponent - attack;
 
@@ -617,9 +640,9 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeGoodAttack(float diff)
     {
-        var playerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var playerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
+        var playerCards = GetOpponentPlayerCards();
+        var opponentPlayerCards = GetCurrentPlayerCards();
+        var playerStatus = GetOpponentPlayerStatus();
 
         playerStatus.ChangePv(diff);
 
@@ -638,8 +661,8 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeGoodAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superOpponent)
     {
-        var playerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-        var playerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
+        var playerCards = GetOpponentPlayerCards();
+        var playerStatus = GetOpponentPlayerStatus();
 
         playerStatus.ChangePv(diff);
         RemoveCombineEffectCard(playerCards.effectCards,
@@ -670,9 +693,9 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeHurtAttack(float diff)
     {
-        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+        var playerCards = GetCurrentPlayerCards();
+        var opponentPlayerCards = GetOpponentPlayerCards();
+        var playerStatus = GetCurrentPlayerStatus();
 
         attacker.IncrementNumberDeaths();
         playerStatus.ChangePv(-diff);
@@ -691,8 +714,8 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeHurtAttackSuperInvocationCard(float diff, InGameSuperInvocationCard superAttacker)
     {
-        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+        var playerCards = GetCurrentPlayerCards();
+        var playerStatus = GetCurrentPlayerStatus();
         RemoveCombineEffectCard(playerCards.effectCards,
             playerCards.yellowCards);
         playerStatus.ChangePv(-diff);
@@ -735,15 +758,8 @@ public class GameLoop : MonoBehaviour
                     combineCard.IncrementNumberDeaths();
                     ComputeEqualityAttackSuperOpponent(combineCard);
                 }
-
-                if (IsP1Turn)
-                {
-                    p2.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
-                }
-                else
-                {
-                    p1.GetComponent<PlayerCards>().RemoveSuperInvocation(superOpponent);
-                }
+                
+                GetOpponentPlayerCards().RemoveSuperInvocation(superOpponent);
             }
             else
             {
@@ -764,8 +780,8 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeEqualityOpponent()
     {
-        var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var playerCard = GetOpponentPlayerCards();
+        var opponentPlayerCards = GetCurrentPlayerCards();
 
         var abilities = opponent.Abilities;
 
@@ -782,8 +798,8 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeEqualityAttacker()
     {
-        var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        var playerCard = GetCurrentPlayerCards();
+        var opponentPlayerCards = GetOpponentPlayerCards();
 
         var abilities = attacker.Abilities;
 
@@ -800,7 +816,7 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeEqualityAttackSuperAttacker(InGameInvocationCard combineCard)
     {
-        var playerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        var playerCard = GetCurrentPlayerCards();
 
         RemoveCombineEffectCard(playerCard.effectCards,
             playerCard.yellowCards);
@@ -808,7 +824,7 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeEqualityAttackSuperOpponent(InGameInvocationCard combineCard)
     {
-        var playerCard = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        var playerCard = GetOpponentPlayerCards()
 
         RemoveCombineEffectCard(playerCard.effectCards,
             playerCard.yellowCards);
@@ -816,8 +832,8 @@ public class GameLoop : MonoBehaviour
 
     protected void SendCardToHand(InGameInvocationCard invocationCard, bool isP1Card)
     {
-        var playerCards = isP1Card ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCards = isP1Card ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        var playerCards = GetCurrentPlayerCards();
+        var opponentPlayerCards = GetOpponentPlayerCards();
 
         if (invocationCard.IsControlled)
         {
@@ -916,11 +932,11 @@ public class GameLoop : MonoBehaviour
 
     private void DoDraw()
     {
-        var playerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-        var opponentPlayerCards = IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+        var playerCards = GetCurrentPlayerCards();
+        var opponentPlayerCards = GetOpponentPlayerCards();
 
-        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
-        var opponentPlayerStatus = IsP1Turn ? p2.GetComponent<PlayerStatus>() : p1.GetComponent<PlayerStatus>();
+        var playerStatus = GetCurrentPlayerStatus();
+        var opponentPlayerStatus = GetOpponentPlayerStatus();
 
         playerCards.ResetInvocationCardNewTurn();
 
@@ -946,8 +962,8 @@ public class GameLoop : MonoBehaviour
             }
             else
             {
-                p1.GetComponent<PlayerStatus>().GetCurrentPv();
-                p2.GetComponent<PlayerStatus>().GetCurrentPv();
+                playerStatus1.GetCurrentPv();
+                playerStatus2.GetCurrentPv();
 
                 phaseId = 5;
                 GameOver();
@@ -967,7 +983,7 @@ public class GameLoop : MonoBehaviour
             phaseId += 1;
         }
 
-        var playerStatus = IsP1Turn ? p1.GetComponent<PlayerStatus>() : p2.GetComponent<PlayerStatus>();
+        var playerStatus = GetCurrentPlayerStatus();
         if (phaseId == 2 && playerStatus.BlockAttack)
         {
             phaseId = 3;
@@ -991,19 +1007,13 @@ public class GameLoop : MonoBehaviour
         }
 
         if (phaseId != 3) return;
-        PlayerCards currentPlayerCard = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
+        PlayerCards currentPlayerCard = GetCurrentPlayerCards();
 
-        var invocationCards = IsP1Turn
-            ? p1.GetComponent<PlayerCards>().invocationCards
-            : p2.GetComponent<PlayerCards>().invocationCards;
+        var invocationCards = currentPlayerCard.invocationCards;
 
         foreach (var invocationCard in invocationCards)
         {
             invocationCard.UnblockAttack();
-        }
-
-        foreach (var invocationCard in currentPlayerCard.invocationCards)
-        {
             invocationCard.incrementNumberTurnOnField();
         }
 
