@@ -94,21 +94,7 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            switch (currentFieldCard.GetFamily())
-            {
-                case CardFamily.Comics:
-                    AudioSystem.Instance.PlayMusic(Music.CanardCity);
-                    break;
-                case CardFamily.Rpg:
-                    AudioSystem.Instance.PlayMusic(Music.Rpg);
-                    break;
-                case CardFamily.Wizard:
-                    AudioSystem.Instance.PlayMusic(Music.Wizard);
-                    break;
-                default:
-                    AudioSystem.Instance.PlayMusic(Music.DrawPhase);
-                    break;
-            }
+            AudioSystem.Instance.PlayFamilyMusic(currentFieldCard.GetFamily());
         }
     }
 
@@ -175,6 +161,8 @@ public class GameLoop : MonoBehaviour
         DoDraw();
         GameStateManager.Instance.IncrementNumberOfTurn();
         GameStateManager.Instance.NextPhase();
+        
+        ChoosePhase();
         UIManager.Instance.SetRoundText("Phase de pose");
     }
 
@@ -209,13 +197,10 @@ public class GameLoop : MonoBehaviour
             GameStateManager.Instance.SetPhase(Phase.End);
         }
 
-        UIManager.Instance.AdaptUIToPhaseIdInNextRound(GameStateManager.Instance.Phase);
+        UIManager.Instance.AdaptUIToPhaseIdInNextRound();
 
         switch (GameStateManager.Instance.Phase) 
         {
-            case Phase.Choose:
-                ChoosePhase();
-                break;
             case Phase.Attack:
                 PlayAttackMusic();
                 break;

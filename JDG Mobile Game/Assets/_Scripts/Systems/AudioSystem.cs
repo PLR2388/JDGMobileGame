@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Cards;
 using UnityEngine;
 
 namespace Sound
@@ -17,6 +20,23 @@ namespace Sound
         public float MusicVolume => musicAudioSource.volume;
         public float SoundEffectVolume => soundEffectAudioSource.volume;
 
+        public Dictionary<CardFamily, Music> FamilyMusic = new Dictionary<CardFamily, Music>
+        {
+            [CardFamily.Any] = Music.DrawPhase,
+           [CardFamily.Comics] = Music.CanardCity,
+           [CardFamily.Developer] = Music.DrawPhase,
+           [CardFamily.Fistiland] = Music.DrawPhase,
+           [CardFamily.Human] = Music.DrawPhase,
+           [CardFamily.Incarnation] = Music.DrawPhase,
+           [CardFamily.Japan] = Music.DrawPhase,
+           [CardFamily.Monster] = Music.DrawPhase,
+           [CardFamily.Police] = Music.DrawPhase,
+           [CardFamily.Rpg] = Music.Rpg,
+           [CardFamily.Spatial] = Music.DrawPhase,
+           [CardFamily.Wizard] =Music.Wizard,
+           [CardFamily.HardCorner] = Music.DrawPhase
+        };
+
         private int IndexMusic(Music music)
         {
             return Array.IndexOf(musicNames, music);
@@ -30,6 +50,11 @@ namespace Sound
         public void StopMusic()
         {
             musicAudioSource.Stop();
+        }
+
+        public void PlayFamilyMusic(CardFamily family)
+        {
+            PlayMusic(FamilyMusic[family]);
         }
 
         public void PlayMusic(Music music)

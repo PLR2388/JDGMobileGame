@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using Cards;
@@ -113,8 +112,9 @@ public class UIManager : Singleton<UIManager>
         invocationMenu.SetActive(false);
     }
 
-    public void AdaptUIToPhaseIdInNextRound(Phase phaseId)
+    public void AdaptUIToPhaseIdInNextRound()
     {
+        var phaseId = GameStateManager.Instance.Phase;
         switch (phaseId)
         {
             case Phase.End:
@@ -122,10 +122,6 @@ public class UIManager : Singleton<UIManager>
                 SetRoundText("Phase de pioche");
                 playerCamera.transform.Rotate(cameraRotation);
                 playerText.GetComponent<TextMeshProUGUI>().text = GameStateManager.Instance.IsP1Turn ? "Joueur 1" : "Joueur 2";
-                break;
-            case Phase.Choose:
-                inHandButton.SetActive(true);
-                SetRoundText("Phase de pose");
                 break;
             case Phase.Attack:
                 inHandButton.SetActive(false);
