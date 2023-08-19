@@ -824,7 +824,7 @@ public class GameLoop : MonoBehaviour
 
     protected void ComputeEqualityAttackSuperOpponent(InGameInvocationCard combineCard)
     {
-        var playerCard = GetOpponentPlayerCards()
+        var playerCard = GetOpponentPlayerCards();
 
         RemoveCombineEffectCard(playerCard.effectCards,
             playerCard.yellowCards);
