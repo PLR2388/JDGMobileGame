@@ -18,7 +18,6 @@ public class GameLoop : MonoBehaviour
     protected bool stopDetectClicking;
     protected bool clicking;
     protected float totalDownTime;
-    protected int numberOfTurn;
 
     // Start is called before the first frame update
     protected void Start()
@@ -367,7 +366,7 @@ public class GameLoop : MonoBehaviour
     protected void Draw()
     {
         DoDraw();
-        numberOfTurn++;
+        GameStateManager.Instance.IncrementNumberOfTurn();
         GameStateManager.Instance.SetPhase(GameStateManager.Instance.PhaseId + 1);
         UIManager.Instance.SetRoundText("Phase de pose");
     }
@@ -387,7 +386,7 @@ public class GameLoop : MonoBehaviour
     protected virtual void NextRound()
     {
         UIManager.Instance.HideInvocationMenu();
-        if (numberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
+        if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
         {
             GameStateManager.Instance.SetPhase(3);
         }
