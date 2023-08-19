@@ -549,9 +549,9 @@ public class GameLoop : MonoBehaviour
                     playerStatus, opponentPlayerStatus);
             }
 
-            foreach (var abiliy in attackerAbilities)
+            foreach (var ability in attackerAbilities)
             {
-                abiliy.OnAttackCard(opponent, attacker, playerCard, opponentPlayerCard);
+                ability.OnAttackCard(opponent, attacker, playerCard, opponentPlayerCard);
             }
         }
 
