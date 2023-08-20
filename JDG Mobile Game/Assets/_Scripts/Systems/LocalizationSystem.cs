@@ -6,8 +6,14 @@ public class LocalizationSystem : StaticInstance<LocalizationSystem>
     private Dictionary<string, string> localizedText;
     private static bool isInitialized = false;
     private const string missingTextString = "Localized text not found";
-    
-    public void LoadLocalizedText(string fileName)
+
+    protected override void Awake()
+    {
+        base.Awake();
+        LoadLocalizedText("Localization/fr");
+    }
+
+    private void LoadLocalizedText(string fileName)
     {
         localizedText = new Dictionary<string, string>();
         TextAsset fileData = Resources.Load<TextAsset>(fileName);
