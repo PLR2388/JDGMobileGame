@@ -34,7 +34,7 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
                     canvas, 
-                    "Aller chercher carte",
+                    "Question",
                     "Veux-tu aller chercher directement une carte de type " + type + " dans ton deck ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {

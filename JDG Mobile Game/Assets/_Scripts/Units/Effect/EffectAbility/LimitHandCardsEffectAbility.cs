@@ -72,7 +72,7 @@ public class LimitHandCardsEffectAbility : EffectAbility
 
             messageBox.GetComponent<MessageBox>().NegativeAction = () =>
             {
-                var messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention", "Il faut enlever des cartes");
+                var messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois enlever des cartes !");
                 messageBox1.GetComponent<MessageBox>().OkAction = () => { Object.Destroy(messageBox1); };
             };
         }

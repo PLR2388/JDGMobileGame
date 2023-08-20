@@ -20,7 +20,7 @@ public class InvokeSpecificCardAbility : Ability
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
                     canvas, 
-                    "Invocation",
+                    "Question",
                     "Veux-tu aller invoquer directement " + cardName + " ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {

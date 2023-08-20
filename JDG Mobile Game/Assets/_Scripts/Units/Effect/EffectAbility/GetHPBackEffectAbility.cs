@@ -25,7 +25,7 @@ public class GetHPBackEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Il faut sélectionner un sacrifice");
+        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à sacrifier !");
     }
 
     public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)

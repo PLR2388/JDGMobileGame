@@ -34,7 +34,7 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
                 "Veux-tu sauter ta phase de pioche pour aller chercher une INVOCATION de type Fistiland dans ta pioche ou ta poubelle jaune ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte", validCards);
+                var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte à aller chercher", validCards);
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var invocationCard = (InGameInvocationCard)messageBox1.GetComponent<MessageBox>().GetSelectedCard();

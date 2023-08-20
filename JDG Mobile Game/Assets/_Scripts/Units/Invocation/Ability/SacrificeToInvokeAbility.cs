@@ -47,7 +47,7 @@ public class SacrificeToInvokeAbility : Ability
             {
                 messageBox.SetActive(false);
                 GameObject messageBox1 =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix carte à invoquer", invocationCards);
+                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à invoquer", invocationCards);
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     InGameInvocationCard newlyInvoke =

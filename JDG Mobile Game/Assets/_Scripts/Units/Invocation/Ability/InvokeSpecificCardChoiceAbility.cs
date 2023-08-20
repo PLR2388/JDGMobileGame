@@ -47,7 +47,7 @@ public class InvokeSpecificCardChoiceAbility : Ability
                 messageBox.SetActive(false);
                 List<InGameCard> cards =
                     playerCards.deck.FindAll(card => cardChoices.Contains(card.Title));
-                GameObject messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix invocation", cards);
+                GameObject messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à invoquer", cards);
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     InGameInvocationCard invocationCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;

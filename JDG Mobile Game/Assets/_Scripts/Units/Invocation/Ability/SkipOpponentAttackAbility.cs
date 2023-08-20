@@ -36,7 +36,7 @@ public class SkipOpponentAttackAbility : Ability
                 messageBox.SetActive(false);
                 List<InGameCard> list = new List<InGameCard>(opponentPlayerCard.invocationCards);
                 GameObject messageBox1 =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix carte à empêcher l'attaque", list);
+                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix carte à empêcher d'attaquer", list);
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     InGameInvocationCard invocationCard =

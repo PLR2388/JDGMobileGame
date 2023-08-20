@@ -29,7 +29,7 @@ public class ChangeFieldCardEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
         var fieldCards = playerCards.deck.Where(card => card.Type == CardType.Field).ToList();
-        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte terrain à joueur", fieldCards);
+        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte terrain à jouer", fieldCards);
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var fieldCard = (InGameFieldCard) messageBox.GetComponent<MessageBox>().GetSelectedCard();

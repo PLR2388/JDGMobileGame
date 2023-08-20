@@ -29,7 +29,7 @@ public class OptionalSacrificeForAtkDefAbility : Ability
 
         if (isFieldPresent && isInvocationPresent)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Augmentation de stats",
+            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
                 "Veux-tu sacrifier " +
                 cardNameToSacrifice + " pour augmenter l'attaque à " + newAtk + " et la défense à " + newDef + " de " +
                 invocationCard.Title + " ?");

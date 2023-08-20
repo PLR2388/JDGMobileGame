@@ -30,7 +30,7 @@ public class OptionalChangeFieldFromDeckAbility : Ability
         List<InGameCard> fieldCardsFromDeck = playerCards.deck.FindAll(card => card.Type == CardType.Field);
         if (fieldCardsFromDeck.Count > 0)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Carte terrain",
+            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
                 "Veux-tu poser une carte terrain depuis ta pioche ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {

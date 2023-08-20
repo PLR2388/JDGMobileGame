@@ -38,7 +38,7 @@ public class DestroyFieldCardAbility : EffectAbility
             var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
             if (card == null)
             {
-                MessageBox.CreateOkMessageBox(canvas, "Information", "Tu dois sélectionner une carte");
+                MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte !");
             }
             else
             {
@@ -75,7 +75,7 @@ public class DestroyFieldCardAbility : EffectAbility
 
         messageBox.GetComponent<MessageBox>().NegativeAction = () =>
         {
-            MessageBox.CreateOkMessageBox(canvas, "Information", "Tu dois sélectionner une carte");
+            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte !");
         };
     }
 

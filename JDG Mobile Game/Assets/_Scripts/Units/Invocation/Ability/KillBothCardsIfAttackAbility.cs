@@ -44,10 +44,4 @@ public class KillBothCardsIfAttackAbility : Ability
             base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
         }
     }
-
-    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,
-        PlayerCards opponentPlayerCards)
-    {
-        return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
-    }
 }

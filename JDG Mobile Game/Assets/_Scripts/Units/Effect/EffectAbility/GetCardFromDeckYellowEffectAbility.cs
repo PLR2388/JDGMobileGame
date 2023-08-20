@@ -28,7 +28,7 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
 
     private void DisplayOkMessageBox(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois prendre une carte");
+        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte !");
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,

@@ -62,7 +62,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
             List<InGameCard> cards = new List<InGameCard>(invocationCards);
 
             bool isMultipleSelected = numberCard > 1;
-            string message = isMultipleSelected ? "Choisis les cartes à sacrifier" : "Choisis la carte à sacrifier";
+            string message = isMultipleSelected ? "Cartes à sacrifier" : "Carte à sacrifier";
             
             GameObject messageBox =
                 MessageBox.CreateMessageBoxWithCardSelector(canvas, message, cards, multipleCardSelection: isMultipleSelected, numberCardInSelection: numberCard);

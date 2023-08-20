@@ -18,7 +18,7 @@ public class GetFamilyInDeckAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Invocation dans le deck",
+        GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
             "Veux-tu aller chercher une carte de la famille " + family.ToName() + " dans ton deck ?");
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
@@ -37,7 +37,7 @@ public class GetFamilyInDeckAbility : Ability
                 {
                     messageBox1.SetActive(false);
                     GameObject messageBox2 =
-                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu n'as sélectionné aucune carte");
+                        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte !");
                     messageBox2.GetComponent<MessageBox>().OkAction = () =>
                     {
                         messageBox1.SetActive(true);

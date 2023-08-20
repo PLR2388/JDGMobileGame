@@ -30,7 +30,7 @@ public class KillOpponentInvocationCardAbility : Ability
         ObservableCollection<InGameInvocationCard> invocationCards = opponentPlayerCards.invocationCards;
         if (invocationCards.Count > 0)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Action",
+            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
                 "Veux-tu détruire une carte invocation de l'adversaire ?");
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {

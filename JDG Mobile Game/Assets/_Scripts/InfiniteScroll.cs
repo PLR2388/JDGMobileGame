@@ -42,7 +42,7 @@ public class InfiniteScroll : MonoBehaviour
     private void DisplayMessageBox(string msg)
     {
         var message = Instantiate(messageBox);
-        message.GetComponent<MessageBox>().title = "Modifie ton deck";
+        message.GetComponent<MessageBox>().title = "Attention";
         message.GetComponent<MessageBox>().isInformation = true;
         message.GetComponent<MessageBox>().description = msg;
     }
