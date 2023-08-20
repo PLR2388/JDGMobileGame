@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class LocalizationSystem : StaticInstance<LocalizationSystem>
@@ -6,13 +7,11 @@ public class LocalizationSystem : StaticInstance<LocalizationSystem>
     private Dictionary<string, string> localizedText;
     private static bool isInitialized = false;
     private const string missingTextString = "Localized text not found";
-
-    protected override void Awake()
+    
+    private void Start()
     {
-        base.Awake();
         LoadLocalizedText("Localization/fr");
     }
-
     private void LoadLocalizedText(string fileName)
     {
         localizedText = new Dictionary<string, string>();
@@ -24,14 +23,28 @@ public class LocalizationSystem : StaticInstance<LocalizationSystem>
             return;
         }
 
-        Dictionary<string, object> dataAsJson = JsonUtility.FromJson<Dictionary<string, object>>(fileData.ToString());
-
-        foreach (var key in dataAsJson.Keys)
-        {
-            localizedText.Add(key, dataAsJson[key].ToString());
-        }
+        JObject jsonObject = JObject.Parse(fileData.text);
+        
+        ProcessJsonObject(jsonObject);
 
         Debug.Log("Loaded localization data from: " + fileName);
+    }
+    
+    private void ProcessJsonObject(JObject jsonObject, string parentKey = "")
+    {
+        foreach (var property in jsonObject.Properties())
+        {
+            string currentKey = string.IsNullOrEmpty(parentKey) ? property.Name : $"{parentKey}.{property.Name}";
+
+            if (property.Value.Type == JTokenType.Object)
+            {
+                ProcessJsonObject((JObject)property.Value, currentKey);
+            }
+            else
+            {
+                localizedText.Add(currentKey, property.Value.ToString());
+            }
+        }
     }
 
     public string GetLocalizedValue(string key)
