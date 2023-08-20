@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalizationSystem : PersistentSingleton<LocalizationSystem>
+public class LocalizationSystem : StaticInstance<LocalizationSystem>
 {
     private Dictionary<string, string> localizedText;
     private static bool isInitialized = false;

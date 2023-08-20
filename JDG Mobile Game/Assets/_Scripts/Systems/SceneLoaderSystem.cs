@@ -1,6 +1,6 @@
 using UnityEngine.SceneManagement;
 
-public class SceneLoaderSystem : PersistentSingleton<SceneLoaderSystem>
+public class SceneLoaderSystem : StaticInstance<SceneLoaderSystem>
 {
     public static void LoadMainScreen()
     {

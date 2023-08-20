@@ -660,7 +660,7 @@ GameObject:
   - component: {fileID: 1099694070}
   - component: {fileID: 1099694071}
   m_Layer: 0
-  m_Name: Localization Manager
+  m_Name: Localization
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -703,7 +703,7 @@ GameObject:
   - component: {fileID: 1131255313}
   - component: {fileID: 1131255314}
   m_Layer: 0
-  m_Name: Scene Loader Manager
+  m_Name: Scene Loader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -829,7 +829,7 @@ GameObject:
   - component: {fileID: 1681551252}
   - component: {fileID: 1681551251}
   m_Layer: 0
-  m_Name: Sound Manager
+  m_Name: Sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
