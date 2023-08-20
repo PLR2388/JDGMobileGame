@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalizationManager : PersistentSingleton<LocalizationManager>
+public class LocalizationSystem : PersistentSingleton<LocalizationSystem>
 {
     private Dictionary<string, string> localizedText;
     private static bool isInitialized = false;

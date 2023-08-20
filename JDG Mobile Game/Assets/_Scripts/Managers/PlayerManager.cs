@@ -42,6 +42,4 @@ public class PlayerManager : Singleton<PlayerManager>
             opponentPlayerStatus.ChangePv(diff);
         }
     }
-
-    //... other player-related methods and functions ...
 }

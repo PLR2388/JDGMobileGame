@@ -1,0 +1,48 @@
+{
+  "FAMILY": {
+    "COMICS": "Comics",
+    "DEVELOPER": "Developpeur",
+    "FISTILAND": "Fistiland",
+    "HARD_CORNER": "HardCorner",
+    "HUMAN": "Humain",
+    "INCARNATION": "Incarnation",
+    "JAPAN": "Japon",
+    "MONSTER": "Monstre",
+    "POLICE": "Police",
+    "RPG": "Rpg",
+    "SPATIAL": "Spatial",
+    "WIZARD": "Sorcier"
+  },
+  "CHOOSE_OPPONENT_TITLE": "Choisis ton adversaire :",
+  "WARNING": {
+    "TITLE": "Attention",
+    "CANNOT_ATTACK_MESSAGE": "Tu ne peux pas attaquer le joueur ni ses invocations!"
+  },
+  "PHASE": {
+    "DRAW": "Phase de pioche",
+    "CHOOSE": "",
+    "ATTACK": "Phase d'attaque"
+  },
+  "PLAYER": {
+    "ONE": "Joueur 1",
+    "TWO": "Joueur 2"
+  },
+  "PAUSE": {
+    "TITLE": "Pause",
+    "MESSAGE": "Veux-tu quitterla partie ?"
+  },
+  "MODIFY_DECK": {
+    "TITLE": "Modifie ton deck",
+    "MESSAGE": "Tu dois avoir 30 cartes !\n %d cartes restantes à choisir !"
+  },
+  "CARD_CHOICE": {
+    "TITLE": {
+      "PLAYER_ONE" : "Choix de cartes pour le joueur 1",
+      "PLAYER_TWO": "Choix de cartes pour le joueur 2"
+    },
+    "BUTTON": {
+      "PLAYER_ONE": "Choix joueur 2",
+      "PLAYER_TWO": "Commencer"
+    }
+  }
+}

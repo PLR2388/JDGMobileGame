@@ -26,7 +26,7 @@ public class GameLoop : MonoBehaviour
     {
         void PositiveAction()
         {
-            SceneLoaderManager.LoadMainScreen();
+            SceneLoaderSystem.LoadMainScreen();
         }
 
         UIManager.Instance.DisplayPauseMenu(PositiveAction);
@@ -167,7 +167,7 @@ public class GameLoop : MonoBehaviour
     private static void GameOver()
     {
         GameStateManager.Instance.SetPhase(Phase.GameOver);
-        SceneLoaderManager.LoadMainScreen();
+        SceneLoaderSystem.LoadMainScreen();
     }
 
     /// <summary>

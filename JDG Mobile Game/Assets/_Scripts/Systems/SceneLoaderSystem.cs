@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneLoaderManager : PersistentSingleton<SceneLoaderManager>
+public class SceneLoaderSystem : PersistentSingleton<SceneLoaderSystem>
 {
     public static void LoadMainScreen()
     {
