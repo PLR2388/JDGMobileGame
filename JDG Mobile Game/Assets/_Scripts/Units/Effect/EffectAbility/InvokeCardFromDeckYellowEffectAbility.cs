@@ -22,7 +22,7 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
         var hasSpaces = playerCards.invocationCards.Count < 4;
         if (fromYellowTrash)
         {
-            return hasSpaces && playerCards.yellowCards.Count(elt => elt.Type == CardType.Invocation) > 0; 
+            return hasSpaces && playerCards.yellowCards.Count(elt => elt.Type == CardType.Invocation) > 0;
         }
         else
         {
@@ -32,7 +32,11 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
 
     private void DisplayOkMessageBox(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+        );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
@@ -43,8 +47,11 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
         if (fromYellowTrash)
         {
             var messageBox =
-                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à invoquer",
-                    playerCards.yellowCards.ToList());
+                MessageBox.CreateMessageBoxWithCardSelector(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
+                    playerCards.yellowCards.ToList()
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCard = (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();

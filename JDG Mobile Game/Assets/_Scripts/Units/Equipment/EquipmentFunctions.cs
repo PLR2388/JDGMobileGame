@@ -68,7 +68,10 @@ namespace Cards.EquipmentCards
             var currentInvocationCards = playerCards.invocationCards;
             var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
 
-            var message = DisplayEquipmentMessageBox(invocationCards, equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut));
+            var message = DisplayEquipmentMessageBox(
+                invocationCards,
+                equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut)
+            );
 
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
@@ -77,10 +80,14 @@ namespace Cards.EquipmentCards
                 if (currentSelectedInvocationCard != null)
                 {
                     miniCardMenu.SetActive(false);
-                    
+
                     foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
                     {
-                        equipmentCardEquipmentAbility.ApplyEffect(currentSelectedInvocationCard, playerCards, OpponentPlayerCard);
+                        equipmentCardEquipmentAbility.ApplyEffect(
+                            currentSelectedInvocationCard,
+                            playerCards,
+                            OpponentPlayerCard
+                        );
                     }
 
                     currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
@@ -112,8 +119,11 @@ namespace Cards.EquipmentCards
                     cards.Add(invocationCard);
                 }
             }
-            return MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Choisis l'invocation auquelle associée l'équipement :", cards);
+            return MessageBox.CreateMessageBoxWithCardSelector(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOCATION_FOR_EQUIPMENT),
+                cards
+            );
         }
     }
 }

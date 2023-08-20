@@ -18,8 +18,12 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
                     canvas,
-                    "Question",
-                    "Veux-tu aller chercher directement " + cardName + " dans ton deck ou ta poubelle jaune?");
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    string.Format(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_SPECIFIC_CARD_IN_DECK_AND_YELLOW_MESSAGE),
+                        cardName
+                    )
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 if (hasCardInDeck)

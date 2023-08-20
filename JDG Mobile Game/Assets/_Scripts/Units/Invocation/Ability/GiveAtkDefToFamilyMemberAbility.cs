@@ -7,7 +7,7 @@ using UnityEngine;
 public class GiveAtkDefToFamilyMemberAbility : Ability
 {
     private CardFamily family;
-    
+
     public GiveAtkDefToFamilyMemberAbility(AbilityName name, string description, CardFamily family)
     {
         Name = name;
@@ -19,7 +19,11 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
     private void DisplayOkMessage(Transform canvas, GameObject messageBox1, GameObject messageBox2)
     {
         var messageBox =
-            MessageBox.CreateOkMessageBox(canvas, "Information", "Aucune carte n'a bénéficié des étoiles !");
+            MessageBox.CreateOkMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_WIN_STARS_MESSAGE)
+            );
         messageBox.GetComponent<MessageBox>().OkAction = () =>
         {
             Object.Destroy(messageBox);
@@ -38,18 +42,23 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
     public override void OnCardActionTouched(Transform canvas, PlayerCards playerCards, PlayerCards opponentCards)
     {
         base.OnCardActionTouched(canvas, playerCards, opponentCards);
-                if (invocationCard.CancelEffect)
+        if (invocationCard.CancelEffect)
         {
             return;
         }
-        var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Confirmation",
-            "Veux-tu transfèrer tes points d'ATK et de DEF à une carte de la même famille ?");
+        var messageBox = MessageBox.CreateSimpleMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TRANSFER_ATK_DEF_MESSAGE)
+        );
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var invocationsCardsValid = new List<InGameCard>(playerCards.invocationCards.Where(inGameInvocationCard =>
                 inGameInvocationCard.Families.Contains(family) && inGameInvocationCard.Title != invocationCard.Title).ToList());
             var messageBox1 =
-                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte récepteur",
+                MessageBox.CreateMessageBoxWithCardSelector(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_RECEIVER_CARD),
                     invocationsCardsValid);
             messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
             {
@@ -78,21 +87,21 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         };
     }
 
-    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
+    public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         if (invocationCard.CancelEffect)
         {
-            return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
+            return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
         }
         if (deadCard.Receiver != null)
         {
             var receiverInvocationCard =
                 playerCards.invocationCards.FirstOrDefault(card => card.Title == deadCard.Receiver);
             deadCard.Receiver = null;
-            if (receiverInvocationCard == null) return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
+            if (receiverInvocationCard == null) return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
             receiverInvocationCard.Attack -= deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;
             receiverInvocationCard.Defense -= deadCard.baseInvocationCard.BaseInvocationCardStats.Defense;
         }
-        return base.OnCardDeath(canvas, deadCard, playerCards,opponentPlayerCards);
+        return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
     }
 }

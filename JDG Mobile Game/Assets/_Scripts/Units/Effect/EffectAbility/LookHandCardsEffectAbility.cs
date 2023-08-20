@@ -19,7 +19,11 @@ public class LookHandCardsEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+        );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -29,7 +33,11 @@ public class LookHandCardsEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var messageBox =
-            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte de l'adversaire", opponentPlayerCard.handCards.ToList());
+            MessageBox.CreateMessageBoxWithCardSelector(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
+                opponentPlayerCard.handCards.ToList()
+            );
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             if (playerCards.handCards.Count > 0)
@@ -40,7 +48,7 @@ public class LookHandCardsEffectAbility : EffectAbility
             {
                 Object.Destroy(messageBox);
             }
-         
+
         };
         messageBox.GetComponent<MessageBox>().NegativeAction = () =>
         {
@@ -58,12 +66,18 @@ public class LookHandCardsEffectAbility : EffectAbility
     private void DisplayChoiceAboutHandCards(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
         GameObject messageBox)
     {
-        var messageBox1 = MessageBox.CreateSimpleMessageBox(canvas, "Question",
-            "Est-ce que tu veux défausser une carte de ton adversaires en défaussant aussi une de tes cartes ?");
+        var messageBox1 = MessageBox.CreateSimpleMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_REMOVE_CARD_OPPONENT_HAND_MESSAGE)
+        );
         messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
         {
-            var messageBox2 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Carte de l'adversaire à défausser", opponentPlayerCard.handCards.ToList());
+            var messageBox2 = MessageBox.CreateMessageBoxWithCardSelector(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
+                opponentPlayerCard.handCards.ToList()
+            );
             messageBox2.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var opponentCard = messageBox2.GetComponent<MessageBox>().GetSelectedCard();
@@ -74,8 +88,11 @@ public class LookHandCardsEffectAbility : EffectAbility
                 else
                 {
                     var messageBox3 =
-                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à défausser",
-                            playerCards.handCards.ToList());
+                        MessageBox.CreateMessageBoxWithCardSelector(
+                            canvas,
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                            playerCards.handCards.ToList()
+                        );
                     messageBox3.GetComponent<MessageBox>().PositiveAction = () =>
                     {
                         var playerCard = messageBox3.GetComponent<MessageBox>().GetSelectedCard();

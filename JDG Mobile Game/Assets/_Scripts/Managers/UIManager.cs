@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
-    
+
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
     [SerializeField] protected GameObject playerText;
@@ -36,11 +36,15 @@ public class UIManager : Singleton<UIManager>
     {
         if (isP1)
         {
-            healthP1Text.SetText(pv + "/" + PlayerStatus.MaxPv);
+            healthP1Text.SetText(
+                $"{pv} / {PlayerStatus.MaxPv}"
+            );
         }
         else
         {
-            healthP2Text.SetText(pv + "/" + PlayerStatus.MaxPv);
+            healthP2Text.SetText(
+                $"{pv} / {PlayerStatus.MaxPv}"
+                );
         }
     }
 
@@ -55,7 +59,7 @@ public class UIManager : Singleton<UIManager>
         bigImageCard.GetComponent<Image>().material = card.MaterialCard;
     }
 
-    public void UpdateAttackButton(bool isP1Turn)
+    public void UpdateAttackButton()
     {
         invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = CardManager.Instance.CanAttackerAttack();
     }
@@ -84,7 +88,11 @@ public class UIManager : Singleton<UIManager>
         if (invocationCards.Count > 0)
         {
             var message =
-                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis ton adversaire :", invocationCards);
+                MessageBox.CreateMessageBoxWithCardSelector(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
+                    invocationCards
+                );
             message.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCard =
@@ -102,8 +110,11 @@ public class UIManager : Singleton<UIManager>
         }
         else
         {
-            MessageBox.CreateOkMessageBox(canvas, "Attention",
-                "Tu ne peux pas attaquer le joueur ni ses invocations");
+            MessageBox.CreateOkMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_CANNOT_ATTACK_MESSAGE)
+            );
         }
     }
 
@@ -119,13 +130,19 @@ public class UIManager : Singleton<UIManager>
         {
             case Phase.End:
                 inHandButton.SetActive(true);
-                SetRoundText("Phase de pioche");
+                SetRoundText(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_DRAW)
+                );
                 playerCamera.transform.Rotate(cameraRotation);
-                playerText.GetComponent<TextMeshProUGUI>().text = GameStateManager.Instance.IsP1Turn ? "Joueur 1" : "Joueur 2";
+                playerText.GetComponent<TextMeshProUGUI>().text = GameStateManager.Instance.IsP1Turn
+                    ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_ONE)
+                    : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO);
                 break;
             case Phase.Attack:
                 inHandButton.SetActive(false);
-                SetRoundText("Phase d'attaque");
+                SetRoundText(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_ATTACK)
+                );
                 break;
         }
     }
@@ -142,6 +159,11 @@ public class UIManager : Singleton<UIManager>
 
     public void DisplayPauseMenu(UnityAction onPositiveAction)
     {
-        MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", onPositiveAction);
+        MessageBox.CreateSimpleMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_MESSAGE),
+            onPositiveAction
+        );
     }
 }

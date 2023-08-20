@@ -41,7 +41,10 @@ public class LimitHandCardsEffectAbility : EffectAbility
             var number = numberCardPlayerCard - numberCards;
             var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
                 canvas,
-                "Joueur " + (playerCards.isPlayerOne ? "1" : "2") + " doit enlever " + number + " cartes de sa main",
+                string.Format(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                    playerCards.isPlayerOne ? "1" : "2",
+                    number),
                 playerCards.handCards.ToList(),
                 multipleCardSelection: true,
                 numberCardInSelection: number
@@ -61,8 +64,14 @@ public class LimitHandCardsEffectAbility : EffectAbility
                 }
                 else
                 {
-                    var messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention",
-                        "Tu dois selectionner " + number + " cartes.");
+                    var messageBox1 = MessageBox.CreateOkMessageBox(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        string.Format(
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARDS),
+                            number
+                        )
+                    );
                     messageBox1.GetComponent<MessageBox>().OkAction = () =>
                     {
                         Object.Destroy(messageBox1);
@@ -72,7 +81,11 @@ public class LimitHandCardsEffectAbility : EffectAbility
 
             messageBox.GetComponent<MessageBox>().NegativeAction = () =>
             {
-                var messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois enlever des cartes !");
+                var messageBox1 = MessageBox.CreateOkMessageBox(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_REMOVE_CARDS)
+                );
                 messageBox1.GetComponent<MessageBox>().OkAction = () => { Object.Destroy(messageBox1); };
             };
         }

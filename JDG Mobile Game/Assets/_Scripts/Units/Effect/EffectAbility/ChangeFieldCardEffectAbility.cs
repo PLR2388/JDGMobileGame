@@ -13,14 +13,18 @@ public class ChangeFieldCardEffectAbility : EffectAbility
         NumberOfTurn = numberTurn;
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.deck.Any(card => card.Type == CardType.Field);
     }
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte terrain");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_FIELD_CARD)
+            );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -29,10 +33,14 @@ public class ChangeFieldCardEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
         var fieldCards = playerCards.deck.Where(card => card.Type == CardType.Field).ToList();
-        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte terrain à jouer", fieldCards);
+        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FIELD),
+            fieldCards
+        );
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
-            var fieldCard = (InGameFieldCard) messageBox.GetComponent<MessageBox>().GetSelectedCard();
+            var fieldCard = (InGameFieldCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
             if (fieldCard == null)
             {
                 DisplayOkMessage(canvas);

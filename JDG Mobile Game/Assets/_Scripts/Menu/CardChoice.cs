@@ -41,8 +41,10 @@ namespace Menu
 
         private void DisplayMessageBox(int remainedCards)
         {
-            MessageBox.CreateOkMessageBox(canvas, "Modifie ton deck",
-                "Tu dois avoir 30 cartes !\n " + remainedCards + " cartes restantes à choisir !");
+            MessageBox.CreateOkMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_TITLE),
+                string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_MESSAGE), remainedCards));
         }
 
         private void DeselectAllCards()
@@ -69,16 +71,16 @@ namespace Menu
                 {
                     AudioSystem.Instance.StopMusic();
                     SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
-                    title.text = "Choix de cartes pour le joueur 1";
-                    buttonText.text = "Choix joueur 2";
+                    title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
+                    buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
                     isPlayerOneCardChosen = false;
 
                     FindObjectOfType<GameState>().deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
                 {
-                    title.text = "Choix de cartes pour le joueur 2";
-                    buttonText.text = "Commencer";
+                    title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_TWO);
+                    buttonText.text = LocalizationSystem.Instance.GetLocalizedValue( LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_TWO);
                     isPlayerOneCardChosen = true;
 
                     FindObjectOfType<GameState>().deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
@@ -195,8 +197,8 @@ namespace Menu
         {
             if (isPlayerOneCardChosen)
             {
-                title.text = "Choix de cartes pour le joueur 1";
-                buttonText.text = "Choix joueur 2";
+                title.text =LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
+                buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE );
                 isPlayerOneCardChosen = false;
                 FindObjectOfType<GameState>().deckP1 = new List<InGameCard>();
                 DeselectAllCards();

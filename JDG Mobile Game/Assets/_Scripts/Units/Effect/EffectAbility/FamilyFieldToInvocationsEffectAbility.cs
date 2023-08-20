@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -21,11 +22,14 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
         var fieldFamily = playerCards.FieldCard.GetFamily();
         foreach (var invocationCard in playerCards.invocationCards)
         {
-            invocationCard.Families = new[] { fieldFamily };
+            invocationCard.Families = new[]
+            {
+                fieldFamily
+            };
         }
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.FieldCard != null && playerCards.invocationCards.Count > 0;
     }
@@ -39,10 +43,14 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
-        var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Action nécessaire",
-            "Veux-tu continuer d'appliquer la famille du terrain aux cartes invocations sur le terrain pour " +
-            costPerTurn +
-            " étoiles ?");
+        var messageBox = MessageBox.CreateSimpleMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
+            string.Format(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONTINUE_APPLY_FAMILY_MESSAGE),
+                costPerTurn
+            )
+        );
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             playerStatus.ChangePv(-costPerTurn);
@@ -65,7 +73,10 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
     public override void OnInvocationCardAdded(PlayerCards playerCards, InGameInvocationCard invocationCard)
     {
         base.OnInvocationCardAdded(playerCards, invocationCard);
-        invocationCard.Families = new[] { playerCards.FieldCard.GetFamily() };
+        invocationCard.Families = new[]
+        {
+            playerCards.FieldCard.GetFamily()
+        };
     }
 
     public override void OnInvocationCardRemoved(PlayerCards playerCards, InGameInvocationCard invocationCard)

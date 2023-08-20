@@ -16,7 +16,11 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+        );
     }
 
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerStatus playerStatus)
@@ -30,11 +34,17 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
 
         if (validCards.Count > 0)
         {
-            var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Action nécessaire",
-                "Veux-tu sauter ta phase de pioche pour aller chercher une INVOCATION de type Fistiland dans ta pioche ou ta poubelle jaune ?");
+            var messageBox = MessageBox.CreateSimpleMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE)
+            );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
-                var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte à aller chercher", validCards);
+                var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
+                    validCards);
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var invocationCard = (InGameInvocationCard)messageBox1.GetComponent<MessageBox>().GetSelectedCard();

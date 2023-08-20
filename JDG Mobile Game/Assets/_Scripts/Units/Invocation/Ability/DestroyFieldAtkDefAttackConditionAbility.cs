@@ -19,8 +19,11 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
     private static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
     {
         messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Information",
-            "Aucune carte n'a été détruite.");
+        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE)
+        );
         messageBox1.GetComponent<MessageBox>().OkAction = () =>
         {
             Object.Destroy(messageBox);
@@ -44,7 +47,7 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
             opponentPlayerCards.yellowCards.Add(fieldCard);
             opponentPlayerCards.FieldCard = null;
         }
-        
+
         invocationCard.Attack /= divideAtkFactor;
         invocationCard.Defense /= divideDefFactor;
         invocationCard.SetRemainedAttackThisTurn(0);
@@ -52,12 +55,20 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        string condition = divideAtkFactor > 1 ? "ton attaque" : "ta défense";
+        string condition = divideAtkFactor > 1
+            ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.YOUR_ATTACK)
+            : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.YOUR_DEFENSE);
         int value = divideAtkFactor > 1 ? divideAtkFactor : divideDefFactor;
 
         GameObject messageBox =
-            MessageBox.CreateSimpleMessageBox(canvas, "Question",
-                "Veux-tu diviser " + condition + " par " + value + " pour détruire un terrain ?");
+            MessageBox.CreateSimpleMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                string.Format(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DIVIDE_TO_DESTROY_FIELD_MESSAGE),
+                    condition, value
+                )
+            );
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             List<InGameCard> fieldCardsToDestroy = new List<InGameCard>();
@@ -75,10 +86,15 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
             {
                 DestroyField(playerCards, opponentPlayerCards, fieldCardsToDestroy[0]);
                 Object.Destroy(messageBox);
-            } else if (fieldCardsToDestroy.Count > 1)
+            }
+            else if (fieldCardsToDestroy.Count > 1)
             {
                 GameObject messageBox1 =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix terrain à détruire", fieldCardsToDestroy);
+                    MessageBox.CreateMessageBoxWithCardSelector(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
+                        fieldCardsToDestroy
+                    );
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     InGameCard fieldCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard();

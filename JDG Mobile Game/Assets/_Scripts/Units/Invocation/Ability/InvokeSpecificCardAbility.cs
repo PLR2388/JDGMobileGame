@@ -19,9 +19,13 @@ public class InvokeSpecificCardAbility : Ability
         {
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
-                    canvas, 
-                    "Question",
-                    "Veux-tu aller invoquer directement " + cardName + " ?");
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    string.Format(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE),
+                        cardName
+                    )
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 InGameInvocationCard card = playerCards.deck.Find(card => card.Title == cardName) as InGameInvocationCard;

@@ -2,9 +2,9 @@
   "ACTION": {
     "CONFIRM_TITLE": "Confirmation",
     "CONFIRM_TRANSFER_ATK_DEF_MESSAGE": "Veux-tu transférer tes points d'ATK et de DEF à une carte de la même famille ?",
-    "CONTINUE_APPLY_FAMILY_MESSAGE": "Veux-tu continuer d'appliquer la famille du terrain aux cartes invocations sur le terrain pour %f étoiles ?",
+    "CONTINUE_APPLY_FAMILY_MESSAGE": "Veux-tu continuer d'appliquer la famille du terrain aux cartes invocations sur le terrain pour {0} étoiles ?",
     "SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE": "Veux-tu sauter ta phase de pioche pour aller chercher une INVOCATION de type Fistiland dans ta pioche ou ta poubelle jaune ?",
-    "TITLE": "Action nécessaire",
+    "TITLE": "Action nécessaire"
   },
   "BUTTON": {
     "BACK": "Retour",
@@ -25,7 +25,7 @@
     "TITLE": {
       "PLAYER_ONE" : "Choix de cartes pour le joueur 1",
       "PLAYER_TWO": "Choix de cartes pour le joueur 2"
-    },
+    }
   },
   "CARDS_SELECTOR_TITLE": {
     "CHANGE_ORDER_CARTES": "Change l'ordre des cartes (Non si pas voulu)",
@@ -33,17 +33,17 @@
     "CHOICE_CONTROLLED_INVOCATION": "Choix de la carte à controller",
     "CHOICE_DESTROY_CARD": "Carte à détruire",
     "CHOICE_DESTROY_FIELD_CARD": "Carte terrain à détruire",
-    "CHOICE_FAMILY_CARD": "Choix de la carte %s",
+    "CHOICE_FAMILY_CARD": "Choix de la carte {0}",
     "CHOICE_FIELD": "Carte terrain à jouer",
     "CHOICE_INVOCATION_FOR_EQUIPMENT": "Choisis l'invocation auquelle associée l'équipement",
     "CHOICE_INVOKE": "Carte à invoquer",
     "CHOICE_RECEIVER_CARD": "Choix de la carte récepteur",
-    "CHOICE_REMOVE_CARDS_FROM_HAND": "Joueur %s doit enlever %d cartes de sa main",
+    "CHOICE_REMOVE_CARDS_FROM_HAND": "Joueur {0} doit enlever {1} cartes de sa main",
     "CHOICE_SACRIFICE": "Carte à sacrifier",
     "CHOICE_SACRIFICES": "Cartes à sacrifier",
     "CHOICE_SET_FIELD": "Carte terrain à poser",
     "CHOICE_SKIP_ATTACK": "Choix carte à empêcher d'attaquer",
-    "CHOOSE_OPPONENT": "Choisis ton adversaire :",
+    "CHOOSE_OPPONENT": "Choisis ton adversaire",
     "DEFAULT_CHOICE_CARD": "Choix carte",
     "OPPONENT_CARDS": "Carte de l'adversaire",
     "REMOVE_CARD_FROM_HAND": "Carte à défausser",
@@ -70,15 +70,15 @@
     "NO_INVOKED_CARD_MESSAGE": "Aucune carte n'a été invoqué.",
     "NO_SKIP_ATTACK_MESSAGE": "Aucune carte n'a perdu sa capacité d'attaque.",
     "NO_WIN_STARS_MESSAGE": "Aucune carte n'a bénéficié des étoiles.",
-    "OPPONENT_CANT_ATTACK_MESSAGE": "%s ne pourra pas attaquer au prochain tour.",
+    "OPPONENT_CANT_ATTACK_MESSAGE": "{0} ne pourra pas attaquer au prochain tour.",
     "TITLE": "Information"
   },
   "MODIFY_DECK": {
-    "MESSAGE": "Tu dois avoir 30 cartes !\n %d cartes restantes à choisir !",
+    "MESSAGE": "Tu dois avoir 30 cartes !\n {0} cartes restantes à choisir !",
     "TITLE": "Modifie ton deck"
   },
   "PAUSE": {
-    "MESSAGE": "Veux-tu quitterla partie ?",
+    "MESSAGE": "Veux-tu quitter la partie ?",
     "TITLE": "Pause"
   },
   "PHASE": {
@@ -94,19 +94,19 @@
     "CHOICE_SEE_DECK_MESSAGE": "Veux-tu voir les cartes de ton deck (Oui) ou les cartes de ton adversaire (Non) ?",
     "CHOICE_TITLE": "Choix",
     "DESTROY_OPPONENT_INVOCATION_MESSAGE": "Veux-tu détruire une carte invocation de l'adversaire ?",
-    "DIVIDE_TO_DESTROY_FIELD_MESSAGE": "Veux-tu diviser %s par %f pour détruire un terrain ?",
-    "DRAW_CARDS_MESSAGE": "Veux-tu piocher %d cartes ?",
-    "GET_CARD_FROM_FAMILY_MESSAGE": "Veux-tu aller chercher une carte de la famille %s dans ton deck ?",
-    "GET_SPECIFIC_CARD_IN_DECK_AND_YELLOW_MESSAGE": "Veux-tu aller chercher directement %s dans ton deck ou ta poubelle jaune ?",
-    "GET_SPECIFIC_CARD_IN_DECK_MESSAGE": "Veux-tu aller chercher directement %s dans ton deck ?",
-    "GET_TYPE_CARD_MESSAGE": "Veux-tu aller chercher directement une carte de type %s dans ton deck ?",
-    "INVOKE_NON_COLLECTOR_BY_SACRFICE_MESSAGE": "Veux-tu sacrifier %s pour invoquer une carte non-brillante depuis la poubelle jaune ?",
-    "INVOKE_SPECIFIC_CARD_MESSAGE": "Veux-tu aller invoquer directement %s ?",
-    "REMOVE_CARD_OPPONENT_HAND_MESSAGE": "Est-ce que tu veux défausser une carte de ton adversaire en défaussant aussi une de tes cartes ?",
-    "SACRIFICE_TO_BOOST_MESSAGE": "Veux-tu sacrifier %s pour augmenter l'attaque à %f et la défense à %f de %s ?",
+    "DIVIDE_TO_DESTROY_FIELD_MESSAGE": "Veux-tu diviser {0} par {1} pour détruire un terrain ?",
+    "DRAW_CARDS_MESSAGE": "Veux-tu piocher {0} cartes ?",
+    "GET_CARD_FROM_FAMILY_MESSAGE": "Veux-tu chercher une carte de la famille {0} dans ton deck ?",
+    "GET_SPECIFIC_CARD_IN_DECK_AND_YELLOW_MESSAGE": "Veux-tu chercher directement {0} dans ton deck ou ta poubelle jaune ?",
+    "GET_SPECIFIC_CARD_IN_DECK_MESSAGE": "Veux-tu chercher directement {0} dans ton deck ?",
+    "GET_TYPE_CARD_MESSAGE": "Veux-tu aller chercher directement une carte de type {0} dans ton deck ?",
+    "INVOKE_NON_COLLECTOR_BY_SACRFICE_MESSAGE": "Veux-tu sacrifier {0} pour invoquer une carte non-brillante depuis la poubelle jaune ?",
+    "INVOKE_SPECIFIC_CARD_MESSAGE": "Veux-tu invoquer directement {0} ?",
+    "REMOVE_CARD_OPPONENT_HAND_MESSAGE": "Veux-tu défausser une carte de ton adversaire en défaussant aussi une de tes cartes ?",
+    "SACRIFICE_TO_BOOST_MESSAGE": "Veux-tu sacrifier {0} pour augmenter l'attaque à {1} et la défense à {2} de {3} ?",
     "SET_FIELD_CARD_MESSAGE": "Veux-tu poser une carte terrain depuis ta pioche ?",
     "SKIP_OPPONENT_ATTACK_MESSAGE": "Veux-tu faire sauter la phase d'attaque d'une carte adverse ?",
-    "TITLE": "Question",
+    "TITLE": "Question"
   },
   "TOAST_ASK": "Si tu as des idées pour l'histoire, je t'invite à me contacter !",
   "TYPE": {
@@ -116,17 +116,17 @@
     "FIELD": "TERRAIN",
     "INVOCATION": "INVOCATION"
   },
-  "TYPE_CARD": "Carte %s",
+  "TYPE_CARD": "Carte {0}",
   "WARNING": {
     "CANNOT_ATTACK_MESSAGE": "Tu ne peux pas attaquer le joueur ni ses invocations !",
     "LIMIT_COLLECTOR_CARD": "Tu ne peux pas avoir plus de 5 cartes brillantes !",
     "LIMIT_EFFECT_CARDS": "Tu ne peux pas poser plus de 4 cartes effet durant un tour !",
     "LIMIT_NUMBER_CARDS": "Tu ne peux pas avoir plus de 30 cartes !",
     "MUST_CHOOSE_CARD": "Tu dois choisir une carte !",
-    "MUST_CHOOSE_CARDS": "Tu dois choisir %d cartes !",
+    "MUST_CHOOSE_CARDS": "Tu dois choisir {0} cartes !",
     "MUST_CHOOSE_FIELD_CARD": "Tu dois choisir une carte terrain !",
     "MUST_CHOOSE_SACRIFICE": "Tu dois choisir une carte à sacrifier !",
-    "MUST_CHOOSE_SACRIFICES": "Tu dois choisir %d cartes à sacrifier !",
+    "MUST_CHOOSE_SACRIFICES": "Tu dois choisir {0} cartes à sacrifier !",
     "MUST_ORDER_CARDS": "Tu dois ordonner toutes les cartes !",
     "MUST_REMOVE_CARDS": "Tu dois enlever des cartes !",
     "TITLE": "Attention"

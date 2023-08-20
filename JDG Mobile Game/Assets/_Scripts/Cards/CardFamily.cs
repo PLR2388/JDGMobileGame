@@ -27,29 +27,29 @@ namespace Cards
             switch (family)
             {
                 case CardFamily.Comics:
-                    return "Comics";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_COMICS);
                 case CardFamily.Developer:
-                    return "Developpeur";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_DEVELOPER);
                 case CardFamily.Fistiland:
-                    return "Fistiland";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_FISTILAND);
                 case CardFamily.HardCorner:
-                    return "HandCorner";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_HARD_CORNER);
                 case CardFamily.Human:
-                    return "Humain";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_HUMAN);
                 case CardFamily.Incarnation:
-                    return "Incarnation";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_INCARNATION);
                 case CardFamily.Japan:
-                    return "Japon";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_JAPAN);
                 case CardFamily.Monster:
-                    return "Monstre";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_MONSTER);
                 case CardFamily.Police:
-                    return "Police";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_POLICE);
                 case CardFamily.Rpg:
-                    return "Rpg";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_RPG);
                 case CardFamily.Spatial:
-                    return "Spatial";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_SPATIAL);
                 case CardFamily.Wizard:
-                    return "Sorcier";
+                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_WIZARD);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(family), family, null);
             }

@@ -9,7 +9,7 @@ public class GetHPBackEffectAbility : EffectAbility
 {
     private int numberInvocationToSacrifice;
     private float atkDefCondition;
-    
+
     // 0 = MAX
     private float HPToRecover;
 
@@ -25,10 +25,14 @@ public class GetHPBackEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte à sacrifier !");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE)
+        );
     }
 
-    public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
+    public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.invocationCards.Count(card =>
             card.Attack >= atkDefCondition || card.Defense >= atkDefCondition) >= numberInvocationToSacrifice;
@@ -47,7 +51,11 @@ public class GetHPBackEffectAbility : EffectAbility
         {
             var invocationCards = new List<InGameCard>(playerCards.invocationCards
                 .Where(card => card.Attack >= atkDefCondition || card.Defense >= atkDefCondition).ToList());
-            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à sacrifier", invocationCards);
+            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
+                invocationCards
+            );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var invocationCard = (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();

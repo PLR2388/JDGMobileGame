@@ -12,12 +12,15 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
         Description = description;
         type = cardType;
     }
-    
+
     protected static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
     {
         messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Information",
-            "Aucune carte n'a été récupéré du deck.");
+        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_CARD_GET_FROM_DECK_MESSAGE)
+        );
         messageBox1.GetComponent<MessageBox>().OkAction = () =>
         {
             Object.Destroy(messageBox);
@@ -25,7 +28,7 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
             Object.Destroy(messageBox2);
         };
     }
-    
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         bool hasCardInDeck = playerCards.deck.Exists(card => card.Type == type);
@@ -33,14 +36,22 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
         {
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
-                    canvas, 
-                    "Question",
-                    "Veux-tu aller chercher directement une carte de type " + type + " dans ton deck ?");
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    string.Format(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_TYPE_CARD_MESSAGE),
+                        type.ToName()
+                    )
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 messageBox.SetActive(false);
                 List<InGameCard> cards = playerCards.deck.FindAll(card => card.Type == type);
-                GameObject messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix carte", cards);
+                GameObject messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_DEFAULT_CHOICE_CARD),
+                    cards
+                );
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     InGameCard card = messageBox1.GetComponent<MessageBox>().GetSelectedCard();

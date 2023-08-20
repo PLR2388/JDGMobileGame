@@ -27,7 +27,11 @@ public class UpdateDescription : MonoBehaviour
         if (card.Type == CardType.Invocation)
         {
             allInvocationOptions.SetActive(true);
-            cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = "Carte INVOCATION";
+            cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text =
+                string.Format(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD),
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_INVOCATION)
+                );
             var invocationCard = (InvocationCard)card;
             var families = invocationCard.BaseInvocationCardStats.Families;
             var familyFormatText = "";
@@ -49,14 +53,8 @@ public class UpdateDescription : MonoBehaviour
         else
         {
             allInvocationOptions.SetActive(false);
-            cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Type switch
-            {
-                CardType.Effect => "Carte EFFET",
-                CardType.Contre => "Carte CONTRE",
-                CardType.Equipment => "Carte ÉQUIPEMENT",
-                CardType.Field => "Carte TERRAIN",
-                _ => cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text
-            };
+            cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text =
+                string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD), card.Type.ToName());
         }
 
         collectorImage.SetActive(card.Collector);

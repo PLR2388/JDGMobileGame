@@ -72,25 +72,25 @@ public class TutoInGameMenuScript : MonoBehaviour
             switch (cardType)
             {
                 case CardType.Invocation:
-                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                     var invocationCard =(InGameInvocationCard) card;
                     putCardButton.GetComponent<Button>().interactable =
                         invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
 
                     break;
                 case CardType.Contre:
-                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Contrer";
+                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_CONTRE);
                     putCardButton.GetComponent<Button>().interactable = true;
                     break;
                 case CardType.Effect:
-                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                     break;
                 case CardType.Equipment:
-                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
+                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_EQUIP_INVOCATION);
                     putCardButton.GetComponent<Button>().interactable = true;
                     break;
                 case CardType.Field:
-                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                    putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                     putCardButton.GetComponent<Button>().interactable = playerCard.FieldCard == null;
                     break;
                 default:
@@ -164,7 +164,7 @@ public class TutoInGameMenuScript : MonoBehaviour
     {
         if (detailCardPanel.activeSelf)
         {
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Détails";
+            detailButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS);
             miniMenuCard.SetActive(false);
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
@@ -176,7 +176,7 @@ public class TutoInGameMenuScript : MonoBehaviour
 
             miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
 
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Retour";
+            detailButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card = currentSelectedCard.baseCard;
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().inGameCard = currentSelectedCard;
             detailCardPanel.SetActive(true);
@@ -209,7 +209,7 @@ public class TutoInGameMenuScript : MonoBehaviour
     {
         handScreen.SetActive(true);
         backgroundInformation.SetActive(false);
-        buttonText.GetComponent<TextMeshProUGUI>().text = "Retour";
+        buttonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
     }
 
     private void HideHand()
@@ -218,6 +218,6 @@ public class TutoInGameMenuScript : MonoBehaviour
         detailCardPanel.SetActive(false);
         handScreen.SetActive(false);
         backgroundInformation.SetActive(true);
-        buttonText.GetComponent<TextMeshProUGUI>().SetText("Cartes en main");
+        buttonText.GetComponent<TextMeshProUGUI>().SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
     }
 }

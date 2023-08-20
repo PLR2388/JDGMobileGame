@@ -7,7 +7,7 @@ public class LocalizationSystem : StaticInstance<LocalizationSystem>
     private Dictionary<string, string> localizedText;
     private static bool isInitialized = false;
     private const string missingTextString = "Localized text not found";
-    
+
     private void Start()
     {
         LoadLocalizedText("Localization/fr");
@@ -24,12 +24,12 @@ public class LocalizationSystem : StaticInstance<LocalizationSystem>
         }
 
         JObject jsonObject = JObject.Parse(fileData.text);
-        
+
         ProcessJsonObject(jsonObject);
 
         Debug.Log("Loaded localization data from: " + fileName);
     }
-    
+
     private void ProcessJsonObject(JObject jsonObject, string parentKey = "")
     {
         foreach (var property in jsonObject.Properties())
@@ -47,8 +47,9 @@ public class LocalizationSystem : StaticInstance<LocalizationSystem>
         }
     }
 
-    public string GetLocalizedValue(string key)
+    public string GetLocalizedValue(LocalizationKeys enumKey)
     {
+        string key = LocalizationKeyStrings.KeyMappings[enumKey];
         string result = missingTextString;
         if (localizedText.TryGetValue(key, out var value))
         {

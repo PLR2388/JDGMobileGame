@@ -17,8 +17,11 @@ public class SacrificeToInvokeAbility : Ability
     protected static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
     {
         messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Information",
-            "Aucune carte n'a été invoqué.");
+        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE)
+        );
         messageBox1.GetComponent<MessageBox>().OkAction = () =>
         {
             Object.Destroy(messageBox);
@@ -41,13 +44,23 @@ public class SacrificeToInvokeAbility : Ability
             card.Collector == false).ToList();
         if (invocationCards.Count > 0)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
-                "Veux-tu sacrifier " + invocationCard.Title + " pour invoquer une carte non-brillante depuis la poubelle jaune ?");
+            GameObject messageBox = MessageBox.CreateSimpleMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                string.Format(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_NON_COLLECTOR_BY_SACRFICE_MESSAGE),
+                    invocationCard.Title
+                )
+            );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 messageBox.SetActive(false);
                 GameObject messageBox1 =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à invoquer", invocationCards);
+                    MessageBox.CreateMessageBoxWithCardSelector(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
+                        invocationCards
+                    );
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     InGameInvocationCard newlyInvoke =

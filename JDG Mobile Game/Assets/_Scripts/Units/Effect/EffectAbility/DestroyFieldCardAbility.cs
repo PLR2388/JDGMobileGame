@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using Cards;
 using UnityEngine;
@@ -13,7 +12,7 @@ public class DestroyFieldCardAbility : EffectAbility
         Description = description;
         costHealth = cost;
     }
-    
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
         PlayerStatus playerStatus,
         PlayerStatus opponentStatus)
@@ -31,14 +30,21 @@ public class DestroyFieldCardAbility : EffectAbility
             cards.Add(opponentPlayerCard.FieldCard);
         }
 
-        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte terrain à détruire", cards);
+        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
+            cards);
 
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
             if (card == null)
             {
-                MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte !");
+                MessageBox.CreateOkMessageBox(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+                );
             }
             else
             {
@@ -75,7 +81,11 @@ public class DestroyFieldCardAbility : EffectAbility
 
         messageBox.GetComponent<MessageBox>().NegativeAction = () =>
         {
-            MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte !");
+            MessageBox.CreateOkMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+            );
         };
     }
 

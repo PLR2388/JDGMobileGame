@@ -19,9 +19,13 @@ public class GetSpecificCardFromDeckAbility : Ability
         {
             GameObject messageBox =
                 MessageBox.CreateSimpleMessageBox(
-                    canvas, 
-                    "Question",
-                    "Veux-tu aller chercher directement " + cardName + " dans ton deck ?");
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    string.Format(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_SPECIFIC_CARD_IN_DECK_MESSAGE),
+                        cardName
+                    )
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 InGameCard card = playerCards.deck.Find(card => card.Title == cardName);

@@ -60,7 +60,7 @@ public class MessageBox : MonoBehaviour
 
         if (isInformation)
         {
-            okButtonText.text = "Ok";
+            okButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_OK);
             positiveButton.SetActive(false);
             negativeButton.SetActive(false);
             okButton.SetActive(true);
@@ -70,8 +70,8 @@ public class MessageBox : MonoBehaviour
         }
         else
         {
-            positiveButtonText.text = "Oui";
-            negativeButtonText.text = "Non";
+            positiveButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_YES);
+            negativeButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_NO);
 
             var positiveBtn = positiveButton.GetComponent<Button>();
             var negativeBtn = negativeButton.GetComponent<Button>();

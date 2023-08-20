@@ -87,25 +87,25 @@ public class InGameMenuScript : MonoBehaviour
         switch (cardType)
         {
             case CardType.Invocation:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                 var invocationCard = (InGameInvocationCard) card;
                 putCardButton.GetComponent<Button>().interactable =
                     invocationCard.CanBeSummoned(playerCard) && playerCard.invocationCards.Count < 4;
 
                 break;
             case CardType.Contre:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Contrer";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_CONTRE);
                 putCardButton.GetComponent<Button>().interactable = true;
                 break;
             case CardType.Effect:
                 var effectCard = (InGameEffectCard) card;
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                 putCardButton.GetComponent<Button>().interactable =
                     effectCard.EffectAbilities.All(elt =>
                         elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus));
                 break;
             case CardType.Equipment:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Équiper une invocation";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_EQUIP_INVOCATION);
                 var equipmentCard = (InGameEquipementCard) card;
                 putCardButton.GetComponent<Button>().interactable =
                     playerCard.invocationCards.Count(inGameInvocationCard =>
@@ -116,7 +116,7 @@ public class InGameMenuScript : MonoBehaviour
                     ;
                 break;
             case CardType.Field:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = "Poser la carte";
+                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                 putCardButton.GetComponent<Button>().interactable = playerCard.FieldCard == null;
                 break;
             default:
@@ -187,7 +187,7 @@ public class InGameMenuScript : MonoBehaviour
     {
         if (detailCardPanel.activeSelf)
         {
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Détails";
+            detailButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS);
             miniMenuCard.SetActive(false);
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
@@ -199,7 +199,7 @@ public class InGameMenuScript : MonoBehaviour
 
             miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
 
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = "Retour";
+            detailButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().card =
                 currentSelectedCard.baseCard;
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().inGameCard =
@@ -226,7 +226,7 @@ public class InGameMenuScript : MonoBehaviour
     {
         handScreen.SetActive(true);
         backgroundInformation.SetActive(false);
-        buttonText.GetComponent<TextMeshProUGUI>().text = "Retour";
+        buttonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
     }
 
     private void HideHand()
@@ -235,6 +235,6 @@ public class InGameMenuScript : MonoBehaviour
         detailCardPanel.SetActive(false);
         handScreen.SetActive(false);
         backgroundInformation.SetActive(true);
-        buttonText.GetComponent<TextMeshProUGUI>().SetText("Cartes en main");
+        buttonText.GetComponent<TextMeshProUGUI>().SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
     }
 }

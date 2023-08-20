@@ -4,7 +4,7 @@ using UnityEngine;
 public class DrawCardsAbility : Ability
 {
     private int numberCards;
-    
+
     public DrawCardsAbility(AbilityName name, string description, int numberCards)
     {
         Name = name;
@@ -19,7 +19,8 @@ public class DrawCardsAbility : Ability
         if (numberCardsInDeck >= numberCards)
         {
             numberCardToDraw = numberCards;
-        } else if (numberCardsInDeck > 0)
+        }
+        else if (numberCardsInDeck > 0)
         {
             numberCardToDraw = numberCardsInDeck;
         }
@@ -27,7 +28,14 @@ public class DrawCardsAbility : Ability
         if (numberCardToDraw > 0)
         {
             GameObject messageBox =
-                MessageBox.CreateSimpleMessageBox(canvas, "Question", "Veux-tu piocher " + numberCardToDraw + " ?");
+                MessageBox.CreateSimpleMessageBox(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    string.Format(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DRAW_CARDS_MESSAGE),
+                        numberCardToDraw
+                    )
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 for (int i = 0; i < numberCardToDraw; i++)
@@ -39,7 +47,7 @@ public class DrawCardsAbility : Ability
                 Object.Destroy(messageBox);
             };
             messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {   
+            {
                 Object.Destroy(messageBox);
             };
         }

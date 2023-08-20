@@ -28,7 +28,11 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
 
     private void DisplayOkMessageBox(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte !");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+        );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -50,7 +54,11 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
         if (numberCards == 1)
         {
             var messageBox =
-                MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte à aller chercher", cards);
+                MessageBox.CreateMessageBoxWithCardSelector(
+                    canvas,
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
+                    cards
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
@@ -63,7 +71,8 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
                     if (playerCards.deck.Contains(card))
                     {
                         playerCards.deck.Remove(card);
-                    } else if (playerCards.yellowCards.Contains(card))
+                    }
+                    else if (playerCards.yellowCards.Contains(card))
                     {
                         playerCards.yellowCards.Remove(card);
                     }

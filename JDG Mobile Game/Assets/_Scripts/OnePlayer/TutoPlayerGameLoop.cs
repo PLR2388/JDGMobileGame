@@ -359,7 +359,7 @@ namespace OnePlayer
             if (invocationCards.Count > 0)
             {
                 var message =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choisis ton adversaire :", invocationCards);
+                    MessageBox.CreateMessageBoxWithCardSelector(canvas, LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT), invocationCards);
                 message.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var invocationCard =

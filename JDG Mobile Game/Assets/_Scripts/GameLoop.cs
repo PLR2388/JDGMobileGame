@@ -18,7 +18,7 @@ public class GameLoop : MonoBehaviour
     }
 
     #region UI Interaction
-    
+
     /// <summary>
     /// Action when back is pressed
     /// </summary>
@@ -65,7 +65,7 @@ public class GameLoop : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// Display a menu and set attacker if user touches a card he owns
     /// </summary>
@@ -97,7 +97,7 @@ public class GameLoop : MonoBehaviour
             UIManager.Instance.DisplayCardInBigImage(cardTouch);
         }
     }
-    
+
     /// <summary>
     /// Called when user presses the next phase button
     /// </summary>
@@ -121,7 +121,7 @@ public class GameLoop : MonoBehaviour
 
         UIManager.Instance.AdaptUIToPhaseIdInNextRound();
 
-        switch (GameStateManager.Instance.Phase) 
+        switch (GameStateManager.Instance.Phase)
         {
             case Phase.Attack:
                 PlayAttackMusic();
@@ -131,11 +131,11 @@ public class GameLoop : MonoBehaviour
                 break;
         }
     }
-    
+
     #endregion
 
     #region Phase Behavior
-    
+
     /// <summary>
     /// Called when choose phase starts
     /// </summary>
@@ -175,7 +175,7 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void PlayAttackMusic()
     {
-      AudioSystem.Instance.PlayMusic(Music.Fight);
+        AudioSystem.Instance.PlayMusic(Music.Fight);
     }
 
     /// <summary>
@@ -218,10 +218,10 @@ public class GameLoop : MonoBehaviour
     private void ComputeAttack()
     {
         CardManager.Instance.HandleAttack();
-        UIManager.Instance.UpdateAttackButton(GameStateManager.Instance.IsP1Turn);
+        UIManager.Instance.UpdateAttackButton();
         HandlePlayerDeath();
     }
-    
+
     /// <summary>
     /// Check if one of the player die
     /// </summary>
@@ -248,9 +248,11 @@ public class GameLoop : MonoBehaviour
         DoDraw();
         GameStateManager.Instance.IncrementNumberOfTurn();
         GameStateManager.Instance.NextPhase();
-        
+
         ChoosePhase();
-        UIManager.Instance.SetRoundText("Phase de pose");
+        UIManager.Instance.SetRoundText(
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE)
+        );
     }
 
     /// <summary>
@@ -277,6 +279,7 @@ public class GameLoop : MonoBehaviour
         GameStateManager.Instance.HandleEndTurn();
         Draw();
     }
+
     #endregion
-    
+
 }

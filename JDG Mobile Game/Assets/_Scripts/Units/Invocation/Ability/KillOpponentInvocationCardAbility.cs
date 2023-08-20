@@ -11,12 +11,12 @@ public class KillOpponentInvocationCardAbility : Ability
         Name = name;
         Description = description;
     }
-    
+
     protected static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
     {
         messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Information",
-            "Aucune carte n'a été détruite.");
+        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE));
         messageBox1.GetComponent<MessageBox>().OkAction = () =>
         {
             Object.Destroy(messageBox);
@@ -24,14 +24,17 @@ public class KillOpponentInvocationCardAbility : Ability
             Object.Destroy(messageBox2);
         };
     }
-    
+
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         ObservableCollection<InGameInvocationCard> invocationCards = opponentPlayerCards.invocationCards;
         if (invocationCards.Count > 0)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Question",
-                "Veux-tu détruire une carte invocation de l'adversaire ?");
+            GameObject messageBox = MessageBox.CreateSimpleMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DESTROY_OPPONENT_INVOCATION_MESSAGE)
+            );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 messageBox.SetActive(false);
@@ -44,7 +47,9 @@ public class KillOpponentInvocationCardAbility : Ability
                 else
                 {
                     GameObject messageBox1 =
-                        MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à détruire", new List<InGameCard>(invocationCards));
+                        MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
+                            new List<InGameCard>(invocationCards));
                     messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
                     {
                         DisplayOkMessage(canvas, messageBox, messageBox1);

@@ -18,7 +18,10 @@ public class DestroyCardsEffectAbility : EffectAbility
 
     private List<CardType> types = new List<CardType>
     {
-        CardType.Effect, CardType.Equipment, CardType.Invocation, CardType.Field
+        CardType.Effect,
+        CardType.Equipment,
+        CardType.Invocation,
+        CardType.Field
     };
 
     public DestroyCardsEffectAbility(EffectAbilityName name, string description, int numberCards,
@@ -87,7 +90,11 @@ public class DestroyCardsEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+        );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -111,7 +118,11 @@ public class DestroyCardsEffectAbility : EffectAbility
                 var invocationCards = new List<InGameCard>(playerCards.invocationCards);
                 var handCards = playerCards.handCards;
                 var messageBox =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à sacrifier", invocationCards);
+                    MessageBox.CreateMessageBoxWithCardSelector(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
+                        invocationCards
+                    );
 
                 messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                 {
@@ -198,8 +209,11 @@ public class DestroyCardsEffectAbility : EffectAbility
             {
                 var handCards = playerCards.handCards;
                 var messageBox =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à enlever de la main",
-                        handCards.ToList());
+                    MessageBox.CreateMessageBoxWithCardSelector(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                        handCards.ToList()
+                    );
                 messageBox.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     var handCard = messageBox.GetComponent<MessageBox>().GetSelectedCard();
@@ -229,7 +243,11 @@ public class DestroyCardsEffectAbility : EffectAbility
         PlayerCards opponentPlayerCard, List<InGameCard> cards)
     {
         var messageBox1 =
-            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à détruire", cards);
+            MessageBox.CreateMessageBoxWithCardSelector(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
+                cards
+            );
 
         messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
         {

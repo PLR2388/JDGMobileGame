@@ -22,7 +22,11 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois choisir une carte");
+        MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+            );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
@@ -30,7 +34,9 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
-        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix de la carte à controller",
+        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CONTROLLED_INVOCATION),
             new List<InGameCard>(opponentPlayerCard.invocationCards.ToList()));
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {

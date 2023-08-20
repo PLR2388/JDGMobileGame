@@ -15,8 +15,11 @@ public class SkipOpponentAttackAbility : Ability
         GameObject messageBox2)
     {
         messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Information",
-            message);
+        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            message
+            );
         messageBox1.GetComponent<MessageBox>().OkAction = () =>
         {
             Object.Destroy(messageBox);
@@ -29,28 +32,45 @@ public class SkipOpponentAttackAbility : Ability
     {
         if (opponentPlayerCard.invocationCards.Count > 0)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
-                "Veux-tu faire sauter la phase d'attaque d'une carte adverse ?");
+            GameObject messageBox = MessageBox.CreateSimpleMessageBox(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_SKIP_OPPONENT_ATTACK_MESSAGE)
+            );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 messageBox.SetActive(false);
                 List<InGameCard> list = new List<InGameCard>(opponentPlayerCard.invocationCards);
                 GameObject messageBox1 =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, "Choix carte à empêcher d'attaquer", list);
+                    MessageBox.CreateMessageBoxWithCardSelector(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SKIP_ATTACK),
+                        list
+                    );
                 messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
                 {
                     InGameInvocationCard invocationCard =
                         messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
                     if (invocationCard == null)
                     {
-                        DisplayOkMessage(canvas, "Aucune carte n'a perdu sa capacité d'attaque", messageBox,
+                        DisplayOkMessage(
+                            canvas,
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_SKIP_ATTACK_MESSAGE),
+                            messageBox,
                             messageBox1);
                     }
                     else
                     {
                         invocationCard.BlockAttack();
-                        DisplayOkMessage(canvas, invocationCard.Title + " ne pourra pas attaquer au prochain tour",
-                            messageBox, messageBox1);
+                        DisplayOkMessage(
+                            canvas,
+                            string.Format(
+                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_OPPONENT_CANT_ATTACK_MESSAGE),
+                                invocationCard.Title
+                            ),
+                            messageBox,
+                            messageBox1
+                        );
                     }
                 };
                 messageBox1.GetComponent<MessageBox>().NegativeAction = () =>

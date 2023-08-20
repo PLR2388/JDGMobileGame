@@ -26,8 +26,11 @@ public class LookDeckCardsEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
-        var messageBox = MessageBox.CreateSimpleMessageBox(canvas, "Choix",
-            "Veux-tu voir les cartes de ton deck (Oui) ou les cartes de ton adversaires (Non) ?");
+        var messageBox = MessageBox.CreateSimpleMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_SEE_DECK_MESSAGE)
+        );
         messageBox.GetComponent<MessageBox>().PositiveAction = () =>
         {
             DisplayAndOrderCardMessageBox(canvas, playerCards, messageBox);
@@ -49,8 +52,11 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 shortList.Add(deck[deck.Count - 1 - i]);
             }
 
-            var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Change l'ordre des cartes (Non si pas voulu)", shortList, numberCardInSelection: numberCards,
+            var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
+                shortList,
+                numberCardInSelection: numberCards,
                 multipleCardSelection: true,
                 displayOrder: true);
             messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
@@ -73,7 +79,11 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 }
                 else
                 {
-                    MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois ordonner toutes les cartes !");
+                    MessageBox.CreateOkMessageBox(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS)
+                    );
                 }
             };
             messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
@@ -84,8 +94,11 @@ public class LookDeckCardsEffectAbility : EffectAbility
         }
         else
         {
-            var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(canvas,
-                "Change l'ordre des cartes (Non si pas voulu)", deck, numberCardInSelection: deck.Count,
+            var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
+                canvas,
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
+                deck,
+                numberCardInSelection: deck.Count,
                 displayOrder: true);
             messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
             {
@@ -107,7 +120,11 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 }
                 else
                 {
-                    MessageBox.CreateOkMessageBox(canvas, "Attention", "Tu dois ordonner toutes les cartes !");
+                    MessageBox.CreateOkMessageBox(
+                        canvas,
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS)
+                    );
                 }
             };
             messageBox1.GetComponent<MessageBox>().NegativeAction = () =>

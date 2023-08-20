@@ -42,7 +42,7 @@ public class InfiniteScroll : MonoBehaviour
     private void DisplayMessageBox(string msg)
     {
         var message = Instantiate(messageBox);
-        message.GetComponent<MessageBox>().title = "Attention";
+        message.GetComponent<MessageBox>().title = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE);
         message.GetComponent<MessageBox>().isInformation = true;
         message.GetComponent<MessageBox>().description = msg;
     }
@@ -76,13 +76,17 @@ public class InfiniteScroll : MonoBehaviour
                 else
                 {
                     childGameObject.GetComponent<OnHover>().bIsSelected = false;
-                    DisplayMessageBox("Tu ne peux pas avoir plus de 5 cartes brillantes !");
+                    DisplayMessageBox(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_COLLECTOR_CARD)
+                    );
                 }
             }
             else
             {
                 childGameObject.GetComponent<OnHover>().bIsSelected = false;
-                DisplayMessageBox("Tu ne peux pas avoir plus de 30 cartes !");
+                DisplayMessageBox(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
+                );
             }
         }
     }

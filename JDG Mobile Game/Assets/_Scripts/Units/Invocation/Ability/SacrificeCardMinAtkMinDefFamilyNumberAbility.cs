@@ -33,11 +33,17 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
     private static void DisplayOkMessage(Transform canvas, GameObject messageBox, int numberOfCards)
     {
         string message = numberOfCards == 1
-            ? "Tu dois sélectionner une carte à sacrifier"
-            : "Tu dois sélectionner " + numberOfCards + " cartes à sacrifier";
+            ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE)
+            : string.Format(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICES),
+                numberOfCards
+            );
         messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, "Attention",
-            message);
+        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
+            canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            message
+        );
         messageBox1.GetComponent<MessageBox>().OkAction = () =>
         {
             messageBox.SetActive(true);
@@ -62,10 +68,18 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
             List<InGameCard> cards = new List<InGameCard>(invocationCards);
 
             bool isMultipleSelected = numberCard > 1;
-            string message = isMultipleSelected ? "Cartes à sacrifier" : "Carte à sacrifier";
-            
+            string message = isMultipleSelected
+                ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICES)
+                : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE);
+
             GameObject messageBox =
-                MessageBox.CreateMessageBoxWithCardSelector(canvas, message, cards, multipleCardSelection: isMultipleSelected, numberCardInSelection: numberCard);
+                MessageBox.CreateMessageBoxWithCardSelector(
+                    canvas,
+                    message,
+                    cards,
+                    multipleCardSelection: isMultipleSelected,
+                    numberCardInSelection: numberCard
+                );
             messageBox.GetComponent<MessageBox>().PositiveAction = () =>
             {
                 if (isMultipleSelected)

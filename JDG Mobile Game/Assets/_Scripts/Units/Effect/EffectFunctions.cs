@@ -57,8 +57,9 @@ namespace Cards.EffectCards
             }
             else
             {
-                MessageBox.CreateOkMessageBox(canvas, "Attention",
-                    "Tu ne peux pas poser plus de 4 cartes effet durant un tour");
+                MessageBox.CreateOkMessageBox(canvas, LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS)
+                );
             }
         }
 
