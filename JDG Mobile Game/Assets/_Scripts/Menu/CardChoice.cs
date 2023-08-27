@@ -151,7 +151,7 @@ namespace Menu
             deck2.Add(GetSpecificCard("Lycée magique Georges Pompidou", deck2AllCard));
             deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck1AllCard));
             deck1.Add(GetSpecificCard("Mohammad", deck1AllCard));
-            deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
+            deck1.Add(GetSpecificCard("MJ corrompu", deck1AllCard));
             deck1.Add(GetSpecificCard("Carole du service marketing", deck1AllCard));
 
             while (deck1.Count != 30)
@@ -159,7 +159,6 @@ namespace Menu
                 GetRandomCards(deck1AllCard, deck1);
             }
             
-            deck1.Add(GetSpecificCard("Petite portions de « riz »", deck1AllCard));
             deck1.Reverse();
 
 

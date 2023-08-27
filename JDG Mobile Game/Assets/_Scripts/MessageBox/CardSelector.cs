@@ -9,12 +9,12 @@ public class CardSelector : StaticInstance<CardSelector>
     private bool multipleCardSelection;
     private int numberCardInSelection = 2;
     private bool displayNumberOnCard = false;
-    
+
     [SerializeField] private GameObject prefab;
 
     private InGameCard currentSelectedCard;
     private readonly List<InGameCard> multipleSelectedCards = new List<InGameCard>();
-    
+
     public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
 
     void Start()
@@ -89,7 +89,7 @@ public class CardSelector : StaticInstance<CardSelector>
 
         numberCardInSelection = config.NumberCardSelection;
         multipleCardSelection = config.NumberCardSelection > 1;
-        
+
         cardsTransform.gameObject.SetActive(true);
 
 
@@ -105,18 +105,26 @@ public class CardSelector : StaticInstance<CardSelector>
         {
             config.OkAction?.Invoke(currentSelectedCard);
             config.OkMultipleAction?.Invoke(multipleSelectedCards);
-            if (config.NumberCardSelection == 1)
+            switch (config.NumberCardSelection)
             {
-                if (currentSelectedCard != null)
+                case 1:
                 {
-                    Destroy(newGameObject);
+                    if (currentSelectedCard != null)
+                    {
+                        Destroy(newGameObject);
+                    }
+                    break;
                 }
-            }
-            else
-            {
-                if (multipleSelectedCards.Count == config.NumberCardSelection)
-                {
+                case 0:
                     Destroy(newGameObject);
+                    break;
+                default:
+                {
+                    if (multipleSelectedCards.Count == config.NumberCardSelection)
+                    {
+                        Destroy(newGameObject);
+                    }
+                    break;
                 }
             }
         });

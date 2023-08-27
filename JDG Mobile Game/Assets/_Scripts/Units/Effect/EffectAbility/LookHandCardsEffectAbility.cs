@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -39,14 +37,9 @@ public class LookHandCardsEffectAbility : EffectAbility
         var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
             opponentPlayerCard.handCards.ToList(),
-            positiveAction: (card) =>
-            {
-                if (playerCards.handCards.Count > 0)
-                {
-                    DisplayChoiceAboutHandCards(canvas, playerCards, opponentPlayerCard);
-                }
-            },
-            negativeAction: () =>
+            showOkButton: true,
+            numberCardSelection: 0,
+            okAction: (card) =>
             {
                 if (playerCards.handCards.Count > 0)
                 {
@@ -82,7 +75,7 @@ public class LookHandCardsEffectAbility : EffectAbility
                                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                                 playerCards.handCards.ToList(),
                                 showOkButton: true,
-                                positiveAction: (playerCard) =>
+                                okAction: (playerCard) =>
                                 {
                                     if (playerCard == null)
                                     {
