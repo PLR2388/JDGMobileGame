@@ -77,7 +77,7 @@ namespace Menu
                     buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
                     isPlayerOneCardChosen = false;
 
-                    FindObjectOfType<GameState>().deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
+                   GameState.Instance.deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace Menu
                     buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_TWO);
                     isPlayerOneCardChosen = true;
 
-                    FindObjectOfType<GameState>().deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
+                    GameState.Instance.deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -114,12 +114,12 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards.Where(card =>
+            var deck1AllCard = GameState.Instance.deck1AllCards.Where(card =>
                 card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
                 card.Title != "Blague interdite" &&
                 card.Title != "Un bon tuyau").ToList();
 
-            var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards.Where(card =>
+            var deck2AllCard = GameState.Instance.deck2AllCards.Where(card =>
                 card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
                 card.Title != "Blague interdite" &&
                 card.Title != "Un bon tuyau").ToList();
@@ -134,8 +134,8 @@ namespace Menu
                 GetRandomCards(deck2AllCard, deck2);
             }
 
-            FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            GameState.Instance.deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            GameState.Instance.deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
@@ -145,8 +145,8 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var deck1AllCard = FindObjectOfType<GameState>().deck1AllCards;
-            var deck2AllCard = FindObjectOfType<GameState>().deck2AllCards;
+            var deck1AllCard = GameState.Instance.deck1AllCards;
+            var deck2AllCard = GameState.Instance.deck2AllCards;
 
             deck2.Add(GetSpecificCard("Lycée magique Georges Pompidou", deck2AllCard));
             deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck1AllCard));
@@ -169,8 +169,8 @@ namespace Menu
 
             deck2.Reverse();
 
-            FindObjectOfType<GameState>().deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            FindObjectOfType<GameState>().deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            GameState.Instance.deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            GameState.Instance.deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
@@ -203,7 +203,7 @@ namespace Menu
                 title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
                 buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
                 isPlayerOneCardChosen = false;
-                FindObjectOfType<GameState>().deckP1 = new List<InGameCard>();
+                GameState.Instance.deckP1 = new List<InGameCard>();
                 DeselectAllCards();
             }
             else

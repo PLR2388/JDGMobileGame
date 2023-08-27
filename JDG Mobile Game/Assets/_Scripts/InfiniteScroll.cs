@@ -19,8 +19,8 @@ public class InfiniteScroll : MonoBehaviour
     private void Start()
     {
         cardChoice = FindObjectOfType<CardChoice>();
-        deck1AllCards = FindObjectOfType<GameState>().deck1AllCards;
-        deck2AllCards = FindObjectOfType<GameState>().deck2AllCards;
+        deck1AllCards = GameState.Instance.deck1AllCards;
+        deck2AllCards = GameState.Instance.deck2AllCards;
         DisplayAvailableCards(deck1AllCards);
     }
 

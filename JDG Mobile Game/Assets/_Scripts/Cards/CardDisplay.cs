@@ -1,18 +1,25 @@
 ﻿using Cards;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CardDisplay : MonoBehaviour
 {
     public InGameCard inGameCard;
     public Card card;
-    public Material defaultMaterial;
-    public bool bIsFaceHidden;
+    [SerializeField] private Material defaultMaterial;
+    public bool isFaceHidden;
     private Image image;
 
     // Start is called before the first frame update
     private void Start()
     {
+        InitializeCard();
+    }
+    
+    private void InitializeCard()
+    {
+
         image = GetComponent<Image>();
         image.material = defaultMaterial;
         if (card != null && inGameCard == null)
@@ -28,7 +35,7 @@ public class CardDisplay : MonoBehaviour
 
     private void Update()
     {
-        if (bIsFaceHidden)
+        if (isFaceHidden)
         {
             image.material = defaultMaterial;
         }

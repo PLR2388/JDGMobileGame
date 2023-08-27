@@ -66,9 +66,7 @@ public class PlayerCards : MonoBehaviour
     {
         invocationCards = new ObservableCollection<InGameInvocationCard>();
         effectCards = new ObservableCollection<InGameEffectCard>();
-        var gameStateGameObject = GameObject.Find("GameState");
-        var gameState = gameStateGameObject.GetComponent<GameState>();
-        deck = isPlayerOne ? gameState.deckP1 : gameState.deckP2;
+        deck = isPlayerOne ? GameState.Instance.deckP1 : GameState.Instance.deckP2;
         UnitManager.Instance.InitPhysicalCards(deck, isPlayerOne);
 
         for (var i = deck.Count - 5; i < deck.Count; i++)

@@ -4,12 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    [SerializeField] private GameState gameState;
-
-    private void Awake()
-    {
-        gameState = FindObjectOfType<GameState>();
-    }
 
     public void QuitGame()
     {
@@ -19,7 +13,7 @@ public class SceneLoader : MonoBehaviour
 
     public void GoToTutorial()
     {
-        gameState.BuildDeckForTuto();
+        GameState.Instance.BuildDeckForTuto();
         AudioSystem.Instance.StopMusic();
         SceneManager.LoadSceneAsync("TutoPlayerGame", LoadSceneMode.Single);
     }

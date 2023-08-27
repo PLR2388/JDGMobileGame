@@ -2,24 +2,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using Menu;
-using UnityEngine;
 
-public class GameState : MonoBehaviour
+public class GameState : StaticInstance<GameState>
 {
     public List<Card> allCards;
 
-    public List<Card> deck1AllCards;
-    public List<Card> deck2AllCards;
+    public List<Card> deck1AllCards = new List<Card>();
+    public List<Card> deck2AllCards = new List<Card>();
 
     public List<InGameCard> deckP1 = new List<InGameCard>();
     public List<InGameCard> deckP2 = new List<InGameCard>();
 
-    private static GameState instance;
-
     public const int MaxDeckCards = 30;
     public const int MaxRare = 5;
 
-    private void Awake()
+    private void Start()
     {
         ResetDeckPlayer();
     }
@@ -32,20 +29,6 @@ public class GameState : MonoBehaviour
         {
             deck1AllCards.Add(Instantiate(card));
             deck2AllCards.Add(Instantiate(card));
-        }
-    }
-
-    private void Start()
-    {
-        foreach (var t in allCards)
-        {
-            InGameCard inGameCard = InGameCard.CreateInGameCard(t, CardOwner.Player1);
-            deckP1.Add(inGameCard);
-        }
-
-        for (var i = 30; i < 60; i++)
-        {
-            deckP2.Add(InGameCard.CreateInGameCard(allCards[i], CardOwner.Player2));
         }
     }
 
