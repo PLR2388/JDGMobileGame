@@ -30,7 +30,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
             (family == CardFamily.Any || card.Families.Contains(family))).ToList();
     }
 
-    private static void DisplayOkMessage(Transform canvas, GameObject messageBox, int numberOfCards)
+    private static void DisplayOkMessage(Transform canvas, int numberOfCards)
     {
         string message = numberOfCards == 1
             ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE)
@@ -38,17 +38,15 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICES),
                 numberOfCards
             );
-        messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            message
+            message,
+            showOkButton: true,
+            okAction: () =>
+            {
+            }
         );
-        messageBox1.GetComponent<MessageBox>().OkAction = () =>
-        {
-            messageBox.SetActive(true);
-            Object.Destroy(messageBox1);
-        };
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
@@ -72,22 +70,29 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                 ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICES)
                 : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE);
 
-            GameObject messageBox =
-                MessageBox.CreateMessageBoxWithCardSelector(
-                    canvas,
-                    message,
-                    cards,
-                    multipleCardSelection: isMultipleSelected,
-                    numberCardInSelection: numberCard
-                );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                if (isMultipleSelected)
+            var config = new CardSelectorConfig(
+                message,
+                cards,
+                numberCardSelection: numberCard,
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: (card) =>
                 {
-                    List<InGameCard> cards = messageBox.GetComponent<MessageBox>().GetMultipleSelectedCards();
+                    if (card is InGameInvocationCard invocationCard)
+                    {
+                        playerCards.invocationCards.Remove(invocationCard);
+                        playerCards.yellowCards.Add(invocationCard);
+                    }
+                    else
+                    {
+                        DisplayOkMessage(canvas, numberCard);
+                    }
+                },
+                positiveMultipleAction: (cards) =>
+                {
                     if (cards == null)
                     {
-                        DisplayOkMessage(canvas, messageBox, numberCard);
+                        DisplayOkMessage(canvas, numberCard);
                     }
                     else if (cards.Count == numberCard)
                     {
@@ -96,32 +101,18 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                             playerCards.invocationCards.Remove(invocationCard);
                             playerCards.yellowCards.Add(invocationCard);
                         }
-                        Object.Destroy(messageBox);
                     }
                     else
                     {
-                        DisplayOkMessage(canvas, messageBox, numberCard);
+                        DisplayOkMessage(canvas, numberCard);
                     }
-                }
-                else
+                },
+                negativeAction: () =>
                 {
-                    InGameInvocationCard invocationCard = messageBox.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
-                    if (invocationCard == null)
-                    {
-                        DisplayOkMessage(canvas, messageBox, numberCard);
-                    }
-                    else
-                    {
-                        playerCards.invocationCards.Remove(invocationCard);
-                        playerCards.yellowCards.Add(invocationCard);
-                        Object.Destroy(messageBox);
-                    }
+                    DisplayOkMessage(canvas, numberCard);
                 }
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                DisplayOkMessage(canvas, messageBox, numberCard);
-            };
+                );
+            CardSelector.Instance.CreateCardSelection(canvas, config);
         }
     }
 }

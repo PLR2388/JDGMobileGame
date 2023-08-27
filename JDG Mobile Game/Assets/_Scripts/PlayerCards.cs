@@ -11,7 +11,6 @@ using UnityEngine;
 public class PlayerCards : MonoBehaviour
 {
     public List<InGameCard> deck = new List<InGameCard>();
-    public List<InGameEffectCard> effectCards = new List<InGameEffectCard>();
 
     [SerializeField] public bool isPlayerOne;
     
@@ -53,6 +52,7 @@ public class PlayerCards : MonoBehaviour
     }
 
     public ObservableCollection<InGameCard> handCards = new ObservableCollection<InGameCard>();
+    public ObservableCollection<InGameEffectCard> effectCards = new ObservableCollection<InGameEffectCard>();
 
     public ObservableCollection<InGameInvocationCard> invocationCards =
         new ObservableCollection<InGameInvocationCard>();
@@ -65,7 +65,7 @@ public class PlayerCards : MonoBehaviour
     private void Start()
     {
         invocationCards = new ObservableCollection<InGameInvocationCard>();
-        effectCards = new List<InGameEffectCard>(4);
+        effectCards = new ObservableCollection<InGameEffectCard>();
         var gameStateGameObject = GameObject.Find("GameState");
         var gameState = gameStateGameObject.GetComponent<GameState>();
         deck = isPlayerOne ? gameState.deckP1 : gameState.deckP2;
@@ -145,6 +145,11 @@ public class PlayerCards : MonoBehaviour
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        };
+        
+        effectCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            CardLocation.UpdateLocation.Invoke();
         };
     }
 
@@ -238,8 +243,7 @@ public class PlayerCards : MonoBehaviour
     private void OnYellowTrashAdded()
     {
         var newYellowTrashCard = yellowCards.Last();
-        var invocationCard = (InGameInvocationCard) newYellowTrashCard;
-        if (invocationCard != null)
+        if (newYellowTrashCard is InGameInvocationCard invocationCard)
         {
             invocationCard.UnblockAttack();
             invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;

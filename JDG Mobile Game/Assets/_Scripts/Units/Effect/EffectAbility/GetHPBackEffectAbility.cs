@@ -25,10 +25,14 @@ public class GetHPBackEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE),
+            showOkButton: true
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
         );
     }
 
@@ -51,27 +55,30 @@ public class GetHPBackEffectAbility : EffectAbility
         {
             var invocationCards = new List<InGameCard>(playerCards.invocationCards
                 .Where(card => card.Attack >= atkDefCondition || card.Defense >= atkDefCondition).ToList());
-            var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
-                canvas,
+            var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
-                invocationCards
-            );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var invocationCard = (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
-                if (invocationCard == null)
+                invocationCards,
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: (card) =>
+                {
+                    if (card is InGameInvocationCard invocationCard)
+                    {
+                        playerCards.yellowCards.Add(invocationCard);
+                        playerCards.invocationCards.Remove(invocationCard);
+                        playerStatus.ChangePv(HPToRecover == 0 ? PlayerStatus.MaxPv : HPToRecover);
+                    }
+                    else
+                    {
+                        DisplayOkMessage(canvas);
+                    }
+                },
+                negativeAction: () =>
                 {
                     DisplayOkMessage(canvas);
                 }
-                else
-                {
-                    playerCards.yellowCards.Add(invocationCard);
-                    playerCards.invocationCards.Remove(invocationCard);
-                    playerStatus.ChangePv(HPToRecover == 0 ? PlayerStatus.MaxPv : HPToRecover);
-                    Object.Destroy(messageBox);
-                }
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
+            );
+            CardSelector.Instance.CreateCardSelection(canvas, config);
         }
     }
 }

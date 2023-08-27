@@ -91,6 +91,7 @@ public class CardManager : Singleton<CardManager>
 
     public void HandleAttack()
     {
+        attacker.AttackTurnDone();
         if (opponent.Title == "Player")
         {
             PlayerManager.Instance.HandleAttackIfOpponentIsPlayer();
@@ -99,9 +100,8 @@ public class CardManager : Singleton<CardManager>
         {
             var opponentAbilities = opponent.Abilities;
             var attackerAbilities = attacker.Abilities;
-            attacker.AttackTurnDone();
-            var playerCard = CardManager.Instance.GetCurrentPlayerCards();
-            var opponentPlayerCard = CardManager.Instance.GetOpponentPlayerCards();
+            var playerCard = GetCurrentPlayerCards();
+            var opponentPlayerCard = GetOpponentPlayerCards();
             foreach (var ability in opponentAbilities)
             {
                 ability.OnCardAttacked(canvas, opponent, attacker, playerCard, opponentPlayerCard,
@@ -149,7 +149,7 @@ public class CardManager : Singleton<CardManager>
             {
                 for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
                 {
-                    var invocationCard = (InGameInvocationCard)notEmptyOpponent[j];
+                    var invocationCard = notEmptyOpponent[j] as InGameInvocationCard;
 
                     if (invocationCard.CantBeAttack)
                     {

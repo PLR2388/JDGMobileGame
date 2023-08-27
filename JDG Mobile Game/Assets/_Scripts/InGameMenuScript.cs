@@ -88,9 +88,9 @@ public class InGameMenuScript : MonoBehaviour
         {
             case CardType.Invocation:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
-                var invocationCard = (InGameInvocationCard) card;
+                var invocationCard = card as InGameInvocationCard;
                 putCardButton.GetComponent<Button>().interactable =
-                    invocationCard.CanBeSummoned(playerCard) && playerCard.invocationCards.Count < 4;
+                    invocationCard?.CanBeSummoned(playerCard) == true && playerCard.invocationCards.Count < 4;
 
                 break;
             case CardType.Contre:
@@ -98,21 +98,21 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButton.GetComponent<Button>().interactable = true;
                 break;
             case CardType.Effect:
-                var effectCard = (InGameEffectCard) card;
+                var effectCard = card as InGameEffectCard;
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                 putCardButton.GetComponent<Button>().interactable =
-                    effectCard.EffectAbilities.All(elt =>
-                        elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus));
+                    effectCard?.EffectAbilities.All(elt =>
+                        elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus)) == true && playerCard.effectCards.Count < 4;
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_EQUIP_INVOCATION);
-                var equipmentCard = (InGameEquipementCard) card;
+                var equipmentCard = card as InGameEquipementCard;
                 putCardButton.GetComponent<Button>().interactable =
                     playerCard.invocationCards.Count(inGameInvocationCard =>
                         inGameInvocationCard.EquipmentCard == null) > 0 ||
                     opponentPlayerCard.invocationCards.Count(inGameInvocationCard =>
                         inGameInvocationCard.EquipmentCard == null) > 0 ||
-                    equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut)
+                    equipmentCard?.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut) == true
                     ;
                 break;
             case CardType.Field:

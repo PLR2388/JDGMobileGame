@@ -19,10 +19,14 @@ public class LookHandCardsEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            showOkButton: true
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
         );
     }
 
@@ -32,95 +36,87 @@ public class LookHandCardsEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
-        var messageBox =
-            MessageBox.CreateMessageBoxWithCardSelector(
-                canvas,
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
-                opponentPlayerCard.handCards.ToList()
-            );
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            if (playerCards.handCards.Count > 0)
+        var config = new CardSelectorConfig(
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
+            opponentPlayerCard.handCards.ToList(),
+            positiveAction: (card) =>
             {
-                DisplayChoiceAboutHandCards(canvas, playerCards, opponentPlayerCard, messageBox);
-            }
-            else
+                if (playerCards.handCards.Count > 0)
+                {
+                    DisplayChoiceAboutHandCards(canvas, playerCards, opponentPlayerCard);
+                }
+            },
+            negativeAction: () =>
             {
-                Object.Destroy(messageBox);
+                if (playerCards.handCards.Count > 0)
+                {
+                    DisplayChoiceAboutHandCards(canvas, playerCards, opponentPlayerCard);
+                }
             }
-
-        };
-        messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-        {
-            if (playerCards.handCards.Count > 0)
-            {
-                DisplayChoiceAboutHandCards(canvas, playerCards, opponentPlayerCard, messageBox);
-            }
-            else
-            {
-                Object.Destroy(messageBox);
-            }
-        };
+        );
+        CardSelector.Instance.CreateCardSelection(canvas, config);
     }
 
-    private void DisplayChoiceAboutHandCards(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
-        GameObject messageBox)
+    private void DisplayChoiceAboutHandCards(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
-        var messageBox1 = MessageBox.CreateSimpleMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_REMOVE_CARD_OPPONENT_HAND_MESSAGE)
-        );
-        messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            var messageBox2 = MessageBox.CreateMessageBoxWithCardSelector(
-                canvas,
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
-                opponentPlayerCard.handCards.ToList()
-            );
-            messageBox2.GetComponent<MessageBox>().PositiveAction = () =>
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_REMOVE_CARD_OPPONENT_HAND_MESSAGE),
+            showPositiveButton: true,
+            showNegativeButton: true,
+            positiveAction: () =>
             {
-                var opponentCard = messageBox2.GetComponent<MessageBox>().GetSelectedCard();
-                if (opponentCard == null)
-                {
-                    DisplayOkMessage(canvas);
-                }
-                else
-                {
-                    var messageBox3 =
-                        MessageBox.CreateMessageBoxWithCardSelector(
-                            canvas,
-                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
-                            playerCards.handCards.ToList()
-                        );
-                    messageBox3.GetComponent<MessageBox>().PositiveAction = () =>
+                var config = new CardSelectorConfig(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
+                    opponentPlayerCard.handCards.ToList(),
+                    showPositiveButton: true,
+                    showNegativeButton: true,
+                    positiveAction: (opponentCard) =>
                     {
-                        var playerCard = messageBox3.GetComponent<MessageBox>().GetSelectedCard();
-                        if (playerCard == null)
+                        if (opponentCard == null)
                         {
                             DisplayOkMessage(canvas);
                         }
                         else
                         {
-                            opponentPlayerCard.handCards.Remove(opponentCard);
-                            opponentPlayerCard.yellowCards.Add(opponentCard);
-                            playerCards.handCards.Remove(playerCard);
-                            playerCards.yellowCards.Add(playerCard);
-                            Object.Destroy(messageBox);
-                            Object.Destroy(messageBox1);
-                            Object.Destroy(messageBox2);
-                            Object.Destroy(messageBox3);
+                            var config = new CardSelectorConfig(
+                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                                playerCards.handCards.ToList(),
+                                showPositiveButton: true,
+                                showNegativeButton: true,
+                                positiveAction: (playerCard) =>
+                                {
+                                    if (playerCard == null)
+                                    {
+                                        DisplayOkMessage(canvas);
+                                    }
+                                    else
+                                    {
+                                        opponentPlayerCard.handCards.Remove(opponentCard);
+                                        opponentPlayerCard.yellowCards.Add(opponentCard);
+                                        playerCards.handCards.Remove(playerCard);
+                                        playerCards.yellowCards.Add(playerCard);
+                                    }
+                                },
+                                negativeAction: () =>
+                                {
+                                    DisplayOkMessage(canvas);
+                                }
+                            );
+                            CardSelector.Instance.CreateCardSelection(canvas, config);
                         }
-                    };
-                    messageBox3.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
-                }
-            };
-            messageBox2.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
-        };
-        messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-        {
-            Object.Destroy(messageBox);
-            Object.Destroy(messageBox1);
-        };
+                    }, negativeAction: () =>
+                    {
+                        DisplayOkMessage(canvas);
+                    }
+                );
+                CardSelector.Instance.CreateCardSelection(canvas, config);
+            },
+            negativeAction: () =>
+            {
+
+            }
+        );
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 }

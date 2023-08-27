@@ -57,8 +57,14 @@ namespace Cards.EffectCards
             }
             else
             {
-                MessageBox.CreateOkMessageBox(canvas, LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS)
+                var config = new MessageBoxConfig(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS),
+                    showOkButton: true
+                );
+                MessageBox.Instance.CreateMessageBox(
+                    canvas,
+                    config
                 );
             }
         }

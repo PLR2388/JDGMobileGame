@@ -18,61 +18,60 @@ public class GetFamilyInDeckAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        GameObject messageBox = MessageBox.CreateSimpleMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
             string.Format(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_CARD_FROM_FAMILY_MESSAGE),
                 family.ToName()
-            )
-        );
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            messageBox.SetActive(false);
+            ),
+            showNegativeButton: true,
+            showPositiveButton: true,
+            positiveAction: () =>
+            {
+                List<InGameCard> familyCards = playerCards.deck.FindAll(card =>
+                    card.Type == CardType.Invocation && (card as InGameInvocationCard)?.Families.Contains(family) == true);
 
-            List<InGameCard> familyCards = playerCards.deck.FindAll(card =>
-                card.Type == CardType.Invocation && ((InGameInvocationCard)card).Families.Contains(family));
-
-            GameObject messageBox1 =
-                MessageBox.CreateMessageBoxWithCardSelector(
-                    canvas,
+                var config = new CardSelectorConfig(
                     string.Format(
                         LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FAMILY_CARD),
                         family.ToName()
                     ),
-                    familyCards);
-            messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                InGameCard card = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
-                if (card == null)
-                {
-                    messageBox1.SetActive(false);
-                    GameObject messageBox2 =
-                        MessageBox.CreateOkMessageBox(
-                            canvas,
-                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
-                        );
-                    messageBox2.GetComponent<MessageBox>().OkAction = () =>
+                    familyCards,
+                    showPositiveButton: true,
+                    showNegativeButton: true,
+                    positiveAction: (card) =>
                     {
-                        messageBox1.SetActive(true);
-                        Object.Destroy(messageBox2);
-                    };
-                }
-                else
-                {
-                    playerCards.deck.Remove(card);
-                    playerCards.handCards.Add(card);
-                    Object.Destroy(messageBox);
-                    Object.Destroy(messageBox1);
-                }
-            };
-            messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-                Object.Destroy(messageBox1);
-            };
-        };
-        messageBox.GetComponent<MessageBox>().NegativeAction = () => { Object.Destroy(messageBox); };
+                        if (card == null)
+                        {
+                            var config = new MessageBoxConfig(
+                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                                showOkButton: true,
+                                okAction: () =>
+                                {
+                                }
+                            );
+                            MessageBox.Instance.CreateMessageBox(
+                                canvas,
+                                config
+                            );
+                        }
+                        else
+                        {
+                            playerCards.deck.Remove(card);
+                            playerCards.handCards.Add(card);
+                        }
+                    },
+                    negativeAction: () =>
+                    {
+                    }
+                );
+                CardSelector.Instance.CreateCardSelection(canvas, config);
+            }
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
+        );
     }
 }

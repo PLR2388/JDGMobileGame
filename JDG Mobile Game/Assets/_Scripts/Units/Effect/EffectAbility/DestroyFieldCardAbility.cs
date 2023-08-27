@@ -30,63 +30,70 @@ public class DestroyFieldCardAbility : EffectAbility
             cards.Add(opponentPlayerCard.FieldCard);
         }
 
-        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
-            canvas,
+        var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
-            cards);
-
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            var card = messageBox.GetComponent<MessageBox>().GetSelectedCard();
-            if (card == null)
+            cards,
+            showNegativeButton: true,
+            showPositiveButton: true,
+            positiveAction: (card) =>
             {
-                MessageBox.CreateOkMessageBox(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
-                );
-            }
-            else
-            {
-                if (card.CardOwner == CardOwner.Player1)
+                if (card == null)
                 {
-                    if (playerCards.isPlayerOne)
-                    {
-                        playerCards.yellowCards.Add(card);
-                        playerCards.FieldCard = null;
-                    }
-                    else
-                    {
-                        opponentPlayerCard.yellowCards.Add(card);
-                        opponentPlayerCard.FieldCard = null;
-                    }
+                    var config = new MessageBoxConfig(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                        showOkButton: true
+                    );
+                    MessageBox.Instance.CreateMessageBox(
+                        canvas,
+                        config
+                    );
                 }
                 else
                 {
-                    if (playerCards.isPlayerOne)
+                    if (card.CardOwner == CardOwner.Player1)
                     {
-                        opponentPlayerCard.yellowCards.Add(card);
-                        opponentPlayerCard.FieldCard = null;
+                        if (playerCards.isPlayerOne)
+                        {
+                            playerCards.yellowCards.Add(card);
+                            playerCards.FieldCard = null;
+                        }
+                        else
+                        {
+                            opponentPlayerCard.yellowCards.Add(card);
+                            opponentPlayerCard.FieldCard = null;
+                        }
                     }
                     else
                     {
-                        playerCards.yellowCards.Add(card);
-                        playerCards.FieldCard = null;
+                        if (playerCards.isPlayerOne)
+                        {
+                            opponentPlayerCard.yellowCards.Add(card);
+                            opponentPlayerCard.FieldCard = null;
+                        }
+                        else
+                        {
+                            playerCards.yellowCards.Add(card);
+                            playerCards.FieldCard = null;
+                        }
                     }
+                    playerStatus.ChangePv(-costHealth);
                 }
-                playerStatus.ChangePv(-costHealth);
-                Object.Destroy(messageBox);
+            },
+            negativeAction: () =>
+            {
+                var config = new MessageBoxConfig(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                    showOkButton: true
+                );
+                MessageBox.Instance.CreateMessageBox(
+                    canvas,
+                    config
+                );
             }
-        };
-
-        messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-        {
-            MessageBox.CreateOkMessageBox(
-                canvas,
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
-            );
-        };
+        );
+        CardSelector.Instance.CreateCardSelection(canvas, config);
     }
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards,

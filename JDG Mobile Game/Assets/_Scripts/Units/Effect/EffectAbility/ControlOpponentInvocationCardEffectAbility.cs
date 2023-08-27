@@ -8,7 +8,7 @@ using UnityEngine;
 public class ControlOpponentInvocationCardEffectAbility : EffectAbility
 {
     private string invocationControlled;
-    
+
     public ControlOpponentInvocationCardEffectAbility(EffectAbilityName name, string description)
     {
         Name = name;
@@ -22,11 +22,15 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
-            );
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            showOkButton: true
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
+        );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
@@ -34,34 +38,34 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
-        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
-            canvas,
+        var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CONTROLLED_INVOCATION),
-            new List<InGameCard>(opponentPlayerCard.invocationCards.ToList()));
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            var invocationCard = (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
-            if (invocationCard == null)
+            new List<InGameCard>(opponentPlayerCard.invocationCards.ToList()),
+            showNegativeButton: true,
+            showPositiveButton: true,
+            positiveAction: (card) =>
+            {
+                if (card is InGameInvocationCard invocationCard)
+                {
+                    invocationControlled = invocationCard.Title;
+                    invocationCard.ControlCard();
+                    invocationCard.UnblockAttack();
+                    opponentPlayerCard.invocationCards.Remove(invocationCard);
+                    playerCards.invocationCards.Add(invocationCard);
+                    //opponentPlayerCard.SendToSecretHide(card);
+                    //cardLocation.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
+                }
+                else
+                {
+                    DisplayOkMessage(canvas);
+                }
+            },
+            negativeAction: () =>
             {
                 DisplayOkMessage(canvas);
             }
-            else
-            {
-                invocationControlled = invocationCard.Title;
-                invocationCard.ControlCard();
-                invocationCard.UnblockAttack();
-                opponentPlayerCard.invocationCards.Remove(invocationCard);
-                playerCards.invocationCards.Add(invocationCard);
-                //opponentPlayerCard.SendToSecretHide(card);
-                //cardLocation.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
-
-                Object.Destroy(messageBox);
-            }
-        };
-        messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-        {
-            DisplayOkMessage(canvas);
-        };
+        );
+        CardSelector.Instance.CreateCardSelection(canvas, config);
     }
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards,

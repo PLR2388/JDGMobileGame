@@ -68,50 +68,8 @@ namespace Cards.EquipmentCards
             var currentInvocationCards = playerCards.invocationCards;
             var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
 
-            var message = DisplayEquipmentMessageBox(
-                invocationCards,
-                equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut)
-            );
-
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var currentSelectedInvocationCard =
-                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
-                if (currentSelectedInvocationCard != null)
-                {
-                    miniCardMenu.SetActive(false);
-
-                    foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
-                    {
-                        equipmentCardEquipmentAbility.ApplyEffect(
-                            currentSelectedInvocationCard,
-                            playerCards,
-                            OpponentPlayerCard
-                        );
-                    }
-
-                    currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
-                    playerCards.handCards.Remove(equipmentCard);
-                }
-
-                Destroy(message);
-            };
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                miniCardMenu.SetActive(false);
-                Destroy(message);
-            };
-        }
-
-        /// <summary>
-        /// DisplayEquipmentMessageBox.
-        /// Show messageBox with invocationsCards that can receive the equipment card.
-        /// <param name="invocationCards">invocation card allow to receive equipment card</param>
-        /// <param name="equipmentInstantEffect">equipmentCard instant effect to test if it authorizes invocations with equipment</param>
-        /// </summary>
-        private GameObject DisplayEquipmentMessageBox(IEnumerable<InGameInvocationCard> invocationCards, bool addAll)
-        {
             var cards = new List<InGameCard>();
+            var addAll = equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut);
             foreach (var invocationCard in invocationCards)
             {
                 if (addAll || invocationCard.EquipmentCard == null)
@@ -119,11 +77,37 @@ namespace Cards.EquipmentCards
                     cards.Add(invocationCard);
                 }
             }
-            return MessageBox.CreateMessageBoxWithCardSelector(
-                canvas,
+            var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOCATION_FOR_EQUIPMENT),
-                cards
+                cards,
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: (card) =>
+                {
+                    if (card is InGameInvocationCard currentSelectedInvocationCard)
+                    {
+                        miniCardMenu.SetActive(false);
+
+                        foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+                        {
+                            equipmentCardEquipmentAbility.ApplyEffect(
+                                currentSelectedInvocationCard,
+                                playerCards,
+                                OpponentPlayerCard
+                            );
+                        }
+
+                        currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
+                        playerCards.handCards.Remove(equipmentCard);
+                    }
+                },
+                negativeAction: () =>
+                {
+                    miniCardMenu.SetActive(false);
+                  
+                }
             );
+            CardSelector.Instance.CreateCardSelection(canvas, config);
         }
     }
 }

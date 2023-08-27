@@ -44,7 +44,7 @@ public class UIManager : Singleton<UIManager>
         {
             healthP2Text.SetText(
                 $"{pv} / {PlayerStatus.MaxPv}"
-                );
+            );
         }
     }
 
@@ -87,34 +87,35 @@ public class UIManager : Singleton<UIManager>
 
         if (invocationCards.Count > 0)
         {
-            var message =
-                MessageBox.CreateMessageBoxWithCardSelector(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
-                    invocationCards
-                );
-            message.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var invocationCard =
-                    (InGameInvocationCard)message.GetComponent<MessageBox>().GetSelectedCard();
-                positiveAction(invocationCard);
-                nextPhaseButton.SetActive(true);
-                Destroy(message);
-            };
-            message.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                negativeAction();
-                nextPhaseButton.SetActive(true);
-                Destroy(message);
-            };
+            var config = new CardSelectorConfig(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
+                invocationCards,
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: (invocationCard) =>
+                {
+                    positiveAction(invocationCard as InGameInvocationCard);
+                    nextPhaseButton.SetActive(true);
+                },
+                negativeAction: () =>
+                {
+                    negativeAction();
+                    nextPhaseButton.SetActive(true);
+                }
+            );
+            CardSelector.Instance.CreateCardSelection(
+                canvas,
+                config
+            );
         }
         else
         {
-            MessageBox.CreateOkMessageBox(
-                canvas,
+            var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_CANNOT_ATTACK_MESSAGE)
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_CANNOT_ATTACK_MESSAGE),
+                showOkButton: true
             );
+            MessageBox.Instance.CreateMessageBox(canvas, config);
         }
     }
 
@@ -159,11 +160,16 @@ public class UIManager : Singleton<UIManager>
 
     public void DisplayPauseMenu(UnityAction onPositiveAction)
     {
-        MessageBox.CreateSimpleMessageBox(
-            canvas,
+        MessageBoxConfig config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_TITLE),
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_MESSAGE),
-            onPositiveAction
+            showPositiveButton: true,
+            showNegativeButton: true,
+            positiveAction: onPositiveAction
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
         );
     }
 }

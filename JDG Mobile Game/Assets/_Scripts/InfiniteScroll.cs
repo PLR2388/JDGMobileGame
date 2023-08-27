@@ -6,7 +6,7 @@ using UnityEngine;
 public class InfiniteScroll : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
-    [SerializeField] private GameObject messageBox;
+    [SerializeField] private Transform canvas;
 
     private int numberSelected;
     private int numberRare;
@@ -41,10 +41,12 @@ public class InfiniteScroll : MonoBehaviour
 
     private void DisplayMessageBox(string msg)
     {
-        var message = Instantiate(messageBox);
-        message.GetComponent<MessageBox>().title = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE);
-        message.GetComponent<MessageBox>().isInformation = true;
-        message.GetComponent<MessageBox>().description = msg;
+        var config = new MessageBoxConfig(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                msg,
+                showOkButton: true
+            );
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     private void Update()

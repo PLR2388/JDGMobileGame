@@ -90,10 +90,14 @@ public class DestroyCardsEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            showOkButton: true
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
         );
     }
 
@@ -117,88 +121,93 @@ public class DestroyCardsEffectAbility : EffectAbility
                 // Only case for the moment
                 var invocationCards = new List<InGameCard>(playerCards.invocationCards);
                 var handCards = playerCards.handCards;
-                var messageBox =
-                    MessageBox.CreateMessageBoxWithCardSelector(
-                        canvas,
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
-                        invocationCards
-                    );
+                var config = new CardSelectorConfig(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
+                    invocationCards,
+                    showNegativeButton: true,
+                    showPositiveButton: true,
+                    positiveAction: (card) =>
+                    {
+                        if (card is InGameInvocationCard invocationCard)
+                        {
+                                           var config = new CardSelectorConfig(
+                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                                handCards.ToList(),
+                                showPositiveButton: true,
+                                showNegativeButton: true,
+                                positiveAction: (handCard) =>
+                                {
+                                    if (handCard == null)
+                                    {
+                                        DisplayOkMessage(canvas);
+                                    }
+                                    else
+                                    {
+                                        playerCards.invocationCards.Remove(invocationCard);
+                                        playerCards.handCards.Remove(handCard);
+                                        playerCards.yellowCards.Add(invocationCard);
+                                        playerCards.yellowCards.Add(handCard);
 
-                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var invocationCard = (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
-                    if (invocationCard == null)
+                                        var copyInvocationCards = playerCards.invocationCards.ToList();
+                                        var copyOpponentInvocationCards = opponentPlayerCard.invocationCards.ToList();
+                                        var copyEffectCards = playerCards.effectCards.ToList();
+                                        var copyOpponentEffectCards = opponentPlayerCard.effectCards.ToList();
+
+                                        foreach (var inGameInvocationCard in copyInvocationCards)
+                                        {
+                                            playerCards.invocationCards.Remove(inGameInvocationCard);
+                                            playerCards.yellowCards.Add(inGameInvocationCard);
+                                        }
+
+                                        foreach (var inGameInvocationCard in copyOpponentInvocationCards)
+                                        {
+                                            opponentPlayerCard.invocationCards.Remove(inGameInvocationCard);
+                                            playerCards.yellowCards.Add(inGameInvocationCard);
+                                        }
+
+                                        foreach (var inGameEffectCard in copyEffectCards)
+                                        {
+                                            playerCards.effectCards.Remove(inGameEffectCard);
+                                            playerCards.effectCards.Add(inGameEffectCard);
+                                        }
+
+                                        foreach (var inGameEffectCard in copyOpponentEffectCards)
+                                        {
+                                            opponentPlayerCard.effectCards.Remove(inGameEffectCard);
+                                            playerCards.effectCards.Add(inGameEffectCard);
+                                        }
+
+                                        if (playerCards.FieldCard != null)
+                                        {
+                                            playerCards.yellowCards.Add(playerCards.FieldCard);
+                                            playerCards.FieldCard = null;
+                                        }
+
+                                        if (opponentPlayerCard.FieldCard != null)
+                                        {
+                                            opponentPlayerCard.yellowCards.Add(opponentPlayerCard.FieldCard);
+                                            opponentPlayerCard.FieldCard = null;
+                                        }
+                                    }
+                                },
+                                negativeAction: () =>
+                                {
+                                    DisplayOkMessage(canvas);
+                                }
+                            );
+                            CardSelector.Instance.CreateCardSelection(canvas, config);
+                        }
+                        else
+                        {
+                            DisplayOkMessage(canvas);
+                        }
+                    },
+                    negativeAction: () =>
                     {
                         DisplayOkMessage(canvas);
                     }
-                    else
-                    {
-                        var messageBox1 =
-                            MessageBox.CreateMessageBoxWithCardSelector(canvas, "Carte à enlever de la main",
-                                handCards.ToList());
-                        messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-                        {
-                            var handCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
-                            if (handCard == null)
-                            {
-                                DisplayOkMessage(canvas);
-                            }
-                            else
-                            {
-                                playerCards.invocationCards.Remove(invocationCard);
-                                playerCards.handCards.Remove(handCard);
-                                playerCards.yellowCards.Add(invocationCard);
-                                playerCards.yellowCards.Add(handCard);
-
-                                var copyInvocationCards = playerCards.invocationCards.ToList();
-                                var copyOpponentInvocationCards = opponentPlayerCard.invocationCards.ToList();
-                                var copyEffectCards = playerCards.effectCards.ToList();
-                                var copyOpponentEffectCards = opponentPlayerCard.effectCards.ToList();
-
-                                foreach (var inGameInvocationCard in copyInvocationCards)
-                                {
-                                    playerCards.invocationCards.Remove(inGameInvocationCard);
-                                    playerCards.yellowCards.Add(inGameInvocationCard);
-                                }
-
-                                foreach (var inGameInvocationCard in copyOpponentInvocationCards)
-                                {
-                                    opponentPlayerCard.invocationCards.Remove(inGameInvocationCard);
-                                    playerCards.yellowCards.Add(inGameInvocationCard);
-                                }
-
-                                foreach (var inGameEffectCard in copyEffectCards)
-                                {
-                                    playerCards.effectCards.Remove(inGameEffectCard);
-                                    playerCards.effectCards.Add(inGameEffectCard);
-                                }
-
-                                foreach (var inGameEffectCard in copyOpponentEffectCards)
-                                {
-                                    opponentPlayerCard.effectCards.Remove(inGameEffectCard);
-                                    playerCards.effectCards.Add(inGameEffectCard);
-                                }
-
-                                if (playerCards.FieldCard != null)
-                                {
-                                    playerCards.yellowCards.Add(playerCards.FieldCard);
-                                    playerCards.FieldCard = null;
-                                }
-
-                                if (opponentPlayerCard.FieldCard != null)
-                                {
-                                    opponentPlayerCard.yellowCards.Add(opponentPlayerCard.FieldCard);
-                                    opponentPlayerCard.FieldCard = null;
-                                }
-
-                                Object.Destroy(messageBox);
-                                Object.Destroy(messageBox1);
-                            }
-                        };
-                        messageBox1.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
-                    }
-                };
-                messageBox.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
+                );
+                CardSelector.Instance.CreateCardSelection(canvas, config);
             }
         }
         else if (numbers == 1)
@@ -208,28 +217,30 @@ public class DestroyCardsEffectAbility : EffectAbility
             if (mustThrowHandCard)
             {
                 var handCards = playerCards.handCards;
-                var messageBox =
-                    MessageBox.CreateMessageBoxWithCardSelector(
-                        canvas,
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
-                        handCards.ToList()
-                    );
-                messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var handCard = messageBox.GetComponent<MessageBox>().GetSelectedCard();
-                    if (handCard == null)
+                var config = new CardSelectorConfig(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                    handCards.ToList(),
+                    showNegativeButton: true,
+                    showPositiveButton: true,
+                    positiveAction: (handCard) =>
+                    {
+                        if (handCard == null)
+                        {
+                            DisplayOkMessage(canvas);
+                        }
+                        else
+                        {
+                            playerCards.handCards.Remove(handCard);
+                            playerCards.yellowCards.Add(handCard);
+                            DisplayMessageBoxToDestroyOneCard(canvas, playerCards, opponentPlayerCard, cards);
+                        }
+                    },
+                    negativeAction: () =>
                     {
                         DisplayOkMessage(canvas);
                     }
-                    else
-                    {
-                        playerCards.handCards.Remove(handCard);
-                        playerCards.yellowCards.Add(handCard);
-                        DisplayMessageBoxToDestroyOneCard(canvas, playerCards, opponentPlayerCard, cards);
-                        Object.Destroy(messageBox);
-                    }
-                };
-                messageBox.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
+                );
+                CardSelector.Instance.CreateCardSelection(canvas, config);
             }
             else
             {
@@ -242,27 +253,28 @@ public class DestroyCardsEffectAbility : EffectAbility
     private void DisplayMessageBoxToDestroyOneCard(Transform canvas, PlayerCards playerCards,
         PlayerCards opponentPlayerCard, List<InGameCard> cards)
     {
-        var messageBox1 =
-            MessageBox.CreateMessageBoxWithCardSelector(
-                canvas,
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
-                cards
-            );
-
-        messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            var card = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
-            if (card == null)
+        var config = new CardSelectorConfig(
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
+            cards,
+            showNegativeButton: true,
+            showPositiveButton: true,
+            positiveAction: (card) =>
+            {
+                if (card == null)
+                {
+                    DisplayOkMessage(canvas);
+                }
+                else
+                {
+                    DestroyCard(playerCards, opponentPlayerCard, card, card.CardOwner == CardOwner.Player1);
+                }
+            },
+            negativeAction: () =>
             {
                 DisplayOkMessage(canvas);
             }
-            else
-            {
-                DestroyCard(playerCards, opponentPlayerCard, card, card.CardOwner == CardOwner.Player1);
-                Object.Destroy(messageBox1);
-            }
-        };
-        messageBox1.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
+        );
+        CardSelector.Instance.CreateCardSelection(canvas, config);
     }
 
     private List<InGameCard> BuildAllPossibleCardsToDestroy(PlayerCards playerCards, PlayerCards opponentPlayerCard)

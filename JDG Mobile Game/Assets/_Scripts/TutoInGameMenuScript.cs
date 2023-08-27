@@ -73,9 +73,9 @@ public class TutoInGameMenuScript : MonoBehaviour
             {
                 case CardType.Invocation:
                     putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
-                    var invocationCard =(InGameInvocationCard) card;
+                    var invocationCard = card as InGameInvocationCard;
                     putCardButton.GetComponent<Button>().interactable =
-                        invocationCard.IsInvocationPossible() && playerCard.invocationCards.Count < 4;
+                        invocationCard?.IsInvocationPossible() == true && playerCard.invocationCards.Count < 4;
 
                     break;
                 case CardType.Contre:

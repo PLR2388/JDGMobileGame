@@ -16,20 +16,17 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         this.family = family;
     }
 
-    private void DisplayOkMessage(Transform canvas, GameObject messageBox1, GameObject messageBox2)
+    private void DisplayOkMessage(Transform canvas)
     {
-        var messageBox =
-            MessageBox.CreateOkMessageBox(
-                canvas,
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_WIN_STARS_MESSAGE)
-            );
-        messageBox.GetComponent<MessageBox>().OkAction = () =>
-        {
-            Object.Destroy(messageBox);
-            Object.Destroy(messageBox1);
-            Object.Destroy(messageBox2);
-        };
+        var config = new MessageBoxConfig(
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_WIN_STARS_MESSAGE),
+            showOkButton: true,
+            okAction: () =>
+            {
+            }
+        );
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     public override bool IsActionPossible(PlayerCards playerCards)
@@ -46,45 +43,45 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         {
             return;
         }
-        var messageBox = MessageBox.CreateSimpleMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TRANSFER_ATK_DEF_MESSAGE)
-        );
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            var invocationsCardsValid = new List<InGameCard>(playerCards.invocationCards.Where(inGameInvocationCard =>
-                inGameInvocationCard.Families.Contains(family) && inGameInvocationCard.Title != invocationCard.Title).ToList());
-            var messageBox1 =
-                MessageBox.CreateMessageBoxWithCardSelector(
-                    canvas,
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TRANSFER_ATK_DEF_MESSAGE),
+            showNegativeButton: true,
+            showPositiveButton: true,
+            positiveAction: () =>
+            {
+                var invocationsCardsValid = new List<InGameCard>(playerCards.invocationCards.Where(inGameInvocationCard =>
+                    inGameInvocationCard.Families.Contains(family) && inGameInvocationCard.Title != invocationCard.Title).ToList());
+                var config = new CardSelectorConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_RECEIVER_CARD),
-                    invocationsCardsValid);
-            messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var chosenInvocationCard =
-                    messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
-                if (chosenInvocationCard == null)
-                {
-                    DisplayOkMessage(canvas, messageBox, messageBox1);
-                }
-                else
-                {
-                    // TODO: Think of a better way if dead card has more atk and def due to power-up
-                    chosenInvocationCard.Attack += invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-                    chosenInvocationCard.Defense += invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
-                    invocationCard.Attack -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-                    invocationCard.Defense -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
-                    invocationCard.Receiver = chosenInvocationCard.Title;
-                    Object.Destroy(messageBox);
-                    Object.Destroy(messageBox1);
-                }
-            };
-            messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                DisplayOkMessage(canvas, messageBox, messageBox1);
-            };
-        };
+                    invocationsCardsValid,
+                    showNegativeButton: true,
+                    showPositiveButton: true,
+                    positiveAction: (card) =>
+                    {
+                        if (card is InGameInvocationCard chosenInvocationCard)
+                        {
+                            // TODO: Think of a better way if dead card has more atk and def due to power-up
+                            chosenInvocationCard.Attack += invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                            chosenInvocationCard.Defense += invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+                            invocationCard.Attack -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
+                            invocationCard.Defense -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+                            invocationCard.Receiver = chosenInvocationCard.Title;
+                        }
+                        else
+                        {
+                            DisplayOkMessage(canvas);
+                        }
+                    },
+                    negativeAction: () =>
+                    {
+                        DisplayOkMessage(canvas);
+                    }
+                    );
+                CardSelector.Instance.CreateCardSelection(canvas, config);
+            }
+        );
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)

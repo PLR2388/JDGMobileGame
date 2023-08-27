@@ -27,29 +27,28 @@ public class DrawCardsAbility : Ability
 
         if (numberCardToDraw > 0)
         {
-            GameObject messageBox =
-                MessageBox.CreateSimpleMessageBox(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                    string.Format(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DRAW_CARDS_MESSAGE),
-                        numberCardToDraw
-                    )
-                );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                for (int i = 0; i < numberCardToDraw; i++)
+            var config = new MessageBoxConfig(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                string.Format(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DRAW_CARDS_MESSAGE),
+                    numberCardToDraw
+                ),
+                showPositiveButton: true,
+                showNegativeButton: true,
+                positiveAction: () =>
                 {
-                    InGameCard card = playerCards.deck[playerCards.deck.Count - 1];
-                    playerCards.handCards.Add(card);
-                    playerCards.deck.RemoveAt(playerCards.deck.Count - 1);
+                    for (int i = 0; i < numberCardToDraw; i++)
+                    {
+                        InGameCard card = playerCards.deck[playerCards.deck.Count - 1];
+                        playerCards.handCards.Add(card);
+                        playerCards.deck.RemoveAt(playerCards.deck.Count - 1);
+                    }
                 }
-                Object.Destroy(messageBox);
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-            };
+            );
+            MessageBox.Instance.CreateMessageBox(
+                canvas,
+                config
+            );
         }
     }
 }

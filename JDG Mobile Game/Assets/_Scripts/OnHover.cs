@@ -26,7 +26,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     private void Start()
     {
-        MessageBox.NumberedCardEvent.AddListener(UpdateNumberOnCard);
+        CardSelector.NumberedCardEvent.AddListener(UpdateNumberOnCard);
         image = GetComponent<Image>();
         card = gameObject.GetComponent<CardDisplay>().inGameCard;
     }

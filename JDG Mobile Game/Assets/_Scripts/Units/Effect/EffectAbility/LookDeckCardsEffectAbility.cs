@@ -26,22 +26,24 @@ public class LookDeckCardsEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
-        var messageBox = MessageBox.CreateSimpleMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_SEE_DECK_MESSAGE)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_SEE_DECK_MESSAGE),
+            showNegativeButton: true,
+            showPositiveButton: true,
+            positiveAction: () =>
+            {
+                DisplayAndOrderCardMessageBox(canvas, playerCards);
+            },
+            negativeAction: () =>
+            {
+                DisplayAndOrderCardMessageBox(canvas, opponentPlayerCard);
+            }
         );
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            DisplayAndOrderCardMessageBox(canvas, playerCards, messageBox);
-        };
-        messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-        {
-            DisplayAndOrderCardMessageBox(canvas, opponentPlayerCard, messageBox);
-        };
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
-    private void DisplayAndOrderCardMessageBox(Transform canvas, PlayerCards playerCards, GameObject messageBox)
+    private void DisplayAndOrderCardMessageBox(Transform canvas, PlayerCards playerCards)
     {
         var deck = playerCards.deck;
         if (deck.Count >= numberCards)
@@ -52,86 +54,89 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 shortList.Add(deck[deck.Count - 1 - i]);
             }
 
-            var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
-                canvas,
+            var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 shortList,
-                numberCardInSelection: numberCards,
-                multipleCardSelection: true,
-                displayOrder: true);
-            messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var selectedCards = messageBox1.GetComponent<MessageBox>().GetMultipleSelectedCards();
-                if (selectedCards.Count == numberCards)
+                numberCardSelection: numberCards,
+                displayOrder: true,
+                showPositiveButton: true,
+                showNegativeButton: true,
+                positiveMultipleAction: (selectedCards) =>
                 {
-                    for (var i = 0; i < numberCards; i++)
+                    if (selectedCards.Count == numberCards)
                     {
-                        playerCards.deck.Remove(selectedCards[i]);
-                    }
+                        for (var i = 0; i < numberCards; i++)
+                        {
+                            playerCards.deck.Remove(selectedCards[i]);
+                        }
 
-                    for (var i = numberCards - 1; i >= 0; i--)
+                        for (var i = numberCards - 1; i >= 0; i--)
+                        {
+                            playerCards.deck.Add(selectedCards[i]);
+                        }
+                    }
+                    else
                     {
-                        playerCards.deck.Add(selectedCards[i]);
+                        var config = new MessageBoxConfig(
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS),
+                            showOkButton: true
+                        );
+                        MessageBox.Instance.CreateMessageBox(
+                            canvas,
+                            config
+                        );
                     }
+                },
+                negativeAction: () => {}
+            );
 
-                    Object.Destroy(messageBox);
-                    Object.Destroy(messageBox1);
-                }
-                else
-                {
-                    MessageBox.CreateOkMessageBox(
-                        canvas,
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS)
-                    );
-                }
-            };
-            messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-                Object.Destroy(messageBox1);
-            };
+            CardSelector.Instance.CreateCardSelection(
+                canvas, config);
         }
         else
         {
-            var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
-                canvas,
+            var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 deck,
-                numberCardInSelection: deck.Count,
-                displayOrder: true);
-            messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var selectedCards = messageBox1.GetComponent<MessageBox>().GetMultipleSelectedCards();
-                if (selectedCards.Count == deck.Count)
+                numberCardSelection: deck.Count,
+                displayOrder: true,
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveMultipleAction: (selectedCards) =>
                 {
-                    for (var i = 0; i < deck.Count; i++)
+                    if (selectedCards.Count == deck.Count)
                     {
-                        playerCards.deck.Remove(selectedCards[i]);
-                    }
+                        for (var i = 0; i < deck.Count; i++)
+                        {
+                            playerCards.deck.Remove(selectedCards[i]);
+                        }
 
-                    for (var i = deck.Count - 1; i >= 0; i--)
+                        for (var i = deck.Count - 1; i >= 0; i--)
+                        {
+                            playerCards.deck.Add(selectedCards[i]);
+                        }
+                    }
+                    else
                     {
-                        playerCards.deck.Add(selectedCards[i]);
+                        var config = new MessageBoxConfig(
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS),
+                            showOkButton: true
+                        );
+                        MessageBox.Instance.CreateMessageBox(
+                            canvas,
+                            config
+                        );
                     }
-
-                    Object.Destroy(messageBox);
-                    Object.Destroy(messageBox1);
-                }
-                else
-                {
-                    MessageBox.CreateOkMessageBox(
-                        canvas,
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS)
-                    );
-                }
-            };
-            messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-                Object.Destroy(messageBox1);
-            };
+                },
+                negativeAction: () => {}
+                );
+            
+            CardSelector.Instance.CreateCardSelection(
+                canvas,
+                config
+                );
         }
     }
 }

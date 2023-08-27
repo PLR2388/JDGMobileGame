@@ -32,10 +32,14 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
 
     private void DisplayOkMessageBox(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            showOkButton: true
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
         );
     }
 
@@ -46,30 +50,29 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
 
         if (fromYellowTrash)
         {
-            var messageBox =
-                MessageBox.CreateMessageBoxWithCardSelector(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
-                    playerCards.yellowCards.ToList()
-                );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var invocationCard = (InGameInvocationCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
-                if (invocationCard == null)
+            var config = new CardSelectorConfig(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
+                playerCards.yellowCards.ToList(),
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: (card) =>
+                {
+                    if (card is InGameInvocationCard invocationCard)
+                    {
+                        playerCards.yellowCards.Remove(invocationCard);
+                        playerCards.invocationCards.Add(invocationCard);
+                    }
+                    else
+                    {
+                        DisplayOkMessageBox(canvas);
+                    }
+                },
+                negativeAction: () =>
                 {
                     DisplayOkMessageBox(canvas);
                 }
-                else
-                {
-                    playerCards.yellowCards.Remove(invocationCard);
-                    playerCards.invocationCards.Add(invocationCard);
-                    Object.Destroy(messageBox);
-                }
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                DisplayOkMessageBox(canvas);
-            };
+            );
+            CardSelector.Instance.CreateCardSelection(canvas, config);
         }
     }
 }

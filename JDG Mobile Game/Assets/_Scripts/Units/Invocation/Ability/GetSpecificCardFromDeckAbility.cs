@@ -17,26 +17,22 @@ public class GetSpecificCardFromDeckAbility : Ability
         bool hasCardInDeck = playerCards.deck.Exists(card => card.Title == cardName);
         if (hasCardInDeck)
         {
-            GameObject messageBox =
-                MessageBox.CreateSimpleMessageBox(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                    string.Format(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_SPECIFIC_CARD_IN_DECK_MESSAGE),
-                        cardName
-                    )
-                );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                InGameCard card = playerCards.deck.Find(card => card.Title == cardName);
-                playerCards.deck.Remove(card);
-                playerCards.handCards.Add(card);
-                Object.Destroy(messageBox);
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-            };
+            var config = new MessageBoxConfig(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                string.Format(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_SPECIFIC_CARD_IN_DECK_MESSAGE),
+                    cardName
+                ),
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: () =>
+                {
+                    InGameCard card = playerCards.deck.Find(card => card.Title == cardName);
+                    playerCards.deck.Remove(card);
+                    playerCards.handCards.Add(card);
+                }
+            );
+            MessageBox.Instance.CreateMessageBox(canvas, config);
         }
     }
 

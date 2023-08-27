@@ -29,8 +29,7 @@ public class OptionalSacrificeForAtkDefAbility : Ability
 
         if (isFieldPresent && isInvocationPresent)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(
-                canvas,
+            var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_SACRIFICE_TO_BOOST_MESSAGE),
@@ -38,21 +37,21 @@ public class OptionalSacrificeForAtkDefAbility : Ability
                     newAtk,
                     newDef,
                     invocationCard.Title
-                )
+                ),
+                showPositiveButton: true,
+                showNegativeButton: true,
+                positiveAction: () =>
+                {
+                    InGameInvocationCard invocationCardToSacrifice =
+                        playerCards.invocationCards.First(card => card.Title == cardNameToSacrifice);
+                    playerCards.invocationCards.Remove(invocationCardToSacrifice);
+                    playerCards.yellowCards.Add(invocationCardToSacrifice);
+
+                    invocationCard.Attack = newAtk;
+                    invocationCard.Defense = newDef;
+                }
             );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                InGameInvocationCard invocationCardToSacrifice =
-                    playerCards.invocationCards.First(card => card.Title == cardNameToSacrifice);
-                playerCards.invocationCards.Remove(invocationCardToSacrifice);
-                playerCards.yellowCards.Add(invocationCardToSacrifice);
-
-                invocationCard.Attack = newAtk;
-                invocationCard.Defense = newDef;
-
-                Object.Destroy(messageBox);
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () => { Object.Destroy(messageBox); };
+            MessageBox.Instance.CreateMessageBox(canvas, config);
         }
     }
 

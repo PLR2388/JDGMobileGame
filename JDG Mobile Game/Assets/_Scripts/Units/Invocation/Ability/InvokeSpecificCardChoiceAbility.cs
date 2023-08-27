@@ -14,19 +14,17 @@ public class InvokeSpecificCardChoiceAbility : Ability
         cardChoices = cardNames;
     }
 
-    protected static void DisplayOkMessage(Transform canvas, GameObject messageBox)
+    protected static void DisplayOkMessage(Transform canvas)
     {
-        messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE),
+            showOkButton: true,
+            okAction: () =>
+            {
+            }
         );
-        messageBox1.GetComponent<MessageBox>().OkAction = () =>
-        {
-            messageBox.SetActive(true);
-            Object.Destroy(messageBox1);
-        };
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
@@ -40,47 +38,44 @@ public class InvokeSpecificCardChoiceAbility : Ability
                 cardNameChoiceString += " ou " + cardChoices[i];
             }
 
-            GameObject messageBox =
-                MessageBox.CreateSimpleMessageBox(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                    string.Format(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE)
-                        , cardNameChoiceString
-                    )
-                );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                messageBox.SetActive(false);
-                List<InGameCard> cards =
-                    playerCards.deck.FindAll(card => cardChoices.Contains(card.Title));
-                GameObject messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
-                    cards);
-                messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
+            var config = new MessageBoxConfig(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                string.Format(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE)
+                    , cardNameChoiceString
+                ),
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: () =>
                 {
-                    InGameInvocationCard invocationCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
-                    if (invocationCard == null)
-                    {
-                        Object.Destroy(messageBox);
-                        DisplayOkMessage(canvas, messageBox1);
-                    }
-                    else
-                    {
-                        playerCards.deck.Remove(invocationCard);
-                        playerCards.invocationCards.Add(invocationCard);
-                        Object.Destroy(messageBox);
-                        Object.Destroy(messageBox1);
-                    }
-                };
-                messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    Object.Destroy(messageBox);
-                    DisplayOkMessage(canvas, messageBox1);
-                };
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () => { Object.Destroy(messageBox); };
+                    List<InGameCard> cards =
+                        playerCards.deck.FindAll(card => cardChoices.Contains(card.Title));
+                    var config = new CardSelectorConfig(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
+                        cards,
+                        showNegativeButton: true,
+                        showPositiveButton: true,
+                        positiveAction: (card) =>
+                        {
+                            if (card is InGameInvocationCard invocationCard)
+                            {
+                                playerCards.deck.Remove(invocationCard);
+                                playerCards.invocationCards.Add(invocationCard);
+                            }
+                            else
+                            {
+                                DisplayOkMessage(canvas);
+                            }
+                        },
+                        negativeAction: () =>
+                        {
+                            DisplayOkMessage(canvas);
+                        }
+                        );
+                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                }
+            );
+            MessageBox.Instance.CreateMessageBox(canvas, config);
         }
     }
 }

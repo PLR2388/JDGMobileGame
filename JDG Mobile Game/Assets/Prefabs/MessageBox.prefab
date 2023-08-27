@@ -1114,7 +1114,6 @@ GameObject:
   - component: {fileID: 435952082473488523}
   - component: {fileID: 435952082473488532}
   - component: {fileID: 435952082473488533}
-  - component: {fileID: 435952082473488521}
   m_Layer: 5
   m_Name: MessageBox
   m_TagString: Untagged
@@ -1185,6 +1184,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &435952082473488533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1202,35 +1202,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &435952082473488521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 435952082473488534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9f57f795cec7d244be3c11ab18b9935, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  title: 
-  description: 
-  isInformation: 0
-  displayCardsScript: {fileID: 2575410864514399939}
-  displayCards: 0
-  multipleCardSelection: 0
-  numberCardInSelection: 2
-  titleText: {fileID: 435952080825071656}
-  descriptionText: {fileID: 435952082315272875}
-  positiveButtonText: {fileID: 435952082400223243}
-  negativeButtonText: {fileID: 435952080487301631}
-  okButtonText: {fileID: 435952082022807059}
-  positiveButton: {fileID: 435952080838459903}
-  negativeButton: {fileID: 435952082309751836}
-  okButton: {fileID: 435952081459802451}
-  container: {fileID: 1659978644410334787}
-  scrollCardDisplay: {fileID: 5765145702027132740}
 --- !u!1 &1659978644410334787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1293,6 +1264,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1345,7 +1317,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabCard: {fileID: 5528645795789417797, guid: 07baf689232351e4caa92a6fd2b8245e,
     type: 3}
-  cardsList: []
 --- !u!1 &1917826928150291131
 GameObject:
   m_ObjectHideFlags: 0
@@ -1406,6 +1377,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1482,6 +1454,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1510,6 +1483,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1608,6 +1582,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

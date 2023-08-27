@@ -12,17 +12,17 @@ public class KillOpponentInvocationCardAbility : Ability
         Description = description;
     }
 
-    protected static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
+    protected static void DisplayOkMessage(Transform canvas)
     {
-        messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(canvas, LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE));
-        messageBox1.GetComponent<MessageBox>().OkAction = () =>
-        {
-            Object.Destroy(messageBox);
-            Object.Destroy(messageBox1);
-            Object.Destroy(messageBox2);
-        };
+        var config = new MessageBoxConfig(
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
+            showOkButton: true,
+            okAction: () =>
+            {
+            }
+        );
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
@@ -30,51 +30,47 @@ public class KillOpponentInvocationCardAbility : Ability
         ObservableCollection<InGameInvocationCard> invocationCards = opponentPlayerCards.invocationCards;
         if (invocationCards.Count > 0)
         {
-            GameObject messageBox = MessageBox.CreateSimpleMessageBox(
-                canvas,
+            var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DESTROY_OPPONENT_INVOCATION_MESSAGE)
-            );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                messageBox.SetActive(false);
-                if (invocationCards.Count == 1)
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DESTROY_OPPONENT_INVOCATION_MESSAGE),
+                showNegativeButton: true,
+                showPositiveButton: true,
+                positiveAction: () =>
                 {
-                    opponentPlayerCards.invocationCards.Remove(invocationCards[0]);
-                    opponentPlayerCards.yellowCards.Add(invocationCards[0]);
-                    Object.Destroy(messageBox);
-                }
-                else
-                {
-                    GameObject messageBox1 =
-                        MessageBox.CreateMessageBoxWithCardSelector(canvas,
+                    if (invocationCards.Count == 1)
+                    {
+                        opponentPlayerCards.invocationCards.Remove(invocationCards[0]);
+                        opponentPlayerCards.yellowCards.Add(invocationCards[0]);
+                    }
+                    else
+                    {
+                        var config = new CardSelectorConfig(
                             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
-                            new List<InGameCard>(invocationCards));
-                    messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-                    {
-                        DisplayOkMessage(canvas, messageBox, messageBox1);
-                    };
-                    messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
-                    {
-                        InGameInvocationCard invocationCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
-                        if (invocationCard == null)
-                        {
-                            DisplayOkMessage(canvas, messageBox, messageBox1);
-                        }
-                        else
-                        {
-                            opponentPlayerCards.invocationCards.Remove(invocationCard);
-                            opponentPlayerCards.yellowCards.Add(invocationCard);
-                            Object.Destroy(messageBox);
-                            Object.Destroy(messageBox1);
-                        }
-                    };
+                            new List<InGameCard>(invocationCards),
+                            showNegativeButton: true,
+                            showPositiveButton: true,
+                            positiveAction: (card) =>
+                            {
+                                if (card is InGameInvocationCard invocationCard)
+                                {
+                                    opponentPlayerCards.invocationCards.Remove(invocationCard);
+                                    opponentPlayerCards.yellowCards.Add(invocationCard);
+                                }
+                                else
+                                {
+                                    DisplayOkMessage(canvas);
+                                }
+                            },
+                            negativeAction: () =>
+                            {
+                                DisplayOkMessage(canvas);
+                            }
+                        );
+                        CardSelector.Instance.CreateCardSelection(canvas, config);
+                    }
                 }
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-            {
-                Object.Destroy(messageBox);
-            };
+            );
+            MessageBox.Instance.CreateMessageBox(canvas, config);
         }
     }
 }

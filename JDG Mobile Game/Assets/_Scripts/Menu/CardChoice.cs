@@ -41,10 +41,12 @@ namespace Menu
 
         private void DisplayMessageBox(int remainedCards)
         {
-            MessageBox.CreateOkMessageBox(
-                canvas,
+            var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_TITLE),
-                string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_MESSAGE), remainedCards));
+                string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_MESSAGE), remainedCards),
+                showOkButton: true
+            );
+            MessageBox.Instance.CreateMessageBox(canvas, config);
         }
 
         private void DeselectAllCards()
@@ -80,7 +82,7 @@ namespace Menu
                 else
                 {
                     title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_TWO);
-                    buttonText.text = LocalizationSystem.Instance.GetLocalizedValue( LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_TWO);
+                    buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_TWO);
                     isPlayerOneCardChosen = true;
 
                     FindObjectOfType<GameState>().deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
@@ -150,14 +152,16 @@ namespace Menu
             deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck1AllCard));
             deck1.Add(GetSpecificCard("Mohammad", deck1AllCard));
             deck1.Add(GetSpecificCard("Petite culotte", deck1AllCard));
-            deck1.Add(GetSpecificCard("Captain URSSAF", deck1AllCard));
-            deck1.Add(GetSpecificCard("Canardcity", deck1AllCard));
+            deck1.Add(GetSpecificCard("Carole du service marketing", deck1AllCard));
 
             while (deck1.Count != 30)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
+            
+            deck1.Add(GetSpecificCard("Petite portions de « riz »", deck1AllCard));
             deck1.Reverse();
+
 
             while (deck2.Count != 30)
             {
@@ -197,8 +201,8 @@ namespace Menu
         {
             if (isPlayerOneCardChosen)
             {
-                title.text =LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
-                buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE );
+                title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
+                buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
                 isPlayerOneCardChosen = false;
                 FindObjectOfType<GameState>().deckP1 = new List<InGameCard>();
                 DeselectAllCards();

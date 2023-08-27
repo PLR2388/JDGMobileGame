@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
@@ -43,31 +44,31 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
-        var messageBox = MessageBox.CreateSimpleMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
             string.Format(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONTINUE_APPLY_FAMILY_MESSAGE),
                 costPerTurn
-            )
-        );
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            playerStatus.ChangePv(-costPerTurn);
-            Object.Destroy(messageBox);
-        };
-        messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-        {
-            Object.Destroy(messageBox);
-            foreach (var invocationCard in playerCards.invocationCards)
+            ),
+            showPositiveButton: true,
+            showNegativeButton: true,
+            positiveAction: () =>
             {
-                invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
-            }
+                playerStatus.ChangePv(-costPerTurn);
+            },
+            negativeAction: () =>
+            {
+                foreach (var invocationCard in playerCards.invocationCards)
+                {
+                    invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
+                }
 
-            var effectCard = playerCards.effectCards.Find(effectCard => effectCard.Title == cardName);
-            playerCards.effectCards.Remove(effectCard);
-            playerCards.yellowCards.Add(effectCard);
-        };
+                var effectCard = playerCards.effectCards.First(effectCard => effectCard.Title == cardName);
+                playerCards.effectCards.Remove(effectCard);
+                playerCards.yellowCards.Add(effectCard);
+            }
+        );
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     public override void OnInvocationCardAdded(PlayerCards playerCards, InGameInvocationCard invocationCard)

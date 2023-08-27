@@ -20,11 +20,15 @@ public class ChangeFieldCardEffectAbility : EffectAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_FIELD_CARD)
-            );
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_FIELD_CARD),
+            showOkButton: true
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
+        );
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -33,32 +37,35 @@ public class ChangeFieldCardEffectAbility : EffectAbility
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
         var fieldCards = playerCards.deck.Where(card => card.Type == CardType.Field).ToList();
-        var messageBox = MessageBox.CreateMessageBoxWithCardSelector(
-            canvas,
+        var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FIELD),
-            fieldCards
-        );
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            var fieldCard = (InGameFieldCard)messageBox.GetComponent<MessageBox>().GetSelectedCard();
-            if (fieldCard == null)
+            fieldCards,
+            showNegativeButton: true,
+            showPositiveButton: true,
+            positiveAction: (card) =>
             {
-                DisplayOkMessage(canvas);
-            }
-            else
-            {
-                if (playerCards.FieldCard == null)
+                if (card is InGameFieldCard fieldCard)
                 {
-                    playerCards.FieldCard = fieldCard;
+                    if (playerCards.FieldCard == null)
+                    {
+                        playerCards.FieldCard = fieldCard;
+                    }
+                    else
+                    {
+                        playerCards.yellowCards.Add(playerCards.FieldCard);
+                        playerCards.FieldCard = fieldCard;
+                    }
                 }
                 else
                 {
-                    playerCards.yellowCards.Add(playerCards.FieldCard);
-                    playerCards.FieldCard = fieldCard;
+                    DisplayOkMessage(canvas);
                 }
-                Object.Destroy(messageBox);
+            },
+            negativeAction: () =>
+            {
+                DisplayOkMessage(canvas);
             }
-        };
-        messageBox.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
+        );
+        CardSelector.Instance.CreateCardSelection(canvas, config);
     }
 }

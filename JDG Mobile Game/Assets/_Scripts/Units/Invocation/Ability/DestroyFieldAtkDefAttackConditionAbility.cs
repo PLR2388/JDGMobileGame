@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Cards;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class DestroyFieldAtkDefAttackConditionAbility : Ability
@@ -16,23 +17,20 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         this.divideDefFactor = divideDefFactor;
     }
 
-    private static void DisplayOkMessage(Transform canvas, GameObject messageBox, GameObject messageBox2)
+    private static void DisplayOkMessage(Transform canvas)
     {
-        messageBox.SetActive(false);
-        GameObject messageBox1 = MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE)
-        );
-        messageBox1.GetComponent<MessageBox>().OkAction = () =>
-        {
-            Object.Destroy(messageBox);
-            Object.Destroy(messageBox1);
-            if (messageBox2 != null)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
+            showOkButton: true,
+            okAction: () =>
             {
-                Object.Destroy(messageBox2);
             }
-        };
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
+        );
     }
 
     private void DestroyField(PlayerCards playerCards, PlayerCards opponentPlayerCards, InGameCard fieldCard)
@@ -60,68 +58,62 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
             : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.YOUR_DEFENSE);
         int value = divideAtkFactor > 1 ? divideAtkFactor : divideDefFactor;
 
-        GameObject messageBox =
-            MessageBox.CreateSimpleMessageBox(
-                canvas,
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DIVIDE_TO_DESTROY_FIELD_MESSAGE),
-                    condition, value
-                )
-            );
-        messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-        {
-            List<InGameCard> fieldCardsToDestroy = new List<InGameCard>();
-            if (playerCards.FieldCard != null)
+        var config = new MessageBoxConfig(
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+            string.Format(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DIVIDE_TO_DESTROY_FIELD_MESSAGE),
+                condition, value
+            ),
+            showPositiveButton: true,
+            showNegativeButton: true,
+            positiveAction: () =>
             {
-                fieldCardsToDestroy.Add(playerCards.FieldCard);
-            }
+                List<InGameCard> fieldCardsToDestroy = new List<InGameCard>();
+                if (playerCards.FieldCard != null)
+                {
+                    fieldCardsToDestroy.Add(playerCards.FieldCard);
+                }
 
-            if (opponentPlayerCards.FieldCard != null)
-            {
-                fieldCardsToDestroy.Add(opponentPlayerCards.FieldCard);
-            }
+                if (opponentPlayerCards.FieldCard != null)
+                {
+                    fieldCardsToDestroy.Add(opponentPlayerCards.FieldCard);
+                }
 
-            if (fieldCardsToDestroy.Count == 1)
-            {
-                DestroyField(playerCards, opponentPlayerCards, fieldCardsToDestroy[0]);
-                Object.Destroy(messageBox);
-            }
-            else if (fieldCardsToDestroy.Count > 1)
-            {
-                GameObject messageBox1 =
-                    MessageBox.CreateMessageBoxWithCardSelector(
-                        canvas,
+                if (fieldCardsToDestroy.Count == 1)
+                {
+                    DestroyField(playerCards, opponentPlayerCards, fieldCardsToDestroy[0]);
+                }
+                else if (fieldCardsToDestroy.Count > 1)
+                {
+                    var config = new CardSelectorConfig(
                         LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
-                        fieldCardsToDestroy
-                    );
-                messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
+                        fieldCardsToDestroy,
+                        showNegativeButton: true,
+                        showPositiveButton: true,
+                        positiveAction: (fieldCard) =>
+                        {
+                            if (fieldCard == null)
+                            {
+                                DisplayOkMessage(canvas);
+                            }
+                            else
+                            {
+                                DestroyField(playerCards, opponentPlayerCards, fieldCard);
+                            }
+                        },
+                        negativeAction: () =>
+                        {
+                            DisplayOkMessage(canvas);
+                        }
+                        );
+                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                }
+                else
                 {
-                    InGameCard fieldCard = messageBox1.GetComponent<MessageBox>().GetSelectedCard();
-                    if (fieldCard == null)
-                    {
-                        DisplayOkMessage(canvas, messageBox1, messageBox);
-                    }
-                    else
-                    {
-                        DestroyField(playerCards, opponentPlayerCards, fieldCard);
-                        Object.Destroy(messageBox);
-                        Object.Destroy(messageBox1);
-                    }
-                };
-                messageBox1.GetComponent<MessageBox>().NegativeAction = () =>
-                {
-                    DisplayOkMessage(canvas, messageBox, messageBox1);
-                };
+                    DisplayOkMessage(canvas);
+                }
             }
-            else
-            {
-                DisplayOkMessage(canvas, messageBox, null);
-            }
-        };
-        messageBox.GetComponent<MessageBox>().NegativeAction = () =>
-        {
-            Object.Destroy(messageBox);
-        };
+        );
+        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 }

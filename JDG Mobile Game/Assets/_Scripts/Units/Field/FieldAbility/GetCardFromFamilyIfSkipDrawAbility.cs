@@ -16,10 +16,14 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
 
     private void DisplayOkMessage(Transform canvas)
     {
-        MessageBox.CreateOkMessageBox(
-            canvas,
+        var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD)
+            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            showOkButton: true
+        );
+        MessageBox.Instance.CreateMessageBox(
+            canvas,
+            config
         );
     }
 
@@ -28,51 +32,58 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
         base.OnTurnStart(canvas, playerCards, playerStatus);
 
         var validCards = playerCards.deck.Where(card =>
-            card.Type == CardType.Invocation && ((InGameInvocationCard)card).Families.Contains(family)).ToList();
+            card.Type == CardType.Invocation && (card as InGameInvocationCard)?.Families?.Contains(family) == true).ToList();
         validCards.AddRange(playerCards.yellowCards.Where(card =>
-            card.Type == CardType.Invocation && ((InGameInvocationCard)card).Families.Contains(family)));
+            card.Type == CardType.Invocation && (card as InGameInvocationCard)?.Families.Contains(family) == true));
 
         if (validCards.Count > 0)
         {
-            var messageBox = MessageBox.CreateSimpleMessageBox(
-                canvas,
+            var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE)
-            );
-            messageBox.GetComponent<MessageBox>().PositiveAction = () =>
-            {
-                var messageBox1 = MessageBox.CreateMessageBoxWithCardSelector(
-                    canvas,
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
-                    validCards);
-                messageBox1.GetComponent<MessageBox>().PositiveAction = () =>
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE),
+                showPositiveButton: true,
+                showNegativeButton: true,
+                positiveAction: () =>
                 {
-                    var invocationCard = (InGameInvocationCard)messageBox1.GetComponent<MessageBox>().GetSelectedCard();
-                    if (invocationCard == null)
-                    {
-                        DisplayOkMessage(canvas);
-                    }
-                    else
-                    {
-                        if (playerCards.yellowCards.Contains(invocationCard))
+                    var config = new CardSelectorConfig(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
+                        validCards,
+                        showNegativeButton: true,
+                        showPositiveButton: true,
+                        positiveAction: (selectedCard) =>
                         {
-                            playerCards.yellowCards.Remove(invocationCard);
-                            playerCards.handCards.Add(invocationCard);
-                        }
-                        else if (playerCards.deck.Contains(invocationCard))
-                        {
-                            playerCards.deck.Remove(invocationCard);
-                            playerCards.handCards.Add(invocationCard);
-                        }
+                            if (selectedCard is InGameInvocationCard invocationCard)
+                            {
+                                if (playerCards.yellowCards.Contains(invocationCard))
+                                {
+                                    playerCards.yellowCards.Remove(invocationCard);
+                                    playerCards.handCards.Add(invocationCard);
+                                }
+                                else if (playerCards.deck.Contains(invocationCard))
+                                {
+                                    playerCards.deck.Remove(invocationCard);
+                                    playerCards.handCards.Add(invocationCard);
+                                }
 
-                        playerCards.SkipCurrentDraw = true;
-                        Object.Destroy(messageBox1);
-                        Object.Destroy(messageBox);
-                    }
-                };
-                messageBox1.GetComponent<MessageBox>().NegativeAction = () => { DisplayOkMessage(canvas); };
-            };
-            messageBox.GetComponent<MessageBox>().NegativeAction = () => { Object.Destroy(messageBox); };
+                                playerCards.SkipCurrentDraw = true;
+                            }
+                            else
+                            {
+                                DisplayOkMessage(canvas);
+                            }
+                        },
+                        negativeAction: () =>
+                        {
+                            DisplayOkMessage(canvas);
+                        }
+                        );
+                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                }
+            );
+            MessageBox.Instance.CreateMessageBox(
+                canvas,
+                config
+            );
         }
     }
 }
