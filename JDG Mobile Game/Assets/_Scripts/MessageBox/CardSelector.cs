@@ -1,10 +1,15 @@
 using System.Collections.Generic;
 using Cards;
-using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class CardSelector : StaticInstance<CardSelector>
+[System.Serializable]
+public class NumberedCardEvent : UnityEvent<InGameCard, int>
+{
+}
+
+public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseComponent
 {
     private bool multipleCardSelection;
     private int numberCardInSelection = 2;
@@ -61,51 +66,66 @@ public class CardSelector : StaticInstance<CardSelector>
         }
     }
 
-    private void SetValueGameObject(GameObject newGameObject, CardSelectorConfig config)
+    private GameObject GetDescriptionTextGameObject(GameObject parent)
     {
-        var titleTextTransform = newGameObject.transform.GetChild(0).Find("TitleText");
-        var descriptionTextTransform = newGameObject.transform.GetChild(0).Find("DescriptionText");
-        var positiveButtonTransform = newGameObject.transform.GetChild(0).Find("PositiveButton");
-        var negativeButtonTransform = newGameObject.transform.GetChild(0).Find("NegativeButton");
-        var okButtonTransfrom = newGameObject.transform.GetChild(0).Find("OkButton");
-        var containerTransform = newGameObject.transform.GetChild(0).GetChild(0).Find("Container");
-        var cardsTransform = newGameObject.transform.GetChild(0).Find("Cards");
+        var descriptionTextTransform = parent.transform.GetChild(0).Find("DescriptionText");
+        return descriptionTextTransform.gameObject;
+    }
 
-        var titleText = titleTextTransform.GetComponent<TextMeshProUGUI>();
-        descriptionTextTransform.gameObject.SetActive(false);
-        var positiveButtonText = positiveButtonTransform.GetComponentInChildren<TextMeshProUGUI>();
-        var negativeButtonText = negativeButtonTransform.GetComponentInChildren<TextMeshProUGUI>();
-        var okButtonText = okButtonTransfrom.GetComponentInChildren<TextMeshProUGUI>();
-        var positiveButton = positiveButtonTransform.gameObject;
-        var negativeButton = negativeButtonTransform.gameObject;
-        var okButton = okButtonTransfrom.gameObject;
-        var displayCardsScript = containerTransform.GetComponent<DisplayCards>();
-        positiveButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_YES);
-        negativeButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_NO);
-        okButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_OK);
+    private GameObject GetChildGameObject(GameObject parent, string childName)
+    {
+        return parent.transform.GetChild(0).Find(childName)?.gameObject;
+    }
 
-        displayCardsScript.cardsList = config.Cards;
-        displayNumberOnCard = config.DisplayOrder;
+    private Button GetButton(GameObject parent, string childName)
+    {
+        var buttonTransform = parent.transform.GetChild(0).Find(childName);
+        return buttonTransform.GetComponent<Button>();
+    }
 
-        numberCardInSelection = config.NumberCardSelection;
-        multipleCardSelection = config.NumberCardSelection > 1;
+    private DisplayCards GetDisplayCards(GameObject parent)
+    {
+        var containerTransform = parent.transform.GetChild(0).GetChild(0).Find("Container");
+        return containerTransform.GetComponent<DisplayCards>();
+    }
 
-        cardsTransform.gameObject.SetActive(true);
-
-
-        titleText.text = config.Title;
-
-        positiveButton.SetActive(config.ShowPositiveButton);
-        okButton.SetActive(config.ShowOkButton);
-        negativeButton.SetActive(config.ShowNegativeButton);
-
-        var okBtn = okButton.GetComponent<Button>();
-        okBtn.onClick.RemoveAllListeners();
-        okBtn.onClick.AddListener(() =>
+    private void ConfigureButton(Button button, UnityAction action, GameObject gameObjectToDestroy)
+    {
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() =>
         {
-            config.OkAction?.Invoke(currentSelectedCard);
-            config.OkMultipleAction?.Invoke(multipleSelectedCards);
-            switch (config.NumberCardSelection)
+            action?.Invoke();
+            if (gameObjectToDestroy != null)
+                Destroy(gameObjectToDestroy);
+        });
+    }
+
+
+    public void SetNewValueGameObject(GameObject newGameObject, UIConfig config)
+    {
+        this.SetValueGameObject(newGameObject, config);
+        var cardSelectorConfig = config as CardSelectorConfig;
+
+        GetChildGameObject(newGameObject, "Cards").SetActive(true);
+        GetDescriptionTextGameObject(newGameObject).SetActive(false);
+
+        var displayCardsScript = GetDisplayCards(newGameObject);
+        displayCardsScript.cardsList = cardSelectorConfig?.Cards;
+
+        displayNumberOnCard = cardSelectorConfig?.DisplayOrder == true;
+        numberCardInSelection = cardSelectorConfig?.NumberCardSelection ?? 0;
+        multipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
+
+
+        var okBtn = GetButton(newGameObject, "OkButton");
+        var positiveBtn = GetButton(newGameObject, "PositiveButton");
+        var negativeBtn = GetButton(newGameObject, "NegativeButton");
+
+        UnityAction okAction = () =>
+        {
+            cardSelectorConfig?.OkAction?.Invoke(currentSelectedCard);
+            cardSelectorConfig?.OkMultipleAction?.Invoke(multipleSelectedCards);
+            switch (cardSelectorConfig?.NumberCardSelection)
             {
                 case 1:
                 {
@@ -120,22 +140,21 @@ public class CardSelector : StaticInstance<CardSelector>
                     break;
                 default:
                 {
-                    if (multipleSelectedCards.Count == config.NumberCardSelection)
+                    if (multipleSelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
                     {
                         Destroy(newGameObject);
                     }
                     break;
                 }
             }
-        });
+        };
+        ConfigureButton(okBtn, okAction, null);
 
-        var positiveBtn = positiveButton.GetComponent<Button>();
-        positiveBtn.onClick.RemoveAllListeners();
-        positiveBtn.onClick.AddListener(() =>
+        UnityAction positiveAction = () =>
         {
-            config.PositiveAction?.Invoke(currentSelectedCard);
-            config.PositiveMultipleAction?.Invoke(multipleSelectedCards);
-            if (config.NumberCardSelection == 1)
+            cardSelectorConfig?.PositiveAction?.Invoke(currentSelectedCard);
+            cardSelectorConfig?.PositiveMultipleAction?.Invoke(multipleSelectedCards);
+            if (cardSelectorConfig?.NumberCardSelection == 1)
             {
                 if (currentSelectedCard != null)
                 {
@@ -144,21 +163,14 @@ public class CardSelector : StaticInstance<CardSelector>
             }
             else
             {
-                if (multipleSelectedCards.Count == config.NumberCardSelection)
+                if (multipleSelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
                 {
                     Destroy(newGameObject);
                 }
             }
-
-        });
-
-        var negativeBtn = negativeButton.GetComponent<Button>();
-        negativeBtn.onClick.RemoveAllListeners();
-        negativeBtn.onClick.AddListener(() =>
-        {
-            config.NegativeAction?.Invoke();
-            Destroy(newGameObject);
-        });
+        };
+        ConfigureButton(positiveBtn, positiveAction, null);
+        ConfigureButton(negativeBtn, config.NegativeAction, newGameObject);
     }
     public void CreateCardSelection(Transform canvas, CardSelectorConfig config)
     {
@@ -166,6 +178,13 @@ public class CardSelector : StaticInstance<CardSelector>
         message.SetActive(true);
         message.transform.SetParent(canvas);
 
-        SetValueGameObject(message, config);
+        SetNewValueGameObject(message, config);
     }
+    
+    private void OnDestroy()
+    {
+        OnHover.CardSelectedEvent.RemoveListener(OnCardSelected);
+        OnHover.CardUnselectedEvent.RemoveListener(OnCardUnselected);
+    }
+
 }

@@ -1,74 +1,54 @@
-using Cards;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-[System.Serializable]
-public class NumberedCardEvent : UnityEvent<InGameCard, int>
+public class MessageBox : StaticInstance<MessageBox>, IMessageBoxBaseComponent
 {
-}
 
-public class MessageBox : StaticInstance<MessageBox>
-{
-    
     [SerializeField] private GameObject prefab;
-
-    private void SetValueGameObject(GameObject newGameObject, MessageBoxConfig config)
+    
+    private void AssignButtonAction(Button button, UnityAction action, GameObject objectToDestroy)
     {
-        var titleTextTransform = newGameObject.transform.GetChild(0).Find("TitleText");
-        var descriptionTextTransform = newGameObject.transform.GetChild(0).Find("DescriptionText");
-        var positiveButtonTransform = newGameObject.transform.GetChild(0).Find("PositiveButton");
-        var negativeButtonTransform = newGameObject.transform.GetChild(0).Find("NegativeButton");
-        var okButtonTransfrom = newGameObject.transform.GetChild(0).Find("OkButton");
-        var containerTransform = newGameObject.transform.GetChild(0).GetChild(0).Find("Container");
+        if(button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => 
+            {
+                action?.Invoke();
+                Destroy(objectToDestroy);
+            });
+        }
+    }
+    
+    private TextMeshProUGUI GetDescriptionText(GameObject parent)
+    {
+        var descriptionTextTransform = parent.transform.GetChild(0).Find("DescriptionText");
+        return descriptionTextTransform.GetComponent<TextMeshProUGUI>();
+    }
 
-        var titleText = titleTextTransform.GetComponent<TextMeshProUGUI>();
-        var descriptionText = descriptionTextTransform.GetComponent<TextMeshProUGUI>();
-        var positiveButtonText = positiveButtonTransform.GetComponentInChildren<TextMeshProUGUI>();
-        var negativeButtonText = negativeButtonTransform.GetComponentInChildren<TextMeshProUGUI>();
-        var okButtonText = okButtonTransfrom.GetComponentInChildren<TextMeshProUGUI>();
-        var positiveButton = positiveButtonTransform.gameObject;
-        var negativeButton = negativeButtonTransform.gameObject;
-        var okButton = okButtonTransfrom.gameObject;
+    private Button GetButton(GameObject parent, string childName)
+    {
+        var buttonTransform = parent.transform.GetChild(0).Find(childName);
+        return buttonTransform.GetComponent<Button>();
+    }
+
+    public void SetNewValueGameObject(GameObject newGameObject, UIConfig config)
+    {
+        this.SetValueGameObject(newGameObject, config);
+        var messageBoxConfig = config as MessageBoxConfig;
+        var containerTransform = newGameObject.transform.GetChild(0).GetChild(0).Find("Container");
         var container = containerTransform.gameObject;
         container.SetActive(false);
-        positiveButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_YES);
-        negativeButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_NO);
-        okButtonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_OK);
         
-        
-       
-        titleText.text = config.Title;
-        descriptionText.text = config.Description;
+        GetDescriptionText(newGameObject).text = messageBoxConfig?.Description;
 
-        positiveButton.SetActive(config.ShowPositiveButton);
-        okButton.SetActive(config.ShowOkButton);
-        negativeButton.SetActive(config.ShowNegativeButton);
-
-        var okBtn = okButton.GetComponent<Button>();
-        okBtn.onClick.RemoveAllListeners();
-        okBtn.onClick.AddListener(() =>
-        {
-            config.OkAction?.Invoke();
-            Destroy(newGameObject);
-        });
-
-        var positiveBtn = positiveButton.GetComponent<Button>();
-        positiveBtn.onClick.RemoveAllListeners();
-        positiveBtn.onClick.AddListener(() =>
-        {
-            config.PositiveAction?.Invoke();
-            Destroy(newGameObject);
-        });
-
-        var negativeBtn = negativeButton.GetComponent<Button>();
-        negativeBtn.onClick.RemoveAllListeners();
-        negativeBtn.onClick.AddListener(() =>
-        {
-            config.NegativeAction?.Invoke();
-            Destroy(newGameObject);
-        });
+        var okBtn = GetButton(newGameObject, "OkButton");
+        var positiveBtn = GetButton(newGameObject, "PositiveButton");
+        var negativeBtn = GetButton(newGameObject, "NegativeButton");
+        AssignButtonAction(okBtn, messageBoxConfig?.OkAction, newGameObject);
+        AssignButtonAction(positiveBtn, messageBoxConfig?.PositiveAction, newGameObject);
+        AssignButtonAction(negativeBtn, messageBoxConfig?.NegativeAction, newGameObject);
     }
 
     public void CreateMessageBox(Transform canvas, MessageBoxConfig config)
@@ -76,7 +56,7 @@ public class MessageBox : StaticInstance<MessageBox>
         var message = Instantiate(prefab);
         message.SetActive(true);
         message.transform.SetParent(canvas); // Must set parent after removing DDOL to avoid errors
-        
-        SetValueGameObject(message, config);
+
+        SetNewValueGameObject(message, config);
     }
 }
