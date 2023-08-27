@@ -33,9 +33,8 @@ public class DestroyFieldCardAbility : EffectAbility
         var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
             cards,
-            showNegativeButton: true,
-            showPositiveButton: true,
-            positiveAction: (card) =>
+            showOkButton: true,
+            okAction: (card) =>
             {
                 if (card == null)
                 {
@@ -79,18 +78,6 @@ public class DestroyFieldCardAbility : EffectAbility
                     }
                     playerStatus.ChangePv(-costHealth);
                 }
-            },
-            negativeAction: () =>
-            {
-                var config = new MessageBoxConfig(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
-                    showOkButton: true
-                );
-                MessageBox.Instance.CreateMessageBox(
-                    canvas,
-                    config
-                );
             }
         );
         CardSelector.Instance.CreateCardSelection(canvas, config);

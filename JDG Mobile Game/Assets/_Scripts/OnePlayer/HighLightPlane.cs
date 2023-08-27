@@ -35,19 +35,19 @@ namespace OnePlayer
             RemoveHighlight.AddListener(HideStatus);
         }
 
-        void HideStatus(HighlightElement element)
+        void HideStatus(HighlightElement highlightElement)
         {
-            if (element == this.element)
+            if (highlightElement == element)
             {
                 gameObject.SetActive(false);
             }
         }
 
-        void UpdateStatus(HighlightElement element, bool isActivated)
+        void UpdateStatus(HighlightElement highlightElement, bool activated)
         {
-            if (element == this.element)
+            if (highlightElement == element)
             {
-                this.isActivated = isActivated;
+                isActivated = activated;
             }
         }
 

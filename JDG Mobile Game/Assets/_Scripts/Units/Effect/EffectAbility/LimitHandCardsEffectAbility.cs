@@ -47,9 +47,8 @@ public class LimitHandCardsEffectAbility : EffectAbility
                     number),
                 playerCards.handCards.ToList(),
                 numberCardSelection: number,
-                showPositiveButton: true,
-                showNegativeButton: true,
-                positiveMultipleAction: (cards) =>
+                showOkButton: true,
+                okMultipleAction: (cards) =>
                 {
                     if (cards.Count == number)
                     {
@@ -74,20 +73,8 @@ public class LimitHandCardsEffectAbility : EffectAbility
                             config
                         );
                     }
-                },
-                negativeAction: () =>
-                {
-                    var config = new MessageBoxConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_REMOVE_CARDS),
-                        showOkButton: true
-                    );
-                    MessageBox.Instance.CreateMessageBox(
-                        canvas,
-                        config
-                    );
                 }
-                );
+            );
             CardSelector.Instance.CreateCardSelection(canvas, config);
         }
     }

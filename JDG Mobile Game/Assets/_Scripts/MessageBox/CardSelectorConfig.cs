@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using Cards;
-using UnityEngine;
 using UnityEngine.Events;
 
 public class CardSelectorConfig

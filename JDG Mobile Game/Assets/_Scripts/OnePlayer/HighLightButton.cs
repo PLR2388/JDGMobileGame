@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using OnePlayer;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,11 +15,11 @@ public class HighLightButton : MonoBehaviour
         HighLightPlane.Highlight.AddListener(UpdateStatus);
     }
 
-    void UpdateStatus(HighlightElement element, bool isActivated)
+    void UpdateStatus(HighlightElement highlightElement, bool activated)
     {
-        if (element == this.element)
+        if (highlightElement == element)
         {
-            this.isActivated = isActivated;
+            isActivated = activated;
         }
     }
 

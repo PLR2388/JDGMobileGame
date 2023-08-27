@@ -30,19 +30,6 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
         }
     }
 
-    private void DisplayOkMessageBox(Transform canvas)
-    {
-        var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
-            showOkButton: true
-        );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
-    }
-
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
         PlayerStatus opponentStatus)
     {
@@ -53,9 +40,8 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
             var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
                 playerCards.yellowCards.ToList(),
-                showNegativeButton: true,
-                showPositiveButton: true,
-                positiveAction: (card) =>
+                showOkButton: true,
+                okAction: (card) =>
                 {
                     if (card is InGameInvocationCard invocationCard)
                     {
@@ -64,12 +50,16 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
                     }
                     else
                     {
-                        DisplayOkMessageBox(canvas);
+                        var config = new MessageBoxConfig(
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                            showOkButton: true
+                        );
+                        MessageBox.Instance.CreateMessageBox(
+                            canvas,
+                            config
+                        );
                     }
-                },
-                negativeAction: () =>
-                {
-                    DisplayOkMessageBox(canvas);
                 }
             );
             CardSelector.Instance.CreateCardSelection(canvas, config);

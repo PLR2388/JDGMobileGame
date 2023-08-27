@@ -5,16 +5,15 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 public class DestroyCardsEffectAbility : EffectAbility
 {
-    private int numbers; // 0 = ALL
-    private bool mustThrowFirstDeck;
-    private bool mustSacrificeInvocation;
-    private bool mustThrowHandCard;
-    private bool fromCurrentPlayer;
-    private bool fromOpponentPlayer;
+    private readonly int numbers; // 0 = ALL
+    private readonly bool mustThrowFirstDeck;
+    private readonly bool mustSacrificeInvocation;
+    private readonly bool mustThrowHandCard;
+    private readonly bool fromCurrentPlayer;
+    private readonly bool fromOpponentPlayer;
 
     private List<CardType> types = new List<CardType>
     {
@@ -124,18 +123,16 @@ public class DestroyCardsEffectAbility : EffectAbility
                 var config = new CardSelectorConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
                     invocationCards,
-                    showNegativeButton: true,
-                    showPositiveButton: true,
-                    positiveAction: (card) =>
+                    showOkButton: true,
+                    okAction: (card) =>
                     {
                         if (card is InGameInvocationCard invocationCard)
                         {
-                                           var config = new CardSelectorConfig(
+                            var config = new CardSelectorConfig(
                                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                                 handCards.ToList(),
-                                showPositiveButton: true,
-                                showNegativeButton: true,
-                                positiveAction: (handCard) =>
+                                showOkButton: true, 
+                                okAction: (handCard) =>
                                 {
                                     if (handCard == null)
                                     {
@@ -189,10 +186,6 @@ public class DestroyCardsEffectAbility : EffectAbility
                                             opponentPlayerCard.FieldCard = null;
                                         }
                                     }
-                                },
-                                negativeAction: () =>
-                                {
-                                    DisplayOkMessage(canvas);
                                 }
                             );
                             CardSelector.Instance.CreateCardSelection(canvas, config);
@@ -201,10 +194,6 @@ public class DestroyCardsEffectAbility : EffectAbility
                         {
                             DisplayOkMessage(canvas);
                         }
-                    },
-                    negativeAction: () =>
-                    {
-                        DisplayOkMessage(canvas);
                     }
                 );
                 CardSelector.Instance.CreateCardSelection(canvas, config);
@@ -220,9 +209,8 @@ public class DestroyCardsEffectAbility : EffectAbility
                 var config = new CardSelectorConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                     handCards.ToList(),
-                    showNegativeButton: true,
-                    showPositiveButton: true,
-                    positiveAction: (handCard) =>
+                    showOkButton: true,
+                    okAction: (handCard) =>
                     {
                         if (handCard == null)
                         {
@@ -234,10 +222,6 @@ public class DestroyCardsEffectAbility : EffectAbility
                             playerCards.yellowCards.Add(handCard);
                             DisplayMessageBoxToDestroyOneCard(canvas, playerCards, opponentPlayerCard, cards);
                         }
-                    },
-                    negativeAction: () =>
-                    {
-                        DisplayOkMessage(canvas);
                     }
                 );
                 CardSelector.Instance.CreateCardSelection(canvas, config);
@@ -256,9 +240,8 @@ public class DestroyCardsEffectAbility : EffectAbility
         var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
             cards,
-            showNegativeButton: true,
-            showPositiveButton: true,
-            positiveAction: (card) =>
+            showOkButton: true,
+            okAction: (card) =>
             {
                 if (card == null)
                 {
@@ -268,10 +251,6 @@ public class DestroyCardsEffectAbility : EffectAbility
                 {
                     DestroyCard(playerCards, opponentPlayerCard, card, card.CardOwner == CardOwner.Player1);
                 }
-            },
-            negativeAction: () =>
-            {
-                DisplayOkMessage(canvas);
             }
         );
         CardSelector.Instance.CreateCardSelection(canvas, config);

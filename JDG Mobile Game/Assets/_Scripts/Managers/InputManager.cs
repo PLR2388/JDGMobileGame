@@ -26,8 +26,6 @@ public class InputManager : Singleton<InputManager>
         }
     }
 
-    public bool HasStopDetectTouch => stopDetectClicking;
-
     public void EnableDetectionTouch()
     {
         stopDetectClicking = false;

@@ -149,11 +149,11 @@ public class CardManager : Singleton<CardManager>
             {
                 for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
                 {
-                    var invocationCard = notEmptyOpponent[j] as InGameInvocationCard;
+                    var opponentInvocationCard = notEmptyOpponent[j] as InGameInvocationCard;
 
-                    if (invocationCard.CantBeAttack)
+                    if (opponentInvocationCard?.CantBeAttack == true)
                     {
-                        notEmptyOpponent.Remove(invocationCard);
+                        notEmptyOpponent.Remove(opponentInvocationCard);
                     }
                 }
 

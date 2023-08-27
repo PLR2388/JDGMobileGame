@@ -32,7 +32,7 @@ namespace _Scripts.Units.Invocation
             set
             {
                 cancelEffect = value;
-                InvocationFunctions.cancelInvocationEvent.Invoke(this);
+                InvocationFunctions.CancelInvocationEvent.Invoke(this);
             }
         }
 

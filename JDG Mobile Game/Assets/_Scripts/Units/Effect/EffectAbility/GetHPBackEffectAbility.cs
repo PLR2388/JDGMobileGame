@@ -23,19 +23,6 @@ public class GetHPBackEffectAbility : EffectAbility
         HPToRecover = hpToRecover;
     }
 
-    private void DisplayOkMessage(Transform canvas)
-    {
-        var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE),
-            showOkButton: true
-        );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
-    }
-
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
         return playerCards.invocationCards.Count(card =>
@@ -58,9 +45,8 @@ public class GetHPBackEffectAbility : EffectAbility
             var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
                 invocationCards,
-                showNegativeButton: true,
-                showPositiveButton: true,
-                positiveAction: (card) =>
+                showOkButton: true,
+                okAction: (card) =>
                 {
                     if (card is InGameInvocationCard invocationCard)
                     {
@@ -70,12 +56,16 @@ public class GetHPBackEffectAbility : EffectAbility
                     }
                     else
                     {
-                        DisplayOkMessage(canvas);
+                        var config = new MessageBoxConfig(
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE),
+                            showOkButton: true
+                        );
+                        MessageBox.Instance.CreateMessageBox(
+                            canvas,
+                            config
+                        );
                     }
-                },
-                negativeAction: () =>
-                {
-                    DisplayOkMessage(canvas);
                 }
             );
             CardSelector.Instance.CreateCardSelection(canvas, config);

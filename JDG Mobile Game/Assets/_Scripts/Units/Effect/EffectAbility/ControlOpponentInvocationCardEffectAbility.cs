@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
@@ -20,19 +19,6 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
         return opponentPlayerCard.invocationCards.Count > 0;
     }
 
-    private void DisplayOkMessage(Transform canvas)
-    {
-        var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
-            showOkButton: true
-        );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
-    }
-
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
         PlayerStatus opponentStatus)
     {
@@ -41,9 +27,8 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
         var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CONTROLLED_INVOCATION),
             new List<InGameCard>(opponentPlayerCard.invocationCards.ToList()),
-            showNegativeButton: true,
-            showPositiveButton: true,
-            positiveAction: (card) =>
+            showOkButton: true,
+            okAction: (card) =>
             {
                 if (card is InGameInvocationCard invocationCard)
                 {
@@ -52,17 +37,19 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
                     invocationCard.UnblockAttack();
                     opponentPlayerCard.invocationCards.Remove(invocationCard);
                     playerCards.invocationCards.Add(invocationCard);
-                    //opponentPlayerCard.SendToSecretHide(card);
-                    //cardLocation.AddPhysicalCard(card, GameLoop.IsP1Turn ? "P1" : "P2");
                 }
                 else
                 {
-                    DisplayOkMessage(canvas);
+                    var config = new MessageBoxConfig(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                        showOkButton: true
+                    );
+                    MessageBox.Instance.CreateMessageBox(
+                        canvas,
+                        config
+                    );
                 }
-            },
-            negativeAction: () =>
-            {
-                DisplayOkMessage(canvas);
             }
         );
         CardSelector.Instance.CreateCardSelection(canvas, config);

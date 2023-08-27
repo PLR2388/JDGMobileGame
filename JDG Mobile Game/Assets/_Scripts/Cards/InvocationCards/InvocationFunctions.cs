@@ -17,18 +17,16 @@ namespace Cards.InvocationCards
         private PlayerCards opponentPlayerCards;
         private GameObject p1;
         private GameObject p2;
-        [SerializeField] private GameObject inHandButton;
         [SerializeField] private Transform canvas;
-        [SerializeField] private GameObject invocationMenu;
 
-        public static readonly CancelInvocationEvent cancelInvocationEvent = new CancelInvocationEvent();
+        public static readonly CancelInvocationEvent CancelInvocationEvent = new CancelInvocationEvent();
 
         private void Start()
         {
             GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
             TutoInGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
-            cancelInvocationEvent.AddListener(OnCancelEffect);
+            CancelInvocationEvent.AddListener(OnCancelEffect);
             p1 = GameObject.Find("Player1");
             p2 = GameObject.Find("Player2");
             currentPlayerCard = p1.GetComponent<PlayerCards>();

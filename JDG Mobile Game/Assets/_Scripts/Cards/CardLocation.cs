@@ -90,15 +90,6 @@ namespace Cards
             DisplayCardsInPosition(player2Cards, false);
         }
 
-        public void AddPhysicalCard(InGameCard card, string playerName)
-        {
-            var newPhysicalCard = Instantiate(prefabCard, playerName == "P1" ? deckLocationP1 : deckLocationP2,
-                Quaternion.identity);
-            newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = card;
-            newPhysicalCard.name = card.Title + playerName;
-            UnitManager.Instance.AllPhysicalCards.Add(newPhysicalCard);
-        }
-
         public void HideCards(List<InGameCard> cards)
         {
             foreach (var card in cards)
@@ -121,17 +112,6 @@ namespace Cards
             }
 
             return -1;
-        }
-
-        public void RemovePhysicalCard(InGameCard card)
-        {
-            var currentIndex = GetPhysicalCardIndex(card, card.CardOwner == CardOwner.Player1);
-            if (currentIndex >= 0)
-            {
-                var physicalCard = UnitManager.Instance.AllPhysicalCards[currentIndex];
-                UnitManager.Instance.AllPhysicalCards.Remove(physicalCard);
-                Destroy(physicalCard);
-            }
         }
 
         // isPlayerOne is used to know if playerCard is from PlayerOne or PlayerTwo

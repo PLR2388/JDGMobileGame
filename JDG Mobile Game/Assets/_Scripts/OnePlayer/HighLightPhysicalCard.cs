@@ -16,13 +16,13 @@ namespace OnePlayer
             OnePlayer.HighLightPlane.Highlight.AddListener(UpdateStatus);
         }
 
-        void UpdateStatus(HighlightElement element, bool isActivated)
+        void UpdateStatus(HighlightElement highlightElement, bool activated)
         {
-            if (element == this.element)
+            if (highlightElement == element)
             {
                 if (GetComponent<PhysicalCardDisplay>().card.Title == "Tentacules")
                 {
-                    this.isActivated = isActivated;
+                    isActivated = activated;
                 }
             }
         }

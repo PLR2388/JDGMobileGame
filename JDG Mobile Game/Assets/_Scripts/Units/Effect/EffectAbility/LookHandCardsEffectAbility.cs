@@ -69,9 +69,8 @@ public class LookHandCardsEffectAbility : EffectAbility
                 var config = new CardSelectorConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
                     opponentPlayerCard.handCards.ToList(),
-                    showPositiveButton: true,
-                    showNegativeButton: true,
-                    positiveAction: (opponentCard) =>
+                    showOkButton: true,
+                    okAction: (opponentCard) =>
                     {
                         if (opponentCard == null)
                         {
@@ -82,8 +81,7 @@ public class LookHandCardsEffectAbility : EffectAbility
                             var config = new CardSelectorConfig(
                                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                                 playerCards.handCards.ToList(),
-                                showPositiveButton: true,
-                                showNegativeButton: true,
+                                showOkButton: true,
                                 positiveAction: (playerCard) =>
                                 {
                                     if (playerCard == null)
@@ -97,17 +95,10 @@ public class LookHandCardsEffectAbility : EffectAbility
                                         playerCards.handCards.Remove(playerCard);
                                         playerCards.yellowCards.Add(playerCard);
                                     }
-                                },
-                                negativeAction: () =>
-                                {
-                                    DisplayOkMessage(canvas);
                                 }
                             );
                             CardSelector.Instance.CreateCardSelection(canvas, config);
                         }
-                    }, negativeAction: () =>
-                    {
-                        DisplayOkMessage(canvas);
                     }
                 );
                 CardSelector.Instance.CreateCardSelection(canvas, config);

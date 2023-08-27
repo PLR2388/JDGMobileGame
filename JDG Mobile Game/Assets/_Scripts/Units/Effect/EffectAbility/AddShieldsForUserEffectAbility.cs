@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AddShieldsForUserEffectAbility : EffectAbility
 {
-    private int numberShields;
+    private readonly int numberShields;
 
     public AddShieldsForUserEffectAbility(EffectAbilityName name, string description, int numberShields)
     {

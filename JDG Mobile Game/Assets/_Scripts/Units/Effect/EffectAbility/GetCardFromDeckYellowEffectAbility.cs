@@ -26,19 +26,6 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
         return number > numberCards;
     }
 
-    private void DisplayOkMessageBox(Transform canvas)
-    {
-        var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
-            showOkButton: true
-        );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
-    }
-
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
         PlayerStatus playerStatus,
         PlayerStatus opponentStatus)
@@ -60,13 +47,20 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
             var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
                 cards,
-                showNegativeButton: true,
-                showPositiveButton: true,
-                positiveAction: (card) =>
+                showOkButton: true,
+                okAction: (card) =>
                 {
                     if (card == null)
                     {
-                        DisplayOkMessageBox(canvas);
+                        var config = new MessageBoxConfig(
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                            showOkButton: true
+                        );
+                        MessageBox.Instance.CreateMessageBox(
+                            canvas,
+                            config
+                        );
                     }
                     else
                     {
@@ -80,12 +74,8 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
                         }
                         playerCards.handCards.Add(card);
                     }
-                },
-                negativeAction: () =>
-                {
-                    DisplayOkMessageBox(canvas); 
                 }
-                );
+            );
             CardSelector.Instance.CreateCardSelection(canvas, config);
         }
     }
