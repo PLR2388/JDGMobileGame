@@ -148,11 +148,11 @@ namespace Menu
             var deck1AllCard = GameState.Instance.deck1AllCards;
             var deck2AllCard = GameState.Instance.deck2AllCards;
 
-            deck2.Add(GetSpecificCard("Lycée magique Georges Pompidou", deck2AllCard));
-            deck1.Add(GetSpecificCard("Sandrine le porte-manteau extraterrestre", deck1AllCard));
-            deck1.Add(GetSpecificCard("Mohammad", deck1AllCard));
-            deck1.Add(GetSpecificCard("MJ corrompu", deck1AllCard));
-            deck1.Add(GetSpecificCard("Carole du service marketing", deck1AllCard));
+            deck2.Add(GetSpecificCard(CardNames.LycéeMagiqueGeorgesPompidou, deck2AllCard));
+            deck1.Add(GetSpecificCard(CardNames.SandrineLePorteManteauExtraterrestre, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.Mohammad, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.MJCorrompu, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.CaroleDuServiceMarketing, deck1AllCard));
 
             while (deck1.Count != 30)
             {
@@ -175,8 +175,9 @@ namespace Menu
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
-        public static Card GetSpecificCard(string nameCard, List<Card> cards)
+        public static Card GetSpecificCard(CardNames cardNames, List<Card> cards)
         {
+            var nameCard = CardNameMappings.CardNameMap[cardNames];
             var card = cards.Find(x => x.Title == nameCard);
             if (card != null)
             {

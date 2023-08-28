@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using Menu;
+using UnityEngine;
 
 public class GameState : StaticInstance<GameState>
 {
@@ -29,6 +30,7 @@ public class GameState : StaticInstance<GameState>
         {
             deck1AllCards.Add(Instantiate(card));
             deck2AllCards.Add(Instantiate(card));
+            Debug.Log(card.Title);
         }
     }
 
@@ -38,17 +40,17 @@ public class GameState : StaticInstance<GameState>
         List<Card> deck1 = new List<Card>();
         List<Card> deck2 = new List<Card>();
 
-        var card = CardChoice.GetSpecificCard("Cliché Raciste", deck2AllCards);
-        var tentacule = CardChoice.GetSpecificCard("Tentacules", deck2AllCards);
-        var musicMegaDrive = CardChoice.GetSpecificCard("Musique de Mega Drive", deck2AllCards);
-        var elfette = CardChoice.GetSpecificCard("L'Elfette", deck2AllCards);
+        var card = CardChoice.GetSpecificCard(CardNames.ClichéRaciste, deck2AllCards);
+        var tentacule = CardChoice.GetSpecificCard(CardNames.Tentacules, deck2AllCards);
+        var musicMegaDrive = CardChoice.GetSpecificCard(CardNames.MusiqueDeMegaDrive, deck2AllCards);
+        var elfette = CardChoice.GetSpecificCard(CardNames.LElfette, deck2AllCards);
 
 
-        var fisti = CardChoice.GetSpecificCard("Fisti", deck1AllCards);
-        var jeanMichelBruitage = CardChoice.GetSpecificCard("Jean-Michel Bruitages", deck1AllCards);
-        var pyroBarbare = CardChoice.GetSpecificCard("Le Pyro-Barbare", deck1AllCards);
-        var fistiland = CardChoice.GetSpecificCard("Fistiland", deck1AllCards);
-        var merdeRose = CardChoice.GetSpecificCard("Merde magique en plastique rose", deck1AllCards);
+        var fisti = CardChoice.GetSpecificCard(CardNames.Fisti, deck1AllCards);
+        var jeanMichelBruitage = CardChoice.GetSpecificCard(CardNames.JeanMichelBruitages, deck1AllCards);
+        var pyroBarbare = CardChoice.GetSpecificCard(CardNames.LePyroBarbare, deck1AllCards);
+        var fistiland = CardChoice.GetSpecificCard(CardNames.Fistiland, deck1AllCards);
+        var merdeRose = CardChoice.GetSpecificCard(CardNames.MerdeMagiqueEnPlastiqueRose, deck1AllCards);
 
 
         CardChoice.GetRandomDeck(25, ref deck1, deck1AllCards);
