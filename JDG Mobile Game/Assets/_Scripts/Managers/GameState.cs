@@ -30,7 +30,6 @@ public class GameState : StaticInstance<GameState>
         {
             deck1AllCards.Add(Instantiate(card));
             deck2AllCards.Add(Instantiate(card));
-            Debug.Log(card.Title);
         }
     }
 

@@ -19,8 +19,14 @@ public class LimitTurnExistenceAbility : Ability
         }
         if (invocationCard.NumberOfTurnOnField >= numberOfTurn)
         {
+            var equipmentCard = invocationCard.EquipmentCard;
             playerCards.yellowCards.Add(invocationCard);
             playerCards.invocationCards.Remove(invocationCard);
+            if (equipmentCard != null)
+            {
+                playerCards.yellowCards.Add(equipmentCard);
+                invocationCard.EquipmentCard = null;
+            } 
         }
         
     }

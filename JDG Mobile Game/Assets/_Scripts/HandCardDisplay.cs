@@ -1,62 +1,75 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Cards;
+using UnityEngine;using UnityEngine.Events;
+
+[Serializable]
+public class HandCardChangeEvent : UnityEvent<ObservableCollection<InGameCard>>
+{
+}
 
 public class HandCardDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
+    
+    private List<GameObject> createdCards = new List<GameObject>();
 
-    [FormerlySerializedAs("Player1")] public GameObject player1;
-
-    [FormerlySerializedAs("Player2")] public GameObject player2;
-
-    private List<GameObject> createdCards;
+    public static readonly HandCardChangeEvent HandCardChange = new HandCardChangeEvent();
 
     private void Awake()
     {
-        GameObject.Find("GameLoop").GetComponent<GameLoop>();
-        createdCards = new List<GameObject>();
+        HandCardChange.AddListener(DisplayHandCard);
     }
 
-    private void Update()
+    private void DisplayHandCard(ObservableCollection<InGameCard> handCards)
     {
-        DisplayHandCard();
+        if (createdCards.Count > 0)
+        {
+            DestroyCards();
+            CreateCards(handCards);
+        }
+        else
+        {
+            CreateCards(handCards);
+        }
+    }
+    private void CreateCards(ObservableCollection<InGameCard> handCards)
+    {
+
+        foreach (var handCard in handCards)
+        {
+            var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+            newCard.transform.SetParent(transform, true);
+            newCard.GetComponent<CardDisplay>().card = handCard.baseCard;
+            newCard.GetComponent<CardDisplay>().inGameCard = handCard;
+            newCard.GetComponent<OnHover>().bIsInGame = true;
+
+            createdCards.Add(newCard);
+        }
+
+        var rectTransform = GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
+    }
+    private void DestroyCards()
+    {
+
+        foreach (var createdCard in createdCards)
+        {
+            Destroy(createdCard);
+        }
+
+        createdCards.Clear();
     }
 
-    private void DisplayHandCard()
+    private void OnEnable()
     {
-        var handCards = GameStateManager.Instance.IsP1Turn
-            ? player1.GetComponent<PlayerCards>().handCards
-            : player2.GetComponent<PlayerCards>().handCards;
-        if (createdCards.Count < handCards.Count)
-        {
-            foreach (var handCard in handCards)
-            {
-                var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-                newCard.transform.SetParent(transform, true);
-                newCard.GetComponent<CardDisplay>().card = handCard.baseCard;
-                newCard.GetComponent<CardDisplay>().inGameCard = handCard;
-                newCard.GetComponent<OnHover>().bIsInGame = true;
-
-                createdCards.Add(newCard);
-            }
-
-            var rectTransform = GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
-        }
-        else if (createdCards.Count > handCards.Count)
-        {
-            foreach (var createdCard in createdCards)
-            {
-                Destroy(createdCard);
-            }
-
-            createdCards.Clear();
-        }
+        HandCardChange.AddListener(DisplayHandCard);
     }
 
     private void OnDisable()
     {
+        HandCardChange.RemoveListener(DisplayHandCard);
         if (createdCards.Count <= 0) return;
         foreach (var createdCard in createdCards)
         {

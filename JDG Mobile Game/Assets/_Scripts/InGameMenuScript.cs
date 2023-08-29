@@ -225,8 +225,12 @@ public class InGameMenuScript : MonoBehaviour
     private void DisplayHand()
     {
         handScreen.SetActive(true);
+        var playerCard = GameStateManager.Instance.IsP1Turn
+            ? GameObject.Find("Player1").GetComponent<PlayerCards>()
+            : GameObject.Find("Player2").GetComponent<PlayerCards>();
         backgroundInformation.SetActive(false);
         buttonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
+        HandCardDisplay.HandCardChange.Invoke(playerCard.handCards);
     }
 
     private void HideHand()

@@ -163,6 +163,7 @@ public class PlayerCards : MonoBehaviour
             }
         }
         CardLocation.UpdateLocation.Invoke();
+        HandCardDisplay.HandCardChange.Invoke(handCards);
     }
 
 

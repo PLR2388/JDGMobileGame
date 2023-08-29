@@ -1624,9 +1624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e55e582599c6fac40bd81be5ff9fe264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
-  invocationMenu: {fileID: 1982540492}
 --- !u!114 &397230406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5734,8 +5732,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabCard: {fileID: 5528645795789417797, guid: 07baf689232351e4caa92a6fd2b8245e,
     type: 3}
-  player1: {fileID: 230530442}
-  player2: {fileID: 2017354827}
 --- !u!114 &2118548143
 MonoBehaviour:
   m_ObjectHideFlags: 0
