@@ -706,7 +706,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &227781771
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3328,6 +3328,7 @@ MonoBehaviour:
   prefabCard: {fileID: 5528645795789417797, guid: 07baf689232351e4caa92a6fd2b8245e,
     type: 3}
   canvas: {fileID: 1089345441}
+  cardChoice: {fileID: 2003630711}
 --- !u!114 &961552871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6502,7 +6503,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 350a3d48a3ce73e4d8eed45b5be65c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameState: {fileID: 0}
 --- !u!114 &2003630711
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -24,11 +24,22 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public static readonly CardSelectedEvent CardSelectedEvent = new CardSelectedEvent();
     public static readonly CardSelectedEvent CardUnselectedEvent = new CardSelectedEvent();
 
+    public static readonly CardSelectedEvent ForceUnselectCardEvent = new CardSelectedEvent();
+
     private void Start()
     {
         CardSelector.NumberedCardEvent.AddListener(UpdateNumberOnCard);
+        ForceUnselectCardEvent.AddListener(UnSelectCard);
         image = GetComponent<Image>();
         card = gameObject.GetComponent<CardDisplay>().inGameCard;
+    }
+
+    private void UnSelectCard(InGameCard cardToUnselect)
+    {
+        if (cardToUnselect == card)
+        {
+            bIsSelected = false;
+        }
     }
 
     private void UpdateNumberOnCard(InGameCard cardToModify, int numberToApply)
@@ -86,17 +97,11 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         {
             if (bIsSelected)
             {
-                image.color = Color.white;
-                bIsSelected = false;
-                displayNumber = false;
-                CardUnselectedEvent.Invoke(card);
+                UnSelectCard();
             }
             else
             {
-                image.color = Color.green;
-                bIsSelected = true;
-                var clickedCard = gameObject.GetComponent<CardDisplay>().inGameCard;
-                CardSelectedEvent.Invoke(clickedCard);
+                SelectCard();
             }
         }
         else
@@ -112,5 +117,21 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
             }
           
         }
+    }
+    private void UnSelectCard()
+    {
+
+        image.color = Color.white;
+        bIsSelected = false;
+        displayNumber = false;
+        CardUnselectedEvent.Invoke(card);
+    }
+    private void SelectCard()
+    {
+
+        image.color = Color.green;
+        bIsSelected = true;
+        var clickedCard = gameObject.GetComponent<CardDisplay>().inGameCard;
+        CardSelectedEvent.Invoke(clickedCard);
     }
 }

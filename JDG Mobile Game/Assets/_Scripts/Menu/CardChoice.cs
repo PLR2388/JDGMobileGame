@@ -3,6 +3,7 @@ using System.Linq;
 using Cards;
 using Sound;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -19,6 +20,8 @@ namespace Menu
 
         [SerializeField] private Text title;
         [SerializeField] private Text buttonText;
+
+        public static readonly UnityEvent<int> ChangeChoicePlayer = new UnityEvent<int>();
 
         public bool isPlayerOneCardChosen;
 
@@ -76,6 +79,7 @@ namespace Menu
                     title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
                     buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
                     isPlayerOneCardChosen = false;
+                    ChangeChoicePlayer.Invoke(1);
 
                    GameState.Instance.deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
@@ -84,6 +88,7 @@ namespace Menu
                     title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_TWO);
                     buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_TWO);
                     isPlayerOneCardChosen = true;
+                    ChangeChoicePlayer.Invoke(2);
 
                     GameState.Instance.deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
                     DeselectAllCards();
@@ -206,6 +211,7 @@ namespace Menu
                 isPlayerOneCardChosen = false;
                 GameState.Instance.deckP1 = new List<InGameCard>();
                 DeselectAllCards();
+                ChangeChoicePlayer.Invoke(1);
             }
             else
             {
