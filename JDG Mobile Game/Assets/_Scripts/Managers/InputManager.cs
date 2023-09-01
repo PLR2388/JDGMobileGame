@@ -60,7 +60,6 @@ public class InputManager : Singleton<InputManager>
             if (totalDownTime >= ClickDuration)
             {
                 Debug.Log("Long click");
-                clicking = false;
                 OnLongTouch.Invoke();
             }
         }

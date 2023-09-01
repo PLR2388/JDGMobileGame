@@ -1398,8 +1398,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerOne: 1
-  nextPhaseButton: {fileID: 1957640249}
-  inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 397230410}
 --- !u!114 &230530445
@@ -1417,6 +1415,7 @@ MonoBehaviour:
   currentPv: 30
   isP1: 1
   numberShield: 0
+  blockAttack: 0
 --- !u!1 &244790276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1738,7 +1737,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miniCardMenu: {fileID: 1989458480}
   canvas: {fileID: 244790280}
-  cardLocation: {fileID: 0}
 --- !u!114 &397230408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1765,23 +1763,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd01c2927ee9e4a4597b29d586f4e45f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phaseId: 0
-  playerText: {fileID: 1024667568}
-  roundText: {fileID: 138997257}
-  healthP1Text: {fileID: 29170108}
-  healthP2Text: {fileID: 1349726584}
-  bigImageCard: {fileID: 793464781}
-  invocationMenu: {fileID: 1982540492}
-  nextPhaseButton: {fileID: 1957640249}
-  canvas: {fileID: 244790280}
-  p1: {fileID: 230530442}
-  p2: {fileID: 2017354827}
-  playerInvocationCard: {fileID: 11400000, guid: 2e1d141870b316c439aa16ada126f544,
-    type: 2}
-  inHandButton: {fileID: 829748139}
-  playerCamera: {fileID: 0}
-  tutoImage: {fileID: 2095843835}
-  tutoVideo: {fileID: 1045100655}
 --- !u!114 &397230410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6112,7 +6093,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1809721686}
-  - component: {fileID: 1809721688}
   - component: {fileID: 1809721689}
   - component: {fileID: 1809721687}
   m_Layer: 0
@@ -6150,20 +6130,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
     type: 3}
---- !u!114 &1809721688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1809721685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cf8891864913b2498f380abea7ba373, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bigImageCard: {fileID: 793464781}
-  handScreen: {fileID: 1928831686}
 --- !u!114 &1809721689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6834,8 +6800,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerOne: 0
-  nextPhaseButton: {fileID: 1957640249}
-  inHandButton: {fileID: 829748139}
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 397230410}
 --- !u!114 &2017354830
@@ -6853,6 +6817,7 @@ MonoBehaviour:
   currentPv: 30
   isP1: 0
   numberShield: 0
+  blockAttack: 0
 --- !u!1 &2021223249
 GameObject:
   m_ObjectHideFlags: 0

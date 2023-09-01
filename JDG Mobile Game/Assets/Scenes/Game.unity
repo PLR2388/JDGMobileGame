@@ -4946,7 +4946,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1809721686}
   - component: {fileID: 1809721687}
-  - component: {fileID: 1809721688}
   - component: {fileID: 1809721689}
   m_Layer: 0
   m_Name: MenuScript
@@ -4992,20 +4991,6 @@ MonoBehaviour:
   backgroundInformation: {fileID: 1582983282}
   invocationMenu: {fileID: 1982540492}
   gameLoop: {fileID: 397230402}
---- !u!114 &1809721688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1809721685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cf8891864913b2498f380abea7ba373, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bigImageCard: {fileID: 793464781}
-  handScreen: {fileID: 1928831686}
 --- !u!114 &1809721689
 MonoBehaviour:
   m_ObjectHideFlags: 0
