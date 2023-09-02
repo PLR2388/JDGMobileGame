@@ -32,7 +32,7 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        bool hasCardInDeck = playerCards.deck.Exists(card => card.Type == type);
+        bool hasCardInDeck = playerCards.Deck.Exists(card => card.Type == type);
         if (hasCardInDeck)
         {
             var config = new MessageBoxConfig(
@@ -45,7 +45,7 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
                 showPositiveButton: true,
                 positiveAction: () =>
                 {
-                    List<InGameCard> cards = playerCards.deck.FindAll(card => card.Type == type);
+                    List<InGameCard> cards = playerCards.Deck.FindAll(card => card.Type == type);
                     var config = new CardSelectorConfig(
                         LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_DEFAULT_CHOICE_CARD),
                         cards,
@@ -59,8 +59,8 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
                             }
                             else
                             {
-                                playerCards.handCards.Add(card);
-                                playerCards.deck.Remove(card);
+                                playerCards.HandCards.Add(card);
+                                playerCards.Deck.Remove(card);
                                 invocationCard.SetRemainedAttackThisTurn(0);
                             }
                         },

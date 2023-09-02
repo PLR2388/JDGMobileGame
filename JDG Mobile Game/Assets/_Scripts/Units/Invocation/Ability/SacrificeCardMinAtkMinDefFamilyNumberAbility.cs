@@ -24,7 +24,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
 
     private List<InGameInvocationCard> GetValidInvocationCards(PlayerCards playerCards)
     {
-        return playerCards.invocationCards.Where(card =>
+        return playerCards.InvocationCards.Where(card =>
             card.Title != invocationCard.Title &&
             (card.Attack >= minAtk || card.Defense >= minDef) &&
             (family == CardFamily.Any || card.Families.Contains(family))).ToList();
@@ -57,8 +57,8 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
         {
             foreach (var invocationCard in invocationCards)
             {
-                playerCards.invocationCards.Remove(invocationCard);
-                playerCards.yellowCards.Add(invocationCard);
+                playerCards.InvocationCards.Remove(invocationCard);
+                playerCards.YellowCards.Add(invocationCard);
             }
         }
         else
@@ -80,8 +80,8 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                 {
                     if (card is InGameInvocationCard invocationCard)
                     {
-                        playerCards.invocationCards.Remove(invocationCard);
-                        playerCards.yellowCards.Add(invocationCard);
+                        playerCards.InvocationCards.Remove(invocationCard);
+                        playerCards.YellowCards.Add(invocationCard);
                     }
                     else
                     {
@@ -98,8 +98,8 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                     {
                         foreach (InGameInvocationCard invocationCard in cards)
                         {
-                            playerCards.invocationCards.Remove(invocationCard);
-                            playerCards.yellowCards.Add(invocationCard);
+                            playerCards.InvocationCards.Remove(invocationCard);
+                            playerCards.YellowCards.Add(invocationCard);
                         }
                     }
                     else

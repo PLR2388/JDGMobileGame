@@ -15,10 +15,10 @@ public class KillBothCardsIfAttackAbility : Ability
     {
         if (attacker.Title == invocationCard.Title)
         {
-            if (playerCards.yellowCards.Contains(attacker) && !opponentPlayerCards.yellowCards.Contains(attackedCard))
+            if (playerCards.YellowCards.Contains(attacker) && !opponentPlayerCards.YellowCards.Contains(attackedCard))
             {
-                opponentPlayerCards.invocationCards.Remove(attackedCard);
-                opponentPlayerCards.yellowCards.Add(attackedCard);
+                opponentPlayerCards.InvocationCards.Remove(attackedCard);
+                opponentPlayerCards.YellowCards.Add(attackedCard);
             }
         }
     }
@@ -33,10 +33,10 @@ public class KillBothCardsIfAttackAbility : Ability
         if (attackedCard.Title == invocationCard.Title)
         {
             base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
-            if (opponentPlayerCards.yellowCards.Contains(attackedCard) && !playerCards.yellowCards.Contains(attacker))
+            if (opponentPlayerCards.YellowCards.Contains(attackedCard) && !playerCards.YellowCards.Contains(attacker))
             {
-                playerCards.invocationCards.Remove(attacker);
-                playerCards.yellowCards.Add(attacker);
+                playerCards.InvocationCards.Remove(attacker);
+                playerCards.YellowCards.Add(attacker);
             }
         }
         else

@@ -38,7 +38,7 @@ public class WinAtkDefFamilyAbility : Ability
 
     private void ApplyPower(PlayerCards playerCards)
     {
-        int numberCardInvocation = playerCards.invocationCards
+        int numberCardInvocation = playerCards.InvocationCards
             .Count(card => card.Title != invocationCard.Title && card.Families.Contains(family));
         IncrementAtkDefInvocationCard(playerCards, numberCardInvocation);
     }
@@ -46,7 +46,7 @@ public class WinAtkDefFamilyAbility : Ability
     public override void CancelEffect(PlayerCards playerCards)
     {
         base.CancelEffect(playerCards);
-        int numberCardInvocation = playerCards.invocationCards
+        int numberCardInvocation = playerCards.InvocationCards
             .Count(card => card.Title != invocationCard.Title && card.Families.Contains(family));
         DecrementAtkDefInvocationCard(playerCards, numberCardInvocation);
     }

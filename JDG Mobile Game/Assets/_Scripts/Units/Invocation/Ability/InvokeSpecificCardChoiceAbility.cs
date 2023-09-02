@@ -29,7 +29,7 @@ public class InvokeSpecificCardChoiceAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        bool hasCardInDeck = playerCards.deck.Exists(card => cardChoices.Contains(card.Title));
+        bool hasCardInDeck = playerCards.Deck.Exists(card => cardChoices.Contains(card.Title));
         if (hasCardInDeck)
         {
             string cardNameChoiceString = cardChoices[0];
@@ -49,7 +49,7 @@ public class InvokeSpecificCardChoiceAbility : Ability
                 positiveAction: () =>
                 {
                     List<InGameCard> cards =
-                        playerCards.deck.FindAll(card => cardChoices.Contains(card.Title));
+                        playerCards.Deck.FindAll(card => cardChoices.Contains(card.Title));
                     var config = new CardSelectorConfig(
                         LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
                         cards,
@@ -59,8 +59,8 @@ public class InvokeSpecificCardChoiceAbility : Ability
                         {
                             if (card is InGameInvocationCard invocationCard)
                             {
-                                playerCards.deck.Remove(invocationCard);
-                                playerCards.invocationCards.Add(invocationCard);
+                                playerCards.Deck.Remove(invocationCard);
+                                playerCards.InvocationCards.Add(invocationCard);
                             }
                             else
                             {

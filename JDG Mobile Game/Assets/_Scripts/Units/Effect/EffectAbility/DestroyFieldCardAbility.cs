@@ -52,27 +52,27 @@ public class DestroyFieldCardAbility : EffectAbility
                 {
                     if (card.CardOwner == CardOwner.Player1)
                     {
-                        if (playerCards.isPlayerOne)
+                        if (playerCards.IsPlayerOne)
                         {
-                            playerCards.yellowCards.Add(card);
+                            playerCards.YellowCards.Add(card);
                             playerCards.FieldCard = null;
                         }
                         else
                         {
-                            opponentPlayerCard.yellowCards.Add(card);
+                            opponentPlayerCard.YellowCards.Add(card);
                             opponentPlayerCard.FieldCard = null;
                         }
                     }
                     else
                     {
-                        if (playerCards.isPlayerOne)
+                        if (playerCards.IsPlayerOne)
                         {
-                            opponentPlayerCard.yellowCards.Add(card);
+                            opponentPlayerCard.YellowCards.Add(card);
                             opponentPlayerCard.FieldCard = null;
                         }
                         else
                         {
-                            playerCards.yellowCards.Add(card);
+                            playerCards.YellowCards.Add(card);
                             playerCards.FieldCard = null;
                         }
                     }

@@ -65,12 +65,12 @@ namespace Cards.InvocationCards
         /// </summary>
         private void PutInvocationCard(InGameInvocationCard invocationCard)
         {
-            var size = currentPlayerCard.invocationCards.Count;
+            var size = currentPlayerCard.InvocationCards.Count;
 
             if (size >= 4) return;
             
-            currentPlayerCard.invocationCards.Add(invocationCard);
-            currentPlayerCard.handCards.Remove(invocationCard);
+            currentPlayerCard.InvocationCards.Add(invocationCard);
+            currentPlayerCard.HandCards.Remove(invocationCard);
 
             foreach (var ability in invocationCard.Abilities)
             {

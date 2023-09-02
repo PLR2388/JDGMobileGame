@@ -16,7 +16,7 @@ public class EquipmentCardOnCardCondition : Condition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return playerCards.invocationCards.Any(card =>
+        return playerCards.InvocationCards.Any(card =>
             card.Title == invocationCardName && card.EquipmentCard != null &&
             card.EquipmentCard.Title == equipmentCardName);
     }

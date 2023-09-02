@@ -31,9 +31,9 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
     {
         base.OnTurnStart(canvas, playerCards, playerStatus);
 
-        var validCards = playerCards.deck.Where(card =>
+        var validCards = playerCards.Deck.Where(card =>
             card.Type == CardType.Invocation && (card as InGameInvocationCard)?.Families?.Contains(family) == true).ToList();
-        validCards.AddRange(playerCards.yellowCards.Where(card =>
+        validCards.AddRange(playerCards.YellowCards.Where(card =>
             card.Type == CardType.Invocation && (card as InGameInvocationCard)?.Families.Contains(family) == true));
 
         if (validCards.Count > 0)
@@ -54,15 +54,15 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
                         {
                             if (selectedCard is InGameInvocationCard invocationCard)
                             {
-                                if (playerCards.yellowCards.Contains(invocationCard))
+                                if (playerCards.YellowCards.Contains(invocationCard))
                                 {
-                                    playerCards.yellowCards.Remove(invocationCard);
-                                    playerCards.handCards.Add(invocationCard);
+                                    playerCards.YellowCards.Remove(invocationCard);
+                                    playerCards.HandCards.Add(invocationCard);
                                 }
-                                else if (playerCards.deck.Contains(invocationCard))
+                                else if (playerCards.Deck.Contains(invocationCard))
                                 {
-                                    playerCards.deck.Remove(invocationCard);
-                                    playerCards.handCards.Add(invocationCard);
+                                    playerCards.Deck.Remove(invocationCard);
+                                    playerCards.HandCards.Add(invocationCard);
                                 }
 
                                 playerCards.SkipCurrentDraw = true;

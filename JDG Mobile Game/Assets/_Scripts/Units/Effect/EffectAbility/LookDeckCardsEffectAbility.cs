@@ -17,7 +17,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard,
         PlayerStatus opponentPlayerStatus)
     {
-        return playerCards.deck.Count > 0 || opponentPlayerCard.deck.Count > 0;
+        return playerCards.Deck.Count > 0 || opponentPlayerCard.Deck.Count > 0;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -45,7 +45,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
 
     private void DisplayAndOrderCardMessageBox(Transform canvas, PlayerCards playerCards)
     {
-        var deck = playerCards.deck;
+        var deck = playerCards.Deck;
         if (deck.Count >= numberCards)
         {
             var shortList = new List<InGameCard>();
@@ -67,12 +67,12 @@ public class LookDeckCardsEffectAbility : EffectAbility
                     {
                         for (var i = 0; i < numberCards; i++)
                         {
-                            playerCards.deck.Remove(selectedCards[i]);
+                            playerCards.Deck.Remove(selectedCards[i]);
                         }
 
                         for (var i = numberCards - 1; i >= 0; i--)
                         {
-                            playerCards.deck.Add(selectedCards[i]);
+                            playerCards.Deck.Add(selectedCards[i]);
                         }
                     }
                     else
@@ -109,12 +109,12 @@ public class LookDeckCardsEffectAbility : EffectAbility
                     {
                         for (var i = 0; i < deck.Count; i++)
                         {
-                            playerCards.deck.Remove(selectedCards[i]);
+                            playerCards.Deck.Remove(selectedCards[i]);
                         }
 
                         for (var i = deck.Count - 1; i >= 0; i--)
                         {
-                            playerCards.deck.Add(selectedCards[i]);
+                            playerCards.Deck.Add(selectedCards[i]);
                         }
                     }
                     else

@@ -27,7 +27,7 @@ public class SkipOpponentAttackAbility : Ability
 
     private void ApplyEffect(Transform canvas, PlayerCards opponentPlayerCard)
     {
-        if (opponentPlayerCard.invocationCards.Count > 0)
+        if (opponentPlayerCard.InvocationCards.Count > 0)
         {
             var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
@@ -36,7 +36,7 @@ public class SkipOpponentAttackAbility : Ability
                 showNegativeButton: true,
                 positiveAction: () =>
                 {
-                    List<InGameCard> list = new List<InGameCard>(opponentPlayerCard.invocationCards);
+                    List<InGameCard> list = new List<InGameCard>(opponentPlayerCard.InvocationCards);
                     var config = new CardSelectorConfig(
                         LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SKIP_ATTACK),
                         list,
@@ -86,7 +86,7 @@ public class SkipOpponentAttackAbility : Ability
         {
             return;
         }
-        if (GameStateManager.Instance.IsP1Turn == playerCards.isPlayerOne)
+        if (GameStateManager.Instance.IsP1Turn == playerCards.IsPlayerOne)
         {
             ApplyEffect(canvas, opponentPlayerCards);
         }

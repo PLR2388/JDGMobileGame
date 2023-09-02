@@ -22,8 +22,8 @@ public class EarnATKDEFForFamilyAbility : FieldAbility
     private List<InGameInvocationCard> BuildValidInvocationCards(PlayerCards playerCards)
     {
         var invocationsList = family == CardFamily.Any
-            ? playerCards.invocationCards
-            : playerCards.invocationCards.Where(card => card.Families.Contains(family));
+            ? playerCards.InvocationCards
+            : playerCards.InvocationCards.Where(card => card.Families.Contains(family));
         return invocationsList.ToList();
     }
 

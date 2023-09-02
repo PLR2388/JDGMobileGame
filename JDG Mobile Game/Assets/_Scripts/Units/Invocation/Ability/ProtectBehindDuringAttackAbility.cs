@@ -22,10 +22,10 @@ public class ProtectBehindDuringAttackAbility : Ability
             base.OnCardAttacked(canvas, attackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
         }
         if (attackedCard.Title == invocationCard.Title &&
-            opponentPlayerCards.invocationCards.Any(card => card.Title == protectorName))
+            opponentPlayerCards.InvocationCards.Any(card => card.Title == protectorName))
         {
             InGameInvocationCard newAttackedCard =
-                opponentPlayerCards.invocationCards.First(card => card.Title == protectorName);
+                opponentPlayerCards.InvocationCards.First(card => card.Title == protectorName);
             base.OnCardAttacked(canvas, newAttackedCard, attacker, playerCards, opponentPlayerCards, currentPlayerStatus, opponentPlayerStatus);
         }
         else

@@ -14,7 +14,7 @@ public class InvokeSpecificCardAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        bool hasCardInDeck = playerCards.deck.Exists(card => card.Title == cardName);
+        bool hasCardInDeck = playerCards.Deck.Exists(card => card.Title == cardName);
         if (hasCardInDeck)
         {
             var config = new MessageBoxConfig(
@@ -27,9 +27,9 @@ public class InvokeSpecificCardAbility : Ability
                 showPositiveButton: true,
                 positiveAction: () =>
                 {
-                    InGameInvocationCard card = playerCards.deck.Find(card => card.Title == cardName) as InGameInvocationCard;
-                    playerCards.deck.Remove(card);
-                    playerCards.invocationCards.Add(card);
+                    InGameInvocationCard card = playerCards.Deck.Find(card => card.Title == cardName) as InGameInvocationCard;
+                    playerCards.Deck.Remove(card);
+                    playerCards.InvocationCards.Add(card);
                 }
             );
             MessageBox.Instance.CreateMessageBox(canvas, config);

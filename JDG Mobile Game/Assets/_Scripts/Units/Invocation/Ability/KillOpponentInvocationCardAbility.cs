@@ -27,7 +27,7 @@ public class KillOpponentInvocationCardAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        ObservableCollection<InGameInvocationCard> invocationCards = opponentPlayerCards.invocationCards;
+        ObservableCollection<InGameInvocationCard> invocationCards = opponentPlayerCards.InvocationCards;
         if (invocationCards.Count > 0)
         {
             var config = new MessageBoxConfig(
@@ -39,8 +39,8 @@ public class KillOpponentInvocationCardAbility : Ability
                 {
                     if (invocationCards.Count == 1)
                     {
-                        opponentPlayerCards.invocationCards.Remove(invocationCards[0]);
-                        opponentPlayerCards.yellowCards.Add(invocationCards[0]);
+                        opponentPlayerCards.InvocationCards.Remove(invocationCards[0]);
+                        opponentPlayerCards.YellowCards.Add(invocationCards[0]);
                     }
                     else
                     {
@@ -53,8 +53,8 @@ public class KillOpponentInvocationCardAbility : Ability
                             {
                                 if (card is InGameInvocationCard invocationCard)
                                 {
-                                    opponentPlayerCards.invocationCards.Remove(invocationCard);
-                                    opponentPlayerCards.yellowCards.Add(invocationCard);
+                                    opponentPlayerCards.InvocationCards.Remove(invocationCard);
+                                    opponentPlayerCards.YellowCards.Add(invocationCard);
                                 }
                                 else
                                 {

@@ -21,7 +21,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
     private void ApplyPower(PlayerCards playerCards)
     {
         var fieldFamily = playerCards.FieldCard.GetFamily();
-        foreach (var invocationCard in playerCards.invocationCards)
+        foreach (var invocationCard in playerCards.InvocationCards)
         {
             invocationCard.Families = new[]
             {
@@ -32,7 +32,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
-        return playerCards.FieldCard != null && playerCards.invocationCards.Count > 0;
+        return playerCards.FieldCard != null && playerCards.InvocationCards.Count > 0;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -58,14 +58,14 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
             },
             negativeAction: () =>
             {
-                foreach (var invocationCard in playerCards.invocationCards)
+                foreach (var invocationCard in playerCards.InvocationCards)
                 {
                     invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
                 }
 
-                var effectCard = playerCards.effectCards.First(effectCard => effectCard.Title == cardName);
-                playerCards.effectCards.Remove(effectCard);
-                playerCards.yellowCards.Add(effectCard);
+                var effectCard = playerCards.EffectCards.First(effectCard => effectCard.Title == cardName);
+                playerCards.EffectCards.Remove(effectCard);
+                playerCards.YellowCards.Add(effectCard);
             }
         );
         MessageBox.Instance.CreateMessageBox(canvas, config);

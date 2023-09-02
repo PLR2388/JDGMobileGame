@@ -19,7 +19,7 @@ public class EarnHPPerFamilyOnTurnStartAbility : FieldAbility
     public override void OnTurnStart(Transform canvas, PlayerCards playerCards, PlayerStatus playerStatus)
     {
         base.OnTurnStart(canvas, playerCards, playerStatus);
-        var numberCard = playerCards.invocationCards.Count(card => card.Families.Contains(family));
+        var numberCard = playerCards.InvocationCards.Count(card => card.Families.Contains(family));
         playerStatus.ChangePv(numberCard * hp);
     }
 }

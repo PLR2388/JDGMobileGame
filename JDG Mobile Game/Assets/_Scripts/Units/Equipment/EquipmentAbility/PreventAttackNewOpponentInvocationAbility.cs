@@ -17,7 +17,7 @@ public class PreventAttackNewOpponentInvocationAbility : EquipmentAbility
     public override void RemoveEffect(InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         base.RemoveEffect(invocationCard, playerCards, opponentPlayerCards);
-        foreach (var inGameInvocationCard in opponentPlayerCards.invocationCards)
+        foreach (var inGameInvocationCard in opponentPlayerCards.InvocationCards)
         {
             inGameInvocationCard.UnblockAttack();
         }

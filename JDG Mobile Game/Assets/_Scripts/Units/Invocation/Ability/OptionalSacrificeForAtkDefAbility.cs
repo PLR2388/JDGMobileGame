@@ -25,7 +25,7 @@ public class OptionalSacrificeForAtkDefAbility : Ability
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         bool isFieldPresent = playerCards.FieldCard?.Title == requiredField;
-        bool isInvocationPresent = playerCards.invocationCards.Any(card => card.Title == cardNameToSacrifice);
+        bool isInvocationPresent = playerCards.InvocationCards.Any(card => card.Title == cardNameToSacrifice);
 
         if (isFieldPresent && isInvocationPresent)
         {
@@ -43,9 +43,9 @@ public class OptionalSacrificeForAtkDefAbility : Ability
                 positiveAction: () =>
                 {
                     InGameInvocationCard invocationCardToSacrifice =
-                        playerCards.invocationCards.First(card => card.Title == cardNameToSacrifice);
-                    playerCards.invocationCards.Remove(invocationCardToSacrifice);
-                    playerCards.yellowCards.Add(invocationCardToSacrifice);
+                        playerCards.InvocationCards.First(card => card.Title == cardNameToSacrifice);
+                    playerCards.InvocationCards.Remove(invocationCardToSacrifice);
+                    playerCards.YellowCards.Add(invocationCardToSacrifice);
 
                     invocationCard.Attack = newAtk;
                     invocationCard.Defense = newDef;

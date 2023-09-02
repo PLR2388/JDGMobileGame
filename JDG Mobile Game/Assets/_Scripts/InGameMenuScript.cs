@@ -90,7 +90,7 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                 var invocationCard = card as InGameInvocationCard;
                 putCardButton.GetComponent<Button>().interactable =
-                    invocationCard?.CanBeSummoned(playerCard) == true && playerCard.invocationCards.Count < 4;
+                    invocationCard?.CanBeSummoned(playerCard) == true && playerCard.InvocationCards.Count < 4;
 
                 break;
             case CardType.Contre:
@@ -102,15 +102,15 @@ public class InGameMenuScript : MonoBehaviour
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
                 putCardButton.GetComponent<Button>().interactable =
                     effectCard?.EffectAbilities.All(elt =>
-                        elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus)) == true && playerCard.effectCards.Count < 4;
+                        elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus)) == true && playerCard.EffectCards.Count < 4;
                 break;
             case CardType.Equipment:
                 putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_EQUIP_INVOCATION);
                 var equipmentCard = card as InGameEquipementCard;
                 putCardButton.GetComponent<Button>().interactable =
-                    playerCard.invocationCards.Count(inGameInvocationCard =>
+                    playerCard.InvocationCards.Count(inGameInvocationCard =>
                         inGameInvocationCard.EquipmentCard == null) > 0 ||
-                    opponentPlayerCard.invocationCards.Count(inGameInvocationCard =>
+                    opponentPlayerCard.InvocationCards.Count(inGameInvocationCard =>
                         inGameInvocationCard.EquipmentCard == null) > 0 ||
                     equipmentCard?.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut) == true
                     ;
@@ -230,7 +230,7 @@ public class InGameMenuScript : MonoBehaviour
             : GameObject.Find("Player2").GetComponent<PlayerCards>();
         backgroundInformation.SetActive(false);
         buttonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
-        HandCardDisplay.HandCardChange.Invoke(playerCard.handCards);
+        HandCardDisplay.HandCardChange.Invoke(playerCard.HandCards);
     }
 
     private void HideHand()

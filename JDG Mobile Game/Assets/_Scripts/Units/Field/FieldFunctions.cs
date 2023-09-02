@@ -32,7 +32,7 @@ namespace Cards.FieldCards
             if (currentPlayerCard.FieldCard != null) return;
             miniCardMenu.SetActive(false);
             currentPlayerCard.FieldCard = fieldCard;
-            currentPlayerCard.handCards.Remove(fieldCard);
+            currentPlayerCard.HandCards.Remove(fieldCard);
             foreach (var ability in fieldCard.FieldAbilities)
             {
                 ability.ApplyEffect(currentPlayerCard);

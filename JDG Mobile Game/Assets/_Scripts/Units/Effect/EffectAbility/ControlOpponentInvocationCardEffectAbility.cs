@@ -16,7 +16,7 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus opponentPlayerStatus)
     {
-        return opponentPlayerCard.invocationCards.Count > 0;
+        return opponentPlayerCard.InvocationCards.Count > 0;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
@@ -26,7 +26,7 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
 
         var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CONTROLLED_INVOCATION),
-            new List<InGameCard>(opponentPlayerCard.invocationCards.ToList()),
+            new List<InGameCard>(opponentPlayerCard.InvocationCards.ToList()),
             showOkButton: true,
             okAction: (card) =>
             {
@@ -35,8 +35,8 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
                     invocationControlled = invocationCard.Title;
                     invocationCard.ControlCard();
                     invocationCard.UnblockAttack();
-                    opponentPlayerCard.invocationCards.Remove(invocationCard);
-                    playerCards.invocationCards.Add(invocationCard);
+                    opponentPlayerCard.InvocationCards.Remove(invocationCard);
+                    playerCards.InvocationCards.Add(invocationCard);
                 }
                 else
                 {
@@ -61,13 +61,13 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
         base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCard);
 
         var invocationCard =
-            playerCards.invocationCards.FirstOrDefault(elt => elt.Title == invocationControlled);
+            playerCards.InvocationCards.FirstOrDefault(elt => elt.Title == invocationControlled);
         if (invocationCard != null)
         {
             invocationCard.UnblockAttack();
             invocationCard.FreeCard();
-            playerCards.invocationCards.Remove(invocationCard);
-            opponentPlayerCard.invocationCards.Add(invocationCard);
+            playerCards.InvocationCards.Remove(invocationCard);
+            opponentPlayerCard.InvocationCards.Add(invocationCard);
         }
     }
 }

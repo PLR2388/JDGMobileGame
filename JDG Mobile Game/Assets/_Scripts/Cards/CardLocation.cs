@@ -119,12 +119,11 @@ namespace Cards
         private void DisplayCardsInPosition(PlayerCards playerCards, bool isPlayerOne)
         {
             var cardTag = isPlayerOne ? "card1" : "card2";
-            var invocationCards = playerCards.invocationCards;
-            var effectCards = playerCards.effectCards;
-            var deck = playerCards.deck;
-            var yellowTrash = playerCards.yellowCards;
+            var invocationCards = playerCards.InvocationCards;
+            var effectCards = playerCards.EffectCards;
+            var deck = playerCards.Deck;
+            var yellowTrash = playerCards.YellowCards;
             var field = playerCards.FieldCard;
-            var secretCards = playerCards.secretCards;
             for (var i = 0; i < invocationCards.Count; i++)
             {
                 if (invocationCards[i] == null) continue;
@@ -153,7 +152,7 @@ namespace Cards
                 UnitManager.Instance.AllPhysicalCards[index].tag = cardTag;
             }
 
-            for (var i = 0; i < playerCards.effectCards.Count; i++)
+            for (var i = 0; i < playerCards.EffectCards.Count; i++)
             {
                 var effectCard = effectCards[i];
                 if (effectCard == null) continue;
@@ -215,13 +214,7 @@ namespace Cards
                 UnitManager.Instance.AllPhysicalCards[index].tag = cardTag;
             }
 
-            foreach (var index in secretCards.Select(card => GetPhysicalCardIndex(card, card.CardOwner == CardOwner.Player1)))
-            {
-                UnitManager.Instance.AllPhysicalCards[index].transform.position = secretHide;
-                UnitManager.Instance.AllPhysicalCards[index].tag = cardTag;
-            }
-
-            foreach (var handCard in playerCards.handCards)
+            foreach (var handCard in playerCards.HandCards)
             {
                 var index = GetPhysicalCardIndex(handCard, handCard.CardOwner == CardOwner.Player1);
                 if (index == -1)

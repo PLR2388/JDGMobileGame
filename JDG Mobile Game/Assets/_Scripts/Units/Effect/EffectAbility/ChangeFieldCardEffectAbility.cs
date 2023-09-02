@@ -15,7 +15,7 @@ public class ChangeFieldCardEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
-        return playerCards.deck.Any(card => card.Type == CardType.Field);
+        return playerCards.Deck.Any(card => card.Type == CardType.Field);
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
@@ -23,7 +23,7 @@ public class ChangeFieldCardEffectAbility : EffectAbility
         PlayerStatus opponentStatus)
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
-        var fieldCards = playerCards.deck.Where(card => card.Type == CardType.Field).ToList();
+        var fieldCards = playerCards.Deck.Where(card => card.Type == CardType.Field).ToList();
         var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FIELD),
             fieldCards,
@@ -38,7 +38,7 @@ public class ChangeFieldCardEffectAbility : EffectAbility
                     }
                     else
                     {
-                        playerCards.yellowCards.Add(playerCards.FieldCard);
+                        playerCards.YellowCards.Add(playerCards.FieldCard);
                         playerCards.FieldCard = fieldCard;
                     }
                 }

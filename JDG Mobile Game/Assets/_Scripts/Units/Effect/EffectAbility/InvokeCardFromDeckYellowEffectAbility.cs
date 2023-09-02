@@ -19,10 +19,10 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus opponentPlayerStatus)
     {
-        var hasSpaces = playerCards.invocationCards.Count < 4;
+        var hasSpaces = playerCards.InvocationCards.Count < 4;
         if (fromYellowTrash)
         {
-            return hasSpaces && playerCards.yellowCards.Count(elt => elt.Type == CardType.Invocation) > 0;
+            return hasSpaces && playerCards.YellowCards.Count(elt => elt.Type == CardType.Invocation) > 0;
         }
         else
         {
@@ -39,14 +39,14 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
         {
             var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
-                playerCards.yellowCards.ToList(),
+                playerCards.YellowCards.ToList(),
                 showOkButton: true,
                 okAction: (card) =>
                 {
                     if (card is InGameInvocationCard invocationCard)
                     {
-                        playerCards.yellowCards.Remove(invocationCard);
-                        playerCards.invocationCards.Add(invocationCard);
+                        playerCards.YellowCards.Remove(invocationCard);
+                        playerCards.InvocationCards.Add(invocationCard);
                     }
                     else
                     {

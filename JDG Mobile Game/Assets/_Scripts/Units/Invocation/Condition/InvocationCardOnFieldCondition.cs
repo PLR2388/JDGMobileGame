@@ -15,7 +15,7 @@ namespace _Scripts.Units.Invocation.Condition
         protected readonly List<string> cardNames;
         public override bool CanBeSummoned(PlayerCards playerCards)
         {
-            return playerCards.invocationCards.Any(card => cardNames.Contains(card.Title));
+            return playerCards.InvocationCards.Any(card => cardNames.Contains(card.Title));
         }
     }
 }

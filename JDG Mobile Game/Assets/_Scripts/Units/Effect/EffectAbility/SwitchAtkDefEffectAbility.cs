@@ -13,7 +13,7 @@ public class SwitchAtkDefEffectAbility : EffectAbility
         PlayerStatus opponentStatus)
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
-        foreach (var invocationCard in playerCards.invocationCards)
+        foreach (var invocationCard in playerCards.InvocationCards)
         {
             (invocationCard.Attack, invocationCard.Defense) = (invocationCard.Defense, invocationCard.Attack);
         }
@@ -23,7 +23,7 @@ public class SwitchAtkDefEffectAbility : EffectAbility
         PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
         base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCards);
-        foreach (var invocationCard in playerCards.invocationCards)
+        foreach (var invocationCard in playerCards.InvocationCards)
         {
             (invocationCard.Attack, invocationCard.Defense) = (invocationCard.Defense, invocationCard.Attack);
         }

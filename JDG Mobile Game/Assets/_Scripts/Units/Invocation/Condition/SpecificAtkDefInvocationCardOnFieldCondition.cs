@@ -16,6 +16,6 @@ public class SpecificAtkDefInvocationCardOnFieldCondition : Condition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return playerCards.invocationCards.Any(card => card.Defense >= def || card.Attack >= atk);
+        return playerCards.InvocationCards.Any(card => card.Defense >= def || card.Attack >= atk);
     }
 }

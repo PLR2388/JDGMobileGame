@@ -64,8 +64,8 @@ namespace Cards.EquipmentCards
         private void DisplayEquipmentPopUp(InGameEquipementCard equipmentCard)
         {
             var playerCards = CurrentPlayerCard;
-            var opponentInvocationCards = OpponentPlayerCard.invocationCards;
-            var currentInvocationCards = playerCards.invocationCards;
+            var opponentInvocationCards = OpponentPlayerCard.InvocationCards;
+            var currentInvocationCards = playerCards.InvocationCards;
             var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
 
             var cards = new List<InGameCard>();
@@ -98,7 +98,7 @@ namespace Cards.EquipmentCards
                         }
 
                         currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
-                        playerCards.handCards.Remove(equipmentCard);
+                        playerCards.HandCards.Remove(equipmentCard);
                     }
                 },
                 negativeAction: () =>

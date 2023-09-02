@@ -16,15 +16,15 @@ public class DrawMoreCardsAbility : FieldAbility
     public override void OnTurnStart(Transform canvas,PlayerCards playerCards, PlayerStatus playerStatus)
     {
         base.OnTurnStart(canvas, playerCards, playerStatus);
-        var size = playerCards.deck.Count;
+        var size = playerCards.Deck.Count;
         if (size > 0)
         {
             var min = Math.Min(size, numberAdditionalCards);
             for (var i = size - 1; i > size - 1 - min; i--)
             {
-                var c = playerCards.deck[i];
-                playerCards.handCards.Add(c);
-                playerCards.deck.RemoveAt(i);
+                var c = playerCards.Deck[i];
+                playerCards.HandCards.Add(c);
+                playerCards.Deck.RemoveAt(i);
             }
         }
     }

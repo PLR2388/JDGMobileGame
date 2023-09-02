@@ -22,17 +22,17 @@ public class LimitHandCardsEffectAbility : EffectAbility
 
     private void ApplyPowerLimitHandCard(Transform canvas, PlayerCards playerCards)
     {
-        var numberCardPlayerCard = playerCards.handCards.Count;
+        var numberCardPlayerCard = playerCards.HandCards.Count;
         if (numberCardPlayerCard < numberCards)
         {
             // Draw numberCards - numberCardPlayerCard
-            var size = playerCards.deck.Count;
-            var number = Math.Min(numberCards - numberCardPlayerCard, playerCards.deck.Count);
+            var size = playerCards.Deck.Count;
+            var number = Math.Min(numberCards - numberCardPlayerCard, playerCards.Deck.Count);
             for (var i = 0; i < number; i++)
             {
-                var c = playerCards.deck[size - 1 - i];
-                playerCards.handCards.Add(c);
-                playerCards.deck.RemoveAt(size - 1 - i);
+                var c = playerCards.Deck[size - 1 - i];
+                playerCards.HandCards.Add(c);
+                playerCards.Deck.RemoveAt(size - 1 - i);
             }
         }
         else if (numberCardPlayerCard > numberCards)
@@ -43,9 +43,9 @@ public class LimitHandCardsEffectAbility : EffectAbility
             var config = new CardSelectorConfig(
                 string.Format(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
-                    playerCards.isPlayerOne ? "1" : "2",
+                    playerCards.IsPlayerOne ? "1" : "2",
                     number),
-                playerCards.handCards.ToList(),
+                playerCards.HandCards.ToList(),
                 numberCardSelection: number,
                 showOkButton: true,
                 okMultipleAction: (cards) =>
@@ -54,8 +54,8 @@ public class LimitHandCardsEffectAbility : EffectAbility
                     {
                         foreach (var inGameCard in cards)
                         {
-                            playerCards.yellowCards.Add(inGameCard);
-                            playerCards.handCards.Remove(inGameCard);
+                            playerCards.YellowCards.Add(inGameCard);
+                            playerCards.HandCards.Remove(inGameCard);
                         }
                     }
                     else

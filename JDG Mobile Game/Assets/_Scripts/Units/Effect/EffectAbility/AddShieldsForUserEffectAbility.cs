@@ -15,7 +15,7 @@ public class AddShieldsForUserEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus opponentPlayerStatus)
     {
-        return playerCards.invocationCards.Count == 0;
+        return playerCards.InvocationCards.Count == 0;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
@@ -30,9 +30,9 @@ public class AddShieldsForUserEffectAbility : EffectAbility
     {
         if (playerStatus.NumberShield == 0)
         {
-            var effectCard = playerCards.effectCards.First(card => card.EffectAbilities.Contains(this));
-            playerCards.effectCards.Remove(effectCard);
-            playerCards.yellowCards.Add(effectCard);
+            var effectCard = playerCards.EffectCards.First(card => card.EffectAbilities.Contains(this));
+            playerCards.EffectCards.Remove(effectCard);
+            playerCards.YellowCards.Add(effectCard);
         }
     }
 }

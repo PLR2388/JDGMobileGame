@@ -28,7 +28,7 @@ public class GetFamilyInDeckAbility : Ability
             showPositiveButton: true,
             positiveAction: () =>
             {
-                List<InGameCard> familyCards = playerCards.deck.FindAll(card =>
+                List<InGameCard> familyCards = playerCards.Deck.FindAll(card =>
                     card.Type == CardType.Invocation && (card as InGameInvocationCard)?.Families.Contains(family) == true);
 
                 var config = new CardSelectorConfig(
@@ -58,8 +58,8 @@ public class GetFamilyInDeckAbility : Ability
                         }
                         else
                         {
-                            playerCards.deck.Remove(card);
-                            playerCards.handCards.Add(card);
+                            playerCards.Deck.Remove(card);
+                            playerCards.HandCards.Add(card);
                         }
                     },
                     negativeAction: () =>

@@ -18,7 +18,7 @@ public class CantBeAttackAbility : Ability
     private bool IsProtected(PlayerCards playerCards)
     {
         return family == CardFamily.Any ||
-               playerCards.invocationCards.Any(card => card.Title != invocationCard.Title && card.Families.Contains(family));
+               playerCards.InvocationCards.Any(card => card.Title != invocationCard.Title && card.Families.Contains(family));
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)

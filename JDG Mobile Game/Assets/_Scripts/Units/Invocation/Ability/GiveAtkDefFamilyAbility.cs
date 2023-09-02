@@ -39,7 +39,7 @@ public class GiveAtkDefFamilyAbility : Ability
     private void ApplyPower(PlayerCards playerCards)
     {
         IEnumerable<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
+            playerCards.InvocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
         foreach (var inGameInvocationCard in invocationCards)
         {
             IncreaseAtkDef(inGameInvocationCard);
@@ -50,7 +50,7 @@ public class GiveAtkDefFamilyAbility : Ability
     {
         base.CancelEffect(playerCards);
         IEnumerable<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
+            playerCards.InvocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
         foreach (var inGameInvocationCard in invocationCards)
         {
             DecreaseAtkDef(inGameInvocationCard);
@@ -88,7 +88,7 @@ public class GiveAtkDefFamilyAbility : Ability
     public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards,PlayerCards opponentPlayerCards)
     {
         IEnumerable<InGameInvocationCard> invocationCards =
-            playerCards.invocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
+            playerCards.InvocationCards.Where(card => card.Title != invocationCard.Title && card.Families.Contains(family));
         foreach (var inGameInvocationCard in invocationCards)
         {
             DecreaseAtkDef(inGameInvocationCard);

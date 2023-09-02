@@ -42,7 +42,7 @@ namespace Cards.EffectCards
         /// <param name="effectCard">The effect card the user put on field</param>
         private void PutEffectCard(InGameEffectCard effectCard)
         {
-            var size = currentPlayerCard.effectCards.Count;
+            var size = currentPlayerCard.EffectCards.Count;
 
             if (size < 4)
             {
@@ -52,8 +52,8 @@ namespace Cards.EffectCards
                 }
 
                 miniCardMenu.SetActive(false);
-                currentPlayerCard.handCards.Remove(effectCard);
-                currentPlayerCard.effectCards.Add(effectCard);
+                currentPlayerCard.HandCards.Remove(effectCard);
+                currentPlayerCard.EffectCards.Add(effectCard);
             }
             else
             {

@@ -25,7 +25,7 @@ public class GetHPBackEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
-        return playerCards.invocationCards.Count(card =>
+        return playerCards.InvocationCards.Count(card =>
             card.Attack >= atkDefCondition || card.Defense >= atkDefCondition) >= numberInvocationToSacrifice;
     }
 
@@ -40,7 +40,7 @@ public class GetHPBackEffectAbility : EffectAbility
         }
         else if (numberInvocationToSacrifice == 1)
         {
-            var invocationCards = new List<InGameCard>(playerCards.invocationCards
+            var invocationCards = new List<InGameCard>(playerCards.InvocationCards
                 .Where(card => card.Attack >= atkDefCondition || card.Defense >= atkDefCondition).ToList());
             var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
@@ -50,8 +50,8 @@ public class GetHPBackEffectAbility : EffectAbility
                 {
                     if (card is InGameInvocationCard invocationCard)
                     {
-                        playerCards.yellowCards.Add(invocationCard);
-                        playerCards.invocationCards.Remove(invocationCard);
+                        playerCards.YellowCards.Add(invocationCard);
+                        playerCards.InvocationCards.Remove(invocationCard);
                         playerStatus.ChangePv(HPToRecover == 0 ? PlayerStatus.MaxPv : HPToRecover);
                     }
                     else

@@ -11,6 +11,6 @@ public class SpecificCardBackFromDeathCondition : InvocationCardOnFieldCondition
 
     public override bool CanBeSummoned(PlayerCards playerCards)
     {
-        return base.CanBeSummoned(playerCards) && playerCards.invocationCards.First(card => card.Title == cardNames[0]).NumberOfDeaths > 0;
+        return base.CanBeSummoned(playerCards) && playerCards.InvocationCards.First(card => card.Title == cardNames[0]).NumberOfDeaths > 0;
     }
 }

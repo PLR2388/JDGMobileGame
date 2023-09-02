@@ -23,8 +23,8 @@ public class CantLiveWithoutAbility : Ability
     {
         if (CantLive(playerCards))
         {
-            playerCards.invocationCards.Remove(invocationCard);
-            playerCards.yellowCards.Add(invocationCard);
+            playerCards.InvocationCards.Remove(invocationCard);
+            playerCards.YellowCards.Add(invocationCard);
         }
     }
 
@@ -33,14 +33,14 @@ public class CantLiveWithoutAbility : Ability
         if (conditionInvocationCards == null)
         {
             // Check Family
-            return !playerCards.invocationCards.Any(card =>
+            return !playerCards.InvocationCards.Any(card =>
                 card.Title != invocationCard.Title &&
                 (card.Families.Contains(family) || family == CardFamily.Any));
         }
         else
         {
             // Check existence of specific cards
-            return !playerCards.invocationCards.Any(card => conditionInvocationCards.Contains(card.Title));
+            return !playerCards.InvocationCards.Any(card => conditionInvocationCards.Contains(card.Title));
         }
  
     }

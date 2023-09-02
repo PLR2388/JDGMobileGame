@@ -17,7 +17,7 @@ public class ProtectFromDestructionAbility : EquipmentAbility
         numberProtect--;
         if (numberProtect <= 0)
         {
-            playerCards.yellowCards.Add(invocationCard.EquipmentCard);
+            playerCards.YellowCards.Add(invocationCard.EquipmentCard);
             invocationCard.EquipmentCard = null;
         }
 

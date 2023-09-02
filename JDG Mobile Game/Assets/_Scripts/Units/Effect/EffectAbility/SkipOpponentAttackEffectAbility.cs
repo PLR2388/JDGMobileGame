@@ -28,9 +28,9 @@ public class SkipOpponentAttackEffectAbility : EffectAbility
         {
             counter = 0;
             opponentPlayerStatus.BlockAttack = false;
-            var card = playerCards.effectCards.First(effectCard => effectCard.Title == cardName);
-            playerCards.effectCards.Remove(card);
-            playerCards.yellowCards.Add(card);
+            var card = playerCards.EffectCards.First(effectCard => effectCard.Title == cardName);
+            playerCards.EffectCards.Remove(card);
+            playerCards.YellowCards.Add(card);
         }
     }
 }

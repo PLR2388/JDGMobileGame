@@ -18,10 +18,10 @@ public class BackToHandAfterDeathAbility : Ability
         var value = base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
         if (invocationCard.CancelEffect == false && deadCard.Title == invocationCard.Title &&
             (numberDeathMax == 0 || deadCard.NumberOfDeaths < numberDeathMax) &&
-            !playerCards.handCards.Contains(deadCard))
+            !playerCards.HandCards.Contains(deadCard))
         {
-            playerCards.yellowCards.Remove(deadCard);
-            playerCards.handCards.Add(deadCard);
+            playerCards.YellowCards.Remove(deadCard);
+            playerCards.HandCards.Add(deadCard);
         }
         
         return value;

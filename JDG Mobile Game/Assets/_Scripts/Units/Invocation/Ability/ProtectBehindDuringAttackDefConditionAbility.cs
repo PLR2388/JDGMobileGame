@@ -22,7 +22,7 @@ public class ProtectBehindDuringAttackDefConditionAbility : Ability
                 opponentPlayerStatus);
         }
         IEnumerable<InGameInvocationCard> invocationCards =
-            opponentPlayerCards.invocationCards.Where(card => card.Defense > attackedCard.Defense);
+            opponentPlayerCards.InvocationCards.Where(card => card.Defense > attackedCard.Defense);
         var inGameInvocationCards = invocationCards.ToList();
         if (attackedCard.Title == invocationCard.Title && inGameInvocationCards.Any())
         {

@@ -14,7 +14,7 @@ public class GetSpecificCardFromDeckAbility : Ability
 
     protected void GetSpecificCard(Transform canvas, PlayerCards playerCards)
     {
-        bool hasCardInDeck = playerCards.deck.Exists(card => card.Title == cardName);
+        bool hasCardInDeck = playerCards.Deck.Exists(card => card.Title == cardName);
         if (hasCardInDeck)
         {
             var config = new MessageBoxConfig(
@@ -27,9 +27,9 @@ public class GetSpecificCardFromDeckAbility : Ability
                 showPositiveButton: true,
                 positiveAction: () =>
                 {
-                    InGameCard card = playerCards.deck.Find(card => card.Title == cardName);
-                    playerCards.deck.Remove(card);
-                    playerCards.handCards.Add(card);
+                    InGameCard card = playerCards.Deck.Find(card => card.Title == cardName);
+                    playerCards.Deck.Remove(card);
+                    playerCards.HandCards.Add(card);
                 }
             );
             MessageBox.Instance.CreateMessageBox(canvas, config);

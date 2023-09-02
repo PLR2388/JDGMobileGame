@@ -29,7 +29,7 @@ public class ChangeInvocationFamilyAbility : FieldAbility
     public override void ApplyEffect(PlayerCards playerCards)
     {
         base.ApplyEffect(playerCards);
-        var invocationCard = playerCards.invocationCards.FirstOrDefault(card => card.Title == invocationName);
+        var invocationCard = playerCards.InvocationCards.FirstOrDefault(card => card.Title == invocationName);
         if (invocationCard != null)
         {
             var previousFamilies = invocationCard.Families;
@@ -54,7 +54,7 @@ public class ChangeInvocationFamilyAbility : FieldAbility
     public override void OnFieldCardRemoved(PlayerCards playerCards)
     {
         base.OnFieldCardRemoved(playerCards);
-        var invocationCard = playerCards.invocationCards.FirstOrDefault(card => card.Title == invocationName);
+        var invocationCard = playerCards.InvocationCards.FirstOrDefault(card => card.Title == invocationName);
         if (invocationCard != null)
         {
             var previousFamilies = invocationCard.Families;

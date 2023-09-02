@@ -25,7 +25,7 @@ public class OptionalChangeFieldFromDeckAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        List<InGameCard> fieldCardsFromDeck = playerCards.deck.FindAll(card => card.Type == CardType.Field);
+        List<InGameCard> fieldCardsFromDeck = playerCards.Deck.FindAll(card => card.Type == CardType.Field);
         if (fieldCardsFromDeck.Count > 0)
         {
             var config = new MessageBoxConfig(
@@ -50,7 +50,7 @@ public class OptionalChangeFieldFromDeckAbility : Ability
                                 }
                                 else
                                 {
-                                    playerCards.yellowCards.Add(playerCards.FieldCard);
+                                    playerCards.YellowCards.Add(playerCards.FieldCard);
                                     playerCards.FieldCard = fieldCard;
                                 }
                             }

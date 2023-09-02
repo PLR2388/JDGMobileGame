@@ -11,8 +11,8 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        bool hasCardInDeck = playerCards.deck.Exists(card => card.Title == cardName);
-        bool hasCardInYellowTrash = playerCards.yellowCards.Any(card => card.Title == cardName);
+        bool hasCardInDeck = playerCards.Deck.Exists(card => card.Title == cardName);
+        bool hasCardInYellowTrash = playerCards.YellowCards.Any(card => card.Title == cardName);
         if (hasCardInDeck || hasCardInYellowTrash)
         {
             var config = new MessageBoxConfig(
@@ -27,15 +27,15 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
                 {
                     if (hasCardInDeck)
                     {
-                        InGameCard card = playerCards.deck.Find(card => card.Title == cardName);
-                        playerCards.deck.Remove(card);
-                        playerCards.handCards.Add(card);
+                        InGameCard card = playerCards.Deck.Find(card => card.Title == cardName);
+                        playerCards.Deck.Remove(card);
+                        playerCards.HandCards.Add(card);
                     }
                     else
                     {
-                        InGameCard card = playerCards.yellowCards.First(card => card.Title == cardName);
-                        playerCards.deck.Remove(card);
-                        playerCards.handCards.Add(card);
+                        InGameCard card = playerCards.YellowCards.First(card => card.Title == cardName);
+                        playerCards.Deck.Remove(card);
+                        playerCards.HandCards.Add(card);
                     }
                 }
             );

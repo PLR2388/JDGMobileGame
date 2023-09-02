@@ -22,7 +22,7 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard,
         PlayerStatus opponentPlayerStatus)
     {
-        var number = fromDeck ? playerCards.deck.Count : 0 + (fromYellow ? playerCards.yellowCards.Count : 0);
+        var number = fromDeck ? playerCards.Deck.Count : 0 + (fromYellow ? playerCards.YellowCards.Count : 0);
         return number > numberCards;
     }
 
@@ -34,12 +34,12 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
         var cards = new List<InGameCard>();
         if (fromDeck)
         {
-            cards.AddRange(playerCards.deck);
+            cards.AddRange(playerCards.Deck);
         }
 
         if (fromYellow)
         {
-            cards.AddRange(playerCards.yellowCards);
+            cards.AddRange(playerCards.YellowCards);
         }
 
         if (numberCards == 1)
@@ -64,15 +64,15 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
                     }
                     else
                     {
-                        if (playerCards.deck.Contains(card))
+                        if (playerCards.Deck.Contains(card))
                         {
-                            playerCards.deck.Remove(card);
+                            playerCards.Deck.Remove(card);
                         }
-                        else if (playerCards.yellowCards.Contains(card))
+                        else if (playerCards.YellowCards.Contains(card))
                         {
-                            playerCards.yellowCards.Remove(card);
+                            playerCards.YellowCards.Remove(card);
                         }
-                        playerCards.handCards.Add(card);
+                        playerCards.HandCards.Add(card);
                     }
                 }
             );

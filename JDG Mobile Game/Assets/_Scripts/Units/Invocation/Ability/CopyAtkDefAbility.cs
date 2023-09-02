@@ -19,7 +19,7 @@ public class CopyAtkDefAbility : Ability
         try
         {
             InGameInvocationCard invocationCardToCopy =
-                playerCards.invocationCards.First(card => card.Title == cardToCopyName);
+                playerCards.InvocationCards.First(card => card.Title == cardToCopyName);
             invocationCard.Attack = invocationCardToCopy.Attack;
             invocationCard.Defense = invocationCardToCopy.Defense;
         }

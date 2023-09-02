@@ -12,7 +12,7 @@ public class LookHandCardsEffectAbility : EffectAbility
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard,
         PlayerStatus opponentPlayerStatus)
     {
-        return opponentPlayerCard.handCards.Count > 0;
+        return opponentPlayerCard.HandCards.Count > 0;
     }
 
     private void DisplayOkMessage(Transform canvas)
@@ -36,12 +36,12 @@ public class LookHandCardsEffectAbility : EffectAbility
 
         var config = new CardSelectorConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
-            opponentPlayerCard.handCards.ToList(),
+            opponentPlayerCard.HandCards.ToList(),
             showOkButton: true,
             numberCardSelection: 0,
             okAction: (card) =>
             {
-                if (playerCards.handCards.Count > 0)
+                if (playerCards.HandCards.Count > 0)
                 {
                     DisplayChoiceAboutHandCards(canvas, playerCards, opponentPlayerCard);
                 }
@@ -61,7 +61,7 @@ public class LookHandCardsEffectAbility : EffectAbility
             {
                 var config = new CardSelectorConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
-                    opponentPlayerCard.handCards.ToList(),
+                    opponentPlayerCard.HandCards.ToList(),
                     showOkButton: true,
                     okAction: (opponentCard) =>
                     {
@@ -73,7 +73,7 @@ public class LookHandCardsEffectAbility : EffectAbility
                         {
                             var config = new CardSelectorConfig(
                                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
-                                playerCards.handCards.ToList(),
+                                playerCards.HandCards.ToList(),
                                 showOkButton: true,
                                 okAction: (playerCard) =>
                                 {
@@ -83,10 +83,10 @@ public class LookHandCardsEffectAbility : EffectAbility
                                     }
                                     else
                                     {
-                                        opponentPlayerCard.handCards.Remove(opponentCard);
-                                        opponentPlayerCard.yellowCards.Add(opponentCard);
-                                        playerCards.handCards.Remove(playerCard);
-                                        playerCards.yellowCards.Add(playerCard);
+                                        opponentPlayerCard.HandCards.Remove(opponentCard);
+                                        opponentPlayerCard.YellowCards.Add(opponentCard);
+                                        playerCards.HandCards.Remove(playerCard);
+                                        playerCards.YellowCards.Add(playerCard);
                                     }
                                 }
                             );

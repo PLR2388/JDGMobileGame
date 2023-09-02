@@ -37,12 +37,12 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
     {
         if (playerCards.FieldCard == fieldCard)
         {
-            playerCards.yellowCards.Add(fieldCard);
+            playerCards.YellowCards.Add(fieldCard);
             playerCards.FieldCard = null;
         }
         else
         {
-            opponentPlayerCards.yellowCards.Add(fieldCard);
+            opponentPlayerCards.YellowCards.Add(fieldCard);
             opponentPlayerCards.FieldCard = null;
         }
 

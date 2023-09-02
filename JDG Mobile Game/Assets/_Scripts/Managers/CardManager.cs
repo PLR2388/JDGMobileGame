@@ -75,12 +75,12 @@ public class CardManager : Singleton<CardManager>
         }
         else
         {
-            var size = playerCards.deck.Count;
+            var size = playerCards.Deck.Count;
             if (size > 0)
             {
-                var c = playerCards.deck[size - 1];
-                playerCards.handCards.Add(c);
-                playerCards.deck.RemoveAt(size - 1);
+                var c = playerCards.Deck[size - 1];
+                playerCards.HandCards.Add(c);
+                playerCards.Deck.RemoveAt(size - 1);
             }
             else
             {
@@ -126,8 +126,8 @@ public class CardManager : Singleton<CardManager>
 
     public List<InGameCard> BuildInvocationCardsForAttack()
     {
-        var invocationCards = GetOpponentPlayerCards().invocationCards;
-        var attackPlayerEffectCard = GetCurrentPlayerCards().effectCards;
+        var invocationCards = GetOpponentPlayerCards().InvocationCards;
+        var attackPlayerEffectCard = GetCurrentPlayerCards().EffectCards;
         var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title != null).Cast<InGameCard>().ToList();
 
         if (notEmptyOpponent.Count == 0)
@@ -186,11 +186,11 @@ public class CardManager : Singleton<CardManager>
         var opponentPlayerCards = GetOpponentPlayerCards();
         var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
         var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
-        var copyInvocationCards = playerCards.invocationCards.ToList();
-        var copyOpponentInvocationCards = opponentPlayerCards.invocationCards.ToList();
+        var copyInvocationCards = playerCards.InvocationCards.ToList();
+        var copyOpponentInvocationCards = opponentPlayerCards.InvocationCards.ToList();
 
-        var copyEffectCards = playerCards.effectCards.ToList();
-        var copyOpponentEffectCards = opponentPlayerCards.effectCards.ToList();
+        var copyEffectCards = playerCards.EffectCards.ToList();
+        var copyOpponentEffectCards = opponentPlayerCards.EffectCards.ToList();
 
         foreach (var invocationCard in copyInvocationCards)
         {
@@ -248,7 +248,7 @@ public class CardManager : Singleton<CardManager>
     {
         PlayerCards currentPlayerCard = GetCurrentPlayerCards();
 
-        var invocationCards = currentPlayerCard.invocationCards;
+        var invocationCards = currentPlayerCard.InvocationCards;
 
         foreach (var invocationCard in invocationCards)
         {

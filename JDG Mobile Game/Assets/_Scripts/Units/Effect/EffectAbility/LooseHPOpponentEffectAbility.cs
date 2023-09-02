@@ -24,17 +24,17 @@ public class LooseHPOpponentEffectAbility : EffectAbility
     {
         if (fromCurrentNumberInvocationCards)
         {
-            return playerCards.invocationCards.Count > 0;
+            return playerCards.InvocationCards.Count > 0;
         }
 
         if (fromOpponentNumberInvocationCards)
         {
-            return opponentPlayerCard.invocationCards.Count > 0;
+            return opponentPlayerCard.InvocationCards.Count > 0;
         }
 
         if (fromOpponentNumberHandCards)
         {
-            return opponentPlayerCard.handCards.Count > 0;
+            return opponentPlayerCard.HandCards.Count > 0;
         }
 
         return true;
@@ -48,17 +48,17 @@ public class LooseHPOpponentEffectAbility : EffectAbility
 
         if (fromOpponentNumberInvocationCards)
         {
-            opponentStatus.ChangePv(-damage * opponentPlayerCard.invocationCards.Count);
+            opponentStatus.ChangePv(-damage * opponentPlayerCard.InvocationCards.Count);
         }
 
         if (fromCurrentNumberInvocationCards)
         {
-            opponentStatus.ChangePv(-damage * playerCards.invocationCards.Count);
+            opponentStatus.ChangePv(-damage * playerCards.InvocationCards.Count);
         }
 
         if (fromOpponentNumberHandCards)
         {
-            opponentStatus.ChangePv(-damage * opponentPlayerCard.handCards.Count);
+            opponentStatus.ChangePv(-damage * opponentPlayerCard.HandCards.Count);
         }
     }
 }

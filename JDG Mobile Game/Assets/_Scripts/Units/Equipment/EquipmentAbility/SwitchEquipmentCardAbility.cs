@@ -18,7 +18,7 @@ public class SwitchEquipmentCardAbility : EquipmentAbility
         var equipmentCard = invocationCard.EquipmentCard;
         if (equipmentCard != null)
         {
-            playerCards.yellowCards.Add(equipmentCard);
+            playerCards.YellowCards.Add(equipmentCard);
             foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
             {
                 equipmentCardEquipmentAbility.RemoveEffect(invocationCard, playerCards, opponentPlayerCards);

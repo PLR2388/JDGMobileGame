@@ -55,9 +55,9 @@ public abstract class EffectAbility
         counter++;
         if (counter >= NumberOfTurn && NumberOfTurn > 0)
         {
-            var effectCard = playerCards.effectCards.First(elt => elt.EffectAbilities.Any(ability => ability.Name == Name));
-            playerCards.effectCards.Remove(effectCard);
-            playerCards.yellowCards.Add(effectCard);
+            var effectCard = playerCards.EffectCards.First(elt => elt.EffectAbilities.Any(ability => ability.Name == Name));
+            playerCards.EffectCards.Remove(effectCard);
+            playerCards.YellowCards.Add(effectCard);
         }
     }
 

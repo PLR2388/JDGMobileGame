@@ -15,7 +15,7 @@ public class IncrementNumberAttackEffectAbility : EffectAbility
         PlayerStatus opponentStatus)
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
-        foreach (var invocationCard in playerCards.invocationCards)
+        foreach (var invocationCard in playerCards.InvocationCards)
         {
             invocationCard.SetRemainedAttackThisTurn(numberAttackPerTurn);
         }

@@ -10,25 +10,29 @@ using UnityEngine;
 
 public class PlayerCards : MonoBehaviour
 {
-    public List<InGameCard> deck = new List<InGameCard>();
-
-    [SerializeField] public bool isPlayerOne;
-
     [SerializeField] private Transform canvas;
     [SerializeField] private CardLocation cardLocation;
-
+    [SerializeField] private PlayerCards opponentPlayerCards;
+    [SerializeField] private bool _isPlayerOne;
     private UnitManager unitManager;
-
-
-    public bool SkipCurrentDraw { get; set; }
-
-    public List<InGameCard> secretCards = new List<InGameCard>(); // Where combine card go
-
     private InGameFieldCard _fieldCard;
+    
+    public bool IsPlayerOne
+    {
+        get => _isPlayerOne;
+        private set => _isPlayerOne = value;
+    }
+    public bool SkipCurrentDraw { get; set; }
+    public List<InGameCard> Deck = new List<InGameCard>();
+    public readonly ObservableCollection<InGameCard> HandCards = new ObservableCollection<InGameCard>();
+    public readonly ObservableCollection<InGameEffectCard> EffectCards = new ObservableCollection<InGameEffectCard>();
+    public readonly ObservableCollection<InGameInvocationCard> InvocationCards = new ObservableCollection<InGameInvocationCard>();
+    public readonly ObservableCollection<InGameCard> YellowCards = new ObservableCollection<InGameCard>();
+    private List<InGameInvocationCard> oldInvocations = new List<InGameInvocationCard>();
 
     public InGameFieldCard FieldCard
     {
-        get { return _fieldCard; }
+        get => _fieldCard;
         set
         {
             if (_fieldCard != value && _fieldCard != null)
@@ -44,109 +48,129 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
-    public ObservableCollection<InGameCard> handCards = new ObservableCollection<InGameCard>();
-    public ObservableCollection<InGameEffectCard> effectCards = new ObservableCollection<InGameEffectCard>();
-
-    public ObservableCollection<InGameInvocationCard> invocationCards =
-        new ObservableCollection<InGameInvocationCard>();
-
-    public ObservableCollection<InGameCard> yellowCards = new ObservableCollection<InGameCard>();
-
-    private List<InGameInvocationCard> oldInvocations = new List<InGameInvocationCard>();
-
     // Start is called before the first frame update
     private void Start()
     {
-        invocationCards = new ObservableCollection<InGameInvocationCard>();
-        effectCards = new ObservableCollection<InGameEffectCard>();
-        deck = isPlayerOne ? GameState.Instance.deckP1 : GameState.Instance.deckP2;
-        UnitManager.Instance.InitPhysicalCards(deck, isPlayerOne);
+        Deck = IsPlayerOne ? GameState.Instance.deckP1 : GameState.Instance.deckP2;
+        UnitManager.Instance.InitPhysicalCards(Deck, IsPlayerOne);
 
-        for (var i = deck.Count - 5; i < deck.Count; i++)
+        for (var i = Deck.Count - 5; i < Deck.Count; i++)
         {
-            handCards.Add(deck[i]);
+            HandCards.Add(Deck[i]);
         }
 
-        deck.RemoveRange(deck.Count - 5, 5);
-        cardLocation.HideCards(handCards.ToList());
+        Deck.RemoveRange(Deck.Count - 5, 5);
+        cardLocation.HideCards(HandCards.ToList());
 
-        invocationCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    OnInvocationCardAdded(invocationCards.Last());
-                    break;
-                case NotifyCollectionChangedAction.Move:
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    var removedInvocationCard = oldInvocations.Except(invocationCards).First();
-                    OnInvocationCardsRemoved(removedInvocationCard);
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            OnInvocationCardsChanged();
-            oldInvocations = invocationCards.ToList();
-        };
-
-        yellowCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    OnYellowTrashAdded();
-                    break;
-                case NotifyCollectionChangedAction.Move:
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            CardLocation.UpdateLocation.Invoke();
-        };
-
-        handCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    OnHandCardsChange(1);
-                    break;
-                case NotifyCollectionChangedAction.Move:
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    OnHandCardsChange(-1);
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    break;
-                case NotifyCollectionChangedAction.Reset:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        };
-
-        effectCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            CardLocation.UpdateLocation.Invoke();
-        };
+        InvocationCards.CollectionChanged += InvocationCards_CollectionChanged;
+        YellowCards.CollectionChanged += YellowCards_CollectionChanged;
+        HandCards.CollectionChanged += HandCards_CollectionChanged;
+        EffectCards.CollectionChanged += EffectCards_CollectionChanged;
     }
 
+    /// <summary>
+    /// React to changes among invocation cards
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private void InvocationCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                OnInvocationCardAdded(InvocationCards.Last());
+                break;
+            case NotifyCollectionChangedAction.Move:
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                var removedInvocationCard = oldInvocations.Except(InvocationCards).First();
+                OnInvocationCardsRemoved(removedInvocationCard);
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        OnInvocationCardsChanged();
+        oldInvocations = InvocationCards.ToList();
+    }
+
+    /// <summary>
+    /// React to changes among Yellow cards
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private void YellowCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                OnYellowTrashAdded();
+                break;
+            case NotifyCollectionChangedAction.Move:
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        CardLocation.UpdateLocation.Invoke();
+    }
+
+    /// <summary>
+    /// React to changes among Hand cards
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private void HandCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                OnHandCardsChange(1);
+                break;
+            case NotifyCollectionChangedAction.Move:
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                OnHandCardsChange(-1);
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    /// <summary>
+    /// React to changes among Effect cards
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void EffectCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        CardLocation.UpdateLocation.Invoke();
+    }
+
+    /// <summary>
+    /// Update powers, location and display when Hand cards change
+    /// </summary>
+    /// <param name="delta"></param>
     private void OnHandCardsChange(int delta)
     {
-        foreach (var inGameInvocationCard in invocationCards)
+        foreach (var inGameInvocationCard in InvocationCards)
         {
             var equipmentCard = inGameInvocationCard.EquipmentCard;
             if (equipmentCard == null) continue;
@@ -156,31 +180,38 @@ public class PlayerCards : MonoBehaviour
             }
         }
         CardLocation.UpdateLocation.Invoke();
-        HandCardDisplay.HandCardChange.Invoke(handCards);
+        HandCardDisplay.HandCardChange.Invoke(HandCards);
     }
 
-
+    /// <summary>
+    /// Reset the attack number of invocations during a new turn
+    /// </summary>
     public void ResetInvocationCardNewTurn()
     {
-        foreach (var invocationCard in invocationCards.Where(invocationCard =>
-                     invocationCard != null && invocationCard.Title != null))
+        foreach (var invocationCard in InvocationCards.Where(invocationCard =>
+                     invocationCard?.Title != null))
         {
             invocationCard.ResetNewTurn();
         }
     }
 
+    /// <summary>
+    /// Check if an invocationCard is on field (among Invocation Cards)
+    /// </summary>
+    /// <param name="invocationCard"></param>
+    /// <returns></returns>
     public bool ContainsCardInInvocation(InGameInvocationCard invocationCard)
     {
-        return invocationCards.Any(invocation => invocation != null && invocation.Title == invocationCard.Title);
+        return InvocationCards.Any(invocation => invocation != null && invocation.Title == invocationCard.Title);
     }
 
+    /// <summary>
+    /// Apply powers on a new invocation card on field
+    /// </summary>
+    /// <param name="newInvocationCard"></param>
     private void OnInvocationCardAdded(InGameInvocationCard newInvocationCard)
     {
-        var opponentPlayerCard = isPlayerOne
-            ? GameObject.Find("Player2").GetComponent<PlayerCards>()
-            : GameObject.Find("Player1").GetComponent<PlayerCards>();
-
-        foreach (var inGameInvocationCard in opponentPlayerCard.invocationCards)
+        foreach (var inGameInvocationCard in opponentPlayerCards.InvocationCards)
         {
             var equipmentCard = inGameInvocationCard.EquipmentCard;
             if (equipmentCard == null) continue;
@@ -190,7 +221,7 @@ public class PlayerCards : MonoBehaviour
             }
         }
 
-        foreach (var inGameInvocationCard in invocationCards)
+        foreach (var inGameInvocationCard in InvocationCards)
         {
             foreach (var ability in inGameInvocationCard.Abilities)
             {
@@ -198,7 +229,7 @@ public class PlayerCards : MonoBehaviour
             }
         }
 
-        foreach (var effectAbility in effectCards.SelectMany(effectCard => effectCard.EffectAbilities))
+        foreach (var effectAbility in EffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
             effectAbility.OnInvocationCardAdded(this, newInvocationCard);
         }
@@ -212,29 +243,39 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Remove power on a invocation removed from field
+    /// </summary>
+    /// <param name="removedInvocationCard"></param>
     private void OnInvocationCardsRemoved(InGameInvocationCard removedInvocationCard)
     {
-        var cloneInvocationCards = invocationCards.ToList();
+        var cloneInvocationCards = InvocationCards.ToList();
         // Apply onCardRemove for invocation card that are still alive
         foreach (var ability in cloneInvocationCards.SelectMany(inGameInvocationCard => inGameInvocationCard.Abilities))
         {
             ability.OnCardRemove(removedInvocationCard, this);
         }
 
-        foreach (var effectAbility in effectCards.SelectMany(effectCard => effectCard.EffectAbilities))
+        foreach (var effectAbility in EffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
         {
             effectAbility.OnInvocationCardRemoved(this, removedInvocationCard);
         }
     }
 
+    /// <summary>
+    /// Update Invocation cards location
+    /// </summary>
     private void OnInvocationCardsChanged()
     {
         CardLocation.UpdateLocation.Invoke();
     }
 
+    /// <summary>
+    /// Reset and update powers for Invocation that goes to Yellow trash
+    /// </summary>
     private void OnYellowTrashAdded()
     {
-        var newYellowTrashCard = yellowCards.Last();
+        var newYellowTrashCard = YellowCards.Last();
         if (newYellowTrashCard is InGameInvocationCard invocationCard)
         {
             invocationCard.UnblockAttack();
@@ -242,12 +283,9 @@ public class PlayerCards : MonoBehaviour
             invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
             invocationCard.FreeCard();
             invocationCard.ResetNewTurn();
-            var opponentPlayerCard = isPlayerOne
-                ? GameObject.Find("Player2").GetComponent<PlayerCards>()
-                : GameObject.Find("Player1").GetComponent<PlayerCards>();
             foreach (var t in invocationCard.Abilities)
             {
-                t.OnCardDeath(canvas, invocationCard, this, opponentPlayerCard);
+                t.OnCardDeath(canvas, invocationCard, this, opponentPlayerCards);
             }
         }
     }

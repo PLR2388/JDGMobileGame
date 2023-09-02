@@ -14,7 +14,7 @@ public class DrawCardsAbility : Ability
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        int numberCardsInDeck = playerCards.deck.Count;
+        int numberCardsInDeck = playerCards.Deck.Count;
         int numberCardToDraw = 0;
         if (numberCardsInDeck >= numberCards)
         {
@@ -39,9 +39,9 @@ public class DrawCardsAbility : Ability
                 {
                     for (int i = 0; i < numberCardToDraw; i++)
                     {
-                        InGameCard card = playerCards.deck[playerCards.deck.Count - 1];
-                        playerCards.handCards.Add(card);
-                        playerCards.deck.RemoveAt(playerCards.deck.Count - 1);
+                        InGameCard card = playerCards.Deck[playerCards.Deck.Count - 1];
+                        playerCards.HandCards.Add(card);
+                        playerCards.Deck.RemoveAt(playerCards.Deck.Count - 1);
                     }
                 }
             );

@@ -31,7 +31,7 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
 
     public override bool IsActionPossible(PlayerCards playerCards)
     {
-        var invocationCards = playerCards.invocationCards;
+        var invocationCards = playerCards.InvocationCards;
         return invocationCard.Receiver == null &&
                invocationCards.Any(elt => elt.Families.Contains(family) && elt.Title != invocationCard.Title);
     }
@@ -50,7 +50,7 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
             showPositiveButton: true,
             positiveAction: () =>
             {
-                var invocationsCardsValid = new List<InGameCard>(playerCards.invocationCards.Where(inGameInvocationCard =>
+                var invocationsCardsValid = new List<InGameCard>(playerCards.InvocationCards.Where(inGameInvocationCard =>
                     inGameInvocationCard.Families.Contains(family) && inGameInvocationCard.Title != invocationCard.Title).ToList());
                 var config = new CardSelectorConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_RECEIVER_CARD),
@@ -93,7 +93,7 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         if (deadCard.Receiver != null)
         {
             var receiverInvocationCard =
-                playerCards.invocationCards.FirstOrDefault(card => card.Title == deadCard.Receiver);
+                playerCards.InvocationCards.FirstOrDefault(card => card.Title == deadCard.Receiver);
             deadCard.Receiver = null;
             if (receiverInvocationCard == null) return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
             receiverInvocationCard.Attack -= deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;

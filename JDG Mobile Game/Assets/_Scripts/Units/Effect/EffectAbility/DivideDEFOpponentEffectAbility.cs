@@ -15,14 +15,14 @@ public class DivideDEFOpponentEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus opponentPlayerStatus)
     {
-        return opponentPlayerCard.invocationCards.Count > 0;
+        return opponentPlayerCard.InvocationCards.Count > 0;
     }
 
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus,
         PlayerStatus opponentStatus)
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
-        foreach (var invocationCard in opponentPlayerCard.invocationCards)
+        foreach (var invocationCard in opponentPlayerCard.InvocationCards)
         {
             invocationCard.Defense /= divideFactor;
         }
@@ -32,7 +32,7 @@ public class DivideDEFOpponentEffectAbility : EffectAbility
         PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCard)
     {
         base.OnTurnStart(canvas, playerStatus, playerCards, opponentPlayerStatus, opponentPlayerCard);
-        foreach (var invocationCard in opponentPlayerCard.invocationCards)
+        foreach (var invocationCard in opponentPlayerCard.InvocationCards)
         {
             invocationCard.Defense *= divideFactor;
         }
