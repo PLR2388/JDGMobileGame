@@ -13,23 +13,16 @@ public class PlayerCards : MonoBehaviour
     public List<InGameCard> deck = new List<InGameCard>();
 
     [SerializeField] public bool isPlayerOne;
-    
+
     [SerializeField] private Transform canvas;
     [SerializeField] private CardLocation cardLocation;
 
     private UnitManager unitManager;
-    
-    
-    private bool skipCurrentDraw;
-    public bool SkipCurrentDraw
-    {
-        get => skipCurrentDraw;
-        set => skipCurrentDraw = value;
-    }
+
+
+    public bool SkipCurrentDraw { get; set; }
 
     public List<InGameCard> secretCards = new List<InGameCard>(); // Where combine card go
-
-    public string Tag => isPlayerOne ? "card1" : "card2";
 
     private InGameFieldCard _fieldCard;
 
@@ -144,7 +137,7 @@ public class PlayerCards : MonoBehaviour
                     throw new ArgumentOutOfRangeException();
             }
         };
-        
+
         effectCards.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
         {
             CardLocation.UpdateLocation.Invoke();
