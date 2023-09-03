@@ -16,6 +16,7 @@ public class GameState : StaticInstance<GameState>
 
     public const int MaxDeckCards = 30;
     public const int MaxRare = 5;
+    public const int InitialNumberOfHandCards = 5;
 
     private void Start()
     {
