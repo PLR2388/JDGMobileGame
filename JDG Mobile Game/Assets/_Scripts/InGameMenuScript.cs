@@ -44,8 +44,8 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] private GameObject putCardButtonText;
     [SerializeField] private GameObject putCardButton;
     [SerializeField] private GameObject inHandButton;
-
     [SerializeField] private GameObject backgroundInformation;
+    
 
     private InGameCard currentSelectedCard;
     [SerializeField] private GameObject invocationMenu;
