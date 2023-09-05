@@ -1,47 +1,108 @@
 ﻿using Cards;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class CardDisplay : MonoBehaviour
 {
-    public InGameCard inGameCard;
-    public Card card;
+    private InGameCard _inGameCard;
+    private Card _card;
     [SerializeField] private Material defaultMaterial;
-    public bool isFaceHidden;
+    [SerializeField] private bool isFaceHidden;
     private Image image;
 
-    // Start is called before the first frame update
-    private void Start()
+    /// <summary>
+    /// Public property for accessing and setting the InGameCard. When set, it also initializes the card and updates its material.
+    /// </summary>
+    public InGameCard InGameCard
     {
-        InitializeCard();
+        get => _inGameCard;
+        set
+        {
+            _inGameCard = value;
+            InitializeCard();
+            UpdateCardMaterial();
+        }
     }
-    
+
+    /// <summary>
+    /// Public property for accessing and setting the Card. When set, it also initializes the card and updates its material.
+    /// </summary>
+    public Card Card
+    {
+        get => _card;
+        set
+        {
+            _card = value;
+            InitializeCard();
+            UpdateCardMaterial();
+        }
+    }
+
+    /// <summary>
+    /// Determines the current material to be used for the card, based on whether the card face is hidden or the Card is null.
+    /// </summary>
+    private Material CurrentMaterial
+    {
+        get
+        {
+            if (isFaceHidden || Card == null)
+            {
+                return defaultMaterial;
+            }
+            return Card.MaterialCard;
+        }
+    }
+
+    /// <summary>
+    /// Initializes the component, ensuring it's done before any Start methods in other scripts.
+    /// </summary>
+    private void Awake()
+    {
+        image = GetComponent<Image>();
+        UpdateCardMaterial();
+    }
+
+    /// <summary>
+    /// Initializes the card. If the Card exists and InGameCard doesn't, a new InGameCard is created.
+    /// If Card doesn't exist but InGameCard does, the base card of the InGameCard is set as the Card.
+    /// </summary>
     private void InitializeCard()
     {
-
-        image = GetComponent<Image>();
-        image.material = defaultMaterial;
-        if (card != null && inGameCard == null)
+        if (Card != null && InGameCard == null)
         {
-            inGameCard = InGameCard.CreateInGameCard(card, CardOwner.NotDefined);
+            InGameCard = InGameCard.CreateInGameCard(Card, CardOwner.NotDefined);
         }
-
-        if (card == null && inGameCard != null)
+        else if (Card == null && InGameCard != null)
         {
-            card = inGameCard.baseCard;
+            Card = InGameCard.baseCard;
         }
     }
 
-    private void Update()
+    /// <summary>
+    /// NOT USED BUT MAYBE USEFUL LATER
+    /// Makes the card face visible and updates the card material.
+    /// </summary>
+    public void ShowCardFace()
     {
-        if (isFaceHidden)
-        {
-            image.material = defaultMaterial;
-        }
-        else
-        {
-            image.material = card ? card.MaterialCard : defaultMaterial;
-        }
+        isFaceHidden = false;
+        UpdateCardMaterial();
+    }
+
+    /// <summary>
+    /// NOT USED BUT MAYBE USEFUL LATER
+    /// Hides the card face and updates the card material.
+    /// </summary>
+    public void HideCardFace()
+    {
+        isFaceHidden = true;
+        UpdateCardMaterial();
+    }
+
+    /// <summary>
+    /// Updates the material used for the card's display.
+    /// </summary>
+    private void UpdateCardMaterial()
+    {
+        image.material = CurrentMaterial;
     }
 }

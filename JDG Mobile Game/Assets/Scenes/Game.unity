@@ -1362,7 +1362,7 @@ MonoBehaviour:
   canvas: {fileID: 244790280}
   cardLocation: {fileID: 397230409}
   opponentPlayerCards: {fileID: 2017354829}
-  _isPlayerOne: 0
+  _isPlayerOne: 1
 --- !u!114 &230530445
 MonoBehaviour:
   m_ObjectHideFlags: 0

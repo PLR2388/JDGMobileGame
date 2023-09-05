@@ -24,8 +24,8 @@ public class DisplayCards : MonoBehaviour
             {
                 var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
                 newCard.transform.SetParent(transform, true);
-                newCard.GetComponent<CardDisplay>().card = card.baseCard;
-                newCard.GetComponent<CardDisplay>().inGameCard = card;
+                newCard.GetComponent<CardDisplay>().Card = card.baseCard;
+                newCard.GetComponent<CardDisplay>().InGameCard = card;
                 createdCards.Add(newCard);
             }
 

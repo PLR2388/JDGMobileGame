@@ -109,7 +109,7 @@ public class InfiniteScroll : MonoBehaviour
         var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
         newCard.GetComponent<OnHover>().bIsInGame = false;
         newCard.transform.SetParent(transform, true);
-        newCard.GetComponent<CardDisplay>().card = card;
+        newCard.GetComponent<CardDisplay>().Card = card;
     }
 
     /// <summary>
