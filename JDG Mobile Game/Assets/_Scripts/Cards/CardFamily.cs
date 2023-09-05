@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cards
 {
@@ -18,41 +19,33 @@ namespace Cards
         Wizard,
         Any
     }
-    
-    // Define an extension method in a non-nested static class.
-    public static class Extensions
+
+    public static class CardFamilyExtensions
     {
+        private static readonly Dictionary<CardFamily, LocalizationKeys> CardFamilyLocalizationMap = new Dictionary<CardFamily, LocalizationKeys>
+        {
+            { CardFamily.Comics, LocalizationKeys.FAMILY_COMICS },
+            { CardFamily.Developer, LocalizationKeys.FAMILY_DEVELOPER },
+            { CardFamily.Fistiland, LocalizationKeys.FAMILY_FISTILAND },
+            { CardFamily.HardCorner, LocalizationKeys.FAMILY_HARD_CORNER },
+            { CardFamily.Human, LocalizationKeys.FAMILY_HUMAN },
+            { CardFamily.Incarnation, LocalizationKeys.FAMILY_INCARNATION },
+            { CardFamily.Japan, LocalizationKeys.FAMILY_JAPAN },
+            { CardFamily.Monster, LocalizationKeys.FAMILY_MONSTER },
+            { CardFamily.Police, LocalizationKeys.FAMILY_POLICE },
+            { CardFamily.Rpg, LocalizationKeys.FAMILY_RPG },
+            { CardFamily.Spatial, LocalizationKeys.FAMILY_SPATIAL },
+            { CardFamily.Wizard, LocalizationKeys.FAMILY_WIZARD }
+        };
+
         public static string ToName(this CardFamily family)
         {
-            switch (family)
+            if (CardFamilyLocalizationMap.TryGetValue(family, out var localizationKey))
             {
-                case CardFamily.Comics:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_COMICS);
-                case CardFamily.Developer:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_DEVELOPER);
-                case CardFamily.Fistiland:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_FISTILAND);
-                case CardFamily.HardCorner:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_HARD_CORNER);
-                case CardFamily.Human:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_HUMAN);
-                case CardFamily.Incarnation:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_INCARNATION);
-                case CardFamily.Japan:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_JAPAN);
-                case CardFamily.Monster:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_MONSTER);
-                case CardFamily.Police:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_POLICE);
-                case CardFamily.Rpg:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_RPG);
-                case CardFamily.Spatial:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_SPATIAL);
-                case CardFamily.Wizard:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.FAMILY_WIZARD);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(family), family, null);
+                return LocalizationSystem.Instance.GetLocalizedValue(localizationKey);
             }
+
+            throw new ArgumentOutOfRangeException(nameof(family), family, "Unmapped card family.");
         }
     }
 }
