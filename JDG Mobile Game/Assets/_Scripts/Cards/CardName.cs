@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 
+/// <summary>
+/// Represents a collection of distinct card identifiers.
+/// </summary>
 public enum CardNames
 {
     AlphaMan,
@@ -170,6 +173,9 @@ public enum CardNames
     ÉtoufféSousLesJeuxDeMerde
 }
 
+/// <summary>
+/// Provides a mapping between the CardNames enumeration and their respective human-friendly string representations.
+/// </summary>
 public static class CardNameMappings
 {
     public static readonly Dictionary<CardNames, string> CardNameMap = new Dictionary<CardNames, string>
