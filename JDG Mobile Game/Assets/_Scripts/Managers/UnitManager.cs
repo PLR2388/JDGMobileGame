@@ -5,16 +5,14 @@ using UnityEngine;
 public class UnitManager : Singleton<UnitManager>
 {
     [SerializeField] private GameObject prefabCard;
-    
-    private List<GameObject> allPhysicalCards = new List<GameObject>();
 
-    public List<GameObject> AllPhysicalCards => allPhysicalCards;
+    public readonly Dictionary<string, GameObject> CardNameToGameObject = new Dictionary<string, GameObject>();
 
     public void InitPhysicalCards(List<InGameCard> deck, bool isPlayerOne)
     {
         for (var i = 0; i < deck.Count; i++)
         {
-            var deckLocation = isPlayerOne ? CardLocation.deckLocationP1 : CardLocation.deckLocationP2;
+            var deckLocation = CardLocation.GetDeckLocation(isPlayerOne);
             var newPhysicalCard = Instantiate(prefabCard, deckLocation, Quaternion.identity);
             if (isPlayerOne)
             {
@@ -23,14 +21,10 @@ public class UnitManager : Singleton<UnitManager>
 
             newPhysicalCard.transform.position =
                 new Vector3(deckLocation.x, deckLocation.y + 0.1f * i, deckLocation.z);
-            newPhysicalCard.name = deck[i].Title + (isPlayerOne ? "P1" : "P2");
+            var newPhysicalCardName = deck[i].Title + (isPlayerOne ? "P1" : "P2");
+            newPhysicalCard.name = newPhysicalCardName;
             newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
-            AddPhysicalCard(newPhysicalCard);
+            CardNameToGameObject.Add(newPhysicalCardName, newPhysicalCard);
         }
-    }
-        
-    private void AddPhysicalCard(GameObject physicalCard)
-    {
-        allPhysicalCards.Add(physicalCard);
     }
 }
