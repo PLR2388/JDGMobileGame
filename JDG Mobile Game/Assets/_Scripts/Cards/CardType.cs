@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cards
 {
+    
+    /// <summary>
+    /// Defines different types of cards.
+    /// </summary>
     public enum CardType
     {
         Contre,
@@ -11,24 +16,29 @@ namespace Cards
         Invocation
     }
 
+    /// <summary>
+    /// Provides extension methods related to the CardType enum.
+    /// </summary>
     public static class CardTypeExtensions
     {
+        private static readonly Dictionary<CardType, LocalizationKeys> CardTypeLocalizationKeyMap = new Dictionary<CardType, LocalizationKeys>
+        {
+            {CardType.Contre, LocalizationKeys.TYPE_CONTRE},
+            {CardType.Effect, LocalizationKeys.TYPE_EFFECT},
+            {CardType.Equipment, LocalizationKeys.TYPE_EQUIPMENT},
+            {CardType.Field, LocalizationKeys.TYPE_FIELD},
+            {CardType.Invocation, LocalizationKeys.TYPE_INVOCATION}
+        };
+        
         public static string ToName(this CardType type)
         {
-            switch (type)
+            if (CardTypeLocalizationKeyMap.TryGetValue(type, out var localizationKey))
             {
-                case CardType.Contre:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CONTRE);
-                case CardType.Effect:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_EFFECT);
-                case CardType.Equipment:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_EQUIPMENT);
-                case CardType.Field:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_FIELD);
-                case CardType.Invocation:
-                    return LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_INVOCATION);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                return LocalizationSystem.Instance.GetLocalizedValue(localizationKey);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(type), type, $"The provided CardType '{type}' does not have a corresponding localization key.");
             }
         }
     }
