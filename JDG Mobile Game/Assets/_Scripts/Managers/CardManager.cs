@@ -8,27 +8,23 @@ using UnityEngine.Events;
 
 public class CardManager : Singleton<CardManager>
 {
-    protected InGameCard player;
-    [SerializeField] protected InvocationCard playerInvocationCard;
     [SerializeField] protected Transform canvas;
 
     private PlayerCards playerCards1;
     private PlayerCards playerCards2;
-    protected InGameInvocationCard attacker;
-    protected InGameInvocationCard opponent;
+    private InGameInvocationCard attacker;
+    private InGameInvocationCard opponent;
 
     [SerializeField] protected GameObject p1;
 
     [SerializeField] protected GameObject p2;
-
-    public InGameCard Player => player;
 
     public PlayerCards GetCurrentPlayerCards()
     {
         return GameStateManager.Instance.IsP1Turn ? playerCards1 : playerCards2;
     }
 
-    public PlayerCards GetOpponentPlayerCards()
+    private PlayerCards GetOpponentPlayerCards()
     {
         return GameStateManager.Instance.IsP1Turn ? playerCards2 : playerCards1;
     }
@@ -36,7 +32,6 @@ public class CardManager : Singleton<CardManager>
     protected override void Awake()
     {
         base.Awake();
-        player = InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
         playerCards1 = p1.GetComponent<PlayerCards>();
         playerCards2 = p2.GetComponent<PlayerCards>();
     }
@@ -129,10 +124,10 @@ public class CardManager : Singleton<CardManager>
         var invocationCards = GetOpponentPlayerCards().InvocationCards;
         var attackPlayerEffectCard = GetCurrentPlayerCards().EffectCards;
         var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title != null).Cast<InGameCard>().ToList();
-
+        var player = GetOpponentPlayerCards().Player;
         if (notEmptyOpponent.Count == 0)
         {
-            notEmptyOpponent.Add(CardManager.Instance.Player);
+            notEmptyOpponent.Add(player);
         }
         else
         {
@@ -160,14 +155,14 @@ public class CardManager : Singleton<CardManager>
                 if (notEmptyOpponent.Count == 0 || attackPlayerEffectCard.Any(card =>
                         card.EffectAbilities.Any(ability => ability is DirectAttackEffectAbility)))
                 {
-                    notEmptyOpponent.Add(CardManager.Instance.Player);
+                    notEmptyOpponent.Add(player);
                 }
             }
         }
 
-        if (!notEmptyOpponent.Contains(CardManager.Instance.Player) && attacker.CanDirectAttack)
+        if (!notEmptyOpponent.Contains(player) && attacker.CanDirectAttack)
         {
-            notEmptyOpponent.Add(CardManager.Instance.Player);
+            notEmptyOpponent.Add(player);
         }
 
         return notEmptyOpponent;

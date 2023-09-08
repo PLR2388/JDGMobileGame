@@ -136,8 +136,8 @@ public class UIManager : Singleton<UIManager>
                 );
                 playerCamera.transform.Rotate(cameraRotation);
                 playerText.GetComponent<TextMeshProUGUI>().text = GameStateManager.Instance.IsP1Turn
-                    ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_ONE)
-                    : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO);
+                    ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO)
+                    : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_ONE);
                 break;
             case Phase.Attack:
                 inHandButton.SetActive(false);

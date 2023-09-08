@@ -17,6 +17,14 @@ public class GameLoop : MonoBehaviour
         Draw();
     }
 
+    private void OnDestroy()
+    {
+        InputManager.OnLongTouch.RemoveListener(OnLongTouch);
+        InputManager.OnTouch.RemoveListener(OnTouch);
+        InputManager.OnReleaseTouch.RemoveListener(OnReleaseTouch);
+        InputManager.OnBackPressed.RemoveListener(OnBackPressed);
+    }
+
     #region UI Interaction
 
     /// <summary>

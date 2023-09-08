@@ -30,7 +30,7 @@ public class GameStateManager : Singleton<GameStateManager>
         numberOfTurn = 0;
     }
 
-    public void ToggleTurn()
+    private void ToggleTurn()
     {
         isP1Turn = !isP1Turn;
         ChangePlayer.Invoke();

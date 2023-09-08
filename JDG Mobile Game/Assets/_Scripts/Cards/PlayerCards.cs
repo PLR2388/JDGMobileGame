@@ -6,6 +6,7 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
+using Cards.InvocationCards;
 using UnityEngine;
 
 /// <summary>
@@ -13,14 +14,16 @@ using UnityEngine;
 /// </summary>
 public class PlayerCards : MonoBehaviour
 {
+
     #region Properties
-    
+
+    [SerializeField] private InvocationCard playerInvocationCard;
     [SerializeField] private Transform canvas;
     [SerializeField] private CardLocation cardLocation;
     [SerializeField] private PlayerCards opponentPlayerCards;
     [SerializeField] private bool _isPlayerOne;
     private InGameFieldCard _fieldCard;
-    
+
     public bool IsPlayerOne
     {
         get => _isPlayerOne;
@@ -33,7 +36,7 @@ public class PlayerCards : MonoBehaviour
     public readonly ObservableCollection<InGameInvocationCard> InvocationCards = new ObservableCollection<InGameInvocationCard>();
     public readonly ObservableCollection<InGameCard> YellowCards = new ObservableCollection<InGameCard>();
     private List<InGameInvocationCard> oldInvocations = new List<InGameInvocationCard>();
-    
+
     public InGameFieldCard FieldCard
     {
         get => _fieldCard;
@@ -52,17 +55,20 @@ public class PlayerCards : MonoBehaviour
         }
     }
 
+    public InGameCard Player;
+
     #endregion
 
-
-
+    public void BuildPlayer()
+    {
+        Player = IsPlayerOne ? InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player1) : InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
+    }
 
     // Start is called before the first frame update
     private void Start()
     {
         Deck = IsPlayerOne ? GameState.Instance.deckP1 : GameState.Instance.deckP2;
         UnitManager.Instance.InitPhysicalCards(Deck, IsPlayerOne);
-
         for (var i = Deck.Count - GameState.InitialNumberOfHandCards; i < Deck.Count; i++)
         {
             HandCards.Add(Deck[i]);
@@ -76,7 +82,7 @@ public class PlayerCards : MonoBehaviour
         HandCards.CollectionChanged += HandCards_CollectionChanged;
         EffectCards.CollectionChanged += EffectCards_CollectionChanged;
     }
-    
+
     /// <summary>
     /// Reset the attack number of invocations during a new turn
     /// </summary>
@@ -108,7 +114,7 @@ public class PlayerCards : MonoBehaviour
     }
 
     #region Event Handlers
-    
+
     /// <summary>
     /// Apply powers on a new invocation card on field
     /// </summary>
@@ -146,7 +152,7 @@ public class PlayerCards : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// Remove power on a invocation removed from field
     /// </summary>
@@ -165,7 +171,7 @@ public class PlayerCards : MonoBehaviour
             effectAbility.OnInvocationCardRemoved(this, removedInvocationCard);
         }
     }
-    
+
     /// <summary>
     /// Update Invocation cards location
     /// </summary>
@@ -173,7 +179,7 @@ public class PlayerCards : MonoBehaviour
     {
         CardLocation.UpdateLocation.Invoke();
     }
-    
+
     /// <summary>
     /// React to changes among invocation cards
     /// </summary>
@@ -195,7 +201,7 @@ public class PlayerCards : MonoBehaviour
         OnInvocationCardsChanged();
         oldInvocations = InvocationCards.ToList();
     }
-    
+
     /// <summary>
     /// Reset and update powers for Invocation that goes to Yellow trash
     /// </summary>
@@ -281,7 +287,7 @@ public class PlayerCards : MonoBehaviour
         CardLocation.UpdateLocation.Invoke();
         HandCardDisplay.HandCardChange.Invoke(HandCards);
     }
-    
 
     #endregion
+
 }

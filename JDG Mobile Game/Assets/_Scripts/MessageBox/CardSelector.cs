@@ -110,7 +110,7 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         GetDescriptionTextGameObject(newGameObject).SetActive(false);
 
         var displayCardsScript = GetDisplayCards(newGameObject);
-        displayCardsScript.cardsList = cardSelectorConfig?.Cards;
+        displayCardsScript.CardsList = cardSelectorConfig?.Cards;
 
         displayNumberOnCard = cardSelectorConfig?.DisplayOrder == true;
         numberCardInSelection = cardSelectorConfig?.NumberCardSelection ?? 0;
