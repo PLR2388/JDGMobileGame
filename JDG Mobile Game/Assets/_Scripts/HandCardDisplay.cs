@@ -24,6 +24,22 @@ public class HandCardDisplay : MonoBehaviour
 
     private void DisplayHandCard(ObservableCollection<InGameCard> handCards)
     {
+        if (handCards.Count > 0)
+        {
+            var isPlayerOneHandCard = handCards[0].CardOwner == CardOwner.Player1;
+            if (GameStateManager.Instance.IsP1Turn == isPlayerOneHandCard)
+            {
+                BuildCards(handCards);
+            }
+        }
+        else
+        {
+            BuildCards(handCards);
+        }
+    }
+    private void BuildCards(ObservableCollection<InGameCard> handCards)
+    {
+
         if (createdCards.Count > 0)
         {
             DestroyCards();
@@ -52,7 +68,6 @@ public class HandCardDisplay : MonoBehaviour
     }
     private void DestroyCards()
     {
-
         foreach (var createdCard in createdCards)
         {
             Destroy(createdCard);
