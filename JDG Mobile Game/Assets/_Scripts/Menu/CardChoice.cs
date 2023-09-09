@@ -155,9 +155,9 @@ namespace Menu
 
             deck2.Add(GetSpecificCard(CardNames.LycéeMagiqueGeorgesPompidou, deck2AllCard));
             deck1.Add(GetSpecificCard(CardNames.SandrineLePorteManteauExtraterrestre, deck1AllCard));
-            deck1.Add(GetSpecificCard(CardNames.Mohammad, deck1AllCard));
-            deck1.Add(GetSpecificCard(CardNames.MJCorrompu, deck1AllCard));
-            deck1.Add(GetSpecificCard(CardNames.CaroleDuServiceMarketing, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.BenzaieJeune, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.AlphaMan, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.PapyGrenier, deck1AllCard));
 
             while (deck1.Count != 30)
             {

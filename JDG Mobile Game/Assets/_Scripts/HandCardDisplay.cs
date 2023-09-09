@@ -41,7 +41,6 @@ public class HandCardDisplay : MonoBehaviour
         {
             var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
             newCard.transform.SetParent(transform, true);
-            newCard.GetComponent<CardDisplay>().Card = handCard.baseCard;
             newCard.GetComponent<CardDisplay>().InGameCard = handCard;
             newCard.GetComponent<OnHover>().bIsInGame = true;
 

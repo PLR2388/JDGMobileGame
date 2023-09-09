@@ -41,9 +41,7 @@ public class CardPoolManager : StaticInstance<CardPoolManager>
     
     private void BuildNewCard(InGameCard inGameCard)
     {
-
         var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-        newCard.GetComponent<CardDisplay>().Card = inGameCard.baseCard;
         newCard.GetComponent<CardDisplay>().InGameCard = inGameCard;
         newCard.SetActive(false);
         newCard.transform.SetParent(cardPoolHolder, true);

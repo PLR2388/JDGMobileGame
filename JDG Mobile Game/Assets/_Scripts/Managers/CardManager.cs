@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
-using Cards.InvocationCards;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -123,49 +122,38 @@ public class CardManager : Singleton<CardManager>
     {
         var invocationCards = GetOpponentPlayerCards().InvocationCards;
         var attackPlayerEffectCard = GetCurrentPlayerCards().EffectCards;
-        var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title != null).Cast<InGameCard>().ToList();
         var player = GetOpponentPlayerCards().Player;
-        if (notEmptyOpponent.Count == 0)
+
+        var validOpponentCards = invocationCards
+            .Where(card => card != null && card.Title != null)
+            .Cast<InGameCard>()
+            .ToList();
+
+        if (validOpponentCards.Any(card => 
+                card is InGameInvocationCard invocationCard && invocationCard.Aggro))
         {
-            notEmptyOpponent.Add(player);
+            validOpponentCards = validOpponentCards
+                .Where(card => card is InGameInvocationCard invocationCard && invocationCard.Aggro)
+                .ToList();
         }
         else
         {
-            var newList = (from card in notEmptyOpponent
-                let invocationCard = card as InGameInvocationCard
-                where invocationCard?.Aggro == true
-                select card).ToList();
-
-            if (newList.Count > 0)
+            validOpponentCards.RemoveAll(card => 
+                card is InGameInvocationCard invocationCard && invocationCard.CantBeAttack);
+        
+            if (!validOpponentCards.Any() || attackPlayerEffectCard.Any(card =>
+                    card.EffectAbilities.Any(ability => ability is DirectAttackEffectAbility)))
             {
-                notEmptyOpponent = newList;
-            }
-            else
-            {
-                for (var j = notEmptyOpponent.Count - 1; j >= 0; j--)
-                {
-                    var opponentInvocationCard = notEmptyOpponent[j] as InGameInvocationCard;
-
-                    if (opponentInvocationCard?.CantBeAttack == true)
-                    {
-                        notEmptyOpponent.Remove(opponentInvocationCard);
-                    }
-                }
-
-                if (notEmptyOpponent.Count == 0 || attackPlayerEffectCard.Any(card =>
-                        card.EffectAbilities.Any(ability => ability is DirectAttackEffectAbility)))
-                {
-                    notEmptyOpponent.Add(player);
-                }
+                validOpponentCards.Add(player);
             }
         }
 
-        if (!notEmptyOpponent.Contains(player) && attacker.CanDirectAttack)
+        if (!validOpponentCards.Contains(player) && attacker.CanDirectAttack)
         {
-            notEmptyOpponent.Add(player);
+            validOpponentCards.Add(player);
         }
 
-        return notEmptyOpponent;
+        return validOpponentCards;
     }
 
     public bool IsSpecialActionPossible()

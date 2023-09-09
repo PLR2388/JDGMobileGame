@@ -177,7 +177,6 @@ public class TutoInGameMenuScript : MonoBehaviour
             miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
 
             detailButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
-            detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().Card = currentSelectedCard.baseCard;
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().InGameCard = currentSelectedCard;
             detailCardPanel.SetActive(true);
             inHandButton.SetActive(false);

@@ -33,6 +33,7 @@ namespace _Scripts.Units.Invocation
             set
             {
                 cancelEffect = value;
+                UpdateInvocationCardForAbilities();
                 InvocationFunctions.CancelInvocationEvent.Invoke(this);
             }
         }
@@ -133,6 +134,11 @@ namespace _Scripts.Units.Invocation
                 .Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
             Abilities = baseInvocationCard.Abilities
                 .Select(abilityName => AbilityLibrary.Instance.abilityDictionary[abilityName]).ToList();
+            UpdateInvocationCardForAbilities();
+        }
+        
+        private void UpdateInvocationCardForAbilities()
+        {
             foreach (var ability in Abilities)
             {
                 ability.InvocationCard = this;
@@ -263,6 +269,7 @@ namespace _Scripts.Units.Invocation
         public void incrementNumberTurnOnField()
         {
             numberTurnOnField++;
+            UpdateInvocationCardForAbilities();
         }
 
         public float GetCurrentDefense()
