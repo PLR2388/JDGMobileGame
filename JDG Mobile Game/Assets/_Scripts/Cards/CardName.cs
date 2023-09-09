@@ -502,46 +502,46 @@ public static class CardNameMappings
             CardNames.MauvaisFlic, "Mauvais flic"
         },
         {
-            CardNames.MauvaiseTraduction, "Mauvaise Traduction"
+            CardNames.MauvaiseTraduction, "Mauvaise traduction"
         },
         {
             CardNames.Max, "Max"
         },
         {
-            CardNames.MechaGranolax, "Mecha Granolax"
+            CardNames.MechaGranolax, "Mecha-Granolax"
         },
         {
-            CardNames.MerdeMagiqueEnPlastiqueRose, "Merde Magique En Plastique Rose"
+            CardNames.MerdeMagiqueEnPlastiqueRose, "Merde magique en plastique rose"
         },
         {
-            CardNames.MerdeTournoyanteEnPlastiqueBleu, "Merde Tournoyante En Plastique Bleu"
+            CardNames.MerdeTournoyanteEnPlastiqueBleu, "Merde tournoyante en plastique bleu"
         },
         {
-            CardNames.MJCorrompu, "MJ Corrompu"
+            CardNames.MJCorrompu, "MJ corrompu"
         },
         {
             CardNames.Mohammad, "Mohammad"
         },
         {
-            CardNames.MoïseLePlusGrandDeTousLesHébreux, "Moïse, Le Plus Grand De Tous Les Hébreux"
+            CardNames.MoïseLePlusGrandDeTousLesHébreux, "Moïse, le plus grand de tous les hébreux"
         },
         {
-            CardNames.MusiqueDeMegaDrive, "Musique De MegaDrive"
+            CardNames.MusiqueDeMegaDrive, "Musique de Mega Drive"
         },
         {
             CardNames.Nounours, "Nounours"
         },
         {
-            CardNames.PainsAuxRaisinsÀLaPlaceDesMains, "Pains Aux Raisins À La Place Des Mains"
+            CardNames.PainsAuxRaisinsÀLaPlaceDesMains, "Pains aux raisins à la place des mains"
         },
         {
             CardNames.PapyGrenier, "Papy Grenier"
         },
         {
-            CardNames.ParachuteDoré, "Parachute Doré"
+            CardNames.ParachuteDoré, "Parachute doré"
         },
         {
-            CardNames.PassageSecretDansLeMurDuVoisin, "Passage Secret Dans Le Mur Du Voisin"
+            CardNames.PassageSecretDansLeMurDuVoisin, "Passage secret dans le mur du voisin"
         },
         {
             CardNames.Patate, "Patate"
@@ -550,25 +550,25 @@ public static class CardNameMappings
             CardNames.PatronDInfogrames, "Patron D'Infogrames"
         },
         {
-            CardNames.PetiteCaille, "Petite Caille"
+            CardNames.PetiteCaille, "Petite caille"
         },
         {
-            CardNames.PetiteCulotte, "Petite Culotte"
+            CardNames.PetiteCulotte, "Petite culotte"
         },
         {
-            CardNames.PetitePortionsDeRiz, "Petite Portions De Riz"
+            CardNames.PetitePortionsDeRiz, "Petite portions de « riz »"
         },
         {
             CardNames.Player, "Player"
         },
         {
-            CardNames.PlumeDePhénix, "Plume De Phénix"
+            CardNames.PlumeDePhénix, "Plume de phénix"
         },
         {
-            CardNames.PoignéeDePorte, "Poignée De Porte"
+            CardNames.PoignéeDePorte, "Poignée de porte"
         },
         {
-            CardNames.ProfDeSVT, "Prof De SVT"
+            CardNames.ProfDeSVT, "Prof de SVT"
         },
         {
             CardNames.ProfesseurHumblebundledore, "Professeur Humblebundledore"
@@ -580,13 +580,13 @@ public static class CardNameMappings
             CardNames.PropriétaireDeFistiland, "Propriétaire De Fistiland"
         },
         {
-            CardNames.QuartDeSmileySurLaMain, "Quart De Smiley Sur La Main"
+            CardNames.QuartDeSmileySurLaMain, "Quart de smiley sur la main"
         },
         {
             CardNames.Repop, "Repop"
         },
         {
-            CardNames.ReversDuDroit, "Revers Du Droit"
+            CardNames.ReversDuDroit, "Revers du droit"
         },
         {
             CardNames.Rémi, "Rémi"
@@ -595,19 +595,19 @@ public static class CardNameMappings
             CardNames.SailorJustice, "Sailor Justice"
         },
         {
-            CardNames.SalutMétalleux, "Salut Métalleux"
+            CardNames.SalutMétalleux, "Salut métalleux"
         },
         {
-            CardNames.SandrineLePorteManteauExtraterrestre, "Sandrine Le Porte-Manteau Extraterrestre"
+            CardNames.SandrineLePorteManteauExtraterrestre, "Sandrine le porte-manteau extraterrestre"
         },
         {
             CardNames.Sangoku, "Sangoku"
         },
         {
-            CardNames.SauvegardeEffacée, "Sauvegarde Effacée"
+            CardNames.SauvegardeEffacée, "Sauvegarde effacée"
         },
         {
-            CardNames.SceauxMagiques, "Sceaux Magiques"
+            CardNames.SceauxMagiques, "Sceaux magiques"
         },
         {
             CardNames.SebDuGrenier, "Seb Du Grenier"
@@ -628,19 +628,19 @@ public static class CardNameMappings
             CardNames.StarlightUnicorn, "Starlight Unicorn"
         },
         {
-            CardNames.SteelbookVide, "Steelbook Vide"
+            CardNames.SteelbookVide, "Steelbook vide"
         },
         {
-            CardNames.StudioDeDéveloppement, "Studio De Développement"
+            CardNames.StudioDeDéveloppement, "Studio de développement"
         },
         {
-            CardNames.StudioDeScénaristesCanadien, "Studio De Scénaristes Canadien"
+            CardNames.StudioDeScénaristesCanadien, "Studio de scénaristes Canadien"
         },
         {
-            CardNames.SylvainFilsDeSylvainRoiDesElfes, "Sylvain, Fils De Sylvain, Roi Des Elfes"
+            CardNames.SylvainFilsDeSylvainRoiDesElfes, "Sylvain, Fils de Sylvain, Roi des Elfes"
         },
         {
-            CardNames.TatouageGoldé, "Tatouage Goldé"
+            CardNames.TatouageGoldé, "Tatouage goldé"
         },
         {
             CardNames.Tentacules, "Tentacules"
@@ -658,10 +658,10 @@ public static class CardNameMappings
             CardNames.TurboCradozaure, "Turbo Cradozaure"
         },
         {
-            CardNames.UnBonTuyau, "Un Bon Tuyau"
+            CardNames.UnBonTuyau, "Un bon tuyau"
         },
         {
-            CardNames.UnDélicieuxRisotto, "Un Délicieux Risotto"
+            CardNames.UnDélicieuxRisotto, "Un délicieux risotto"
         },
         {
             CardNames.VieuxSage, "Vieux Sage"
