@@ -74,6 +74,7 @@ public class CardDisplay : MonoBehaviour
         }
         else if (Card == null && InGameCard != null)
         {
+            image = GetComponent<Image>();
             Card = InGameCard.baseCard;
         }
     }
