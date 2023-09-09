@@ -44,6 +44,7 @@ public class DisplayCards : StaticInstance<DisplayCards>
         foreach (var cardGameObject in associatedGameObject)
         {
             cardGameObject.transform.SetParent(CardPoolManager.Instance.cardPoolHolder, true);
+            cardGameObject.GetComponent<OnHover>()?.UnSelectCard();
             cardGameObject.SetActive(false);
         }
         associatedGameObject.Clear();

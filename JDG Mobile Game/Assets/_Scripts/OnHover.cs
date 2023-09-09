@@ -118,7 +118,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
           
         }
     }
-    private void UnSelectCard()
+    public void UnSelectCard()
     {
 
         image.color = Color.white;
