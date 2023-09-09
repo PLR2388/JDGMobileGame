@@ -1326,6 +1326,7 @@ GameObject:
   - component: {fileID: 230530443}
   - component: {fileID: 230530444}
   - component: {fileID: 230530445}
+  - component: {fileID: 230530446}
   m_Layer: 0
   m_Name: Player1
   m_TagString: Untagged
@@ -1381,6 +1382,19 @@ MonoBehaviour:
   isP1: 1
   numberShield: 0
   blockAttack: 0
+--- !u!114 &230530446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 230530442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72db3446395e302429b06ccff104eb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCards: {fileID: 0}
 --- !u!1 &244790276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,8 +1713,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 244790280}
-  p1: {fileID: 230530442}
-  p2: {fileID: 2017354827}
+  player1CardManager: {fileID: 230530446}
+  player2CardManager: {fileID: 2017354831}
 --- !u!114 &397230411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5496,6 +5510,7 @@ GameObject:
   - component: {fileID: 2017354828}
   - component: {fileID: 2017354829}
   - component: {fileID: 2017354830}
+  - component: {fileID: 2017354831}
   m_Layer: 0
   m_Name: Player2
   m_TagString: Untagged
@@ -5551,6 +5566,19 @@ MonoBehaviour:
   isP1: 0
   numberShield: 0
   blockAttack: 0
+--- !u!114 &2017354831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017354827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72db3446395e302429b06ccff104eb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCards: {fileID: 0}
 --- !u!1 &2094974137
 GameObject:
   m_ObjectHideFlags: 0

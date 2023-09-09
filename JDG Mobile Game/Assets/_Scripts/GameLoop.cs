@@ -87,7 +87,7 @@ public class GameLoop : MonoBehaviour
         {
             if (invocationCard.CardOwner == currentOwner || invocationCard.IsControlled)
             {
-                CardManager.Instance.SetAttacker(invocationCard);
+                CardManager.Instance.Attacker = invocationCard;
                 UIManager.Instance.DisplayInvocationMenu(isAttackPhase);
             }
         }
@@ -206,7 +206,7 @@ public class GameLoop : MonoBehaviour
         {
             if (invocationCard != null)
             {
-                CardManager.Instance.SetOpponent(invocationCard);
+                CardManager.Instance.Opponent = invocationCard;
                 ComputeAttack();
             }
             InputManager.Instance.EnableDetectionTouch();
