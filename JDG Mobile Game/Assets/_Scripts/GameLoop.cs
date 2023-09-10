@@ -88,7 +88,7 @@ public class GameLoop : MonoBehaviour
             if (invocationCard.CardOwner == currentOwner || invocationCard.IsControlled)
             {
                 CardManager.Instance.Attacker = invocationCard;
-                UIManager.Instance.DisplayInvocationMenu(isAttackPhase);
+                InvocationMenuManager.Instance.Display(isAttackPhase);
             }
         }
     }
@@ -98,11 +98,11 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void OnLongTouch()
     {
-        UIManager.Instance.HideInvocationMenu();
+        InvocationMenuManager.Instance.Hide();
         var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
         if (cardTouch != null)
         {
-            UIManager.Instance.DisplayCardInBigImage(cardTouch);
+            UIManager.Instance.DisplayCardOnLargeView(cardTouch);
         }
     }
 
@@ -111,7 +111,7 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected virtual void NextRound()
     {
-        UIManager.Instance.HideInvocationMenu();
+        InvocationMenuManager.Instance.Hide();
         if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
         {
             GameStateManager.Instance.SetPhase(Phase.End);
@@ -127,7 +127,7 @@ public class GameLoop : MonoBehaviour
             GameStateManager.Instance.SetPhase(Phase.End);
         }
 
-        UIManager.Instance.AdaptUIToPhaseIdInNextRound();
+        RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound();
 
         switch (GameStateManager.Instance.Phase)
         {
@@ -149,7 +149,7 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void ChoosePhase()
     {
-        UIManager.Instance.EnableInvocationMenu();
+        InvocationMenuManager.Instance.Enable();
         ChoosePhaseMusic();
     }
 
@@ -226,7 +226,7 @@ public class GameLoop : MonoBehaviour
     private void ComputeAttack()
     {
         CardManager.Instance.HandleAttack();
-        UIManager.Instance.UpdateAttackButton();
+        InvocationMenuManager.Instance.UpdateAttackButton();
         HandlePlayerDeath();
     }
 
@@ -258,7 +258,7 @@ public class GameLoop : MonoBehaviour
         GameStateManager.Instance.NextPhase();
 
         ChoosePhase();
-        UIManager.Instance.SetRoundText(
+        RoundDisplayManager.Instance.SetRoundText(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE)
         );
     }

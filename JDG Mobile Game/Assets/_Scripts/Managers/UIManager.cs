@@ -1,83 +1,47 @@
 using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using Cards;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages the user interface elements and interactions for the game.
+/// </summary>
 public class UIManager : Singleton<UIManager>
 {
-
-    private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
-
-    [SerializeField] protected GameObject playerText;
-    [SerializeField] protected GameObject roundText;
-    [SerializeField] protected TextMeshProUGUI healthP1Text;
-    [SerializeField] protected TextMeshProUGUI healthP2Text;
-
-    [SerializeField] protected GameObject bigImageCard;
-    [SerializeField] protected GameObject invocationMenu;
+    [SerializeField] private GameObject bigImageCard;
     [SerializeField] protected GameObject nextPhaseButton;
     [SerializeField] protected Transform canvas;
 
-    [SerializeField] protected GameObject inHandButton;
+    private Image bigImageCardImage;
 
-    [SerializeField] private GameObject playerCamera;
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Initialize component references.
+    /// </summary>
+    protected override void Awake()
     {
-        ChangeHealthText(PlayerStatus.MaxPv, true);
-        ChangeHealthText(PlayerStatus.MaxPv, false);
-        PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
+        base.Awake();
+        bigImageCardImage = bigImageCard.GetComponent<Image>();
     }
 
-    protected void ChangeHealthText(float pv, bool isP1)
+    /// <summary>
+    /// Displays the given card on the large card viewer.
+    /// </summary>
+    /// <param name="card">Card to be displayed.</param>
+    public void DisplayCardOnLargeView(InGameCard card)
     {
-        if (isP1)
-        {
-            healthP1Text.SetText(
-                $"{pv} / {PlayerStatus.MaxPv}"
-            );
-        }
-        else
-        {
-            healthP2Text.SetText(
-                $"{pv} / {PlayerStatus.MaxPv}"
-            );
-        }
-    }
-
-    public void SetRoundText(string value)
-    {
-        roundText.GetComponent<TextMeshProUGUI>().text = value;
-    }
-
-    public void DisplayCardInBigImage(InGameCard card)
-    {
+        if (!bigImageCard || !bigImageCardImage) return;
         bigImageCard.SetActive(true);
-        bigImageCard.GetComponent<Image>().material = card.MaterialCard;
+        bigImageCardImage.material = card.MaterialCard;
     }
 
-    public void UpdateAttackButton()
-    {
-        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = CardManager.Instance.CanAttackerAttack();
-    }
-
-    public void DisplayInvocationMenu(bool isAttackPhase)
-    {
-        var mousePosition = InputManager.TouchPosition;
-        invocationMenu.SetActive(true);
-        var attackButton = invocationMenu.transform.GetChild(0);
-        var actionButton = invocationMenu.transform.GetChild(1);
-        attackButton.gameObject.SetActive(isAttackPhase);
-        attackButton.GetComponent<Button>().interactable = CardManager.Instance.CanAttackerAttack();
-        actionButton.gameObject.SetActive(CardManager.Instance.HasAttackerAction() && !isAttackPhase);
-        actionButton.GetComponent<Button>().interactable =
-            CardManager.Instance.IsSpecialActionPossible();
-        invocationMenu.transform.position = mousePosition;
-    }
-
+    /// <summary>
+    /// Displays a message box to inform the user about the available opponents for invocation.
+    /// </summary>
+    /// <param name="invocationCards">List of invocable cards.</param>
+    /// <param name="positiveAction">Action on positive button click.</param>
+    /// <param name="negativeAction">Action on negative button click.</param>
     public void DisplayOpponentAvailableMessageBox(
         List<InGameCard> invocationCards,
         UnityAction<InGameInvocationCard> positiveAction,
@@ -118,46 +82,19 @@ public class UIManager : Singleton<UIManager>
             MessageBox.Instance.CreateMessageBox(canvas, config);
         }
     }
-
-    public void HideInvocationMenu()
-    {
-        invocationMenu.SetActive(false);
-    }
-
-    public void AdaptUIToPhaseIdInNextRound()
-    {
-        var phaseId = GameStateManager.Instance.Phase;
-        switch (phaseId)
-        {
-            case Phase.End:
-                inHandButton.SetActive(true);
-                SetRoundText(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_DRAW)
-                );
-                playerCamera.transform.Rotate(cameraRotation);
-                playerText.GetComponent<TextMeshProUGUI>().text = GameStateManager.Instance.IsP1Turn
-                    ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO)
-                    : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_ONE);
-                break;
-            case Phase.Attack:
-                inHandButton.SetActive(false);
-                SetRoundText(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_ATTACK)
-                );
-                break;
-        }
-    }
-
-    public void EnableInvocationMenu()
-    {
-        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = true;
-    }
-
+    
+    /// <summary>
+    /// Hides the large card viewer.
+    /// </summary>
     public void HideBigImage()
     {
         bigImageCard.SetActive(false);
     }
 
+    /// <summary>
+    /// Displays a pause menu with given positive action.
+    /// </summary>
+    /// <param name="onPositiveAction">Action to execute on positive button click.</param>
     public void DisplayPauseMenu(UnityAction onPositiveAction)
     {
         MessageBoxConfig config = new MessageBoxConfig(

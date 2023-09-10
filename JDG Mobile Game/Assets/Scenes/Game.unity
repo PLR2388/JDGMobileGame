@@ -1596,6 +1596,9 @@ GameObject:
   - component: {fileID: 397230413}
   - component: {fileID: 397230415}
   - component: {fileID: 397230414}
+  - component: {fileID: 397230416}
+  - component: {fileID: 397230417}
+  - component: {fileID: 397230418}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1740,16 +1743,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5133ba8f6b481b4880b259155ca519f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerText: {fileID: 1024667568}
-  roundText: {fileID: 138997257}
-  healthP1Text: {fileID: 29170108}
-  healthP2Text: {fileID: 1349726584}
   bigImageCard: {fileID: 793464781}
-  invocationMenu: {fileID: 1982540492}
   nextPhaseButton: {fileID: 1957640249}
   canvas: {fileID: 244790280}
-  inHandButton: {fileID: 829748139}
-  playerCamera: {fileID: 1233983595}
 --- !u!114 &397230413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1787,6 +1783,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clickDuration: 2
+--- !u!114 &397230416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b05fc5d108c7f5a4f8c10dc52f762b07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthP1Text: {fileID: 29170108}
+  healthP2Text: {fileID: 1349726584}
+--- !u!114 &397230417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 238036748b797b04eb4fc41ead09a400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invocationMenu: {fileID: 1982540492}
+--- !u!114 &397230418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8862196d9871d5941ba370247df1399c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerText: {fileID: 1024667568}
+  roundText: {fileID: 138997259}
+  playerCamera: {fileID: 1233983595}
+  inHandButton: {fileID: 829748139}
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0
