@@ -68,7 +68,8 @@ public class PlayerCards : MonoBehaviour
     private void Start()
     {
         Deck = IsPlayerOne ? GameState.Instance.Player1DeckCards : GameState.Instance.Player2DeckCards;
-        UnitManager.Instance.InitPhysicalCards(Deck, IsPlayerOne);
+        var deckLocation = CardLocation.GetDeckLocation(IsPlayerOne);
+        UnitManager.Instance.InitPhysicalCards(Deck, deckLocation, IsPlayerOne);
         for (var i = Deck.Count - GameState.InitialNumberOfHandCards; i < Deck.Count; i++)
         {
             HandCards.Add(Deck[i]);
