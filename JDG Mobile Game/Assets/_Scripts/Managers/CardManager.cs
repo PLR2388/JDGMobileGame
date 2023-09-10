@@ -30,7 +30,7 @@ public class CardManager : Singleton<CardManager>
     /// <returns>The card set of the current player.</returns>
     public PlayerCards GetCurrentPlayerCards()
     {
-        return GameStateManager.Instance.IsP1Turn ? player1CardManager.playerCards : player2CardManager.playerCards;
+        return GameStateManager.Instance.IsP1Turn ? player1CardManager.PlayerCards : player2CardManager.PlayerCards;
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class CardManager : Singleton<CardManager>
     /// <param name="onNoCard">Action to perform when there are no cards.</param>
     public void Draw(UnityAction onNoCard)
     {
-        GetCurrentPlayerCardManager().Draw(onNoCard);
+        GetCurrentPlayerCardManager().DrawCard(onNoCard);
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class CardManager : Singleton<CardManager>
     /// </summary>
     public void HandleEndTurn()
     {
-        GetCurrentPlayerCardManager().HandleEndTurn();
+        GetCurrentPlayerCardManager().ProcessEndOfTurn();
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ public class CardManager : Singleton<CardManager>
         var opponentAbilities = Opponent.Abilities;
         var attackerAbilities = Attacker.Abilities;
         var playerCard = GetCurrentPlayerCards();
-        var opponentPlayerCard = GetOpponentPlayerCardManager().playerCards;
+        var opponentPlayerCard = GetOpponentPlayerCardManager().PlayerCards;
         foreach (var ability in opponentAbilities)
         {
             ability.OnCardAttacked(canvas, Opponent, Attacker, playerCard, opponentPlayerCard,
@@ -150,7 +150,7 @@ public class CardManager : Singleton<CardManager>
         }
         var abilities = Attacker.Abilities;
         var playerCard = GetCurrentPlayerCards();
-        var opponentPlayerCard = GetOpponentPlayerCardManager().playerCards;
+        var opponentPlayerCard = GetOpponentPlayerCardManager().PlayerCards;
         foreach (var ability in abilities)
         {
             ability.OnCardActionTouched(canvas, playerCard, opponentPlayerCard);
@@ -168,7 +168,7 @@ public class CardManager : Singleton<CardManager>
             return new List<InGameCard>();
         }
 
-        var opponentInvocationCards = GetOpponentPlayerCardManager().playerCards.InvocationCards;
+        var opponentInvocationCards = GetOpponentPlayerCardManager().PlayerCards.InvocationCards;
         var attackPlayerEffectCard = GetCurrentPlayerCards().EffectCards;
 
         var validOpponentCards = FilterValidOpponentCards(opponentInvocationCards);
@@ -182,13 +182,13 @@ public class CardManager : Singleton<CardManager>
             RemoveCantBeAttackedCards(validOpponentCards);
             if (ShouldAddPlayerToTarget(attackPlayerEffectCard, validOpponentCards))
             {
-                validOpponentCards.Add(GetOpponentPlayerCardManager().playerCards.Player);
+                validOpponentCards.Add(GetOpponentPlayerCardManager().PlayerCards.Player);
             }
         }
 
-        if (AttackerCanDirectAttack() && !validOpponentCards.Contains(GetOpponentPlayerCardManager().playerCards.Player))
+        if (AttackerCanDirectAttack() && !validOpponentCards.Contains(GetOpponentPlayerCardManager().PlayerCards.Player))
         {
-            validOpponentCards.Add(GetOpponentPlayerCardManager().playerCards.Player);
+            validOpponentCards.Add(GetOpponentPlayerCardManager().PlayerCards.Player);
         }
 
         return validOpponentCards;
@@ -280,7 +280,7 @@ public class CardManager : Singleton<CardManager>
     public void OnTurnStart()
     {
         var playerCards = GetCurrentPlayerCards();
-        var opponentPlayerCards = GetOpponentPlayerCardManager().playerCards;
+        var opponentPlayerCards = GetOpponentPlayerCardManager().PlayerCards;
         playerCards.ResetInvocationCardNewTurn();
         var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
         var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();

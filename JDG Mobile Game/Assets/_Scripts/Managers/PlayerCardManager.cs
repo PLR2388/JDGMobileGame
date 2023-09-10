@@ -3,38 +3,60 @@ using UnityEngine.Events;
 
 public class PlayerCardManager : MonoBehaviour
 {
-    public PlayerCards playerCards;
+    /// <summary>
+    /// Gets the PlayerCards component associated with this manager.
+    /// </summary>
+    public PlayerCards PlayerCards { get; private set; }
 
+    /// <summary>
+    /// Initialize references.
+    /// </summary>
     private void Awake()
     {
-        playerCards = GetComponent<PlayerCards>();
+        PlayerCards = GetComponent<PlayerCards>();
     }
 
-    public void Draw(UnityAction onNoCard)
+    /// <summary>
+    /// Draws a card from the deck. If the deck is empty, invokes the provided callback.
+    /// </summary>
+    /// <param name="onEmptyDeckCallback">Action to perform if the deck is empty.</param>
+    public void DrawCard(UnityAction onEmptyDeckCallback)
     {
-        if (playerCards.SkipCurrentDraw)
+        if (PlayerCards.SkipCurrentDraw)
         {
-            playerCards.SkipCurrentDraw = false;
+            PlayerCards.SkipCurrentDraw = false;
         }
         else
         {
-            var size = playerCards.Deck.Count;
-            if (size > 0)
-            {
-                var c = playerCards.Deck[size - 1];
-                playerCards.HandCards.Add(c);
-                playerCards.Deck.RemoveAt(size - 1);
-            }
-            else
-            {
-                onNoCard();
-            }
+            DrawFromDeck(onEmptyDeckCallback);
+        }
+    }
+    
+    /// <summary>
+    /// Helper method to draw a card from the deck and invoke a callback if the deck is empty.
+    /// </summary>
+    /// <param name="onEmptyDeckCallback">Action to perform if the deck is empty.</param>
+    private void DrawFromDeck(UnityAction onEmptyDeckCallback)
+    {
+        int size = PlayerCards.Deck.Count;
+        if (size > 0)
+        {
+            var c = PlayerCards.Deck[size - 1];
+            PlayerCards.HandCards.Add(c);
+            PlayerCards.Deck.RemoveAt(size - 1);
+        }
+        else
+        {
+            onEmptyDeckCallback();
         }
     }
 
-    public void HandleEndTurn()
+    /// <summary>
+    /// Processes end-of-turn logic for each invocation card.
+    /// </summary>
+    public void ProcessEndOfTurn()
     {
-        var invocationCards = playerCards.InvocationCards;
+        var invocationCards = PlayerCards.InvocationCards;
 
         foreach (var invocationCard in invocationCards)
         {
