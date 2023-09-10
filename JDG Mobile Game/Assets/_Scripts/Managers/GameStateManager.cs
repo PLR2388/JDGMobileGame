@@ -21,57 +21,50 @@ public class GameStateManager : Singleton<GameStateManager>
     private int numberOfTurn = 0;
     
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
-
-    protected override void Awake()
-    {
-        base.Awake();
-        phase = 0;
-        isP1Turn = true;
-        numberOfTurn = 0;
-    }
-
+    
+    /// <summary>
+    /// Toggles the current player's turn and invokes a change player event.
+    /// </summary>
     private void ToggleTurn()
     {
         isP1Turn = !isP1Turn;
         ChangePlayer.Invoke();
     }
 
+    /// <summary>
+    /// Sets the current phase to a specified value.
+    /// </summary>
+    /// <param name="newPhaseId">The new phase to set.</param>
     public void SetPhase(Phase newPhaseId)
     {
         phase = newPhaseId;
     }
 
+    /// <summary>
+    /// Transitions to the next phase in the sequence. If the current phase is GameOver, no change occurs.
+    /// </summary>
     public void NextPhase()
     {
-        switch (phase)
+        if (phase != Phase.GameOver)
         {
-            case Phase.Draw:
-                phase = Phase.Choose;
-                break;
-            case Phase.Choose:
-                phase = Phase.Attack;
-                break;
-            case Phase.Attack:
-                phase = Phase.End;
-                break;
-            case Phase.End:
-                phase = Phase.Draw;
-                break;
-            case Phase.GameOver:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            phase = (Phase)(((int)phase + 1) % 4);
         }
     }
 
+    /// <summary>
+    /// Increments the turn counter by one.
+    /// </summary>
     public void IncrementNumberOfTurn()
     {
         numberOfTurn++;
     }
 
+    /// <summary>
+    /// Handles the end of a turn by toggling the current player and resetting the phase to Draw.
+    /// </summary>
     public void HandleEndTurn()
     {
         ToggleTurn();
-        SetPhase(0);
+        SetPhase(Phase.Draw);
     }
 }
