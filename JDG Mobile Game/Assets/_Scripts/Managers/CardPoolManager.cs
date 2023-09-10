@@ -28,8 +28,8 @@ public class CardPoolManager : StaticInstance<CardPoolManager>
     /// </summary>
     private void InitializeCardPool()
     {
-        AddCardsToPool(GameState.Instance.deckP1);
-        AddCardsToPool(GameState.Instance.deckP2);
+        AddCardsToPool(GameState.Instance.Player1DeckCards);
+        AddCardsToPool(GameState.Instance.Player2DeckCards);
         BuildPlayerCards();
     }
 

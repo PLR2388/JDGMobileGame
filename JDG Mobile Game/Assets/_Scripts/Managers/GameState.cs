@@ -6,23 +6,30 @@ using UnityEngine;
 
 public class GameState : StaticInstance<GameState>
 {
-    public List<Card> allCards;
+    [SerializeField]
+    private List<Card> allCards;
 
     public List<Card> deck1AllCards = new List<Card>();
     public List<Card> deck2AllCards = new List<Card>();
 
-    public List<InGameCard> deckP1 = new List<InGameCard>();
-    public List<InGameCard> deckP2 = new List<InGameCard>();
+    public List<InGameCard> Player1DeckCards = new List<InGameCard>();
+    public List<InGameCard> Player2DeckCards = new List<InGameCard>();
 
     public const int MaxDeckCards = 30;
     public const int MaxRare = 5;
     public const int InitialNumberOfHandCards = 5;
 
+    /// <summary>
+    /// Initializes the game state.
+    /// </summary>
     private void Start()
     {
         ResetDeckPlayer();
     }
 
+    /// <summary>
+    /// Resets the decks for both players.
+    /// </summary>
     private void ResetDeckPlayer()
     {
         deck1AllCards.Clear();
@@ -34,38 +41,63 @@ public class GameState : StaticInstance<GameState>
         }
     }
 
+    /// <summary>
+    /// Builds the tutorial decks for both players.
+    /// </summary>
     public void BuildDeckForTuto()
     {
         ResetDeckPlayer();
-        List<Card> deck1 = new List<Card>();
-        List<Card> deck2 = new List<Card>();
+        BuildPlayer1DeckForTuto();
+        BuildPlayer2DeckForTuto();
+    }
+    
+    /// <summary>
+    /// Instantiates specific cards based on the card names provided.
+    /// </summary>
+    /// <param name="cardNames">The names of the cards to be instantiated.</param>
+    /// <param name="deck">The deck to get the cards from.</param>
+    /// <returns>A list of instantiated cards.</returns>
+    private List<Card> InstantiateSpecificCards(List<CardNames> cardNames, List<Card> deck)
+    {
+        return cardNames.Select(cardName => CardChoice.GetSpecificCard(cardName, deck)).ToList();
+    }
+    
+    /// <summary>
+    /// Builds the tutorial deck for player 1.
+    /// </summary>
+    private void BuildPlayer1DeckForTuto()
+    {
+        var player1Deck = InstantiateSpecificCards(
+            new List<CardNames>
+            {
+                CardNames.Fisti,
+                CardNames.JeanMichelBruitages,
+                CardNames.LePyroBarbare,
+                CardNames.Fistiland,
+                CardNames.MerdeMagiqueEnPlastiqueRose
+            }, 
+            deck1AllCards
+        );
+        CardChoice.GetRandomDeck(25, ref player1Deck, deck1AllCards);
+        Player1DeckCards = player1Deck.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+    }
+    
+    /// <summary>
+    /// Builds the tutorial deck for player 2.
+    /// </summary>
+    private void BuildPlayer2DeckForTuto()
+    {
+        var player2Deck = InstantiateSpecificCards(
+            new List<CardNames>
+            {
+                CardNames.ClichéRaciste,
+                CardNames.Tentacules,
+                CardNames.MusiqueDeMegaDrive,
+                CardNames.LElfette
+            },
+            deck2AllCards
+        );
 
-        var card = CardChoice.GetSpecificCard(CardNames.ClichéRaciste, deck2AllCards);
-        var tentacule = CardChoice.GetSpecificCard(CardNames.Tentacules, deck2AllCards);
-        var musicMegaDrive = CardChoice.GetSpecificCard(CardNames.MusiqueDeMegaDrive, deck2AllCards);
-        var elfette = CardChoice.GetSpecificCard(CardNames.LElfette, deck2AllCards);
-
-
-        var fisti = CardChoice.GetSpecificCard(CardNames.Fisti, deck1AllCards);
-        var jeanMichelBruitage = CardChoice.GetSpecificCard(CardNames.JeanMichelBruitages, deck1AllCards);
-        var pyroBarbare = CardChoice.GetSpecificCard(CardNames.LePyroBarbare, deck1AllCards);
-        var fistiland = CardChoice.GetSpecificCard(CardNames.Fistiland, deck1AllCards);
-        var merdeRose = CardChoice.GetSpecificCard(CardNames.MerdeMagiqueEnPlastiqueRose, deck1AllCards);
-
-
-        CardChoice.GetRandomDeck(25, ref deck1, deck1AllCards);
-        deck1.Add(fisti);
-        deck1.Add(pyroBarbare);
-        deck1.Add(jeanMichelBruitage);
-        deck1.Add(fistiland);
-        deck1.Add(merdeRose);
-        CardChoice.GetRandomDeck(26, ref deck2, deck2AllCards);
-        deck2.Add(card);
-        deck2.Add(musicMegaDrive);
-        deck2.Add(elfette);
-        deck2.Add(tentacule);
-
-        deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-        deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+        Player2DeckCards = player2Deck.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
     }
 }

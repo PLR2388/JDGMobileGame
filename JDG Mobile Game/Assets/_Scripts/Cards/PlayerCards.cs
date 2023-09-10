@@ -67,7 +67,7 @@ public class PlayerCards : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        Deck = IsPlayerOne ? GameState.Instance.deckP1 : GameState.Instance.deckP2;
+        Deck = IsPlayerOne ? GameState.Instance.Player1DeckCards : GameState.Instance.Player2DeckCards;
         UnitManager.Instance.InitPhysicalCards(Deck, IsPlayerOne);
         for (var i = Deck.Count - GameState.InitialNumberOfHandCards; i < Deck.Count; i++)
         {

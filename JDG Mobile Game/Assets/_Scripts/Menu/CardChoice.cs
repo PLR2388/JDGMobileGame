@@ -81,7 +81,7 @@ namespace Menu
                     isPlayerOneCardChosen = false;
                     ChangeChoicePlayer.Invoke(1);
 
-                   GameState.Instance.deckP2 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
+                   GameState.Instance.Player2DeckCards = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
                 {
@@ -90,7 +90,7 @@ namespace Menu
                     isPlayerOneCardChosen = true;
                     ChangeChoicePlayer.Invoke(2);
 
-                    GameState.Instance.deckP1 = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
+                    GameState.Instance.Player1DeckCards = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -139,8 +139,8 @@ namespace Menu
                 GetRandomCards(deck2AllCard, deck2);
             }
 
-            GameState.Instance.deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            GameState.Instance.Player1DeckCards = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            GameState.Instance.Player2DeckCards = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
@@ -174,8 +174,8 @@ namespace Menu
 
             deck2.Reverse();
 
-            GameState.Instance.deckP1 = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.deckP2 = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            GameState.Instance.Player1DeckCards = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            GameState.Instance.Player2DeckCards = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
@@ -209,7 +209,7 @@ namespace Menu
                 title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
                 buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
                 isPlayerOneCardChosen = false;
-                GameState.Instance.deckP1 = new List<InGameCard>();
+                GameState.Instance.Player1DeckCards = new List<InGameCard>();
                 DeselectAllCards();
                 ChangeChoicePlayer.Invoke(1);
             }
