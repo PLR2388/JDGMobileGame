@@ -1394,7 +1394,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72db3446395e302429b06ccff104eb30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCards: {fileID: 0}
 --- !u!1 &244790276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1727,8 +1726,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57665ca15eac9a04bbe13519a258b5db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  p1: {fileID: 230530442}
-  p2: {fileID: 2017354827}
+  playerStatus1: {fileID: 230530445}
+  playerStatus2: {fileID: 2017354830}
 --- !u!114 &397230412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1787,6 +1786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e9b2367def2e544e9df1e3aa982c8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickDuration: 2
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0
@@ -5578,7 +5578,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72db3446395e302429b06ccff104eb30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCards: {fileID: 0}
 --- !u!1 &2094974137
 GameObject:
   m_ObjectHideFlags: 0

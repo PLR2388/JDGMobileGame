@@ -22,7 +22,7 @@ public class AddShieldsForUserEffectAbility : EffectAbility
         PlayerStatus opponentStatus)
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
-        playerStatus.SetNumberShield(numberShields);
+        playerStatus.SetShieldCount(numberShields);
     }
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards,

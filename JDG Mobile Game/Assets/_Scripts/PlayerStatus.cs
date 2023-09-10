@@ -45,7 +45,7 @@ public class PlayerStatus : MonoBehaviour
         return currentPv;
     }
 
-    public void SetNumberShield(int number)
+    public void SetShieldCount(int number)
     {
         numberShield = number;
     }
