@@ -53,7 +53,7 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void OnTouch()
     {
-        var cardTouch = RaycastManager.GetCardTouch();
+        var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
         var currentOwner = GameStateManager.Instance.IsP1Turn ? CardOwner.Player1 : CardOwner.Player2;
         if (cardTouch != null)
         {
@@ -99,7 +99,7 @@ public class GameLoop : MonoBehaviour
     private void OnLongTouch()
     {
         UIManager.Instance.HideInvocationMenu();
-        var cardTouch = RaycastManager.GetCardTouch();
+        var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
         if (cardTouch != null)
         {
             UIManager.Instance.DisplayCardInBigImage(cardTouch);
