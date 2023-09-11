@@ -6469,6 +6469,7 @@ GameObject:
   - component: {fileID: 2003630711}
   - component: {fileID: 2003630710}
   - component: {fileID: 2003630713}
+  - component: {fileID: 2003630712}
   m_Layer: 0
   m_Name: ChoiceMenu
   m_TagString: Untagged
@@ -6521,6 +6522,24 @@ MonoBehaviour:
   title: {fileID: 81259937}
   buttonText: {fileID: 216690698}
   isPlayerOneCardChosen: 0
+--- !u!114 &2003630712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2003630708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 866d552fa30132d4eb14eedd6f91bd4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  container: {fileID: 961552866}
+  canvas: {fileID: 1089345441}
+  choiceCardMenu: {fileID: 1700677370}
+  twoPlayerModeMenu: {fileID: 1648840136}
+  title: {fileID: 81259937}
+  buttonText: {fileID: 216690698}
 --- !u!114 &2003630713
 MonoBehaviour:
   m_ObjectHideFlags: 0

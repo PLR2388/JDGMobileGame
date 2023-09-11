@@ -10,61 +10,58 @@ using Random = UnityEngine.Random;
 
 namespace Menu
 {
+    /// <summary>
+    /// Manages the card choices and selections in the game menu.
+    /// </summary>
     public class CardChoice : MonoBehaviour
     {
         [SerializeField] private GameObject container;
-        [SerializeField] private Transform canvas;
 
-        [SerializeField] private GameObject choiceCardMenu;
-        [SerializeField] private GameObject twoPlayerModeMenu;
-
-        [SerializeField] private Text title;
-        [SerializeField] private Text buttonText;
-
+        /// <summary>
+        /// Event raised when the card choice of a player changes.
+        /// </summary>
         public static readonly UnityEvent<int> ChangeChoicePlayer = new UnityEvent<int>();
 
+        /// <summary>
+        /// Indicates if the player one has chosen their cards.
+        /// </summary>
         public bool isPlayerOneCardChosen;
 
+        /// <summary>
+        /// Checks and counts the selected cards in the deck.
+        /// </summary>
+        /// <param name="deck">The collection of cards to check.</param>
+        /// <returns>The number of selected cards.</returns>
         private int CheckCard(ICollection<Card> deck)
         {
             var numberSelected = 0;
-            var children = container.GetComponentsInChildren<Transform>();
-            foreach (var transformInChildren in children)
+            var hoverComponents = container.GetComponentsInChildren<OnHover>();
+            foreach (var hoverComponent in hoverComponents)
             {
-                var cardGameObject = transformInChildren.gameObject;
-                if (cardGameObject.GetComponent<OnHover>() == null) continue;
-                var isSelected = cardGameObject.GetComponent<OnHover>().bIsSelected;
+                var isSelected = hoverComponent.bIsSelected;
                 if (!isSelected) continue;
                 numberSelected++;
-                deck.Add(cardGameObject.GetComponent<CardDisplay>().Card);
+                deck.Add(hoverComponent.gameObject.GetComponent<CardDisplay>().Card);
             }
 
             return numberSelected;
         }
 
-        private void DisplayMessageBox(int remainedCards)
-        {
-            var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_TITLE),
-                string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_MESSAGE), remainedCards),
-                showOkButton: true
-            );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
-        }
-
+        /// <summary>
+        /// Deselects all the cards.
+        /// </summary>
         private void DeselectAllCards()
         {
-            var children = container.GetComponentsInChildren<Transform>();
-            foreach (var transformChildren in children)
+            var hoverComponents = container.GetComponentsInChildren<OnHover>();
+            foreach (var hoverComponent in hoverComponents)
             {
-                var gameObjectChildren = transformChildren.gameObject;
-                if (gameObjectChildren.GetComponent<OnHover>() != null)
-                {
-                    gameObjectChildren.GetComponent<OnHover>().bIsSelected = false;
-                }
+                hoverComponent.bIsSelected = false;
             }
         }
 
+        /// <summary>
+        /// Verifies and manages the cards chosen by the player.
+        /// </summary>
         public void CheckPlayerCards()
         {
             var deck = new List<Card>();
@@ -72,21 +69,18 @@ namespace Menu
 
             if (numberSelected == GameState.MaxDeckCards)
             {
+                CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(isPlayerOneCardChosen);
                 if (isPlayerOneCardChosen)
                 {
                     AudioSystem.Instance.StopMusic();
                     SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
-                    title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
-                    buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
                     isPlayerOneCardChosen = false;
                     ChangeChoicePlayer.Invoke(1);
 
-                   GameState.Instance.Player2DeckCards = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
+                    GameState.Instance.Player2DeckCards = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
                 {
-                    title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_TWO);
-                    buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_TWO);
                     isPlayerOneCardChosen = true;
                     ChangeChoicePlayer.Invoke(2);
 
@@ -97,44 +91,58 @@ namespace Menu
             else
             {
                 var remainedCards = GameState.MaxDeckCards - numberSelected;
-                DisplayMessageBox(remainedCards);
+                CardChoiceUIManager.Instance.DisplayMessageBox(remainedCards);
             }
         }
 
+        /// <summary>
+        /// Filters and retrieves the cards that meet specific criteria.
+        /// </summary>
+        /// <param name="sourceCards">The source cards to filter from.</param>
+        /// <returns>A list of filtered cards.</returns>
+        private static List<Card> FilterCards(List<Card> sourceCards)
+        {
+            return sourceCards.Where(card =>
+                    card.Type != CardType.Contre &&
+                    card.Title != CardNameMappings.CardNameMap[CardNames.AttaqueDeLaTourEiffel] &&
+                    card.Title != CardNameMappings.CardNameMap[CardNames.BlagueInterdite] &&
+                    card.Title != CardNameMappings.CardNameMap[CardNames.UnBonTuyau])
+                .ToList();
+        }
+
+        /// <summary>
+        /// Generates a random deck of cards.
+        /// </summary>
+        /// <param name="numberOfCards">The number of cards required in the deck.</param>
+        /// <param name="initialDeck">The initial collection of cards.</param>
+        /// <param name="cards">The list of cards to choose from.</param>
         public static void GetRandomDeck(int numberOfCards, ref List<Card> initialDeck, List<Card> cards)
         {
-            var deckAllCard = cards.Where(card =>
-                card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
-                card.Title != "Blague interdite" &&
-                card.Title != "Un bon tuyau").ToList();
+            var deckAllCard = FilterCards(cards);
 
             while (initialDeck.Count != numberOfCards)
             {
                 GetRandomCards(deckAllCard, initialDeck);
             }
         }
-
+        
+        /// <summary>
+        /// Sets random decks for players and starts the game.
+        /// </summary>
         public void RandomDeck()
         {
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var deck1AllCard = GameState.Instance.deck1AllCards.Where(card =>
-                card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
-                card.Title != "Blague interdite" &&
-                card.Title != "Un bon tuyau").ToList();
+            var deck1AllCard = FilterCards(GameState.Instance.deck1AllCards);
+            var deck2AllCard = FilterCards(GameState.Instance.deck2AllCards);
 
-            var deck2AllCard = GameState.Instance.deck2AllCards.Where(card =>
-                card.Type != CardType.Contre && card.Title != "Attaque de la tour Eiffel" &&
-                card.Title != "Blague interdite" &&
-                card.Title != "Un bon tuyau").ToList();
-
-            while (deck1.Count != 30)
+            while (deck1.Count != GameState.MaxDeckCards)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
 
-            while (deck2.Count != 30)
+            while (deck2.Count != GameState.MaxDeckCards)
             {
                 GetRandomCards(deck2AllCard, deck2);
             }
@@ -145,6 +153,9 @@ namespace Menu
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
+        /// <summary>
+        /// Sets a deck for testing purposes and starts the game.
+        /// </summary>
         public void DeckToTest()
         {
             var deck1 = new List<Card>();
@@ -159,15 +170,15 @@ namespace Menu
             deck1.Add(GetSpecificCard(CardNames.AlphaMan, deck1AllCard));
             deck1.Add(GetSpecificCard(CardNames.BébéTerreurNocturne, deck1AllCard));
 
-            while (deck1.Count != 30)
+            while (deck1.Count != GameState.MaxDeckCards)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
-            
+
             deck1.Reverse();
 
 
-            while (deck2.Count != 30)
+            while (deck2.Count != GameState.MaxDeckCards)
             {
                 GetRandomCards(deck2AllCard, deck2);
             }
@@ -180,6 +191,12 @@ namespace Menu
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
 
+        /// <summary>
+        /// Retrieves a specific card based on its name.
+        /// </summary>
+        /// <param name="cardNames">The name identifier of the card.</param>
+        /// <param name="cards">The list of cards to search from.</param>
+        /// <returns>The specific card found; null otherwise.</returns>
         public static Card GetSpecificCard(CardNames cardNames, List<Card> cards)
         {
             var nameCard = CardNameMappings.CardNameMap[cardNames];
@@ -192,6 +209,11 @@ namespace Menu
             return card;
         }
 
+        /// <summary>
+        /// Gets a random card from the list and adds it to the deck.
+        /// </summary>
+        /// <param name="allCards">The list of cards to choose from.</param>
+        /// <param name="deck">The deck to which the card is added.</param>
         private static void GetRandomCards(IList<Card> allCards, ICollection<Card> deck)
         {
             var randomIndex = Random.Range(0, allCards.Count - 1);
@@ -202,12 +224,14 @@ namespace Menu
             allCards.Remove(card);
         }
 
+        /// <summary>
+        /// Handles the back action in the game menu.
+        /// </summary>
         public void Back()
         {
             if (isPlayerOneCardChosen)
             {
-                title.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_TITLE_PLAYER_ONE);
-                buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARD_CHOICE_BUTTON_PLAYER_ONE);
+                CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(true);
                 isPlayerOneCardChosen = false;
                 GameState.Instance.Player1DeckCards = new List<InGameCard>();
                 DeselectAllCards();
@@ -216,8 +240,8 @@ namespace Menu
             else
             {
                 DeselectAllCards();
-                choiceCardMenu.SetActive(false);
-                twoPlayerModeMenu.SetActive(true);
+                CardChoiceUIManager.Instance.ShowChoiceCardMenu(false);
+                CardChoiceUIManager.Instance.ShowTwoPlayerModeMenu(true);
             }
         }
     }
