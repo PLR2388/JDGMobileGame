@@ -12,23 +12,35 @@ namespace Menu
         // Start is called before the first frame update
         private void Start()
         {
+            InitializeSliders();
+        }
+        
+        /// <summary>
+        /// Initializes the sliders with the current audio system values and adds listeners.
+        /// </summary>
+        private void InitializeSliders()
+        {
             volumeMusicSlider.value = AudioSystem.Instance.MusicVolume;
             soundEffectSlider.value = AudioSystem.Instance.SoundEffectVolume;
-            Slider.SliderEvent sliderMusicEvent = new Slider.SliderEvent();
-            Slider.SliderEvent sliderSoundEffectEvent = new Slider.SliderEvent();
-            
-            sliderMusicEvent.AddListener(MusicVolumeChanged);
-            sliderSoundEffectEvent.AddListener(SoundEffectVolumeChanged);
 
-            volumeMusicSlider.onValueChanged = sliderMusicEvent;
-            soundEffectSlider.onValueChanged = sliderSoundEffectEvent;
+            volumeMusicSlider.onValueChanged.AddListener(MusicVolumeChanged);
+            soundEffectSlider.onValueChanged.AddListener(SoundEffectVolumeChanged);
         }
 
+        
+        /// <summary>
+        /// Updates the music volume in the audio system.
+        /// </summary>
+        /// <param name="value">The new volume value.</param>
         private void MusicVolumeChanged(float value)
         {
             AudioSystem.Instance.ChangeMusicVolume(value);
         }
         
+        /// <summary>
+        /// Updates the sound effect volume in the audio system.
+        /// </summary>
+        /// <param name="value">The new volume value.</param>
         private void SoundEffectVolumeChanged(float value)
         {
             AudioSystem.Instance.ChangeSoundEffectVolume(value);
