@@ -3,20 +3,12 @@ using UnityEngine;
 
 public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
 {
-    [SerializeField] private GameObject playerText;
+    [SerializeField] private TextMeshProUGUI playerText;
     [SerializeField] private TextMeshProUGUI roundText;
     [SerializeField] private GameObject playerCamera;
     [SerializeField] protected GameObject inHandButton;
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
-
-    protected override void Awake()
-    {
-        base.Awake();
-        // Ensure roundText is assigned
-        if(!roundText && playerText)
-            roundText = playerText.GetComponent<TextMeshProUGUI>();
-    }
 
     public void SetRoundText(string value)
     {
@@ -51,9 +43,9 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
 
     private void SetPlayerTurnText()
     {
-        if (playerText && roundText)
+        if (playerText)
         {
-            roundText.text = GameStateManager.Instance.IsP1Turn 
+            playerText.text = GameStateManager.Instance.IsP1Turn 
                 ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO) 
                 : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_ONE);
         }

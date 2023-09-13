@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cards;
 using UnityEngine;
@@ -232,6 +233,7 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     {
         if (currentSelectedCard != null)
         {
+            currentSelectedCard = null;
             Destroy(newGameObject);
         }
     }
@@ -243,6 +245,7 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     {
         if (multipleSelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
         {
+            multipleSelectedCards.Clear();
             Destroy(newGameObject);
         }
     }

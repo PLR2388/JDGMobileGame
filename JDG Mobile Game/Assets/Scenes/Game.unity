@@ -1822,7 +1822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8862196d9871d5941ba370247df1399c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerText: {fileID: 1024667568}
+  playerText: {fileID: 1024667570}
   roundText: {fileID: 138997259}
   playerCamera: {fileID: 1233983595}
   inHandButton: {fileID: 829748139}
