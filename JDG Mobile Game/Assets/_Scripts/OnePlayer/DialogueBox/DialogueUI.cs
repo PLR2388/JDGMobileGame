@@ -74,7 +74,7 @@ public class DialogueUI : MonoBehaviour
             
             yield return typewriterEffect.Run(dialogue, textLabel);
 
-            if (i == dialogueObject.Dialogue.Length - 1 && dialogueObject.hasResponses) break;
+            if (i == dialogueObject.Dialogue.Length - 1 && dialogueObject.HasResponses) break;
 
 
             yield return new WaitUntil(() =>
@@ -147,7 +147,7 @@ public class DialogueUI : MonoBehaviour
             });
         }
 
-        if (dialogueObject.hasResponses)
+        if (dialogueObject.HasResponses)
         {
             responseHandler.ShowResponses(dialogueObject.Responses);
         }
