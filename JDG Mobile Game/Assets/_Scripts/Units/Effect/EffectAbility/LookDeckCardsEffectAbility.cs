@@ -58,7 +58,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 shortList,
                 numberCardSelection: numberCards,
-                displayOrder: true,
+                showOrder: true,
                 showPositiveButton: true,
                 showNegativeButton: true,
                 positiveMultipleAction: (selectedCards) =>
@@ -100,7 +100,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 deck,
                 numberCardSelection: deck.Count,
-                displayOrder: true,
+                showOrder: true,
                 showNegativeButton: true,
                 showPositiveButton: true,
                 positiveMultipleAction: (selectedCards) =>

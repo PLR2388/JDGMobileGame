@@ -187,8 +187,8 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction okAction = () =>
         {
-            cardSelectorConfig?.OkAction?.Invoke(currentSelectedCard);
-            cardSelectorConfig?.OkMultipleAction?.Invoke(multipleSelectedCards);
+            cardSelectorConfig?.OkActions.SingleAction?.Invoke(currentSelectedCard);
+            cardSelectorConfig?.OkActions.MultipleAction?.Invoke(multipleSelectedCards);
             switch (cardSelectorConfig?.NumberCardSelection)
             {
                 case 1:
@@ -210,8 +210,8 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction positiveAction = () =>
         {
-            cardSelectorConfig?.PositiveAction?.Invoke(currentSelectedCard);
-            cardSelectorConfig?.PositiveMultipleAction?.Invoke(multipleSelectedCards);
+            cardSelectorConfig?.PositiveActions.SingleAction?.Invoke(currentSelectedCard);
+            cardSelectorConfig?.PositiveActions.MultipleAction?.Invoke(multipleSelectedCards);
             if (cardSelectorConfig?.NumberCardSelection == 1)
             {
                 DestroyGameObjectSingleCard(newGameObject);
@@ -265,7 +265,7 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         var displayCardsScript = GetDisplayCards(newGameObject);
         displayCardsScript.CardsList = cardSelectorConfig?.Cards;
 
-        displayNumberOnCard = cardSelectorConfig?.DisplayOrder == true;
+        displayNumberOnCard = cardSelectorConfig?.ShowOrder == true;
         numberCardInSelection = cardSelectorConfig?.NumberCardSelection ?? 0;
         multipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
 
