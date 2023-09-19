@@ -5,58 +5,104 @@ using UnityEngine;
 
 public class UpdateDescription : MonoBehaviour
 {
-    [SerializeField] private GameObject titleCardText;
-    [SerializeField] private GameObject shortDescriptionText;
-    [SerializeField] private GameObject descriptionText;
+    [SerializeField] private TMPro.TextMeshProUGUI titleCardText;
+    [SerializeField] private TMPro.TextMeshProUGUI shortDescriptionText;
+    [SerializeField] private TMPro.TextMeshProUGUI descriptionText;
     [SerializeField] private GameObject allInvocationOptions;
-    [SerializeField] private GameObject familyText;
-    [SerializeField] private GameObject attackText;
-    [SerializeField] private GameObject defenseText;
+    [SerializeField] private TMPro.TextMeshProUGUI familyText;
+    [SerializeField] private TMPro.TextMeshProUGUI attackText;
+    [SerializeField] private TMPro.TextMeshProUGUI defenseText;
     [SerializeField] private GameObject collectorImage;
-    [SerializeField] private GameObject cardTypeText;
+    [SerializeField] private TMPro.TextMeshProUGUI cardTypeText;
     private Card card;
+    private CardDisplay cardDisplay;
+    private Card previousCard;
 
-    // Update is called once per frame
-    private void Update()
+    /// <summary>
+    /// Initializes the component when the script instance is being loaded.
+    /// </summary>
+    private void Awake()
     {
-        card = GetComponent<CardDisplay>().Card;
-        titleCardText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Title;
-        shortDescriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.Description;
-        descriptionText.GetComponent<TMPro.TextMeshProUGUI>().text = card.DetailedDescription;
+        cardDisplay = GetComponent<CardDisplay>();
+    }
 
-        if (card.Type == CardType.Invocation)
+    /// <summary>
+    /// Updates the details specific to Invocation cards.
+    /// </summary>
+    private void UpdateInvocationCardDetails()
+    {
+        allInvocationOptions.SetActive(true);
+        cardTypeText.text =
+            string.Format(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD),
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_INVOCATION)
+            );
+        var invocationCard = card as InvocationCard;
+        var baseInvocationCardStats = invocationCard?.BaseInvocationCardStats;
+        if (baseInvocationCardStats != null)
         {
-            allInvocationOptions.SetActive(true);
-            cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text =
-                string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD),
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_INVOCATION)
-                );
-            var invocationCard = (InvocationCard)card;
-            var families = invocationCard.BaseInvocationCardStats.Families;
+            var families = baseInvocationCardStats.Value.Families;
             var familyFormatText = "";
-            if (families.Length == 2)
+            if (families?.Length == 2)
             {
-                familyFormatText = families[0] + ", " + families[1];
+                familyFormatText = $"{families[0]}, {families[1]}";
             }
-            else
+            else if (families != null)
             {
                 familyFormatText = families[0].ToString();
             }
 
-            familyText.GetComponent<TMPro.TextMeshProUGUI>().text = familyFormatText;
-            attackText.GetComponent<TMPro.TextMeshProUGUI>().text =
-                invocationCard.BaseInvocationCardStats.Attack.ToString(CultureInfo.InvariantCulture);
-            defenseText.GetComponent<TMPro.TextMeshProUGUI>().text =
-                invocationCard.BaseInvocationCardStats.Defense.ToString(CultureInfo.InvariantCulture);
+            familyText.text = familyFormatText;
+            attackText.text =
+                baseInvocationCardStats.Value.Attack.ToString(CultureInfo.InvariantCulture);
+            defenseText.text =
+                baseInvocationCardStats.Value.Defense.ToString(CultureInfo.InvariantCulture);
         }
-        else
-        {
-            allInvocationOptions.SetActive(false);
-            cardTypeText.GetComponent<TMPro.TextMeshProUGUI>().text =
-                string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD), card.Type.ToName());
-        }
+    }
 
+    /// <summary>
+    /// Updates the details specific to non-Invocation cards.
+    /// </summary>
+    private void UpdateOtherCardDetails()
+    {
+        allInvocationOptions.SetActive(false);
+        cardTypeText.text =
+            string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD),
+                card.Type.ToName());
+    }
+
+    /// <summary>
+    /// Updates the visibility status of the collector image based on card properties.
+    /// </summary>
+    private void UpdateCollectorImageStatus()
+    {
         collectorImage.SetActive(card.Collector);
+    }
+
+    /// <summary>
+    /// Called every frame, updates card details if there is a change in the card.
+    /// </summary>
+    private void Update()
+    {
+        card = cardDisplay.Card;
+
+        if (previousCard != card)
+        {
+            titleCardText.text = card.Title;
+            shortDescriptionText.text = card.Description;
+            descriptionText.text = card.DetailedDescription;
+
+            if (card.Type == CardType.Invocation)
+            {
+                UpdateInvocationCardDetails();
+            }
+            else
+            {
+                UpdateOtherCardDetails();
+            }
+
+            UpdateCollectorImageStatus();
+            previousCard = card;
+        }
     }
 }

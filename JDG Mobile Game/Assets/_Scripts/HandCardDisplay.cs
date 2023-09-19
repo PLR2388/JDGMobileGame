@@ -39,7 +39,6 @@ public class HandCardDisplay : MonoBehaviour
     }
     private void BuildCards(ObservableCollection<InGameCard> handCards)
     {
-
         if (createdCards.Count > 0)
         {
             DestroyCards();
@@ -52,7 +51,6 @@ public class HandCardDisplay : MonoBehaviour
     }
     private void CreateCards(ObservableCollection<InGameCard> handCards)
     {
-
         foreach (var handCard in handCards)
         {
             var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);

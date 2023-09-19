@@ -192,6 +192,10 @@ public class InGameMenuScript : MonoBehaviour
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
             inHandButton.SetActive(true);
+            var playerCard = GameStateManager.Instance.IsP1Turn
+                ? GameObject.Find("Player1").GetComponent<PlayerCards>()
+                : GameObject.Find("Player2").GetComponent<PlayerCards>();
+            HandCardDisplay.HandCardChange.Invoke(playerCard.HandCards);
         }
         else
         {
