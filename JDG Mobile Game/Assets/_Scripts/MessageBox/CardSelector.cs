@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cards;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,15 +13,11 @@ public class NumberedCardEvent : UnityEvent<InGameCard, int>
 
 public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseComponent
 {
-
     #region Fields and Properties
 
     [SerializeField] private GameObject prefab;
-    private InGameCard currentSelectedCard;
-    private readonly List<InGameCard> multipleSelectedCards = new List<InGameCard>();
     public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
 
-    private bool multipleCardSelection;
     private int numberCardInSelection = 2;
     private bool displayNumberOnCard = false;
 
@@ -33,68 +30,16 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     /// </summary>
     void Start()
     {
-        OnHover.CardSelectedEvent.AddListener(OnCardSelected);
-        OnHover.CardUnselectedEvent.AddListener(OnCardUnselected);
-    }
-
-    /// <summary>
-    /// Called by Unity when the object is destroyed. It removes the card selection and unselection event listeners.
-    /// </summary>
-    private void OnDestroy()
-    {
-        OnHover.CardSelectedEvent.RemoveListener(OnCardSelected);
-        OnHover.CardUnselectedEvent.RemoveListener(OnCardUnselected);
+        CardSelectionManager.Instance.SelectionChanged.AddListener(SelectionChanged);
     }
 
     #endregion
 
     #region Private Methods
 
-    /// <summary>
-    /// Handles the logic when a card is selected.
-    /// </summary>
-    private void OnCardSelected(InGameCard card)
+    private void SelectionChanged()
     {
-        if (multipleCardSelection)
-        {
-            if (!CardAlreadySelected(card))
-            {
-                EnsureCardSelectionLimit();
-                multipleSelectedCards.Add(card);
-                InvokeNumberedEventIfRequired();
-            }
-        }
-        else
-        {
-            if (currentSelectedCard != null)
-            {
-                OnHover.ForceUnselectCardEvent.Invoke(currentSelectedCard);
-            }
-            currentSelectedCard = card;
-        }
-    }
-    
-    /// <summary>
-    /// Checks if the given card is already selected based on its title.
-    /// </summary>
-    /// <param name="card">The card to check.</param>
-    /// <returns>True if the card is already selected; otherwise, false.</returns>
-    private bool CardAlreadySelected(InGameCard card)
-    {
-        return multipleSelectedCards.Exists(selectedCard => card.Title == selectedCard.Title);
-    }
-
-    /// <summary>
-    /// Ensures that the number of selected cards does not exceed the defined limit.
-    /// If the limit is reached, it forces unselect on the first card and removes it from the list.
-    /// </summary>
-    private void EnsureCardSelectionLimit()
-    {
-        if (numberCardInSelection == multipleSelectedCards.Count)
-        {
-            OnHover.ForceUnselectCardEvent.Invoke(multipleSelectedCards[0]);
-            multipleSelectedCards.RemoveAt(0);
-        }
+        InvokeNumberedEventIfRequired();
     }
 
     /// <summary>
@@ -105,24 +50,9 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     {
         if (displayNumberOnCard)
         {
-            for (var i = 0; i < multipleSelectedCards.Count; i++)
+            for (var i = 0; i < CardSelectionManager.Instance.SelectedCards.Count; i++)
             {
-                NumberedCardEvent.Invoke(multipleSelectedCards[i], i + 1);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Handles the logic when a card is unselected.
-    /// </summary>
-    private void OnCardUnselected(InGameCard card)
-    {
-        if (displayNumberOnCard)
-        {
-            multipleSelectedCards.Remove(card);
-            for (var i = 0; i < multipleSelectedCards.Count; i++)
-            {
-                NumberedCardEvent.Invoke(multipleSelectedCards[i], i + 1);
+                NumberedCardEvent.Invoke(CardSelectionManager.Instance.SelectedCards[i], i + 1);
             }
         }
     }
@@ -153,7 +83,7 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         return buttonTransform.GetComponent<Button>();
     }
 
-    
+
     /// <summary>
     /// Returns the DisplayCards component of the "Container" child GameObject from the provided parent GameObject.
     /// </summary>
@@ -188,8 +118,12 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction okAction = () =>
         {
-            cardSelectorConfig?.OkActions.SingleAction?.Invoke(currentSelectedCard);
-            cardSelectorConfig?.OkActions.MultipleAction?.Invoke(multipleSelectedCards);
+            var singleCard = CardSelectionManager.Instance.SelectedCards.Count > 0
+                ? CardSelectionManager.Instance.SelectedCards[0]
+                : null;
+            var multipleCards = CardSelectionManager.Instance.SelectedCards;
+            cardSelectorConfig?.OkActions.SingleAction?.Invoke(singleCard);
+            cardSelectorConfig?.OkActions.MultipleAction?.Invoke(multipleCards);
             switch (cardSelectorConfig?.NumberCardSelection)
             {
                 case 1:
@@ -211,8 +145,12 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction positiveAction = () =>
         {
-            cardSelectorConfig?.PositiveActions.SingleAction?.Invoke(currentSelectedCard);
-            cardSelectorConfig?.PositiveActions.MultipleAction?.Invoke(multipleSelectedCards);
+            var singleCard = CardSelectionManager.Instance.SelectedCards.Count > 0
+                ? CardSelectionManager.Instance.SelectedCards[0]
+                : null;
+            var multipleCards = CardSelectionManager.Instance.SelectedCards;
+            cardSelectorConfig?.PositiveActions.SingleAction?.Invoke(singleCard);
+            cardSelectorConfig?.PositiveActions.MultipleAction?.Invoke(multipleCards);
             if (cardSelectorConfig?.NumberCardSelection == 1)
             {
                 DestroyGameObjectSingleCard(newGameObject);
@@ -225,27 +163,27 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         ConfigureButton(positiveBtn, positiveAction, null);
         ConfigureButton(negativeBtn, config.NegativeAction, newGameObject);
     }
-    
+
     /// <summary>
     /// Destroys the provided GameObject if a single card is selected.
     /// </summary>
     private void DestroyGameObjectSingleCard(GameObject newGameObject)
     {
-        if (currentSelectedCard != null)
+        if (CardSelectionManager.Instance.SelectedCards.Count > 0)
         {
-            currentSelectedCard = null;
+            CardSelectionManager.Instance.ClearSelection();
             Destroy(newGameObject);
         }
     }
-    
+
     /// <summary>
     /// Destroys the provided GameObject if the count of multiple selected cards matches the specified configuration.
     /// </summary>
     private void DestroyGameObjectMultipleSelectedCards(GameObject newGameObject, CardSelectorConfig cardSelectorConfig)
     {
-        if (multipleSelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
+        if (CardSelectionManager.Instance.SelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
         {
-            multipleSelectedCards.Clear();
+            CardSelectionManager.Instance.ClearSelection();
             Destroy(newGameObject);
         }
     }
@@ -269,8 +207,8 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         displayCardsScript.CardsList = cardSelectorConfig?.Cards;
 
         displayNumberOnCard = cardSelectorConfig?.ShowOrder == true;
-        numberCardInSelection = cardSelectorConfig?.NumberCardSelection ?? 0;
-        multipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
+        CardSelectionManager.Instance.MultipleSelectionLimit = cardSelectorConfig?.NumberCardSelection ?? 0;
+        CardSelectionManager.Instance.MultipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
 
         ConfigureButtons(newGameObject, config, cardSelectorConfig);
     }
@@ -288,5 +226,4 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     }
 
     #endregion
-
 }

@@ -20,9 +20,6 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     private CardState currentState; // This will be an abstract base class or interface for different card states
     
     public bool bIsInGame = false;
-    public static readonly CardSelectedEvent CardSelectedEvent = new CardSelectedEvent();
-    public static readonly CardSelectedEvent CardUnselectedEvent = new CardSelectedEvent();
-    public static readonly CardSelectedEvent ForceUnselectCardEvent = new CardSelectedEvent();
 
     /// <summary>
     /// Indicates if the card is currently selected.
@@ -36,8 +33,8 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         numberText = numberTextObject.GetComponent<Text>();
         CardSelector.NumberedCardEvent.AddListener(UpdateNumberOnCard);
-        ForceUnselectCardEvent.AddListener(UnSelectCard);
         card = gameObject.GetComponent<CardDisplay>().InGameCard;
+        CardSelectionManager.Instance.CardDeselected.AddListener(UnSelectCard);
 
         // Initialize default state
         SetState(new DefaultCardState(this, card));
@@ -50,7 +47,6 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         // Unsubscribe from events
         CardSelector.NumberedCardEvent.RemoveListener(UpdateNumberOnCard);
-        ForceUnselectCardEvent.RemoveListener(UnSelectCard);
     }
 
     /// <summary>

@@ -29,10 +29,13 @@ public class InfiniteScroll : MonoBehaviour
         deck1AllCards = GameState.Instance.deck1AllCards;
         deck2AllCards = GameState.Instance.deck2AllCards;
         DisplayAvailableCards(deck1AllCards);
-        OnHover.CardSelectedEvent.AddListener(OnSelectCard);
-        OnHover.CardUnselectedEvent.AddListener(OnUnSelectCard);
+        CardSelectionManager.Instance.MultipleCardSelection = true;
+        CardSelectionManager.Instance.MultipleSelectionLimit = GameState.MaxDeckCards;
+        CardSelectionManager.Instance.CardSelected.AddListener(OnSelectCard);
+        CardSelectionManager.Instance.CardDeselected.AddListener(OnUnSelectCard);
         CardChoice.ChangeChoicePlayer.AddListener(OnChangePlayer);
     }
+
 
     /// <summary>
     /// Reset value when another player must choose his cards
@@ -58,21 +61,22 @@ public class InfiniteScroll : MonoBehaviour
         {
             numberRare++;
         }
+
         if (numberSelected > GameState.MaxDeckCards)
         {
-            OnHover.ForceUnselectCardEvent.Invoke(card);
+            CardSelectionManager.Instance.UnselectCard(card);
             DisplayMessageBox(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
             );
         }
+
         if (numberRare > GameState.MaxRare)
         {
-            OnHover.ForceUnselectCardEvent.Invoke(card);
+            CardSelectionManager.Instance.UnselectCard(card);
             DisplayMessageBox(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_COLLECTOR_CARD)
             );
         }
-        
     }
 
     /// <summary>
@@ -94,12 +98,13 @@ public class InfiniteScroll : MonoBehaviour
     /// <param name="allCards"></param>
     private void DisplayAvailableCards(List<Card> allCards)
     {
-        foreach (var card in allCards.Where(card => card.Type != CardType.Contre).Where(card => !removeCardTitles.Contains(card.Title)))
+        foreach (var card in allCards.Where(card => card.Type != CardType.Contre)
+                     .Where(card => !removeCardTitles.Contains(card.Title)))
         {
             CreateCardDisplay(card);
         }
     }
-    
+
     /// <summary>
     /// Create a display for a card
     /// </summary>
@@ -125,15 +130,12 @@ public class InfiniteScroll : MonoBehaviour
         );
         MessageBox.Instance.CreateMessageBox(canvas, config);
     }
-    
+
     /// <summary>
     /// Remove Event listener attached
     /// </summary>
     private void OnDestroy()
     {
-        OnHover.CardSelectedEvent.RemoveListener(OnSelectCard);
-        OnHover.CardUnselectedEvent.RemoveListener(OnUnSelectCard);
         CardChoice.ChangeChoicePlayer.RemoveListener(OnChangePlayer);
     }
-
 }

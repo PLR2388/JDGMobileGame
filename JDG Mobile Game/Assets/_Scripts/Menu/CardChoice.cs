@@ -52,11 +52,7 @@ namespace Menu
         /// </summary>
         private void DeselectAllCards()
         {
-            var cardDisplayComponents = container.GetComponentsInChildren<CardDisplay>();
-            foreach (var cardDisplayComponent in cardDisplayComponents)
-            {
-                OnHover.ForceUnselectCardEvent.Invoke(cardDisplayComponent.InGameCard);
-            }
+            CardSelectionManager.Instance.ClearSelection();
         }
 
         /// <summary>
@@ -77,14 +73,16 @@ namespace Menu
                     isPlayerOneCardChosen = false;
                     ChangeChoicePlayer.Invoke(1);
 
-                    GameState.Instance.Player2DeckCards = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
+                    GameState.Instance.Player2DeckCards =
+                        deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
                 {
                     isPlayerOneCardChosen = true;
                     ChangeChoicePlayer.Invoke(2);
 
-                    GameState.Instance.Player1DeckCards = deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
+                    GameState.Instance.Player1DeckCards =
+                        deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -125,7 +123,7 @@ namespace Menu
                 GetRandomCards(deckAllCard, initialDeck);
             }
         }
-        
+
         /// <summary>
         /// Sets random decks for players and starts the game.
         /// </summary>
@@ -147,8 +145,10 @@ namespace Menu
                 GetRandomCards(deck2AllCard, deck2);
             }
 
-            GameState.Instance.Player1DeckCards = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.Player2DeckCards = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            GameState.Instance.Player1DeckCards =
+                deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            GameState.Instance.Player2DeckCards =
+                deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
@@ -168,7 +168,7 @@ namespace Menu
             deck1.Add(GetSpecificCard(CardNames.SandrineLePorteManteauExtraterrestre, deck1AllCard));
             deck1.Add(GetSpecificCard(CardNames.BenzaieJeune, deck1AllCard));
             deck1.Add(GetSpecificCard(CardNames.AlphaMan, deck1AllCard));
-            deck1.Add(GetSpecificCard(CardNames.BébéTerreurNocturne, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.MJCorrompu, deck1AllCard));
 
             while (deck1.Count != GameState.MaxDeckCards)
             {
@@ -185,8 +185,10 @@ namespace Menu
 
             deck2.Reverse();
 
-            GameState.Instance.Player1DeckCards = deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.Player2DeckCards = deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+            GameState.Instance.Player1DeckCards =
+                deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+            GameState.Instance.Player2DeckCards =
+                deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }

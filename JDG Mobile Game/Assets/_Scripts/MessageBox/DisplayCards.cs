@@ -43,8 +43,16 @@ public class DisplayCards : StaticInstance<DisplayCards>
     {
         foreach (var cardGameObject in associatedGameObject)
         {
-            cardGameObject.transform.SetParent(CardPoolManager.Instance.cardPoolHolder, true);
-            OnHover.ForceUnselectCardEvent.Invoke(cardGameObject.GetComponent<CardDisplay>().InGameCard);
+            if (CardPoolManager.Instance != null)
+            {
+                cardGameObject.transform.SetParent(CardPoolManager.Instance.cardPoolHolder, true);    
+            }
+
+            if (CardSelectionManager.Instance != null)
+            {
+                CardSelectionManager.Instance.UnselectCard(cardGameObject.GetComponent<CardDisplay>().InGameCard);    
+            }
+            
             cardGameObject.SetActive(false);
         }
         associatedGameObject.Clear();
@@ -67,6 +75,7 @@ public class DisplayCards : StaticInstance<DisplayCards>
                 associatedGameObject.Add(newCardObject);
             }
         }
+        UpdateRectSize();
     }
 
     /// <summary>
@@ -113,6 +122,6 @@ public class DisplayCards : StaticInstance<DisplayCards>
     private void UpdateRectSize()
     {
         var rectTransform = GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(420 * _cardsList.Count, rectTransform.sizeDelta.y);
+        rectTransform.sizeDelta = new Vector2(300 * _cardsList.Count, rectTransform.sizeDelta.y);
     }
 }

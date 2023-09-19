@@ -50,7 +50,7 @@ public class SelectedCardState : CardState
     {
         // Behavior when entering the selected state
         context.GetComponent<Image>().color = Color.green;
-        OnHover.CardSelectedEvent.Invoke(card);
+        CardSelectionManager.Instance.SelectCard(card);
     }
 
     public override void OnClick()
@@ -58,7 +58,7 @@ public class SelectedCardState : CardState
         // Handle click event for the selected state
         // For example, if clicking deselects the card, set the default state
         context.SetState(new DefaultCardState(context, card));
-        OnHover.CardUnselectedEvent.Invoke(card);
+        CardSelectionManager.Instance.UnselectCard(card);
     }
 }
 
@@ -68,6 +68,7 @@ public class NumberCardState : CardState
     
     public override void EnterState()
     {
+        context.GetComponent<Image>().color = Color.green;
         context.DisplayNumber();
     }
 
@@ -75,5 +76,6 @@ public class NumberCardState : CardState
     {
         context.SetState(new DefaultCardState(context, card));
         context.HideNumber();
+        CardSelectionManager.Instance.UnselectCard(card);
     }
 }
