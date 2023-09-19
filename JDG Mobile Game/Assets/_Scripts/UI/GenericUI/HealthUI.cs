@@ -12,13 +12,13 @@ public class HealthUI : MonoBehaviour
     private void Awake()
     {
         // Initialize the health text for both players at the start.
-        SetHealthText(PlayerStatus.MaxPv, true);
-        SetHealthText(PlayerStatus.MaxPv, false);
+        SetHealthText(PlayerStatus.MaxHealth, true);
+        SetHealthText(PlayerStatus.MaxHealth, false);
         
         // We can listen to a health change event if PlayerStatus broadcasts one.
         // This way, whenever a player's health changes, it'll automatically update
         // the UI without UIManager needing to manually call it.
-        PlayerStatus.ChangePvEvent.AddListener(ChangeHealthText);
+        PlayerStatus.OnHealthChanged.AddListener(ChangeHealthText);
     }
 
     /// <summary>
@@ -30,11 +30,11 @@ public class HealthUI : MonoBehaviour
     {
         if (isP1)
         {
-            healthP1Text.SetText($"{health} / {PlayerStatus.MaxPv}");
+            healthP1Text.SetText($"{health} / {PlayerStatus.MaxHealth}");
         }
         else
         {
-            healthP2Text.SetText($"{health} / {PlayerStatus.MaxPv}");
+            healthP2Text.SetText($"{health} / {PlayerStatus.MaxHealth}");
         }
     }
 
@@ -48,6 +48,6 @@ public class HealthUI : MonoBehaviour
     // OnDestroy or OnDisable could be used to unregister the event listener if needed.
     private void OnDestroy()
     {
-        PlayerStatus.ChangePvEvent.RemoveListener(ChangeHealthText);
+        PlayerStatus.OnHealthChanged.RemoveListener(ChangeHealthText);
     }
 }

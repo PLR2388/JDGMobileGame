@@ -18,7 +18,7 @@ public class SkipOpponentAttackEffectAbility : EffectAbility
         PlayerStatus opponentStatus)
     {
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
-        opponentStatus.BlockAttack = true;
+        opponentStatus.EnableBlockAttack();
     }
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
@@ -27,7 +27,7 @@ public class SkipOpponentAttackEffectAbility : EffectAbility
         if (counter > NumberOfTurn)
         {
             counter = 0;
-            opponentPlayerStatus.BlockAttack = false;
+            opponentPlayerStatus.DisableBlockAttack();
             var card = playerCards.EffectCards.First(effectCard => effectCard.Title == cardName);
             playerCards.EffectCards.Remove(card);
             playerCards.YellowCards.Add(card);

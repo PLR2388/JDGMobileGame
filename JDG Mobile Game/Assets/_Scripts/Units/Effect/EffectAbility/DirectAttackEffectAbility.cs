@@ -13,6 +13,6 @@ public class DirectAttackEffectAbility : EffectAbility
 
     public override bool CanUseEffect(PlayerCards playerCards,PlayerCards opponentPlayerCards, PlayerStatus opponentPlayerStatus)
     {
-        return opponentPlayerStatus.GetCurrentPv() < limitHpOpponent;
+        return opponentPlayerStatus.GetCurrentHealth() < limitHpOpponent;
     }
 }

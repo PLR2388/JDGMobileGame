@@ -9,49 +9,78 @@ public class ChangePvEvent : UnityEvent<float, bool>
 
 public class PlayerStatus : MonoBehaviour
 {
-    public static readonly ChangePvEvent ChangePvEvent = new ChangePvEvent();
-    public const float MaxPv = 30f;
-
-    [FormerlySerializedAs("currentPV")] [SerializeField]
-    private float currentPv = 30f;
+    public static readonly ChangePvEvent OnHealthChanged = new ChangePvEvent();
+    public const float MaxHealth = 30f;
+    
+    [SerializeField]
+    private float currentHealth = 30f;
 
     [SerializeField] private bool isP1;
 
-    [SerializeField] private int numberShield;
+    /// <summary>
+    /// Gets the number of shields the player has.
+    /// </summary>
+    public int NumberShield { get; private set; }
 
-    [SerializeField] private bool blockAttack;
+    /// <summary>
+    /// Gets or sets whether the player can block an attack.
+    /// </summary>
+    public bool BlockAttack { get; private set; }
 
-    public int NumberShield => numberShield;
-
-    public bool BlockAttack
-    {
-        get => blockAttack;
-        set => blockAttack = value;
-    }
-
+    /// <summary>
+    /// Changes the player's health by the given amount and triggers the OnHealthChanged event.
+    /// </summary>
+    /// <param name="pv">Amount to change the health by (can be positive or negative).</param>
     public void ChangePv(float pv)
     {
-        currentPv += pv;
-        if (currentPv > MaxPv)
+        currentHealth += pv;
+        if (currentHealth > MaxHealth)
         {
-            currentPv = MaxPv;
+            currentHealth = MaxHealth;
         }
 
-        ChangePvEvent.Invoke(currentPv, isP1);
+        OnHealthChanged.Invoke(currentHealth, isP1);
     }
 
-    public float GetCurrentPv()
+    /// <summary>
+    /// Gets the current health of the player.
+    /// </summary>
+    /// <returns>The current health value.</returns>
+    public float GetCurrentHealth()
     {
-        return currentPv;
+        return currentHealth;
     }
 
+    /// <summary>
+    /// Sets the shield count for the player.
+    /// </summary>
+    /// <param name="number">The number of shields to set.</param>
     public void SetShieldCount(int number)
     {
-        numberShield = number;
+        NumberShield = number;
     }
 
+    /// <summary>
+    /// Decreases the shield count by one.
+    /// </summary>
     public void DecrementShield()
     {
-        numberShield--;
+        NumberShield--;
+    }
+    
+    /// <summary>
+    /// Enables the player to block an attack.
+    /// </summary>
+    public void EnableBlockAttack()
+    {
+        BlockAttack = true;
+    }
+    
+    /// <summary>
+    /// Disables the player's ability to block an attack.
+    /// </summary>
+    public void DisableBlockAttack()
+    {
+        BlockAttack = false;
     }
 }

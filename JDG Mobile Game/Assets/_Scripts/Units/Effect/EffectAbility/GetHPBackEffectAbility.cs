@@ -52,7 +52,7 @@ public class GetHPBackEffectAbility : EffectAbility
                     {
                         playerCards.YellowCards.Add(invocationCard);
                         playerCards.InvocationCards.Remove(invocationCard);
-                        playerStatus.ChangePv(HPToRecover == 0 ? PlayerStatus.MaxPv : HPToRecover);
+                        playerStatus.ChangePv(HPToRecover == 0 ? PlayerStatus.MaxHealth : HPToRecover);
                     }
                     else
                     {

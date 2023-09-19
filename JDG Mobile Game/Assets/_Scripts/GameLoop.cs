@@ -238,11 +238,11 @@ public class GameLoop : MonoBehaviour
         // Check if one player die
         var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
         var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
-        if (playerStatus.GetCurrentPv() <= 0)
+        if (playerStatus.GetCurrentHealth() <= 0)
         {
             GameOver();
         }
-        else if (opponentPlayerStatus.GetCurrentPv() <= 0)
+        else if (opponentPlayerStatus.GetCurrentHealth() <= 0)
         {
             GameOver();
         }
