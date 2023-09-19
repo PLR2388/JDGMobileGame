@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class CardSelectedEvent : UnityEvent<InGameCard>
@@ -13,69 +12,88 @@ public class CardSelectedEvent : UnityEvent<InGameCard>
 [RequireComponent(typeof(Image))]
 public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    [SerializeField] private GameObject numberText;
-    private Image image;
-    public int number = 0;
-    private bool displayNumber = false;
-    public bool bIsSelected = false;
-    public bool bIsInGame = false;
+    [SerializeField] private GameObject numberTextObject;
+    private Text numberText;
+    private int number = 0;
     private InGameCard card;
 
+    private CardState currentState; // This will be an abstract base class or interface for different card states
+    
+    public bool bIsInGame = false;
     public static readonly CardSelectedEvent CardSelectedEvent = new CardSelectedEvent();
     public static readonly CardSelectedEvent CardUnselectedEvent = new CardSelectedEvent();
-
     public static readonly CardSelectedEvent ForceUnselectCardEvent = new CardSelectedEvent();
 
+    /// <summary>
+    /// Indicates if the card is currently selected.
+    /// </summary>
+    public bool IsSelected => currentState is SelectedCardState;
+
+    /// <summary>
+    /// Initialize component references and set up event listeners.
+    /// </summary>
     private void Start()
     {
+        numberText = numberTextObject.GetComponent<Text>();
         CardSelector.NumberedCardEvent.AddListener(UpdateNumberOnCard);
         ForceUnselectCardEvent.AddListener(UnSelectCard);
-        image = GetComponent<Image>();
         card = gameObject.GetComponent<CardDisplay>().InGameCard;
+
+        // Initialize default state
+        SetState(new DefaultCardState(this, card));
     }
 
+    /// <summary>
+    /// Cleanup and unsubscribe from events.
+    /// </summary>
+    private void OnDestroy()
+    {
+        // Unsubscribe from events
+        CardSelector.NumberedCardEvent.RemoveListener(UpdateNumberOnCard);
+        ForceUnselectCardEvent.RemoveListener(UnSelectCard);
+    }
+
+    /// <summary>
+    /// Deselect the card.
+    /// </summary>
+    /// <param name="cardToUnselect">The card to deselect.</param>
     private void UnSelectCard(InGameCard cardToUnselect)
     {
         if (cardToUnselect == card)
         {
-            bIsSelected = false;
+            SetState(new DefaultCardState(this, card));
         }
     }
 
+    /// <summary>
+    /// Update the number displayed on the card.
+    /// </summary>
+    /// <param name="cardToModify">The card to modify.</param>
+    /// <param name="numberToApply">The number to display on the card.</param>
     private void UpdateNumberOnCard(InGameCard cardToModify, int numberToApply)
     {
         if (card.Title == cardToModify.Title)
         {
             number = numberToApply;
-            displayNumber = true;
+            SetState(new NumberCardState(this, card));
         }
     }
 
-    private void Update()
+    /// <summary>
+    /// Hide the number display on the card.
+    /// </summary>
+    public void HideNumber()
     {
-        if (bIsInGame) return;
-        if (bIsSelected)
-        {
-            image.color = Color.green;
-        }
-        else if (card.Collector)
-        {
-            image.color = Color.yellow;
-        }
-        else
-        {
-            image.color = Color.white;
-        }
+        numberTextObject.SetActive(false);
+    }
 
-        if (displayNumber)
-        {
-            numberText.GetComponent<Text>().text = "" + number;
-            numberText.SetActive(true);
-        }
-        else
-        {
-            numberText.SetActive(false);
-        }
+    /// <summary>
+    /// Display the card's number.
+    /// </summary>
+    public void DisplayNumber()
+    {
+        numberText.text = "" + number;
+        numberTextObject.SetActive(true);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -86,52 +104,28 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
     }
 
+    /// <summary>
+    /// Handle card click events.
+    /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        OnClick();
-    }
-
-    private void OnClick()
-    {
-        if (!bIsInGame)
+        if (bIsInGame)
         {
-            if (bIsSelected)
-            {
-                UnSelectCard();
-            }
-            else
-            {
-                SelectCard();
-            }
+            InGameMenuScript.EventClick.Invoke(card);
         }
         else
         {
-            var currentCard = GetComponent<CardDisplay>().InGameCard;
-            if (SceneManager.GetActiveScene().name == "TutoPlayerGame")
-            {
-                TutoInGameMenuScript.EventClick.Invoke(currentCard);
-            }
-            else
-            {
-                InGameMenuScript.EventClick.Invoke(currentCard);
-            }
-          
+            currentState.OnClick();    
         }
     }
-    public void UnSelectCard()
-    {
 
-        image.color = Color.white;
-        bIsSelected = false;
-        displayNumber = false;
-        CardUnselectedEvent.Invoke(card);
-    }
-    private void SelectCard()
+    /// <summary>
+    /// Set the card's current state.
+    /// </summary>
+    /// <param name="state">The new state for the card.</param>
+    public void SetState(CardState state)
     {
-
-        image.color = Color.green;
-        bIsSelected = true;
-        var clickedCard = gameObject.GetComponent<CardDisplay>().InGameCard;
-        CardSelectedEvent.Invoke(clickedCard);
+        currentState = state;
+        currentState.EnterState();
     }
 }

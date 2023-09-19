@@ -38,7 +38,7 @@ namespace Menu
             var hoverComponents = container.GetComponentsInChildren<OnHover>();
             foreach (var hoverComponent in hoverComponents)
             {
-                var isSelected = hoverComponent.bIsSelected;
+                var isSelected = hoverComponent.IsSelected;
                 if (!isSelected) continue;
                 numberSelected++;
                 deck.Add(hoverComponent.gameObject.GetComponent<CardDisplay>().Card);
@@ -52,10 +52,10 @@ namespace Menu
         /// </summary>
         private void DeselectAllCards()
         {
-            var hoverComponents = container.GetComponentsInChildren<OnHover>();
-            foreach (var hoverComponent in hoverComponents)
+            var cardDisplayComponents = container.GetComponentsInChildren<CardDisplay>();
+            foreach (var cardDisplayComponent in cardDisplayComponents)
             {
-                hoverComponent.bIsSelected = false;
+                OnHover.ForceUnselectCardEvent.Invoke(cardDisplayComponent.InGameCard);
             }
         }
 
