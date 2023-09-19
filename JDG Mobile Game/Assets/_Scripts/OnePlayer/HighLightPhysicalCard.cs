@@ -20,7 +20,7 @@ namespace OnePlayer
         {
             if (highlightElement == element)
             {
-                if (GetComponent<PhysicalCardDisplay>().card.Title == "Tentacules")
+                if (GetComponent<PhysicalCardDisplay>().Card.Title == "Tentacules")
                 {
                     isActivated = activated;
                 }

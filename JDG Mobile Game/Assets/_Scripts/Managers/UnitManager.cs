@@ -38,7 +38,7 @@ public class UnitManager : Singleton<UnitManager>
 
             var newPhysicalCardName = GenerateCardName(deck[i], isPlayerOne);
             newPhysicalCard.name = newPhysicalCardName;
-            newPhysicalCard.GetComponent<PhysicalCardDisplay>().card = deck[i];
+            newPhysicalCard.GetComponent<PhysicalCardDisplay>().Card = deck[i];
             cardNameToGameObject.Add(newPhysicalCardName, newPhysicalCard);
         }
     }

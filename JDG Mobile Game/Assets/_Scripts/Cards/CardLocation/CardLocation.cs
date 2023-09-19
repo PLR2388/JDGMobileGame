@@ -151,7 +151,7 @@ namespace Cards
         {
             cardGameObject.transform.position = position;
             var displayComponent = cardGameObject.GetComponent<PhysicalCardDisplay>();
-            if (displayComponent.bIsFaceHidden == shouldDisplay)
+            if (displayComponent.IsFaceHidden == shouldDisplay)
             {
                 if (shouldDisplay)
                     displayComponent.Display();

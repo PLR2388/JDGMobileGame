@@ -31,7 +31,7 @@ public class CardRaycastManager : Singleton<CardRaycastManager>
     public InGameCard GetTouchedCard()
     {
         var touchedObject = RaycastUnderTouch();
-        return touchedObject?.GetComponent<PhysicalCardDisplay>()?.card;
+        return touchedObject?.GetComponent<PhysicalCardDisplay>()?.Card;
     }
 
     /// <summary>
