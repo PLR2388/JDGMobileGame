@@ -168,7 +168,7 @@ namespace Menu
             deck1.Add(GetSpecificCard(CardNames.SandrineLePorteManteauExtraterrestre, deck1AllCard));
             deck1.Add(GetSpecificCard(CardNames.BenzaieJeune, deck1AllCard));
             deck1.Add(GetSpecificCard(CardNames.AlphaMan, deck1AllCard));
-            deck1.Add(GetSpecificCard(CardNames.MJCorrompu, deck1AllCard));
+            deck1.Add(GetSpecificCard(CardNames.FiltreDégueulasseFMV, deck1AllCard));
 
             while (deck1.Count != GameState.MaxDeckCards)
             {

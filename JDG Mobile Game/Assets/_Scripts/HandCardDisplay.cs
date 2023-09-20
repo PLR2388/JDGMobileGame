@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Cards;
 using UnityEngine;using UnityEngine.Events;
 
@@ -13,42 +14,55 @@ public class HandCardDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
     
-    private List<GameObject> createdCards = new List<GameObject>();
+    private List<GameObject> createdCards = new();
 
-    public static readonly HandCardChangeEvent HandCardChange = new HandCardChangeEvent();
+    public static readonly HandCardChangeEvent HandCardChange = new();
 
+    /// <summary>
+    /// Called when the script instance is being loaded.
+    /// Subscribes to relevant events.
+    /// </summary>
     private void Awake()
     {
-        HandCardChange.AddListener(DisplayHandCard);
+        SubscribeToEvents();
     }
 
+    /// <summary>
+    /// Displays hand cards if they belong to the current player.
+    /// </summary>
+    /// <param name="handCards">Collection of in-game cards.</param>
     private void DisplayHandCard(ObservableCollection<InGameCard> handCards)
     {
-        if (handCards.Count > 0)
-        {
-            var isPlayerOneHandCard = handCards[0].CardOwner == CardOwner.Player1;
-            if (GameStateManager.Instance.IsP1Turn == isPlayerOneHandCard)
-            {
-                BuildCards(handCards);
-            }
-        }
-        else
+        if (handCards.Count == 0 || IsCurrentPlayerTurn(handCards[0]))
         {
             BuildCards(handCards);
         }
     }
+    
+    /// <summary>
+    /// Checks if the provided card belongs to the current player.
+    /// </summary>
+    /// <param name="card">In-game card to check.</param>
+    /// <returns>True if card belongs to current player; otherwise, false.</returns>
+    private bool IsCurrentPlayerTurn(InGameCard card)
+    {
+        return GameStateManager.Instance.IsP1Turn == (card.CardOwner == CardOwner.Player1);
+    }
+    
+    /// <summary>
+    /// Clears and then creates visual representations for the provided cards.
+    /// </summary>
+    /// <param name="handCards">Collection of in-game cards.</param>
     private void BuildCards(ObservableCollection<InGameCard> handCards)
     {
-        if (createdCards.Count > 0)
-        {
-            DestroyCards();
-            CreateCards(handCards);
-        }
-        else
-        {
-            CreateCards(handCards);
-        }
+        ClearCreatedCards();
+        CreateCards(handCards);
     }
+    
+    /// <summary>
+    /// Creates visual representations for the provided cards.
+    /// </summary>
+    /// <param name="handCards">Collection of in-game cards.</param>
     private void CreateCards(ObservableCollection<InGameCard> handCards)
     {
         foreach (var handCard in handCards)
@@ -61,33 +75,63 @@ public class HandCardDisplay : MonoBehaviour
             createdCards.Add(newCard);
         }
 
-        var rectTransform = GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
+        AdjustRectTransformSize(handCards.Count);
     }
-    private void DestroyCards()
+    
+    /// <summary>
+    /// Adjusts the RectTransform size based on the number of cards.
+    /// </summary>
+    /// <param name="cardCount">Number of cards.</param>
+    private void AdjustRectTransformSize(int cardCount)
+    {
+        var rectTransform = GetComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(420 * cardCount, rectTransform.sizeDelta.y);
+    }
+    
+    /// <summary>
+    /// Destroys created card game objects and clears the list.
+    /// </summary>
+    private void ClearCreatedCards()
     {
         foreach (var createdCard in createdCards)
         {
             Destroy(createdCard);
         }
-
         createdCards.Clear();
     }
 
+    /// <summary>
+    /// Called when the object becomes enabled and active.
+    /// Subscribes to relevant events.
+    /// </summary>
     private void OnEnable()
+    {
+        SubscribeToEvents();
+    }
+
+    /// <summary>
+    /// Called when the behaviour becomes disabled.
+    /// Unsubscribes from events and clears created cards.
+    /// </summary>
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
+        ClearCreatedCards();
+    }
+    
+    /// <summary>
+    /// Subscribes to hand card change events.
+    /// </summary>
+    private void SubscribeToEvents()
     {
         HandCardChange.AddListener(DisplayHandCard);
     }
 
-    private void OnDisable()
+    /// <summary>
+    /// Unsubscribes from hand card change events.
+    /// </summary>
+    private void UnsubscribeFromEvents()
     {
         HandCardChange.RemoveListener(DisplayHandCard);
-        if (createdCards.Count <= 0) return;
-        foreach (var createdCard in createdCards)
-        {
-            Destroy(createdCard);
-        }
-
-        createdCards.Clear();
     }
 }
