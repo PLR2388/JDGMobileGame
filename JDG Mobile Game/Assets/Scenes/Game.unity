@@ -1389,10 +1389,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7f24280be368849ba08ad5676ce8bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPv: 30
+  currentHealth: 30
   isP1: 1
-  numberShield: 0
-  blockAttack: 0
 --- !u!114 &230530446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5072,13 +5070,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cffbf39985ceec4795491bdc3c552b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonText: {fileID: 1510095173}
+  buttonText: {fileID: 1510095175}
   handScreen: {fileID: 1928831686}
   miniMenuCard: {fileID: 1989458480}
   detailCardPanel: {fileID: 128609970}
-  detailButtonText: {fileID: 1617317194}
-  putCardButtonText: {fileID: 2122246937}
-  putCardButton: {fileID: 1930089324}
+  detailButtonText: {fileID: 1617317196}
+  putCardButtonText: {fileID: 2122246939}
+  putCardButton: {fileID: 1930089326}
   inHandButton: {fileID: 829748139}
   backgroundInformation: {fileID: 1582983282}
   invocationMenu: {fileID: 1982540492}
@@ -5638,10 +5636,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7f24280be368849ba08ad5676ce8bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPv: 30
+  currentHealth: 30
   isP1: 0
-  numberShield: 0
-  blockAttack: 0
 --- !u!114 &2017354831
 MonoBehaviour:
   m_ObjectHideFlags: 0

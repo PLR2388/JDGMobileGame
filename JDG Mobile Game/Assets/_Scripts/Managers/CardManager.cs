@@ -32,6 +32,15 @@ public class CardManager : Singleton<CardManager>
     {
         return GameStateManager.Instance.IsP1Turn ? player1CardManager.PlayerCards : player2CardManager.PlayerCards;
     }
+    
+    /// <summary>
+    /// Retrieves the card set for the opponent player.
+    /// </summary>
+    /// <returns>The card set of the opponent player.</returns>
+    public PlayerCards GetOpponentPlayerCards()
+    {
+        return GameStateManager.Instance.IsP1Turn ? player2CardManager.PlayerCards : player1CardManager.PlayerCards;
+    }
 
     /// <summary>
     /// Retrieves the card manager for the current player.

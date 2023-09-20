@@ -1,57 +1,35 @@
-﻿using System;
-using System.Linq;
-using _Scripts.Units.Invocation;
+﻿using System.Collections.Generic;
 using Cards;
-using Cards.EffectCards;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
-[Serializable]
-public class CardEvent : UnityEvent<InGameCard>
-{
-}
-
-[Serializable]
-public class InvocationCardEvent : UnityEvent<InGameInvocationCard>
-{
-}
-
-[Serializable]
-public class FieldCardEvent : UnityEvent<InGameFieldCard>
-{
-}
-
-[Serializable]
-public class EffectCardEvent : UnityEvent<InGameEffectCard>
-{
-}
-
-
-[Serializable]
-public class EquipmentCardEvent : UnityEvent<InGameEquipementCard>
-{
-}
-
+/// <summary>
+/// Manages in-game card interactions, handling events, and displaying UI elements related to cards.
+/// </summary>
 public class InGameMenuScript : MonoBehaviour
 {
-    [SerializeField] private GameObject buttonText;
+    // Serialized fields for UI components
+    [SerializeField] private TextMeshProUGUI buttonText;
     [SerializeField] private GameObject handScreen;
     [SerializeField] private GameObject miniMenuCard;
     [SerializeField] private GameObject detailCardPanel;
-    [SerializeField] private GameObject detailButtonText;
-    [SerializeField] private GameObject putCardButtonText;
-    [SerializeField] private GameObject putCardButton;
+    [SerializeField] private TextMeshProUGUI detailButtonText;
     [SerializeField] private GameObject inHandButton;
     [SerializeField] private GameObject backgroundInformation;
-    
 
+    // Used in CardHandler
+    [SerializeField] public TextMeshProUGUI putCardButtonText;
+    [SerializeField] public Button putCardButton;
+
+    /// <summary>
+    /// Represents the currently selected in-game card.
+    /// </summary>
     private InGameCard currentSelectedCard;
+
     [SerializeField] private GameObject invocationMenu;
 
-    [SerializeField] private GameObject gameLoop;
-
+    // Static events for various card interactions
     public static readonly CardEvent EventClick = new CardEvent();
     public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
     public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
@@ -59,120 +37,109 @@ public class InGameMenuScript : MonoBehaviour
     public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
 
 
-    private readonly Vector3 buttonGroupPosition = new Vector3(-40, 40, 0);
-    private readonly Vector3 padding = new Vector3(490, -350, 0);
+    private const float ButtonGroupPosX = 600f;
+    private const float ButtonGroupPosY = 400f;
+    private const float ButtonGroupPosZ = 0f;
 
+    private const float PaddingX = 490f;
+    private const float PaddingY = -350f;
+    private const float PaddingZ = 0f;
+
+    private readonly Vector3 buttonGroupPosition = new Vector3(ButtonGroupPosX, ButtonGroupPosY, ButtonGroupPosZ);
+    private readonly Vector3 padding = new Vector3(PaddingX, PaddingY, PaddingZ);
+
+    /// <summary>
+    /// Dictionary mapping card types to their respective handlers.
+    /// </summary>
+    private Dictionary<CardType, CardHandler> cardHandlerMap = new Dictionary<CardType, CardHandler>();
+
+    /// <summary>
+    /// Initializes handlers for different types of cards.
+    /// </summary>
+    private void InitializeCardHandlers()
+    {
+        cardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this);
+        cardHandlerMap[CardType.Effect] = new EffectCardHandler(this);
+        cardHandlerMap[CardType.Contre] = new ContreCardHandler(this);
+        cardHandlerMap[CardType.Field] = new FieldCardHandler(this);
+        cardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this);
+    }
+
+    /// <summary>
+    /// Unity's start method, called before the first frame update. Initializes UI states and card handlers.
+    /// </summary>
     private void Start()
     {
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
         EventClick.AddListener(ClickOnCard);
+        InitializeCardHandlers();
     }
 
+    /// <summary>
+    /// Handles the event of clicking on a card.
+    /// </summary>
+    /// <param name="card">The card that was clicked on.</param>
     private void ClickOnCard(InGameCard card)
     {
         currentSelectedCard = card;
-        var cardType = currentSelectedCard.Type;
-        var playerCard = GameStateManager.Instance.IsP1Turn
-            ? GameObject.Find("Player1").GetComponent<PlayerCards>()
-            : GameObject.Find("Player2").GetComponent<PlayerCards>();
-
-        var opponentPlayerCard = GameStateManager.Instance.IsP1Turn
-            ? GameObject.Find("Player2").GetComponent<PlayerCards>()
-            : GameObject.Find("Player1").GetComponent<PlayerCards>();
-
-        var opponentPlayerStatus = GameStateManager.Instance.IsP1Turn
-            ? GameObject.Find("Player2").GetComponent<PlayerStatus>()
-            : GameObject.Find("Player1").GetComponent<PlayerStatus>();
-        switch (cardType)
+        if (cardHandlerMap.TryGetValue(card.Type, out var handler))
         {
-            case CardType.Invocation:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
-                var invocationCard = card as InGameInvocationCard;
-                putCardButton.GetComponent<Button>().interactable =
-                    invocationCard?.CanBeSummoned(playerCard) == true && playerCard.InvocationCards.Count < 4;
-
-                break;
-            case CardType.Contre:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_CONTRE);
-                putCardButton.GetComponent<Button>().interactable = true;
-                break;
-            case CardType.Effect:
-                var effectCard = card as InGameEffectCard;
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
-                putCardButton.GetComponent<Button>().interactable =
-                    effectCard?.EffectAbilities.All(elt =>
-                        elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus)) == true && playerCard.EffectCards.Count < 4;
-                break;
-            case CardType.Equipment:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_EQUIP_INVOCATION);
-                var equipmentCard = card as InGameEquipementCard;
-                putCardButton.GetComponent<Button>().interactable =
-                    playerCard.InvocationCards.Count(inGameInvocationCard =>
-                        inGameInvocationCard.EquipmentCard == null) > 0 ||
-                    opponentPlayerCard.InvocationCards.Count(inGameInvocationCard =>
-                        inGameInvocationCard.EquipmentCard == null) > 0 ||
-                    equipmentCard?.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut) == true
-                    ;
-                break;
-            case CardType.Field:
-                putCardButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD);
-                putCardButton.GetComponent<Button>().interactable = playerCard.FieldCard == null;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-#if UNITY_EDITOR
-        var mousePosition = Input.mousePosition;
-        DisplayMiniMenuCardAtPosition(mousePosition);
-#elif UNITY_ANDROID
-        var touch = Input.GetTouch(0);
-        DisplayMiniMenuCardAtPosition(touch.position);
-#endif
-    }
-
-    private void DisplayMiniMenuCardAtPosition(Vector3 mousePosition)
-    {
-        if (miniMenuCard.activeSelf)
-        {
-            miniMenuCard.transform.position = mousePosition + padding;
+            handler.HandleCard(card);
         }
         else
         {
+            Debug.LogError($"Unexpected card type: {card.Type}");
+        }
+
+        var clickPosition = GetClickPosition();
+        DisplayMiniMenuCardAtPosition(clickPosition);
+    }
+
+    /// <summary>
+    /// Gets the click or touch position based on the platform.
+    /// </summary>
+    /// <returns>
+    /// Returns the mouse position in the Unity editor, touch position on Android, 
+    /// and Vector3.zero as a default for other platforms.
+    /// </returns>
+    private Vector3 GetClickPosition()
+    {
+#if UNITY_EDITOR
+        return Input.mousePosition;
+#elif UNITY_ANDROID
+    return Input.GetTouch(0).position;
+#else
+    return Vector3.zero; // Default
+#endif
+    }
+
+
+    /// <summary>
+    /// Displays a mini-menu at the specified position, usually next to the clicked card.
+    /// </summary>
+    /// <param name="mousePosition">The position where the mini-menu should appear.</param>
+    private void DisplayMiniMenuCardAtPosition(Vector3 mousePosition)
+    {
+        miniMenuCard.transform.position = mousePosition + padding;
+        if (!miniMenuCard.activeSelf)
+        {
             miniMenuCard.SetActive(true);
-            miniMenuCard.transform.position = mousePosition + padding;
         }
     }
 
+    /// <summary>
+    /// Handles the "Put Card" action, triggering the appropriate event based on the card's type.
+    /// </summary>
     public void ClickPutCard()
     {
-        switch (currentSelectedCard.Type)
+        if (cardHandlerMap.TryGetValue(currentSelectedCard.Type, out var handler))
         {
-            case CardType.Invocation:
-            {
-                var invocationCard = currentSelectedCard as InGameInvocationCard;
-                InvocationCardEvent.Invoke(invocationCard);
-                break;
-            }
-            case CardType.Field:
-            {
-                var fieldCard = currentSelectedCard as InGameFieldCard;
-                FieldCardEvent.Invoke(fieldCard);
-                break;
-            }
-            case CardType.Effect:
-            {
-                var effectCard = currentSelectedCard as InGameEffectCard;
-                EffectCardEvent.Invoke(effectCard);
-                break;
-            }
-            case CardType.Equipment:
-            {
-                var equipmentCard = currentSelectedCard as InGameEquipementCard;
-                EquipmentCardEvent.Invoke(equipmentCard);
-                break;
-            }
+            handler.HandleCardPut(currentSelectedCard);
+        }
+        else
+        {
+            Debug.LogError($"Unexpected card type: {currentSelectedCard.Type}");
         }
 
         miniMenuCard.SetActive(false);
@@ -183,27 +150,27 @@ public class InGameMenuScript : MonoBehaviour
         inHandButton.SetActive(true);
     }
 
+    /// <summary>
+    /// Manages the card detail view, toggling between card details and hand view.
+    /// </summary>
     public void DetailCardClick()
     {
         if (detailCardPanel.activeSelf)
         {
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS);
+            detailButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS));
             miniMenuCard.SetActive(false);
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
             inHandButton.SetActive(true);
-            var playerCard = GameStateManager.Instance.IsP1Turn
-                ? GameObject.Find("Player1").GetComponent<PlayerCards>()
-                : GameObject.Find("Player2").GetComponent<PlayerCards>();
-            HandCardDisplay.HandCardChange.Invoke(playerCard.HandCards);
+            HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
         }
         else
         {
             handScreen.SetActive(false);
 
-            miniMenuCard.transform.position = buttonGroupPosition + new Vector3(640, 360);
+            miniMenuCard.transform.position = buttonGroupPosition;
 
-            detailButtonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
+            detailButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().InGameCard =
                 currentSelectedCard;
             detailCardPanel.SetActive(true);
@@ -211,6 +178,9 @@ public class InGameMenuScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles the hand card display on and off.
+    /// </summary>
     public void ClickHandCard()
     {
         invocationMenu.SetActive(false);
@@ -224,23 +194,26 @@ public class InGameMenuScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Displays the hand cards.
+    /// </summary>
     private void DisplayHand()
     {
         handScreen.SetActive(true);
-        var playerCard = GameStateManager.Instance.IsP1Turn
-            ? GameObject.Find("Player1").GetComponent<PlayerCards>()
-            : GameObject.Find("Player2").GetComponent<PlayerCards>();
         backgroundInformation.SetActive(false);
-        buttonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
-        HandCardDisplay.HandCardChange.Invoke(playerCard.HandCards);
+        buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
+        HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
     }
 
+    /// <summary>
+    /// Hides the hand cards display.
+    /// </summary>
     private void HideHand()
     {
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
         handScreen.SetActive(false);
         backgroundInformation.SetActive(true);
-        buttonText.GetComponent<TextMeshProUGUI>().SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
+        buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
     }
 }
