@@ -79,7 +79,7 @@ public class GameState : StaticInstance<GameState>
             deck1AllCards
         );
         CardChoice.GetRandomDeck(25, ref player1Deck, deck1AllCards);
-        Player1DeckCards = player1Deck.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+        Player1DeckCards = player1Deck.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
     }
     
     /// <summary>
@@ -98,6 +98,6 @@ public class GameState : StaticInstance<GameState>
             deck2AllCards
         );
 
-        Player2DeckCards = player2Deck.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+        Player2DeckCards = player2Deck.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
     }
 }

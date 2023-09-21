@@ -23,7 +23,7 @@ public class EquipmentCardHandler : CardHandler
         var playerCard = CardManager.Instance.GetCurrentPlayerCards();
         var opponentPlayerCard = CardManager.Instance.GetOpponentPlayerCards();
         menuScript.putCardButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_EQUIP_INVOCATION));
-        var equipmentCard = card as InGameEquipementCard;
+        var equipmentCard = card as InGameEquipmentCard;
         menuScript.putCardButton.interactable =
             playerCard.InvocationCards.Count(inGameInvocationCard =>
                 inGameInvocationCard.EquipmentCard == null) > 0 ||
@@ -39,7 +39,7 @@ public class EquipmentCardHandler : CardHandler
     /// <param name="card">The in-game card that is being placed.</param>
     public override void HandleCardPut(InGameCard card)
     {
-        if (card is InGameEquipementCard equipmentCard)
+        if (card is InGameEquipmentCard equipmentCard)
         {
             InGameMenuScript.EquipmentCardEvent.Invoke(equipmentCard);    
         }

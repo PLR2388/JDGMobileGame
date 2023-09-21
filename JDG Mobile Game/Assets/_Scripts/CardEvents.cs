@@ -40,6 +40,6 @@ public class EffectCardEvent : UnityEvent<InGameEffectCard>
 /// Represents in-game equipment card events as Unity events.
 /// </summary>
 [Serializable]
-public class EquipmentCardEvent : UnityEvent<InGameEquipementCard>
+public class EquipmentCardEvent : UnityEvent<InGameEquipmentCard>
 {
 }

@@ -3,16 +3,16 @@ using System.Linq;
 using Cards;
 using Cards.EquipmentCards;
 
-public class InGameEquipementCard : InGameCard
+public class InGameEquipmentCard : InGameCard
 {
     private EquipmentCard baseEquipmentCard;
 
     public List<EquipmentAbility> EquipmentAbilities = new List<EquipmentAbility>();
 
 
-    public static InGameEquipementCard Init(EquipmentCard equipmentCard, CardOwner cardOwner)
+    public static InGameEquipmentCard Init(EquipmentCard equipmentCard, CardOwner cardOwner)
     {
-        InGameEquipementCard inGameEquipmentCard = new InGameEquipementCard
+        InGameEquipmentCard inGameEquipmentCard = new InGameEquipmentCard
         {
             baseEquipmentCard = equipmentCard,
             CardOwner = cardOwner
@@ -24,9 +24,9 @@ public class InGameEquipementCard : InGameCard
     private void Reset()
     {
         title = baseEquipmentCard.Title;
-        description = baseEquipmentCard.Description;
-        detailedDescription = baseEquipmentCard.DetailedDescription;
-        baseCard = baseEquipmentCard;
+        Description = baseEquipmentCard.Description;
+        DetailedDescription = baseEquipmentCard.DetailedDescription;
+        BaseCard = baseEquipmentCard;
         type = baseEquipmentCard.Type;
         materialCard = baseEquipmentCard.MaterialCard;
         collector = baseEquipmentCard.Collector;

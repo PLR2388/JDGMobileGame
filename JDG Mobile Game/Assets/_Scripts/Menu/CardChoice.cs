@@ -74,7 +74,7 @@ namespace Menu
                     ChangeChoicePlayer.Invoke(1);
 
                     GameState.Instance.Player2DeckCards =
-                        deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player2)).ToList();
+                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace Menu
                     ChangeChoicePlayer.Invoke(2);
 
                     GameState.Instance.Player1DeckCards =
-                        deck.Select(card => InGameCard.CreateInGameCard(card, CardOwner.Player1)).ToList();
+                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -146,9 +146,9 @@ namespace Menu
             }
 
             GameState.Instance.Player1DeckCards =
-                deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
             GameState.Instance.Player2DeckCards =
-                deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }
@@ -186,9 +186,9 @@ namespace Menu
             deck2.Reverse();
 
             GameState.Instance.Player1DeckCards =
-                deck1.Select(card1 => InGameCard.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
             GameState.Instance.Player2DeckCards =
-                deck2.Select(card2 => InGameCard.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
         }

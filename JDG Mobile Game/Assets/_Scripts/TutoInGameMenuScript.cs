@@ -144,7 +144,7 @@ public class TutoInGameMenuScript : MonoBehaviour
             }
             case CardType.Equipment:
             {
-                var equipmentCard = currentSelectedCard as InGameEquipementCard;
+                var equipmentCard = currentSelectedCard as InGameEquipmentCard;
                 EquipmentCardEvent.Invoke(equipmentCard);
                 break;
             }

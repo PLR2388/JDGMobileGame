@@ -25,9 +25,9 @@ public class InGameFieldCard : InGameCard
     private void Reset()
     {
         title = baseFieldCard.Title;
-        description = baseFieldCard.Description;
-        baseCard = baseFieldCard;
-        detailedDescription = baseFieldCard.DetailedDescription;
+        Description = baseFieldCard.Description;
+        BaseCard = baseFieldCard;
+        DetailedDescription = baseFieldCard.DetailedDescription;
         type = baseFieldCard.Type;
         materialCard = baseFieldCard.MaterialCard;
         collector = baseFieldCard.Collector;

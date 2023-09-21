@@ -23,9 +23,9 @@ namespace Cards.EffectCards
         private void Reset()
         {
             title = baseEffectCard.Title;
-            description = baseEffectCard.Description;
-            baseCard = baseEffectCard;
-            detailedDescription = baseEffectCard.DetailedDescription;
+            Description = baseEffectCard.Description;
+            BaseCard = baseEffectCard;
+            DetailedDescription = baseEffectCard.DetailedDescription;
             type = baseEffectCard.Type;
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;

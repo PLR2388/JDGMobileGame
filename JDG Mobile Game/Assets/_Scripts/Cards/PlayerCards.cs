@@ -61,7 +61,7 @@ public class PlayerCards : MonoBehaviour
 
     public void BuildPlayer()
     {
-        Player = IsPlayerOne ? InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player1) : InGameCard.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
+        Player = IsPlayerOne ? CardFactory.CreateInGameCard(playerInvocationCard, CardOwner.Player1) : CardFactory.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
     }
 
     // Start is called before the first frame update

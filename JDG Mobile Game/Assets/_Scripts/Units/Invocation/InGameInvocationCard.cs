@@ -13,7 +13,7 @@ namespace _Scripts.Units.Invocation
         protected float attack;
         protected float defense;
         private CardFamily[] families;
-        private InGameEquipementCard equipmentCard;
+        private InGameEquipmentCard equipmentCard;
         private int numberTurnOnField;
         private int numberDeaths;
         private bool blockAttackNextTurn;
@@ -64,7 +64,7 @@ namespace _Scripts.Units.Invocation
 
         public int NumberOfDeaths => numberDeaths;
 
-        public InGameEquipementCard EquipmentCard
+        public InGameEquipmentCard EquipmentCard
         {
             get => equipmentCard;
             set => equipmentCard = value;
@@ -113,10 +113,10 @@ namespace _Scripts.Units.Invocation
         public void Reset()
         {
             title = baseInvocationCard.Title;
-            description = baseInvocationCard.Description;
-            detailedDescription = baseInvocationCard.DetailedDescription;
+            Description = baseInvocationCard.Description;
+            DetailedDescription = baseInvocationCard.DetailedDescription;
             type = baseInvocationCard.Type;
-            baseCard = baseInvocationCard;
+            BaseCard = baseInvocationCard;
             materialCard = baseInvocationCard.MaterialCard;
             collector = baseInvocationCard.Collector;
             numberTurnOnField = 0;
@@ -244,7 +244,7 @@ namespace _Scripts.Units.Invocation
         /// If user decided to remove an equipment (card = null), one should remove all equipment effect
         /// <param name="card">new equipment card</param>
         /// </summary>
-        public void SetEquipmentCard(InGameEquipementCard card)
+        public void SetEquipmentCard(InGameEquipmentCard card)
         {
             if (equipmentCard != null && card == null)
             {

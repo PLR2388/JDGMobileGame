@@ -61,7 +61,7 @@ namespace Cards.EquipmentCards
         /// Show the player invocations cards he can put equipment on.
         /// <param name="equipmentCard">equipmentCard player want to put</param>
         /// </summary>
-        private void DisplayEquipmentPopUp(InGameEquipementCard equipmentCard)
+        private void DisplayEquipmentPopUp(InGameEquipmentCard equipmentCard)
         {
             var playerCards = CurrentPlayerCard;
             var opponentInvocationCards = OpponentPlayerCard.InvocationCards;

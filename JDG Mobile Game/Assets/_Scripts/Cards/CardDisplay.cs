@@ -70,12 +70,12 @@ public class CardDisplay : MonoBehaviour
     {
         if (Card != null && InGameCard == null)
         {
-            InGameCard = InGameCard.CreateInGameCard(Card, CardOwner.NotDefined);
+            InGameCard = CardFactory.CreateInGameCard(Card, CardOwner.NotDefined);
         }
         else if (Card == null && InGameCard != null)
         {
             image = GetComponent<Image>();
-            Card = InGameCard.baseCard;
+            Card = InGameCard.BaseCard;
         }
     }
 
