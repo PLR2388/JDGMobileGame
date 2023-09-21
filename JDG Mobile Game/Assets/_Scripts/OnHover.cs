@@ -17,6 +17,8 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     private int number = 0;
     private InGameCard card;
 
+    private Image image;
+
     private CardState currentState; // This will be an abstract base class or interface for different card states
     
     public bool bIsInGame = false;
@@ -31,6 +33,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     /// </summary>
     private void Start()
     {
+        image = GetComponent<Image>();
         numberText = numberTextObject.GetComponent<Text>();
         CardSelector.NumberedCardEvent.AddListener(UpdateNumberOnCard);
         card = gameObject.GetComponent<CardDisplay>().InGameCard;
@@ -123,5 +126,10 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         currentState = state;
         currentState.EnterState();
+    }
+
+    public void SetImageColor(Color color)
+    {
+        image.color = color;
     }
 }
