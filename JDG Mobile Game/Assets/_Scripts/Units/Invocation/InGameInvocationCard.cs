@@ -133,7 +133,7 @@ namespace _Scripts.Units.Invocation
             Conditions = baseInvocationCard.Conditions
                 .Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
             Abilities = baseInvocationCard.Abilities
-                .Select(abilityName => AbilityLibrary.Instance.abilityDictionary[abilityName]).ToList();
+                .Select(abilityName => AbilityLibrary.Instance.AbilityDictionary[abilityName]).ToList();
             UpdateInvocationCardForAbilities();
         }
         

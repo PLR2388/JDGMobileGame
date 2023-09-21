@@ -2,18 +2,30 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 
-
+/// <summary>
+/// Represents a library of abilities for cards.
+/// This library contains a collection of abilities that can be assigned to various cards based on their type and function.
+/// </summary>
 public class AbilityLibrary : StaticInstance<AbilityLibrary>
 {
-    public Dictionary<AbilityName, Ability> abilityDictionary;
+    /// <summary>
+    /// Dictionary storing abilities keyed by their names.
+    /// </summary>
+    public Dictionary<AbilityName, Ability> AbilityDictionary;
 
+    /// <summary>
+    /// Initializes the ability dictionary upon object creation.
+    /// </summary>
     protected override void Awake()
     {
         base.Awake();
-        abilityDictionary = abilities.ToDictionary(ability => ability.Name, ability => ability);
+        AbilityDictionary = abilities.ToDictionary(ability => ability.Name, ability => ability);
     }
 
-    private readonly List<Ability> abilities = new List<Ability>
+    /// <summary>
+    /// A list of abilities available in the library.
+    /// </summary>
+    private readonly List<Ability> abilities = new()
     {
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune,
