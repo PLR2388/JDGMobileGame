@@ -58,7 +58,7 @@ public class ChangeInvocationFamilyAbility : FieldAbility
         if (invocationCard != null)
         {
             var previousFamilies = invocationCard.Families;
-            invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
+            invocationCard.Families = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Families;
             NotifyChangeFamilyFieldCard(playerCards, previousFamilies, invocationCard);
         }
     }

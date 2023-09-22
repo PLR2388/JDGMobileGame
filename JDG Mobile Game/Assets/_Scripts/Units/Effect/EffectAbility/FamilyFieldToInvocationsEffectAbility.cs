@@ -60,7 +60,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
             {
                 foreach (var invocationCard in playerCards.InvocationCards)
                 {
-                    invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
+                    invocationCard.Families = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Families;
                 }
 
                 var effectCard = playerCards.EffectCards.First(effectCard => effectCard.Title == cardName);
@@ -83,6 +83,6 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
     public override void OnInvocationCardRemoved(PlayerCards playerCards, InGameInvocationCard invocationCard)
     {
         base.OnInvocationCardRemoved(playerCards, invocationCard);
-        invocationCard.Families = invocationCard.baseInvocationCard.BaseInvocationCardStats.Families;
+        invocationCard.Families = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Families;
     }
 }

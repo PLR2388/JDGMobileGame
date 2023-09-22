@@ -212,8 +212,8 @@ public class PlayerCards : MonoBehaviour
         if (newYellowTrashCard is InGameInvocationCard invocationCard)
         {
             invocationCard.UnblockAttack();
-            invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-            invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+            invocationCard.Attack = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+            invocationCard.Defense = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
             invocationCard.FreeCard();
             invocationCard.ResetNewTurn();
             foreach (var t in invocationCard.Abilities)

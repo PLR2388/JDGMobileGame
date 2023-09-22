@@ -62,10 +62,10 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
                         if (card is InGameInvocationCard chosenInvocationCard)
                         {
                             // TODO: Think of a better way if dead card has more atk and def due to power-up
-                            chosenInvocationCard.Attack += invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-                            chosenInvocationCard.Defense += invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
-                            invocationCard.Attack -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-                            invocationCard.Defense -= invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+                            chosenInvocationCard.Attack += invocationCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+                            chosenInvocationCard.Defense += invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
+                            invocationCard.Attack -= invocationCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+                            invocationCard.Defense -= invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
                             invocationCard.Receiver = chosenInvocationCard.Title;
                         }
                         else
@@ -96,8 +96,8 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
                 playerCards.InvocationCards.FirstOrDefault(card => card.Title == deadCard.Receiver);
             deadCard.Receiver = null;
             if (receiverInvocationCard == null) return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
-            receiverInvocationCard.Attack -= deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-            receiverInvocationCard.Defense -= deadCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+            receiverInvocationCard.Attack -= deadCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+            receiverInvocationCard.Defense -= deadCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
         }
         return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
     }

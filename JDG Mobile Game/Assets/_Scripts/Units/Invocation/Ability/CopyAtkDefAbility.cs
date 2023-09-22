@@ -38,8 +38,8 @@ public class CopyAtkDefAbility : Ability
     public override void CancelEffect(PlayerCards playerCards)
     {
         base.CancelEffect(playerCards);
-        invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-        invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+        invocationCard.Attack = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+        invocationCard.Defense = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
     }
 
     public override void ReactivateEffect(PlayerCards playerCards)
@@ -79,8 +79,8 @@ public class CopyAtkDefAbility : Ability
 
         if (removeCard.Title == cardToCopyName)
         {
-            invocationCard.Attack = invocationCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-            invocationCard.Defense = invocationCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+            invocationCard.Attack = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+            invocationCard.Defense = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
         }
     }
     

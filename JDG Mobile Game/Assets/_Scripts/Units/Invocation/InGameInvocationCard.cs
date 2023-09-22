@@ -3,30 +3,21 @@ using System.Linq;
 using _Scripts.Cards.InvocationCards;
 using Cards;
 using Cards.InvocationCards;
-using UnityEngine;
 
 namespace _Scripts.Units.Invocation
 {
     public class InGameInvocationCard : InGameCard
     {
-        public InvocationCard baseInvocationCard;
-        protected float attack;
-        protected float defense;
-        private CardFamily[] families;
-        private InGameEquipmentCard equipmentCard;
-        private int numberTurnOnField;
-        private int numberDeaths;
+        public InvocationCard BaseInvocationCard;
         private bool blockAttackNextTurn;
-        private bool affectedByEffect = true;
         private int remainedAttackThisTurn;
-        private bool isControlled;
-        private bool cantBeAttack = false;
-        private bool attrackAttack = false;
-        private string receiver = null;
-        private bool cancelEffect = false;
+        private bool cancelEffect;
 
-        private bool directAttackPossible = false;
+        private const int DefaultNumberAttacksPerTurn = 1;
 
+        /// <summary>
+        /// Gets or sets whether the card effect is canceled.
+        /// </summary>
         public bool CancelEffect
         {
             get => cancelEffect;
@@ -38,105 +29,85 @@ namespace _Scripts.Units.Invocation
             }
         }
 
-        public bool CanDirectAttack
-        {
-            get => directAttackPossible;
-            set => directAttackPossible = value;
-        }
+        public bool CanDirectAttack { get; set; }
 
-        public bool CantBeAttack
-        {
-            get => cantBeAttack;
-            set => cantBeAttack = value;
-        }
+        public bool CantBeAttack { get; set; }
 
-        public bool Aggro
-        {
-            get => attrackAttack;
-            set => attrackAttack = value;
-        }
+        public bool Aggro { get; set; }
 
-        public List<global::Condition> Conditions = new List<global::Condition>();
-        public List<Ability> Abilities = new List<Ability>();
+        private List<global::Condition> conditions = new();
+        public List<Ability> Abilities = new();
 
 
-        public int NumberOfTurnOnField => numberTurnOnField;
+        public int NumberOfTurnOnField { get; private set; }
 
-        public int NumberOfDeaths => numberDeaths;
+        public int NumberOfDeaths { get; private set; }
 
-        public InGameEquipmentCard EquipmentCard
-        {
-            get => equipmentCard;
-            set => equipmentCard = value;
-        }
+        public InGameEquipmentCard EquipmentCard { get; set; }
 
+        /// <summary>
+        /// Initializes an instance of the InGameInvocationCard.
+        /// </summary>
+        /// <param name="invocationCard">The base invocation card.</param>
+        /// <param name="cardOwner">The owner of the card.</param>
+        /// <returns>A new InGameInvocationCard instance.</returns>
         public static InGameInvocationCard Init(InvocationCard invocationCard, CardOwner cardOwner)
         {
-            InGameInvocationCard inGameInvocationCard = new InGameInvocationCard
+            var inGameInvocationCard = new InGameInvocationCard
             {
-                baseInvocationCard = invocationCard,
+                BaseInvocationCard = invocationCard,
                 CardOwner = cardOwner
             };
             inGameInvocationCard.Reset();
             return inGameInvocationCard;
         }
 
-        public CardFamily[] Families
-        {
-            get => families;
-            set => families = value;
-        }
+        public CardFamily[] Families { get; set; }
 
-        public float Attack
-        {
-            get => attack;
-            set => attack = value;
-        }
+        public float Attack { get; set; }
 
-        public float Defense
-        {
-            get => defense;
-            set => defense = value;
-        }
+        public float Defense { get; set; }
 
         /// <summary>
         /// This represent the card that receive the power from this card
         /// only use for L'elfette and Sangoku right now that give their
         /// atk and def
         /// </summary>
-        public string Receiver
+        public string Receiver { get; set; } = null;
+
+        /// <summary>
+        /// Resets the card to its initial state.
+        /// </summary>
+        private void Reset()
         {
-            get => receiver;
-            set => receiver = value;
-        }
+            title = BaseInvocationCard.Title;
+            Description = BaseInvocationCard.Description;
+            DetailedDescription = BaseInvocationCard.DetailedDescription;
+            type = BaseInvocationCard.Type;
+            BaseCard = BaseInvocationCard;
+            materialCard = BaseInvocationCard.MaterialCard;
+            collector = BaseInvocationCard.Collector;
+            NumberOfTurnOnField = 0;
+            NumberOfDeaths = 0;
+            remainedAttackThisTurn = DefaultNumberAttacksPerTurn;
 
-        public void Reset()
-        {
-            title = baseInvocationCard.Title;
-            Description = baseInvocationCard.Description;
-            DetailedDescription = baseInvocationCard.DetailedDescription;
-            type = baseInvocationCard.Type;
-            BaseCard = baseInvocationCard;
-            materialCard = baseInvocationCard.MaterialCard;
-            collector = baseInvocationCard.Collector;
-            numberTurnOnField = 0;
-            numberDeaths = 0;
-            remainedAttackThisTurn = 1;
+            IsControlled = false;
 
-            isControlled = false;
-
-            attack = baseInvocationCard.BaseInvocationCardStats.Attack;
-            defense = baseInvocationCard.BaseInvocationCardStats.Defense;
-            families = baseInvocationCard.BaseInvocationCardStats.Families;
-            equipmentCard = null;
-            IsAffectedByEffectCard = baseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
-            Conditions = baseInvocationCard.Conditions
+            Attack = BaseInvocationCard.BaseInvocationCardStats.Attack;
+            Defense = BaseInvocationCard.BaseInvocationCardStats.Defense;
+            Families = BaseInvocationCard.BaseInvocationCardStats.Families;
+            EquipmentCard = null;
+            IsAffectedByEffectCard = BaseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
+            conditions = BaseInvocationCard.Conditions
                 .Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
-            Abilities = baseInvocationCard.Abilities
+            Abilities = BaseInvocationCard.Abilities
                 .Select(abilityName => AbilityLibrary.Instance.AbilityDictionary[abilityName]).ToList();
             UpdateInvocationCardForAbilities();
         }
         
+        /// <summary>
+        /// Updates the invocation card for abilities.
+        /// </summary>
         private void UpdateInvocationCardForAbilities()
         {
             foreach (var ability in Abilities)
@@ -145,97 +116,94 @@ namespace _Scripts.Units.Invocation
             }
         }
 
+        /// <summary>
+        /// Checks if the card can be summoned.
+        /// </summary>
+        /// <param name="playerCards">The player cards.</param>
+        /// <returns>true if can be summoned; otherwise, false.</returns>
         public bool CanBeSummoned(PlayerCards playerCards)
         {
-            return Conditions.Count == 0 || Conditions.TrueForAll(condition => condition.CanBeSummoned(playerCards));
+            return conditions.Count == 0 || conditions.TrueForAll(condition => condition.CanBeSummoned(playerCards));
         }
 
+        /// <summary>
+        /// Blocks the card's attack for the next turn.
+        /// </summary>
         public void BlockAttack()
         {
             blockAttackNextTurn = true;
         }
 
+        /// <summary>
+        /// Unblocks the card's attack.
+        /// </summary>
         public void UnblockAttack()
         {
             blockAttackNextTurn = false;
         }
 
-        public bool IsAffectedByEffectCard
-        {
-            get => affectedByEffect;
-            set => affectedByEffect = value;
-        }
+        public bool IsAffectedByEffectCard { get; set; } = true;
 
+        /// <summary>
+        /// Sets the remained attack for this turn.
+        /// </summary>
+        /// <param name="number">The number of remained attacks.</param>
         public void SetRemainedAttackThisTurn(int number)
         {
             remainedAttackThisTurn = number;
         }
 
         /// <summary>
-        /// IncrementNumberDeaths.
-        /// Increment the value numberDeaths by one.
+        /// Increments the number of deaths.
         /// </summary>
         public void IncrementNumberDeaths()
         {
-            numberDeaths++;
+            NumberOfDeaths++;
         }
 
         /// <summary>
-        /// CanAttack.
-        /// Check if an invocation card can attack.
-        /// if there is no equipment, we look at remainedAttackThisTurn and blockAttackNextTurn.
-        /// Otherwise, if there is an equipment card with BlockAtk InstantEffect, we had this condition to the previous one
+        /// Checks if the card can attack.
         /// </summary>
+        /// <returns>true if can attack; otherwise, false.</returns>
         public bool CanAttack()
         {
-            if (equipmentCard == null) return remainedAttackThisTurn > 0 && !blockAttackNextTurn;
-            /*var instantEffect = equipmentCard.EquipmentInstantEffect;
-            var equipmentBlockedAttack = false;
-            if (instantEffect != null)
-            {
-                equipmentBlockedAttack = instantEffect.Keys.Contains(InstantEffect.BlockAtk);
-            }*/
-
+            if (EquipmentCard == null) return remainedAttackThisTurn > 0 && !blockAttackNextTurn;
             return remainedAttackThisTurn > 0 && !blockAttackNextTurn; //& !equipmentBlockedAttack;
         }
 
         /// <summary>
-        /// HasAction.
-        /// Return true if an in-game action is available for this card
+        /// Checks if the card has an available action.
         /// </summary>
+        /// <returns>true if has action; otherwise, false.</returns>
         public bool HasAction()
         {
             return Abilities.Exists(elt => elt.IsAction);
         }
 
         /// <summary>
-        /// AttackTurnDone.
-        /// Decrement remainedAttackThisTurn.
+        /// Marks that the card has done an attack this turn.
         /// </summary>
         public void AttackTurnDone()
         {
             remainedAttackThisTurn--;
         }
 
+     
         /// <summary>
-        /// ResetNewTurn.
-        /// Reset remainedAttackThisTurn variable to one.
+        /// Resets the card for a new turn.
         /// </summary>
         public void ResetNewTurn()
         {
-            remainedAttackThisTurn = 1;
+            remainedAttackThisTurn = DefaultNumberAttacksPerTurn;
         }
 
         /// <summary>
-        /// IsInvocationPossible.
-        /// Check if an invocation card can be put on field.
+        /// Checks if invoking the card is possible.
         /// </summary>
+        /// <returns>true if invocation is possible; otherwise, false.</returns>
         public bool IsInvocationPossible()
         {
-            var playerCards = GameStateManager.Instance.IsP1Turn
-                ? GameObject.Find("Player1").GetComponent<PlayerCards>()
-                : GameObject.Find("Player2").GetComponent<PlayerCards>();
-            return CanBeSummoned(playerCards);
+            return CanBeSummoned(CardManager.Instance.GetCurrentPlayerCards());
         }
 
         /// <summary>
@@ -246,40 +214,52 @@ namespace _Scripts.Units.Invocation
         /// </summary>
         public void SetEquipmentCard(InGameEquipmentCard card)
         {
-            if (equipmentCard != null && card == null)
-            {
-                // RemoveEquipmentCardEffect(equipmentCard.EquipmentInstantEffect);
-            }
-
-            equipmentCard = card;
+            EquipmentCard = card;
         }
 
-        public bool IsControlled => isControlled;
+        public bool IsControlled { get; private set; }
 
+        /// <summary>
+        /// Controls the card.
+        /// </summary>
         public void ControlCard()
         {
-            isControlled = true;
+            IsControlled = true;
         }
 
+        /// <summary>
+        /// Frees the card.
+        /// </summary>
         public void FreeCard()
         {
-            isControlled = false;
+            IsControlled = false;
         }
 
-        public void incrementNumberTurnOnField()
+        /// <summary>
+        /// Increments the number of turns on the field.
+        /// </summary>
+        public void IncrementNumberTurnOnField()
         {
-            numberTurnOnField++;
+            NumberOfTurnOnField++;
             UpdateInvocationCardForAbilities();
         }
 
+        /// <summary>
+        /// Gets the current defense value of the card.
+        /// </summary>
+        /// <returns>The current defense value.</returns>
         public float GetCurrentDefense()
         {
-            return defense;
+            return Defense;
         }
 
+        /// <summary>
+        /// Gets the current attack value of the card.
+        /// </summary>
+        /// <returns>The current attack value.</returns>
         public float GetCurrentAttack()
         {
-            return attack;
+            return Attack;
         }
     }
 }

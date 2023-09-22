@@ -61,7 +61,7 @@ public class PlayerCardManager : MonoBehaviour
         foreach (var invocationCard in invocationCards)
         {
             invocationCard.UnblockAttack();
-            invocationCard.incrementNumberTurnOnField();
+            invocationCard.IncrementNumberTurnOnField();
         }
     }
 }

@@ -62,8 +62,8 @@ public class OptionalSacrificeForAtkDefAbility : Ability
         {
             return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
         }
-        deadCard.Attack = deadCard.baseInvocationCard.BaseInvocationCardStats.Attack;
-        deadCard.Defense = deadCard.baseInvocationCard.BaseInvocationCardStats.Defense;
+        deadCard.Attack = deadCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+        deadCard.Defense = deadCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
         return base.OnCardDeath(canvas, deadCard, playerCards, opponentPlayerCards);
     }
 }
