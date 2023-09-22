@@ -3,9 +3,12 @@ using System.Linq;
 using _Scripts.Units.Invocation.Condition;
 using Cards;
 
+/// <summary>
+/// Represents a library of conditions used in the game.
+/// </summary>
 public class ConditionLibrary : StaticInstance<ConditionLibrary>
 {
-    private List<Condition> conditions = new List<Condition>
+    private readonly List<Condition> conditions = new()
     {
         new InvocationCardOnFieldCondition(
             ConditionName.BenzaieJeuneOrBenzaieOnField,
@@ -156,11 +159,17 @@ public class ConditionLibrary : StaticInstance<ConditionLibrary>
         )
     };
 
-    public Dictionary<ConditionName, Condition> conditionDictionary;
+    /// <summary>
+    /// Gets or sets the dictionary that maps condition names to condition instances.
+    /// </summary>
+    public Dictionary<ConditionName, Condition> ConditionDictionary;
 
+    /// <summary>
+    /// Initializes the condition library and populates the condition dictionary.
+    /// </summary>
     protected override void Awake()
     {
         base.Awake();
-        conditionDictionary = conditions.ToDictionary(condition => condition.Name, condition => condition);
+        ConditionDictionary = conditions.ToDictionary(condition => condition.Name, condition => condition);
     }
 }

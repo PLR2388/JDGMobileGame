@@ -99,7 +99,7 @@ namespace _Scripts.Units.Invocation
             EquipmentCard = null;
             IsAffectedByEffectCard = BaseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
             conditions = BaseInvocationCard.Conditions
-                .Select(conditionName => ConditionLibrary.Instance.conditionDictionary[conditionName]).ToList();
+                .Select(conditionName => ConditionLibrary.Instance.ConditionDictionary[conditionName]).ToList();
             Abilities = BaseInvocationCard.Abilities
                 .Select(abilityName => AbilityLibrary.Instance.AbilityDictionary[abilityName]).ToList();
             UpdateInvocationCardForAbilities();
