@@ -8,7 +8,7 @@ using Cards;
 /// </summary>
 public class ConditionLibrary : StaticInstance<ConditionLibrary>
 {
-    private readonly List<Condition> conditions = new()
+    private readonly List<Condition> conditions = new List<Condition>()
     {
         new InvocationCardOnFieldCondition(
             ConditionName.BenzaieJeuneOrBenzaieOnField,

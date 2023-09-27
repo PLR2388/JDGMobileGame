@@ -17,8 +17,7 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
     [SerializeField] private GameObject prefab;
     public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
-
-    private int numberCardInSelection = 2;
+    
     private bool displayNumberOnCard = false;
 
     #endregion

@@ -8,8 +8,8 @@ using Newtonsoft.Json.Linq;
 /// </summary>
 public class EnumGenerator: MonoBehaviour
 {
-    StringBuilder enumBuilder = new();
-    StringBuilder mappingBuilder = new();
+    StringBuilder enumBuilder = new StringBuilder();
+    StringBuilder mappingBuilder = new StringBuilder();
 
     /// <summary>
     /// Called when the script instance is being loaded.

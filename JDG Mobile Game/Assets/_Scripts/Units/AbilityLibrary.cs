@@ -25,7 +25,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
     /// <summary>
     /// A list of abilities available in the library.
     /// </summary>
-    private readonly List<Ability> abilities = new()
+    private readonly List<Ability> abilities = new List<Ability>()
     {
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune,

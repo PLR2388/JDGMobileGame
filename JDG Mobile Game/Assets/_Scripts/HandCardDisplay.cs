@@ -14,9 +14,9 @@ public class HandCardDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
     
-    private List<GameObject> createdCards = new();
+    private List<GameObject> createdCards = new List<GameObject>();
 
-    public static readonly HandCardChangeEvent HandCardChange = new();
+    public static readonly HandCardChangeEvent HandCardChange = new HandCardChangeEvent();
 
     /// <summary>
     /// Called when the script instance is being loaded.

@@ -35,8 +35,8 @@ namespace _Scripts.Units.Invocation
 
         public bool Aggro { get; set; }
 
-        private List<global::Condition> conditions = new();
-        public List<Ability> Abilities = new();
+        private List<global::Condition> conditions = new List<global::Condition>();
+        public List<Ability> Abilities = new List<Ability>();
 
 
         public int NumberOfTurnOnField { get; private set; }
