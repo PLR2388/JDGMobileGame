@@ -4,9 +4,16 @@ using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
 
+/// <summary>
+/// Represents an ability allowing a player to sacrifice a card to invoke another.
+/// </summary>
 public class SacrificeToInvokeAbility : Ability
 {
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SacrificeToInvokeAbility"/> class.
+    /// </summary>
+    /// <param name="name">The name of the ability.</param>
+    /// <param name="description">The description of the ability.</param>
     public SacrificeToInvokeAbility(AbilityName name, string description)
     {
         Name = name;
@@ -14,7 +21,11 @@ public class SacrificeToInvokeAbility : Ability
         IsAction = true;
     }
 
-    protected static void DisplayOkMessage(Transform canvas)
+    /// <summary>
+    /// Displays a message indicating that no cards were invoked.
+    /// </summary>
+    /// <param name="canvas">The canvas to display the message on.</param>
+    private static void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
@@ -28,6 +39,11 @@ public class SacrificeToInvokeAbility : Ability
         MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
+    /// <summary>
+    /// Checks if the action is possible with the given player's cards.
+    /// </summary>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <returns>True if action is possible, false otherwise.</returns>
     public override bool IsActionPossible(PlayerCards playerCards)
     {
         return playerCards.YellowCards.Any(card =>
@@ -35,6 +51,12 @@ public class SacrificeToInvokeAbility : Ability
             card.Collector == false);
     }
 
+    /// <summary>
+    /// Applies the effect of the ability.
+    /// </summary>
+    /// <param name="canvas">The canvas to display any UI elements on.</param>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <param name="opponentPlayerCards">The opponent's player cards.</param>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         List<InGameCard> invocationCards = playerCards.YellowCards.TakeWhile(card =>
@@ -83,6 +105,12 @@ public class SacrificeToInvokeAbility : Ability
         }
     }
 
+    /// <summary>
+    /// Handles the touch action on the card and applies the effect if conditions are met.
+    /// </summary>
+    /// <param name="canvas">The canvas to display any UI elements on.</param>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <param name="opponentCards">The opponent's player cards.</param>
     public override void OnCardActionTouched(Transform canvas, PlayerCards playerCards, PlayerCards opponentCards)
     {
         base.OnCardActionTouched(canvas, playerCards, opponentCards);
