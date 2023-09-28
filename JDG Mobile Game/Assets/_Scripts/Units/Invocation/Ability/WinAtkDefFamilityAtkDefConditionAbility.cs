@@ -23,9 +23,9 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
     private void ApplyPower(PlayerCards playerCards)
     {
         int numberCardInvocation = playerCards.InvocationCards
-            .Count(card => card.Title != invocationCard.Title && card.Families.Contains(family) &&
+            .Count(card => card.Title != invocationCard.Title && card.Families.Contains(Family) &&
                            card.Defense == invocationDefCondition && card.Attack == invocationAtkCondition);
-        IncrementAtkDefInvocationCard(playerCards, numberCardInvocation);
+        IncrementAtkDefInvocationCard(numberCardInvocation);
     }
 
     public override void ReactivateEffect(PlayerCards playerCards)
@@ -38,9 +38,9 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
     {
         base.CancelEffect(playerCards);
         int numberCardInvocation = playerCards.InvocationCards
-            .Count(card => card.Title != invocationCard.Title && card.Families.Contains(family) &&
+            .Count(card => card.Title != invocationCard.Title && card.Families.Contains(Family) &&
                            card.Defense == invocationDefCondition && card.Attack == invocationAtkCondition);
-        DecrementAtkDefInvocationCard(playerCards, numberCardInvocation);
+        DecrementAtkDefInvocationCard(numberCardInvocation);
     }
 
     public override void OnCardAdded(InGameInvocationCard newCard, PlayerCards playerCards)
@@ -50,10 +50,10 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
         {
             return;
         }
-        if (newCard.Title != invocationCard.Title && newCard.Families.Contains(family) &&
+        if (newCard.Title != invocationCard.Title && newCard.Families.Contains(Family) &&
             newCard.Attack == invocationAtkCondition && newCard.Defense == invocationDefCondition)
         {
-            IncrementAtkDefInvocationCard(playerCards, 1);
+            IncrementAtkDefInvocationCard(1);
         }
     }
 
@@ -64,10 +64,10 @@ public class WinAtkDefFamilityAtkDefConditionAbility : WinAtkDefFamilyAbility
         {
             
         }
-        if (removeCard.Title != invocationCard.Title && removeCard.Families.Contains(family) &&
+        if (removeCard.Title != invocationCard.Title && removeCard.Families.Contains(Family) &&
             removeCard.Attack == invocationAtkCondition && removeCard.Defense == invocationDefCondition)
         {
-            DecrementAtkDefInvocationCard(playerCards, 1);
+            DecrementAtkDefInvocationCard(1);
         }
     }
 }
