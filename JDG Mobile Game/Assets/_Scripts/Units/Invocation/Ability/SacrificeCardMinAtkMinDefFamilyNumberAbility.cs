@@ -4,13 +4,26 @@ using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
 
+/// <summary>
+/// Represents an ability allowing a player to sacrifice cards based on certain attributes
+/// such as minimum attack, minimum defense, card family, and a specific number of cards.
+/// </summary>
 public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
 {
-    private float minAtk;
-    private float minDef;
-    private CardFamily family;
-    private int numberCard;
+    private readonly float minAtk;
+    private readonly float minDef;
+    private readonly CardFamily family;
+    private readonly int numberCard;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SacrificeCardMinAtkMinDefFamilyNumberAbility"/> class.
+    /// </summary>
+    /// <param name="name">The name of the ability.</param>
+    /// <param name="description">The description of the ability.</param>
+    /// <param name="atk">The minimum attack required for a card to be sacrificed.</param>
+    /// <param name="def">The minimum defense required for a card to be sacrificed.</param>
+    /// <param name="cardFamily">The family the card must belong to.</param>
+    /// <param name="number">The number of cards to be sacrificed.</param>
     public SacrificeCardMinAtkMinDefFamilyNumberAbility(AbilityName name, string description,
         float atk = 0f, float def = 0f, CardFamily cardFamily = CardFamily.Any, int number = 1)
     {
@@ -22,6 +35,11 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
         numberCard = number;
     }
 
+    /// <summary>
+    /// Retrieves a list of valid invocation cards from the player's cards based on the ability's attributes.
+    /// </summary>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <returns>A list of valid <see cref="InGameInvocationCard"/>.</returns>
     private List<InGameInvocationCard> GetValidInvocationCards(PlayerCards playerCards)
     {
         return playerCards.InvocationCards.Where(card =>
@@ -30,6 +48,11 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
             (family == CardFamily.Any || card.Families.Contains(family))).ToList();
     }
 
+    /// <summary>
+    /// Displays a message indicating the obligation of choosing a card/cards for sacrifice.
+    /// </summary>
+    /// <param name="canvas">The canvas to display the message on.</param>
+    /// <param name="numberOfCards">The number of cards that need to be sacrificed.</param>
     private static void DisplayOkMessage(Transform canvas, int numberOfCards)
     {
         string message = numberOfCards == 1
@@ -49,16 +72,22 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
         MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
+    /// <summary>
+    /// Applies the effect of the ability, sacrificing the valid cards based on the given attributes.
+    /// </summary>
+    /// <param name="canvas">The canvas to display any UI elements on.</param>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <param name="opponentPlayerCards">The opponent's player cards.</param>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         List<InGameInvocationCard> invocationCards = GetValidInvocationCards(playerCards);
 
         if (invocationCards.Count == numberCard)
         {
-            foreach (var invocationCard in invocationCards)
+            foreach (var inGameInvocationCard in invocationCards)
             {
-                playerCards.InvocationCards.Remove(invocationCard);
-                playerCards.YellowCards.Add(invocationCard);
+                playerCards.InvocationCards.Remove(inGameInvocationCard);
+                playerCards.YellowCards.Add(inGameInvocationCard);
             }
         }
         else
@@ -74,42 +103,37 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                 message,
                 cards,
                 numberCardSelection: numberCard,
-                showNegativeButton: true,
-                showPositiveButton: true,
-                positiveAction: (card) =>
+                showOkButton: true,
+                okAction: (card) =>
                 {
-                    if (card is InGameInvocationCard invocationCard)
+                    if (card is InGameInvocationCard inGameInvocationCard)
                     {
-                        playerCards.InvocationCards.Remove(invocationCard);
-                        playerCards.YellowCards.Add(invocationCard);
+                        playerCards.InvocationCards.Remove(inGameInvocationCard);
+                        playerCards.YellowCards.Add(inGameInvocationCard);
                     }
                     else
                     {
                         DisplayOkMessage(canvas, numberCard);
                     }
                 },
-                positiveMultipleAction: (cards) =>
+                okMultipleAction: (inGameCards) =>
                 {
-                    if (cards == null)
+                    if (inGameCards == null)
                     {
                         DisplayOkMessage(canvas, numberCard);
                     }
-                    else if (cards.Count == numberCard)
+                    else if (inGameCards.Count == numberCard)
                     {
-                        foreach (InGameInvocationCard invocationCard in cards)
+                        foreach (var inGameInvocationCard in inGameCards.Cast<InGameInvocationCard>())
                         {
-                            playerCards.InvocationCards.Remove(invocationCard);
-                            playerCards.YellowCards.Add(invocationCard);
+                            playerCards.InvocationCards.Remove(inGameInvocationCard);
+                            playerCards.YellowCards.Add(inGameInvocationCard);
                         }
                     }
                     else
                     {
                         DisplayOkMessage(canvas, numberCard);
                     }
-                },
-                negativeAction: () =>
-                {
-                    DisplayOkMessage(canvas, numberCard);
                 }
                 );
             CardSelector.Instance.CreateCardSelection(canvas, config);
