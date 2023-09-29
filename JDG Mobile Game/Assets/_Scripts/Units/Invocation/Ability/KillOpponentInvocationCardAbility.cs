@@ -4,27 +4,42 @@ using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
 
+/// <summary>
+/// Represents an ability that allows a player to destroy an opponent's Invocation Card.
+/// </summary>
 public class KillOpponentInvocationCardAbility : Ability
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KillOpponentInvocationCardAbility"/> class.
+    /// </summary>
+    /// <param name="name">The name of the ability.</param>
+    /// <param name="description">The description of the ability.</param>
     public KillOpponentInvocationCardAbility(AbilityName name, string description)
     {
         Name = name;
         Description = description;
     }
 
-    protected static void DisplayOkMessage(Transform canvas)
+    /// <summary>
+    /// Displays an informational message box indicating that there is no card available to destroy.
+    /// </summary>
+    /// <param name="canvas">The canvas transform.</param>
+    private static void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
-            showOkButton: true,
-            okAction: () =>
-            {
-            }
+            showOkButton: true
         );
         MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
+    /// <summary>
+    /// Applies the effect of the ability, allowing the player to destroy an opponent's Invocation Card if available.
+    /// </summary>
+    /// <param name="canvas">The canvas transform.</param>
+    /// <param name="playerCards">The collection of the current player's cards.</param>
+    /// <param name="opponentPlayerCards">The collection of the opponent player's cards.</param>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         ObservableCollection<InGameInvocationCard> invocationCards = opponentPlayerCards.InvocationCards;
@@ -49,12 +64,12 @@ public class KillOpponentInvocationCardAbility : Ability
                             new List<InGameCard>(invocationCards),
                             showNegativeButton: true,
                             showPositiveButton: true,
-                            positiveAction: (card) =>
+                            positiveAction: card =>
                             {
-                                if (card is InGameInvocationCard invocationCard)
+                                if (card is InGameInvocationCard inGameInvocationCard)
                                 {
-                                    opponentPlayerCards.InvocationCards.Remove(invocationCard);
-                                    opponentPlayerCards.YellowCards.Add(invocationCard);
+                                    opponentPlayerCards.InvocationCards.Remove(inGameInvocationCard);
+                                    opponentPlayerCards.YellowCards.Add(inGameInvocationCard);
                                 }
                                 else
                                 {
