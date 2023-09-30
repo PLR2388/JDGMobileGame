@@ -8,14 +8,15 @@ using Cards.FieldCards;
 /// </summary>
 public class InGameFieldCard : InGameCard
 {
-    private FieldCard baseFieldCard;
-    private CardFamily family;
+    private readonly FieldCard baseFieldCard;
+
+    public CardFamily Family { get; private set; }
 
     /// <summary>
     /// List of abilities associated with the field card.
     /// </summary>
     public List<FieldAbility> FieldAbilities = new List<FieldAbility>();
-    
+
     /// <summary>
     /// Initializes a new instance of <see cref="InGameFieldCard"/> using the base <see cref="FieldCard"/> data.
     /// </summary>
@@ -41,18 +42,9 @@ public class InGameFieldCard : InGameCard
         type = baseFieldCard.Type;
         materialCard = baseFieldCard.MaterialCard;
         collector = baseFieldCard.Collector;
-        family = baseFieldCard.Family;
+        Family = baseFieldCard.Family;
         FieldAbilities = baseFieldCard.FieldAbilities.Select(
             fieldAbilityName => FieldAbilityLibrary.Instance.fieldAbilityDictionary[fieldAbilityName]
         ).ToList();
-    }
-
-    /// <summary>
-    /// Retrieves the family associated with the card.
-    /// </summary>
-    /// <returns>The <see cref="CardFamily"/> of the card.</returns>
-    public CardFamily GetFamily()
-    {
-        return family;
     }
 }

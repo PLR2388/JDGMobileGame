@@ -37,7 +37,7 @@ namespace Cards.FieldCards
             {
                 ability.ApplyEffect(currentPlayerCard);
             }
-            AudioSystem.Instance.PlayFamilyMusic(fieldCard.GetFamily());
+            AudioSystem.Instance.PlayFamilyMusic(fieldCard.Family);
         }
 
         /// <summary>

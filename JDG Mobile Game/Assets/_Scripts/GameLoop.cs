@@ -165,7 +165,7 @@ public class GameLoop : MonoBehaviour
         }
         else
         {
-            AudioSystem.Instance.PlayFamilyMusic(currentFieldCard.GetFamily());
+            AudioSystem.Instance.PlayFamilyMusic(currentFieldCard.Family);
         }
     }
 

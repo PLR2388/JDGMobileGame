@@ -20,7 +20,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
 
     private void ApplyPower(PlayerCards playerCards)
     {
-        var fieldFamily = playerCards.FieldCard.GetFamily();
+        var fieldFamily = playerCards.FieldCard.Family;
         foreach (var invocationCard in playerCards.InvocationCards)
         {
             invocationCard.Families = new[]
@@ -76,7 +76,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
         base.OnInvocationCardAdded(playerCards, invocationCard);
         invocationCard.Families = new[]
         {
-            playerCards.FieldCard.GetFamily()
+            playerCards.FieldCard.Family
         };
     }
 
