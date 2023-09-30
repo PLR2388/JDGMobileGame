@@ -4,10 +4,19 @@ using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
 
+/// <summary>
+/// Represents an ability to give attack and defense values to a member of the same card family.
+/// </summary>
 public class GiveAtkDefToFamilyMemberAbility : Ability
 {
-    private CardFamily family;
+    private readonly CardFamily family;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GiveAtkDefToFamilyMemberAbility"/> class.
+    /// </summary>
+    /// <param name="name">The name of the ability.</param>
+    /// <param name="description">The description of the ability.</param>
+    /// <param name="family">The card family for which the ability is applicable.</param>
     public GiveAtkDefToFamilyMemberAbility(AbilityName name, string description, CardFamily family)
     {
         Name = name;
@@ -16,19 +25,25 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         this.family = family;
     }
 
+    /// <summary>
+    /// Displays a message box with a predefined OK message.
+    /// </summary>
+    /// <param name="canvas">The canvas to display the message on.</param>
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_WIN_STARS_MESSAGE),
-            showOkButton: true,
-            okAction: () =>
-            {
-            }
+            showOkButton: true
         );
         MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
+    /// <summary>
+    /// Determines if the action associated with this ability is possible.
+    /// </summary>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <returns><c>true</c> if the action is possible; otherwise, <c>false</c>.</returns>
     public override bool IsActionPossible(PlayerCards playerCards)
     {
         var invocationCards = playerCards.InvocationCards;
@@ -36,6 +51,12 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
                invocationCards.Any(elt => elt.Families.Contains(family) && elt.Title != invocationCard.Title);
     }
 
+    /// <summary>
+    /// Handles the event when the card's action is touched.
+    /// </summary>
+    /// <param name="canvas">The canvas to display any UI elements.</param>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <param name="opponentCards">The opponent player's cards.</param>
     public override void OnCardActionTouched(Transform canvas, PlayerCards playerCards, PlayerCards opponentCards)
     {
         base.OnCardActionTouched(canvas, playerCards, opponentCards);
@@ -84,6 +105,14 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
         MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
+    /// <summary>
+    /// Handles the event when a card dies.
+    /// </summary>
+    /// <param name="canvas">The canvas to display any UI elements.</param>
+    /// <param name="deadCard">The card that died.</param>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <param name="opponentPlayerCards">The opponent player's cards.</param>
+    /// <returns><c>true</c> if the base method should be called; otherwise, <c>false</c>.</returns>
     public override bool OnCardDeath(Transform canvas, InGameInvocationCard deadCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         if (invocationCard.CancelEffect)
