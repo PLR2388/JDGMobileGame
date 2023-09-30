@@ -1,82 +1,48 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
 
 namespace Cards.EquipmentCards
 {
+    /// <summary>
+    /// Handles the functionalities associated with equipment cards within the game.
+    /// </summary>
     public class EquipmentFunctions : MonoBehaviour
     {
         [SerializeField] private GameObject miniCardMenu;
         [SerializeField] private Transform canvas;
 
+        /// <summary>
+        /// Initializes listeners for equipment card events.
+        /// </summary>
         private void Start()
         {
             InGameMenuScript.EquipmentCardEvent.AddListener(DisplayEquipmentPopUp);
             TutoInGameMenuScript.EquipmentCardEvent.AddListener(DisplayEquipmentPopUp);
         }
 
-        private static PlayerCards CurrentPlayerCard
+        /// <summary>
+        /// Cleans up listeners upon object destruction.
+        /// </summary>
+        private void OnDestroy()
         {
-            get
-            {
-                PlayerCards currentPlayerCard;
-                if (GameStateManager.Instance.IsP1Turn)
-                {
-                    var player = GameObject.Find("Player1");
-                    currentPlayerCard = player.GetComponent<PlayerCards>();
-                }
-                else
-                {
-                    var player = GameObject.Find("Player2");
-                    currentPlayerCard = player.GetComponent<PlayerCards>();
-                }
-
-                return currentPlayerCard;
-            }
-        }
-
-        private static PlayerCards OpponentPlayerCard
-        {
-            get
-            {
-                PlayerCards opponentPlayerCard;
-                if (GameStateManager.Instance.IsP1Turn)
-                {
-                    var player = GameObject.Find("Player2");
-                    opponentPlayerCard = player.GetComponent<PlayerCards>();
-                }
-                else
-                {
-                    var player = GameObject.Find("Player1");
-                    opponentPlayerCard = player.GetComponent<PlayerCards>();
-                }
-
-                return opponentPlayerCard;
-            }
+            InGameMenuScript.EquipmentCardEvent.RemoveListener(DisplayEquipmentPopUp);
+            TutoInGameMenuScript.EquipmentCardEvent.RemoveListener(DisplayEquipmentPopUp);
         }
 
         /// <summary>
-        /// DisplayEquipmentPopUp.
-        /// Show the player invocations cards he can put equipment on.
-        /// <param name="equipmentCard">equipmentCard player want to put</param>
+        /// Displays a pop-up for equipping a card, showing invocations on which equipment can be added.
         /// </summary>
+        /// <param name="equipmentCard">The equipment card the player wishes to apply.</param>
         private void DisplayEquipmentPopUp(InGameEquipmentCard equipmentCard)
         {
-            var playerCards = CurrentPlayerCard;
-            var opponentInvocationCards = OpponentPlayerCard.InvocationCards;
+            var playerCards = CardManager.Instance.GetCurrentPlayerCards();
+            var opponentInvocationCards = CardManager.Instance.GetOpponentPlayerCards().InvocationCards;
             var currentInvocationCards = playerCards.InvocationCards;
             var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
 
-            var cards = new List<InGameCard>();
             var addAll = equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut);
-            foreach (var invocationCard in invocationCards)
-            {
-                if (addAll || invocationCard.EquipmentCard == null)
-                {
-                    cards.Add(invocationCard);
-                }
-            }
+            var cards = invocationCards.Where(invocationCard => addAll || invocationCard.EquipmentCard == null).Cast<InGameCard>().ToList();
             var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOCATION_FOR_EQUIPMENT),
                 cards,
@@ -93,7 +59,7 @@ namespace Cards.EquipmentCards
                             equipmentCardEquipmentAbility.ApplyEffect(
                                 currentSelectedInvocationCard,
                                 playerCards,
-                                OpponentPlayerCard
+                                CardManager.Instance.GetOpponentPlayerCards()
                             );
                         }
 
@@ -104,7 +70,6 @@ namespace Cards.EquipmentCards
                 negativeAction: () =>
                 {
                     miniCardMenu.SetActive(false);
-                  
                 }
             );
             CardSelector.Instance.CreateCardSelection(canvas, config);
