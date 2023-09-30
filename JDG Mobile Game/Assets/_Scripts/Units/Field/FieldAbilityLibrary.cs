@@ -2,9 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 
+/// <summary>
+/// Represents a library that manages and provides access to various field abilities.
+/// </summary>
 public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
 {
-    private List<FieldAbility> fieldAbilities = new List<FieldAbility>
+    /// <summary>
+    /// A collection of all field abilities defined in the library.
+    /// </summary>
+    private readonly List<FieldAbility> fieldAbilities = new List<FieldAbility>
     {
         new EarnATKDEFForFamilyAbility(
             FieldAbilityName.Earn1DEFForSpatialFamily,
@@ -85,11 +91,17 @@ public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
         )
     };
 
-    public Dictionary<FieldAbilityName, FieldAbility> fieldAbilityDictionary;
+    /// <summary>
+    /// Dictionary for quick access to field abilities based on their name.
+    /// </summary>
+    public Dictionary<FieldAbilityName, FieldAbility> FieldAbilityDictionary;
 
+    /// <summary>
+    /// Initializes the ability library by populating the dictionary.
+    /// </summary>
     protected override void Awake()
     {
         base.Awake();
-        fieldAbilityDictionary = fieldAbilities.ToDictionary(ability => ability.Name, ability => ability);
+        FieldAbilityDictionary = fieldAbilities.ToDictionary(ability => ability.Name, ability => ability);
     }
 }

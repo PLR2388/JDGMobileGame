@@ -44,7 +44,7 @@ public class InGameFieldCard : InGameCard
         collector = baseFieldCard.Collector;
         Family = baseFieldCard.Family;
         FieldAbilities = baseFieldCard.FieldAbilities.Select(
-            fieldAbilityName => FieldAbilityLibrary.Instance.fieldAbilityDictionary[fieldAbilityName]
+            fieldAbilityName => FieldAbilityLibrary.Instance.FieldAbilityDictionary[fieldAbilityName]
         ).ToList();
     }
 }
