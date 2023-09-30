@@ -1,13 +1,30 @@
 using System.Collections.Generic;
 using Cards;
-using JetBrains.Annotations;
 using UnityEngine;
 
+/// <summary>
+/// Represents an ability that provides the condition to destroy a field card if the user agree to loose a part of
+/// its card defense or attack
+/// </summary>
 public class DestroyFieldAtkDefAttackConditionAbility : Ability
 {
-    private int divideAtkFactor;
-    private int divideDefFactor;
+    /// <summary>
+    /// Attack division factor used to determine the condition for destroying the field card.
+    /// </summary>
+    private readonly int divideAtkFactor;
+    
+    /// <summary>
+    /// Defense division factor used to determine the condition for destroying the field card.
+    /// </summary>
+    private readonly int divideDefFactor;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DestroyFieldAtkDefAttackConditionAbility"/> class.
+    /// </summary>
+    /// <param name="name">The name of the ability.</param>
+    /// <param name="description">The description of the ability.</param>
+    /// <param name="divideAtkFactor">The attack division factor.</param>
+    /// <param name="divideDefFactor">The defense division factor.</param>
     public DestroyFieldAtkDefAttackConditionAbility(AbilityName name, string description,
         int divideAtkFactor, int divideDefFactor)
     {
@@ -17,15 +34,16 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         this.divideDefFactor = divideDefFactor;
     }
 
+    /// <summary>
+    /// Displays a message indicating there's no card that was destroyed
+    /// </summary>
+    /// <param name="canvas">The game canvas where UI components will be displayed.</param>
     private static void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
-            showOkButton: true,
-            okAction: () =>
-            {
-            }
+            showOkButton: true
         );
         MessageBox.Instance.CreateMessageBox(
             canvas,
@@ -33,6 +51,12 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         );
     }
 
+    /// <summary>
+    /// Destroys the field card and adjusts the attacking card's attributes.
+    /// </summary>
+    /// <param name="playerCards">The player's current cards.</param>
+    /// <param name="opponentPlayerCards">The opponent's current cards.</param>
+    /// <param name="fieldCard">The field card to be destroyed.</param>
     private void DestroyField(PlayerCards playerCards, PlayerCards opponentPlayerCards, InGameCard fieldCard)
     {
         if (playerCards.FieldCard == fieldCard)
@@ -51,6 +75,14 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
         invocationCard.SetRemainedAttackThisTurn(0);
     }
 
+    
+    /// <summary>
+    /// Executes the ability, checking if the conditions for destroying a field card are met.
+    /// If met, it offers the option to destroy a field card.
+    /// </summary>
+    /// <param name="canvas">The game canvas where UI components will be displayed.</param>
+    /// <param name="playerCards">The player's current cards.</param>
+    /// <param name="opponentPlayerCards">The opponent's current cards.</param>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         string condition = divideAtkFactor > 1
