@@ -27,15 +27,15 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
     /// <param name="opponentPlayerCards">The opponent's current cards. (Not used in this method, but included due to override)</param>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        bool hasCardInDeck = playerCards.Deck.Exists(card => card.Title == cardName);
-        bool hasCardInYellowTrash = playerCards.YellowCards.Any(card => card.Title == cardName);
+        bool hasCardInDeck = playerCards.Deck.Exists(card => card.Title == CardName);
+        bool hasCardInYellowTrash = playerCards.YellowCards.Any(card => card.Title == CardName);
         if (hasCardInDeck || hasCardInYellowTrash)
         {
             var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_SPECIFIC_CARD_IN_DECK_AND_YELLOW_MESSAGE),
-                    cardName
+                    CardName
                 ),
                 showNegativeButton: true,
                 showPositiveButton: true,
@@ -43,13 +43,13 @@ public class GetSpecificCardFromDeckOrYellowCardAbility : GetSpecificCardFromDec
                 {
                     if (hasCardInDeck)
                     {
-                        InGameCard card = playerCards.Deck.Find(card => card.Title == cardName);
+                        InGameCard card = playerCards.Deck.Find(card => card.Title == CardName);
                         playerCards.Deck.Remove(card);
                         playerCards.HandCards.Add(card);
                     }
                     else
                     {
-                        InGameCard card = playerCards.YellowCards.First(card => card.Title == cardName);
+                        InGameCard card = playerCards.YellowCards.First(card => card.Title == CardName);
                         playerCards.Deck.Remove(card);
                         playerCards.HandCards.Add(card);
                     }
