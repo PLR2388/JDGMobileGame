@@ -40,7 +40,7 @@ public class InGameEquipmentCard : InGameCard
         materialCard = baseEquipmentCard.MaterialCard;
         collector = baseEquipmentCard.Collector;
         EquipmentAbilities = baseEquipmentCard.EquipmentAbilities.Select(
-            equipmentAbilityName => EquipmentAbilityLibrary.Instance.equipmentAbilityDictionary[equipmentAbilityName]
+            equipmentAbilityName => EquipmentAbilityLibrary.Instance.EquipmentAbilityDictionary[equipmentAbilityName]
         ).ToList();
     }
 }

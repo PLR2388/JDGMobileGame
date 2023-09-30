@@ -1,9 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>
+/// Represents a library of equipment abilities, allowing for easy access and management of various equipment abilities.
+/// </summary>
 public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
 {
-    private List<EquipmentAbility> equipmentAbilities = new List<EquipmentAbility>
+    /// <summary>
+    /// A list of predefined equipment abilities.
+    /// </summary>
+    private readonly List<EquipmentAbility> equipmentAbilities = new List<EquipmentAbility>
     {
         new MultiplyAtkDefAbility(
             EquipmentAbilityName.MultiplyDefBy2ButPreventAttack,
@@ -108,11 +114,17 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
         )
     };
 
-    public Dictionary<EquipmentAbilityName, EquipmentAbility> equipmentAbilityDictionary;
+    /// <summary>
+    /// Dictionary to look up equipment abilities by their names.
+    /// </summary>
+    public Dictionary<EquipmentAbilityName, EquipmentAbility> EquipmentAbilityDictionary;
 
+    /// <summary>
+    /// Initializes the equipment ability library on awake, converting the list of abilities into a dictionary.
+    /// </summary>
     protected override void Awake()
     {
         base.Awake();
-        equipmentAbilityDictionary = equipmentAbilities.ToDictionary(ability => ability.Name, ability => ability);
+        EquipmentAbilityDictionary = equipmentAbilities.ToDictionary(ability => ability.Name, ability => ability);
     }
 }
