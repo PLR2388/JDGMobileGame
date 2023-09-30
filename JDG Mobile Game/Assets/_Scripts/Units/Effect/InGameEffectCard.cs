@@ -9,15 +9,11 @@ namespace Cards.EffectCards
 
         public List<EffectAbility> EffectAbilities = new List<EffectAbility>();
 
-        public static InGameEffectCard Init(EffectCard effectCard, CardOwner cardOwner)
+        public InGameEffectCard(EffectCard effectCard, CardOwner cardOwner)
         {
-            InGameEffectCard inGameEffectCard = new InGameEffectCard
-            {
-                baseEffectCard = effectCard,
-                CardOwner = cardOwner
-            };
-            inGameEffectCard.Reset();
-            return inGameEffectCard;
+            baseEffectCard = effectCard;
+            CardOwner = cardOwner;
+            Reset();
         }
 
         private void Reset()

@@ -22,10 +22,10 @@ public class CardFactory
     {
         return card switch
         {
-            EquipmentCard equipmentCard => InGameEquipmentCard.Init(equipmentCard, cardOwner),
-            EffectCard effectCard => InGameEffectCard.Init(effectCard, cardOwner),
-            InvocationCard invocationCard => InGameInvocationCard.Init(invocationCard, cardOwner),
-            FieldCard fieldCard => InGameFieldCard.Init(fieldCard, cardOwner),
+            EquipmentCard equipmentCard => new InGameEquipmentCard(equipmentCard, cardOwner),
+            EffectCard effectCard => new InGameEffectCard(effectCard, cardOwner),
+            InvocationCard invocationCard => new InGameInvocationCard(invocationCard, cardOwner),
+            FieldCard fieldCard => new InGameFieldCard(fieldCard, cardOwner),
             _ => throw new InvalidOperationException("Unsupported card type provided.")
         };
     }

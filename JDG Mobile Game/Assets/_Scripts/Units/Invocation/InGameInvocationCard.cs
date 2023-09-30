@@ -51,15 +51,11 @@ namespace _Scripts.Units.Invocation
         /// <param name="invocationCard">The base invocation card.</param>
         /// <param name="cardOwner">The owner of the card.</param>
         /// <returns>A new InGameInvocationCard instance.</returns>
-        public static InGameInvocationCard Init(InvocationCard invocationCard, CardOwner cardOwner)
+        public InGameInvocationCard(InvocationCard invocationCard, CardOwner cardOwner)
         {
-            var inGameInvocationCard = new InGameInvocationCard
-            {
-                BaseInvocationCard = invocationCard,
-                CardOwner = cardOwner
-            };
-            inGameInvocationCard.Reset();
-            return inGameInvocationCard;
+            BaseInvocationCard = invocationCard;
+            CardOwner = cardOwner;
+            Reset();
         }
 
         public CardFamily[] Families { get; set; }

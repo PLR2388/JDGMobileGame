@@ -10,15 +10,11 @@ public class InGameEquipmentCard : InGameCard
     public List<EquipmentAbility> EquipmentAbilities = new List<EquipmentAbility>();
 
 
-    public static InGameEquipmentCard Init(EquipmentCard equipmentCard, CardOwner cardOwner)
+    public InGameEquipmentCard(EquipmentCard equipmentCard, CardOwner cardOwner)
     {
-        InGameEquipmentCard inGameEquipmentCard = new InGameEquipmentCard
-        {
-            baseEquipmentCard = equipmentCard,
-            CardOwner = cardOwner
-        };
-        inGameEquipmentCard.Reset();
-        return inGameEquipmentCard;
+        baseEquipmentCard = equipmentCard;
+        CardOwner = cardOwner;
+        Reset();
     }
 
     private void Reset()

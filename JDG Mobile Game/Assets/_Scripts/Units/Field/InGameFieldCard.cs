@@ -3,25 +3,35 @@ using System.Linq;
 using Cards;
 using Cards.FieldCards;
 
+/// <summary>
+/// Represents a card on the field in the game with additional runtime behaviors.
+/// </summary>
 public class InGameFieldCard : InGameCard
 {
     private FieldCard baseFieldCard;
     private CardFamily family;
 
+    /// <summary>
+    /// List of abilities associated with the field card.
+    /// </summary>
     public List<FieldAbility> FieldAbilities = new List<FieldAbility>();
-
-
-    public static InGameFieldCard Init(FieldCard fieldCard, CardOwner cardOwner)
+    
+    /// <summary>
+    /// Initializes a new instance of <see cref="InGameFieldCard"/> using the base <see cref="FieldCard"/> data.
+    /// </summary>
+    /// <param name="fieldCard">The base field card data.</param>
+    /// <param name="cardOwner">The owner of the card.</param>
+    /// <returns>An instance of <see cref="InGameFieldCard"/>.</returns>
+    public InGameFieldCard(FieldCard fieldCard, CardOwner cardOwner)
     {
-        InGameFieldCard inGameFieldCard = new InGameFieldCard
-        {
-            baseFieldCard = fieldCard,
-            CardOwner = cardOwner
-        };
-        inGameFieldCard.Reset();
-        return inGameFieldCard;
+        baseFieldCard = fieldCard;
+        CardOwner = cardOwner;
+        Reset();
     }
 
+    /// <summary>
+    /// Resets the card's properties based on the underlying base field card.
+    /// </summary>
     private void Reset()
     {
         title = baseFieldCard.Title;
@@ -37,6 +47,10 @@ public class InGameFieldCard : InGameCard
         ).ToList();
     }
 
+    /// <summary>
+    /// Retrieves the family associated with the card.
+    /// </summary>
+    /// <returns>The <see cref="CardFamily"/> of the card.</returns>
     public CardFamily GetFamily()
     {
         return family;
