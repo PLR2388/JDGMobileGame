@@ -3,33 +3,39 @@ using UnityEngine;
 
 namespace Cards.FieldCards
 {
+    /// <summary>
+    /// Provides functionalities related to field cards in the game, such as placing a card on the field.
+    /// </summary>
     public class FieldFunctions : MonoBehaviour
     {
-        private PlayerCards currentPlayerCard;
-        private GameObject p1;
-        private GameObject p2;
+        [SerializeField] private GameObject miniCardMenu; // The UI component representing a mini card menu.
 
-        [SerializeField] private GameObject miniCardMenu;
-
-        // Start is called before the first frame update
+        /// <summary>
+        /// Initialization method that sets up listeners for relevant events.
+        /// </summary>
         private void Start()
         {
-            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
             TutoInGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
-            p1 = GameObject.Find("Player1");
-            p2 = GameObject.Find("Player2");
-            currentPlayerCard = p1.GetComponent<PlayerCards>();
+        }
+        
+        /// <summary>
+        /// Called when the object is being destroyed and unsubscribes from events.
+        /// </summary>
+        private void OnDestroy()
+        {
+            InGameMenuScript.FieldCardEvent.RemoveListener(PutFieldCard);
+            TutoInGameMenuScript.FieldCardEvent.RemoveListener(PutFieldCard);
         }
 
         /// <summary>
-        /// PutFieldCard.
-        /// Put a field card on field and apply its effect
-        /// <param name="fieldCard">field card used</param>
+        /// Places a field card onto the game field and applies its associated effects.
         /// </summary>
+        /// <param name="fieldCard">The field card to be placed on the field.</param>
         private void PutFieldCard(InGameFieldCard fieldCard)
         {
-            if (currentPlayerCard.FieldCard != null) return;
+            var currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
+            if (currentPlayerCard.FieldCard != null || fieldCard == null) return;
             miniCardMenu.SetActive(false);
             currentPlayerCard.FieldCard = fieldCard;
             currentPlayerCard.HandCards.Remove(fieldCard);
@@ -38,15 +44,6 @@ namespace Cards.FieldCards
                 ability.ApplyEffect(currentPlayerCard);
             }
             AudioSystem.Instance.PlayFamilyMusic(fieldCard.Family);
-        }
-
-        /// <summary>
-        /// ChangePlayer.
-        /// Change currentPlayerCard depending of player turn
-        /// </summary>
-        private void ChangePlayer()
-        {
-            currentPlayerCard = GameStateManager.Instance.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
         }
     }
 }
