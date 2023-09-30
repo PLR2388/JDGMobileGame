@@ -3,10 +3,19 @@ using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
 
+/// <summary>
+/// Represents an ability to invoke a specific card chosen from the deck.
+/// </summary>
 public class InvokeSpecificCardChoiceAbility : Ability
 {
-    private List<string> cardChoices;
+    private readonly List<string> cardChoices;
 
+    /// <summary>
+    /// Initializes a new instance of the InvokeSpecificCardChoiceAbility class.
+    /// </summary>
+    /// <param name="name">The name of the ability.</param>
+    /// <param name="description">The description of the ability.</param>
+    /// <param name="cardNames">The list of card names that can be chosen for invocation.</param>
     public InvokeSpecificCardChoiceAbility(AbilityName name, string description, List<string> cardNames)
     {
         Name = name;
@@ -14,29 +23,32 @@ public class InvokeSpecificCardChoiceAbility : Ability
         cardChoices = cardNames;
     }
 
-    protected static void DisplayOkMessage(Transform canvas)
+    /// <summary>
+    /// Displays a message box with information that no card was invoked.
+    /// </summary>
+    /// <param name="canvas">The canvas on which to display the message box.</param>
+    private static void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE),
-            showOkButton: true,
-            okAction: () =>
-            {
-            }
+            showOkButton: true
         );
         MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
+    /// <summary>
+    /// Applies the effect of this ability.
+    /// </summary>
+    /// <param name="canvas">The canvas to display any UI elements.</param>
+    /// <param name="playerCards">The player's cards.</param>
+    /// <param name="opponentPlayerCards">The opponent player's cards.</param>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         bool hasCardInDeck = playerCards.Deck.Exists(card => cardChoices.Contains(card.Title));
         if (hasCardInDeck)
         {
-            string cardNameChoiceString = cardChoices[0];
-            for (int i = 1; i < cardChoices.Count; i++)
-            {
-                cardNameChoiceString += " ou " + cardChoices[i];
-            }
+            string cardNameChoiceString = string.Join(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_OR_OPTION), cardChoices);
 
             var config = new MessageBoxConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
@@ -57,10 +69,10 @@ public class InvokeSpecificCardChoiceAbility : Ability
                         showPositiveButton: true,
                         positiveAction: (card) =>
                         {
-                            if (card is InGameInvocationCard invocationCard)
+                            if (card is InGameInvocationCard inGameInvocationCard)
                             {
-                                playerCards.Deck.Remove(invocationCard);
-                                playerCards.InvocationCards.Add(invocationCard);
+                                playerCards.Deck.Remove(inGameInvocationCard);
+                                playerCards.InvocationCards.Add(inGameInvocationCard);
                             }
                             else
                             {

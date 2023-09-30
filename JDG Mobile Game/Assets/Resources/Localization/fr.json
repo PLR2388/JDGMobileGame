@@ -102,6 +102,7 @@
     "GET_TYPE_CARD_MESSAGE": "Veux-tu aller chercher directement une carte de type {0} dans ton deck ?",
     "INVOKE_NON_COLLECTOR_BY_SACRFICE_MESSAGE": "Veux-tu sacrifier {0} pour invoquer une carte non-brillante depuis la poubelle jaune ?",
     "INVOKE_SPECIFIC_CARD_MESSAGE": "Veux-tu invoquer directement {0} ?",
+    "OR_OPTION": " ou ",
     "REMOVE_CARD_OPPONENT_HAND_MESSAGE": "Veux-tu défausser une carte de ton adversaire en défaussant aussi une de tes cartes ?",
     "SACRIFICE_TO_BOOST_MESSAGE": "Veux-tu sacrifier {0} pour augmenter l'attaque à {1} et la défense à {2} de {3} ?",
     "SET_FIELD_CARD_MESSAGE": "Veux-tu poser une carte terrain depuis ta pioche ?",
