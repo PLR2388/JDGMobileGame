@@ -18,7 +18,7 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.Lose2Point5StarsByInvocations,
             "Opponent will lose 2.5 Stars by invocations on our field",
             2.5f,
-            fromCurrentNumberInvocationCards: true
+            DamageType.ByPlayerInvocationCount
         ),
         new FamilyFieldToInvocationsEffectAbility(
             EffectAbilityName.ApplyFamilyFieldToInvocations,
@@ -94,12 +94,16 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
         new LooseHPOpponentEffectAbility(EffectAbilityName.LooseHPBasedOnNumberInvocation,
             "Opponent loose 2.5HP per invocation on his field",
             2.5f,
-            fromOpponentNumberInvocationCards: true),
+            DamageType.ByOpponentInvocationCount
+        ),
         new DestroyCardsEffectAbility(
             EffectAbilityName.DestroyEquipmentCard,
             "Destroy one equipment card",
             1,
-            types: new List<CardType> { CardType.Equipment }),
+            types: new List<CardType>
+            {
+                CardType.Equipment
+            }),
         new LookHandCardsEffectAbility(
             EffectAbilityName.LookOpponentHandCardsAndChangeIt,
             "Look opponent hand cards and remove one of them by removing also one of them from player's handcards"
@@ -128,13 +132,16 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.DestroyOpponentInvocationCard,
             "Destroy one invocation from opponent",
             1,
-            types: new List<CardType> { CardType.Invocation },
+            types: new List<CardType>
+            {
+                CardType.Invocation
+            },
             fromCurrentPlayer: false),
         new LooseHPOpponentEffectAbility(
             EffectAbilityName.Loose1HPPerOpponentHandCards,
             "Opponent loose 1HP per card in his hand",
             1,
-            fromOpponentNumberHandCards: true
+            DamageType.ByOpponentHandCount
         ),
         new GetHPBackEffectAbility(
             EffectAbilityName.GetBackAllHPBySacrifice5AtkDef,
@@ -146,7 +153,7 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
         new ControlOpponentInvocationCardEffectAbility(
             EffectAbilityName.Control1OpponentInvocationCard,
             "Control an opponent invocation card during 1 turn"
-            )
+        )
     };
 
     /// <summary>
