@@ -3,7 +3,7 @@ using Cards;
 using UnityEngine;
 
 /// <summary>
-/// Represents an effect ability that allows a player to look at the deck cards.
+/// Represents an effect ability that allows a player to look at the deck cards and rearrange them if he wants.
 /// </summary>
 public class LookDeckCardsEffectAbility : EffectAbility
 {
