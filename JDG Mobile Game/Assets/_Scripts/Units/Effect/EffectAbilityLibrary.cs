@@ -75,8 +75,7 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             EffectAbilityName.GetCardFromYellowDeck,
             "Get a card from the yellow trash or the deck",
             1,
-            true,
-            true
+            CardSource.Both
         ),
         new SkipOpponentAttackEffectAbility(
             EffectAbilityName.ManiabilitePourrieSkipAttackForOpponent,
