@@ -15,7 +15,7 @@ public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
             EquipmentAbilityName.MultiplyDefBy2ButPreventAttack,
             "Multiply DEF by 2 but the invocation cannot attack",
             defenseFactor: 2f,
-            preventAttack: true
+            shouldPreventAttack: true
         ),
         new EarnAtkDefAbility(
             EquipmentAbilityName.Earn1ATKAndMinus1DEF,
