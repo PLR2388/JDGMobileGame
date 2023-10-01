@@ -23,10 +23,10 @@ public class SkipOpponentAttackEffectAbility : EffectAbility
 
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
-        counter++;
-        if (counter > NumberOfTurn)
+        Counter++;
+        if (Counter > NumberOfTurn)
         {
-            counter = 0;
+            Counter = 0;
             opponentPlayerStatus.DisableBlockAttack();
             var card = playerCards.EffectCards.First(effectCard => effectCard.Title == cardName);
             playerCards.EffectCards.Remove(card);
