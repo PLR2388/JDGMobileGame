@@ -1,47 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using _Scripts.Units.Invocation;
-using Cards.FieldCards;
-using Cards.InvocationCards;
-using OnePlayer;
-using UnityEngine;
-using UnityEngine.Events;
+﻿using UnityEngine;
 
 namespace Cards.EffectCards
 {
+    /// <summary>
+    /// Handles the functionality related to effect cards within the game.
+    /// </summary>
     public class EffectFunctions : MonoBehaviour
     {
         [SerializeField] private GameObject miniCardMenu;
         [SerializeField] private Transform canvas;
-        private PlayerCards currentPlayerCard;
-        private PlayerStatus currentPlayerStatus;
-        private PlayerCards opponentPlayerCard;
-        private PlayerStatus opponentPlayerStatus;
-        private GameObject p1;
-        private GameObject p2;
 
-        // Start is called before the first frame update
+        /// <summary>
+        /// Initialization method. Subscribes to relevant events.
+        /// </summary>
         private void Start()
         {
-            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             InGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
             TutoInGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
-            p1 = GameObject.Find("Player1");
-            p2 = GameObject.Find("Player2");
-            currentPlayerCard = p1.GetComponent<PlayerCards>();
-            currentPlayerStatus = p1.GetComponent<PlayerStatus>();
-            opponentPlayerCard = p2.GetComponent<PlayerCards>();
-            opponentPlayerStatus = p2.GetComponent<PlayerStatus>();
+        }
+        
+        /// <summary>
+        /// Cleanup method. Unsubscribes from events when the object is destroyed.
+        /// </summary>
+        private void OnDestroy()
+        {
+            InGameMenuScript.EffectCardEvent.RemoveListener(PutEffectCard);
+            TutoInGameMenuScript.EffectCardEvent.RemoveListener(PutEffectCard);
         }
 
         /// <summary>
-        /// Called when user clicks on put for an effect card
-        /// Apply effects of the card or refuse to put it if 4 effects cards are on the field
+        /// Processes the placement of an effect card on the field. If there are less than 4 effect cards on the field, it applies the card's effects.
+        /// Otherwise, a warning is shown to the player.
         /// </summary>
-        /// <param name="effectCard">The effect card the user put on field</param>
+        /// <param name="effectCard">The effect card the user put on the field.</param>
         private void PutEffectCard(InGameEffectCard effectCard)
         {
+            var currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
+            var opponentPlayerCard = CardManager.Instance.GetOpponentPlayerCards();
+            var currentPlayerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
+            var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
             var size = currentPlayerCard.EffectCards.Count;
 
             if (size < 4)
@@ -66,24 +63,6 @@ namespace Cards.EffectCards
                     canvas,
                     config
                 );
-            }
-        }
-
-        private void ChangePlayer()
-        {
-            if (GameStateManager.Instance.IsP1Turn)
-            {
-                currentPlayerCard = p1.GetComponent<PlayerCards>();
-                currentPlayerStatus = p1.GetComponent<PlayerStatus>();
-                opponentPlayerCard = p2.GetComponent<PlayerCards>();
-                opponentPlayerStatus = p2.GetComponent<PlayerStatus>();
-            }
-            else
-            {
-                currentPlayerCard = p2.GetComponent<PlayerCards>();
-                currentPlayerStatus = p2.GetComponent<PlayerStatus>();
-                opponentPlayerCard = p1.GetComponent<PlayerCards>();
-                opponentPlayerStatus = p1.GetComponent<PlayerStatus>();
             }
         }
     }
