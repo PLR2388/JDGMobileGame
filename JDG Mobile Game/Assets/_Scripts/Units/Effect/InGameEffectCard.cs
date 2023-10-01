@@ -40,7 +40,7 @@ namespace Cards.EffectCards
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;
             EffectAbilities = baseEffectCard.EffectAbilities.Select(
-                effectAbilityName => EffectAbilityLibrary.Instance.effectAbilityDictionary[effectAbilityName]
+                effectAbilityName => EffectAbilityLibrary.Instance.EffectAbilityDictionary[effectAbilityName]
             ).ToList();
         }
     }

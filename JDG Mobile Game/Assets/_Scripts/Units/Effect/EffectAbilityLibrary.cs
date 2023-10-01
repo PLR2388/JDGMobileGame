@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 
+/// <summary>
+/// Represents a library of effect abilities that can be applied in the game.
+/// </summary>
 public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
 {
-    private List<EffectAbility> effectAbilities = new List<EffectAbility>
+    private readonly List<EffectAbility> effectAbilities = new List<EffectAbility>
     {
         new LimitHandCardsEffectAbility(
             EffectAbilityName.LimitHandCardTo5,
@@ -146,11 +149,17 @@ public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
             )
     };
 
-    public Dictionary<EffectAbilityName, EffectAbility> effectAbilityDictionary;
+    /// <summary>
+    /// Dictionary that maps an effect ability name to its respective effect ability instance.
+    /// </summary>
+    public Dictionary<EffectAbilityName, EffectAbility> EffectAbilityDictionary;
 
+    /// <summary>
+    /// Initializes the effect abilities library.
+    /// </summary>
     protected override void Awake()
     {
         base.Awake();
-        effectAbilityDictionary = effectAbilities.ToDictionary(ability => ability.Name, ability => ability);
+        EffectAbilityDictionary = effectAbilities.ToDictionary(ability => ability.Name, ability => ability);
     }
 }
