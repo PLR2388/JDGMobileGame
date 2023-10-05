@@ -1,6 +1,9 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Represents the user interface for displaying player health.
+/// </summary>
 public class HealthUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI healthP1Text;
@@ -9,13 +12,17 @@ public class HealthUI : MonoBehaviour
     // Reference to the PlayerStatus objects could be useful but not shown here
     // for simplicity.
 
+    /// <summary>
+    /// Initialization logic for the health UI.
+    /// Registers for health change events from the PlayerStatus.
+    /// </summary>
     private void Awake()
     {
         // Initialize the health text for both players at the start.
         SetHealthText(PlayerStatus.MaxHealth, true);
         SetHealthText(PlayerStatus.MaxHealth, false);
         
-        // We can listen to a health change event if PlayerStatus broadcasts one.
+        // Listens to a health change event if PlayerStatus broadcasts one.
         // This way, whenever a player's health changes, it'll automatically update
         // the UI without UIManager needing to manually call it.
         PlayerStatus.OnHealthChanged.AddListener(ChangeHealthText);
@@ -38,14 +45,19 @@ public class HealthUI : MonoBehaviour
         }
     }
 
-    // This method assumes PlayerStatus broadcasts a health change event with both 
-    // the new health value and a flag indicating which player's health changed.
+    /// <summary>
+    /// Handles the health change event from PlayerStatus.
+    /// </summary>
+    /// <param name="health">The updated health value.</param>
+    /// <param name="isP1">If true, the health update is for Player 1; otherwise, it's for Player 2.</param>
     private void ChangeHealthText(float health, bool isP1)
     {
         SetHealthText(health, isP1);
     }
 
-    // OnDestroy or OnDisable could be used to unregister the event listener if needed.
+    /// <summary>
+    /// Unregisters the event listener when the object is destroyed.
+    /// </summary>
     private void OnDestroy()
     {
         PlayerStatus.OnHealthChanged.RemoveListener(ChangeHealthText);
