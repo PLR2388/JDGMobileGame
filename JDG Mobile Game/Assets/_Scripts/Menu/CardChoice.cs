@@ -69,7 +69,7 @@ namespace Menu
                 if (isPlayerOneCardChosen)
                 {
                     AudioSystem.Instance.StopMusic();
-                    SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
+                    SceneLoaderSystem.LoadGameScreen();
                     isPlayerOneCardChosen = false;
                     ChangeChoicePlayer.Invoke(1);
 
@@ -150,7 +150,7 @@ namespace Menu
             GameState.Instance.Player2DeckCards =
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
-            SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
+            SceneLoaderSystem.LoadGameScreen();
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace Menu
             GameState.Instance.Player2DeckCards =
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
-            SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
+            SceneLoaderSystem.LoadGameScreen();
         }
 
         /// <summary>

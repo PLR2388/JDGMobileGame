@@ -137,7 +137,7 @@ public class DialogueUI : MonoBehaviour
                         }
                         break;
                     case NextDialogueTrigger.EndGame:
-                        SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
+                        SceneLoaderSystem.LoadMainScreen();
                         return true;
                     default:
                         throw new ArgumentOutOfRangeException();
