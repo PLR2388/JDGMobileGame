@@ -9,8 +9,8 @@ public class InfiniteScroll : MonoBehaviour
     [SerializeField] private GameObject prefabCard;
     [SerializeField] private Transform canvas;
 
-    private int numberSelected;
-    private int numberRare;
+    private int numberOfSelectedCards;
+    private int numberOfRareCards;
 
     private bool displayP1Card = true;
     private List<Card> deck1AllCards;
@@ -44,8 +44,8 @@ public class InfiniteScroll : MonoBehaviour
     private void OnChangePlayer(int numberPlayer)
     {
         displayP1Card = numberPlayer == 1;
-        numberSelected = 0;
-        numberRare = 0;
+        numberOfSelectedCards = 0;
+        numberOfRareCards = 0;
         DisplayAvailableCards(displayP1Card ? deck1AllCards : deck2AllCards);
     }
 
@@ -56,25 +56,44 @@ public class InfiniteScroll : MonoBehaviour
     /// <param name="card"></param>
     private void OnSelectCard(InGameCard card)
     {
-        numberSelected++;
+        numberOfSelectedCards++;
         if (card.Collector)
         {
-            numberRare++;
+            numberOfRareCards++;
         }
 
-        if (numberSelected > GameState.MaxDeckCards)
-        {
-            CardSelectionManager.Instance.UnselectCard(card);
-            DisplayMessageBox(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
-            );
-        }
-
-        if (numberRare > GameState.MaxRare)
+        CheckNumberOfSelectedCards(card);
+        CheckNumberOfRareCards(card);
+    }
+    
+    /// <summary>
+    /// Checks if the number of rare cards selected exceeds the maximum allowed limit.
+    /// If it does, the provided card is unselected, and a warning message is displayed.
+    /// </summary>
+    /// <param name="card">The card to check and possibly unselect.</param>
+    private void CheckNumberOfRareCards(InGameCard card)
+    {
+        if (numberOfRareCards > GameState.MaxRare)
         {
             CardSelectionManager.Instance.UnselectCard(card);
             DisplayMessageBox(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_COLLECTOR_CARD)
+            );
+        }
+    }
+    
+    /// <summary>
+    /// Checks if the total number of selected cards exceeds the maximum allowed limit.
+    /// If it does, the provided card is unselected, and a warning message is displayed.
+    /// </summary>
+    /// <param name="card">The card to check and possibly unselect.</param>
+    private void CheckNumberOfSelectedCards(InGameCard card)
+    {
+        if (numberOfSelectedCards > GameState.MaxDeckCards)
+        {
+            CardSelectionManager.Instance.UnselectCard(card);
+            DisplayMessageBox(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
             );
         }
     }
@@ -85,10 +104,10 @@ public class InfiniteScroll : MonoBehaviour
     /// <param name="card"></param>
     private void OnUnSelectCard(InGameCard card)
     {
-        numberSelected--;
+        numberOfSelectedCards--;
         if (card.Collector)
         {
-            numberRare--;
+            numberOfRareCards--;
         }
     }
 
@@ -98,8 +117,7 @@ public class InfiniteScroll : MonoBehaviour
     /// <param name="allCards"></param>
     private void DisplayAvailableCards(List<Card> allCards)
     {
-        foreach (var card in allCards.Where(card => card.Type != CardType.Contre)
-                     .Where(card => !removeCardTitles.Contains(card.Title)))
+        foreach (var card in allCards.Where(card => card.Type != CardType.Contre && !removeCardTitles.Contains(card.Title)))
         {
             CreateCardDisplay(card);
         }
