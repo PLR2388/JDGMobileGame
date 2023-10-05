@@ -1,6 +1,9 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Manages the round display, including round text, player indicators, and camera orientation.
+/// </summary>
 public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
 {
     [SerializeField] private TextMeshProUGUI playerText;
@@ -10,12 +13,19 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
+    /// <summary>
+    /// Sets the displayed round text.
+    /// </summary>
+    /// <param name="value">The text value to set.</param>
     public void SetRoundText(string value)
     {
         if (roundText)
             roundText.text = value;
     }
 
+    /// <summary>
+    /// Updates the UI elements based on the game phase in the next round.
+    /// </summary>
     public void AdaptUIToPhaseIdInNextRound()
     {
         var phaseId = GameStateManager.Instance.Phase;
@@ -35,12 +45,18 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
         }
     }
 
+    /// <summary>
+    /// Rotates the camera for the end phase of the game.
+    /// </summary>
     private void RotateCameraForEndPhase()
     {
         if (playerCamera)
             playerCamera.transform.Rotate(cameraRotation);
     }
 
+    /// <summary>
+    /// Sets the text indicating whose turn it is.
+    /// </summary>
     private void SetPlayerTurnText()
     {
         if (playerText)
