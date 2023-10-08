@@ -1,84 +1,118 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.ObjectModel;
+using Cards;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-public class TutoHandCardDisplay : MonoBehaviour
+public class TutoHandCardDisplay : HandCardDisplay
 {
-    [SerializeField] private GameObject prefabCard;
 
-    [FormerlySerializedAs("Player1")] public GameObject player1;
-
-    [FormerlySerializedAs("Player2")] public GameObject player2;
-
-    private List<GameObject> createdCards;
-    
     private int currentDialogIndex = 0;
 
+    /// <summary>
+    /// Called when the script instance is being loaded.
+    /// Subscribes to relevant events.
+    /// </summary>
+    private void Awake()
+    {
+        SubscribeToEvents();
+    }
+    
+    /// <summary>
+    /// Called when the object becomes enabled and active.
+    /// Subscribes to relevant events.
+    /// </summary>
+    private void OnEnable()
+    {
+        SubscribeToEvents();
+    }
+    
+    /// <summary>
+    /// Called when the behaviour becomes disabled.
+    /// Unsubscribes from events and clears created cards.
+    /// </summary>
+    private void OnDisable()
+    {
+        ClearCreatedCards();
+    }
+
+    private void OnDestroy()
+    {
+        ClearCreatedCards();
+        UnsubscribeFromEvents();
+    }
+
+    private void SubscribeToEvents()
+    {
+        HandCardChange.AddListener(DisplayHandCard);
+        DialogueUI.DialogIndex.AddListener(SavedIndexDialog);
+    }
+
+    /// <summary>
+    /// Unsubscribes from hand card change events.
+    /// </summary>
+    private void UnsubscribeFromEvents()
+    {
+        HandCardChange.RemoveListener(DisplayHandCard);
+        DialogueUI.DialogIndex.RemoveListener(SavedIndexDialog);
+    }
+    
     private void SavedIndexDialog(int index)
     {
         currentDialogIndex = index;
-    }
-
-    private void Awake()
-    {
-        DialogueUI.DialogIndex.AddListener(SavedIndexDialog);
-        GameObject.Find("GameLoop").GetComponent<GameLoop>();
-        createdCards = new List<GameObject>();
-    }
-
-    private void Update()
-    {
-        //DisplayHandCard();
-    }
-
-    /*private void DisplayHandCard()
-    {
-        var handCards = GameLoop.IsP1Turn
-            ? player1.GetComponent<PlayerCards>().handCards
-            : player2.GetComponent<PlayerCards>().handCards;
-        if (createdCards.Count < handCards.Count)
+        if (index > 35)
         {
-            foreach (var handCard in handCards)
+            var card = CreatedCards.Find(card => card.GetComponent<CardDisplay>().Card.Title == CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive]);
+            if (card != null)
             {
-                var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-                newCard.transform.SetParent(transform, true);
-                newCard.GetComponent<CardDisplay>().card = handCard.baseCard;
-                newCard.GetComponent<CardDisplay>().inGameCard = handCard;
-                newCard.GetComponent<OnHover>().bIsInGame = true;
-                if (handCard.Title == "Cliché Raciste")
-                {
-                    newCard.AddComponent<HighLightCard>();
-                }
+                card.AddComponent<HighLightCard>();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Creates visual representations for the provided cards.
+    /// </summary>
+    /// <param name="handCards">Collection of in-game cards.</param>
+    private void CreateCards(ObservableCollection<InGameCard> handCards)
+    {
+        foreach (var handCard in handCards)
+        {
+            var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
+            newCard.transform.SetParent(transform, true);
+            newCard.GetComponent<CardDisplay>().InGameCard = handCard;
+            newCard.GetComponent<OnHover>().bIsInGame = true;
 
-                if (handCard.Title == "Musique de Mega Drive" && currentDialogIndex > 35)
-                {
-                    newCard.AddComponent<HighLightCard>();
-                }
-                createdCards.Add(newCard);
+            if (handCard.Title == CardNameMappings.CardNameMap[CardNames.ClichéRaciste])
+            {
+                newCard.AddComponent<HighLightCard>();
+            }
+            
+            if (handCard.Title == CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive] && currentDialogIndex > 35)
+            {
+                newCard.AddComponent<HighLightCard>();
             }
 
-            var rectTransform = GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(420 * handCards.Count, rectTransform.sizeDelta.y);
+            CreatedCards.Add(newCard);
         }
-        else if (createdCards.Count > handCards.Count)
-        {
-            foreach (var createdCard in createdCards)
-            {
-                Destroy(createdCard);
-            }
 
-            createdCards.Clear();
-        }
-    }*/
-
-    private void OnDisable()
+        AdjustRectTransformSize(handCards.Count);
+    }
+    
+    /// <summary>
+    /// Clears and then creates visual representations for the provided cards.
+    /// </summary>
+    /// <param name="handCards">Collection of in-game cards.</param>
+    private void BuildCards(ObservableCollection<InGameCard> handCards)
     {
-        if (createdCards.Count <= 0) return;
-        foreach (var createdCard in createdCards)
-        {
-            Destroy(createdCard);
-        }
+        ClearCreatedCards();
+        CreateCards(handCards);
+    }
 
-        createdCards.Clear();
+    private void DisplayHandCard(ObservableCollection<InGameCard> handCards)
+    {
+        if (handCards.Count == 0 || IsCurrentPlayerTurn(handCards[0]))
+        {
+            BuildCards(handCards);
+        }
     }
 }

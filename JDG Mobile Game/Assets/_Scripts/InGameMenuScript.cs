@@ -10,13 +10,13 @@ using UnityEngine.UI;
 public class InGameMenuScript : MonoBehaviour
 {
     // Serialized fields for UI components
-    [SerializeField] private TextMeshProUGUI buttonText;
-    [SerializeField] private GameObject handScreen;
-    [SerializeField] private GameObject miniMenuCard;
-    [SerializeField] private GameObject detailCardPanel;
+    [SerializeField] protected TextMeshProUGUI buttonText;
+    [SerializeField] protected GameObject handScreen;
+    [SerializeField] protected GameObject miniMenuCard;
+    [SerializeField] protected GameObject detailCardPanel;
     [SerializeField] private TextMeshProUGUI detailButtonText;
-    [SerializeField] private GameObject inHandButton;
-    [SerializeField] private GameObject backgroundInformation;
+    [SerializeField] protected GameObject inHandButton;
+    [SerializeField] protected GameObject backgroundInformation;
 
     // Used in CardHandler
     [SerializeField] public TextMeshProUGUI putCardButtonText;
@@ -25,9 +25,9 @@ public class InGameMenuScript : MonoBehaviour
     /// <summary>
     /// Represents the currently selected in-game card.
     /// </summary>
-    private InGameCard currentSelectedCard;
+    protected InGameCard CurrentSelectedCard;
 
-    [SerializeField] private GameObject invocationMenu;
+    [SerializeField] protected GameObject invocationMenu;
 
     // Static events for various card interactions
     public static readonly CardEvent EventClick = new CardEvent();
@@ -51,18 +51,18 @@ public class InGameMenuScript : MonoBehaviour
     /// <summary>
     /// Dictionary mapping card types to their respective handlers.
     /// </summary>
-    private Dictionary<CardType, CardHandler> cardHandlerMap = new Dictionary<CardType, CardHandler>();
+    protected readonly Dictionary<CardType, CardHandler> CardHandlerMap = new Dictionary<CardType, CardHandler>();
 
     /// <summary>
     /// Initializes handlers for different types of cards.
     /// </summary>
-    private void InitializeCardHandlers()
+    protected void InitializeCardHandlers()
     {
-        cardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this);
-        cardHandlerMap[CardType.Effect] = new EffectCardHandler(this);
-        cardHandlerMap[CardType.Contre] = new ContreCardHandler(this);
-        cardHandlerMap[CardType.Field] = new FieldCardHandler(this);
-        cardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this);
+        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this);
+        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this);
+        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this);
+        CardHandlerMap[CardType.Field] = new FieldCardHandler(this);
+        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this);
     }
 
     /// <summary>
@@ -82,8 +82,8 @@ public class InGameMenuScript : MonoBehaviour
     /// <param name="card">The card that was clicked on.</param>
     private void ClickOnCard(InGameCard card)
     {
-        currentSelectedCard = card;
-        if (cardHandlerMap.TryGetValue(card.Type, out var handler))
+        CurrentSelectedCard = card;
+        if (CardHandlerMap.TryGetValue(card.Type, out var handler))
         {
             handler.HandleCard(card);
         }
@@ -103,7 +103,7 @@ public class InGameMenuScript : MonoBehaviour
     /// Returns the mouse position in the Unity editor, touch position on Android, 
     /// and Vector3.zero as a default for other platforms.
     /// </returns>
-    private Vector3 GetClickPosition()
+    protected Vector3 GetClickPosition()
     {
 #if UNITY_EDITOR
         return Input.mousePosition;
@@ -119,7 +119,7 @@ public class InGameMenuScript : MonoBehaviour
     /// Displays a mini-menu at the specified position, usually next to the clicked card.
     /// </summary>
     /// <param name="mousePosition">The position where the mini-menu should appear.</param>
-    private void DisplayMiniMenuCardAtPosition(Vector3 mousePosition)
+    protected void DisplayMiniMenuCardAtPosition(Vector3 mousePosition)
     {
         miniMenuCard.transform.position = mousePosition + padding;
         if (!miniMenuCard.activeSelf)
@@ -133,13 +133,13 @@ public class InGameMenuScript : MonoBehaviour
     /// </summary>
     public void ClickPutCard()
     {
-        if (cardHandlerMap.TryGetValue(currentSelectedCard.Type, out var handler))
+        if (CardHandlerMap.TryGetValue(CurrentSelectedCard.Type, out var handler))
         {
-            handler.HandleCardPut(currentSelectedCard);
+            handler.HandleCardPut(CurrentSelectedCard);
         }
         else
         {
-            Debug.LogError($"Unexpected card type: {currentSelectedCard.Type}");
+            Debug.LogError($"Unexpected card type: {CurrentSelectedCard.Type}");
         }
 
         miniMenuCard.SetActive(false);
@@ -172,7 +172,7 @@ public class InGameMenuScript : MonoBehaviour
 
             detailButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().InGameCard =
-                currentSelectedCard;
+                CurrentSelectedCard;
             detailCardPanel.SetActive(true);
             inHandButton.SetActive(false);
         }

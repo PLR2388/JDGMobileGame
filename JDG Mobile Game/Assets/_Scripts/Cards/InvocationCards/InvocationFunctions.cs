@@ -20,11 +20,7 @@ namespace _Scripts.Cards.InvocationCards
     /// </summary>
     public class InvocationFunctions : MonoBehaviour
     {
-        [SerializeField] private PlayerCards player1Cards;
-        [SerializeField] private PlayerCards player2Cards;
-        [SerializeField] private Transform canvas;
-        private PlayerCards currentPlayerCard;
-        private PlayerCards opponentPlayerCards;
+        [SerializeField] protected Transform canvas;
 
         /// <summary>
         /// Public event that is raised to cancel an invocation.
@@ -38,9 +34,7 @@ namespace _Scripts.Cards.InvocationCards
         private void Start()
         {
             // Attach listeners
-            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
             AttachInvocationEventListeners();
-            InitializePlayers();
         }
 
 
@@ -50,36 +44,7 @@ namespace _Scripts.Cards.InvocationCards
         private void AttachInvocationEventListeners()
         {
             InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
-            TutoInGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
             CancelInvocationEvent.AddListener(OnCancelEffect);
-        }
-
-        /// <summary>
-        /// Initializes the starting player states.
-        /// </summary>
-        private void InitializePlayers()
-        {
-            currentPlayerCard = player1Cards;
-            opponentPlayerCards = player2Cards;
-        }
-
-        /// <summary>
-        /// Changes the current player, swapping the roles of player and opponent.
-        /// </summary>
-        private void ChangePlayer()
-        {
-            Swap(ref currentPlayerCard, ref opponentPlayerCards);
-        }
-
-        /// <summary>
-        /// Swaps the references of two objects.
-        /// </summary>
-        /// <typeparam name="T">Type of objects to be swapped.</typeparam>
-        /// <param name="a">First object.</param>
-        /// <param name="b">Second object.</param>
-        private static void Swap<T>(ref T a, ref T b)
-        {
-            (a, b) = (b, a);
         }
 
         /// <summary>
@@ -88,6 +53,7 @@ namespace _Scripts.Cards.InvocationCards
         /// <param name="invocationCard">The invocation card to process.</param>
         private void OnCancelEffect(InGameInvocationCard invocationCard)
         {
+            var currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
             if (invocationCard.CancelEffect)
             {
                 foreach (var ability in invocationCard.Abilities)
@@ -123,8 +89,9 @@ namespace _Scripts.Cards.InvocationCards
         /// </summary>
         /// <returns>True if card can be added, false otherwise.</returns>
 
-        private bool CanAddCardToField()
+        protected bool CanAddCardToField()
         {
+            var currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
             return currentPlayerCard.InvocationCards.Count < 4;
         }
 
@@ -132,8 +99,9 @@ namespace _Scripts.Cards.InvocationCards
         /// Adds the specified invocation card to the field.
         /// </summary>
         /// <param name="invocationCard">The invocation card to add.</param>
-        private void AddCardToField(InGameInvocationCard invocationCard)
+        protected void AddCardToField(InGameInvocationCard invocationCard)
         {
+            var currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
             currentPlayerCard.InvocationCards.Add(invocationCard);
             currentPlayerCard.HandCards.Remove(invocationCard);
         }
@@ -144,6 +112,8 @@ namespace _Scripts.Cards.InvocationCards
         /// <param name="invocationCard">The invocation card whose effect should be applied.</param>
         private void ApplyCardEffect(InGameInvocationCard invocationCard)
         {
+            var currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
+            var opponentPlayerCards = CardManager.Instance.GetOpponentPlayerCards();
             foreach (var ability in invocationCard.Abilities)
             {
                 ability.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCards);

@@ -1,31 +1,49 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
 using OnePlayer.DialogueBox;
-using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace OnePlayer
 {
     public class TutoPlayerGameLoop : GameLoop
     {
-        /*[SerializeField] private GameObject tutoImage;
+        [SerializeField] private GameObject tutoImage;
         [SerializeField] private GameObject tutoVideo;
+
+        [SerializeField] private GameObject miniCardMenu;
+        [SerializeField] private Transform canvas;
+        [SerializeField] private GameObject nextPhaseButtonGameObject;
+        private Button nextPhaseButton;
 
         private ActionScenario[] actionScenarios;
 
-        protected override void Awake()
+        private void Awake()
         {
             // The opponent is player2 (only the AI attacks the player directly)
-            base.Awake();
             actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
             DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
+            nextPhaseButton = nextPhaseButtonGameObject.GetComponent<Button>();
+        }
+
+        private void Start()
+        {
+            InputManager.OnLongTouch.AddListener(OnLongTouch);
+            InputManager.OnTouch.AddListener(OnTouch);
+            InputManager.OnReleaseTouch.AddListener(OnReleaseTouch);
+            InputManager.OnBackPressed.AddListener(OnBackPressed);
+            Draw();
+        }
+
+        private void OnDestroy()
+        {
+            InputManager.OnLongTouch.RemoveListener(OnLongTouch);
+            InputManager.OnTouch.RemoveListener(OnTouch);
+            InputManager.OnReleaseTouch.RemoveListener(OnReleaseTouch);
+            InputManager.OnBackPressed.RemoveListener(OnBackPressed);
         }
 
         private void TriggerScenarioAction(int index)
@@ -84,34 +102,44 @@ namespace OnePlayer
 
                 if (putCard != null)
                 {
+                    PlayerCards playerCards = CardManager.Instance.GetCurrentPlayerCards();
                     if (putCard.Contains(">"))
                     {
                         var cardNames = putCard.Split('>');
-                        PlayerCards playerCards = p1.GetComponent<PlayerCards>();
-                        InGameEquipementCard equipmentCard =
-                            playerCards.handCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipementCard;
-                        InGameInvocationCard invocationCard =
-                            playerCards.invocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
 
-                        invocationCard.SetEquipmentCard(equipmentCard);
-                        playerCards.handCards.Remove(equipmentCard);
+                        InGameEquipmentCard equipmentCard =
+                            playerCards.HandCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipmentCard;
+                        InGameInvocationCard invocationCard =
+                            playerCards.InvocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
+                        
+                        if (equipmentCard == null) return;
+
+                        invocationCard?.SetEquipmentCard(equipmentCard);
+                        playerCards.HandCards.Remove(equipmentCard);
+                        foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+                        {
+                            equipmentCardEquipmentAbility.ApplyEffect(
+                                invocationCard,
+                                playerCards,
+                                CardManager.Instance.GetOpponentPlayerCards()
+                            );
+                        }
                     }
                     else
                     {
                         var cardNames = putCard.Split(';');
-                        PlayerCards playerCards = p1.GetComponent<PlayerCards>();
-                        foreach (var name in cardNames)
+                        foreach (var cardName in cardNames)
                         {
-                            InGameCard card = playerCards.handCards.First(elt => elt.Title == name);
+                            InGameCard card = playerCards.HandCards.First(elt => elt.Title == cardName);
                             if (card is InGameInvocationCard invocationCard)
                             {
-                                playerCards.handCards.Remove(card);
-                                playerCards.invocationCards.Add(invocationCard);
+                                playerCards.HandCards.Remove(card);
+                                playerCards.InvocationCards.Add(invocationCard);
                             }
                             else if (card is InGameFieldCard fieldCard)
                             {
                                 playerCards.FieldCard = fieldCard;
-                                playerCards.handCards.Remove(fieldCard);
+                                playerCards.HandCards.Remove(fieldCard);
                             }
                         }
                     }
@@ -127,22 +155,24 @@ namespace OnePlayer
                     }
 
                     InGameInvocationCard attackerInvocationCard =
-                        p1.GetComponent<PlayerCards>().invocationCards.First(card => card.Title == attacker);
+                        CardManager.Instance.GetCurrentPlayerCards().InvocationCards.First(card => card.Title == attacker);
+
+                    PlayerCards opponentPlayerCards = CardManager.Instance.GetOpponentPlayerCards();
 
                     InGameInvocationCard opponentInvocationCard;
 
                     if (defender == "player")
                     {
-                        opponentInvocationCard = player as InGameInvocationCard;
+                        opponentInvocationCard = opponentPlayerCards.Player as InGameInvocationCard;
                     }
                     else
                     {
-                        opponentInvocationCard = p2.GetComponent<PlayerCards>().invocationCards
+                        opponentInvocationCard = opponentPlayerCards.InvocationCards
                             .First(card => card.Title == defender);
                     }
 
-                    this.attacker = attackerInvocationCard;
-                    opponent = opponentInvocationCard;
+                    CardManager.Instance.Attacker = attackerInvocationCard;
+                    CardManager.Instance.Opponent = opponentInvocationCard;
                     ComputeAttack();
 
                     if (defender == "player")
@@ -169,6 +199,85 @@ namespace OnePlayer
             }
         }
 
+        protected override void NextRound()
+        {
+            HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
+            InvocationMenuManager.Instance.Hide();
+            if (GameStateManager.Instance.IsP1Turn == false)
+            {
+                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
+            }
+            if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
+            {
+                GameStateManager.Instance.SetPhase(Phase.End);
+            }
+            else
+            {
+                GameStateManager.Instance.NextPhase();
+            }
+
+            var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
+            if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
+            {
+                GameStateManager.Instance.SetPhase(Phase.End);
+            }
+
+            RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(false);
+
+            switch (GameStateManager.Instance.Phase)
+            {
+                case Phase.Attack:
+                    PlayAttackMusic();
+                    break;
+                case Phase.End:
+                    EndTurnPhase();
+                    break;
+            }
+            nextPhaseButton.interactable = false;
+        }
+
+        public new void DisplayAvailableOpponent()
+        {
+            var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
+            DisplayOpponentMessageBox(notEmptyOpponent);
+            InputManager.Instance.DisableDetectionTouch();
+        }
+
+        /// <summary>
+        /// Display the MessageBox with the available opponents
+        /// </summary>
+        /// <param name="invocationCards">Available opponents list</param>
+        private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
+        {
+            void PositiveAction(InGameInvocationCard invocationCard)
+            {
+                if (invocationCard?.Title == CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages])
+                {
+                    CardManager.Instance.Opponent = invocationCard;
+                    ComputeAttack();
+                    HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
+                    miniCardMenu.SetActive(false);
+                    HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
+                }
+                InputManager.Instance.EnableDetectionTouch();
+            }
+
+            var config = new CardSelectorConfig(
+                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
+                invocationCards,
+                showOkButton: true,
+                okAction: (invocationCard) =>
+                {
+                    PositiveAction(invocationCard as InGameInvocationCard);
+                    nextPhaseButtonGameObject.SetActive(true);
+                }
+            );
+            CardSelector.Instance.CreateCardSelection(
+                canvas,
+                config
+            );
+        }
+
         private void UnsetHighligh()
         {
             HighLightPlane.Highlight.Invoke(HighlightElement.Space, false);
@@ -183,263 +292,22 @@ namespace OnePlayer
             HighLightPlane.Highlight.Invoke(HighlightElement.LifePoints, false);
         }
 
-        // Update is called once per frame
-        private void Update()
+        protected override void ChoosePhase()
         {
-            if (phaseId == 1 && numberOfTurn == 2 && p2.GetComponent<PlayerCards>().invocationCards.Count == 2)
+            InvocationMenuManager.Instance.Enable();
+            ChoosePhaseMusic();
+
+            if (GameStateManager.Instance.NumberOfTurn == 2 && CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)
             {
-                nextPhaseButton.GetComponent<HighLightButton>().isActivated = true;
-            }
-
-            switch (phaseId)
-            {
-                case 0:
-                    Draw();
-                    break;
-                case 1:
-                    ChoosePhase();
-                    break;
-                case 2:
-                    ChooseAttack();
-                    break;
-                case 5:
-                    GameOver();
-                    break;
-            }
-
-            // Make sure user is on Android platform
-            if (Application.platform != RuntimePlatform.Android) return;
-            // Check if Back was pressed this frame
-            if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-            void PositiveAction()
-            {
-                SceneManager.LoadSceneAsync("MainScreen", LoadSceneMode.Single);
-            }
-
-            MessageBox.CreateSimpleMessageBox(canvas, "Pause", "Veux-tu quitter la partie ?", PositiveAction);
-        }
-
-        protected override void HandleClick(RaycastHit hitInfo)
-        {
-            var objectTag = hitInfo.transform.gameObject.tag;
-            var ownPlayerCards = IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-            var personTag = IsP1Turn ? p1.GetComponent<PlayerCards>().Tag : p2.GetComponent<PlayerCards>().Tag;
-            var opponentTag = IsP1Turn ? p2.GetComponent<PlayerCards>().Tag : p1.GetComponent<PlayerCards>().Tag;
-            var cardObject = hitInfo.transform.gameObject;
-
-            if (cardObject.GetComponent<PhysicalCardDisplay>() == null) return;
-            var card = cardObject.GetComponent<PhysicalCardDisplay>().card;
-            if (card.Title != "Tentacules") return;
-            if (objectTag == personTag)
-            {
-                cardSelected = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                var isInYellowTrash = ownPlayerCards.yellowCards.Contains(cardSelected);
-                if (Input.GetMouseButtonDown(0) && !isInYellowTrash)
-                {
-                    totalDownTime = 0;
-                    clicking = true;
-#if UNITY_EDITOR
-                    var mousePosition = Input.mousePosition;
-#elif UNITY_ANDROID
-                var mousePosition = Input.GetTouch(0).position;
-#endif
-                    if (cardSelected is InGameInvocationCard invocationCard)
-                    {
-                        attacker = invocationCard;
-                        var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-                        var hasAction = attacker.HasAction();
-                        invocationMenu.SetActive(true);
-                        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
-                        invocationMenu.transform.position = mousePosition;
-                        if (hasAction)
-                        {
-                            invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
-                            invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable =
-                                IsSpecialActionPossible();
-                        }
-                        else
-                        {
-                            invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
-                        }
-                    }
-                }
-
-                if (clicking && Input.GetMouseButton(0))
-                {
-                    totalDownTime += Time.deltaTime;
-
-                    if (totalDownTime >= ClickDuration)
-                    {
-                        Debug.Log("Long click");
-                        clicking = false;
-                        invocationMenu.SetActive(false);
-                        DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                    }
-                }
-
-                if (clicking && Input.GetMouseButtonUp(0))
-                {
-                    clicking = false;
-                }
-            }
-            else if (objectTag == opponentTag)
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    totalDownTime = 0;
-                    clicking = true;
-                    var opponentInvocationCard = cardObject.GetComponent<PhysicalCardDisplay>().card;
-                    if (opponentInvocationCard is InGameInvocationCard { IsControlled: true } invocationCard)
-                    {
-#if UNITY_EDITOR
-                        var mousePosition = Input.mousePosition;
-#elif UNITY_ANDROID
-                            var mousePosition = Input.GetTouch(0).position;
-#endif
-                        attacker = invocationCard;
-                        var canAttack = attacker.CanAttack() && ownPlayerCards.ContainsCardInInvocation(attacker);
-             
-                        var hasAction = attacker.HasAction();
-                        invocationMenu.SetActive(true);
-                        invocationMenu.transform.GetChild(0).GetComponent<Button>().interactable = canAttack;
-                        invocationMenu.transform.position = mousePosition;
-                        if (hasAction)
-                        {
-                            invocationMenu.transform.GetChild(1).gameObject.SetActive(true);
-                            invocationMenu.transform.GetChild(1).GetComponent<Button>().interactable =
-                                IsSpecialActionPossible();
-                        }
-                        else
-                        {
-                            invocationMenu.transform.GetChild(1).gameObject.SetActive(false);
-                        }
-                    }
-                }
-
-                if (clicking && Input.GetMouseButton(0))
-                {
-                    totalDownTime += Time.deltaTime;
-
-                    if (totalDownTime >= ClickDuration)
-                    {
-                        clicking = false;
-                        DisplayCurrentCard(cardObject.GetComponent<PhysicalCardDisplay>().card);
-                    }
-                }
-
-                if (clicking && Input.GetMouseButtonUp(0))
-                {
-                    clicking = false;
-                }
-            }
-            else
-            {
-                bigImageCard.SetActive(false);
+                HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
             }
         }
 
-        /**
-     * Return the list of available opponents
-     */
-       /* protected override void DisplayCards(ObservableCollection<InGameInvocationCard> invocationCards,
-            List<InGameEffectCard> attackPlayerEffectCard)
+        private void OnTouch()
         {
-            var notEmptyOpponent = invocationCards.Where(t => t != null && t.Title == "Jean-Michel Bruitages")
-                .Cast<InGameCard>().ToList();
-            DisplayOpponentMessageBox(notEmptyOpponent);
-            stopDetectClicking = true;
+            var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
+            if (cardTouch?.Title != CardNameMappings.CardNameMap[CardNames.Tentacules] || GameStateManager.Instance.Phase != Phase.Attack) return;
+            HandleSingleTouch(cardTouch, CardOwner.Player2, true);
         }
-
-        protected override void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
-        {
-            nextPhaseButton.SetActive(false);
-            invocationMenu.SetActive(false);
-
-            if (invocationCards.Count > 0)
-            {
-                var message =
-                    MessageBox.CreateMessageBoxWithCardSelector(canvas, LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT), invocationCards);
-                message.GetComponent<MessageBox>().PositiveAction = () =>
-                {
-                    var invocationCard =
-                        message.GetComponent<MessageBox>().GetSelectedCard() as InGameInvocationCard;
-
-                    if (invocationCard == null)
-                    {
-                        message.SetActive(false);
-                        MessageBox.CreateOkMessageBox(canvas, "Attention",
-                            "Tu es obligé d'attaquer Jean-Michel Bruitages", () => { message.SetActive(true); });
-                    }
-                    else
-                    {
-                        opponent = invocationCard;
-                        ComputeAttack();
-                        stopDetectClicking = false;
-                        nextPhaseButton.SetActive(true);
-                        nextPhaseButton.GetComponent<HighLightButton>().isActivated = true;
-                        HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
-                        Destroy(message);
-                    }
-                };
-                message.GetComponent<MessageBox>().NegativeAction = () => { };
-            }
-            else
-            {
-                MessageBox.CreateOkMessageBox(canvas, "Attention",
-                    "Tu ne peux pas attaquer le joueur ni ses invocations");
-            }
-        }
-
-        protected override void NextRound()
-        {
-            if (!IsP1Turn)
-            {
-                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
-            }
-
-            invocationMenu.SetActive(false);
-            if (numberOfTurn == 1 && IsP1Turn)
-            {
-                phaseId = 3;
-            }
-            else
-            {
-                phaseId += 1;
-            }
-
-            switch (phaseId)
-            {
-                case 3:
-                    inHandButton.SetActive(true);
-                    roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pioche";
-                    break;
-                case 1:
-                    inHandButton.SetActive(true);
-                    roundText.GetComponent<TextMeshProUGUI>().text = "Phase de pose";
-                    break;
-                case 2:
-                    inHandButton.SetActive(false);
-                    roundText.GetComponent<TextMeshProUGUI>().text = "Phase d'attaque";
-                    break;
-            }
-
-            if (phaseId != 3) return;
-            
-            var invocationCards = IsP1Turn
-                ? p1.GetComponent<PlayerCards>().invocationCards
-                : p2.GetComponent<PlayerCards>().invocationCards;
-
-            foreach (var invocationCard in invocationCards)
-            {
-                invocationCard.UnblockAttack();
-            }
-
-            IsP1Turn = !IsP1Turn;
-            ChangePlayer.Invoke();
-            playerText.GetComponent<TextMeshProUGUI>().text = IsP1Turn ? "Joueur 1" : "Joueur 2";
-            phaseId = 0;
-            nextPhaseButton.GetComponent<Button>().interactable = false;
-        }*/
     }
 }

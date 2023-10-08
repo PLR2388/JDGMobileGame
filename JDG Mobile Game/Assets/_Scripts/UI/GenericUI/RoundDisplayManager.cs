@@ -26,7 +26,7 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
     /// <summary>
     /// Updates the UI elements based on the game phase in the next round.
     /// </summary>
-    public void AdaptUIToPhaseIdInNextRound()
+    public void AdaptUIToPhaseIdInNextRound(bool rotate)
     {
         var phaseId = GameStateManager.Instance.Phase;
         switch (phaseId)
@@ -34,7 +34,10 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
             case Phase.End:
                 inHandButton.SetActive(true);
                 SetRoundText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_DRAW));
-                RotateCameraForEndPhase();
+                if (rotate)
+                {
+                    RotateCameraForEndPhase();   
+                }
                 SetPlayerTurnText();
                 break;
             case Phase.Attack:

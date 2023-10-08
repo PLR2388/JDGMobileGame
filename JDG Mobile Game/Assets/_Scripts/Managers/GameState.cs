@@ -79,6 +79,7 @@ public class GameState : StaticInstance<GameState>
             deck1AllCards
         );
         CardChoice.GetRandomDeck(25, ref player1Deck, deck1AllCards);
+        player1Deck.Reverse();
         Player1DeckCards = player1Deck.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
     }
     
@@ -91,13 +92,18 @@ public class GameState : StaticInstance<GameState>
             new List<CardNames>
             {
                 CardNames.ClichéRaciste,
-                CardNames.Tentacules,
                 CardNames.MusiqueDeMegaDrive,
                 CardNames.LElfette
             },
             deck2AllCards
         );
-
+        CardChoice.GetRandomDeck(24, ref player2Deck, deck2AllCards);
+        var tentaculesCard = CardChoice.GetSpecificCard(CardNames.Tentacules, deck2AllCards);
+        if (tentaculesCard != null && !player2Deck.Contains(tentaculesCard))
+        {
+            player2Deck.Add(tentaculesCard);
+        }
+        player2Deck.Reverse();
         Player2DeckCards = player2Deck.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
     }
 }

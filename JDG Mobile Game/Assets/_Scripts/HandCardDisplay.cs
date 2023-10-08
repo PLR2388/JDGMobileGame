@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Cards;
 using UnityEngine;using UnityEngine.Events;
 
@@ -12,9 +11,9 @@ public class HandCardChangeEvent : UnityEvent<ObservableCollection<InGameCard>>
 
 public class HandCardDisplay : MonoBehaviour
 {
-    [SerializeField] private GameObject prefabCard;
+    [SerializeField] protected GameObject prefabCard;
     
-    private List<GameObject> createdCards = new List<GameObject>();
+    protected readonly List<GameObject> CreatedCards = new List<GameObject>();
 
     public static readonly HandCardChangeEvent HandCardChange = new HandCardChangeEvent();
 
@@ -44,7 +43,7 @@ public class HandCardDisplay : MonoBehaviour
     /// </summary>
     /// <param name="card">In-game card to check.</param>
     /// <returns>True if card belongs to current player; otherwise, false.</returns>
-    private bool IsCurrentPlayerTurn(InGameCard card)
+    protected bool IsCurrentPlayerTurn(InGameCard card)
     {
         return GameStateManager.Instance.IsP1Turn == (card.CardOwner == CardOwner.Player1);
     }
@@ -72,7 +71,7 @@ public class HandCardDisplay : MonoBehaviour
             newCard.GetComponent<CardDisplay>().InGameCard = handCard;
             newCard.GetComponent<OnHover>().bIsInGame = true;
 
-            createdCards.Add(newCard);
+            CreatedCards.Add(newCard);
         }
 
         AdjustRectTransformSize(handCards.Count);
@@ -82,7 +81,7 @@ public class HandCardDisplay : MonoBehaviour
     /// Adjusts the RectTransform size based on the number of cards.
     /// </summary>
     /// <param name="cardCount">Number of cards.</param>
-    private void AdjustRectTransformSize(int cardCount)
+    protected void AdjustRectTransformSize(int cardCount)
     {
         var rectTransform = GetComponent<RectTransform>();
         rectTransform.sizeDelta = new Vector2(420 * cardCount, rectTransform.sizeDelta.y);
@@ -91,13 +90,13 @@ public class HandCardDisplay : MonoBehaviour
     /// <summary>
     /// Destroys created card game objects and clears the list.
     /// </summary>
-    private void ClearCreatedCards()
+    protected void ClearCreatedCards()
     {
-        foreach (var createdCard in createdCards)
+        foreach (var createdCard in CreatedCards)
         {
             Destroy(createdCard);
         }
-        createdCards.Clear();
+        CreatedCards.Clear();
     }
 
     /// <summary>

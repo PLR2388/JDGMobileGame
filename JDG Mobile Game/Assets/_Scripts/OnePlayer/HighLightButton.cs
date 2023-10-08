@@ -36,7 +36,6 @@ public class HighLightButton : MonoBehaviour
         }
         else
         {
-            gameObject.GetComponent<Button>().interactable = false;
             gameObject.GetComponent<Image>().color = Color.white;
             waitEndTurn = true;
         }

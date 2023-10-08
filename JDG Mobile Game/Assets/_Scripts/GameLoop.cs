@@ -8,7 +8,7 @@ public class GameLoop : MonoBehaviour
 {
 
     // Start is called before the first frame update
-    protected void Start()
+    private void Start()
     {
         InputManager.OnLongTouch.AddListener(OnLongTouch);
         InputManager.OnTouch.AddListener(OnTouch);
@@ -30,7 +30,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Action when back is pressed
     /// </summary>
-    private void OnBackPressed()
+    protected void OnBackPressed()
     {
         void PositiveAction()
         {
@@ -43,7 +43,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// When user just stops to touch the screen
     /// </summary>
-    private void OnReleaseTouch()
+    protected void OnReleaseTouch()
     {
         UIManager.Instance.HideBigImage();
     }
@@ -80,7 +80,7 @@ public class GameLoop : MonoBehaviour
     /// <param name="cardTouch">Current card touched</param>
     /// <param name="currentOwner">Owner associated to the current player</param>
     /// <param name="isAttackPhase">Is the touch happen during attack phase</param>
-    private static void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
+    protected static void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
     {
 
         if (cardTouch is InGameInvocationCard invocationCard)
@@ -96,7 +96,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Called when user touches during a long time
     /// </summary>
-    private void OnLongTouch()
+    protected void OnLongTouch()
     {
         InvocationMenuManager.Instance.Hide();
         var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
@@ -127,7 +127,7 @@ public class GameLoop : MonoBehaviour
             GameStateManager.Instance.SetPhase(Phase.End);
         }
 
-        RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound();
+        RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(true);
 
         switch (GameStateManager.Instance.Phase)
         {
@@ -147,7 +147,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Called when choose phase starts
     /// </summary>
-    private void ChoosePhase()
+    protected virtual void ChoosePhase()
     {
         InvocationMenuManager.Instance.Enable();
         ChoosePhaseMusic();
@@ -156,7 +156,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Choose the right Choose music
     /// </summary>
-    private void ChoosePhaseMusic()
+    protected void ChoosePhaseMusic()
     {
         var currentFieldCard = CardManager.Instance.GetCurrentPlayerCards().FieldCard;
         if (currentFieldCard == null)
@@ -181,7 +181,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Play the attack music
     /// </summary>
-    private void PlayAttackMusic()
+    protected void PlayAttackMusic()
     {
         AudioSystem.Instance.PlayMusic(Music.Fight);
     }
@@ -223,7 +223,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Compute Attack after player chooses an opponent
     /// </summary>
-    private void ComputeAttack()
+    protected void ComputeAttack()
     {
         CardManager.Instance.HandleAttack();
         InvocationMenuManager.Instance.UpdateAttackButton();
@@ -251,7 +251,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Draw a card during draw phase
     /// </summary>
-    private void Draw()
+    protected void Draw()
     {
         DoDraw();
         GameStateManager.Instance.IncrementNumberOfTurn();
@@ -281,7 +281,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Called when a turn end for a player
     /// </summary>
-    private void EndTurnPhase()
+    protected void EndTurnPhase()
     {
         CardManager.Instance.HandleEndTurn();
         GameStateManager.Instance.HandleEndTurn();

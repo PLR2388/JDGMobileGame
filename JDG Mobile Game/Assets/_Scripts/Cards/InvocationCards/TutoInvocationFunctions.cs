@@ -1,48 +1,57 @@
-﻿using _Scripts.Units.Invocation;
+﻿using _Scripts.Cards.InvocationCards;
+using _Scripts.Units.Invocation;
 using OnePlayer;
-using UnityEngine;
 
 namespace Cards.InvocationCards
 {
-    public class TutoInvocationFunctions : MonoBehaviour
+    public class TutoInvocationFunctions : InvocationFunctions
     {
-        private PlayerCards currentPlayerCard;
-        private PlayerCards opponentPlayerCards;
-        private GameObject p1;
-        private GameObject p2;
-        [SerializeField] private GameObject inHandButton;
-        [SerializeField] private Transform canvas;
-        [SerializeField] private GameObject invocationMenu;
-
         private void Start()
         {
-            GameStateManager.ChangePlayer.AddListener(ChangePlayer);
-            TutoInGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
-            p1 = GameObject.Find("Player1");
-            p2 = GameObject.Find("Player2");
-            currentPlayerCard = p1.GetComponent<PlayerCards>();
-            opponentPlayerCards = p2.GetComponent<PlayerCards>();
-        }
-
-        private void ChangePlayer()
-        {
-            //currentPlayerCard = GameLoop.IsP1Turn ? p1.GetComponent<PlayerCards>() : p2.GetComponent<PlayerCards>();
-            //opponentPlayerCards = GameLoop.IsP1Turn ? p2.GetComponent<PlayerCards>() : p1.GetComponent<PlayerCards>();
+            InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
         }
         
         /// <summary>
-        /// PutInvocationCard.
-        /// Put an invocation card on field.
-        /// Apply StartEffect and ConditionEffect of this card if there is enough place
-        /// <param name="invocationCard">invocation card</param>
+        /// Places the invocation card on the field and applies its effect.
         /// </summary>
+        /// <param name="invocationCard">The invocation card to place on the field.</param>
+
         private void PutInvocationCard(InGameInvocationCard invocationCard)
         {
-            var size = currentPlayerCard.InvocationCards.Count;
+            if (CanAddCardToField())
+            {
+                AddCardToField(invocationCard);
+                ApplyCardEffect(invocationCard);
+            }
+        }
 
-            if (size >= 4) return;
-            currentPlayerCard.InvocationCards.Add(invocationCard);
-            currentPlayerCard.HandCards.Remove(invocationCard);
+        /// <summary>
+        /// Applies the effect of the specified invocation card.
+        /// </summary>
+        /// <param name="invocationCard">The invocation card whose effect should be applied.</param>
+        private void ApplyCardEffect(InGameInvocationCard invocationCard)
+        {
+            if (invocationCard.Title == CardNameMappings.CardNameMap[CardNames.ClichéRaciste])
+            {
+                var cardName = CardNameMappings.CardNameMap[CardNames.Tentacules];
+                var playerCards = CardManager.Instance.GetCurrentPlayerCards();
+                var config = new MessageBoxConfig(
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    string.Format(
+                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE),
+                        cardName
+                    ),
+                    showOkButton: true,
+                    okAction: () =>
+                    {
+                        InGameInvocationCard card = playerCards.Deck.Find(card => card.Title == cardName) as InGameInvocationCard;
+                        playerCards.Deck.Remove(card);
+                        playerCards.InvocationCards.Add(card);
+                        HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+                    }
+                );
+                MessageBox.Instance.CreateMessageBox(canvas, config);
+            }
         }
     }
 }

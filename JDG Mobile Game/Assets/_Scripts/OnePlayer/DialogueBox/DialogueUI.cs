@@ -62,7 +62,7 @@ public class DialogueUI : MonoBehaviour
         var audioClips = dialogueObject.AudioClips;
         for (int i = 0; i < dialogueObject.Dialogue.Length; i++)
         {
-            DialogIndex.Invoke(i);
+             DialogIndex.Invoke(i);
             string dialogue = dialogueObject.Dialogue[i];
 
             if (soundDialogIndex.Contains(i))
