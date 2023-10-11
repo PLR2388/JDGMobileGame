@@ -66,7 +66,7 @@ namespace OnePlayer
         private void Awake()
         {
             // The opponent is player1 (only the AI attacks the player directly)
-            actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
+            actionScenarios = GetComponent<ScenarioDecoder>().Scenario.ActionScenarios;
             DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
             nextPhaseButton = nextPhaseButtonGameObject.GetComponent<Button>();
         }

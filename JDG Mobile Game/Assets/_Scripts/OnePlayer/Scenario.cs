@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Scenario
 {
-    public ActionScenario[] actionScenarios;
+    public ActionScenario[] ActionScenarios;
 }
 
 public class ActionScenario
@@ -11,7 +11,6 @@ public class ActionScenario
     public int Index;
     public Highlight Highlight;
     public string PutCard;
-    public Trigger Trigger;
     public string Image;
     public string Video;
     public string[] Attack;
@@ -29,8 +28,10 @@ public class JsonScenario
         var actionScenarios = new ArrayList();
         foreach (var actionJson in jsonScenarios)
         {
-            var actionScenario = new ActionScenario();
-            actionScenario.Index = actionJson.index;
+            var actionScenario = new ActionScenario
+            {
+                Index = actionJson.index
+            };
             if (actionJson.highlight == null)
             {
                 actionScenario.Highlight = Highlight.unknown;
@@ -38,15 +39,6 @@ public class JsonScenario
             else
             {
                 Enum.TryParse(actionJson.highlight, out actionScenario.Highlight);
-            }
-
-            if (actionJson.trigger == null)
-            {
-                actionScenario.Trigger = Trigger.unknown;
-            }
-            else
-            {
-                Enum.TryParse(actionJson.trigger, out actionScenario.Trigger);
             }
 
             if (actionJson.action == null)
@@ -65,7 +57,7 @@ public class JsonScenario
             actionScenarios.Add(actionScenario);
         }
 
-        scenario.actionScenarios = (ActionScenario[])actionScenarios.ToArray(typeof(ActionScenario));
+        scenario.ActionScenarios = (ActionScenario[])actionScenarios.ToArray(typeof(ActionScenario));
         return scenario;
     }
 }
@@ -96,14 +88,6 @@ public enum Highlight
     unknown,
     tentacules,
     life_point
-}
-
-public enum Trigger
-{
-    put_card,
-    next_phase,
-    put_card_effect,
-    unknown
 }
 
 public enum Action
