@@ -9,6 +9,9 @@ using UnityEngine.UI;
 
 namespace OnePlayer
 {
+    /// <summary>
+    /// Represents the game loop for the tutorial player.
+    /// </summary>
     public class TutoPlayerGameLoop : GameLoop
     {
         [SerializeField] private GameObject tutoImage;
@@ -21,14 +24,56 @@ namespace OnePlayer
 
         private ActionScenario[] actionScenarios;
 
+        private readonly Dictionary<Highlight, HighlightElement> highlightMapping = new Dictionary<Highlight, HighlightElement>
+        {
+            {
+                Highlight.space, HighlightElement.Space
+            },
+            {
+                Highlight.deck, HighlightElement.Deck
+            },
+            {
+                Highlight.yellow_trash, HighlightElement.YellowTrash
+            },
+            {
+                Highlight.field, HighlightElement.Field
+            },
+            {
+                Highlight.invocation_cards, HighlightElement.Invocations
+            },
+            {
+                Highlight.effect_cards, HighlightElement.Effect
+            },
+            {
+                Highlight.hand_cards, HighlightElement.InHandButton
+            },
+            {
+                Highlight.next_phase, HighlightElement.NextPhaseButton
+            },
+            {
+                Highlight.tentacules, HighlightElement.Tentacules
+            },
+            {
+                Highlight.life_point, HighlightElement.LifePoints
+            }
+        };
+
+        private const string EquipSymbol = ">";
+
+        /// <summary>
+        /// Awake is called when the script instance is being loaded.
+        /// </summary>
         private void Awake()
         {
-            // The opponent is player2 (only the AI attacks the player directly)
+            // The opponent is player1 (only the AI attacks the player directly)
             actionScenarios = GetComponent<ScenarioDecoder>().Scenario.actionScenarios;
             DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
             nextPhaseButton = nextPhaseButtonGameObject.GetComponent<Button>();
         }
 
+        /// <summary>
+        /// Start is called on the frame when a script is enabled just before any of the Update methods are called the first time.
+        /// </summary>
         private void Start()
         {
             InputManager.OnLongTouch.AddListener(OnLongTouch);
@@ -38,6 +83,9 @@ namespace OnePlayer
             Draw();
         }
 
+        /// <summary>
+        /// This function is called when the MonoBehaviour will be destroyed.
+        /// </summary>
         private void OnDestroy()
         {
             InputManager.OnLongTouch.RemoveListener(OnLongTouch);
@@ -46,6 +94,10 @@ namespace OnePlayer
             InputManager.OnBackPressed.RemoveListener(OnBackPressed);
         }
 
+        /// <summary>
+        /// Triggers the scenario action based on the provided index.
+        /// </summary>
+        /// <param name="index">The index of the action scenario to trigger.</param>
         private void TriggerScenarioAction(int index)
         {
             try
@@ -58,127 +110,19 @@ namespace OnePlayer
                 var attack = actionScenario.Attack;
                 var action = actionScenario.Action;
 
-                UnsetHighligh();
-                switch (highlight)
-                {
-                    case Highlight.space:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.Space, true);
-                        break;
-                    case Highlight.deck:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.Deck, true);
-                        break;
-                    case Highlight.yellow_trash:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.YellowTrash, true);
-                        break;
-                    case Highlight.field:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.Field, true);
-                        break;
-                    case Highlight.invocation_cards:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.Invocations, true);
-                        break;
-                    case Highlight.effect_cards:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.Effect, true);
-                        break;
-                    case Highlight.hand_cards:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
-                        break;
-                    case Highlight.next_phase:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
-                        break;
-                    case Highlight.tentacules:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, true);
-                        break;
-                    case Highlight.life_point:
-                        HighLightPlane.Highlight.Invoke(HighlightElement.LifePoints, true);
-                        break;
-                    case Highlight.unknown:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                HandleHighlight(highlight);
 
                 tutoImage.SetActive(image != null);
                 tutoVideo.SetActive(video != null);
 
                 if (putCard != null)
                 {
-                    PlayerCards playerCards = CardManager.Instance.GetCurrentPlayerCards();
-                    if (putCard.Contains(">"))
-                    {
-                        var cardNames = putCard.Split('>');
-
-                        InGameEquipmentCard equipmentCard =
-                            playerCards.HandCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipmentCard;
-                        InGameInvocationCard invocationCard =
-                            playerCards.InvocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
-                        
-                        if (equipmentCard == null) return;
-
-                        invocationCard?.SetEquipmentCard(equipmentCard);
-                        playerCards.HandCards.Remove(equipmentCard);
-                        foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
-                        {
-                            equipmentCardEquipmentAbility.ApplyEffect(
-                                invocationCard,
-                                playerCards,
-                                CardManager.Instance.GetOpponentPlayerCards()
-                            );
-                        }
-                    }
-                    else
-                    {
-                        var cardNames = putCard.Split(';');
-                        foreach (var cardName in cardNames)
-                        {
-                            InGameCard card = playerCards.HandCards.First(elt => elt.Title == cardName);
-                            if (card is InGameInvocationCard invocationCard)
-                            {
-                                playerCards.HandCards.Remove(card);
-                                playerCards.InvocationCards.Add(invocationCard);
-                            }
-                            else if (card is InGameFieldCard fieldCard)
-                            {
-                                playerCards.FieldCard = fieldCard;
-                                playerCards.HandCards.Remove(fieldCard);
-                            }
-                        }
-                    }
+                    PlaceCard(putCard);
                 }
 
                 if (attack != null)
                 {
-                    string attacker = attack[0];
-                    string defender = "player";
-                    if (attack.Length > 1)
-                    {
-                        defender = attack[1] == "" ? "player" : attack[1];
-                    }
-
-                    InGameInvocationCard attackerInvocationCard =
-                        CardManager.Instance.GetCurrentPlayerCards().InvocationCards.First(card => card.Title == attacker);
-
-                    PlayerCards opponentPlayerCards = CardManager.Instance.GetOpponentPlayerCards();
-
-                    InGameInvocationCard opponentInvocationCard;
-
-                    if (defender == "player")
-                    {
-                        opponentInvocationCard = opponentPlayerCards.Player as InGameInvocationCard;
-                    }
-                    else
-                    {
-                        opponentInvocationCard = opponentPlayerCards.InvocationCards
-                            .First(card => card.Title == defender);
-                    }
-
-                    CardManager.Instance.Attacker = attackerInvocationCard;
-                    CardManager.Instance.Opponent = opponentInvocationCard;
-                    ComputeAttack();
-
-                    if (defender == "player")
-                    {
-                        HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
-                    }
+                    HandleAttack(attack);
                 }
 
                 switch (action)
@@ -194,11 +138,131 @@ namespace OnePlayer
             }
             catch (Exception e)
             {
-                UnsetHighligh();
+                UnsetHighlight();
                 Console.WriteLine(e);
             }
         }
+        
+        /// <summary>
+        /// Handles the attack scenario based on the provided attack configuration.
+        /// </summary>
+        /// <param name="attack">Array of attack configuration in the form [attacker, defender] or [attacker] if defender is player.</param>
+        private void HandleAttack(string[] attack)
+        {
+            string attacker = attack[0];
+            string defender = attack.Length > 1 && !string.IsNullOrEmpty(attack[1]) ? attack[1] : CardNameMappings.CardNameMap[CardNames.Player];
 
+            InGameInvocationCard attackerInvocationCard =
+                CardManager.Instance.GetCurrentPlayerCards().InvocationCards.First(card => card.Title == attacker);
+
+            PlayerCards opponentPlayerCards = CardManager.Instance.GetOpponentPlayerCards();
+
+            InGameInvocationCard opponentInvocationCard = defender == CardNameMappings.CardNameMap[CardNames.Player]
+                ? opponentPlayerCards.Player as InGameInvocationCard
+                : opponentPlayerCards.InvocationCards
+                    .First(card => card.Title == defender);
+
+            CardManager.Instance.Attacker = attackerInvocationCard;
+            CardManager.Instance.Opponent = opponentInvocationCard;
+            ComputeAttack();
+
+            if (defender == CardNameMappings.CardNameMap[CardNames.Player])
+            {
+                HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+            }
+        }
+        
+        /// <summary>
+        /// Places a card in the game using a scenario
+        /// </summary>
+        /// <param name="putCard">The name of the card to be placed.</param>
+
+        private static void PlaceCard(string putCard)
+        {
+            PlayerCards playerCards = CardManager.Instance.GetCurrentPlayerCards();
+            if (putCard.Contains(EquipSymbol))
+            {
+                EquipInvocationCard(putCard, playerCards);
+            }
+            else
+            {
+                InvokeInvocationCards(putCard, playerCards);
+            }
+        }
+
+        /// <summary>
+        /// Invokes the specified invocation cards.
+        /// </summary>
+        /// <param name="putCard">Card name to invoke.</param>
+        /// <param name="playerCards">Current player's card details.</param>
+        private static void InvokeInvocationCards(string putCard, PlayerCards playerCards)
+        {
+            var cardNames = putCard.Split(';');
+            foreach (var cardName in cardNames)
+            {
+                InGameCard card = playerCards.HandCards.First(elt => elt.Title == cardName);
+                if (card is InGameInvocationCard invocationCard)
+                {
+                    playerCards.HandCards.Remove(card);
+                    playerCards.InvocationCards.Add(invocationCard);
+                }
+                else if (card is InGameFieldCard fieldCard)
+                {
+                    playerCards.FieldCard = fieldCard;
+                    playerCards.HandCards.Remove(fieldCard);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Equips the specified invocation card with the given equipment.
+        /// </summary>
+        /// <param name="putCard">Card data for equipment and invocation card.</param>
+        /// <param name="playerCards">Current player's card details.</param>
+        private static void EquipInvocationCard(string putCard, PlayerCards playerCards)
+        {
+
+            var cardNames = putCard.Split('>');
+
+            InGameEquipmentCard equipmentCard =
+                playerCards.HandCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipmentCard;
+            InGameInvocationCard invocationCard =
+                playerCards.InvocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
+
+            if (equipmentCard == null) return;
+
+            invocationCard?.SetEquipmentCard(equipmentCard);
+            playerCards.HandCards.Remove(equipmentCard);
+            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+            {
+                equipmentCardEquipmentAbility.ApplyEffect(
+                    invocationCard,
+                    playerCards,
+                    CardManager.Instance.GetOpponentPlayerCards()
+                );
+            }
+        }
+        
+        /// <summary>
+        /// Handles the highlighting of elements in the game based on the given highlight type.
+        /// </summary>
+        /// <param name="highlight">Type of highlight to apply.</param>
+        private void HandleHighlight(Highlight highlight)
+        {
+            UnsetHighlight();
+            if (highlightMapping.TryGetValue(highlight, out var highlightElement))
+            {
+                HighLightPlane.Highlight.Invoke(highlightElement, true);
+            }
+            else if (highlight != Highlight.unknown)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        /// Handles the transition to the next round of the game.
+        /// </summary>
         protected override void NextRound()
         {
             HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
@@ -236,6 +300,9 @@ namespace OnePlayer
             nextPhaseButton.interactable = false;
         }
 
+        /// <summary>
+        /// Displays available opponents for the current player.
+        /// </summary>
         public new void DisplayAvailableOpponent()
         {
             var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
@@ -278,20 +345,20 @@ namespace OnePlayer
             );
         }
 
-        private void UnsetHighligh()
+        /// <summary>
+        /// Unsets the highlighted elements in the game.
+        /// </summary>
+        private void UnsetHighlight()
         {
-            HighLightPlane.Highlight.Invoke(HighlightElement.Space, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.Deck, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.YellowTrash, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.Field, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.Invocations, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.Effect, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
-            HighLightPlane.Highlight.Invoke(HighlightElement.LifePoints, false);
+            foreach (var element in highlightMapping.Values)
+            {
+                HighLightPlane.Highlight.Invoke(element, false);
+            }
         }
 
+        /// <summary>
+        /// Chooses the next phase of the game based on game state and conditions.
+        /// </summary>
         protected override void ChoosePhase()
         {
             InvocationMenuManager.Instance.Enable();
@@ -303,6 +370,9 @@ namespace OnePlayer
             }
         }
 
+        /// <summary>
+        /// Handles the touch input by the player during the game.
+        /// </summary>
         private void OnTouch()
         {
             var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
