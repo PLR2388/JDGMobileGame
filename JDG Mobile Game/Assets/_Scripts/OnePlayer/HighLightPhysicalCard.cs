@@ -11,6 +11,7 @@ namespace OnePlayer
         [SerializeField] private HighlightElement element;
         [SerializeField] private Color pulseColor = Color.green;
         [SerializeField] private Color defaultColor = Color.white;
+        [SerializeField] private float pulseDuration = 0.5f;
 
 
         private static readonly string TargetCardName = CardNameMappings.CardNameMap[CardNames.Tentacules];
@@ -84,9 +85,9 @@ namespace OnePlayer
         private IEnumerator PulseCoroutine()
         {
             waitEndTurn = false;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(pulseDuration);
             meshRenderer.material.color = pulseColor;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(pulseDuration);
             meshRenderer.material.color = defaultColor;
             waitEndTurn = true;
         }

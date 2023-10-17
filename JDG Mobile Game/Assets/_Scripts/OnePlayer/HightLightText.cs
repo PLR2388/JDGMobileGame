@@ -12,6 +12,11 @@ public class HightLightText : MonoBehaviour
     /// The highlight element associated with this text.
     /// </summary>
     [SerializeField] private HighlightElement element;
+    
+    /// <summary>
+    /// The duration of the pulse
+    /// </summary>
+    [SerializeField] private float pulseDuration = 0.5f;
         
     /// <summary>
     /// Flag to indicate if the highlight is activated.
@@ -101,9 +106,9 @@ public class HightLightText : MonoBehaviour
     private IEnumerator PulseCoroutine()
     {
         waitEndTurn = false;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(pulseDuration);
         SetTextColor(Color.white);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(pulseDuration);
         SetTextColor(Color.clear);
         waitEndTurn = true;
     }
