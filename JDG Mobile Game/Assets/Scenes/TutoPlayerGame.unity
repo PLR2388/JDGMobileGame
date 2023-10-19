@@ -1570,6 +1570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cac269e1b1a4252408f513d513c5d741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultTypewriterSpeed: 25
 --- !u!114 &244790283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1685,6 +1686,7 @@ GameObject:
   - component: {fileID: 397230414}
   - component: {fileID: 397230413}
   - component: {fileID: 397230420}
+  - component: {fileID: 397230421}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -1720,7 +1722,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jsonFile: {fileID: 4900000, guid: 892b438fda39499795eec7cf75b2be5a, type: 3}
-  dialogueObject: {fileID: 11400000, guid: 3bd361463c111544b80baf3eec81bc05, type: 2}
 --- !u!114 &397230406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1930,6 +1931,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 244790280}
+--- !u!114 &397230421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397230402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d56c649259f9456494bc323183a3b0be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &414799418
 GameObject:
   m_ObjectHideFlags: 0
@@ -3259,6 +3272,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 6
+  pulseColor: {r: 0, g: 1, b: 0, a: 1}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  pulseDuration: 0.5
   isActivated: 0
 --- !u!1 &891353974
 GameObject:
@@ -5185,6 +5201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 9
+  pulseDuration: 0.5
 --- !u!23 &1349726587
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5942,6 +5959,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 8
+  pulseColor: {r: 0, g: 1, b: 0, a: 1}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  pulseDuration: 0.5
   isActivated: 1
 --- !u!1 &1664943299
 GameObject:
@@ -6677,6 +6697,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 0
+  pulseColor: {r: 0, g: 1, b: 0, a: 1}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  pulseDuration: 0.5
   isActivated: 1
 --- !u!1 &1957640249
 GameObject:
@@ -6825,6 +6848,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 7
+  pulseColor: {r: 0, g: 1, b: 0, a: 1}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  pulseDuration: 0.5
   isActivated: 0
 --- !u!1 &1982540492
 GameObject:

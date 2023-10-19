@@ -5,20 +5,32 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// Represents the tutorial version of the in-game menu.
+/// </summary>
 public class TutoInGameMenuScript : InGameMenuScript
 {
-    // Serialized fields for UI components
+    private const int CardDialogChangeIndex = 36;
+    private const int PutCardIndex = 38;
 
-    private int currentDialogIndex = 0;
+    private TextMeshProUGUI buttonTextMeshProUGUI;
+    private Button button;
+    private HighLightButton highLightButton;
+    private HighLightButton putCardHighLightButton;
 
+    /// <summary>
+    /// Awake method to cache component references.
+    /// </summary>
     private void Awake()
     {
-        DialogueUI.DialogIndex.AddListener(SavedIndexDialog);
+        buttonTextMeshProUGUI = buttonText.GetComponent<TextMeshProUGUI>();
+        button = inHandButton.GetComponent<Button>();
+        highLightButton = inHandButton.GetComponent<HighLightButton>();
+        putCardHighLightButton = putCardButton.GetComponent<HighLightButton>();
     }
 
     /// <summary>
-    /// Unity's start method, called before the first frame update. Initializes UI states and card handlers.
+    /// Initializes the state of UI and card handlers.
     /// </summary>
     private void Start()
     {
@@ -27,15 +39,16 @@ public class TutoInGameMenuScript : InGameMenuScript
         EventClick.AddListener(ClickOnCard);
         InitializeCardHandlers();
     }
-
-    private void SavedIndexDialog(int index)
-    {
-        currentDialogIndex = index;
-    }
-
+    
+    /// <summary>
+    /// Handles the logic when a card is clicked.
+    /// </summary>
+    /// <param name="card">The in-game card that was clicked.</param>
     private void ClickOnCard(InGameCard card)
     {
-        var authorizedCard = currentDialogIndex > 36 ? CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive] : CardNameMappings.CardNameMap[CardNames.ClichéRaciste];
+        var authorizedCard = DialogueTutoHandler.Instance.CurrentDialogIndex > CardDialogChangeIndex
+            ? CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive]
+            : CardNameMappings.CardNameMap[CardNames.ClichéRaciste];
         if (card.Title != authorizedCard) return;
         CurrentSelectedCard = card;
         if (CardHandlerMap.TryGetValue(card.Type, out var handler))
@@ -48,10 +61,10 @@ public class TutoInGameMenuScript : InGameMenuScript
         }
 
         var clickPosition = GetClickPosition();
-        putCardButton.GetComponent<HighLightButton>().isActivated = true;
+        putCardHighLightButton.isActivated = true;
         DisplayMiniMenuCardAtPosition(clickPosition);
     }
-        
+
     /// <summary>
     /// Handles the "Put Card" action, triggering the appropriate event based on the card's type.
     /// </summary>
@@ -72,14 +85,17 @@ public class TutoInGameMenuScript : InGameMenuScript
         {
             HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
         }
-        
+
         if (!detailCardPanel.activeSelf) return;
         // The detail panel is visible. One must go back to card display
         detailCardPanel.SetActive(false);
         handScreen.SetActive(true);
         inHandButton.SetActive(true);
     }
-
+    
+    /// <summary>
+    /// Toggles between showing and hiding the hand card display.
+    /// </summary>
     public new void ClickHandCard()
     {
         invocationMenu.SetActive(false);
@@ -92,29 +108,59 @@ public class TutoInGameMenuScript : InGameMenuScript
             DisplayHand();
         }
     }
+    
+    /// <summary>
+    /// Sets the visibility of the hand.
+    /// </summary>
+    /// <param name="isVisible">Whether the hand should be visible.</param>
+    private void SetHandVisibility(bool isVisible)
+    {
+        handScreen.SetActive(isVisible);
+        backgroundInformation.SetActive(!isVisible);
+    }
 
+    /// <summary>
+    /// Updates the button text based on the given localization key.
+    /// </summary>
+    /// <param name="key">Localization key for the button text.</param>
+    private void UpdateButtonText(LocalizationKeys key)
+    {
+        buttonTextMeshProUGUI.text = LocalizationSystem.Instance.GetLocalizedValue(key);
+    }
+
+    /// <summary>
+    /// Deactivates the button interactivity and highlighting.
+    /// </summary>
+    private void UnselectButton()
+    {
+        button.interactable = false;
+        highLightButton.isActivated = false;
+    }
+
+    /// <summary>
+    /// Displays hand cards
+    /// </summary>
     private void DisplayHand()
     {
-        handScreen.SetActive(true);
-        backgroundInformation.SetActive(false);
-        buttonText.GetComponent<TextMeshProUGUI>().text = LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK);
-        
-        inHandButton.GetComponent<Button>().interactable = false;
-        inHandButton.GetComponent<HighLightButton>().isActivated = false;
+        SetHandVisibility(true);
+        UpdateButtonText(LocalizationKeys.BUTTON_BACK);
+        UnselectButton();
         HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
     }
 
+    /// <summary>
+    /// Hides hand cards
+    /// </summary>
     private void HideHand()
     {
+        SetHandVisibility(false);
+        UpdateButtonText(LocalizationKeys.BUTTON_HAND);
+        UnselectButton();
+        
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
-        handScreen.SetActive(false);
-        backgroundInformation.SetActive(true);
-        buttonText.GetComponent<TextMeshProUGUI>().SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
         
-        inHandButton.GetComponent<Button>().interactable = false;
-        inHandButton.GetComponent<HighLightButton>().isActivated = false;
-        if (currentDialogIndex == 38)
+        if (DialogueTutoHandler.Instance.CurrentDialogIndex == PutCardIndex)
         {
             DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
         }
