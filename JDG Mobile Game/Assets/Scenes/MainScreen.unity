@@ -4586,7 +4586,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2003630710}
         m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: onClickStory
+        m_MethodName: OnClickStory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

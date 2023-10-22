@@ -36,7 +36,7 @@ public class SceneLoader : MonoBehaviour
     /// <summary>
     /// Handles the onClick event for the story button. Shows a toast message.
     /// </summary>
-    public void onClickStory()
+    public void OnClickStory()
     {
         ShowAndroidToastMessage(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TOAST_ASK)
@@ -48,7 +48,7 @@ public class SceneLoader : MonoBehaviour
     /// Displays the message as a log entry in the Unity Editor and as a toast on Android.
     /// </summary>
     /// <param name="message">Message string to show in the toast.</param>
-    private void ShowAndroidToastMessage(string message)
+    private static void ShowAndroidToastMessage(string message)
     {
 #if UNITY_EDITOR
         Debug.Log(message);
