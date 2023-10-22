@@ -46,14 +46,15 @@ public class SceneLoader : MonoBehaviour
     /// <summary>
     /// Shows a toast message with the provided text. 
     /// Displays the message as a log entry in the Unity Editor and as a toast on Android.
+    /// This method CANNOT be static
     /// </summary>
     /// <param name="message">Message string to show in the toast.</param>
-    private static void ShowAndroidToastMessage(string message)
+    private void ShowAndroidToastMessage(string message)
     {
 #if UNITY_EDITOR
         Debug.Log(message);
 #elif UNITY_ANDROID
- DisplayAndroidToast(message);
+        DisplayAndroidToast(message);
 #endif
     }
 
