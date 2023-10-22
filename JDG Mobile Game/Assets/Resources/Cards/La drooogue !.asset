@@ -12,13 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: La drooogue !
   m_EditorClassIdentifier: 
-  nom: La drooogue !
+  title: La drooogue !
   description: "Mais ils ont pris de la drogue ces d\xE9veloppeurs ?!?"
-  descriptionDetaillee: "L'ATQ de l'INVOCATION \xE9quip\xE9e est multipli\xE9e par
+  detailedDescription: "L'ATQ de l'INVOCATION \xE9quip\xE9e est multipli\xE9e par
     3 et sa DEF passe \xE0 0 \xE9toile."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: 9e8a8278007e57745a962c7af3c9ba7a, type: 2}
   collector: 1
-  equipmentInstantEffect: {fileID: 11400000, guid: 771604ace2f7bd14aa638a7a740be17e,
-    type: 2}
-  equipmentPermEffect: {fileID: 0}
+  EquipmentAbilities: 0900000008000000

@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Bolossage gratuit
   m_EditorClassIdentifier: 
-  nom: Bolossage gratuit
+  title: Bolossage gratuit
   description: Mange tes mangemorts !
-  descriptionDetaillee: "Votre adversaire perd 2.5 \xE9toiles de vie pour chaque
-    carte INVOCATION pr\xE9sente sur votre terrain."
+  detailedDescription: "Votre adversaire perd 2,5 \xE9toiles de vie pour chaque carte
+    INVOCATION pr\xE9sente sur votre terrain."
   type: 1
   materialCard: {fileID: 2100000, guid: 06547fa6071e30b40ac96e5275b14276, type: 2}
   collector: 0
-  effectCardEffect: {fileID: 11400000, guid: a021bc26479e67947863bb7a17cfd5c1, type: 2}
   lifeTime: 1
   checkTurn: 0
   affectPv: -2.5
+  EffectAbilities: 01000000

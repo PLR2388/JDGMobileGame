@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Deltaplane
   m_EditorClassIdentifier: 
-  nom: Deltaplane
+  title: Deltaplane
   description: "Le pire accessoire de jeu vid\xE9o de tous les temps."
-  descriptionDetaillee: "L'ATQ de l'INVOCATION \xE9quip\xE9e passe \xE0 1 \xE9toile."
-  type: equipment
+  detailedDescription: "L'ATQ de l'INVOCATION \xE9quip\xE9e passe \xE0 1 \xE9toile."
+  type: 2
   materialCard: {fileID: 2100000, guid: 812be0e8ab549914d80815fc015e260f, type: 2}
   collector: 0
-  equipmentInstantEffect: {fileID: 11400000, guid: b084773ca69d5cb46b4f717e0b8cee79,
-    type: 2}
-  equipmentPermEffect: {fileID: 0}
+  EquipmentAbilities: 06000000

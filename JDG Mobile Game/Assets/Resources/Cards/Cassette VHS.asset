@@ -12,13 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Cassette VHS
   m_EditorClassIdentifier: 
-  nom: Cassette VHS
+  title: Cassette VHS
   description: "Mais quel artefact \xE9trange venu d'un autre temps !"
-  descriptionDetaillee: "L'INVOCATION \xE9quip\xE9e gagne 0.25 \xE9toile d'ATQ par
+  detailedDescription: "L'INVOCATION \xE9quip\xE9e gagne 0,25 \xE9toile d'ATQ par
     carte pr\xE9sente dans la main de celui qui la contr\xF4le."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: dbb6ce8f37c259d46becd94cbbcbc244, type: 2}
   collector: 0
-  equipmentInstantEffect: {fileID: 0}
-  equipmentPermEffect: {fileID: 11400000, guid: b8ee36878716cc2418092e5ffa15b3c0,
-    type: 2}
+  EquipmentAbilities: 03000000

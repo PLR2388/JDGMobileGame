@@ -12,26 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: "Mo\xEFse, le plus grand de tous les h\xE9breux"
   m_EditorClassIdentifier: 
-  nom: "Mo\xEFse, le plus grand de tous les h\xE9breux"
+  title: "Mo\xEFse, le plus grand de tous les h\xE9breux"
   description: "J'vais ouvrir ta m\xE8re en deux !"
-  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e et subsister sur
-    votre terrain que si s'y trouve au moins une autre carte de type \xAB Humain
-    \xBB."
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e et subsister sur
+    votre terrain que si s'y trouve au moins une autre carte de type \" Humain \"."
   type: 4
   materialCard: {fileID: 2100000, guid: bf06fac9869aa004f97e89c7308f6e12, type: 2}
   collector: 0
-  attack: 4
-  defense: 2.5
-  family: 05000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: d76bd398b170f0c418214aae7d05b35c,
-    type: 2}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 4
+    Defense: 2.5
+    Families: 05000000
+    AffectedByEffect: 1
+  Conditions: 11000000
+  Abilities: 29000000

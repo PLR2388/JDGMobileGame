@@ -12,28 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: La Petite Fille
   m_EditorClassIdentifier: 
-  nom: La Petite Fille
+  title: La Petite Fille
   description: Putain Putain Putain Putain !!
-  descriptionDetaillee: "Cette carte ne peut-\xEAtre invoqu\xE9e et subsister sur
-    le terrain que si s'y trouve une carte \xAB Joueur Du Grenier \xBB. Tant que
-    cette carte reste sur le terrain, les cartes INVOCATION adverses ne peuvent pas
-    attaquer d'autre carte que celle-ci."
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9eet subsister sur le
+    terrain que si s'y trouve une carte \" Joueur du grenier \". Tant que cette carte
+    reste sur le terrain, les cartes INVOCATION adverses ne peuvent pas attaquer
+    d'autre carte que celle-ci."
   type: 4
   materialCard: {fileID: 2100000, guid: 35a79b12db5510b48bb498f19a2bd1bd, type: 2}
   collector: 0
-  attack: 4
-  defense: 3.5
-  family: 0600000005000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: 7df0b14b6f77b8d408ee2a2850246066,
-    type: 2}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: 0978c6ccfce1fb047afc98ef7298030a,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 4
+    Defense: 3.5
+    Families: 0600000005000000
+    AffectedByEffect: 1
+  Conditions: 06000000
+  Abilities: 1f00000000000000

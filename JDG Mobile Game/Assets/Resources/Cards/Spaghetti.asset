@@ -12,26 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Spaghetti
   m_EditorClassIdentifier: 
-  nom: Spaghetti
+  title: Spaghetti
   description: "Joue aussi du piano dans certains \xE9pisodes."
-  descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'aller
-    chercher dans votre pioche ou votre poubelle jaune une carte \xAB Patron d'infogrammes
-    \xBB pour l'ajouter \xE0 votre main."
+  detailedDescription: "Invoquer cette carte sur votre terrain vous permet d'aller
+    chercher dans votre pioche ou votre poubelle jaune une carte \" Patron d'Infogrames
+    \" pour l'ajouter \xE0 votre main."
   type: 4
   materialCard: {fileID: 2100000, guid: 00e23f21ba271474899cbf37429139b5, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 07000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 11400000, guid: e53cabda86edbb649bd6d322ef39493c,
-    type: 2}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 07000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 33000000

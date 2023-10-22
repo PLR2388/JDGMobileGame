@@ -12,26 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: "Propri\xE9taire De Fistiland"
   m_EditorClassIdentifier: 
-  nom: "Propri\xE9taire De Fistiland"
+  title: "Propri\xE9taire De Fistiland"
   description: Vive l'argent !
-  descriptionDetaillee: "Cette carte gagne 1 \xE9toile en ATQ et en DEF pour chaque
-    carte INVOCATION de type \xAB Fistiland \xBB pr\xE9sente sur le terrain du joueur."
+  detailedDescription: "Cette carte gagne 1 \xE9toile en ATQ et en DEF pour chaque
+    carte INVOCATION de type \" Fistiland \" pr\xE9sente sur le terrain du joueur."
   type: 4
   materialCard: {fileID: 2100000, guid: 238d861caa2841c4a97372d3e7c8d98b, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 02000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: 79f1b98bd7b13c54e94670ed879cf6de,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
-  affectedByEffect: 1
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 02000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 2f000000

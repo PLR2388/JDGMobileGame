@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Kenavo !
   m_EditorClassIdentifier: 
-  nom: Kenavo !
+  title: Kenavo !
   description: "Sort d'attaque classique du Lyc\xE9e George Pompidou."
-  descriptionDetaillee: "Si une carte INVOCATION de votre adversaire lance une attaque
+  detailedDescription: "Si une carte INVOCATION de votre adversaire lance une attaque
     sur l'une des v\xF4tres, vous pouvez suspendre cette attaque pour en lancer une
     avant avec une de vos cartes INVOCATION. Si l'INVOCATION adverse est d\xE9truite
     par cette attaque, l'attaque d'origine suspendue est annul\xE9e."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 71291704f20827a49bfefe570ea28504, type: 2}
+  collector: 0

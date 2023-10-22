@@ -12,26 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Maman
   m_EditorClassIdentifier: 
-  nom: Maman
+  title: Maman
   description: "Benzou ! L\xE2che cette console ou j'appelle un de tes cinq beaux-p\xE8res
     !"
-  descriptionDetaillee: "Invoquer cette carte vous permet d'ajouter \xE0 votre main
-    la carte \xAB Benzaie jeune \xBB depuis votre pioche."
+  detailedDescription: "Invoquer cette carte vous permet d'ajouter \xE0 votre main
+    la carte \" Benzaie jeune \" depuis votre pioche."
   type: 4
   materialCard: {fileID: 2100000, guid: 5affe114eb07cf84d93bf3b676a2983e, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 03000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 11400000, guid: f77b1f38b4c90a842aec7b9425d0e0a3,
-    type: 2}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 03000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 25000000

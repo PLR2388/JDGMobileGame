@@ -12,25 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Nounours
   m_EditorClassIdentifier: 
-  nom: Nounours
+  title: Nounours
   description: "La rumeur veut qu'il ait couch\xE9 avec Benzaie pour r\xE9ussir."
-  descriptionDetaillee: "Cette carte obtient les m\xEAmes statistiques d'ATQ et de
-    DEF que la carte \xAB Benzaie jeune \xBB si celle-ci est sur terrain."
+  detailedDescription: "Cette carte obtient les m\xEAmes statistiques d'ATQ et de
+    DEF que la carte \" Benzaie jeune \" si celle-ci est sur le terrain."
   type: 4
   materialCard: {fileID: 2100000, guid: 1a15e34eed2f9f14295db40018e3d17d, type: 2}
   collector: 0
-  attack: 1
-  defense: 1
-  family: 03000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: 15685c33fc8cce7418edaf4274e19f93,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 1
+    Defense: 1
+    Families: 03000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 2a000000

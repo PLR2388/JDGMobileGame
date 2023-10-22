@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: "Pains aux raisins \xE0 la place des mains"
   m_EditorClassIdentifier: 
-  nom: "Pains aux raisins \xE0 la place des mains"
+  title: "Pains aux raisins \xE0 la place des mains"
   description: "C'est qu'une petite carte. Y'a 150 endroits o\xF9 elle pourrait se
     la mettre !"
-  descriptionDetaillee: "D\xE9truit une carte EQUIPEMENT pr\xE9sente sur le terrain."
+  detailedDescription: "D\xE9truit une carte EQUIPEMENT pr\xE9sente sur le terrain."
   type: 1
   materialCard: {fileID: 2100000, guid: 957f0da8efb28854e90237c6b316f754, type: 2}
   collector: 0
-  effectCardEffect: {fileID: 11400000, guid: 70dfdab6aee887143ad9352df40001fd, type: 2}
   lifeTime: 1
   checkTurn: 0
   affectPv: 0
+  EffectAbilities: 0f000000

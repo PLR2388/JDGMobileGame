@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Torture Ninja
   m_EditorClassIdentifier: 
-  nom: Torture Ninja
+  title: Torture Ninja
   description: Une carte de merde qui va vous faire mal au cul.
-  descriptionDetaillee: "Votre adversaire perd 1 \xE9toile de vie pour chaque carte
+  detailedDescription: "Votre adversaire perd 1 \xE9toile de vie pour chaque carte
     de sa main."
   type: 1
   materialCard: {fileID: 2100000, guid: 8b31b0d47749aa74683eede15fe83ab0, type: 2}
   collector: 0
-  effectCardEffect: {fileID: 11400000, guid: 4b8823d6facedda409da64dd91f9a95e, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0
+  EffectAbilities: 16000000

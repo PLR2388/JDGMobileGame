@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Blague interdite
   m_EditorClassIdentifier: 
-  nom: Blague interdite
+  title: Blague interdite
   description: "Tous les sujets sont accept\xE9s... Par contre \xE0 ne pas faire
     avec tout le monde."
-  descriptionDetaillee: "Cette carte ne peut \xEAtre contr\xE9e. Cette carte emp\xEAche
+  detailedDescription: "Cette carte ne peut \xEAtre contr\xE9e. Cette carte emp\xEAche
     l'utilisation de cartes CONTRE pendant ce tour."
   type: 1
   materialCard: {fileID: 2100000, guid: 3abe17bf55a617c458c963d1ba258927, type: 2}
   collector: 1
   effectCardEffect: {fileID: 11400000, guid: 4325ea2afd3304245a2c3259e8c1c735, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0

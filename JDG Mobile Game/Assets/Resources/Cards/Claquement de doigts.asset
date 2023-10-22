@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Claquement de doigts
   m_EditorClassIdentifier: 
-  nom: Claquement de doigts
+  title: Claquement de doigts
   description: Silence femme.
-  descriptionDetaillee: "Annule une carte CONTRE et l'envoie \xE0 la poubelle jaune."
-  type: contre
+  detailedDescription: "Annule une carte CONTRE et l'envoie \xE0 la poubelle jaune."
+  type: 0
   materialCard: {fileID: 2100000, guid: 95176ad67479f6c42b596910edea228d, type: 2}
   collector: 1

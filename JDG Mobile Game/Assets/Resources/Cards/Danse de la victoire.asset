@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Danse de la victoire
   m_EditorClassIdentifier: 
-  nom: Danse de la victoire
+  title: Danse de la victoire
   description: Tintintintin Tin Tin Tintinliiiin !
-  descriptionDetaillee: "S'utilise dans le cas o\xF9 une INVOCATION adverse attaque
+  detailedDescription: "S'utilise dans le cas o\xF9 une INVOCATION adverse attaque
     et d\xE9truit une de celles de votre terrain. L'INVOCATION victorieuse lance
     apr\xE8s destruction de votre carte une attaque sur chacune des autres cartes
     INVOCATION pr\xE9sentes sur son propre terrain."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: ffc361b54a803ae4f8bd1738aac413c9, type: 2}
+  collector: 0

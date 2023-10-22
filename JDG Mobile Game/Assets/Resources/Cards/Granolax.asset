@@ -12,26 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Granolax
   m_EditorClassIdentifier: 
-  nom: Granolax
+  title: Granolax
   description: Maudit Shi-Nwa.
-  descriptionDetaillee: "Si elle est cibl\xE9e par une attaque adverse, cette carte
-    peut se prot\xE9ger automatiquement derri\xE8re la carte \xAB Starlight Unicorn
-    \xBB si celle-ci est sur le terrain du joueur."
+  detailedDescription: "Si elle est cibl\xE9e par une attaque adverse, cette carte
+    peut se prot\xE9ger automatiquement derri\xE8re la carte \" Starlight Unicorn
+    \" si celle-ci est sur le terrain du joueur."
   type: 4
   materialCard: {fileID: 2100000, guid: 4ca723aea1434794ab2c162edd6a711a, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 0a000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: d0df77811ddbacb498ccedc0d60b4b03,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 0a000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 11400000, guid: d0df77811ddbacb498ccedc0d60b4b03,
+      type: 2}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 16000000

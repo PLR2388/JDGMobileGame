@@ -12,13 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7860eebd348ff8d4eafd19296976741d, type: 3}
   m_Name: Cosplay pourri
   m_EditorClassIdentifier: 
-  nom: Cosplay pourri
+  title: Cosplay pourri
   description: "Voil\xE0 ce qui arrive quand la costumi\xE8re est malade."
-  descriptionDetaillee: "Enl\xE8ve \xE0 une INVOCATION une \xE9toile en ATQ et une
+  detailedDescription: "Enl\xE8ve \xE0 une invocation une \xE9toile en ATQ et une
     \xE9toile en DEF."
-  type: equipment
+  type: 2
   materialCard: {fileID: 2100000, guid: bc4eadaa97a446a42a73856a82b1066d, type: 2}
   collector: 0
-  equipmentInstantEffect: {fileID: 11400000, guid: 7b966f354cc14bb42b5de9fa90e9ff11,
-    type: 2}
-  equipmentPermEffect: {fileID: 0}
+  EquipmentAbilities: 05000000

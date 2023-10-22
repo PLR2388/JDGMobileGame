@@ -12,26 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: David Gnouf
   m_EditorClassIdentifier: 
-  nom: David Gnouf
+  title: David Gnouf
   description: Mais c'est ce que recherchent tous ces cons...ommateurs !
-  descriptionDetaillee: "Cette carte gagne 1 \xE9toile en ATQ et en DEF pour chaque
-    autre carte INVOCATION de la famille \xAB D\xE9veloppeur \xBB pr\xE9sente sur
-    votre terrain."
+  detailedDescription: "Cette carte gagne 1 \xE9toile en ATQ et en DEF pour chaque
+    autre carte INVOCATION de la famille \" D\xE9veloppeur \" pr\xE9sente sur votre
+    terrain."
   type: 4
   materialCard: {fileID: 2100000, guid: 84dc4a483d3040f49ac9fe5fdcba2d60, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 01000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: 353c0e29cbc387e44b95cc9bd3060fc3,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 01000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 11400000, guid: 353c0e29cbc387e44b95cc9bd3060fc3,
+      type: 2}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 0e000000

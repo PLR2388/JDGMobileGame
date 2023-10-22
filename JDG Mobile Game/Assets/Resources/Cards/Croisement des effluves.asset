@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Croisement des effluves
   m_EditorClassIdentifier: 
-  nom: Croisement des effluves
+  title: Croisement des effluves
   description: "J'vous jure que \xE7a va marcher !"
-  descriptionDetaillee: "Sacrifiez une carte INVOCATION de votre terrain, d\xE9faussez
+  detailedDescription: "Sacrifiez une carte INVOCATION de votre terrain, d\xE9faussez
     la premi\xE8re carte de votre pioche, et d\xE9faussez une carte de votre main
     pour pouvoir d\xE9truire toutes les cartes pr\xE9sentes sur le terrain."
   type: 1
   materialCard: {fileID: 2100000, guid: 2909f2ef20210054bb29a3ac4d116cd5, type: 2}
   collector: 1
-  effectCardEffect: {fileID: 11400000, guid: 913562a2648ceb44f9afbe6022900569, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0
+  EffectAbilities: 03000000

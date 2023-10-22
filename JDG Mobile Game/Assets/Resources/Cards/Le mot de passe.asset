@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Le mot de passe
   m_EditorClassIdentifier: 
-  nom: Le mot de passe
+  title: Le mot de passe
   description: Moi aussi je perds la boule !
-  descriptionDetaillee: "Allez chercher n'importe quelle carte dans votre pioche
-    ou votre poubelle jaune pour l'ajouter \xE0 votre main."
+  detailedDescription: "Aller chercher n'importe quelle carte dans votre pioche ou
+    votre poubelle jaune pour l'ajouter \xE0 votre main."
   type: 1
   materialCard: {fileID: 2100000, guid: f83339aec693bae48b514fd477c99fbd, type: 2}
   collector: 1
-  effectCardEffect: {fileID: 11400000, guid: d9172b1a460d5f34597deb64837e0da3, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0
+  EffectAbilities: 0a000000

@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: "Sauvegarde effac\xE9e"
   m_EditorClassIdentifier: 
-  nom: "Sauvegarde effac\xE9e"
+  title: "Sauvegarde effac\xE9e"
   description: "C'est g\xE9nial ! J'ai h\xE2te de tout recommencer !"
-  descriptionDetaillee: "Si votre adversaire inflige des d\xE9g\xE2ts \xE0 vos \xE9toiles
+  detailedDescription: "Si votre adversaire inflige des d\xE9g\xE2ts \xE0 vos \xE9toiles
     de vie, ces d\xE9g\xE2ts sont annul\xE9s et toutes les cartes qu'il a jou\xE9
     ce tour vont directement \xE0 la poubelle jaune."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 618ebd11d5dcbdd4785eca92de543093, type: 2}
   collector: 1

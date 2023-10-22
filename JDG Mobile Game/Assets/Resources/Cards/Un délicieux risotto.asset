@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: "Un d\xE9licieux risotto"
   m_EditorClassIdentifier: 
-  nom: "Un d\xE9licieux risotto"
+  title: "Un d\xE9licieux risotto"
   description: "Ajoutez du poivre... Et voil\xE0 c'est pr\xEAt !"
-  descriptionDetaillee: "Sacrifiez une INVOCATION de votre terrain ayant au moins
+  detailedDescription: "Sacrifiez une INVOCATION de votre terrain ayant au moins
     5 \xE9toiles d'ATQ ou de DEF pour r\xE9cup\xE9rer l'int\xE9gralit\xE9 de vos
     \xE9toiles de vie."
   type: 1
   materialCard: {fileID: 2100000, guid: e75ce7d42c59bcb4194fc7f32b30be64, type: 2}
   collector: 0
-  effectCardEffect: {fileID: 11400000, guid: 75a42e943c7d67344a6e80c8ad91d33e, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0
+  EffectAbilities: 17000000

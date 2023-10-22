@@ -12,27 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Sangoku
   m_EditorClassIdentifier: 
-  nom: Sangoku
+  title: Sangoku
   description: Oui c'est le comptable de fistiland. Je sais, ce jeu est bizarre.
-  descriptionDetaillee: "Cette carte peut se soustraire de ses \xE9toiles d'ATQ et
+  detailedDescription: "Cette carte peut se soustraire de ses \xE9toiles d'ATQ et
     de DEF pour les additionner sur les m\xEAmes statistiques d'autres cartes INVOCATION
-    de type \xAB Fistiland \xBB sur le terrain. Les \xE9toiles distribu\xE9es sont
-    annul\xE9es si cette carte est d\xE9truite."
+    de type \" Fistiland \" sur le terrain. Les \xE9toiles distribu\xE9es sont annul\xE9es
+    si cette carte est d\xE9truite."
   type: 4
   materialCard: {fileID: 2100000, guid: d9388356848b23b4f85fb853bd28a149, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 02000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 11400000, guid: bf0bc784af2e9dd4fa421cfcaf7e6f1c,
-    type: 2}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 02000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 3a000000

@@ -12,25 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: L'homme-banane
   m_EditorClassIdentifier: 
-  nom: L'homme-banane
+  title: L'homme-banane
   description: "Il a toujours la p\xEAche... Les jeux de mots dans cette s\xE9rie
     de cartes d\xE9foncent tout !"
-  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e et subsister sur
-    le terrain que si s'y trouve une carte INVOCATION de type \xAB Comics \xBB."
-  type: invocation
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e et subsister sur
+    le terrain que si s'y trouve une carte INVOCATION de type \" Comics \"."
+  type: 4
   materialCard: {fileID: 2100000, guid: b526156dcefb918478ad8f41fc079543, type: 2}
   collector: 0
-  attack: 2.5
-  defense: 4
-  family:
-  - comics
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: 77fe8d16de9b7384395c91b4b05b1b4f,
-    type: 2}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
+  _invocationCardStats:
+    Attack: 2.5
+    Defense: 4
+    Families: 00000000
+    AffectedByEffect: 1
+  Conditions: 0e000000
+  Abilities: 22000000

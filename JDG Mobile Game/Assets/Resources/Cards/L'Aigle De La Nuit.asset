@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: L'Aigle De La Nuit
   m_EditorClassIdentifier: 
-  nom: L'Aigle De La Nuit
+  title: L'Aigle De La Nuit
   description: Facilement confondu avec Le Pygargue.
-  descriptionDetaillee: "C'est juste un mec en costume de motard ! Tu ne croyais
-    quand m\xEAme pas que tu allais avoir un effet bonus pour \xE7a, non ?"
-  type: invocation
+  detailedDescription: "C'est juste un mec en costume de motard ! Tu ne croyais quand
+    m\xEAme pas que tu allais avoir un effet bonus pour \xE7a, non ?"
+  type: 4
   materialCard: {fileID: 2100000, guid: e87680881b87cd94fba1a1e6f99441ee, type: 2}
-  attack: 3
-  defense: 2
-  family:
-  - comics
-  equipmentCard: {fileID: 0}
+  collector: 0
+  _invocationCardStats:
+    Attack: 3
+    Defense: 2
+    Families: 00000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 3b000000

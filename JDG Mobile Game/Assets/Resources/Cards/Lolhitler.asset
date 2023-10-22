@@ -12,29 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Lolhitler
   m_EditorClassIdentifier: 
-  nom: Lolhitler
+  title: Lolhitler
   description: Une carte qui va faire fureur.
-  descriptionDetaillee: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur
-    le terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre
-    terrain 2 cartes INVOCATION de la famille \xAB Incarnation \xBB. Cette carte
-    a la capacit\xE9 de d\xE9truire une carte TERRAIN sur le terrain le tour de son
-    invocation en sautant son tour d'attaque et en divisant sa DEF par 2."
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e directement sur le
+    terrain. Invocable par invocation sp\xE9ciale, ou en sacrifiant sur votre terrain
+    2 cartes INVOCATION de la famille \" Incarnation \". Cette carte a la capacit\xE9
+    de d\xE9truire une carte TERRAIN sur le terrain le tour de son invocation en
+    sautant son tour d'attaque et en divisant sa DEF par 2."
   type: 4
   materialCard: {fileID: 2100000, guid: 8bd316b65b1e8e74ba8d13d629385739, type: 2}
   collector: 0
-  attack: 3.5
-  defense: 4
-  family: 05000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: 42006b0562dc6e3498552471cd616848,
-    type: 2}
-  invocationStartEffect: {fileID: 11400000, guid: 20041ebf433c0234f89a7e98bb468ba7,
-    type: 2}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 3.5
+    Defense: 4
+    Families: 05000000
+    AffectedByEffect: 1
+  Conditions: 0f000000
+  Abilities: 2300000024000000

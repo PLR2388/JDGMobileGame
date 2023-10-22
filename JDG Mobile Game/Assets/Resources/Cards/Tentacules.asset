@@ -12,28 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Tentacules
   m_EditorClassIdentifier: 
-  nom: Tentacules
+  title: Tentacules
   description: "Parce que forc\xE9ment \xE7a devait arriver."
-  descriptionDetaillee: "Cette carte ne peut-\xEAtre invoqu\xE9e et subsister sur
-    le terrain que si s'y trouve au moins une autre carte de type \xAB Japon \xBB.
-    Tant que cette carte reste sur le terrain, les cartes INVOCATION adverses ne
-    peuvent pas attaquer d'autre carte que celle-ci."
+  detailedDescription: "Cette carte ne peut \xEAtre invoqu\xE9e et subsister sur
+    votre terrain que si s'y trouve une autre carte de type \" Japon \". Tant que
+    cette carte reste sur le terrain, les cartes INVOCATION adverses ne peuvent pas
+    attaquer d'autre carte que celle-ci."
   type: 4
   materialCard: {fileID: 2100000, guid: 778f3bf8428a5f84da0f5f505129f3f8, type: 2}
   collector: 0
-  attack: 2.5
-  defense: 4
-  family: 06000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 11400000, guid: 517b2c377df6f744187950ca7821a55a,
-    type: 2}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: 8e61308b80999504d8a131a8529b6aac,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2.5
+    Defense: 4
+    Families: 06000000
+    AffectedByEffect: 1
+  Conditions: 16000000
+  Abilities: 3700000000000000

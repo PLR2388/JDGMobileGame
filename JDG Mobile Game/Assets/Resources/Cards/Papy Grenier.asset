@@ -12,27 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Papy Grenier
   m_EditorClassIdentifier: 
-  nom: Papy Grenier
+  title: Papy Grenier
   description: "Et la description de la carte \xE7a sera pour une prochaine fois."
-  descriptionDetaillee: "Cette carte ne peut rester qu'un seul tour sur le terrain
+  detailedDescription: "Cette carte ne peut rester qu'un seul tour sur le terrain
     avant d'aller directement \xE0 la poubelle jaune. Le tour fini, vous pouvez ajouter
-    \xE0 votre main une carte \xAB La Mort \xBB depuis votre pioche."
+    \xE0 votre main une carte \" La Mort \" depuis votre pioche."
   type: 4
   materialCard: {fileID: 2100000, guid: 6bbe4f31efd733e429cd67cfe07d2ebe, type: 2}
   collector: 0
-  attack: 4
-  defense: 2
-  family: 04000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: 022636aa8dc814448be9fffa182f5fcf,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 11400000, guid: 0141e1807edc22544b8952c28c17ec6c,
-    type: 2}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 4
+    Defense: 2
+    Families: 04000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 2b0000002c000000

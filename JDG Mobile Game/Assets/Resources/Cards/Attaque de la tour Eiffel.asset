@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Attaque de la tour Eiffel
   m_EditorClassIdentifier: 
-  nom: Attaque de la tour Eiffel
+  title: Attaque de la tour Eiffel
   description: Des passes quoi...
-  descriptionDetaillee: "Cette carte vous permet ce tour de combiner ensemble 2 cartes
+  detailedDescription: "Cette carte vous permet ce tour de combiner ensemble 2 cartes
     INVOCATION pr\xE9sentes sur votre terrain. Leurs \xE9toiles d'ATQ et de DEF sont
     additionn\xE9es, et les cartes combin\xE9es comptent comme une seule carte. Si
     votre combinaison est d\xE9truite, toutes les cartes qui la composent le sont."

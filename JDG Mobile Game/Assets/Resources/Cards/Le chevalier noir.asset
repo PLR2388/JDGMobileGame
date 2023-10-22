@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Le chevalier noir
   m_EditorClassIdentifier: 
-  nom: Le chevalier noir
+  title: Le chevalier noir
   description: Non, non, je... Pas de blague.
-  descriptionDetaillee: "Ce jeu de mot vaut d\xE9j\xE0 tous les effets bonus du monde."
-  type: invocation
+  detailedDescription: "Ce jeu de mot vaut d\xE9j\xE0 tous les effets bonus du monde."
+  type: 4
   materialCard: {fileID: 2100000, guid: 212364e92d6d57843803cb64d4fe617b, type: 2}
-  attack: 2
-  defense: 3
-  family:
-  - comics
-  equipmentCard: {fileID: 0}
+  collector: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 3
+    Families: 00000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 3b000000

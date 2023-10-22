@@ -12,27 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Sheik Point
   m_EditorClassIdentifier: 
-  nom: Sheik Point
+  title: Sheik Point
   description: "Je d\xE9die cette blague \xE0 toute l'\xE9quipe d'\xE9criture.. qui
     n'a pas souhait\xE9e \xEAtre cr\xE9dit\xE9e..."
-  descriptionDetaillee: "Vous pouvez pendant votre phase de pose choisir de sacrifier
+  detailedDescription: "Vous pouvez pendant votre phase de pose choisir de sacrifier
     cette carte pour faire l'invocation sp\xE9ciale sur votre terrain d'une autre
     carte INVOCATION non-brillante depuis votre poubelle jaune."
   type: 4
   materialCard: {fileID: 2100000, guid: 60924881a4773104f8c96c09778cc36a, type: 2}
   collector: 0
-  attack: 1
-  defense: 1
-  family: 04000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 11400000, guid: b1a910798a41afe49acbcdedadc67055,
-    type: 2}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 1
+    Defense: 1
+    Families: 04000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 32000000

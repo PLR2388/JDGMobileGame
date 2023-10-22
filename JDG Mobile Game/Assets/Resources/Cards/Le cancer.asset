@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Le cancer
   m_EditorClassIdentifier: 
-  nom: Le cancer
+  title: Le cancer
   description: "Les blagues de canc\xE9reux sont toujours les plus dr\xF4les."
-  descriptionDetaillee: "Si votre adversaire fait une invocation sp\xE9ciale ou normale
+  detailedDescription: "Si votre adversaire fait une invocation sp\xE9ciale ou normale
     d'une INVOCATION sur le terrain, cette carte est envoy\xE9e directement \xE0
     la poubelle jaune."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 8779aa0457ebaa349989287dfb42cd85, type: 2}
+  collector: 0

@@ -12,24 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: David Goodenough
   m_EditorClassIdentifier: 
-  nom: David Goodenough
+  title: David Goodenough
   description: Le personnage que tout le monde attendait.
-  descriptionDetaillee: Ok, elle fait rien mais elle est pas si mal cette carte non
+  detailedDescription: Ok, elle fait rien mais elle est pas si mal cette carte non
     ?
   type: 4
   materialCard: {fileID: 2100000, guid: 180a63e7c011b3342ad2bd417987fb5d, type: 2}
   collector: 0
-  attack: 2.5
-  defense: 2.5
-  family: 01000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2.5
+    Defense: 2.5
+    Families: 01000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 3b000000

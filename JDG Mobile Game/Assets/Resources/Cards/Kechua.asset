@@ -12,24 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Kechua
   m_EditorClassIdentifier: 
-  nom: Kechua
+  title: Kechua
   description: Anana wa oni wananou osheshtach.
-  descriptionDetaillee: "J'ai d\xE9coup\xE9 un morceau de la nappe de ma m\xE8re
-    pour faire ce costume. Donc, \xE9videmment que cette carte ne fait rien de sp\xE9cial."
+  detailedDescription: "J'ai d\xE9coup\xE9 un morceau de la nappe de ma m\xE8re pour
+    faire ce costume. Donc, \xE9videmment que cette carte ne fait rien de sp\xE9cial."
   type: 4
   materialCard: {fileID: 2100000, guid: e0b154a99c7b6f740a79c28c2cdbc46b, type: 2}
   collector: 0
-  attack: 2
-  defense: 3
-  family: 04000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 3
+    Families: 04000000
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 3b000000

@@ -12,26 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Dresseur de Bidulmon
   m_EditorClassIdentifier: 
-  nom: Dresseur de Bidulmon
+  title: Dresseur de Bidulmon
   description: Expert en braconnage depuis 1997.
-  descriptionDetaillee: "Ajoutez 1 \xE9toile d'ATQ et de DEF \xE0 cette carte pour
-    chaque autre carte de type \xAB Japon \xBB pr\xE9sente sur le terrain dont les
-    statistiques d'ATQ et de DEF de base sont \xE9gales \xE0 2."
+  detailedDescription: "Ajoutez 1 \xE9toile d'ATQ et de DEF \xE0 cette carte pour
+    chaque autre carte de type \" Japon \" pr\xE9sente sur le terrain dont les statistiques
+    d'ATQ et de DEF de base sont \xE9gales \xE0 2."
   type: 4
   materialCard: {fileID: 2100000, guid: a673de8f7c61df043adf0f1d3bf317f8, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 0600000007000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 0}
-  invocationPermEffect: {fileID: 11400000, guid: fa62aea31d0eb1140be89089b3415a79,
-    type: 2}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 0600000007000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 0}
+    InvocationPermEffect: {fileID: 11400000, guid: fa62aea31d0eb1140be89089b3415a79,
+      type: 2}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 11000000

@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: Youtube Money
   m_EditorClassIdentifier: 
-  nom: Youtube Money
+  title: Youtube Money
   description: Muchos Dineros !
-  descriptionDetaillee: "Transf\xE9rez une INVOCATION du terrain de votre adversaire
-    \xE0 votre propre main, ce qui vous permet d'en prendre le contr\xF4le pendant
+  detailedDescription: "Transf\xE9rez une INVOCATION du terrain de votre adversaire
+    \xE0 votre propre terrain ce qui vous permet d'en prendre le contr\xF4le pendant
     ce tour."
   type: 1
   materialCard: {fileID: 2100000, guid: 3614a6f84bc8df248a966208e5d56615, type: 2}
   collector: 0
-  effectCardEffect: {fileID: 11400000, guid: 3422f9bf54305784d995f4eae8d0a7f4, type: 2}
-  lifeTime: 1
+  lifeTime: 2
+  checkTurn: 0
+  affectPv: 0
+  EffectAbilities: 18000000

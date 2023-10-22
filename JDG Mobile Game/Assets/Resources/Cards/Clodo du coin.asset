@@ -12,26 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32082e37a1071a43ae910280ac85b2b, type: 3}
   m_Name: Clodo du coin
   m_EditorClassIdentifier: 
-  nom: Clodo du coin
+  title: Clodo du coin
   description: "Hey, une p'tite pi\xE8ce, c'est bon, vazy !"
-  descriptionDetaillee: "Invoquer cette carte sur votre terrain vous permet d'aller
-    chercher dans votre pioche la carte \xAB Lyc\xE9e magique Georges Pompidou \xBB
-    pour l'ajouter \xE0 votre main."
+  detailedDescription: "Invoquer cette carte sur votre terrain vous permet d'aller
+    chercher dans votre pioche la carte \" Lyc\xE9e magique Georges Pompidou \" pour
+    l'ajouter \xE0 votre main."
   type: 4
   materialCard: {fileID: 2100000, guid: ddde7ef868010b745b6629a846f1220a, type: 2}
   collector: 0
-  attack: 2
-  defense: 2
-  family: 0b000000
-  equipmentCard: {fileID: 0}
-  invocationConditions: {fileID: 0}
-  invocationStartEffect: {fileID: 11400000, guid: 4a713c2b4f3e3264fb89b673d407a937,
-    type: 2}
-  invocationPermEffect: {fileID: 0}
-  invocationActionEffect: {fileID: 0}
-  invocationDeathEffect: {fileID: 0}
-  bonusAttack: 0
-  bonusDefense: 0
-  numberTurnOnField: 0
-  numberDeaths: 0
-  blockAttackNextTurn: 0
+  _invocationCardStats:
+    Attack: 2
+    Defense: 2
+    Families: 0b000000
+    InvocationConditions: {fileID: 0}
+    InvocationStartEffect: {fileID: 11400000, guid: 4a713c2b4f3e3264fb89b673d407a937,
+      type: 2}
+    InvocationPermEffect: {fileID: 0}
+    InvocationActionEffect: {fileID: 0}
+    InvocationDeathEffect: {fileID: 0}
+    AffectedByEffect: 1
+  Conditions: 
+  Abilities: 0c000000

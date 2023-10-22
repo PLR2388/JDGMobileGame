@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7db7b3a7aa13b64fbb830b3cb1adbe2, type: 3}
   m_Name: "Petite portions de \xAB riz \xBB"
   m_EditorClassIdentifier: 
-  nom: "Petite portions de \xAB riz \xBB"
+  title: "Petite portions de \xAB riz \xBB"
   description: "Plot twist : c'\xE9tait pas du riz."
-  descriptionDetaillee: Vos cartes INVOCATION peuvent attaquer 2 fois chacune pendant
+  detailedDescription: Vos cartes INVOCATION peuvent attaquer 2 fois chacune pendant
     ce tour.
   type: 1
   materialCard: {fileID: 2100000, guid: 43a7874d82e344c4fa54730fd25fef3c, type: 2}
   collector: 0
-  effectCardEffect: {fileID: 11400000, guid: 5f3b270a2359dc44faa287d7fd84e0aa, type: 2}
   lifeTime: 1
+  checkTurn: 0
+  affectPv: 0
+  EffectAbilities: 11000000

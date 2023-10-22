@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742b51389cec5e448bfa8bf469f8dd7c, type: 3}
   m_Name: Injonction du tribunal
   m_EditorClassIdentifier: 
-  nom: Injonction du tribunal
+  title: Injonction du tribunal
   description: "Pour vous emp\xEAcher de faire cette blague."
-  descriptionDetaillee: "D\xE9faussez une carte de votre main pour annuler l'activation
+  detailedDescription: "D\xE9faussez une carte de votre main pour annuler l'activation
     d'une carte brillante jou\xE9e par votre adversaire et l'envoyer \xE0 la poubelle
     jaune."
-  type: contre
+  type: 0
   materialCard: {fileID: 2100000, guid: 95d33fdb89cc0df459ba978860360c54, type: 2}
   collector: 1

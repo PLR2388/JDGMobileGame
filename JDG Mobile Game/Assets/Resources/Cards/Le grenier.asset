@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe3350d66d1ba9740bca6993fc91c5f3, type: 3}
   m_Name: Le grenier
   m_EditorClassIdentifier: 
-  nom: Le grenier
+  title: Le grenier
   description: "En r\xE9alit\xE9 c'est le salon, mais on s'en fout."
-  descriptionDetaillee: Permet au joueur ayant cette carte sur son terrain de piocher
+  detailedDescription: Permet au joueur ayant cette carte sur son terrain de piocher
     2 cartes par tour.
   type: 3
   materialCard: {fileID: 2100000, guid: d6b1b09dd90d9384fae803c1af000d47, type: 2}
   collector: 1
   family: 4
   fieldCardEffect: {fileID: 11400000, guid: 1fb4a636380df2a47830b496f73eb9c7, type: 2}
+  FieldAbilities: 08000000
