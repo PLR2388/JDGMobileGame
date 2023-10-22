@@ -3,23 +3,39 @@ using UnityEngine.Events;
 
 public class InputManager : Singleton<InputManager>
 {
-    [SerializeField]
-    private float clickDuration = 2f;
+    [SerializeField] private float clickDuration = 2f;
 
     private bool isTouchDetectionDisabled;
     private bool isTouchInProgress;
     private float totalDownTime;
 
     /// <summary>
+    /// Checks if the user tap at a random location
+    /// </summary>
+    public static bool IsTap
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return Input.GetKeyDown(KeyCode.Space);
+#elif UNITY_ANDROID
+        return Input.touchCount > 0;
+#else
+        return false;
+#endif
+        }
+    }
+
+    /// <summary>
     /// Checks if the user started a touch or click input.
     /// </summary>
     private bool IsTouch => Input.GetMouseButtonDown(0);
-    
+
     /// <summary>
     /// Checks if the user is continuously touching or clicking.
     /// </summary>
     private bool IsTouching => Input.GetMouseButton(0);
-    
+
     /// <summary>
     /// Checks if the user just stopped a touch or click input.
     /// </summary>
@@ -50,7 +66,7 @@ public class InputManager : Singleton<InputManager>
     {
         isTouchDetectionDisabled = false;
     }
-    
+
     /// <summary>
     /// Disables touch detection.
     /// </summary>
@@ -84,7 +100,7 @@ public class InputManager : Singleton<InputManager>
         HandleTouchInput();
         HandleAndroidBackButton();
     }
-    
+
     /// <summary>
     /// Handles touch and click input detection.
     /// </summary>
@@ -98,7 +114,7 @@ public class InputManager : Singleton<InputManager>
             isTouchInProgress = true;
             OnTouch.Invoke();
         }
-        
+
         if (!isTouchInProgress) return;
         if (IsTouching)
         {
@@ -116,13 +132,12 @@ public class InputManager : Singleton<InputManager>
             OnReleaseTouch.Invoke();
         }
     }
-    
+
     /// <summary>
     /// Handles the behavior for the Android back button.
     /// </summary>
     private static void HandleAndroidBackButton()
     {
-
         if (Application.platform == RuntimePlatform.Android &&
             Input.GetKeyDown(KeyCode.Escape))
         {
