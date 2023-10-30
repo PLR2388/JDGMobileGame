@@ -71,7 +71,7 @@ public class DialogueUI : MonoBehaviour
     public void ShowDialogue(DialogueObject dialogueObject)
     {
         dialogueBox.SetActive(true);
-        StartCoroutine(StepThroughDialogue((dialogueObject)));
+        StartCoroutine(StepThroughDialogue(dialogueObject));
     }
 
     /// <summary>
