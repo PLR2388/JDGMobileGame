@@ -7,6 +7,7 @@
     "com.unity.multiplayer.center": "1.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.test-framework": "1.6.0",
+    "jp.hadashikick.vcontainer": "1.15.4",
     "com.unity.timeline": "1.8.9",
     "com.unity.ugui": "2.0.0",
     "com.unity.modules.accessibility": "1.0.0",
