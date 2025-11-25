@@ -1,3 +1,4 @@
+using System.Linq;
 using JDG.Application.Repositories;
 using JDG.Domain.Entities;
 using JDG.Domain.Events;

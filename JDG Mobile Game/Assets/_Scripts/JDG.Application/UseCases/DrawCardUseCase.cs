@@ -50,7 +50,7 @@ namespace JDG.Application.UseCases
             // Publish event
             _eventBus.Publish(new CardDrawnEvent
             {
-                PlayerId = playerId.ToCardOwner(),
+                Owner = playerId.ToCardOwner(),
                 CardId = drawnCard.Id.ToGuid(),
                 CardTitle = drawnCard.Title,
                 DeckCount = player.DeckCount,

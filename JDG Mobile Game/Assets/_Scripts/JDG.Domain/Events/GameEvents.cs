@@ -58,6 +58,8 @@ namespace JDG.Domain.Events
         public Guid CardId;
         public CardOwner Owner;
         public string CardTitle;
+        public int DeckCount;
+        public int HandCount;
     }
 
     /// <summary>
@@ -69,6 +71,8 @@ namespace JDG.Domain.Events
         public CardOwner Owner;
         public CardType CardType;
         public string CardTitle;
+        public int HandCount;
+        public int FieldCount;
     }
 
     /// <summary>
@@ -136,6 +140,7 @@ namespace JDG.Domain.Events
         public Guid DefenderId;
         public int Damage;
         public bool DefenderDestroyed;
+        public bool AttackerDestroyed;
     }
 
     /// <summary>
@@ -158,6 +163,29 @@ namespace JDG.Domain.Events
         public CardOwner Player;
         public int OldShields;
         public int NewShields;
+    }
+
+    /// <summary>
+    /// Published when a player takes damage (after shields).
+    /// </summary>
+    public struct PlayerDamagedEvent
+    {
+        public CardOwner PlayerId;
+        public int Damage;
+        public int HealthDamage;
+        public int CurrentHealth;
+        public bool IsDefeated;
+    }
+
+    /// <summary>
+    /// Published when a new game starts.
+    /// </summary>
+    public struct GameStartedEvent
+    {
+        public CardOwner Player1Id;
+        public CardOwner Player2Id;
+        public CardOwner StartingPlayer;
+        public int TurnNumber;
     }
 
     /// <summary>
