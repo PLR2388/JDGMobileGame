@@ -1,4 +1,5 @@
 using System;
+using JDG.Domain.ValueObjects;
 
 namespace JDG.Domain.Events
 {
@@ -178,7 +179,7 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct TouchStartedEvent
     {
-        public UnityEngine.Vector2 Position;
+        public Vector2 Position;
         public float Timestamp;
     }
 
@@ -188,7 +189,7 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct TouchEndedEvent
     {
-        public UnityEngine.Vector2 Position;
+        public Vector2 Position;
         public float Duration;
     }
 
@@ -198,7 +199,7 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct LongTouchEvent
     {
-        public UnityEngine.Vector2 Position;
+        public Vector2 Position;
         public float Duration;
     }
 

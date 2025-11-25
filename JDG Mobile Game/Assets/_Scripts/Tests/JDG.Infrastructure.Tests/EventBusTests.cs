@@ -2,6 +2,8 @@ using System;
 using NUnit.Framework;
 using JDG.Application;
 using JDG.Infrastructure.Events;
+using JDG.Domain;
+using JDG.Domain.Events;
 
 namespace JDG.Infrastructure.Tests
 {
