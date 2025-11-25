@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JDG.Domain;
 using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
