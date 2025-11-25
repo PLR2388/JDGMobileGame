@@ -17,7 +17,7 @@ namespace JDG.Domain.Tests.Entities
             // Arrange
             var id = CardId.New();
             var families = new[] { CardFamily.Human, CardFamily.Wizard };
-            var abilities = new[] { AbilityName.DrawCard, AbilityName.GainShield };
+            var abilities = new[] { AbilityName.Draw2Cards, AbilityName.Win1Atk1DefDeveloper };
             var conditions = new[] { ConditionName.WizardOnField };
 
             // Act
@@ -441,13 +441,13 @@ namespace JDG.Domain.Tests.Entities
                 3, 3,
                 new[] { CardFamily.Human },
                 false,
-                abilities: new[] { AbilityName.DrawCard, AbilityName.GainShield }
+                abilities: new[] { AbilityName.Draw2Cards, AbilityName.Win1Atk1DefDeveloper }
             );
 
             // Assert
-            Assert.IsTrue(card.HasAbility(AbilityName.DrawCard));
-            Assert.IsTrue(card.HasAbility(AbilityName.GainShield));
-            Assert.IsFalse(card.HasAbility(AbilityName.DestroyCard));
+            Assert.IsTrue(card.HasAbility(AbilityName.Draw2Cards));
+            Assert.IsTrue(card.HasAbility(AbilityName.Win1Atk1DefDeveloper));
+            Assert.IsFalse(card.HasAbility(AbilityName.KillOpponentInvocation));
         }
 
         [Test]
@@ -543,7 +543,7 @@ namespace JDG.Domain.Tests.Entities
                 defense: 3,
                 families: new[] { CardFamily.Human, CardFamily.Wizard },
                 affectedByEffect: true,
-                abilities: new[] { AbilityName.DrawCard }
+                abilities: new[] { AbilityName.Draw2Cards }
             );
             card.SetOwner(CardOwner.Player1);
 
