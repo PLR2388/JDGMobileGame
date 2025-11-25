@@ -69,14 +69,14 @@ namespace JDG.Domain.Entities
             IsCollector = isCollector;
             Owner = owner;
             Stats = stats;
-            Families = families?.ToList().AsReadOnly() ?? Array.Empty<CardFamily>();
+            Families = families?.ToList().AsReadOnly() ?? new List<CardFamily>().AsReadOnly();
             AffectedByEffect = affectedByEffect;
-            Conditions = conditions?.ToList().AsReadOnly() ?? Array.Empty<ConditionName>();
-            Abilities = abilities?.ToList().AsReadOnly() ?? Array.Empty<AbilityName>();
-            EquipmentAbilities = equipmentAbilities?.ToList().AsReadOnly() ?? Array.Empty<EquipmentAbilityName>();
+            Conditions = conditions?.ToList().AsReadOnly() ?? new List<ConditionName>().AsReadOnly();
+            Abilities = abilities?.ToList().AsReadOnly() ?? new List<AbilityName>().AsReadOnly();
+            EquipmentAbilities = equipmentAbilities?.ToList().AsReadOnly() ?? new List<EquipmentAbilityName>().AsReadOnly();
             FieldFamily = fieldFamily;
-            FieldAbilities = fieldAbilities?.ToList().AsReadOnly() ?? Array.Empty<FieldAbilityName>();
-            EffectAbilities = effectAbilities?.ToList().AsReadOnly() ?? Array.Empty<EffectAbilityName>();
+            FieldAbilities = fieldAbilities?.ToList().AsReadOnly() ?? new List<FieldAbilityName>().AsReadOnly();
+            EffectAbilities = effectAbilities?.ToList().AsReadOnly() ?? new List<EffectAbilityName>().AsReadOnly();
         }
 
         #region Factory Methods
