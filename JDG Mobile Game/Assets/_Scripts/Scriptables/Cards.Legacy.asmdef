@@ -1,12 +1,8 @@
 {
-    "name": "JDG.Presentation",
-    "rootNamespace": "JDG.Presentation",
+    "name": "Cards.Legacy",
+    "rootNamespace": "",
     "references": [
-        "JDG.Domain",
-        "JDG.Application",
-        "JDG.Infrastructure",
-        "VContainer",
-        "Unity.TextMeshPro"
+        "Cards.Types"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
