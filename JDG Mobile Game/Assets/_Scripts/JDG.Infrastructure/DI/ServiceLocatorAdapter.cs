@@ -1,5 +1,6 @@
 using UnityEngine;
 using VContainer;
+using JDG.Application;
 using JDG.Application.Repositories;
 using JDG.Application.UseCases;
 
