@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using JDG.Domain;
 using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;

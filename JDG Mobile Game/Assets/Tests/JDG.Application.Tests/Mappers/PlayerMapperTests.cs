@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using JDG.Application.Mappers;
+using JDG.Domain;
 using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 using JDG.Domain.Enums;
