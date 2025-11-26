@@ -1,6 +1,5 @@
 using System.Linq;
 using JDG.Domain;
-using JDG.Domain.Enums;
 using JDG.Application.Repositories;
 
 namespace JDG.Application.Abilities

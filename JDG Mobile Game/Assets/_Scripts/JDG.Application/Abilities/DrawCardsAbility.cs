@@ -1,4 +1,4 @@
-using JDG.Domain.Enums;
+using JDG.Domain;
 using JDG.Application.UseCases;
 
 namespace JDG.Application.Abilities
