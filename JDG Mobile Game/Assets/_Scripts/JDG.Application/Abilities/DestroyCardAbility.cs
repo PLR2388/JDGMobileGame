@@ -1,5 +1,6 @@
 using System.Linq;
 using JDG.Domain;
+using JDG.Domain.Events;
 using JDG.Application.Repositories;
 
 namespace JDG.Application.Abilities
@@ -68,21 +69,20 @@ namespace JDG.Application.Abilities
             // This would be: var result = _destroyCardUseCase.Execute(opponentId, targetCard.Id);
             // For demonstration, we'll just show the pattern:
 
-            // Move card from field to graveyard (simplified - should be in a use case)
-            bool removed = opponent.RemoveCardFromField(targetCard);
+            // Move card from field to graveyard using Player's method
+            bool destroyed = opponent.DestroyCardFromField(targetCard);
 
-            if (removed)
+            if (destroyed)
             {
-                opponent.AddCardToGraveyard(targetCard);
                 _playerRepository.SavePlayer(opponent);
 
                 // Publish event
                 _eventBus.Publish(new CardDestroyedEvent
                 {
                     CardId = targetCard.Id.ToGuid(),
-                    CardTitle = targetCard.Title,
                     Owner = context.OpponentPlayerId.ToCardOwner(),
-                    DestroyedBy = context.CurrentPlayerId.ToCardOwner()
+                    KilledByCardId = context.SourceCard?.Id.ToGuid(),
+                    Reason = $"Destroyed by ability: {Name}"
                 });
 
                 return AbilityResult.Success($"Destroyed {targetCard.Title}");
