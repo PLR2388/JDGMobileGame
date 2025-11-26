@@ -2,6 +2,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using JDG.Infrastructure.DI;
+using JDG.Infrastructure.Repositories;
 
 namespace JDG.Infrastructure.Bootstrap
 {
@@ -23,6 +24,11 @@ namespace JDG.Infrastructure.Bootstrap
             {
                 ServiceLocator.Initialize(_lifetimeScope.Container);
                 Debug.Log("GameBootstrapper: Service locator initialized");
+
+                // Initialize CardRepository to load all ScriptableObject cards
+                var cardRepository = ServiceLocator.GetCardRepository();
+                cardRepository.Initialize();
+                Debug.Log("GameBootstrapper: CardRepository initialized");
             }
             else
             {

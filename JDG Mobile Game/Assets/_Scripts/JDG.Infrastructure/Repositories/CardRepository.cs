@@ -80,26 +80,37 @@ namespace JDG.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// Loads card definitions from ScriptableObjects.
-        /// TODO: Replace with actual ScriptableObject loading logic.
+        /// Loads card definitions from ScriptableObjects in Resources/Cards.
+        /// Converts all old ScriptableObject cards to domain Card entities.
         /// </summary>
         private void LoadCardDefinitions()
         {
-            // This is a placeholder implementation
-            // In the real implementation, you would:
-            // 1. Load all InvocationCard, EquipmentCard, FieldCard, EffectCard, ContreCard ScriptableObjects
-            // 2. Convert each to a domain Card entity
-            // 3. Store in _cardDefinitions dictionary
+            int loadedCount = 0;
 
-            // Example of what this would look like:
-            // var invocationCards = Resources.LoadAll<InvocationCard>("Cards/Invocations");
-            // foreach (var scriptableCard in invocationCards)
-            // {
-            //     var domainCard = ConvertScriptableCardToDomain(scriptableCard);
-            //     _cardDefinitions[domainCard.Title] = domainCard;
-            // }
+            // Load all cards from Resources/Cards folder
+            // Unity's Resources.LoadAll loads from any Resources folder in the project
+            var allScriptableCards = Resources.LoadAll<Cards.Card>("Cards");
 
-            Debug.Log("CardRepository: LoadCardDefinitions called - implement ScriptableObject loading");
+            foreach (var scriptableCard in allScriptableCards)
+            {
+                try
+                {
+                    // Convert ScriptableObject to domain Card entity
+                    var domainCard = CardConverter.ConvertToDomain(scriptableCard);
+
+                    if (domainCard != null)
+                    {
+                        _cardDefinitions[domainCard.Title] = domainCard;
+                        loadedCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Failed to convert card '{scriptableCard.Title}': {ex.Message}");
+                }
+            }
+
+            Debug.Log($"CardRepository: Loaded {loadedCount} card definitions from ScriptableObjects");
         }
 
         /// <summary>
