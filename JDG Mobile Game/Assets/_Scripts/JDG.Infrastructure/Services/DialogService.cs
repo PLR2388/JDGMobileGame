@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using JDG.Application.Services;
 using UnityEngine;
 
+// Alias to avoid conflict with global CardSelectorConfig in MessageBox/Config.cs
+using DomainCardSelectorConfig = JDG.Application.Services.CardSelectorConfig;
+
 namespace JDG.Infrastructure.Services
 {
     /// <summary>
@@ -75,7 +78,7 @@ namespace JDG.Infrastructure.Services
             return await tcs.Task;
         }
 
-        public async Task<List<Guid>> ShowCardSelectorAsync(CardSelectorConfig config)
+        public async Task<List<Guid>> ShowCardSelectorAsync(DomainCardSelectorConfig config)
         {
             if (_canvas == null)
             {
