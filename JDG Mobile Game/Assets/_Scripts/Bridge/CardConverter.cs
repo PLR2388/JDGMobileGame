@@ -14,6 +14,11 @@ using LegacyCard = Cards.Card;
 using DomainCard = JDG.Domain.Entities.Card;
 using LegacyCardFamily = Cards.CardFamily;
 using DomainCardFamily = JDG.Domain.Enums.CardFamily;
+using DomainAbilityName = JDG.Domain.AbilityName;
+using DomainConditionName = JDG.Domain.Enums.ConditionName;
+using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
+using DomainFieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
+using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 
 namespace JDG.Infrastructure.Bridge
 {
@@ -79,12 +84,12 @@ namespace JDG.Infrastructure.Bridge
             // Convert old AbilityName to new domain AbilityName
             var abilities = scriptableCard.Abilities
                 ?.Select(ConvertAbilityName)
-                .ToArray() ?? new AbilityName[0];
+                .ToArray() ?? new DomainAbilityName[0];
 
             // Convert old ConditionName to new domain ConditionName
             var conditions = scriptableCard.Conditions
                 ?.Select(ConvertConditionName)
-                .ToArray() ?? new ConditionName[0];
+                .ToArray() ?? new DomainConditionName[0];
 
             return DomainCard.CreateInvocation(
                 cardId,
@@ -106,7 +111,7 @@ namespace JDG.Infrastructure.Bridge
             // Convert old EquipmentAbilityName to new domain EquipmentAbilityName
             var abilities = scriptableCard.EquipmentAbilities
                 ?.Select(ConvertEquipmentAbilityName)
-                .ToArray() ?? new EquipmentAbilityName[0];
+                .ToArray() ?? new DomainEquipmentAbilityName[0];
 
             return DomainCard.CreateEquipment(
                 cardId,
@@ -123,7 +128,7 @@ namespace JDG.Infrastructure.Bridge
             // Convert old FieldAbilityName to new domain FieldAbilityName
             var abilities = scriptableCard.FieldAbilities
                 ?.Select(ConvertFieldAbilityName)
-                .ToArray() ?? new FieldAbilityName[0];
+                .ToArray() ?? new DomainFieldAbilityName[0];
 
             return DomainCard.CreateField(
                 cardId,
@@ -141,7 +146,7 @@ namespace JDG.Infrastructure.Bridge
             // Convert old EffectAbilityName to new domain EffectAbilityName
             var abilities = scriptableCard.EffectAbilities
                 ?.Select(ConvertEffectAbilityName)
-                .ToArray() ?? new EffectAbilityName[0];
+                .ToArray() ?? new DomainEffectAbilityName[0];
 
             return DomainCard.CreateEffect(
                 cardId,
@@ -172,34 +177,34 @@ namespace JDG.Infrastructure.Bridge
             return (DomainCardFamily)System.Enum.Parse(typeof(DomainCardFamily), oldFamily.ToString());
         }
 
-        private static AbilityName ConvertAbilityName(global::AbilityName oldAbility)
+        private static DomainAbilityName ConvertAbilityName(global::AbilityName oldAbility)
         {
             // The enums have the same names, so we can parse
-            return (AbilityName)System.Enum.Parse(typeof(AbilityName), oldAbility.ToString());
+            return (DomainAbilityName)System.Enum.Parse(typeof(DomainAbilityName), oldAbility.ToString());
         }
 
-        private static ConditionName ConvertConditionName(global::ConditionName oldCondition)
+        private static DomainConditionName ConvertConditionName(global::ConditionName oldCondition)
         {
             // The enums have the same names, so we can parse
-            return (ConditionName)System.Enum.Parse(typeof(ConditionName), oldCondition.ToString());
+            return (DomainConditionName)System.Enum.Parse(typeof(DomainConditionName), oldCondition.ToString());
         }
 
-        private static EquipmentAbilityName ConvertEquipmentAbilityName(global::EquipmentAbilityName oldAbility)
+        private static DomainEquipmentAbilityName ConvertEquipmentAbilityName(global::EquipmentAbilityName oldAbility)
         {
             // The enums have the same names, so we can parse
-            return (EquipmentAbilityName)System.Enum.Parse(typeof(EquipmentAbilityName), oldAbility.ToString());
+            return (DomainEquipmentAbilityName)System.Enum.Parse(typeof(DomainEquipmentAbilityName), oldAbility.ToString());
         }
 
-        private static FieldAbilityName ConvertFieldAbilityName(global::FieldAbilityName oldAbility)
+        private static DomainFieldAbilityName ConvertFieldAbilityName(global::FieldAbilityName oldAbility)
         {
             // The enums have the same names, so we can parse
-            return (FieldAbilityName)System.Enum.Parse(typeof(FieldAbilityName), oldAbility.ToString());
+            return (DomainFieldAbilityName)System.Enum.Parse(typeof(DomainFieldAbilityName), oldAbility.ToString());
         }
 
-        private static EffectAbilityName ConvertEffectAbilityName(global::EffectAbilityName oldAbility)
+        private static DomainEffectAbilityName ConvertEffectAbilityName(global::EffectAbilityName oldAbility)
         {
             // The enums have the same names, so we can parse
-            return (EffectAbilityName)System.Enum.Parse(typeof(EffectAbilityName), oldAbility.ToString());
+            return (DomainEffectAbilityName)System.Enum.Parse(typeof(DomainEffectAbilityName), oldAbility.ToString());
         }
     }
 }

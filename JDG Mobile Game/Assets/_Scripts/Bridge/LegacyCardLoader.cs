@@ -35,11 +35,19 @@ namespace JDG.Infrastructure.Bridge
                 return;
             }
 
+            // Cast to concrete type to access Initialize and RegisterCardDefinition methods
+            var concreteRepository = cardRepository as CardRepository;
+            if (concreteRepository == null)
+            {
+                Debug.LogError("LegacyCardLoader: CardRepository is not of type CardRepository!");
+                return;
+            }
+
             // Initialize repository
-            cardRepository.Initialize();
+            concreteRepository.Initialize();
 
             // Load cards using the bridge initializer
-            CardRepositoryInitializer.Initialize(cardRepository);
+            CardRepositoryInitializer.Initialize(concreteRepository);
 
             Debug.Log("LegacyCardLoader: Legacy cards loaded successfully");
         }
