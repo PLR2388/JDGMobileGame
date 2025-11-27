@@ -4,7 +4,6 @@ using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using UnityEngine;
-using Vector2 = UnityEngine.Vector2;
 
 namespace JDG.Infrastructure.Services
 {
@@ -36,12 +35,25 @@ namespace JDG.Infrastructure.Services
 
         public bool IsTouching => Input.GetMouseButton(0);
 
-        public Vector2? GetCurrentTouchPosition()
+        public Position2D? GetCurrentTouchPosition()
         {
             if (!IsTouching)
                 return null;
 
-            return InputManager.TouchPosition;
+            var unityPos = InputManager.TouchPosition;
+            return new Position2D(unityPos.x, unityPos.y);
+        }
+
+        // Helper method to convert Unity Vector2 to Position2D
+        private static Position2D ToPosition2D(Vector2 vector)
+        {
+            return new Position2D(vector.x, vector.y);
+        }
+
+        // Helper method to convert Unity Vector3 to Position2D
+        private static Position2D ToPosition2D(Vector3 vector)
+        {
+            return new Position2D(vector.x, vector.y);
         }
 
         public IDisposable SubscribeToTouchStarted(Action<TouchEventData> handler)
@@ -83,9 +95,10 @@ namespace JDG.Infrastructure.Services
                 _totalDownTime = 0;
                 _isTouchInProgress = true;
 
+                var unityPos = InputManager.TouchPosition;
                 var eventData = new TouchEventData
                 {
-                    Position = InputManager.TouchPosition,
+                    Position = ToPosition2D(unityPos),
                     Timestamp = Time.time,
                     FingerId = 0
                 };
@@ -95,7 +108,7 @@ namespace JDG.Infrastructure.Services
                 NotifyHandlers(_touchStartedHandlers, eventData);
                 _eventBus.Publish(new TouchStartedEvent
                 {
-                    Position = eventData.Position,
+                    Position = unityPos,
                     Timestamp = eventData.Timestamp
                 });
             }
@@ -108,9 +121,10 @@ namespace JDG.Infrastructure.Services
 
                 if (_totalDownTime >= _clickDuration)
                 {
+                    var unityPos = InputManager.TouchPosition;
                     var eventData = new TouchEventData
                     {
-                        Position = InputManager.TouchPosition,
+                        Position = ToPosition2D(unityPos),
                         Timestamp = Time.time,
                         FingerId = 0
                     };
@@ -120,7 +134,7 @@ namespace JDG.Infrastructure.Services
                     NotifyHandlers(_longTouchHandlers, eventData);
                     _eventBus.Publish(new LongTouchEvent
                     {
-                        Position = eventData.Position,
+                        Position = unityPos,
                         Duration = _totalDownTime
                     });
                 }
@@ -130,9 +144,10 @@ namespace JDG.Infrastructure.Services
             {
                 _isTouchInProgress = false;
 
+                var unityPos = InputManager.TouchPosition;
                 var eventData = new TouchEventData
                 {
-                    Position = InputManager.TouchPosition,
+                    Position = ToPosition2D(unityPos),
                     Timestamp = Time.time,
                     FingerId = 0
                 };
@@ -142,7 +157,7 @@ namespace JDG.Infrastructure.Services
                 NotifyHandlers(_touchEndedHandlers, eventData);
                 _eventBus.Publish(new TouchEndedEvent
                 {
-                    Position = eventData.Position,
+                    Position = unityPos,
                     Duration = _totalDownTime
                 });
             }

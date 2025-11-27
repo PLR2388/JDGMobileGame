@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using JDG.Application.Services;
 using JDG.Infrastructure.Services;
-using UnityEngine;
 
 namespace JDG.Infrastructure.Tests.Services
 {
@@ -39,7 +38,7 @@ namespace JDG.Infrastructure.Tests.Services
             var language = service.GetCurrentLanguage();
 
             // Assert
-            Assert.AreEqual(SystemLanguage.French, language);
+            Assert.AreEqual(GameLanguage.French, language);
         }
 
         [Test]
@@ -49,11 +48,11 @@ namespace JDG.Infrastructure.Tests.Services
             var service = new LocalizationService();
 
             // Act
-            service.SetLanguage(SystemLanguage.English);
+            service.SetLanguage(GameLanguage.English);
             var language = service.GetCurrentLanguage();
 
             // Assert
-            Assert.AreEqual(SystemLanguage.English, language);
+            Assert.AreEqual(GameLanguage.English, language);
         }
 
         [Test]

@@ -1,14 +1,28 @@
 using System;
-using UnityEngine;
 
 namespace JDG.Application.Services
 {
+    /// <summary>
+    /// 2D position (pure C# type, no Unity dependency).
+    /// </summary>
+    public struct Position2D
+    {
+        public float X;
+        public float Y;
+
+        public Position2D(float x, float y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
     /// <summary>
     /// Touch event data.
     /// </summary>
     public struct TouchEventData
     {
-        public Vector2 Position;
+        public Position2D Position;
         public float Timestamp;
         public int FingerId;
     }
@@ -46,7 +60,7 @@ namespace JDG.Application.Services
         /// <summary>
         /// Gets the current touch position (if touching).
         /// </summary>
-        Vector2? GetCurrentTouchPosition();
+        Position2D? GetCurrentTouchPosition();
 
         /// <summary>
         /// Checks if currently touching the screen.

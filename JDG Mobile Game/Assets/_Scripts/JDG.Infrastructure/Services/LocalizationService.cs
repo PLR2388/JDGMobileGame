@@ -11,14 +11,14 @@ namespace JDG.Infrastructure.Services
     public class LocalizationService : ILocalizationService
     {
         private readonly LocalizationSystem _localizationSystem;
-        private SystemLanguage _currentLanguage;
+        private GameLanguage _currentLanguage;
 
         public LocalizationService()
         {
             // During migration, get the existing singleton
             // TODO: Later, inject localization dependencies directly
             _localizationSystem = LocalizationSystem.Instance;
-            _currentLanguage = SystemLanguage.French; // Default from original system
+            _currentLanguage = GameLanguage.French; // Default from original system
         }
 
         public string GetLocalizedValue(string key)
@@ -36,7 +36,7 @@ namespace JDG.Infrastructure.Services
             }
         }
 
-        public void SetLanguage(SystemLanguage language)
+        public void SetLanguage(GameLanguage language)
         {
             // LocalizationSystem currently only supports French (hardcoded)
             // Store for future use when proper multi-language support is added
@@ -44,7 +44,7 @@ namespace JDG.Infrastructure.Services
             Debug.LogWarning($"LocalizationService: Multi-language support not yet implemented. Current: {language}");
         }
 
-        public SystemLanguage GetCurrentLanguage()
+        public GameLanguage GetCurrentLanguage()
         {
             return _currentLanguage;
         }
