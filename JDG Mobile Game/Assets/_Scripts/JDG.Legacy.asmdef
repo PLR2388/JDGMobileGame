@@ -1,11 +1,9 @@
 {
-    "name": "JDG.Infrastructure",
-    "rootNamespace": "JDG.Infrastructure",
+    "name": "JDG.Legacy",
+    "rootNamespace": "",
     "references": [
-        "JDG.Domain",
-        "JDG.Application",
-        "JDG.Legacy",
-        "VContainer"
+        "Unity.TextMeshPro",
+        "Newtonsoft.Json"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
