@@ -42,15 +42,10 @@ namespace JDG.Application.UseCases
                 TurnNumber = _gameStateRepository.TurnNumber
             });
 
-            // Switch to next player
+            // Switch to next player and increment turn
             _gameStateRepository.SwitchPlayer();
+            _gameStateRepository.IncrementTurn();
             var newPlayer = _gameStateRepository.CurrentPlayer;
-
-            // Increment turn if we're back to Player1
-            if (newPlayer == PlayerId.Player1)
-            {
-                _gameStateRepository.IncrementTurn();
-            }
 
             _eventBus.Publish(new PlayerTurnChangedEvent
             {

@@ -186,6 +186,10 @@ namespace JDG.Infrastructure.Tests
             _eventBus.Subscribe<TestEvent>(evt => throw new Exception("Test exception"));
             _eventBus.Subscribe<TestEvent>(evt => callCount2++);
 
+            // Expect the error log from the exception
+            UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Error,
+                new System.Text.RegularExpressions.Regex("EventBus: Error in handler.*Test exception"));
+
             // Act
             _eventBus.Publish(new TestEvent());
 

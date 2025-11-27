@@ -36,10 +36,32 @@ namespace JDG.Infrastructure.Repositories
         public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
         {
             // Convert CardIds to Card instances
-            var deckCards = deckCardIds
-                .Select(cardId => _cardRepository.GetCard(cardId))
-                .Where(card => card != null)
-                .ToList();
+            // First try to get existing instances, then try to get from definitions
+            var deckCards = new List<Card>();
+
+            foreach (var cardId in deckCardIds)
+            {
+                var card = _cardRepository.GetCard(cardId);
+
+                // If not found as instance, try to find in definitions and create instance
+                if (card == null)
+                {
+                    // Try to find by matching the CardId in all definitions
+                    var definitions = _cardRepository.GetAllCardDefinitions();
+                    var definition = definitions.FirstOrDefault(d => d.Id == cardId);
+
+                    if (definition != null)
+                    {
+                        // Create a new instance from the definition
+                        card = _cardRepository.CreateCardInstance(definition.Title);
+                    }
+                }
+
+                if (card != null)
+                {
+                    deckCards.Add(card);
+                }
+            }
 
             if (deckCards.Count == 0)
                 return null;
