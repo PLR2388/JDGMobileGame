@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using JDG.Domain;
 using JDG.Domain.Entities;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using JDG.Application;
@@ -93,16 +94,15 @@ namespace JDG.Infrastructure.Tests.Integration
             ((CardRepository)_cardRepository).RegisterCardDefinition(card2);
 
             // Create a test deck
-            _deckRepository.CreateDeck("TestDeck", new[] { card1.Id, card2.Id, card1.Id, card2.Id });
+            _deckRepository.SaveDeck("TestDeck", new[] { card1.Id, card2.Id, card1.Id, card2.Id });
 
             // Act 1: Start Game
             var startResult = _startGameUseCase.Execute("TestDeck", "TestDeck");
             Assert.IsTrue(startResult.IsSuccess, "Game should start successfully");
 
-            var gameState = ((GameStateRepository)_gameStateRepository).CurrentGameState;
-            Assert.AreEqual(Phase.Draw, gameState.CurrentPhase);
-            Assert.AreEqual(PlayerId.Player1, gameState.CurrentPlayer);
-            Assert.AreEqual(1, gameState.TurnNumber);
+            Assert.AreEqual(Phase.Draw, _gameStateRepository.CurrentPhase);
+            Assert.AreEqual(PlayerId.Player1, _gameStateRepository.CurrentPlayer);
+            Assert.AreEqual(1, _gameStateRepository.TurnNumber);
 
             // Act 2: Draw Card for Player 1
             var drawResult = _drawCardUseCase.Execute(PlayerId.Player1);
@@ -115,9 +115,8 @@ namespace JDG.Infrastructure.Tests.Integration
             var endTurnResult = _endTurnUseCase.Execute();
             Assert.IsTrue(endTurnResult.IsSuccess, "Turn should end successfully");
 
-            gameState = ((GameStateRepository)_gameStateRepository).CurrentGameState;
-            Assert.AreEqual(PlayerId.Player2, gameState.CurrentPlayer);
-            Assert.AreEqual(2, gameState.TurnNumber);
+            Assert.AreEqual(PlayerId.Player2, _gameStateRepository.CurrentPlayer);
+            Assert.AreEqual(2, _gameStateRepository.TurnNumber);
 
             // Act 4: Player 2 draws a card
             drawResult = _drawCardUseCase.Execute(PlayerId.Player2);
@@ -130,9 +129,8 @@ namespace JDG.Infrastructure.Tests.Integration
             endTurnResult = _endTurnUseCase.Execute();
             Assert.IsTrue(endTurnResult.IsSuccess);
 
-            gameState = ((GameStateRepository)_gameStateRepository).CurrentGameState;
-            Assert.AreEqual(PlayerId.Player1, gameState.CurrentPlayer);
-            Assert.AreEqual(3, gameState.TurnNumber);
+            Assert.AreEqual(PlayerId.Player1, _gameStateRepository.CurrentPlayer);
+            Assert.AreEqual(3, _gameStateRepository.TurnNumber);
         }
 
         [Test]
@@ -163,7 +161,7 @@ namespace JDG.Infrastructure.Tests.Integration
             );
 
             ((CardRepository)_cardRepository).RegisterCardDefinition(card);
-            _deckRepository.CreateDeck("TestDeck", new[] { card.Id, card.Id });
+            _deckRepository.SaveDeck("TestDeck", new[] { card.Id, card.Id });
 
             // Act: Perform game flow
             _startGameUseCase.Execute("TestDeck", "TestDeck");
@@ -199,7 +197,7 @@ namespace JDG.Infrastructure.Tests.Integration
             // Arrange
             var card = Card.CreateInvocation(CardId.New(), "Test", "Desc", "Details", 1, 1, null, true, null, null, false);
             ((CardRepository)_cardRepository).RegisterCardDefinition(card);
-            _deckRepository.CreateDeck("TestDeck", new[] { card.Id, card.Id, card.Id, card.Id });
+            _deckRepository.SaveDeck("TestDeck", new[] { card.Id, card.Id, card.Id, card.Id });
             _startGameUseCase.Execute("TestDeck", "TestDeck");
 
             // Act: Play 10 turns
@@ -209,11 +207,10 @@ namespace JDG.Infrastructure.Tests.Integration
             }
 
             // Assert
-            var gameState = ((GameStateRepository)_gameStateRepository).CurrentGameState;
-            Assert.AreEqual(11, gameState.TurnNumber, "Should be on turn 11");
+            Assert.AreEqual(11, _gameStateRepository.TurnNumber, "Should be on turn 11");
 
             // Player 1 starts, so after 10 end turns (even number), it should be Player 1's turn again
-            Assert.AreEqual(PlayerId.Player1, gameState.CurrentPlayer);
+            Assert.AreEqual(PlayerId.Player1, _gameStateRepository.CurrentPlayer);
         }
     }
 }
