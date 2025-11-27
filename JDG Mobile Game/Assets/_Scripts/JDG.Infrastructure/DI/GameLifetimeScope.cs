@@ -2,9 +2,11 @@ using VContainer;
 using VContainer.Unity;
 using JDG.Application;
 using JDG.Application.Repositories;
+using JDG.Application.Services;
 using JDG.Application.UseCases;
 using JDG.Infrastructure.Events;
 using JDG.Infrastructure.Repositories;
+using JDG.Infrastructure.Services;
 
 namespace JDG.Infrastructure.DI
 {
@@ -28,6 +30,13 @@ namespace JDG.Infrastructure.DI
             builder.Register<IDeckRepository, DeckRepository>(Lifetime.Singleton);
             builder.Register<IPlayerRepository, PlayerRepository>(Lifetime.Singleton);
             builder.Register<IGameStateRepository, GameStateRepository>(Lifetime.Singleton);
+
+            // Services (Singleton - application-wide services)
+            // Phase 13: Service Layer Foundation
+            builder.Register<IAudioService, AudioService>(Lifetime.Singleton);
+            builder.Register<ILocalizationService, LocalizationService>(Lifetime.Singleton);
+            builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
+            builder.Register<IInputService, InputService>(Lifetime.Singleton);
 
             // ============================================
             // APPLICATION LAYER - Use Cases

@@ -2,6 +2,7 @@ using UnityEngine;
 using VContainer;
 using JDG.Application;
 using JDG.Application.Repositories;
+using JDG.Application.Services;
 using JDG.Application.UseCases;
 
 namespace JDG.Infrastructure.DI
@@ -87,5 +88,11 @@ namespace JDG.Infrastructure.DI
         public static AttackUseCase GetAttackUseCase() => Get<AttackUseCase>();
         public static EndTurnUseCase GetEndTurnUseCase() => Get<EndTurnUseCase>();
         public static StartGameUseCase GetStartGameUseCase() => Get<StartGameUseCase>();
+
+        // Phase 13: Service Layer Foundation - convenience methods
+        public static IAudioService GetAudioService() => Get<IAudioService>();
+        public static ILocalizationService GetLocalizationService() => Get<ILocalizationService>();
+        public static IDialogService GetDialogService() => Get<IDialogService>();
+        public static IInputService GetInputService() => Get<IInputService>();
     }
 }

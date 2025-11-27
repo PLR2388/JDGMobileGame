@@ -1,0 +1,146 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JDG.Application.Services;
+using UnityEngine;
+
+namespace JDG.Infrastructure.Services
+{
+    /// <summary>
+    /// Infrastructure implementation of IDialogService.
+    /// Wraps the existing MessageBox and CardSelector singletons during migration.
+    /// Uses Strangler Fig pattern - delegates to old systems temporarily.
+    /// </summary>
+    public class DialogService : IDialogService
+    {
+        private readonly MessageBox _messageBox;
+        private readonly CardSelector _cardSelector;
+        private Transform _canvas;
+
+        public DialogService()
+        {
+            // During migration, get the existing singletons
+            // TODO: Later, inject dialog dependencies directly
+            _messageBox = MessageBox.Instance;
+            _cardSelector = CardSelector.Instance;
+        }
+
+        /// <summary>
+        /// Sets the canvas where dialogs will be displayed.
+        /// </summary>
+        public void SetCanvas(Transform canvas)
+        {
+            _canvas = canvas;
+        }
+
+        public async Task<bool> ShowMessageBoxAsync(string title, string message, MessageBoxType type)
+        {
+            if (_canvas == null)
+            {
+                Debug.LogError("DialogService: Canvas not set. Call SetCanvas() first.");
+                return false;
+            }
+
+            var tcs = new TaskCompletionSource<bool>();
+
+            var config = new MessageBoxConfig
+            {
+                Title = title,
+                Description = message
+            };
+
+            switch (type)
+            {
+                case MessageBoxType.Ok:
+                    config.OkAction = () => tcs.TrySetResult(true);
+                    break;
+
+                case MessageBoxType.YesNo:
+                case MessageBoxType.OkCancel:
+                    config.PositiveAction = () => tcs.TrySetResult(true);
+                    config.NegativeAction = () => tcs.TrySetResult(false);
+                    break;
+
+                case MessageBoxType.Custom:
+                    config.OkAction = () => tcs.TrySetResult(true);
+                    break;
+
+                default:
+                    config.OkAction = () => tcs.TrySetResult(true);
+                    break;
+            }
+
+            _messageBox.CreateMessageBox(_canvas, config);
+
+            return await tcs.Task;
+        }
+
+        public async Task<List<Guid>> ShowCardSelectorAsync(CardSelectorConfig config)
+        {
+            if (_canvas == null)
+            {
+                Debug.LogError("DialogService: Canvas not set. Call SetCanvas() first.");
+                return null;
+            }
+
+            var tcs = new TaskCompletionSource<List<Guid>>();
+
+            var cardSelectorConfig = new global::CardSelectorConfig
+            {
+                Title = config.Title,
+                Cards = config.CardIds != null ? ConvertCardIds(config.CardIds) : new List<Cards.InGameCard>(),
+                MinCardSelection = config.MinSelection,
+                MaxCardSelection = config.MaxSelection,
+                PositiveAction = () =>
+                {
+                    var selectedCards = CardSelectionManager.Instance.SelectedCards;
+                    var selectedIds = new List<Guid>();
+                    foreach (var card in selectedCards)
+                    {
+                        selectedIds.Add(card.Id);
+                    }
+                    tcs.TrySetResult(selectedIds);
+                },
+                NegativeAction = () =>
+                {
+                    if (config.AllowCancel)
+                    {
+                        tcs.TrySetResult(null);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("DialogService: Cancel not allowed for this card selector");
+                    }
+                }
+            };
+
+            _cardSelector.CreateCardSelection(_canvas, cardSelectorConfig);
+
+            return await tcs.Task;
+        }
+
+        public async Task<bool> ShowConfirmAsync(string message)
+        {
+            return await ShowMessageBoxAsync("Confirm", message, MessageBoxType.YesNo);
+        }
+
+        public async Task ShowInfoAsync(string message)
+        {
+            await ShowMessageBoxAsync("Information", message, MessageBoxType.Ok);
+        }
+
+        // Helper method to convert card GUIDs to InGameCard instances
+        // TODO: This is a temporary bridge - should be improved
+        private List<Cards.InGameCard> ConvertCardIds(List<Guid> cardIds)
+        {
+            var cards = new List<Cards.InGameCard>();
+
+            // For now, we need to find the actual InGameCard instances
+            // This is a limitation of the current CardSelector design
+            // In the future, CardSelector should work with IDs directly
+            Debug.LogWarning($"DialogService: Card conversion not fully implemented. Returning empty list.");
+
+            return cards;
+        }
+    }
+}
