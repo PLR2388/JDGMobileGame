@@ -11,7 +11,7 @@ using Cards.FieldCards;
 using Cards.EffectCards;
 using _Scripts.Scriptables;
 
-namespace JDG.Infrastructure.Repositories
+namespace JDG.Infrastructure.Bridge
 {
     /// <summary>
     /// Converts old ScriptableObject cards to new domain Card entities.

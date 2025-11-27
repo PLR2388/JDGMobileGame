@@ -2,13 +2,13 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using JDG.Infrastructure.DI;
-using JDG.Infrastructure.Repositories;
 
 namespace JDG.Infrastructure.Bootstrap
 {
     /// <summary>
     /// Game bootstrapper - initializes the DI container and service locator.
     /// Attach this to a GameObject in your startup scene.
+    /// Note: Card loading is handled by LegacyCardLoader (in default assembly).
     /// </summary>
     public class GameBootstrapper : MonoBehaviour
     {
@@ -24,11 +24,6 @@ namespace JDG.Infrastructure.Bootstrap
             {
                 ServiceLocator.Initialize(_lifetimeScope.Container);
                 Debug.Log("GameBootstrapper: Service locator initialized");
-
-                // Initialize CardRepository to load all ScriptableObject cards
-                var cardRepository = ServiceLocator.GetCardRepository();
-                cardRepository.Initialize();
-                Debug.Log("GameBootstrapper: CardRepository initialized");
             }
             else
             {

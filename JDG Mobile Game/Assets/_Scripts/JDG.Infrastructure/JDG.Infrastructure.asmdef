@@ -4,8 +4,6 @@
     "references": [
         "JDG.Domain",
         "JDG.Application",
-        "Cards.Types",
-        "Cards.Legacy",
         "VContainer"
     ],
     "includePlatforms": [],

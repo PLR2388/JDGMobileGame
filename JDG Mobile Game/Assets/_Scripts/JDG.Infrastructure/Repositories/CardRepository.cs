@@ -22,18 +22,11 @@ namespace JDG.Infrastructure.Repositories
         private bool _isInitialized;
 
         /// <summary>
-        /// Initializes the repository by loading all card ScriptableObjects.
-        /// Should be called once at game startup.
+        /// Marks the repository as initialized.
+        /// Actual card loading is done by CardRepositoryInitializer (in default assembly).
         /// </summary>
         public void Initialize()
         {
-            if (_isInitialized)
-                return;
-
-            // Load all card ScriptableObjects from Resources
-            // In a real implementation, this would load from your asset database
-            LoadCardDefinitions();
-
             _isInitialized = true;
         }
 
@@ -79,39 +72,6 @@ namespace JDG.Infrastructure.Repositories
             return _cardDefinitions.Values.FirstOrDefault(c => c.Title == title);
         }
 
-        /// <summary>
-        /// Loads card definitions from ScriptableObjects in Resources/Cards.
-        /// Converts all old ScriptableObject cards to domain Card entities.
-        /// </summary>
-        private void LoadCardDefinitions()
-        {
-            int loadedCount = 0;
-
-            // Load all cards from Resources/Cards folder
-            // Unity's Resources.LoadAll loads from any Resources folder in the project
-            var allScriptableCards = Resources.LoadAll<Cards.Card>("Cards");
-
-            foreach (var scriptableCard in allScriptableCards)
-            {
-                try
-                {
-                    // Convert ScriptableObject to domain Card entity
-                    var domainCard = CardConverter.ConvertToDomain(scriptableCard);
-
-                    if (domainCard != null)
-                    {
-                        _cardDefinitions[domainCard.Title] = domainCard;
-                        loadedCount++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Failed to convert card '{scriptableCard.Title}': {ex.Message}");
-                }
-            }
-
-            Debug.Log($"CardRepository: Loaded {loadedCount} card definitions from ScriptableObjects");
-        }
 
         /// <summary>
         /// Creates a copy of a card with a new unique CardId.
