@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using Cards.InvocationCards;
 using Cards.EquipmentCards;
@@ -12,7 +13,7 @@ using _Scripts.Scriptables;
 using LegacyCard = Cards.Card;
 using DomainCard = JDG.Domain.Entities.Card;
 using LegacyCardFamily = Cards.CardFamily;
-using DomainCardFamily = JDG.Domain.CardFamily;
+using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 namespace JDG.Infrastructure.Bridge
 {
