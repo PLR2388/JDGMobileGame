@@ -176,8 +176,14 @@ namespace JDG.Infrastructure.Tests.Integration
         [Test]
         public void PlayerDamage_ReducesHealthCorrectly()
         {
-            // Arrange
-            var player = _playerRepository.GetPlayer(PlayerId.Player1);
+            // Arrange: Create a test card and player
+            var card = Card.CreateInvocation(CardId.New(), "Test", "Desc", "Details", 1, 1, null, true, null, null, false);
+            ((CardRepository)_cardRepository).RegisterCardDefinition(card);
+
+            // Create player with a deck
+            var player = _playerRepository.CreatePlayer(PlayerId.Player1, new[] { card.Id }, maxHealth: 30);
+            Assert.IsNotNull(player, "Player should be created");
+
             int initialHealth = player.Health;
 
             // Act: Direct damage through domain entity
