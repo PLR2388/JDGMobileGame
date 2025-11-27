@@ -1,6 +1,8 @@
 using UnityEngine;
 using JDG.Infrastructure.Repositories;
-using Cards;
+
+// Type alias to avoid ambiguity
+using LegacyCard = Cards.Card;
 
 namespace JDG.Infrastructure.Bridge
 {
@@ -19,7 +21,7 @@ namespace JDG.Infrastructure.Bridge
             int loadedCount = 0;
 
             // Load all cards from Resources/Cards folder
-            var allScriptableCards = Resources.LoadAll<Card>("Cards");
+            var allScriptableCards = Resources.LoadAll<LegacyCard>("Cards");
 
             foreach (var scriptableCard in allScriptableCards)
             {

@@ -1,15 +1,18 @@
 using System.Linq;
 using UnityEngine;
 using JDG.Domain;
-using JDG.Domain.Entities;
-using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
-using Cards;
 using Cards.InvocationCards;
 using Cards.EquipmentCards;
 using Cards.FieldCards;
 using Cards.EffectCards;
 using _Scripts.Scriptables;
+
+// Type aliases to avoid ambiguity
+using LegacyCard = Cards.Card;
+using DomainCard = JDG.Domain.Entities.Card;
+using LegacyCardFamily = Cards.CardFamily;
+using DomainCardFamily = JDG.Domain.CardFamily;
 
 namespace JDG.Infrastructure.Bridge
 {
@@ -23,7 +26,7 @@ namespace JDG.Infrastructure.Bridge
         /// Converts a ScriptableObject Card to a domain Card entity.
         /// Automatically detects the card type and performs the appropriate conversion.
         /// </summary>
-        public static Card ConvertToDomain(Cards.Card scriptableCard)
+        public static DomainCard ConvertToDomain(LegacyCard scriptableCard)
         {
             if (scriptableCard == null)
                 return null;
@@ -55,7 +58,7 @@ namespace JDG.Infrastructure.Bridge
 
             // Fallback for base Card type
             Debug.LogWarning($"Card '{scriptableCard.Title}' has unknown type, creating as Effect");
-            return Card.CreateEffect(
+            return DomainCard.CreateEffect(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
@@ -65,12 +68,12 @@ namespace JDG.Infrastructure.Bridge
             );
         }
 
-        private static Card ConvertInvocationCard(InvocationCard scriptableCard, CardId cardId)
+        private static DomainCard ConvertInvocationCard(InvocationCard scriptableCard, CardId cardId)
         {
             // Convert old CardFamily[] to new domain CardFamily enum
             var families = scriptableCard.BaseInvocationCardStats.Families
                 ?.Select(ConvertFamily)
-                .ToArray() ?? new CardFamily[0];
+                .ToArray() ?? new DomainCardFamily[0];
 
             // Convert old AbilityName to new domain AbilityName
             var abilities = scriptableCard.Abilities
@@ -82,7 +85,7 @@ namespace JDG.Infrastructure.Bridge
                 ?.Select(ConvertConditionName)
                 .ToArray() ?? new ConditionName[0];
 
-            return Card.CreateInvocation(
+            return DomainCard.CreateInvocation(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
@@ -97,14 +100,14 @@ namespace JDG.Infrastructure.Bridge
             );
         }
 
-        private static Card ConvertEquipmentCard(EquipmentCard scriptableCard, CardId cardId)
+        private static DomainCard ConvertEquipmentCard(EquipmentCard scriptableCard, CardId cardId)
         {
             // Convert old EquipmentAbilityName to new domain EquipmentAbilityName
             var abilities = scriptableCard.EquipmentAbilities
                 ?.Select(ConvertEquipmentAbilityName)
                 .ToArray() ?? new EquipmentAbilityName[0];
 
-            return Card.CreateEquipment(
+            return DomainCard.CreateEquipment(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
@@ -114,14 +117,14 @@ namespace JDG.Infrastructure.Bridge
             );
         }
 
-        private static Card ConvertFieldCard(FieldCard scriptableCard, CardId cardId)
+        private static DomainCard ConvertFieldCard(FieldCard scriptableCard, CardId cardId)
         {
             // Convert old FieldAbilityName to new domain FieldAbilityName
             var abilities = scriptableCard.FieldAbilities
                 ?.Select(ConvertFieldAbilityName)
                 .ToArray() ?? new FieldAbilityName[0];
 
-            return Card.CreateField(
+            return DomainCard.CreateField(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
@@ -132,14 +135,14 @@ namespace JDG.Infrastructure.Bridge
             );
         }
 
-        private static Card ConvertEffectCard(EffectCard scriptableCard, CardId cardId)
+        private static DomainCard ConvertEffectCard(EffectCard scriptableCard, CardId cardId)
         {
             // Convert old EffectAbilityName to new domain EffectAbilityName
             var abilities = scriptableCard.EffectAbilities
                 ?.Select(ConvertEffectAbilityName)
                 .ToArray() ?? new EffectAbilityName[0];
 
-            return Card.CreateEffect(
+            return DomainCard.CreateEffect(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
@@ -149,9 +152,9 @@ namespace JDG.Infrastructure.Bridge
             );
         }
 
-        private static Card ConvertContreCard(ContreCard scriptableCard, CardId cardId)
+        private static DomainCard ConvertContreCard(ContreCard scriptableCard, CardId cardId)
         {
-            return Card.CreateContre(
+            return DomainCard.CreateContre(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
@@ -162,10 +165,10 @@ namespace JDG.Infrastructure.Bridge
 
         // Enum conversion methods - these convert from old to new namespace
 
-        private static CardFamily ConvertFamily(Cards.CardFamily oldFamily)
+        private static DomainCardFamily ConvertFamily(LegacyCardFamily oldFamily)
         {
             // The enums have the same names, so we can parse
-            return (CardFamily)System.Enum.Parse(typeof(CardFamily), oldFamily.ToString());
+            return (DomainCardFamily)System.Enum.Parse(typeof(DomainCardFamily), oldFamily.ToString());
         }
 
         private static AbilityName ConvertAbilityName(global::AbilityName oldAbility)
