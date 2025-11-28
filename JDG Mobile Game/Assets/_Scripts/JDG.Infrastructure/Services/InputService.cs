@@ -99,7 +99,7 @@ namespace JDG.Infrastructure.Services
             NotifyHandlers(_touchStartedHandlers, eventData);
             _eventBus.Publish(new TouchStartedEvent
             {
-                Position = unityPos,
+                Position = ToVector2(unityPos),
                 Timestamp = eventData.Timestamp
             });
         }
@@ -117,7 +117,7 @@ namespace JDG.Infrastructure.Services
             NotifyHandlers(_longTouchHandlers, eventData);
             _eventBus.Publish(new LongTouchEvent
             {
-                Position = unityPos,
+                Position = ToVector2(unityPos),
                 Duration = 2f // InputManager's click duration
             });
         }
@@ -135,7 +135,7 @@ namespace JDG.Infrastructure.Services
             NotifyHandlers(_touchEndedHandlers, eventData);
             _eventBus.Publish(new TouchEndedEvent
             {
-                Position = unityPos,
+                Position = ToVector2(unityPos),
                 Duration = 0f
             });
         }

@@ -113,11 +113,11 @@ namespace JDG.Infrastructure.Services
                 showPositiveButton: true,
                 positiveMultipleAction: (selectedCards) =>
                 {
+                    // TODO: InGameCard doesn't have Id property yet
+                    // This is a temporary limitation during migration
+                    // For now, return empty list as card selection isn't fully integrated
                     var selectedIds = new List<Guid>();
-                    foreach (var card in selectedCards)
-                    {
-                        selectedIds.Add(card.Id);
-                    }
+                    Debug.LogWarning($"DialogService: Card selection returned {selectedCards.Count} cards, but ID mapping not implemented yet.");
                     tcs.TrySetResult(selectedIds);
                 },
                 showNegativeButton: config.AllowCancel,
