@@ -4,6 +4,7 @@ using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using UnityEngine;
+using VContainer;
 
 namespace JDG.Infrastructure.Services
 {
@@ -14,8 +15,8 @@ namespace JDG.Infrastructure.Services
     /// </summary>
     public class InputService : MonoBehaviour, IInputService
     {
-        private readonly IEventBus _eventBus;
-        private readonly InputManager _inputManager;
+        private IEventBus _eventBus;
+        private InputManager _inputManager;
 
         private bool _isTouchDetectionDisabled;
         private bool _isTouchInProgress;
@@ -27,7 +28,8 @@ namespace JDG.Infrastructure.Services
         private readonly List<Action<TouchEventData>> _longTouchHandlers = new();
         private readonly List<Action> _backButtonHandlers = new();
 
-        public InputService(IEventBus eventBus)
+        [Inject]
+        public void Construct(IEventBus eventBus)
         {
             _eventBus = eventBus;
             _inputManager = InputManager.Instance;
