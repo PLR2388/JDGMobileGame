@@ -76,7 +76,7 @@ namespace JDG.Infrastructure.Tests.Services
         public void GetLocalizedValue_WithInvalidKey_ReturnsKeyInBrackets()
         {
             // Arrange
-            if (!LocalizationSystem.InstanceExists) Assert.Ignore("LocalizationSystem singleton not available");
+            if (LocalizationSystem.Instance == null) Assert.Ignore("LocalizationSystem singleton not available");
 
             var service = new LocalizationService();
 

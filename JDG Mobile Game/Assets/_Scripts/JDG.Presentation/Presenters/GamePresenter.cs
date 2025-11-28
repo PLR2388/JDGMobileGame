@@ -80,9 +80,9 @@ namespace JDG.Presentation.Presenters
         /// </summary>
         private void UpdateGameState()
         {
-            _view.ShowPhase(_gameStateRepository.CurrentPhase);
+            _view.ShowPhase((Phase)(int)_gameStateRepository.CurrentPhase);
             _view.ShowTurnNumber(_gameStateRepository.TurnNumber);
-            _view.ShowCurrentPlayer(_gameStateRepository.CurrentPlayer.ToCardOwner());
+            _view.ShowCurrentPlayer((CardOwner)(int)_gameStateRepository.CurrentPlayer.ToCardOwner());
             _view.SetEndTurnButtonEnabled(!_gameStateRepository.IsGameOver);
         }
 
@@ -118,19 +118,19 @@ namespace JDG.Presentation.Presenters
 
         private void OnPhaseChanged(PhaseChangedEvent evt)
         {
-            _view.ShowPhase(evt.NewPhase);
+            _view.ShowPhase((Phase)(int)evt.NewPhase);
         }
 
         private void OnTurnChanged(PlayerTurnChangedEvent evt)
         {
-            _view.ShowCurrentPlayer(evt.NewPlayer);
+            _view.ShowCurrentPlayer((CardOwner)(int)evt.NewPlayer);
             _view.ShowTurnNumber(evt.TurnNumber);
             UpdatePlayers();
         }
 
         private void OnGameOver(GameOverEvent evt)
         {
-            _view.ShowGameOver(evt.Winner, evt.Reason);
+            _view.ShowGameOver((CardOwner)(int)evt.Winner, evt.Reason);
             _view.SetEndTurnButtonEnabled(false);
         }
 

@@ -34,7 +34,7 @@ namespace JDG.Infrastructure.Tests.Services
         public void GetMusicVolume_ReturnsValidRange()
         {
             // Arrange
-            if (!AudioSystem.InstanceExists) Assert.Ignore("AudioSystem singleton not available");
+            if (AudioSystem.Instance == null) Assert.Ignore("AudioSystem singleton not available");
 
             var service = new AudioService();
 
@@ -50,7 +50,7 @@ namespace JDG.Infrastructure.Tests.Services
         public void GetSfxVolume_ReturnsValidRange()
         {
             // Arrange
-            if (!AudioSystem.InstanceExists) Assert.Ignore("AudioSystem singleton not available");
+            if (AudioSystem.Instance == null) Assert.Ignore("AudioSystem singleton not available");
 
             var service = new AudioService();
 
@@ -66,7 +66,7 @@ namespace JDG.Infrastructure.Tests.Services
         public void SetMusicVolume_ClampsToValidRange()
         {
             // Arrange
-            if (!AudioSystem.InstanceExists) Assert.Ignore("AudioSystem singleton not available");
+            if (AudioSystem.Instance == null) Assert.Ignore("AudioSystem singleton not available");
 
             var service = new AudioService();
 

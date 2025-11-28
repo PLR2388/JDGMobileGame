@@ -233,13 +233,13 @@ namespace JDG.Infrastructure.Tests
             _eventBus.Publish(new CardDrawnEvent
             {
                 CardId = cardId,
-                Owner = CardOwner.Player1,
+                Owner = JDG.Domain.CardOwner.Player1,
                 CardTitle = "Test Card"
             });
 
             // Assert
             Assert.AreEqual(cardId, receivedEvent.CardId);
-            Assert.AreEqual(CardOwner.Player1, receivedEvent.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, receivedEvent.Owner);
             Assert.AreEqual("Test Card", receivedEvent.CardTitle);
         }
 
@@ -254,14 +254,14 @@ namespace JDG.Infrastructure.Tests
             // Act
             _eventBus.Publish(new PhaseChangedEvent
             {
-                OldPhase = Phase.Draw,
-                NewPhase = Phase.Choose,
+                OldPhase = JDG.Domain.Phase.Draw,
+                NewPhase = JDG.Domain.Phase.Choose,
                 TurnNumber = 1
             });
 
             // Assert
-            Assert.AreEqual(Phase.Draw, receivedEvent.OldPhase);
-            Assert.AreEqual(Phase.Choose, receivedEvent.NewPhase);
+            Assert.AreEqual(JDG.Domain.Phase.Draw, receivedEvent.OldPhase);
+            Assert.AreEqual(JDG.Domain.Phase.Choose, receivedEvent.NewPhase);
             Assert.AreEqual(1, receivedEvent.TurnNumber);
         }
     }

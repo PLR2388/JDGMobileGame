@@ -23,7 +23,7 @@ namespace JDG.Infrastructure.Tests.Repositories
             _repository.ResetGameState();
 
             // Assert
-            Assert.AreEqual(Phase.Draw, _repository.CurrentPhase);
+            Assert.AreEqual(JDG.Domain.Phase.Draw, _repository.CurrentPhase);
             Assert.AreEqual(1, _repository.TurnNumber);
             Assert.AreEqual(PlayerId.Player1, _repository.CurrentPlayer);
             Assert.IsFalse(_repository.IsGameOver);
@@ -33,10 +33,10 @@ namespace JDG.Infrastructure.Tests.Repositories
         public void SetPhase_UpdatesCurrentPhase()
         {
             // Act
-            _repository.SetPhase(Phase.Attack);
+            _repository.SetPhase(JDG.Domain.Phase.Attack);
 
             // Assert
-            Assert.AreEqual(Phase.Attack, _repository.CurrentPhase);
+            Assert.AreEqual(JDG.Domain.Phase.Attack, _repository.CurrentPhase);
         }
 
         [Test]
