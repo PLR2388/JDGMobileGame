@@ -46,30 +46,47 @@ namespace JDG.Infrastructure.Services
 
             var tcs = new TaskCompletionSource<bool>();
 
-            var config = new MessageBoxConfig
-            {
-                Title = title,
-                Description = message
-            };
+            MessageBoxConfig config;
 
             switch (type)
             {
                 case MessageBoxType.Ok:
-                    config.OkAction = () => tcs.TrySetResult(true);
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showOkButton: true,
+                        okAction: () => tcs.TrySetResult(true)
+                    );
                     break;
 
                 case MessageBoxType.YesNo:
                 case MessageBoxType.OkCancel:
-                    config.PositiveAction = () => tcs.TrySetResult(true);
-                    config.NegativeAction = () => tcs.TrySetResult(false);
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showPositiveButton: true,
+                        positiveAction: () => tcs.TrySetResult(true),
+                        showNegativeButton: true,
+                        negativeAction: () => tcs.TrySetResult(false)
+                    );
                     break;
 
                 case MessageBoxType.Custom:
-                    config.OkAction = () => tcs.TrySetResult(true);
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showOkButton: true,
+                        okAction: () => tcs.TrySetResult(true)
+                    );
                     break;
 
                 default:
-                    config.OkAction = () => tcs.TrySetResult(true);
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showOkButton: true,
+                        okAction: () => tcs.TrySetResult(true)
+                    );
                     break;
             }
 
@@ -88,15 +105,14 @@ namespace JDG.Infrastructure.Services
 
             var tcs = new TaskCompletionSource<List<Guid>>();
 
-            var cardSelectorConfig = new global::CardSelectorConfig
-            {
-                Title = config.Title,
-                Cards = config.CardIds != null ? ConvertCardIds(config.CardIds) : new List<Cards.InGameCard>(),
-                MinCardSelection = config.MinSelection,
-                MaxCardSelection = config.MaxSelection,
-                PositiveAction = () =>
+            var cards = config.CardIds != null ? ConvertCardIds(config.CardIds) : new List<Cards.InGameCard>();
+
+            var cardSelectorConfig = new global::CardSelectorConfig(
+                title: config.Title,
+                cards: cards,
+                showPositiveButton: true,
+                positiveMultipleAction: (selectedCards) =>
                 {
-                    var selectedCards = CardSelectionManager.Instance.SelectedCards;
                     var selectedIds = new List<Guid>();
                     foreach (var card in selectedCards)
                     {
@@ -104,18 +120,10 @@ namespace JDG.Infrastructure.Services
                     }
                     tcs.TrySetResult(selectedIds);
                 },
-                NegativeAction = () =>
-                {
-                    if (config.AllowCancel)
-                    {
-                        tcs.TrySetResult(null);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("DialogService: Cancel not allowed for this card selector");
-                    }
-                }
-            };
+                showNegativeButton: config.AllowCancel,
+                negativeAction: config.AllowCancel ? () => tcs.TrySetResult(null) : null,
+                numberCardSelection: config.MaxSelection
+            );
 
             _cardSelector.CreateCardSelection(_canvas, cardSelectorConfig);
 

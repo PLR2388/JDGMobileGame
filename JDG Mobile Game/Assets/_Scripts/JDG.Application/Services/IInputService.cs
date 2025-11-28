@@ -1,28 +1,14 @@
 using System;
+using JDG.Domain.ValueObjects;
 
 namespace JDG.Application.Services
 {
-    /// <summary>
-    /// 2D position (pure C# type, no Unity dependency).
-    /// </summary>
-    public struct Position2D
-    {
-        public float X;
-        public float Y;
-
-        public Position2D(float x, float y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
-
     /// <summary>
     /// Touch event data.
     /// </summary>
     public struct TouchEventData
     {
-        public Position2D Position;
+        public Vector2 Position;
         public float Timestamp;
         public int FingerId;
     }
@@ -55,12 +41,12 @@ namespace JDG.Application.Services
         /// Subscribe to back button pressed events.
         /// Returns an IDisposable for unsubscribing.
         /// </summary>
-        IDisposable SubscribeToBackButton(Action handler);
+        IDisposable SubscribeToBackButton(System.Action handler);
 
         /// <summary>
         /// Gets the current touch position (if touching).
         /// </summary>
-        Position2D? GetCurrentTouchPosition();
+        Vector2? GetCurrentTouchPosition();
 
         /// <summary>
         /// Checks if currently touching the screen.

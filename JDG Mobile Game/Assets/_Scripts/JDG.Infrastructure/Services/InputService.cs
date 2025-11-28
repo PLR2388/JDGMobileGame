@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using JDG.Domain.ValueObjects;
 using UnityEngine;
 
 namespace JDG.Infrastructure.Services
@@ -23,7 +24,7 @@ namespace JDG.Infrastructure.Services
         private readonly List<Action<TouchEventData>> _touchStartedHandlers = new();
         private readonly List<Action<TouchEventData>> _touchEndedHandlers = new();
         private readonly List<Action<TouchEventData>> _longTouchHandlers = new();
-        private readonly List<Action> _backButtonHandlers = new();
+        private readonly List<System.Action> _backButtonHandlers = new();
 
         public InputService(IEventBus eventBus)
         {
@@ -39,49 +40,49 @@ namespace JDG.Infrastructure.Services
 
         public bool IsTouching => Input.GetMouseButton(0);
 
-        public Position2D? GetCurrentTouchPosition()
+        public JDG.Domain.ValueObjects.Vector2? GetCurrentTouchPosition()
         {
             if (!IsTouching)
                 return null;
 
             var unityPos = InputManager.TouchPosition;
-            return new Position2D(unityPos.x, unityPos.y);
+            return new JDG.Domain.ValueObjects.Vector2(unityPos.x, unityPos.y);
         }
 
-        // Helper method to convert Unity Vector2 to Position2D
-        private static Position2D ToPosition2D(Vector2 vector)
+        // Helper method to convert Unity Vector2 to domain Vector2
+        private static JDG.Domain.ValueObjects.Vector2 ToVector2(UnityEngine.Vector2 vector)
         {
-            return new Position2D(vector.x, vector.y);
+            return new JDG.Domain.ValueObjects.Vector2(vector.x, vector.y);
         }
 
-        // Helper method to convert Unity Vector3 to Position2D
-        private static Position2D ToPosition2D(Vector3 vector)
+        // Helper method to convert Unity Vector3 to domain Vector2
+        private static JDG.Domain.ValueObjects.Vector2 ToVector2(UnityEngine.Vector3 vector)
         {
-            return new Position2D(vector.x, vector.y);
+            return new JDG.Domain.ValueObjects.Vector2(vector.x, vector.y);
         }
 
         public IDisposable SubscribeToTouchStarted(Action<TouchEventData> handler)
         {
             _touchStartedHandlers.Add(handler);
-            return new DisposableSubscription(() => _touchStartedHandlers.Remove(handler));
+            return new DisposableSubscription(() => { _touchStartedHandlers.Remove(handler); });
         }
 
         public IDisposable SubscribeToTouchEnded(Action<TouchEventData> handler)
         {
             _touchEndedHandlers.Add(handler);
-            return new DisposableSubscription(() => _touchEndedHandlers.Remove(handler));
+            return new DisposableSubscription(() => { _touchEndedHandlers.Remove(handler); });
         }
 
         public IDisposable SubscribeToLongTouch(Action<TouchEventData> handler)
         {
             _longTouchHandlers.Add(handler);
-            return new DisposableSubscription(() => _longTouchHandlers.Remove(handler));
+            return new DisposableSubscription(() => { _longTouchHandlers.Remove(handler); });
         }
 
-        public IDisposable SubscribeToBackButton(Action handler)
+        public IDisposable SubscribeToBackButton(System.Action handler)
         {
             _backButtonHandlers.Add(handler);
-            return new DisposableSubscription(() => _backButtonHandlers.Remove(handler));
+            return new DisposableSubscription(() => { _backButtonHandlers.Remove(handler); });
         }
 
         // Event handlers that republish InputManager events
@@ -90,7 +91,7 @@ namespace JDG.Infrastructure.Services
             var unityPos = InputManager.TouchPosition;
             var eventData = new TouchEventData
             {
-                Position = ToPosition2D(unityPos),
+                Position = ToVector2(unityPos),
                 Timestamp = Time.time,
                 FingerId = 0
             };
@@ -108,7 +109,7 @@ namespace JDG.Infrastructure.Services
             var unityPos = InputManager.TouchPosition;
             var eventData = new TouchEventData
             {
-                Position = ToPosition2D(unityPos),
+                Position = ToVector2(unityPos),
                 Timestamp = Time.time,
                 FingerId = 0
             };
@@ -126,7 +127,7 @@ namespace JDG.Infrastructure.Services
             var unityPos = InputManager.TouchPosition;
             var eventData = new TouchEventData
             {
-                Position = ToPosition2D(unityPos),
+                Position = ToVector2(unityPos),
                 Timestamp = Time.time,
                 FingerId = 0
             };
@@ -165,7 +166,7 @@ namespace JDG.Infrastructure.Services
             }
         }
 
-        private void NotifyHandlers(List<Action> handlers)
+        private void NotifyHandlers(List<System.Action> handlers)
         {
             var handlersCopy = handlers.ToArray();
             foreach (var handler in handlersCopy)
@@ -183,10 +184,10 @@ namespace JDG.Infrastructure.Services
 
         private class DisposableSubscription : IDisposable
         {
-            private readonly Action _unsubscribeAction;
+            private readonly System.Action _unsubscribeAction;
             private bool _disposed;
 
-            public DisposableSubscription(Action unsubscribeAction)
+            public DisposableSubscription(System.Action unsubscribeAction)
             {
                 _unsubscribeAction = unsubscribeAction;
             }
@@ -195,7 +196,7 @@ namespace JDG.Infrastructure.Services
             {
                 if (!_disposed)
                 {
-                    _unsubscribeAction();
+                    _unsubscribeAction?.Invoke();
                     _disposed = true;
                 }
             }
