@@ -1,5 +1,4 @@
 using JDG.Domain;
-using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 
 namespace JDG.Application.Repositories

@@ -1,10 +1,9 @@
 using JDG.Application.Repositories;
 using JDG.Domain;
-using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 
-// Alias to avoid conflict with global Phase enum in GameStateManager.cs
-using DomainPhase = JDG.Domain.Enums.Phase;
+// Alias to avoid conflict with global Phase enum in GameStateManager.cs (in JDG.Legacy)
+using Phase = JDG.Domain.Phase;
 
 namespace JDG.Infrastructure.Repositories
 {
@@ -14,14 +13,14 @@ namespace JDG.Infrastructure.Repositories
     /// </summary>
     public class GameStateRepository : IGameStateRepository
     {
-        private DomainPhase _currentPhase;
+        private Phase _currentPhase;
         private int _turnNumber;
         private PlayerId _currentPlayer;
         private bool _isGameOver;
 
-        public DomainPhase CurrentPhase => _currentPhase;
+        public Phase CurrentPhase => _currentPhase;
 
-        public void SetPhase(DomainPhase phase)
+        public void SetPhase(Phase phase)
         {
             _currentPhase = phase;
         }
@@ -49,7 +48,7 @@ namespace JDG.Infrastructure.Repositories
 
         public void ResetGameState()
         {
-            _currentPhase = DomainPhase.Draw;
+            _currentPhase = Phase.Draw;
             _turnNumber = 1;
             _currentPlayer = PlayerId.Player1;
             _isGameOver = false;
