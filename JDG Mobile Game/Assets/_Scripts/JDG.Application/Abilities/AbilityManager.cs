@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using JDG.Domain;
 using JDG.Domain.Events;
+using JDG.Domain.ValueObjects;
 
 namespace JDG.Application.Abilities
 {
