@@ -309,4 +309,19 @@ namespace JDG.Domain.Events
         public Guid TargetCardId;
         public string EffectDescription;
     }
+
+    // ============================================
+    // ABILITY EVENTS
+    // ============================================
+
+    /// <summary>
+    /// Published when an ability is executed.
+    /// </summary>
+    public struct AbilityExecutedEvent
+    {
+        public AbilityName AbilityName;
+        public CardOwner PlayerId;
+        public bool IsSuccess;
+        public string Message;
+    }
 }
