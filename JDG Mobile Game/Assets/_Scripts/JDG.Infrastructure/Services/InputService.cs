@@ -4,7 +4,6 @@ using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using UnityEngine;
-using VContainer;
 
 namespace JDG.Infrastructure.Services
 {
@@ -12,27 +11,30 @@ namespace JDG.Infrastructure.Services
     /// Infrastructure implementation of IInputService.
     /// Wraps the existing InputManager and publishes events to EventBus.
     /// Uses dual publishing pattern - both UnityEvents (old) and EventBus (new).
+    ///
+    /// Note: This is a regular class, not a MonoBehaviour. InputManager (singleton)
+    /// handles the Update loop. This service just provides a clean interface.
     /// </summary>
-    public class InputService : MonoBehaviour, IInputService
+    public class InputService : IInputService
     {
-        private IEventBus _eventBus;
-        private InputManager _inputManager;
-
-        private bool _isTouchDetectionDisabled;
-        private bool _isTouchInProgress;
-        private float _totalDownTime;
-        private float _clickDuration = 2f;
+        private readonly IEventBus _eventBus;
+        private readonly InputManager _inputManager;
 
         private readonly List<Action<TouchEventData>> _touchStartedHandlers = new();
         private readonly List<Action<TouchEventData>> _touchEndedHandlers = new();
         private readonly List<Action<TouchEventData>> _longTouchHandlers = new();
         private readonly List<Action> _backButtonHandlers = new();
 
-        [Inject]
-        public void Construct(IEventBus eventBus)
+        public InputService(IEventBus eventBus)
         {
             _eventBus = eventBus;
             _inputManager = InputManager.Instance;
+
+            // Subscribe to InputManager's static events and republish through our handlers + EventBus
+            InputManager.OnTouch.AddListener(OnTouchStarted);
+            InputManager.OnLongTouch.AddListener(OnLongTouchDetected);
+            InputManager.OnReleaseTouch.AddListener(OnTouchEnded);
+            InputManager.OnBackPressed.AddListener(OnBackButtonPressed);
         }
 
         public bool IsTouching => Input.GetMouseButton(0);
@@ -82,106 +84,69 @@ namespace JDG.Infrastructure.Services
             return new DisposableSubscription(() => _backButtonHandlers.Remove(handler));
         }
 
-        private void Update()
+        // Event handlers that republish InputManager events
+        private void OnTouchStarted()
         {
-            HandleTouchInput();
-            HandleAndroidBackButton();
+            var unityPos = InputManager.TouchPosition;
+            var eventData = new TouchEventData
+            {
+                Position = ToPosition2D(unityPos),
+                Timestamp = Time.time,
+                FingerId = 0
+            };
+
+            NotifyHandlers(_touchStartedHandlers, eventData);
+            _eventBus.Publish(new TouchStartedEvent
+            {
+                Position = unityPos,
+                Timestamp = eventData.Timestamp
+            });
         }
 
-        private void HandleTouchInput()
+        private void OnLongTouchDetected()
         {
-            if (_isTouchDetectionDisabled) return;
-
-            if (IsTouch())
+            var unityPos = InputManager.TouchPosition;
+            var eventData = new TouchEventData
             {
-                _totalDownTime = 0;
-                _isTouchInProgress = true;
+                Position = ToPosition2D(unityPos),
+                Timestamp = Time.time,
+                FingerId = 0
+            };
 
-                var unityPos = InputManager.TouchPosition;
-                var eventData = new TouchEventData
-                {
-                    Position = ToPosition2D(unityPos),
-                    Timestamp = Time.time,
-                    FingerId = 0
-                };
-
-                // Publish to both old (UnityEvent) and new (service handlers + EventBus) systems
-                InputManager.OnTouch.Invoke();
-                NotifyHandlers(_touchStartedHandlers, eventData);
-                _eventBus.Publish(new TouchStartedEvent
-                {
-                    Position = unityPos,
-                    Timestamp = eventData.Timestamp
-                });
-            }
-
-            if (!_isTouchInProgress) return;
-
-            if (IsTouching)
+            NotifyHandlers(_longTouchHandlers, eventData);
+            _eventBus.Publish(new LongTouchEvent
             {
-                _totalDownTime += Time.deltaTime;
-
-                if (_totalDownTime >= _clickDuration)
-                {
-                    var unityPos = InputManager.TouchPosition;
-                    var eventData = new TouchEventData
-                    {
-                        Position = ToPosition2D(unityPos),
-                        Timestamp = Time.time,
-                        FingerId = 0
-                    };
-
-                    // Dual publishing
-                    InputManager.OnLongTouch.Invoke();
-                    NotifyHandlers(_longTouchHandlers, eventData);
-                    _eventBus.Publish(new LongTouchEvent
-                    {
-                        Position = unityPos,
-                        Duration = _totalDownTime
-                    });
-                }
-            }
-
-            if (IsJustStopTouching())
-            {
-                _isTouchInProgress = false;
-
-                var unityPos = InputManager.TouchPosition;
-                var eventData = new TouchEventData
-                {
-                    Position = ToPosition2D(unityPos),
-                    Timestamp = Time.time,
-                    FingerId = 0
-                };
-
-                // Dual publishing
-                InputManager.OnReleaseTouch.Invoke();
-                NotifyHandlers(_touchEndedHandlers, eventData);
-                _eventBus.Publish(new TouchEndedEvent
-                {
-                    Position = unityPos,
-                    Duration = _totalDownTime
-                });
-            }
+                Position = unityPos,
+                Duration = 2f // InputManager's click duration
+            });
         }
 
-        private void HandleAndroidBackButton()
+        private void OnTouchEnded()
         {
-            if (Application.platform == RuntimePlatform.Android &&
-                Input.GetKeyDown(KeyCode.Escape))
+            var unityPos = InputManager.TouchPosition;
+            var eventData = new TouchEventData
             {
-                // Dual publishing
-                InputManager.OnBackPressed.Invoke();
-                NotifyHandlers(_backButtonHandlers);
-                _eventBus.Publish(new BackButtonPressedEvent
-                {
-                    Timestamp = Time.time
-                });
-            }
+                Position = ToPosition2D(unityPos),
+                Timestamp = Time.time,
+                FingerId = 0
+            };
+
+            NotifyHandlers(_touchEndedHandlers, eventData);
+            _eventBus.Publish(new TouchEndedEvent
+            {
+                Position = unityPos,
+                Duration = 0f
+            });
         }
 
-        private static bool IsTouch() => Input.GetMouseButtonDown(0);
-        private static bool IsJustStopTouching() => Input.GetMouseButtonUp(0);
+        private void OnBackButtonPressed()
+        {
+            NotifyHandlers(_backButtonHandlers);
+            _eventBus.Publish(new BackButtonPressedEvent
+            {
+                Timestamp = Time.time
+            });
+        }
 
         private void NotifyHandlers(List<Action<TouchEventData>> handlers, TouchEventData eventData)
         {
