@@ -5,7 +5,6 @@
         "JDG.Domain",
         "JDG.Application",
         "JDG.Infrastructure",
-        "JDG.Legacy",
         "VContainer",
         "Unity.TextMeshPro"
     ],
