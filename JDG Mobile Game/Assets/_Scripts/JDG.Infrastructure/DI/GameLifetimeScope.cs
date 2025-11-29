@@ -39,6 +39,9 @@ namespace JDG.Infrastructure.DI
             builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
             builder.Register<IInputService, InputService>(Lifetime.Singleton);
 
+            // Phase 15: Event-Driven Game State
+            builder.Register<GameStateService>(Lifetime.Singleton);
+
             // ============================================
             // APPLICATION LAYER - Use Cases
             // ============================================
