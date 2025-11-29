@@ -61,7 +61,9 @@ namespace JDG.Domain
         SkipOpponentAttackEveryTurn,
         ComesBackFromDeath5Times,
         CantLiveWithoutJapon,
+        Draw1Card,
         Draw2Cards,
+        Draw3Cards,
         GiveAktDefToRpgMember,
         GiveAktDefToFistilandMember,
         Default
