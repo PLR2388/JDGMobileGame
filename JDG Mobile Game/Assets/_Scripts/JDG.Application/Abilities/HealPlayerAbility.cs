@@ -41,7 +41,7 @@ namespace JDG.Application.Abilities
         {
             // Can heal if player is not at max HP
             var player = _playerRepository.GetPlayer(context.CurrentPlayerId);
-            return player != null && player.HP < player.MaxHP;
+            return player != null && player.Health < player.MaxHealth;
         }
 
         public AbilityResult Execute(AbilityContext context)
@@ -53,18 +53,15 @@ namespace JDG.Application.Abilities
                 return AbilityResult.Failure("Player not found");
             }
 
-            int oldHP = player.HP;
-            player.Heal(_healAmount);
+            int actualHealed = player.Heal(_healAmount);
             _playerRepository.SavePlayer(player);
-
-            int actualHealed = player.HP - oldHP;
 
             // Publish event
             _eventBus.Publish(new PlayerHealedEvent
             {
                 PlayerId = context.CurrentPlayerId.ToCardOwner(),
                 HealAmount = actualHealed,
-                NewHP = player.HP
+                NewHP = player.Health
             });
 
             return AbilityResult.Success($"Restored {actualHealed} HP");

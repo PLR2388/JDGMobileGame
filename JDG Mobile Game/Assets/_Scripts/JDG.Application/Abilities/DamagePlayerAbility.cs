@@ -58,16 +58,17 @@ namespace JDG.Application.Abilities
             }
 
             // Deal damage (shields absorb damage first, then HP)
-            player.TakeDamage(_damageAmount);
+            int healthDamage = player.TakeDamage(_damageAmount);
             _playerRepository.SavePlayer(player);
 
             // Publish event
             _eventBus.Publish(new PlayerDamagedEvent
             {
                 PlayerId = targetPlayerId.ToCardOwner(),
-                DamageAmount = _damageAmount,
-                NewHP = player.HP,
-                NewShields = player.Shields
+                Damage = _damageAmount,
+                HealthDamage = healthDamage,
+                CurrentHealth = player.Health,
+                IsDefeated = player.IsDefeated
             });
 
             return AbilityResult.Success($"Dealt {_damageAmount} damage");

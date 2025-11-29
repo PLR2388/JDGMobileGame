@@ -91,8 +91,8 @@ namespace JDG.Application.Abilities
                     Owner = targetPlayerId.ToCardOwner(),
                     AtkChange = _atkModifier,
                     DefChange = _defModifier,
-                    NewAtk = card.ATK,
-                    NewDef = card.DEF
+                    NewAtk = card.Stats?.Attack ?? 0,
+                    NewDef = card.Stats?.Defense ?? 0
                 });
             }
 

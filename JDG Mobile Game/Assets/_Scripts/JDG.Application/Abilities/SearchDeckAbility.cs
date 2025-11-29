@@ -15,7 +15,6 @@ namespace JDG.Application.Abilities
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly IEventBus _eventBus;
-        private readonly DrawCardUseCase _drawCardUseCase;
         private readonly CardType _searchCardType;
         private readonly CardFamily? _searchFamily;
 
@@ -30,21 +29,18 @@ namespace JDG.Application.Abilities
         /// <param name="searchFamily">Optional: specific family to search for</param>
         /// <param name="playerRepository">Repository for accessing player data</param>
         /// <param name="eventBus">Event bus for publishing events</param>
-        /// <param name="drawCardUseCase">Use case for drawing cards</param>
         public SearchDeckAbility(
             AbilityName abilityName,
             CardType searchCardType,
             CardFamily? searchFamily,
             IPlayerRepository playerRepository,
-            IEventBus eventBus,
-            DrawCardUseCase drawCardUseCase)
+            IEventBus eventBus)
         {
             Name = abilityName;
             _searchCardType = searchCardType;
             _searchFamily = searchFamily;
             _playerRepository = playerRepository;
             _eventBus = eventBus;
-            _drawCardUseCase = drawCardUseCase;
 
             string familyDesc = searchFamily.HasValue ? $" ({searchFamily.Value})" : "";
             Description = $"Search deck for {searchCardType}{familyDesc} and add to hand";
@@ -57,7 +53,7 @@ namespace JDG.Application.Abilities
 
             // Check if deck has matching card
             return player.Deck.Any(c => c.Type == _searchCardType &&
-                                       (!_searchFamily.HasValue || c.Family == _searchFamily.Value));
+                                       (!_searchFamily.HasValue || c.HasFamily(_searchFamily.Value)));
         }
 
         public AbilityResult Execute(AbilityContext context)
@@ -69,19 +65,16 @@ namespace JDG.Application.Abilities
                 return AbilityResult.Failure("Player not found");
             }
 
-            // Find matching card in deck
-            var matchingCard = player.Deck.FirstOrDefault(c =>
+            // Search deck and draw matching card
+            var matchingCard = player.SearchDeckAndDraw(c =>
                 c.Type == _searchCardType &&
-                (!_searchFamily.HasValue || c.Family == _searchFamily.Value));
+                (!_searchFamily.HasValue || c.HasFamily(_searchFamily.Value)));
 
             if (matchingCard == null)
             {
                 return AbilityResult.Failure($"No matching {_searchCardType} found in deck");
             }
 
-            // Move card from deck to hand
-            player.Deck.Remove(matchingCard);
-            player.Hand.Add(matchingCard);
             _playerRepository.SavePlayer(player);
 
             // Publish event
@@ -90,8 +83,8 @@ namespace JDG.Application.Abilities
                 CardId = matchingCard.Id.ToGuid(),
                 Owner = context.CurrentPlayerId.ToCardOwner(),
                 CardTitle = matchingCard.Title,
-                DeckCount = player.Deck.Count,
-                HandCount = player.Hand.Count
+                DeckCount = player.DeckCount,
+                HandCount = player.HandCount
             });
 
             return AbilityResult.Success($"Added {matchingCard.Title} to hand");
@@ -105,16 +98,13 @@ namespace JDG.Application.Abilities
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly IEventBus _eventBus;
-        private readonly DrawCardUseCase _drawCardUseCase;
 
         public SearchDeckAbilityFactory(
             IPlayerRepository playerRepository,
-            IEventBus eventBus,
-            DrawCardUseCase drawCardUseCase)
+            IEventBus eventBus)
         {
             _playerRepository = playerRepository;
             _eventBus = eventBus;
-            _drawCardUseCase = drawCardUseCase;
         }
 
         public SearchDeckAbility CreateSearchByType(CardType cardType)
@@ -124,8 +114,7 @@ namespace JDG.Application.Abilities
                 cardType,
                 searchFamily: null,
                 _playerRepository,
-                _eventBus,
-                _drawCardUseCase
+                _eventBus
             );
         }
 
@@ -136,8 +125,7 @@ namespace JDG.Application.Abilities
                 cardType,
                 searchFamily: family,
                 _playerRepository,
-                _eventBus,
-                _drawCardUseCase
+                _eventBus
             );
         }
     }
