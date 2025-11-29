@@ -74,24 +74,19 @@ namespace OnePlayer
         /// <summary>
         /// Start is called on the frame when a script is enabled just before any of the Update methods are called the first time.
         /// </summary>
-        private void Start()
+        protected override void Start()
         {
-            InputManager.OnLongTouch.AddListener(OnLongTouch);
-            InputManager.OnTouch.AddListener(OnTouch);
-            InputManager.OnReleaseTouch.AddListener(OnReleaseTouch);
-            InputManager.OnBackPressed.AddListener(OnBackPressed);
-            Draw();
+            // Base class handles EventBus subscriptions and calls Draw()
+            base.Start();
         }
 
         /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.
         /// </summary>
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            InputManager.OnLongTouch.RemoveListener(OnLongTouch);
-            InputManager.OnTouch.RemoveListener(OnTouch);
-            InputManager.OnReleaseTouch.RemoveListener(OnReleaseTouch);
-            InputManager.OnBackPressed.RemoveListener(OnBackPressed);
+            // Base class handles EventBus cleanup
+            base.OnDestroy();
         }
 
         /// <summary>
@@ -267,33 +262,33 @@ namespace OnePlayer
         {
             HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
             InvocationMenuManager.Instance.Hide();
-            if (GameStateManager.Instance.IsP1Turn == false)
+            if (_gameStateService.CurrentPlayer != JDG.Domain.ValueObjects.PlayerId.Player1)
             {
                 DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
             }
-            if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
+            if (_gameStateService.TurnNumber == 1 && _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
             {
-                GameStateManager.Instance.SetPhase(Phase.End);
+                _gameStateService.SetPhase(JDG.Domain.Phase.End);
             }
             else
             {
-                GameStateManager.Instance.NextPhase();
+                _gameStateService.NextPhase();
             }
 
             var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-            if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
+            if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
             {
-                GameStateManager.Instance.SetPhase(Phase.End);
+                _gameStateService.SetPhase(JDG.Domain.Phase.End);
             }
 
             RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(false);
 
-            switch (GameStateManager.Instance.Phase)
+            switch (_gameStateService.CurrentPhase)
             {
-                case Phase.Attack:
+                case JDG.Domain.Phase.Attack:
                     PlayAttackMusic();
                     break;
-                case Phase.End:
+                case JDG.Domain.Phase.End:
                     EndTurnPhase();
                     break;
             }
@@ -364,7 +359,7 @@ namespace OnePlayer
             InvocationMenuManager.Instance.Enable();
             ChoosePhaseMusic();
 
-            if (GameStateManager.Instance.NumberOfTurn == 2 && CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)
+            if (_gameStateService.TurnNumber == 2 && CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)
             {
                 HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
             }
@@ -372,11 +367,14 @@ namespace OnePlayer
 
         /// <summary>
         /// Handles the touch input by the player during the game.
+        /// This method is never called directly - kept for potential future use.
+        /// Touch events are handled by the base class OnTouch(TouchStartedEvent) method.
         /// </summary>
+        [System.Obsolete("This method is shadowed by base class OnTouch(TouchStartedEvent). Consider removing or renaming.")]
         private void OnTouch()
         {
             var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
-            if (cardTouch?.Title != CardNameMappings.CardNameMap[CardNames.Tentacules] || GameStateManager.Instance.Phase != Phase.Attack) return;
+            if (cardTouch?.Title != CardNameMappings.CardNameMap[CardNames.Tentacules] || _gameStateService.CurrentPhase != JDG.Domain.Phase.Attack) return;
             HandleSingleTouch(cardTouch, CardOwner.Player2, true);
         }
     }

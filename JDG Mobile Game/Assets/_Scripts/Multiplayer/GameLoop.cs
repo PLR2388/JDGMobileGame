@@ -24,7 +24,7 @@ public class GameLoop : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    private void Start()
+    protected virtual void Start()
     {
         // Subscribe to EventBus events instead of static UnityEvents
         _eventBus.Subscribe<LongTouchEvent>(OnLongTouch);
@@ -34,7 +34,7 @@ public class GameLoop : MonoBehaviour
         Draw();
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         // EventBus auto-disposes subscriptions
         _eventBus?.Dispose();
