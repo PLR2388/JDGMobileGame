@@ -1,6 +1,7 @@
 using System.Linq;
 using JDG.Domain;
 using JDG.Domain.Events;
+using JDG.Domain.Enums;
 using JDG.Application.Repositories;
 using JDG.Application.UseCases;
 
