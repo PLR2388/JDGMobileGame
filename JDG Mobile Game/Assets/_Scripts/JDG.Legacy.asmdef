@@ -3,7 +3,11 @@
     "rootNamespace": "",
     "references": [
         "Unity.TextMeshPro",
-        "Newtonsoft.Json"
+        "Newtonsoft.Json",
+        "VContainer",
+        "JDG.Domain",
+        "JDG.Application",
+        "JDG.Infrastructure"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
