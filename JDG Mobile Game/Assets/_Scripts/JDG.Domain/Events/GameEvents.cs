@@ -1,4 +1,5 @@
 using System;
+using JDG.Domain;
 using JDG.Domain.ValueObjects;
 
 namespace JDG.Domain.Events
