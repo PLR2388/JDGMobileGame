@@ -26,7 +26,7 @@ namespace JDG.Infrastructure.Services
         /// <summary>
         /// Gets the current game phase.
         /// </summary>
-        public Phase CurrentPhase => _gameStateRepository.CurrentPhase;
+        public JDG.Domain.Phase CurrentPhase => _gameStateRepository.CurrentPhase;
 
         /// <summary>
         /// Gets the current turn number.
@@ -46,7 +46,7 @@ namespace JDG.Infrastructure.Services
         /// <summary>
         /// Sets the current phase and publishes PhaseChangedEvent.
         /// </summary>
-        public void SetPhase(Phase newPhase)
+        public void SetPhase(JDG.Domain.Phase newPhase)
         {
             var oldPhase = _gameStateRepository.CurrentPhase;
             _gameStateRepository.SetPhase(newPhase);
@@ -64,11 +64,11 @@ namespace JDG.Infrastructure.Services
         /// </summary>
         public void NextPhase()
         {
-            if (_gameStateRepository.CurrentPhase == Phase.GameOver)
+            if (_gameStateRepository.CurrentPhase == JDG.Domain.Phase.GameOver)
                 return;
 
             var oldPhase = _gameStateRepository.CurrentPhase;
-            var newPhase = (Phase)(((int)oldPhase + 1) % 4);
+            var newPhase = (JDG.Domain.Phase)(((int)oldPhase + 1) % 4);
             SetPhase(newPhase);
         }
 
@@ -119,17 +119,17 @@ namespace JDG.Infrastructure.Services
         {
             EndTurn();
             SwitchPlayer();
-            SetPhase(Phase.Draw);
+            SetPhase(JDG.Domain.Phase.Draw);
             StartNewTurn();
         }
 
         /// <summary>
         /// Ends the game and publishes GameOverEvent.
         /// </summary>
-        public void EndGame(CardOwner winner, string reason)
+        public void EndGame(JDG.Domain.CardOwner winner, string reason)
         {
             _gameStateRepository.SetGameOver(true);
-            SetPhase(Phase.GameOver);
+            SetPhase(JDG.Domain.Phase.GameOver);
 
             _eventBus.Publish(new GameOverEvent
             {
