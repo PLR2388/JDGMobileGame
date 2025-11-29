@@ -324,4 +324,47 @@ namespace JDG.Domain.Events
         public bool IsSuccess;
         public string Message;
     }
+
+    /// <summary>
+    /// Published when a card is discarded from hand to graveyard.
+    /// </summary>
+    public struct CardDiscardedEvent
+    {
+        public Guid CardId;
+        public CardOwner Owner;
+        public string CardTitle;
+    }
+
+    /// <summary>
+    /// Published when shields are added to a player.
+    /// </summary>
+    public struct ShieldsAddedEvent
+    {
+        public CardOwner PlayerId;
+        public int ShieldsAdded;
+        public int NewShields;
+    }
+
+    /// <summary>
+    /// Published when a card's ATK/DEF stats are modified.
+    /// </summary>
+    public struct CardStatsModifiedEvent
+    {
+        public Guid CardId;
+        public CardOwner Owner;
+        public int AtkChange;
+        public int DefChange;
+        public int NewAtk;
+        public int NewDef;
+    }
+
+    /// <summary>
+    /// Published when a player is healed.
+    /// </summary>
+    public struct PlayerHealedEvent
+    {
+        public CardOwner PlayerId;
+        public int HealAmount;
+        public int NewHP;
+    }
 }

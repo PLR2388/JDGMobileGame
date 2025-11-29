@@ -1,6 +1,7 @@
 using VContainer;
 using VContainer.Unity;
 using JDG.Application;
+using JDG.Application.Abilities;
 using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Application.UseCases;
@@ -53,8 +54,34 @@ namespace JDG.Infrastructure.DI
             // Combat Use Cases (Transient)
             builder.Register<AttackUseCase>(Lifetime.Transient);
 
-            // TODO: Add ability use cases when implemented
-            // builder.Register<ActivateAbilityUseCase>(Lifetime.Transient);
+            // ============================================
+            // ABILITY SYSTEM - Phase 14
+            // ============================================
+
+            // Ability Core (Singleton)
+            builder.Register<AbilityRegistry>(Lifetime.Singleton);
+            builder.Register<AbilityManager>(Lifetime.Singleton);
+
+            // Ability Factories (Singleton - can be reused to create abilities)
+            builder.Register<DrawCardsAbilityFactory>(Lifetime.Singleton);
+            builder.Register<DestroyCardAbilityFactory>(Lifetime.Singleton);
+
+            // Register abilities after container is built
+            builder.RegisterBuildCallback(container =>
+            {
+                var registry = container.Resolve<AbilityRegistry>();
+                var drawFactory = container.Resolve<DrawCardsAbilityFactory>();
+                var destroyFactory = container.Resolve<DestroyCardAbilityFactory>();
+
+                // Register Draw abilities
+                registry.Register(Domain.AbilityName.Draw2Cards, () => drawFactory.CreateDraw2Cards());
+                registry.Register(Domain.AbilityName.Draw1Card, () => drawFactory.CreateDrawNCards(1));
+                registry.Register(Domain.AbilityName.Draw3Cards, () => drawFactory.CreateDrawNCards(3));
+
+                // Register Destroy abilities
+                registry.Register(Domain.AbilityName.KillOpponentInvocation, () => destroyFactory.CreateKillOpponentInvocation());
+                registry.Register(Domain.AbilityName.DestroyFieldATK, () => destroyFactory.CreateDestroyField());
+            });
         }
     }
 }
