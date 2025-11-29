@@ -3,26 +3,41 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Sound;
 using UnityEngine;
+using VContainer;
+using JDG.Application;
+using JDG.Domain.Events;
+using JDG.Infrastructure.Services;
 
 public class GameLoop : MonoBehaviour
 {
+    private IEventBus _eventBus;
+    private GameStateService _gameStateService;
+
+    /// <summary>
+    /// VContainer injection point. Called before Start().
+    /// </summary>
+    [Inject]
+    public void Construct(IEventBus eventBus, GameStateService gameStateService)
+    {
+        _eventBus = eventBus;
+        _gameStateService = gameStateService;
+    }
 
     // Start is called before the first frame update
     private void Start()
     {
-        InputManager.OnLongTouch.AddListener(OnLongTouch);
-        InputManager.OnTouch.AddListener(OnTouch);
-        InputManager.OnReleaseTouch.AddListener(OnReleaseTouch);
-        InputManager.OnBackPressed.AddListener(OnBackPressed);
+        // Subscribe to EventBus events instead of static UnityEvents
+        _eventBus.Subscribe<LongTouchEvent>(OnLongTouch);
+        _eventBus.Subscribe<TouchStartedEvent>(OnTouch);
+        _eventBus.Subscribe<TouchEndedEvent>(OnReleaseTouch);
+        _eventBus.Subscribe<BackButtonPressedEvent>(OnBackPressed);
         Draw();
     }
 
     private void OnDestroy()
     {
-        InputManager.OnLongTouch.RemoveListener(OnLongTouch);
-        InputManager.OnTouch.RemoveListener(OnTouch);
-        InputManager.OnReleaseTouch.RemoveListener(OnReleaseTouch);
-        InputManager.OnBackPressed.RemoveListener(OnBackPressed);
+        // EventBus auto-disposes subscriptions
+        _eventBus?.Dispose();
     }
 
     #region UI Interaction
@@ -30,7 +45,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Action when back is pressed
     /// </summary>
-    protected void OnBackPressed()
+    protected void OnBackPressed(BackButtonPressedEvent evt)
     {
         void PositiveAction()
         {
@@ -43,7 +58,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// When user just stops to touch the screen
     /// </summary>
-    protected void OnReleaseTouch()
+    protected void OnReleaseTouch(TouchEndedEvent evt)
     {
         UIManager.Instance.HideBigImage();
     }
@@ -51,20 +66,20 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// When user just touches the screen
     /// </summary>
-    private void OnTouch()
+    private void OnTouch(TouchStartedEvent evt)
     {
         var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
-        var currentOwner = GameStateManager.Instance.IsP1Turn ? CardOwner.Player1 : CardOwner.Player2;
+        var currentOwner = _gameStateService.CurrentPlayer.ToCardOwner();
         if (cardTouch != null)
         {
-            switch (GameStateManager.Instance.Phase)
+            switch (_gameStateService.CurrentPhase)
             {
-                case Phase.Choose:
+                case JDG.Domain.Phase.Choose:
                 {
                     HandleSingleTouch(cardTouch, currentOwner, false);
                 }
                     break;
-                case Phase.Attack:
+                case JDG.Domain.Phase.Attack:
                 {
                     HandleSingleTouch(cardTouch, currentOwner, true);
                 }
@@ -96,7 +111,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Called when user touches during a long time
     /// </summary>
-    protected void OnLongTouch()
+    protected void OnLongTouch(LongTouchEvent evt)
     {
         InvocationMenuManager.Instance.Hide();
         var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
@@ -112,29 +127,29 @@ public class GameLoop : MonoBehaviour
     protected virtual void NextRound()
     {
         InvocationMenuManager.Instance.Hide();
-        if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
+        if (_gameStateService.TurnNumber == 1 && _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
         {
-            GameStateManager.Instance.SetPhase(Phase.End);
+            _gameStateService.SetPhase(JDG.Domain.Phase.End);
         }
         else
         {
-            GameStateManager.Instance.NextPhase();
+            _gameStateService.NextPhase();
         }
 
         var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
+        if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
         {
-            GameStateManager.Instance.SetPhase(Phase.End);
+            _gameStateService.SetPhase(JDG.Domain.Phase.End);
         }
 
         RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(true);
 
-        switch (GameStateManager.Instance.Phase)
+        switch (_gameStateService.CurrentPhase)
         {
-            case Phase.Attack:
+            case JDG.Domain.Phase.Attack:
                 PlayAttackMusic();
                 break;
-            case Phase.End:
+            case JDG.Domain.Phase.End:
                 EndTurnPhase();
                 break;
         }
@@ -172,9 +187,9 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Redirect player after a Gameover
     /// </summary>
-    private static void GameOver()
+    private void GameOver()
     {
-        GameStateManager.Instance.SetPhase(Phase.GameOver);
+        _gameStateService.SetPhase(JDG.Domain.Phase.GameOver);
         SceneLoaderSystem.LoadMainScreen();
     }
 
@@ -254,8 +269,8 @@ public class GameLoop : MonoBehaviour
     protected void Draw()
     {
         DoDraw();
-        GameStateManager.Instance.IncrementNumberOfTurn();
-        GameStateManager.Instance.NextPhase();
+        _gameStateService.StartNewTurn();
+        _gameStateService.NextPhase();
 
         ChoosePhase();
         RoundDisplayManager.Instance.SetRoundText(
@@ -284,7 +299,7 @@ public class GameLoop : MonoBehaviour
     protected void EndTurnPhase()
     {
         CardManager.Instance.HandleEndTurn();
-        GameStateManager.Instance.HandleEndTurn();
+        _gameStateService.HandleEndTurn();
         Draw();
     }
 
