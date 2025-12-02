@@ -1,0 +1,24 @@
+using VContainer;
+using VContainer.Unity;
+using JDG.Application.Services;
+using JDG.Infrastructure.Services;
+
+namespace JDG.DI
+{
+    /// <summary>
+    /// VContainer lifetime scope for legacy wrapper services.
+    /// Registers services that wrap old singleton managers during migration.
+    /// </summary>
+    public class LegacyServicesScope : LifetimeScope
+    {
+        protected override void Configure(IContainerBuilder builder)
+        {
+            // Legacy wrapper services (wrap old singleton managers)
+            // These will be removed once migration to new architecture is complete
+            builder.Register<IAudioService, AudioService>(Lifetime.Singleton);
+            builder.Register<ILocalizationService, LocalizationService>(Lifetime.Singleton);
+            builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
+            builder.Register<IInputService, InputService>(Lifetime.Singleton);
+        }
+    }
+}

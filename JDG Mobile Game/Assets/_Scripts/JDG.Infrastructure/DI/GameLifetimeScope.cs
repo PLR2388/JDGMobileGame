@@ -33,14 +33,11 @@ namespace JDG.Infrastructure.DI
             builder.Register<IGameStateRepository, GameStateRepository>(Lifetime.Singleton);
 
             // Services (Singleton - application-wide services)
-            // Phase 13: Service Layer Foundation
-            builder.Register<IAudioService, AudioService>(Lifetime.Singleton);
-            builder.Register<ILocalizationService, LocalizationService>(Lifetime.Singleton);
-            builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
-            builder.Register<IInputService, InputService>(Lifetime.Singleton);
-
             // Phase 15: Event-Driven Game State
             builder.Register<GameStateService>(Lifetime.Singleton);
+
+            // Note: Legacy wrapper services (AudioService, DialogService, InputService, LocalizationService)
+            // are registered in a separate Legacy assembly scope to avoid circular dependencies.
 
             // ============================================
             // APPLICATION LAYER - Use Cases
