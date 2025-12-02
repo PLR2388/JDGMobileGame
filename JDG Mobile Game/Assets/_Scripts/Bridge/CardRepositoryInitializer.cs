@@ -4,7 +4,7 @@ using JDG.Infrastructure.Repositories;
 // Type alias to avoid ambiguity
 using LegacyCard = Cards.Card;
 
-namespace JDG.Infrastructure.Bridge
+namespace JDG.Bridge
 {
     /// <summary>
     /// Bridge class that initializes CardRepository with ScriptableObject cards.

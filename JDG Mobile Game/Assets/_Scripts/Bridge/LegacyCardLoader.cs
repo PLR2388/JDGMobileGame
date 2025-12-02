@@ -2,7 +2,7 @@ using UnityEngine;
 using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Repositories;
 
-namespace JDG.Infrastructure.Bridge
+namespace JDG.Bridge
 {
     /// <summary>
     /// MonoBehaviour that loads legacy ScriptableObject cards into CardRepository.

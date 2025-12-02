@@ -20,7 +20,7 @@ using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
 using DomainFieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
 using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 
-namespace JDG.Infrastructure.Bridge
+namespace JDG.Bridge
 {
     /// <summary>
     /// Converts old ScriptableObject cards to new domain Card entities.
