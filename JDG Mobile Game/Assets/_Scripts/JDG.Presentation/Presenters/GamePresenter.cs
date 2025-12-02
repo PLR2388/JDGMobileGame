@@ -3,6 +3,7 @@ using JDG.Application;
 using JDG.Application.Repositories;
 using JDG.Application.UseCases;
 using JDG.Application.Mappers;
+using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Presentation.Views;
 

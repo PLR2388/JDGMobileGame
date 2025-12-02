@@ -11,7 +11,7 @@ using JDG.Infrastructure.Services;
 public class GameLoop : MonoBehaviour
 {
     private IEventBus _eventBus;
-    private GameStateService _gameStateService;
+    protected GameStateService _gameStateService;
 
     /// <summary>
     /// VContainer injection point. Called before Start().
@@ -36,8 +36,8 @@ public class GameLoop : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
-        // EventBus auto-disposes subscriptions
-        _eventBus?.Dispose();
+        // EventBus subscriptions are automatically managed
+        // No manual cleanup needed
     }
 
     #region UI Interaction
@@ -69,7 +69,9 @@ public class GameLoop : MonoBehaviour
     private void OnTouch(TouchStartedEvent evt)
     {
         var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
-        var currentOwner = _gameStateService.CurrentPlayer.ToCardOwner();
+        // Convert domain CardOwner to global CardOwner enum
+        var domainOwner = _gameStateService.CurrentPlayer.ToCardOwner();
+        var currentOwner = (CardOwner)(int)domainOwner;
         if (cardTouch != null)
         {
             switch (_gameStateService.CurrentPhase)
@@ -248,7 +250,7 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Check if one of the player die
     /// </summary>
-    private static void HandlePlayerDeath()
+    private void HandlePlayerDeath()
     {
         // Check if one player die
         var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
