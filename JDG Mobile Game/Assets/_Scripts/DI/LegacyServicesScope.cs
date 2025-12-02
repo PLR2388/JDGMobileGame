@@ -19,6 +19,11 @@ namespace JDG.DI
             builder.Register<ILocalizationService, LocalizationService>(Lifetime.Singleton);
             builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
             builder.Register<IInputService, InputService>(Lifetime.Singleton);
+
+            // Phase 1: Input System Services
+            // RaycastService is here (not in GameLifetimeScope) because it depends on
+            // legacy types (InGameCard, PhysicalCardDisplay) that live in the default assembly
+            builder.Register<IRaycastService, RaycastService>(Lifetime.Singleton);
         }
     }
 }

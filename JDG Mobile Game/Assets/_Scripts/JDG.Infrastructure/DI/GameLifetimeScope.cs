@@ -36,7 +36,7 @@ namespace JDG.Infrastructure.DI
             // Phase 15: Event-Driven Game State
             builder.Register<GameStateService>(Lifetime.Singleton);
 
-            // Note: Legacy wrapper services (AudioService, DialogService, InputService, LocalizationService)
+            // Note: Legacy wrapper services (AudioService, DialogService, InputService, LocalizationService, RaycastService)
             // are registered in a separate Legacy assembly scope to avoid circular dependencies.
 
             // ============================================

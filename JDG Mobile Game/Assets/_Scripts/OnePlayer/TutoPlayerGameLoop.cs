@@ -373,7 +373,7 @@ namespace OnePlayer
         [System.Obsolete("This method is shadowed by base class OnTouch(TouchStartedEvent). Consider removing or renaming.")]
         private void OnTouch()
         {
-            var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
+            var cardTouch = _raycastService.GetTouchedCard();
             if (cardTouch?.Title != CardNameMappings.CardNameMap[CardNames.Tentacules] || _gameStateService.CurrentPhase != JDG.Domain.Phase.Attack) return;
             HandleSingleTouch(cardTouch, CardOwner.Player2, true);
         }

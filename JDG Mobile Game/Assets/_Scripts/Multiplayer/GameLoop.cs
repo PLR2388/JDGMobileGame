@@ -12,15 +12,17 @@ public class GameLoop : MonoBehaviour
 {
     private IEventBus _eventBus;
     protected GameStateService _gameStateService;
+    private IRaycastService _raycastService;
 
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// </summary>
     [Inject]
-    public void Construct(IEventBus eventBus, GameStateService gameStateService)
+    public void Construct(IEventBus eventBus, GameStateService gameStateService, IRaycastService raycastService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
+        _raycastService = raycastService;
     }
 
     // Start is called before the first frame update
@@ -68,7 +70,7 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void OnTouch(TouchStartedEvent evt)
     {
-        var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
+        var cardTouch = _raycastService.GetTouchedCard();
         // Convert domain CardOwner to global CardOwner enum
         var domainOwner = _gameStateService.CurrentPlayer.ToCardOwner();
         var currentOwner = (CardOwner)(int)domainOwner;
@@ -116,7 +118,7 @@ public class GameLoop : MonoBehaviour
     protected void OnLongTouch(LongTouchEvent evt)
     {
         InvocationMenuManager.Instance.Hide();
-        var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
+        var cardTouch = _raycastService.GetTouchedCard();
         if (cardTouch != null)
         {
             UIManager.Instance.DisplayCardOnLargeView(cardTouch);

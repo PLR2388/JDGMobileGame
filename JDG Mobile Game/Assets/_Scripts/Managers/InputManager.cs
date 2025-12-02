@@ -10,8 +10,11 @@ public class InputManager : Singleton<InputManager>
     private float totalDownTime;
 
     /// <summary>
-    /// Checks if the user tap at a random location
+    /// Checks if the user tap at a random location.
+    ///
+    /// [OBSOLETE] Use IInputService with EventBus (TouchStartedEvent) instead.
     /// </summary>
+    [System.Obsolete("Use IInputService.SubscribeToTouchStarted() or EventBus TouchStartedEvent instead.")]
     public static bool IsTap
     {
         get
@@ -43,7 +46,10 @@ public class InputManager : Singleton<InputManager>
 
     /// <summary>
     /// Gets the position of the current touch or click input.
+    ///
+    /// [OBSOLETE] Use IInputService.GetCurrentTouchPosition() instead.
     /// </summary>
+    [System.Obsolete("Use IInputService.GetCurrentTouchPosition() instead for better testability.")]
     public static Vector3 TouchPosition
     {
         get

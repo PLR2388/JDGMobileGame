@@ -4,7 +4,11 @@ using UnityEngine;
 
 /// <summary>
 /// Manages the raycasting functionality to detect card interactions in the game.
+///
+/// [OBSOLETE] This singleton is deprecated. Use IRaycastService with dependency injection instead.
+/// Will be removed in a future version once all legacy code is migrated.
 /// </summary>
+[System.Obsolete("Use IRaycastService with dependency injection instead. This singleton will be removed in Phase 1 cleanup.")]
 public class CardRaycastManager : Singleton<CardRaycastManager>
 {
     private Camera mainCamera;
