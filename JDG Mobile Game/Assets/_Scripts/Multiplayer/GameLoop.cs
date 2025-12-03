@@ -12,7 +12,7 @@ public class GameLoop : MonoBehaviour
 {
     private IEventBus _eventBus;
     protected GameStateService _gameStateService;
-    private IRaycastService _raycastService;
+    protected IRaycastService _raycastService;
 
     /// <summary>
     /// VContainer injection point. Called before Start().
