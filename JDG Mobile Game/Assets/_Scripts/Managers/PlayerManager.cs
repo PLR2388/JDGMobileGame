@@ -81,7 +81,7 @@ public class PlayerManager : Singleton<PlayerManager>
         else
         {
             var diff = CardManager.Instance.ComputeDamageAttack();
-            PlayerService.ChangeHealth(opponentId, diff);
+            PlayerService.ChangeHealth(opponentId, (int)diff);
         }
 
         // Sync legacy PlayerStatus MonoBehaviours with service state
