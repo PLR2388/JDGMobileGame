@@ -56,12 +56,12 @@ public class PlayerManager : Singleton<PlayerManager>
     /// </summary>
     private void InitShieldCount()
     {
-        PlayerService.SetShieldCount(CardOwner.Player1, 0);
-        PlayerService.SetShieldCount(CardOwner.Player2, 0);
+        PlayerService.SetShieldCount(JDG.Domain.CardOwner.Player1, 0);
+        PlayerService.SetShieldCount(JDG.Domain.CardOwner.Player2, 0);
 
         // Sync legacy PlayerStatus MonoBehaviours with service state
-        SyncPlayerStatusWithService(CardOwner.Player1);
-        SyncPlayerStatusWithService(CardOwner.Player2);
+        SyncPlayerStatusWithService(JDG.Domain.CardOwner.Player1);
+        SyncPlayerStatusWithService(JDG.Domain.CardOwner.Player2);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class PlayerManager : Singleton<PlayerManager>
     /// </summary>
     public void HandleAttackIfOpponentIsPlayer()
     {
-        var opponentId = IsP1Turn ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentId = IsP1Turn ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
 
         // Directly attack the player
         if (PlayerService.HasShields(opponentId))
@@ -92,10 +92,10 @@ public class PlayerManager : Singleton<PlayerManager>
     /// Syncs the legacy PlayerStatus MonoBehaviour with the current PlayerService state.
     /// This bridge method maintains UI compatibility during migration.
     /// </summary>
-    private void SyncPlayerStatusWithService(CardOwner playerId)
+    private void SyncPlayerStatusWithService(JDG.Domain.CardOwner playerId)
     {
         var state = PlayerService.GetPlayerState(playerId);
-        var playerStatus = playerId == CardOwner.Player1 ? playerStatus1 : playerStatus2;
+        var playerStatus = playerId == JDG.Domain.CardOwner.Player1 ? playerStatus1 : playerStatus2;
 
         // Update MonoBehaviour to match service state (without triggering events)
         playerStatus.SetHealthDirect((float)state.CurrentHealth);

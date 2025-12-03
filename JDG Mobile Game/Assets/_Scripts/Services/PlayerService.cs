@@ -18,24 +18,24 @@ using System.Collections.Generic;
 public class PlayerService : IPlayerService
 {
     private readonly IEventBus _eventBus;
-    private readonly Dictionary<CardOwner, PlayerState> _playerStates;
+    private readonly Dictionary<JDG.Domain.CardOwner, PlayerState> _playerStates;
 
     public PlayerService(IEventBus eventBus)
     {
         _eventBus = eventBus;
-        _playerStates = new Dictionary<CardOwner, PlayerState>
+        _playerStates = new Dictionary<JDG.Domain.CardOwner, PlayerState>
         {
-            { CardOwner.Player1, PlayerState.CreateDefault(CardOwner.Player1) },
-            { CardOwner.Player2, PlayerState.CreateDefault(CardOwner.Player2) }
+            { JDG.Domain.CardOwner.Player1, PlayerState.CreateDefault(JDG.Domain.CardOwner.Player1) },
+            { JDG.Domain.CardOwner.Player2, PlayerState.CreateDefault(JDG.Domain.CardOwner.Player2) }
         };
     }
 
-    public PlayerState GetPlayerState(CardOwner playerId)
+    public PlayerState GetPlayerState(JDG.Domain.CardOwner playerId)
     {
         return _playerStates[playerId];
     }
 
-    public void ChangeHealth(CardOwner playerId, int delta)
+    public void ChangeHealth(JDG.Domain.CardOwner playerId, int delta)
     {
         var currentState = _playerStates[playerId];
         var oldHealth = currentState.CurrentHealth;
@@ -52,7 +52,7 @@ public class PlayerService : IPlayerService
         });
     }
 
-    public void SetHealth(CardOwner playerId, int health)
+    public void SetHealth(JDG.Domain.CardOwner playerId, int health)
     {
         var currentState = _playerStates[playerId];
         var oldHealth = currentState.CurrentHealth;
@@ -69,7 +69,7 @@ public class PlayerService : IPlayerService
         });
     }
 
-    public void SetShieldCount(CardOwner playerId, int shieldCount)
+    public void SetShieldCount(JDG.Domain.CardOwner playerId, int shieldCount)
     {
         var currentState = _playerStates[playerId];
         var oldShields = currentState.ShieldCount;
@@ -85,7 +85,7 @@ public class PlayerService : IPlayerService
         });
     }
 
-    public void DecrementShield(CardOwner playerId)
+    public void DecrementShield(JDG.Domain.CardOwner playerId)
     {
         var currentState = _playerStates[playerId];
         var oldShields = currentState.ShieldCount;
@@ -101,33 +101,33 @@ public class PlayerService : IPlayerService
         });
     }
 
-    public void EnableBlockAttack(CardOwner playerId)
+    public void EnableBlockAttack(JDG.Domain.CardOwner playerId)
     {
         var currentState = _playerStates[playerId];
         var newState = currentState.EnableBlockAttack();
         _playerStates[playerId] = newState;
     }
 
-    public void DisableBlockAttack(CardOwner playerId)
+    public void DisableBlockAttack(JDG.Domain.CardOwner playerId)
     {
         var currentState = _playerStates[playerId];
         var newState = currentState.DisableBlockAttack();
         _playerStates[playerId] = newState;
     }
 
-    public bool IsPlayerDefeated(CardOwner playerId)
+    public bool IsPlayerDefeated(JDG.Domain.CardOwner playerId)
     {
         return _playerStates[playerId].IsDefeated;
     }
 
-    public bool HasShields(CardOwner playerId)
+    public bool HasShields(JDG.Domain.CardOwner playerId)
     {
         return _playerStates[playerId].HasShields;
     }
 
     public void ResetPlayers()
     {
-        _playerStates[CardOwner.Player1] = PlayerState.CreateDefault(CardOwner.Player1);
-        _playerStates[CardOwner.Player2] = PlayerState.CreateDefault(CardOwner.Player2);
+        _playerStates[JDG.Domain.CardOwner.Player1] = PlayerState.CreateDefault(JDG.Domain.CardOwner.Player1);
+        _playerStates[JDG.Domain.CardOwner.Player2] = PlayerState.CreateDefault(JDG.Domain.CardOwner.Player2);
     }
 }
