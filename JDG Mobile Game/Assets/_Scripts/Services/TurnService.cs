@@ -1,0 +1,131 @@
+using System.Linq;
+using Cards;
+using JDG.Application.Services;
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Services;
+using UnityEngine;
+
+/// <summary>
+/// Implementation of ITurnService.
+/// Manages turn lifecycle and processes card abilities at turn start/end.
+///
+/// Note: This service is in the default assembly because it depends on legacy types
+/// (PlayerCardManager, PlayerCards, PlayerStatus). It will be moved to JDG.Infrastructure
+/// once these types are fully refactored.
+///
+/// Part of Phase 4 migration - decomposes CardManager god class.
+/// </summary>
+public class TurnService : ITurnService
+{
+    private readonly GameStateService _gameStateService;
+    private readonly PlayerCardManager _player1CardManager;
+    private readonly PlayerCardManager _player2CardManager;
+    private readonly Transform _canvas;
+
+    public TurnService(
+        GameStateService gameStateService,
+        PlayerCardManager player1CardManager,
+        PlayerCardManager player2CardManager,
+        Transform canvas)
+    {
+        _gameStateService = gameStateService;
+        _player1CardManager = player1CardManager;
+        _player2CardManager = player2CardManager;
+        _canvas = canvas;
+    }
+
+    public void OnTurnStart()
+    {
+        var (playerCards, opponentCards) = GetCurrentAndOpponentCards();
+        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
+        var opponentStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
+
+        playerCards.ResetInvocationCardNewTurn();
+
+        // Create copies to avoid collection modification during iteration
+        var copyInvocationCards = playerCards.InvocationCards.ToList();
+        var copyOpponentInvocationCards = opponentCards.InvocationCards.ToList();
+        var copyEffectCards = playerCards.EffectCards.ToList();
+        var copyOpponentEffectCards = opponentCards.EffectCards.ToList();
+
+        // Apply abilities for both players
+        ApplyInvocationOnTurnStart(copyInvocationCards, playerCards, opponentCards);
+        ApplyInvocationOnTurnStart(copyOpponentInvocationCards, opponentCards, playerCards);
+
+        ApplyEffectOnTurnStart(copyEffectCards, playerStatus, playerCards, opponentStatus, opponentCards);
+        ApplyEffectOnTurnStart(copyOpponentEffectCards, opponentStatus, opponentCards, playerStatus, playerCards);
+
+        ApplyFieldOnTurnStart(playerCards, playerStatus);
+    }
+
+    public void HandleEndTurn()
+    {
+        var currentCardManager = GetCurrentPlayerCardManager();
+        currentCardManager.ProcessEndOfTurn();
+    }
+
+    private (PlayerCards current, PlayerCards opponent) GetCurrentAndOpponentCards()
+    {
+        var isP1Turn = _gameStateService.CurrentPlayer == PlayerId.Player1;
+        if (isP1Turn)
+        {
+            return (_player1CardManager.PlayerCards, _player2CardManager.PlayerCards);
+        }
+        else
+        {
+            return (_player2CardManager.PlayerCards, _player1CardManager.PlayerCards);
+        }
+    }
+
+    private PlayerCardManager GetCurrentPlayerCardManager()
+    {
+        var isP1Turn = _gameStateService.CurrentPlayer == PlayerId.Player1;
+        return isP1Turn ? _player1CardManager : _player2CardManager;
+    }
+
+    private void ApplyInvocationOnTurnStart(
+        System.Collections.Generic.List<InGameInvocationCard> invocationCards,
+        PlayerCards playerCards,
+        PlayerCards opponentCards)
+    {
+        foreach (var invocationCard in invocationCards)
+        {
+            foreach (var ability in invocationCard.Abilities)
+            {
+                ability.OnTurnStart(_canvas, playerCards, opponentCards);
+            }
+
+            if (invocationCard.EquipmentCard != null)
+            {
+                foreach (var equipmentAbility in invocationCard.EquipmentCard.EquipmentAbilities)
+                {
+                    equipmentAbility.OnTurnStart(invocationCard);
+                }
+            }
+        }
+    }
+
+    private void ApplyEffectOnTurnStart(
+        System.Collections.Generic.List<InGameEffectCard> effectCards,
+        PlayerStatus playerStatus,
+        PlayerCards playerCards,
+        PlayerStatus opponentStatus,
+        PlayerCards opponentCards)
+    {
+        foreach (var ability in effectCards.SelectMany(card => card.EffectAbilities))
+        {
+            ability.OnTurnStart(_canvas, playerStatus, playerCards, opponentStatus, opponentCards);
+        }
+    }
+
+    private void ApplyFieldOnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus)
+    {
+        if (playerCards.FieldCard != null)
+        {
+            foreach (var fieldAbility in playerCards.FieldCard.FieldAbilities)
+            {
+                fieldAbility.OnTurnStart(_canvas, playerCards, playerStatus);
+            }
+        }
+    }
+}
