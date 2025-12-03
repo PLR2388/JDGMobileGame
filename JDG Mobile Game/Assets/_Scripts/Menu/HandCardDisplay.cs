@@ -92,7 +92,7 @@ public class HandCardDisplay : MonoBehaviour
     protected void AdjustRectTransformSize(int cardCount)
     {
         var rectTransform = GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(420 * cardCount, rectTransform.sizeDelta.y);
+        rectTransform.sizeDelta = new UnityEngine.Vector2(420 * cardCount, rectTransform.sizeDelta.y);
     }
     
     /// <summary>
