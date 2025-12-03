@@ -1,9 +1,6 @@
 using Cards;
-using JDG.Application.Services;
 using JDG.Domain.ValueObjects;
-using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
-using UnityEngine;
 
 /// <summary>
 /// Implementation of ICardCollectionService.

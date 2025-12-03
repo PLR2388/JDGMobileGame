@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using Cards.EffectCards;
-using JDG.Application.Services;
 using UnityEngine;
 
 /// <summary>

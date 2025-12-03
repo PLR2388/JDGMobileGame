@@ -4,7 +4,6 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
-using JDG.Application.Services;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;

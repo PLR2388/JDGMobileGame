@@ -1,6 +1,5 @@
 using System.Linq;
 using Cards;
-using JDG.Application.Services;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Services;
 using UnityEngine;
