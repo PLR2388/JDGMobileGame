@@ -10,6 +10,18 @@ public enum Phase
     GameOver
 }
 
+/// <summary>
+/// [OBSOLETE] Legacy game state manager using singleton pattern.
+/// Use GameStateService with dependency injection instead.
+/// GameStateService provides the same functionality with proper DI and EventBus integration.
+///
+/// Migration guide:
+/// - GameStateManager.Instance.IsP1Turn → gameStateService.CurrentPlayer == PlayerId.Player1
+/// - GameStateManager.Instance.Phase → gameStateService.CurrentPhase (note: JDG.Domain.Phase enum)
+/// - GameStateManager.Instance.NumberOfTurn → gameStateService.TurnNumber
+/// - GameStateManager.ChangePlayer event → Subscribe to PlayerTurnChangedEvent via EventBus
+/// </summary>
+[System.Obsolete("Use GameStateService with dependency injection instead. This singleton will be removed in Phase 2 cleanup.")]
 public class GameStateManager : Singleton<GameStateManager>
 {
     public bool IsP1Turn => isP1Turn;
@@ -19,7 +31,12 @@ public class GameStateManager : Singleton<GameStateManager>
     private bool isP1Turn = true;
     private Phase phase = Phase.Draw;
     private int numberOfTurn = 0;
-    
+
+    /// <summary>
+    /// [OBSOLETE] Static UnityEvent for player turn changes.
+    /// Use EventBus with PlayerTurnChangedEvent instead for better testability and decoupling.
+    /// </summary>
+    [System.Obsolete("Use EventBus.Subscribe<PlayerTurnChangedEvent>() instead.")]
     public static readonly UnityEvent ChangePlayer = new UnityEvent();
     
     /// <summary>

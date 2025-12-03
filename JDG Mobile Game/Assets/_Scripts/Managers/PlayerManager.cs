@@ -1,3 +1,6 @@
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.DI;
+using JDG.Infrastructure.Services;
 using UnityEngine;
 
 /// <summary>
@@ -8,13 +11,18 @@ public class PlayerManager : Singleton<PlayerManager>
     [SerializeField] private PlayerStatus playerStatus1;
     [SerializeField] private PlayerStatus playerStatus2;
 
+    // Phase 2: Temporary bridge to GameStateService during migration
+    // This will be removed when PlayerManager is replaced by PlayerService in Phase 3
+    private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
+    private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
+
     /// <summary>
     /// Retrieves the current player's status.
     /// </summary>
     /// <returns>PlayerStatus of the current player.</returns>
     public PlayerStatus GetCurrentPlayerStatus()
     {
-        return GameStateManager.Instance.IsP1Turn ? playerStatus1 : playerStatus2;
+        return IsP1Turn ? playerStatus1 : playerStatus2;
     }
 
     /// <summary>
@@ -23,7 +31,7 @@ public class PlayerManager : Singleton<PlayerManager>
     /// <returns>PlayerStatus of the opponent player.</returns>
     public PlayerStatus GetOpponentPlayerStatus()
     {
-        return GameStateManager.Instance.IsP1Turn ? playerStatus2 : playerStatus1;
+        return IsP1Turn ? playerStatus2 : playerStatus1;
     }
 
     /// <summary>

@@ -4,12 +4,20 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.DI;
+using JDG.Infrastructure.Services;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class CardManager : Singleton<CardManager>
 {
     [SerializeField] protected Transform canvas;
+
+    // Phase 2: Temporary bridge to GameStateService during migration
+    // This will be removed when CardManager is decomposed in Phase 4
+    private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
+    private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
 
     /// <summary>
     /// Get attacker from Player's touch externally
@@ -30,16 +38,16 @@ public class CardManager : Singleton<CardManager>
     /// <returns>The card set of the current player.</returns>
     public PlayerCards GetCurrentPlayerCards()
     {
-        return GameStateManager.Instance.IsP1Turn ? player1CardManager.PlayerCards : player2CardManager.PlayerCards;
+        return IsP1Turn ? player1CardManager.PlayerCards : player2CardManager.PlayerCards;
     }
-    
+
     /// <summary>
     /// Retrieves the card set for the opponent player.
     /// </summary>
     /// <returns>The card set of the opponent player.</returns>
     public PlayerCards GetOpponentPlayerCards()
     {
-        return GameStateManager.Instance.IsP1Turn ? player2CardManager.PlayerCards : player1CardManager.PlayerCards;
+        return IsP1Turn ? player2CardManager.PlayerCards : player1CardManager.PlayerCards;
     }
 
     /// <summary>
@@ -48,7 +56,7 @@ public class CardManager : Singleton<CardManager>
     /// <returns>The card manager of the current player.</returns>
     private PlayerCardManager GetCurrentPlayerCardManager()
     {
-        return GameStateManager.Instance.IsP1Turn ? player1CardManager : player2CardManager;
+        return IsP1Turn ? player1CardManager : player2CardManager;
     }
 
     /// <summary>
@@ -57,7 +65,7 @@ public class CardManager : Singleton<CardManager>
     /// <returns>The card manager of the opponent.</returns>
     private PlayerCardManager GetOpponentPlayerCardManager()
     {
-        return GameStateManager.Instance.IsP1Turn ? player2CardManager : player1CardManager;
+        return IsP1Turn ? player2CardManager : player1CardManager;
     }
 
     /// <summary>

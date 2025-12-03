@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Cards;
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.DI;
+using JDG.Infrastructure.Services;
 using UnityEngine;using UnityEngine.Events;
 
 [Serializable]
@@ -12,10 +15,15 @@ public class HandCardChangeEvent : UnityEvent<ObservableCollection<InGameCard>>
 public class HandCardDisplay : MonoBehaviour
 {
     [SerializeField] protected GameObject prefabCard;
-    
+
     protected readonly List<GameObject> CreatedCards = new List<GameObject>();
 
     public static readonly HandCardChangeEvent HandCardChange = new HandCardChangeEvent();
+
+    // Phase 2: Temporary bridge to GameStateService during migration
+    // This will be removed when HandCardDisplay is refactored in Phase 6
+    private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
+    private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
 
     /// <summary>
     /// Called when the script instance is being loaded.
@@ -45,7 +53,7 @@ public class HandCardDisplay : MonoBehaviour
     /// <returns>True if card belongs to current player; otherwise, false.</returns>
     protected bool IsCurrentPlayerTurn(InGameCard card)
     {
-        return GameStateManager.Instance.IsP1Turn == (card.CardOwner == CardOwner.Player1);
+        return IsP1Turn == (card.CardOwner == CardOwner.Player1);
     }
     
     /// <summary>

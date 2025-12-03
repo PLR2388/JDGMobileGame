@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.DI;
+using JDG.Infrastructure.Services;
 using UnityEngine;
 
 /// <summary>
@@ -106,7 +109,13 @@ public class SkipOpponentAttackAbility : Ability
         {
             return;
         }
-        if (GameStateManager.Instance.IsP1Turn == playerCards.IsPlayerOne)
+
+        // Phase 2: Temporary use of ServiceLocator during migration
+        // This ability will be migrated to new IAbility system in Phase 7
+        var gameStateService = ServiceLocator.Get<GameStateService>();
+        var isP1Turn = gameStateService.CurrentPlayer == PlayerId.Player1;
+
+        if (isP1Turn == playerCards.IsPlayerOne)
         {
             ApplyEffect(canvas, opponentPlayerCards);
         }

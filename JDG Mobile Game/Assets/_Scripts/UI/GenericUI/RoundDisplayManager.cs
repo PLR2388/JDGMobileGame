@@ -1,3 +1,6 @@
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.DI;
+using JDG.Infrastructure.Services;
 using TMPro;
 using UnityEngine;
 
@@ -12,6 +15,12 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
     [SerializeField] protected GameObject inHandButton;
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
+
+    // Phase 2: Temporary bridge to GameStateService during migration
+    // This will be removed when RoundDisplayManager is replaced by Presenter in Phase 5
+    private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
+    private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
+    private Phase CurrentPhase => (Phase)(int)GameStateService.CurrentPhase; // Cast from JDG.Domain.Phase to global Phase
 
     /// <summary>
     /// Sets the displayed round text.
@@ -28,7 +37,7 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
     /// </summary>
     public void AdaptUIToPhaseIdInNextRound(bool rotate)
     {
-        var phaseId = GameStateManager.Instance.Phase;
+        var phaseId = CurrentPhase;
         switch (phaseId)
         {
             case Phase.End:
@@ -64,8 +73,8 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
     {
         if (playerText)
         {
-            playerText.text = GameStateManager.Instance.IsP1Turn 
-                ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO) 
+            playerText.text = IsP1Turn
+                ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO)
                 : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_ONE);
         }
     }
