@@ -1,3 +1,5 @@
+using JDG.Application.Services;
+using JDG.Domain;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
@@ -5,6 +7,8 @@ using UnityEngine;
 
 /// <summary>
 /// Manages player-related functionalities such as retrieving the current player status or handling attacks on the opponent.
+/// Phase 3: Now uses IPlayerService for state management. PlayerStatus MonoBehaviours are kept
+/// temporarily to maintain UI compatibility during migration.
 /// </summary>
 public class PlayerManager : Singleton<PlayerManager>
 {
@@ -12,9 +16,12 @@ public class PlayerManager : Singleton<PlayerManager>
     [SerializeField] private PlayerStatus playerStatus2;
 
     // Phase 2: Temporary bridge to GameStateService during migration
-    // This will be removed when PlayerManager is replaced by PlayerService in Phase 3
     private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
     private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
+
+    // Phase 3: Temporary bridge to PlayerService during migration
+    // This will be removed when PlayerManager singleton is fully replaced
+    private IPlayerService PlayerService => ServiceLocator.Get<IPlayerService>();
 
     /// <summary>
     /// Retrieves the current player's status.
@@ -42,33 +49,56 @@ public class PlayerManager : Singleton<PlayerManager>
         base.Awake();
         InitShieldCount();
     }
-    
+
     /// <summary>
     /// Initializes the shield count for both players to zero.
+    /// Phase 3: Now uses PlayerService to manage state.
     /// </summary>
     private void InitShieldCount()
     {
+        PlayerService.SetShieldCount(CardOwner.Player1, 0);
+        PlayerService.SetShieldCount(CardOwner.Player2, 0);
 
-        playerStatus1.SetShieldCount(0);
-        playerStatus2.SetShieldCount(0);
+        // Sync legacy PlayerStatus MonoBehaviours with service state
+        SyncPlayerStatusWithService(CardOwner.Player1);
+        SyncPlayerStatusWithService(CardOwner.Player2);
     }
 
     /// <summary>
-    /// Handles the attack on the opponent player. 
+    /// Handles the attack on the opponent player.
     /// If the opponent has a shield, it decrements the shield. Otherwise, it computes the damage and applies it.
+    /// Phase 3: Now uses PlayerService for state management and event publishing.
     /// </summary>
     public void HandleAttackIfOpponentIsPlayer()
     {
-        var opponentPlayerStatus = GetOpponentPlayerStatus();
+        var opponentId = IsP1Turn ? CardOwner.Player2 : CardOwner.Player1;
+
         // Directly attack the player
-        if (opponentPlayerStatus.NumberShield > 0)
+        if (PlayerService.HasShields(opponentId))
         {
-            opponentPlayerStatus.DecrementShield();
+            PlayerService.DecrementShield(opponentId);
         }
         else
         {
             var diff = CardManager.Instance.ComputeDamageAttack();
-            opponentPlayerStatus.ChangePv(diff);
+            PlayerService.ChangeHealth(opponentId, diff);
         }
+
+        // Sync legacy PlayerStatus MonoBehaviours with service state
+        SyncPlayerStatusWithService(opponentId);
+    }
+
+    /// <summary>
+    /// Syncs the legacy PlayerStatus MonoBehaviour with the current PlayerService state.
+    /// This bridge method maintains UI compatibility during migration.
+    /// </summary>
+    private void SyncPlayerStatusWithService(CardOwner playerId)
+    {
+        var state = PlayerService.GetPlayerState(playerId);
+        var playerStatus = playerId == CardOwner.Player1 ? playerStatus1 : playerStatus2;
+
+        // Update MonoBehaviour to match service state (without triggering events)
+        playerStatus.SetHealthDirect((float)state.CurrentHealth);
+        playerStatus.SetShieldCount(state.ShieldCount);
     }
 }

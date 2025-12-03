@@ -24,6 +24,11 @@ namespace JDG.DI
             // RaycastService is here (not in GameLifetimeScope) because it depends on
             // legacy types (InGameCard, PhysicalCardDisplay) that live in the default assembly
             builder.Register<IRaycastService, RaycastService>(Lifetime.Singleton);
+
+            // Phase 3: Player Management Services
+            // PlayerService is here because it manages state that will eventually sync with
+            // legacy PlayerStatus MonoBehaviours during the transition period
+            builder.Register<IPlayerService, PlayerService>(Lifetime.Singleton);
         }
     }
 }

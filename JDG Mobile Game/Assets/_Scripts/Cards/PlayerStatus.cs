@@ -9,6 +9,7 @@ public class ChangePvEvent : UnityEvent<float, bool>
 
 public class PlayerStatus : MonoBehaviour
 {
+    [System.Obsolete("Use EventBus.Subscribe<PlayerHealthChangedEvent>() instead. This static event will be removed in Phase 6.")]
     public static readonly ChangePvEvent OnHealthChanged = new ChangePvEvent();
     public const float MaxHealth = 30f;
     
@@ -49,6 +50,16 @@ public class PlayerStatus : MonoBehaviour
     public float GetCurrentHealth()
     {
         return currentHealth;
+    }
+
+    /// <summary>
+    /// Sets the health directly without triggering the OnHealthChanged event.
+    /// Phase 3: Used by PlayerService sync bridge to avoid duplicate events.
+    /// </summary>
+    /// <param name="health">The health value to set.</param>
+    public void SetHealthDirect(float health)
+    {
+        currentHealth = Mathf.Clamp(health, 0f, MaxHealth);
     }
 
     /// <summary>
