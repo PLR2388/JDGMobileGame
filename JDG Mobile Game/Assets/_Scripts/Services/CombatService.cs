@@ -145,7 +145,7 @@ public class CombatService : ICombatService
         }
     }
 
-    private List<InGameCard> FilterValidOpponentCards(System.Collections.ObjectModel.ObservableCollection<InGameCard> cards)
+    private List<InGameCard> FilterValidOpponentCards(System.Collections.Generic.IEnumerable<InGameCard> cards)
     {
         return cards.Where(card => card != null && card.Title != null).ToList();
     }
