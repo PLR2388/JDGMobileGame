@@ -4,11 +4,15 @@ namespace Cards.EffectCards
 {
     /// <summary>
     /// Handles the functionality related to effect cards within the game.
+    /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
     /// </summary>
     public class EffectFunctions : MonoBehaviour
     {
         [SerializeField] private GameObject miniCardMenu;
         [SerializeField] private Transform canvas;
+
+        // Phase 6: Use service for business logic
+        private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
 
         /// <summary>
         /// Initialization method. Subscribes to relevant events.
@@ -31,38 +35,27 @@ namespace Cards.EffectCards
         /// <summary>
         /// Processes the placement of an effect card on the field. If there are less than 4 effect cards on the field, it applies the card's effects.
         /// Otherwise, a warning is shown to the player.
+        /// Phase 6: Delegates to CardPlacementService.
         /// </summary>
         /// <param name="effectCard">The effect card the user put on the field.</param>
         private void PutEffectCard(InGameEffectCard effectCard)
         {
-            var currentPlayerCard = CardManager.Instance.GetCurrentPlayerCards();
-            var opponentPlayerCard = CardManager.Instance.GetOpponentPlayerCards();
-            var currentPlayerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-            var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
-            var size = currentPlayerCard.EffectCards.Count;
+            bool success = CardPlacementService.PlaceEffectCard(effectCard, canvas);
 
-            if (size < 4)
+            if (success)
             {
-                foreach (var effectCardEffectAbility in effectCard.EffectAbilities)
-                {
-                    effectCardEffectAbility.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCard, currentPlayerStatus, opponentPlayerStatus);
-                }
-
+                // Hide mini card menu on successful placement
                 miniCardMenu.SetActive(false);
-                currentPlayerCard.HandCards.Remove(effectCard);
-                currentPlayerCard.EffectCards.Add(effectCard);
             }
             else
             {
+                // Show warning if field is full (4 effects max)
                 var config = new MessageBoxConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS),
                     showOkButton: true
                 );
-                MessageBox.Instance.CreateMessageBox(
-                    canvas,
-                    config
-                );
+                MessageBox.Instance.CreateMessageBox(canvas, config);
             }
         }
     }

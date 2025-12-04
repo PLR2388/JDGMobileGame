@@ -6,11 +6,15 @@ namespace Cards.EquipmentCards
 {
     /// <summary>
     /// Handles the functionalities associated with equipment cards within the game.
+    /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
     /// </summary>
     public class EquipmentFunctions : MonoBehaviour
     {
         [SerializeField] private GameObject miniCardMenu;
         [SerializeField] private Transform canvas;
+
+        // Phase 6: Use service for business logic
+        private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
 
         /// <summary>
         /// Initializes listeners for equipment card events.
@@ -32,46 +36,38 @@ namespace Cards.EquipmentCards
 
         /// <summary>
         /// Displays a pop-up for equipping a card, showing invocations on which equipment can be added.
+        /// Phase 6: Delegates business logic to CardPlacementService.
         /// </summary>
         /// <param name="equipmentCard">The equipment card the player wishes to apply.</param>
         private void DisplayEquipmentPopUp(InGameEquipmentCard equipmentCard)
         {
-            var playerCards = CardManager.Instance.GetCurrentPlayerCards();
-            var opponentInvocationCards = CardManager.Instance.GetOpponentPlayerCards().InvocationCards;
-            var currentInvocationCards = playerCards.InvocationCards;
-            var invocationCards = currentInvocationCards.Concat(opponentInvocationCards);
+            // Get valid targets from service
+            var validTargets = CardPlacementService.GetEquipmentTargets(equipmentCard);
 
-            var addAll = equipmentCard.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut);
-            var cards = invocationCards.Where(invocationCard => addAll || invocationCard.EquipmentCard == null).Cast<InGameCard>().ToList();
+            // Display card selector UI
             var config = new CardSelectorConfig(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOCATION_FOR_EQUIPMENT),
-                cards,
+                validTargets,
                 showNegativeButton: true,
                 showPositiveButton: true,
                 positiveAction: (card) =>
                 {
-                    if (card is InGameInvocationCard currentSelectedInvocationCard)
+                    if (card is InGameInvocationCard selectedInvocationCard)
                     {
+                        // Delegate to service for business logic
+                        CardPlacementService.PlaceEquipmentCard(equipmentCard, selectedInvocationCard, canvas);
+
+                        // Hide UI after placement
                         miniCardMenu.SetActive(false);
-
-                        foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
-                        {
-                            equipmentCardEquipmentAbility.ApplyEffect(
-                                currentSelectedInvocationCard,
-                                playerCards,
-                                CardManager.Instance.GetOpponentPlayerCards()
-                            );
-                        }
-
-                        currentSelectedInvocationCard.SetEquipmentCard(equipmentCard);
-                        playerCards.HandCards.Remove(equipmentCard);
                     }
                 },
                 negativeAction: () =>
                 {
+                    // Hide UI on cancel
                     miniCardMenu.SetActive(false);
                 }
             );
+
             CardSelector.Instance.CreateCardSelection(canvas, config);
         }
     }

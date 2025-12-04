@@ -29,6 +29,14 @@ namespace JDG.DI
             // PlayerService is here because it manages state that will eventually sync with
             // legacy PlayerStatus MonoBehaviours during the transition period
             builder.Register<IPlayerService, PlayerService>(Lifetime.Singleton);
+
+            // Phase 4: Card Management Services
+            // CardCollectionServiceAdapter bridges to CardManager singleton during migration
+            builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Singleton);
+
+            // Phase 6: Card Placement Services
+            // CardPlacementService extracts business logic from *Functions MonoBehaviours
+            builder.Register<ICardPlacementService, CardPlacementService>(Lifetime.Singleton);
         }
     }
 }
