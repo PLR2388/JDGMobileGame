@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Presentation.Presenters;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 /// <summary>
-/// Manages the user interface elements and interactions for the game.
+/// Phase 5: UIManager is being decomposed into focused presenters (MVP pattern).
+/// This class now delegates to CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter.
+/// UIManager will eventually be removed once all callsites migrate to the new presenters.
 /// </summary>
+[System.Obsolete("UIManager is being phased out. Use CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter directly via dependency injection instead. This singleton will be removed in a future phase.")]
 public class UIManager : Singleton<UIManager>
 {
     [SerializeField] private GameObject bigImageCard;
@@ -16,28 +20,44 @@ public class UIManager : Singleton<UIManager>
 
     private Image bigImageCardImage;
 
+    // Phase 5: Presenter instances
+    private CardDisplayPresenter _cardDisplayPresenter;
+    private DialogPresenter _dialogPresenter;
+    private CardSelectorPresenter _cardSelectorPresenter;
+
     /// <summary>
-    /// Initialize component references.
+    /// Initialize component references and presenters.
     /// </summary>
     protected override void Awake()
     {
         base.Awake();
         bigImageCardImage = bigImageCard.GetComponent<Image>();
+
+        // Phase 5: Create presenter instances
+        InitializePresenters();
+    }
+
+    private void InitializePresenters()
+    {
+        // Phase 5: Create simple presenter instances (not MonoBehaviours)
+        _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard);
+        _dialogPresenter = new DialogPresenter(canvas);
+        _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton);
     }
 
     /// <summary>
     /// Displays the given card on the large card viewer.
+    /// Phase 5: Now delegates to CardDisplayPresenter
     /// </summary>
     /// <param name="card">Card to be displayed.</param>
     public void DisplayCardOnLargeView(InGameCard card)
     {
-        if (!bigImageCard || !bigImageCardImage) return;
-        bigImageCard.SetActive(true);
-        bigImageCardImage.material = card.MaterialCard;
+        _cardDisplayPresenter?.ShowCard(card);
     }
 
     /// <summary>
     /// Displays a message box to inform the user about the available opponents for invocation.
+    /// Phase 5: Now delegates to CardSelectorPresenter
     /// </summary>
     /// <param name="invocationCards">List of invocable cards.</param>
     /// <param name="positiveAction">Action on positive button click.</param>
@@ -47,66 +67,25 @@ public class UIManager : Singleton<UIManager>
         UnityAction<InGameInvocationCard> positiveAction,
         UnityAction negativeAction)
     {
-        nextPhaseButton.SetActive(false);
-
-        if (invocationCards.Count > 0)
-        {
-            var config = new CardSelectorConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
-                invocationCards,
-                showNegativeButton: true,
-                showPositiveButton: true,
-                positiveAction: (invocationCard) =>
-                {
-                    positiveAction(invocationCard as InGameInvocationCard);
-                    nextPhaseButton.SetActive(true);
-                },
-                negativeAction: () =>
-                {
-                    negativeAction();
-                    nextPhaseButton.SetActive(true);
-                }
-            );
-            CardSelector.Instance.CreateCardSelection(
-                canvas,
-                config
-            );
-        }
-        else
-        {
-            var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_CANNOT_ATTACK_MESSAGE),
-                showOkButton: true
-            );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
-        }
+        _cardSelectorPresenter?.ShowOpponentSelector(invocationCards, positiveAction, negativeAction);
     }
-    
+
     /// <summary>
     /// Hides the large card viewer.
+    /// Phase 5: Now delegates to CardDisplayPresenter
     /// </summary>
     public void HideBigImage()
     {
-        bigImageCard.SetActive(false);
+        _cardDisplayPresenter?.HideCard();
     }
 
     /// <summary>
     /// Displays a pause menu with given positive action.
+    /// Phase 5: Now delegates to DialogPresenter
     /// </summary>
     /// <param name="onPositiveAction">Action to execute on positive button click.</param>
     public void DisplayPauseMenu(UnityAction onPositiveAction)
     {
-        MessageBoxConfig config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_MESSAGE),
-            showPositiveButton: true,
-            showNegativeButton: true,
-            positiveAction: onPositiveAction
-        );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
+        _dialogPresenter?.ShowPauseMenu(onPositiveAction);
     }
 }
