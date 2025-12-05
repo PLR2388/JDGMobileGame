@@ -2,6 +2,7 @@ using VContainer;
 using VContainer.Unity;
 using JDG.Application;
 using JDG.Application.Abilities;
+using JDG.Application.Abilities.Implementations;
 using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Application.UseCases;
@@ -63,8 +64,18 @@ namespace JDG.Infrastructure.DI
             builder.Register<AbilityManager>(Lifetime.Singleton);
 
             // Ability Factories (Singleton - can be reused to create abilities)
+            // Phase 7: Comprehensive ability migration
             builder.Register<DrawCardsAbilityFactory>(Lifetime.Singleton);
             builder.Register<DestroyCardAbilityFactory>(Lifetime.Singleton);
+            builder.Register<DeckSearchAbilityFactory>(Lifetime.Singleton);
+            builder.Register<SacrificeAbilityFactory>(Lifetime.Singleton);
+            builder.Register<StatModifierAbilityFactory>(Lifetime.Singleton);
+            builder.Register<ProtectionAbilityFactory>(Lifetime.Singleton);
+            builder.Register<CombatAbilityFactory>(Lifetime.Singleton);
+            builder.Register<EffectAbilityFactory>(Lifetime.Singleton);
+            builder.Register<EquipmentAbilityFactory>(Lifetime.Singleton);
+            builder.Register<FieldAbilityFactory>(Lifetime.Singleton);
+            builder.Register<SpecialAbilityFactory>(Lifetime.Singleton);
 
             // Register abilities after container is built
             builder.RegisterBuildCallback(container =>

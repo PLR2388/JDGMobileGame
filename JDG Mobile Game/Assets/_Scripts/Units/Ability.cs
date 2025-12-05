@@ -4,7 +4,11 @@ using UnityEngine;
 
 /// <summary>
 /// Represents a set of ability names that can be used in the game.
+///
+/// DEPRECATED: This enum is part of the legacy ability system.
+/// Use JDG.Domain.AbilityName instead.
 /// </summary>
+[System.Obsolete("Legacy enum. Use JDG.Domain.AbilityName instead.")]
 public enum AbilityName
 {
     CanOnlyAttackItself,
@@ -70,9 +74,16 @@ public enum AbilityName
 }
 
 /// <summary>
-/// Provides a base class for all abilities in the game. 
+/// Provides a base class for all abilities in the game.
 /// Each ability has a name, description, and can have associated effects or actions.
+///
+/// DEPRECATED: This legacy ability system is being phased out.
+/// Use the new IAbility interface in JDG.Application.Abilities instead.
+/// See JDG.Application.Abilities.Implementations for migrated abilities.
+/// Migration Guide: Old abilities with Unity dependencies → New pure C# abilities using repositories/use cases.
 /// </summary>
+[System.Obsolete("Legacy ability system. Use IAbility interface from JDG.Application.Abilities instead. " +
+                 "Migrate to new system using factories and dependency injection.")]
 public abstract class Ability
 {
     /// <summary>
