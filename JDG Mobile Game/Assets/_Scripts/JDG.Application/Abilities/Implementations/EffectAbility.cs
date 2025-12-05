@@ -42,8 +42,11 @@ namespace JDG.Application.Abilities.Implementations
 
             foreach (var card in player.Field)
             {
-                var tempAtk = card.Attack;
-                card.SetStats(card.Defense, tempAtk);
+                if (card.Stats.HasValue)
+                {
+                    var tempAtk = card.Stats.Value.Attack;
+                    card.SetStats(card.Stats.Value.Defense, tempAtk);
+                }
             }
 
             _playerRepository.SavePlayer(player);
@@ -87,8 +90,11 @@ namespace JDG.Application.Abilities.Implementations
 
             foreach (var card in opponent.Field)
             {
-                int newDef = card.Defense / _divisor;
-                card.SetStats(card.Attack, newDef);
+                if (card.Stats.HasValue)
+                {
+                    int newDef = card.Stats.Value.Defense / _divisor;
+                    card.SetStats(card.Stats.Value.Attack, newDef);
+                }
             }
 
             _playerRepository.SavePlayer(opponent);

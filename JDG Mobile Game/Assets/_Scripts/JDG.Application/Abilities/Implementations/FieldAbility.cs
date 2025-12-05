@@ -147,11 +147,7 @@ namespace JDG.Application.Abilities.Implementations
 
             foreach (var card in invocations)
             {
-                if (card.Families != null)
-                {
-                    card.Families.Clear();
-                    card.Families.Add(_newFamily);
-                }
+                card.SetFamilies(new[] { _newFamily });
             }
 
             _playerRepository.SavePlayer(player);
@@ -225,16 +221,13 @@ namespace JDG.Application.Abilities.Implementations
             if (player == null)
                 return AbilityResult.Failure("Player not found");
 
-            var familyCard = player.Deck.FirstOrDefault(c =>
+            var familyCard = player.SearchDeckAndDraw(c =>
                 c.Families != null && c.Families.Contains(_targetFamily));
 
             if (familyCard == null)
                 return AbilityResult.Failure($"No {_targetFamily} cards in deck");
 
-            player.Deck.Remove(familyCard);
-            player.Hand.Add(familyCard);
             _playerRepository.SavePlayer(player);
-
             return AbilityResult.Success($"Got {familyCard.Title} from deck (skipped draw)");
         }
     }

@@ -40,15 +40,11 @@ namespace JDG.Application.Abilities.Implementations
             if (player == null)
                 return AbilityResult.Failure("Player not found");
 
-            var targetCard = player.Deck.FirstOrDefault(c => c.Title == _targetCardName);
+            var targetCard = player.SearchDeckAndDraw(c => c.Title == _targetCardName);
             if (targetCard == null)
                 return AbilityResult.Failure($"{_targetCardName} not found in deck");
 
-            // Move card from deck to hand
-            player.Deck.Remove(targetCard);
-            player.Hand.Add(targetCard);
             _playerRepository.SavePlayer(player);
-
             return AbilityResult.Success($"Added {_targetCardName} to hand");
         }
     }

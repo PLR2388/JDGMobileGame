@@ -27,10 +27,15 @@ namespace JDG.Domain.Entities
 
         // Invocation Card Properties (null for non-invocation cards)
         public CardStats? Stats { get; private set; }
-        public IReadOnlyList<CardFamily> Families { get; }
+        private List<CardFamily> _families;
+        public IReadOnlyList<CardFamily> Families => _families.AsReadOnly();
         public bool AffectedByEffect { get; }
         public IReadOnlyList<ConditionName> Conditions { get; }
         public IReadOnlyList<AbilityName> Abilities { get; }
+
+        // Runtime State (mutable during gameplay)
+        public int TimesRevived { get; private set; }
+        public bool CancelEffect { get; private set; }
 
         // Equipment Card Properties
         public IReadOnlyList<EquipmentAbilityName> EquipmentAbilities { get; }
@@ -69,7 +74,7 @@ namespace JDG.Domain.Entities
             IsCollector = isCollector;
             Owner = owner;
             Stats = stats;
-            Families = families?.ToList().AsReadOnly() ?? new List<CardFamily>().AsReadOnly();
+            _families = families?.ToList() ?? new List<CardFamily>();
             AffectedByEffect = affectedByEffect;
             Conditions = conditions?.ToList().AsReadOnly() ?? new List<ConditionName>().AsReadOnly();
             Abilities = abilities?.ToList().AsReadOnly() ?? new List<AbilityName>().AsReadOnly();
@@ -77,6 +82,10 @@ namespace JDG.Domain.Entities
             FieldFamily = fieldFamily;
             FieldAbilities = fieldAbilities?.ToList().AsReadOnly() ?? new List<FieldAbilityName>().AsReadOnly();
             EffectAbilities = effectAbilities?.ToList().AsReadOnly() ?? new List<EffectAbilityName>().AsReadOnly();
+
+            // Initialize runtime state
+            TimesRevived = 0;
+            CancelEffect = false;
         }
 
         #region Factory Methods
@@ -243,6 +252,42 @@ namespace JDG.Domain.Entities
             {
                 Stats = baseStats;
             }
+        }
+
+        /// <summary>
+        /// Increments the times this card has been revived.
+        /// Used for resurrection abilities with limited revive counts.
+        /// </summary>
+        public void IncrementTimesRevived()
+        {
+            TimesRevived++;
+        }
+
+        /// <summary>
+        /// Resets the revive counter to zero.
+        /// </summary>
+        public void ResetTimesRevived()
+        {
+            TimesRevived = 0;
+        }
+
+        /// <summary>
+        /// Sets whether card abilities are canceled.
+        /// Used by equipment that cancels invocation abilities.
+        /// </summary>
+        public void SetCancelEffect(bool canceled)
+        {
+            CancelEffect = canceled;
+        }
+
+        /// <summary>
+        /// Changes the families of this card.
+        /// Used by field abilities that change card families.
+        /// </summary>
+        public void SetFamilies(IEnumerable<CardFamily> families)
+        {
+            _families.Clear();
+            _families.AddRange(families);
         }
 
         #endregion

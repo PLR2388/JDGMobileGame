@@ -43,9 +43,8 @@ namespace JDG.Application.Abilities.Implementations
             if (cardToSacrifice == null)
                 return AbilityResult.Failure($"{_targetCardName} not on field");
 
-            // Remove from field, add to graveyard
-            player.Field.Remove(cardToSacrifice);
-            player.Graveyard.Add(cardToSacrifice);
+            // Move to graveyard
+            player.DestroyCardFromField(cardToSacrifice);
             _playerRepository.SavePlayer(player);
 
             return AbilityResult.Success($"Sacrificed {_targetCardName}");
@@ -94,13 +93,12 @@ namespace JDG.Application.Abilities.Implementations
             if (player.Field.Count >= 4)
                 return AbilityResult.Failure("Field is full");
 
-            var cardToInvoke = player.Deck.FirstOrDefault(c => c.Title == _targetCardName && c.Type == CardType.Invocation);
-            if (cardToInvoke == null)
+            // Move from deck to hand, then play to field
+            var card = player.SearchDeckAndDraw(c => c.Title == _targetCardName && c.Type == CardType.Invocation);
+            if (card == null)
                 return AbilityResult.Failure($"{_targetCardName} not in deck");
 
-            // Move from deck to field
-            player.Deck.Remove(cardToInvoke);
-            player.Field.Add(cardToInvoke);
+            player.PlayCard(card);
             _playerRepository.SavePlayer(player);
 
             return AbilityResult.Success($"Invoked {_targetCardName}");

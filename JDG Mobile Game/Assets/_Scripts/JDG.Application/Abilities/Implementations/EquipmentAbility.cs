@@ -100,11 +100,11 @@ namespace JDG.Application.Abilities.Implementations
 
         public AbilityResult Execute(AbilityContext context)
         {
-            if (context.TargetCard == null)
-                return AbilityResult.Failure("No target card");
+            if (context.TargetCard == null || !context.TargetCard.Stats.HasValue)
+                return AbilityResult.Failure("No target card or invalid stats");
 
-            int newAtk = (int)(context.TargetCard.Attack * _attackMultiplier);
-            int newDef = (int)(context.TargetCard.Defense * _defenseMultiplier);
+            int newAtk = (int)(context.TargetCard.Stats.Value.Attack * _attackMultiplier);
+            int newDef = (int)(context.TargetCard.Stats.Value.Defense * _defenseMultiplier);
             context.TargetCard.SetStats(newAtk, newDef);
 
             return AbilityResult.Success($"Stats multiplied to {newAtk}/{newDef}");
@@ -164,7 +164,7 @@ namespace JDG.Application.Abilities.Implementations
                 return AbilityResult.Failure("No target card");
 
             // Mark card abilities as canceled
-            context.TargetCard.CancelEffect = true;
+            context.TargetCard.SetCancelEffect(true);
             return AbilityResult.Success("Card abilities canceled");
         }
     }

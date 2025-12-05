@@ -43,9 +43,8 @@ namespace JDG.Application.Abilities.Implementations
                 var fieldCards = player.Field.ToList();
                 foreach (var card in fieldCards)
                 {
-                    player.Field.Remove(card);
-                    player.Hand.Add(card);
-                    totalReturned++;
+                    if (player.ReturnFieldCardToHand(card))
+                        totalReturned++;
                 }
                 _playerRepository.SavePlayer(player);
             }
@@ -55,9 +54,8 @@ namespace JDG.Application.Abilities.Implementations
                 var fieldCards = opponent.Field.ToList();
                 foreach (var card in fieldCards)
                 {
-                    opponent.Field.Remove(card);
-                    opponent.Hand.Add(card);
-                    totalReturned++;
+                    if (opponent.ReturnFieldCardToHand(card))
+                        totalReturned++;
                 }
                 _playerRepository.SavePlayer(opponent);
             }
@@ -294,8 +292,9 @@ namespace JDG.Application.Abilities.Implementations
             if (player == null || context.SourceCard == null)
                 return false;
 
-            bool meetsStats = context.SourceCard.Attack >= _minAttack &&
-                            context.SourceCard.Defense >= _minDefense;
+            bool meetsStats = context.SourceCard.Stats.HasValue &&
+                            context.SourceCard.Stats.Value.Attack >= _minAttack &&
+                            context.SourceCard.Stats.Value.Defense >= _minDefense;
 
             int familyCount = player.Field.Count(c =>
                 c.Families != null && c.Families.Contains(_targetFamily));

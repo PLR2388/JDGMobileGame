@@ -42,11 +42,8 @@ namespace JDG.Application.Abilities.Implementations
                 return AbilityResult.Failure("Players not found");
 
             // Destroy both cards
-            currentPlayer.Field.Remove(context.SourceCard);
-            currentPlayer.Graveyard.Add(context.SourceCard);
-
-            opponentPlayer.Field.Remove(context.TargetCard);
-            opponentPlayer.Graveyard.Add(context.TargetCard);
+            currentPlayer.DestroyCardFromField(context.SourceCard);
+            opponentPlayer.DestroyCardFromField(context.TargetCard);
 
             _playerRepository.SavePlayer(currentPlayer);
             _playerRepository.SavePlayer(opponentPlayer);
@@ -156,26 +153,20 @@ namespace JDG.Application.Abilities.Implementations
             if (context.SourceCard.TimesRevived >= _maxRevives)
                 return AbilityResult.Failure("Max revives reached");
 
-            // Move from graveyard to field or hand
-            player.Graveyard.Remove(context.SourceCard);
-
+            bool success;
             if (_toHand)
             {
-                player.Hand.Add(context.SourceCard);
+                success = player.ReturnCardToHand(context.SourceCard);
             }
             else
             {
-                if (player.Field.Count < 4)
-                {
-                    player.Field.Add(context.SourceCard);
-                }
-                else
-                {
-                    return AbilityResult.Failure("Field is full");
-                }
+                success = player.ReturnCardToField(context.SourceCard);
             }
 
-            context.SourceCard.TimesRevived++;
+            if (!success)
+                return AbilityResult.Failure(_toHand ? "Failed to return to hand" : "Field is full");
+
+            context.SourceCard.IncrementTimesRevived();
             _playerRepository.SavePlayer(player);
 
             return AbilityResult.Success($"Card revived ({context.SourceCard.TimesRevived}/{_maxRevives})");
@@ -250,14 +241,11 @@ namespace JDG.Application.Abilities.Implementations
             if (player == null)
                 return AbilityResult.Failure("Player not found");
 
-            var rewardCard = player.Deck.FirstOrDefault(c => c.Title == _rewardCardName);
+            var rewardCard = player.SearchDeckAndDraw(c => c.Title == _rewardCardName);
             if (rewardCard == null)
                 return AbilityResult.Failure($"{_rewardCardName} not in deck");
 
-            player.Deck.Remove(rewardCard);
-            player.Hand.Add(rewardCard);
             _playerRepository.SavePlayer(player);
-
             return AbilityResult.Success($"Added {_rewardCardName} to hand");
         }
     }

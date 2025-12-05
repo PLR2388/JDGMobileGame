@@ -114,8 +114,9 @@ namespace JDG.Application.Abilities.Implementations
             // Check if card meets condition
             if (sourceCard.Families != null &&
                 sourceCard.Families.Contains(_conditionFamily) &&
-                sourceCard.Attack >= _minAttack &&
-                sourceCard.Defense >= _minDefense)
+                sourceCard.Stats.HasValue &&
+                sourceCard.Stats.Value.Attack >= _minAttack &&
+                sourceCard.Stats.Value.Defense >= _minDefense)
             {
                 sourceCard.ModifyStats(_attackBonus, _defenseBonus);
                 _playerRepository.SavePlayer(player);
@@ -164,13 +165,13 @@ namespace JDG.Application.Abilities.Implementations
                 return AbilityResult.Failure("Invalid context");
 
             var targetCard = player.Field.FirstOrDefault(c => c.Title == _targetCardName);
-            if (targetCard == null)
-                return AbilityResult.Failure($"{_targetCardName} not on field");
+            if (targetCard == null || !targetCard.Stats.HasValue)
+                return AbilityResult.Failure($"{_targetCardName} not on field or has no stats");
 
-            context.SourceCard.SetStats(targetCard.Attack, targetCard.Defense);
+            context.SourceCard.SetStats(targetCard.Stats.Value.Attack, targetCard.Stats.Value.Defense);
             _playerRepository.SavePlayer(player);
 
-            return AbilityResult.Success($"Copied {targetCard.Attack}/{targetCard.Defense}");
+            return AbilityResult.Success($"Copied {targetCard.Stats.Value.Attack}/{targetCard.Stats.Value.Defense}");
         }
     }
 

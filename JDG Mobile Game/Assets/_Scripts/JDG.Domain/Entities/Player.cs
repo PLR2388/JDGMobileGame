@@ -145,6 +145,36 @@ namespace JDG.Domain.Entities
             return card;
         }
 
+        /// <summary>
+        /// Returns a card from graveyard to field.
+        /// Used for resurrection abilities.
+        /// </summary>
+        public bool ReturnCardToField(Card card)
+        {
+            if (!_graveyard.Contains(card) || _field.Count >= 4)
+                return false;
+
+            _graveyard.Remove(card);
+            _field.Add(card);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns a card from field to hand.
+        /// Used for bounce/return effects.
+        /// </summary>
+        public bool ReturnFieldCardToHand(Card card)
+        {
+            if (!_field.Contains(card))
+                return false;
+
+            _field.Remove(card);
+            _hand.Add(card);
+
+            return true;
+        }
+
         #endregion
 
         #region Health & Shields

@@ -85,7 +85,7 @@ namespace JDG.Application.Abilities.Implementations
 
             var protectedCards = player.Field.Where(c =>
                 c != context.SourceCard &&
-                (!_minDefense.HasValue || c.Defense < _minDefense.Value))
+                (!_minDefense.HasValue || (c.Stats.HasValue && c.Stats.Value.Defense < _minDefense.Value)))
                 .ToList();
 
             return AbilityResult.Success($"Protecting {protectedCards.Count} cards");
@@ -194,8 +194,7 @@ namespace JDG.Application.Abilities.Implementations
             if (!hasDependency)
             {
                 // Card must be destroyed
-                player.Field.Remove(context.SourceCard);
-                player.Graveyard.Add(context.SourceCard);
+                player.DestroyCardFromField(context.SourceCard);
                 _playerRepository.SavePlayer(player);
                 return AbilityResult.Success("Card destroyed due to missing dependency");
             }
