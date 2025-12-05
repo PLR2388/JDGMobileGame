@@ -1,6 +1,5 @@
 using JDG.Domain;
 using JDG.Application.Repositories;
-using JDG.Infrastructure.Events;
 using System.Linq;
 
 namespace JDG.Application.Abilities.Implementations
@@ -12,7 +11,6 @@ namespace JDG.Application.Abilities.Implementations
     public class MutualDestructionAbility : IAbility, IPassiveAbility
     {
         private readonly IPlayerRepository _playerRepository;
-        private readonly IEventBus _eventBus;
 
         public AbilityName Name { get; }
         public string Description { get; }
@@ -20,12 +18,10 @@ namespace JDG.Application.Abilities.Implementations
 
         public MutualDestructionAbility(
             AbilityName abilityName,
-            IPlayerRepository playerRepository,
-            IEventBus eventBus)
+            IPlayerRepository playerRepository)
         {
             Name = abilityName;
             _playerRepository = playerRepository;
-            _eventBus = eventBus;
             Description = "When this card attacks or is attacked, destroy both cards";
         }
 
@@ -272,17 +268,15 @@ namespace JDG.Application.Abilities.Implementations
     public class CombatAbilityFactory
     {
         private readonly IPlayerRepository _playerRepository;
-        private readonly IEventBus _eventBus;
 
-        public CombatAbilityFactory(IPlayerRepository playerRepository, IEventBus eventBus)
+        public CombatAbilityFactory(IPlayerRepository playerRepository)
         {
             _playerRepository = playerRepository;
-            _eventBus = eventBus;
         }
 
         public MutualDestructionAbility CreateMutualDestruction(AbilityName name)
         {
-            return new MutualDestructionAbility(name, _playerRepository, _eventBus);
+            return new MutualDestructionAbility(name, _playerRepository);
         }
 
         public SkipAttackAbility CreateSkipAttack(AbilityName name, bool everyTurn = false)

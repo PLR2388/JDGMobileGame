@@ -1,6 +1,5 @@
 using JDG.Domain;
 using JDG.Application.Repositories;
-using JDG.Infrastructure.Events;
 using System.Linq;
 
 namespace JDG.Application.Abilities.Implementations
