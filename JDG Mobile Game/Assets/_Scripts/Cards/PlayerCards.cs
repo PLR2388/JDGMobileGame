@@ -8,13 +8,15 @@ using Cards;
 using Cards.EffectCards;
 using Cards.InvocationCards;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
-/// Represent all the cards of a player
+/// Represent all the cards of a player.
+/// Phase 8: Removed singleton dependencies (GameState, UnitManager).
+/// Uses dependency injection for deck initialization.
 /// </summary>
 public class PlayerCards : MonoBehaviour
 {
-
     #region Properties
 
     [SerializeField] private InvocationCard playerInvocationCard;
@@ -23,6 +25,9 @@ public class PlayerCards : MonoBehaviour
     [SerializeField] private PlayerCards opponentPlayerCards;
     [SerializeField] private bool _isPlayerOne;
     private InGameFieldCard _fieldCard;
+
+    // Phase 8: Injected dependencies
+    private IDeckInitializationService _deckInitService;
 
     public bool IsPlayerOne
     {
@@ -59,6 +64,16 @@ public class PlayerCards : MonoBehaviour
 
     #endregion
 
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 8: Inject IDeckInitializationService instead of using singletons.
+    /// </summary>
+    [Inject]
+    public void Construct(IDeckInitializationService deckInitService)
+    {
+        _deckInitService = deckInitService;
+    }
+
     public void BuildPlayer()
     {
         Player = IsPlayerOne ? CardFactory.CreateInGameCard(playerInvocationCard, CardOwner.Player1) : CardFactory.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
@@ -67,9 +82,13 @@ public class PlayerCards : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        Deck = IsPlayerOne ? GameState.Instance.Player1DeckCards : GameState.Instance.Player2DeckCards;
+        // Phase 8: Use injected service instead of GameState.Instance
+        Deck = _deckInitService.GetPlayerDeck(IsPlayerOne);
         var deckLocation = CardLocation.GetDeckLocation(IsPlayerOne);
-        UnitManager.Instance.InitPhysicalCards(Deck, deckLocation, IsPlayerOne);
+
+        // Phase 8: Use injected service instead of UnitManager.Instance
+        _deckInitService.InitializePhysicalCards(Deck, deckLocation, IsPlayerOne);
+
         for (var i = Deck.Count - GameState.InitialNumberOfHandCards; i < Deck.Count; i++)
         {
             HandCards.Add(Deck[i]);

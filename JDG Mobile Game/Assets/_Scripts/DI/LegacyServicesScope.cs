@@ -37,6 +37,10 @@ namespace JDG.DI
             // Phase 6: Card Placement Services
             // CardPlacementService extracts business logic from *Functions MonoBehaviours
             builder.Register<ICardPlacementService, CardPlacementService>(Lifetime.Singleton);
+
+            // Phase 8: Deck Initialization Service
+            // DeckInitializationService removes GameState/UnitManager singleton access from PlayerCards
+            builder.Register<IDeckInitializationService, DeckInitializationService>(Lifetime.Singleton);
         }
     }
 }
