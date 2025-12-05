@@ -3,7 +3,11 @@ using System.Linq;
 using Cards;
 using Menu;
 using UnityEngine;
+using VContainer;
 
+/// <summary>
+/// Phase 9: Removed CardSelectionManager singleton dependency via DI.
+/// </summary>
 public class InfiniteScroll : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
@@ -16,6 +20,9 @@ public class InfiniteScroll : MonoBehaviour
     private List<Card> deck1AllCards;
     private List<Card> deck2AllCards;
 
+    // Phase 9: Injected dependencies
+    private ICardSelectionService _cardSelectionService;
+
     private readonly string[] removeCardTitles =
     {
         CardNameMappings.CardNameMap[CardNames.AttaqueDeLaTourEiffel],
@@ -23,16 +30,28 @@ public class InfiniteScroll : MonoBehaviour
         CardNameMappings.CardNameMap[CardNames.UnBonTuyau]
     };
 
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 9: Inject ICardSelectionService instead of using singleton.
+    /// </summary>
+    [Inject]
+    public void Construct(ICardSelectionService cardSelectionService)
+    {
+        _cardSelectionService = cardSelectionService;
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
         deck1AllCards = GameState.Instance.deck1AllCards;
         deck2AllCards = GameState.Instance.deck2AllCards;
         DisplayAvailableCards(deck1AllCards);
-        CardSelectionManager.Instance.MultipleCardSelection = true;
-        CardSelectionManager.Instance.MultipleSelectionLimit = GameState.MaxDeckCards;
-        CardSelectionManager.Instance.CardSelected.AddListener(OnSelectCard);
-        CardSelectionManager.Instance.CardDeselected.AddListener(OnUnSelectCard);
+
+        // Phase 9: Use injected service instead of _cardSelectionService
+        _cardSelectionService.MultipleCardSelection = true;
+        _cardSelectionService.MultipleSelectionLimit = GameState.MaxDeckCards;
+        _cardSelectionService.CardSelected.AddListener(OnSelectCard);
+        _cardSelectionService.CardDeselected.AddListener(OnUnSelectCard);
         CardChoice.ChangeChoicePlayer.AddListener(OnChangePlayer);
     }
 
@@ -75,7 +94,7 @@ public class InfiniteScroll : MonoBehaviour
     {
         if (numberOfRareCards > GameState.MaxRare)
         {
-            CardSelectionManager.Instance.UnselectCard(card);
+            _cardSelectionService.UnselectCard(card);
             DisplayMessageBox(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_COLLECTOR_CARD)
             );
@@ -91,7 +110,7 @@ public class InfiniteScroll : MonoBehaviour
     {
         if (numberOfSelectedCards > GameState.MaxDeckCards)
         {
-            CardSelectionManager.Instance.UnselectCard(card);
+            _cardSelectionService.UnselectCard(card);
             DisplayMessageBox(
                 LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
             );

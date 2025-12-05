@@ -5,6 +5,7 @@ using Sound;
 using UnityEngine;
 using VContainer;
 using JDG.Application;
+using JDG.Application.Services;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Services;
 
@@ -13,16 +14,25 @@ public class GameLoop : MonoBehaviour
     private IEventBus _eventBus;
     protected GameStateService _gameStateService;
     protected IRaycastService _raycastService;
+    protected IInvocationMenuService _invocationMenuService;
+    protected IRoundDisplayService _roundDisplayService;
 
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// </summary>
     [Inject]
-    public void Construct(IEventBus eventBus, GameStateService gameStateService, IRaycastService raycastService)
+    public void Construct(
+        IEventBus eventBus,
+        GameStateService gameStateService,
+        IRaycastService raycastService,
+        IInvocationMenuService invocationMenuService,
+        IRoundDisplayService roundDisplayService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
         _raycastService = raycastService;
+        _invocationMenuService = invocationMenuService;
+        _roundDisplayService = roundDisplayService;
     }
 
     // Start is called before the first frame update
@@ -99,7 +109,7 @@ public class GameLoop : MonoBehaviour
     /// <param name="cardTouch">Current card touched</param>
     /// <param name="currentOwner">Owner associated to the current player</param>
     /// <param name="isAttackPhase">Is the touch happen during attack phase</param>
-    protected static void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
+    protected void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
     {
 
         if (cardTouch is InGameInvocationCard invocationCard)
@@ -107,7 +117,8 @@ public class GameLoop : MonoBehaviour
             if (invocationCard.CardOwner == currentOwner || invocationCard.IsControlled)
             {
                 CardManager.Instance.Attacker = invocationCard;
-                InvocationMenuManager.Instance.Display(isAttackPhase);
+                // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+                _invocationMenuService.Display(isAttackPhase);
             }
         }
     }
@@ -117,7 +128,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void OnLongTouch(LongTouchEvent evt)
     {
-        InvocationMenuManager.Instance.Hide();
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.Hide();
         var cardTouch = _raycastService.GetTouchedCard();
         if (cardTouch != null)
         {
@@ -130,7 +142,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected virtual void NextRound()
     {
-        InvocationMenuManager.Instance.Hide();
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.Hide();
         if (_gameStateService.TurnNumber == 1 && _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
         {
             _gameStateService.SetPhase(JDG.Domain.Phase.End);
@@ -146,7 +159,8 @@ public class GameLoop : MonoBehaviour
             _gameStateService.SetPhase(JDG.Domain.Phase.End);
         }
 
-        RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(true);
+        // Phase 9: Use injected service instead of RoundDisplayManager.Instance
+        _roundDisplayService.AdaptUIToPhaseIdInNextRound(true);
 
         switch (_gameStateService.CurrentPhase)
         {
@@ -168,7 +182,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected virtual void ChoosePhase()
     {
-        InvocationMenuManager.Instance.Enable();
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.Enable();
         ChoosePhaseMusic();
     }
 
@@ -245,7 +260,8 @@ public class GameLoop : MonoBehaviour
     protected void ComputeAttack()
     {
         CardManager.Instance.HandleAttack();
-        InvocationMenuManager.Instance.UpdateAttackButton();
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.UpdateAttackButton();
         HandlePlayerDeath();
     }
 
@@ -277,7 +293,8 @@ public class GameLoop : MonoBehaviour
         _gameStateService.NextPhase();
 
         ChoosePhase();
-        RoundDisplayManager.Instance.SetRoundText(
+        // Phase 9: Use injected service instead of RoundDisplayManager.Instance
+        _roundDisplayService.SetRoundText(
             LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE)
         );
     }

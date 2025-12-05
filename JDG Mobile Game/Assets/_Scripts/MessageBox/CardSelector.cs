@@ -5,22 +5,39 @@ using Cards;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using VContainer;
 
 [System.Serializable]
 public class NumberedCardEvent : UnityEvent<InGameCard, int>
 {
 }
 
+/// <summary>
+/// Phase 9: Removed CardSelectionManager singleton dependency via DI.
+/// </summary>
 public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseComponent
 {
     #region Fields and Properties
 
     [SerializeField] private GameObject prefab;
     public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
-    
+
     private bool displayNumberOnCard = false;
 
+    // Phase 9: Injected dependencies
+    private ICardSelectionService _cardSelectionService;
+
     #endregion
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 9: Inject ICardSelectionService instead of using singleton.
+    /// </summary>
+    [Inject]
+    public void Construct(ICardSelectionService cardSelectionService)
+    {
+        _cardSelectionService = cardSelectionService;
+    }
 
     #region Unity Callbacks
 
@@ -29,7 +46,8 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     /// </summary>
     void Start()
     {
-        CardSelectionManager.Instance.SelectionChanged.AddListener(SelectionChanged);
+        // Phase 9: Use injected service instead of _cardSelectionService
+        _cardSelectionService?.SelectionChanged.AddListener(SelectionChanged);
     }
 
     #endregion
@@ -49,9 +67,9 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     {
         if (displayNumberOnCard)
         {
-            for (var i = 0; i < CardSelectionManager.Instance.SelectedCards.Count; i++)
+            for (var i = 0; i < _cardSelectionService.SelectedCards.Count; i++)
             {
-                NumberedCardEvent.Invoke(CardSelectionManager.Instance.SelectedCards[i], i + 1);
+                NumberedCardEvent.Invoke(_cardSelectionService.SelectedCards[i], i + 1);
             }
         }
     }
@@ -117,10 +135,10 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction okAction = () =>
         {
-            var singleCard = CardSelectionManager.Instance.SelectedCards.Count > 0
-                ? CardSelectionManager.Instance.SelectedCards[0]
+            var singleCard = _cardSelectionService.SelectedCards.Count > 0
+                ? _cardSelectionService.SelectedCards[0]
                 : null;
-            var multipleCards = CardSelectionManager.Instance.SelectedCards;
+            var multipleCards = _cardSelectionService.SelectedCards;
             cardSelectorConfig?.OkActions.SingleAction?.Invoke(singleCard);
             cardSelectorConfig?.OkActions.MultipleAction?.Invoke(multipleCards);
             switch (cardSelectorConfig?.NumberCardSelection)
@@ -144,10 +162,10 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction positiveAction = () =>
         {
-            var singleCard = CardSelectionManager.Instance.SelectedCards.Count > 0
-                ? CardSelectionManager.Instance.SelectedCards[0]
+            var singleCard = _cardSelectionService.SelectedCards.Count > 0
+                ? _cardSelectionService.SelectedCards[0]
                 : null;
-            var multipleCards = CardSelectionManager.Instance.SelectedCards;
+            var multipleCards = _cardSelectionService.SelectedCards;
             cardSelectorConfig?.PositiveActions.SingleAction?.Invoke(singleCard);
             cardSelectorConfig?.PositiveActions.MultipleAction?.Invoke(multipleCards);
             if (cardSelectorConfig?.NumberCardSelection == 1)
@@ -168,9 +186,9 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     /// </summary>
     private void DestroyGameObjectSingleCard(GameObject newGameObject)
     {
-        if (CardSelectionManager.Instance.SelectedCards.Count > 0)
+        if (_cardSelectionService.SelectedCards.Count > 0)
         {
-            CardSelectionManager.Instance.ClearSelection();
+            _cardSelectionService.ClearSelection();
             Destroy(newGameObject);
         }
     }
@@ -180,9 +198,9 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     /// </summary>
     private void DestroyGameObjectMultipleSelectedCards(GameObject newGameObject, CardSelectorConfig cardSelectorConfig)
     {
-        if (CardSelectionManager.Instance.SelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
+        if (_cardSelectionService.SelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
         {
-            CardSelectionManager.Instance.ClearSelection();
+            _cardSelectionService.ClearSelection();
             Destroy(newGameObject);
         }
     }
@@ -206,8 +224,8 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         displayCardsScript.CardsList = cardSelectorConfig?.Cards;
 
         displayNumberOnCard = cardSelectorConfig?.ShowOrder == true;
-        CardSelectionManager.Instance.MultipleSelectionLimit = cardSelectorConfig?.NumberCardSelection ?? 0;
-        CardSelectionManager.Instance.MultipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
+        _cardSelectionService.MultipleSelectionLimit = cardSelectorConfig?.NumberCardSelection ?? 0;
+        _cardSelectionService.MultipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
 
         ConfigureButtons(newGameObject, config, cardSelectorConfig);
     }

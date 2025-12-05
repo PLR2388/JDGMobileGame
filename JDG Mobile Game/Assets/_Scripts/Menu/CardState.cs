@@ -3,21 +3,25 @@ using UnityEngine;
 
 /// <summary>
 /// Represents an abstract card state. Contains common functionality and provides the interface for concrete card states.
+/// Phase 9: Removed CardSelectionManager singleton dependency via DI.
 /// </summary>
 public abstract class CardState
 {
     protected OnHover context;
     protected InGameCard card;
+    protected ICardSelectionService cardSelectionService;
 
     /// <summary>
     /// Initializes a new instance of the CardState class.
     /// </summary>
     /// <param name="context">Reference to the OnHover script.</param>
     /// <param name="card">Reference to the InGameCard that is associated with the state.</param>
-    public CardState(OnHover context, InGameCard card)
+    /// <param name="cardSelectionService">Card selection service for managing card selection.</param>
+    public CardState(OnHover context, InGameCard card, ICardSelectionService cardSelectionService)
     {
         this.context = context;
         this.card = card;
+        this.cardSelectionService = cardSelectionService;
     }
 
     /// <summary>
@@ -36,7 +40,8 @@ public abstract class CardState
 /// </summary>
 public class DefaultCardState : CardState
 {
-    public DefaultCardState(OnHover context, InGameCard card) : base(context, card)
+    public DefaultCardState(OnHover context, InGameCard card, ICardSelectionService cardSelectionService)
+        : base(context, card, cardSelectionService)
     {
     }
 
@@ -47,7 +52,7 @@ public class DefaultCardState : CardState
 
     public override void OnClick()
     {
-        context.SetState(new SelectedCardState(context, card));
+        context.SetState(new SelectedCardState(context, card, cardSelectionService));
     }
 }
 
@@ -56,20 +61,23 @@ public class DefaultCardState : CardState
 /// </summary>
 public class SelectedCardState : CardState
 {
-    public SelectedCardState(OnHover context, InGameCard card) : base(context, card)
+    public SelectedCardState(OnHover context, InGameCard card, ICardSelectionService cardSelectionService)
+        : base(context, card, cardSelectionService)
     {
     }
 
     public override void EnterState()
     {
         context.SetImageColor(Color.green);
-        CardSelectionManager.Instance.SelectCard(card);
+        // Phase 9: Use injected service instead of CardSelectionManager.Instance
+        cardSelectionService?.SelectCard(card);
     }
 
     public override void OnClick()
     {
-        context.SetState(new DefaultCardState(context, card));
-        CardSelectionManager.Instance.UnselectCard(card);
+        context.SetState(new DefaultCardState(context, card, cardSelectionService));
+        // Phase 9: Use injected service instead of CardSelectionManager.Instance
+        cardSelectionService?.UnselectCard(card);
     }
 }
 
@@ -78,7 +86,8 @@ public class SelectedCardState : CardState
 /// </summary>
 public class NumberCardState : CardState
 {
-    public NumberCardState(OnHover context, InGameCard card) : base(context, card)
+    public NumberCardState(OnHover context, InGameCard card, ICardSelectionService cardSelectionService)
+        : base(context, card, cardSelectionService)
     {
     }
 
@@ -90,8 +99,9 @@ public class NumberCardState : CardState
 
     public override void OnClick()
     {
-        context.SetState(new DefaultCardState(context, card));
+        context.SetState(new DefaultCardState(context, card, cardSelectionService));
         context.HideNumber();
-        CardSelectionManager.Instance.UnselectCard(card);
+        // Phase 9: Use injected service instead of CardSelectionManager.Instance
+        cardSelectionService?.UnselectCard(card);
     }
 }

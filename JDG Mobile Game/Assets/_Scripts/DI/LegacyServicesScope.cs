@@ -45,6 +45,18 @@ namespace JDG.DI
             // Phase 9: Card Pool Service
             // CardPoolService removes CardPoolManager singleton access from UI components
             builder.Register<ICardPoolService, CardPoolService>(Lifetime.Singleton);
+
+            // Phase 9: Card Selection Service
+            // CardSelectionService removes CardSelectionManager singleton access from UI components
+            builder.Register<ICardSelectionService, CardSelectionService>(Lifetime.Singleton);
+
+            // Phase 9: Invocation Menu Service
+            // InvocationMenuService removes InvocationMenuManager singleton access from GameLoop
+            builder.Register<IInvocationMenuService, InvocationMenuService>(Lifetime.Singleton);
+
+            // Phase 9: Round Display Service
+            // RoundDisplayService removes RoundDisplayManager singleton access from GameLoop
+            builder.Register<IRoundDisplayService, RoundDisplayService>(Lifetime.Singleton);
         }
     }
 }

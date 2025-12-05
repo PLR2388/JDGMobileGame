@@ -4,12 +4,14 @@ using Cards;
 using Sound;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 using Random = UnityEngine.Random;
 
 namespace Menu
 {
     /// <summary>
     /// Manages the card choices and selections in the game menu.
+    /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
@@ -24,6 +26,19 @@ namespace Menu
         /// Indicates if the player one has chosen their cards.
         /// </summary>
         public bool isPlayerOneCardChosen;
+
+        // Phase 9: Injected dependencies
+        private ICardSelectionService _cardSelectionService;
+
+        /// <summary>
+        /// VContainer method injection for dependencies.
+        /// Phase 9: Inject ICardSelectionService instead of using singleton.
+        /// </summary>
+        [Inject]
+        public void Construct(ICardSelectionService cardSelectionService)
+        {
+            _cardSelectionService = cardSelectionService;
+        }
 
         /// <summary>
         /// Checks and counts the selected cards in the deck.
@@ -50,7 +65,8 @@ namespace Menu
         /// </summary>
         private void DeselectAllCards()
         {
-            CardSelectionManager.Instance.ClearSelection();
+            // Phase 9: Use injected service instead of CardSelectionManager.Instance
+            _cardSelectionService?.ClearSelection();
         }
 
         /// <summary>

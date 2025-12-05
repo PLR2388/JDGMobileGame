@@ -261,7 +261,8 @@ namespace OnePlayer
         protected override void NextRound()
         {
             HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
-            InvocationMenuManager.Instance.Hide();
+            // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+            _invocationMenuService.Hide();
             if (_gameStateService.CurrentPlayer != JDG.Domain.ValueObjects.PlayerId.Player1)
             {
                 DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
@@ -281,7 +282,8 @@ namespace OnePlayer
                 _gameStateService.SetPhase(JDG.Domain.Phase.End);
             }
 
-            RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(false);
+            // Phase 9: Use injected service instead of RoundDisplayManager.Instance
+            _roundDisplayService.AdaptUIToPhaseIdInNextRound(false);
 
             switch (_gameStateService.CurrentPhase)
             {
@@ -356,7 +358,8 @@ namespace OnePlayer
         /// </summary>
         protected override void ChoosePhase()
         {
-            InvocationMenuManager.Instance.Enable();
+            // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+            _invocationMenuService.Enable();
             ChoosePhaseMusic();
 
             if (_gameStateService.TurnNumber == 2 && CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)

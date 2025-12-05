@@ -17,6 +17,7 @@ public class DisplayCards : StaticInstance<DisplayCards>
 
     // Phase 9: Injected dependencies
     private ICardPoolService _cardPoolService;
+    private ICardSelectionService _cardSelectionService;
 
     /// <summary>
     /// Sets the list of cards to be displayed and triggers the card display.
@@ -36,12 +37,13 @@ public class DisplayCards : StaticInstance<DisplayCards>
 
     /// <summary>
     /// VContainer method injection for dependencies.
-    /// Phase 9: Inject ICardPoolService instead of using singleton.
+    /// Phase 9: Inject services instead of using singletons.
     /// </summary>
     [Inject]
-    public void Construct(ICardPoolService cardPoolService)
+    public void Construct(ICardPoolService cardPoolService, ICardSelectionService cardSelectionService)
     {
         _cardPoolService = cardPoolService;
+        _cardSelectionService = cardSelectionService;
     }
 
     /// <summary>
@@ -65,10 +67,8 @@ public class DisplayCards : StaticInstance<DisplayCards>
                 cardGameObject.transform.SetParent(_cardPoolService.CardPoolHolder, true);
             }
 
-            if (CardSelectionManager.Instance != null)
-            {
-                CardSelectionManager.Instance.UnselectCard(cardGameObject.GetComponent<CardDisplay>().InGameCard);
-            }
+            // Phase 9: Use injected service instead of CardSelectionManager.Instance
+            _cardSelectionService?.UnselectCard(cardGameObject.GetComponent<CardDisplay>().InGameCard);
 
             cardGameObject.SetActive(false);
         }
