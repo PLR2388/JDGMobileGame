@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using JDG.Infrastructure.DI;
+using UnityEngine;
 
 namespace Cards.EffectCards
 {

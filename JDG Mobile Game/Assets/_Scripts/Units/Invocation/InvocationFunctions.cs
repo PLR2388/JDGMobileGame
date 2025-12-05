@@ -1,5 +1,6 @@
 ﻿using System;
 using _Scripts.Units.Invocation;
+using JDG.Infrastructure.DI;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -75,7 +76,7 @@ namespace _Scripts.Cards.InvocationCards
                 // Show warning if field is full (4 invocations max)
                 var config = new MessageBoxConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_INVOCATION_CARDS),
+                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS),
                     showOkButton: true
                 );
                 MessageBox.Instance.CreateMessageBox(canvas, config);

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using _Scripts.Units.Invocation;
+using JDG.Infrastructure.DI;
 using UnityEngine;
 
 namespace Cards.EquipmentCards

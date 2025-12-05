@@ -1,35 +1,46 @@
 ﻿using _Scripts.Cards.InvocationCards;
 using _Scripts.Units.Invocation;
+using JDG.Infrastructure.DI;
 using OnePlayer;
 
 namespace Cards.InvocationCards
 {
+    /// <summary>
+    /// Tutorial-specific invocation functions.
+    /// Phase 6: Updated to use CardPlacementService like InvocationFunctions.
+    /// </summary>
     public class TutoInvocationFunctions : InvocationFunctions
     {
+        // Phase 6: Use service for business logic
+        private ICardPlacementService TutoCardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+
         private void Start()
         {
             InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
         }
-        
+
         /// <summary>
         /// Places the invocation card on the field and applies its effect.
+        /// Phase 6: Delegates to CardPlacementService, then applies tutorial-specific logic.
         /// </summary>
         /// <param name="invocationCard">The invocation card to place on the field.</param>
-
         private void PutInvocationCard(InGameInvocationCard invocationCard)
         {
-            if (CanAddCardToField())
+            // Place card using service
+            bool success = TutoCardPlacementService.PlaceInvocationCard(invocationCard, canvas);
+
+            if (success)
             {
-                AddCardToField(invocationCard);
-                ApplyCardEffect(invocationCard);
+                // Apply tutorial-specific effect after placement
+                ApplyTutorialSpecificEffect(invocationCard);
             }
         }
 
         /// <summary>
-        /// Applies the effect of the specified invocation card.
+        /// Applies tutorial-specific effect for certain cards.
         /// </summary>
         /// <param name="invocationCard">The invocation card whose effect should be applied.</param>
-        private void ApplyCardEffect(InGameInvocationCard invocationCard)
+        private void ApplyTutorialSpecificEffect(InGameInvocationCard invocationCard)
         {
             if (invocationCard.Title == CardNameMappings.CardNameMap[CardNames.ClichéRaciste])
             {
