@@ -5,12 +5,18 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Cards;
 using UnityEngine;
+using VContainer;
 
+/// <summary>
+/// Phase 9: Removed CardPoolManager singleton dependency via DI.
+/// </summary>
 public class DisplayCards : StaticInstance<DisplayCards>
 {
     private readonly ObservableCollection<InGameCard> _cardsList = new ObservableCollection<InGameCard>();
-
     private readonly List<GameObject> associatedGameObject = new List<GameObject>();
+
+    // Phase 9: Injected dependencies
+    private ICardPoolService _cardPoolService;
 
     /// <summary>
     /// Sets the list of cards to be displayed and triggers the card display.
@@ -29,6 +35,16 @@ public class DisplayCards : StaticInstance<DisplayCards>
     }
 
     /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 9: Inject ICardPoolService instead of using singleton.
+    /// </summary>
+    [Inject]
+    public void Construct(ICardPoolService cardPoolService)
+    {
+        _cardPoolService = cardPoolService;
+    }
+
+    /// <summary>
     /// Sets up event listener on start.
     /// </summary>
     private void Start()
@@ -43,16 +59,17 @@ public class DisplayCards : StaticInstance<DisplayCards>
     {
         foreach (var cardGameObject in associatedGameObject)
         {
-            if (CardPoolManager.Instance != null)
+            // Phase 9: Use injected service instead of CardPoolManager.Instance
+            if (_cardPoolService?.CardPoolHolder != null)
             {
-                cardGameObject.transform.SetParent(CardPoolManager.Instance.cardPoolHolder, true);    
+                cardGameObject.transform.SetParent(_cardPoolService.CardPoolHolder, true);
             }
 
             if (CardSelectionManager.Instance != null)
             {
-                CardSelectionManager.Instance.UnselectCard(cardGameObject.GetComponent<CardDisplay>().InGameCard);    
+                CardSelectionManager.Instance.UnselectCard(cardGameObject.GetComponent<CardDisplay>().InGameCard);
             }
-            
+
             cardGameObject.SetActive(false);
         }
         associatedGameObject.Clear();
@@ -67,7 +84,8 @@ public class DisplayCards : StaticInstance<DisplayCards>
     {
         foreach (var card in newItems)
         {
-            var newCardObject = CardPoolManager.Instance.GetPooledObject(card as InGameCard);
+            // Phase 9: Use injected service instead of CardPoolManager.Instance
+            var newCardObject = _cardPoolService?.GetPooledObject(card as InGameCard);
             if (newCardObject != null)
             {
                 newCardObject.transform.SetParent(transform, true);
@@ -107,12 +125,12 @@ public class DisplayCards : StaticInstance<DisplayCards>
     /// Hides the specified cards.
     /// </summary>
     /// <param name="e">List of cards to be hidden.</param>
-    private static void HideCard(IList e)
+    private void HideCard(IList e)
     {
-
         foreach (var card in e)
         {
-            CardPoolManager.Instance.GetPooledObject(card as InGameCard)?.SetActive(false);
+            // Phase 9: Use injected service instead of CardPoolManager.Instance
+            _cardPoolService?.GetPooledObject(card as InGameCard)?.SetActive(false);
         }
     }
 

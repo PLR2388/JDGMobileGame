@@ -41,6 +41,10 @@ namespace JDG.DI
             // Phase 8: Deck Initialization Service
             // DeckInitializationService removes GameState/UnitManager singleton access from PlayerCards
             builder.Register<IDeckInitializationService, DeckInitializationService>(Lifetime.Singleton);
+
+            // Phase 9: Card Pool Service
+            // CardPoolService removes CardPoolManager singleton access from UI components
+            builder.Register<ICardPoolService, CardPoolService>(Lifetime.Singleton);
         }
     }
 }
