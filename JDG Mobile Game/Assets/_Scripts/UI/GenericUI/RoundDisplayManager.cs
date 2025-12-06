@@ -3,11 +3,13 @@ using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
 using TMPro;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
 /// Manages the round display, including round text, player indicators, and camera orientation.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
 /// </summary>
-public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
+public class RoundDisplayManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI playerText;
     [SerializeField] private TextMeshProUGUI roundText;

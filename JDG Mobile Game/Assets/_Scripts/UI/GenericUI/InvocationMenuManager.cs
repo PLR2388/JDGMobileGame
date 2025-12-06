@@ -5,8 +5,9 @@ using VContainer;
 /// <summary>
 /// Manages the invocation menu, including its buttons and their states.
 /// Phase 17-18: Removed CardManager singleton dependency via ICombatService.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
 /// </summary>
-public class InvocationMenuManager : StaticInstance<InvocationMenuManager>
+public class InvocationMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject invocationMenu;
      private Button attackButton;
@@ -27,10 +28,10 @@ public class InvocationMenuManager : StaticInstance<InvocationMenuManager>
 
      /// <summary>
      /// Initialize the manager, caching necessary components.
+     /// Phase 19-20: No longer calls base.Awake() since not a singleton.
      /// </summary>
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         // Cache the components
         if (invocationMenu.transform.childCount > 0)
             attackButton = invocationMenu.transform.GetChild(0).GetComponent<Button>();

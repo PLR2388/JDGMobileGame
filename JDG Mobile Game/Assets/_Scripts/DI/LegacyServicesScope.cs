@@ -51,11 +51,13 @@ namespace JDG.DI
             builder.Register<ICardSelectionService, CardSelectionService>(Lifetime.Singleton);
 
             // Phase 9: Invocation Menu Service
-            // InvocationMenuService removes InvocationMenuManager singleton access from GameLoop
+            // Phase 19-20: Register InvocationMenuManager MonoBehaviour from scene, then adapter service
+            builder.RegisterComponentInHierarchy<InvocationMenuManager>();
             builder.Register<IInvocationMenuService, InvocationMenuService>(Lifetime.Singleton);
 
             // Phase 9: Round Display Service
-            // RoundDisplayService removes RoundDisplayManager singleton access from GameLoop
+            // Phase 19-20: Register RoundDisplayManager MonoBehaviour from scene, then adapter service
+            builder.RegisterComponentInHierarchy<RoundDisplayManager>();
             builder.Register<IRoundDisplayService, RoundDisplayService>(Lifetime.Singleton);
 
             // Phase 17-18: Deck Management Service
