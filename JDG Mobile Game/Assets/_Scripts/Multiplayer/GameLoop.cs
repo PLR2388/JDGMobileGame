@@ -9,6 +9,9 @@ using JDG.Application.Services;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Services;
 
+/// <summary>
+/// Phase 17-18: Removed CardManager singleton dependency via Phase 4 services.
+/// </summary>
 public class GameLoop : MonoBehaviour
 {
     private IEventBus _eventBus;
@@ -17,8 +20,15 @@ public class GameLoop : MonoBehaviour
     protected IInvocationMenuService _invocationMenuService;
     protected IRoundDisplayService _roundDisplayService;
 
+    // Phase 17-18: Phase 4 services replacing CardManager
+    private ICombatService _combatService;
+    private ICardCollectionService _cardCollectionService;
+    private ITurnService _turnService;
+    private ICardDrawService _cardDrawService;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
+    /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
     /// </summary>
     [Inject]
     public void Construct(
@@ -26,13 +36,21 @@ public class GameLoop : MonoBehaviour
         GameStateService gameStateService,
         IRaycastService raycastService,
         IInvocationMenuService invocationMenuService,
-        IRoundDisplayService roundDisplayService)
+        IRoundDisplayService roundDisplayService,
+        ICombatService combatService,
+        ICardCollectionService cardCollectionService,
+        ITurnService turnService,
+        ICardDrawService cardDrawService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
         _raycastService = raycastService;
         _invocationMenuService = invocationMenuService;
         _roundDisplayService = roundDisplayService;
+        _combatService = combatService;
+        _cardCollectionService = cardCollectionService;
+        _turnService = turnService;
+        _cardDrawService = cardDrawService;
     }
 
     // Start is called before the first frame update
@@ -116,7 +134,8 @@ public class GameLoop : MonoBehaviour
         {
             if (invocationCard.CardOwner == currentOwner || invocationCard.IsControlled)
             {
-                CardManager.Instance.Attacker = invocationCard;
+                // Phase 17-18: Use ICombatService instead of CardManager.Instance
+                _combatService.Attacker = invocationCard;
                 // Phase 9: Use injected service instead of InvocationMenuManager.Instance
                 _invocationMenuService.Display(isAttackPhase);
             }
@@ -192,7 +211,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void ChoosePhaseMusic()
     {
-        var currentFieldCard = CardManager.Instance.GetCurrentPlayerCards().FieldCard;
+        // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+        var currentFieldCard = _cardCollectionService.GetCurrentPlayerCards().FieldCard;
         if (currentFieldCard == null)
         {
             AudioSystem.Instance.PlayMusic(Music.DrawPhase);
@@ -225,7 +245,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void DisplayAvailableOpponent()
     {
-        var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
+        // Phase 17-18: Use ICombatService instead of CardManager.Instance
+        var notEmptyOpponent = _combatService.BuildValidTargets();
         DisplayOpponentMessageBox(notEmptyOpponent);
         InputManager.Instance.DisableDetectionTouch();
     }
@@ -240,7 +261,8 @@ public class GameLoop : MonoBehaviour
         {
             if (invocationCard != null)
             {
-                CardManager.Instance.Opponent = invocationCard;
+                // Phase 17-18: Use ICombatService instead of CardManager.Instance
+                _combatService.Opponent = invocationCard;
                 ComputeAttack();
             }
             InputManager.Instance.EnableDetectionTouch();
@@ -259,7 +281,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void ComputeAttack()
     {
-        CardManager.Instance.HandleAttack();
+        // Phase 17-18: Use ICombatService instead of CardManager.Instance
+        _combatService.HandleAttack();
         // Phase 9: Use injected service instead of InvocationMenuManager.Instance
         _invocationMenuService.UpdateAttackButton();
         HandlePlayerDeath();
@@ -304,14 +327,16 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void DoDraw()
     {
-        CardManager.Instance.OnTurnStart();
+        // Phase 17-18: Use ITurnService instead of CardManager.Instance
+        _turnService.OnTurnStart();
 
         void OnNoCards()
         {
             GameOver();
         }
 
-        CardManager.Instance.Draw(OnNoCards);
+        // Phase 17-18: Use ICardDrawService instead of CardManager.Instance
+        _cardDrawService.DrawCard(OnNoCards);
     }
 
     /// <summary>
@@ -319,7 +344,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void EndTurnPhase()
     {
-        CardManager.Instance.HandleEndTurn();
+        // Phase 17-18: Use ITurnService instead of CardManager.Instance
+        _turnService.HandleEndTurn();
         _gameStateService.HandleEndTurn();
         Draw();
     }
