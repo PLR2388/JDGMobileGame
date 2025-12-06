@@ -77,6 +77,11 @@ namespace JDG.DI
             // Phase 17-18: Card Instantiation Service
             // CardInstantiationService replaces UnitManager singleton for GameObject creation
             builder.Register<ICardInstantiationService, CardInstantiationService>(Lifetime.Singleton);
+
+            // Phase 21-22: Player & Card Management Use Cases
+            // These are in the default assembly because they depend on legacy card types
+            builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient);
+            builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
         }
     }
 }

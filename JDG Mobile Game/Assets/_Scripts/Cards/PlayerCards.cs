@@ -7,7 +7,6 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using Cards.InvocationCards;
-using JDG.Application.UseCases;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
 using VContainer;
