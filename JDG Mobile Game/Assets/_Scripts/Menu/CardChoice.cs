@@ -256,7 +256,8 @@ namespace Menu
             {
                 CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(true);
                 isPlayerOneCardChosen = false;
-                GameState.Instance.Player1DeckCards = new List<InGameCard>();
+                // Phase 17-18: Use IDeckManagementService instead of GameState.Instance
+                _deckManagementService.Player1DeckCards = new List<InGameCard>();
                 DeselectAllCards();
                 ChangeChoicePlayer.Invoke(1);
             }
