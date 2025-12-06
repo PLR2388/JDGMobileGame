@@ -1,17 +1,34 @@
 using System.Collections.Generic;
 using Cards;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
 /// Generates GameObjects to be used in CardSelector.
 /// Serves as a pool to store Image card GameObjects when they are not actively used in a card selector.
+/// Phase 17-18: Removed GameState singleton and FindObjectsOfType dependencies.
 /// </summary>
 public class CardPoolManager : StaticInstance<CardPoolManager>
 {
     [SerializeField] private GameObject prefabCard;
     [SerializeField] public Transform cardPoolHolder;
-    
+
     private readonly List<GameObject> pooledCards = new List<GameObject>();
+
+    // Phase 17-18: Injected dependencies
+    private IDeckManagementService _deckManagementService;
+    private IDeckInitializationService _deckInitializationService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
+    /// </summary>
+    [Inject]
+    public void Construct(IDeckManagementService deckManagementService, IDeckInitializationService deckInitializationService)
+    {
+        _deckManagementService = deckManagementService;
+        _deckInitializationService = deckInitializationService;
+    }
 
     /// <summary>
     /// Called when the script instance is being loaded.
@@ -20,6 +37,14 @@ public class CardPoolManager : StaticInstance<CardPoolManager>
     protected override void Awake()
     {
         base.Awake();
+        // Initialization moved to Start() to ensure DI has completed
+    }
+
+    /// <summary>
+    /// Called on the frame when a script is enabled just before any of the Update methods are called the first time.
+    /// </summary>
+    private void Start()
+    {
         InitializeCardPool();
     }
 
@@ -28,8 +53,14 @@ public class CardPoolManager : StaticInstance<CardPoolManager>
     /// </summary>
     private void InitializeCardPool()
     {
-        AddCardsToPool(GameState.Instance.Player1DeckCards);
-        AddCardsToPool(GameState.Instance.Player2DeckCards);
+        if (_deckManagementService == null)
+        {
+            Debug.LogError("CardPoolManager: DeckManagementService not injected!");
+            return;
+        }
+
+        AddCardsToPool(_deckManagementService.Player1DeckCards);
+        AddCardsToPool(_deckManagementService.Player2DeckCards);
         BuildPlayerCards();
     }
 
@@ -46,15 +77,16 @@ public class CardPoolManager : StaticInstance<CardPoolManager>
 
     /// <summary>
     /// Builds player cards and adds them to the card pool.
+    /// Phase 17-18: Temporarily disabled FindObjectsOfType pattern.
+    /// TODO Phase 21: Refactor when PlayerCards business logic is extracted.
     /// </summary>
     private void BuildPlayerCards()
     {
-        var playerCards = FindObjectsOfType<PlayerCards>();
-        foreach (var playerCard in playerCards)
-        {
-            playerCard.BuildPlayer();
-            BuildNewCard(playerCard.Player);
-        }
+        // Phase 17-18: FindObjectsOfType removed - this will be refactored in Phase 21
+        // when PlayerCards MonoBehaviour business logic is extracted to services.
+        // For now, the card pool is initialized with deck cards only.
+        // Player entity cards (player avatars) will be handled differently after
+        // PlayerCards refactoring is complete.
     }
 
     /// <summary>

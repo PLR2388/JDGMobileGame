@@ -4,9 +4,13 @@ using _Scripts.Units.Invocation;
 using Cards.EffectCards;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 
 namespace Cards
 {
+    /// <summary>
+    /// Phase 17-18: Removed UnitManager singleton dependency via ICardInstantiationService.
+    /// </summary>
     public class CardLocation : MonoBehaviour
     {
         [SerializeField] private GameObject player1;
@@ -20,6 +24,19 @@ namespace Cards
 
         private PlayerCards player1Cards;
         private PlayerCards player2Cards;
+
+        // Phase 17-18: Injected dependencies
+        private ICardInstantiationService _cardInstantiationService;
+
+        /// <summary>
+        /// VContainer method injection for dependencies.
+        /// Phase 17-18: Inject ICardInstantiationService instead of UnitManager.Instance.
+        /// </summary>
+        [Inject]
+        public void Construct(ICardInstantiationService cardInstantiationService)
+        {
+            _cardInstantiationService = cardInstantiationService;
+        }
 
         private static readonly PlayerCardLocations Player1Locations = new PlayerCardLocations
         {
@@ -128,7 +145,8 @@ namespace Cards
         }
 
         /// <summary>
-        /// Fetches the physical game object of the card from the UnitManager.
+        /// Fetches the physical game object of the card from the CardInstantiationService.
+        /// Phase 17-18: Now uses ICardInstantiationService instead of UnitManager.Instance.
         /// </summary>
         /// <param name="card"></param>
         /// <param name="isPlayerOne"></param>
@@ -136,7 +154,7 @@ namespace Cards
         private GameObject GetPhysicalCard(InGameCard card, bool isPlayerOne)
         {
             var cardName = card.Title + (isPlayerOne ? "P1" : "P2");
-            UnitManager.Instance.CardNameToGameObject.TryGetValue(cardName, out var cardGameObject);
+            _cardInstantiationService.TryGetCardGameObject(cardName, out var cardGameObject);
             return cardGameObject;
         }
 
