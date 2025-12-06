@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Cards;
-using JDG.Application.Services;
 using UnityEngine;
 
 /// <summary>
