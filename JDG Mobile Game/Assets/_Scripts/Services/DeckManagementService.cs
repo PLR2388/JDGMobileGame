@@ -10,8 +10,7 @@ using UnityEngine;
 /// Manages deck data storage and tutorial deck building.
 /// Migrated from GameState singleton in Phase 17-18.
 ///
-/// Uses Strangler Fig pattern: Temporarily accesses GameState to initialize card pools
-/// until all callsites are migrated.
+/// Phase 17-18 Fix: Now uses ResourceSystem to load card data instead of GameState.
 /// </summary>
 public class DeckManagementService : IDeckManagementService
 {
@@ -24,18 +23,23 @@ public class DeckManagementService : IDeckManagementService
 
     public DeckManagementService()
     {
-        // Strangler Fig: Temporarily initialize from GameState singleton
-        // This will be replaced with proper card loading once GameState is removed
-        if (GameState.Instance != null)
+        // Phase 17-18 Fix: Use ResourceSystem to get all cards instead of GameState
+        // ResourceSystem loads cards from Resources/Cards folder
+        if (ResourceSystem.Instance != null)
         {
-            var field = typeof(GameState).GetField("allCards",
+            // Access Cards via reflection to maintain compatibility
+            var field = typeof(ResourceSystem).GetProperty("Cards",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            _allCards = (List<Card>)field?.GetValue(GameState.Instance);
+            _allCards = (List<Card>)field?.GetValue(ResourceSystem.Instance);
 
             if (_allCards != null && _allCards.Count > 0)
             {
                 InitializeCardPools(_allCards);
             }
+        }
+        else
+        {
+            Debug.LogWarning("DeckManagementService: ResourceSystem not initialized yet");
         }
     }
 

@@ -6,8 +6,8 @@ using UnityEngine;
 /// Implementation of ICardInstantiationService that handles physical card GameObject creation.
 /// Migrated from UnitManager singleton in Phase 17-18.
 ///
-/// Uses Strangler Fig pattern: Temporarily accesses UnitManager to get prefab reference
-/// until all callsites are migrated.
+/// Phase 17-18 Fix: Now gets prefab from CardPoolManager instead of deleted UnitManager.
+/// This is temporary until Phase 19-20 when CardPoolManager is removed.
 ///
 /// This service is responsible for:
 /// - Instantiating card prefabs
@@ -24,19 +24,20 @@ public class CardInstantiationService : ICardInstantiationService
 
     public CardInstantiationService()
     {
-        // Strangler Fig: Temporarily get prefab from UnitManager singleton
-        // This will be replaced with proper DI once UnitManager is fully migrated
-        if (UnitManager.Instance != null)
+        // Phase 17-18 Fix: Get prefab from CardPoolManager instead of deleted UnitManager
+        // CardPoolManager has the prefab serialized from the Unity scene
+        // This will be replaced with proper DI in Phase 19-20
+        if (CardPoolManager.Instance != null)
         {
-            // Access the prefabCard via reflection since it's private
-            var field = typeof(UnitManager).GetField("prefabCard",
+            // Access the prefabCard via reflection to maintain encapsulation
+            var field = typeof(CardPoolManager).GetField("prefabCard",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            _prefabCard = (GameObject)field?.GetValue(UnitManager.Instance);
+            _prefabCard = (GameObject)field?.GetValue(CardPoolManager.Instance);
         }
 
         if (_prefabCard == null)
         {
-            Debug.LogError("CardInstantiationService: Could not access prefabCard from UnitManager");
+            Debug.LogError("CardInstantiationService: Could not access prefabCard from CardPoolManager");
         }
 
         _cardNameToGameObject = new Dictionary<string, GameObject>();

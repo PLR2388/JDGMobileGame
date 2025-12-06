@@ -99,7 +99,8 @@ public class InfiniteScroll : MonoBehaviour
     /// <param name="card">The card to check and possibly unselect.</param>
     private void CheckNumberOfRareCards(InGameCard card)
     {
-        if (numberOfRareCards > GameState.MaxRare)
+        // Phase 17-18: Use DeckConfiguration instead of GameState for constants
+        if (numberOfRareCards > DeckConfiguration.MaxRare)
         {
             _cardSelectionService.UnselectCard(card);
             DisplayMessageBox(
@@ -115,7 +116,8 @@ public class InfiniteScroll : MonoBehaviour
     /// <param name="card">The card to check and possibly unselect.</param>
     private void CheckNumberOfSelectedCards(InGameCard card)
     {
-        if (numberOfSelectedCards > GameState.MaxDeckCards)
+        // Phase 17-18: Use DeckConfiguration instead of GameState for constants
+        if (numberOfSelectedCards > DeckConfiguration.MaxDeckCards)
         {
             _cardSelectionService.UnselectCard(card);
             DisplayMessageBox(

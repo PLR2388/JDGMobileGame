@@ -21,10 +21,11 @@ public class GameLoop : MonoBehaviour
     protected IRoundDisplayService _roundDisplayService;
 
     // Phase 17-18: Phase 4 services replacing CardManager
-    private ICombatService _combatService;
-    private ICardCollectionService _cardCollectionService;
-    private ITurnService _turnService;
-    private ICardDrawService _cardDrawService;
+    // Changed to protected so TutoPlayerGameLoop can access them
+    protected ICombatService _combatService;
+    protected ICardCollectionService _cardCollectionService;
+    protected ITurnService _turnService;
+    protected ICardDrawService _cardDrawService;
 
     /// <summary>
     /// VContainer injection point. Called before Start().

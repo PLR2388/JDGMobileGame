@@ -89,12 +89,13 @@ public class PlayerCards : MonoBehaviour
         // Phase 8: Use injected service instead of UnitManager.Instance
         _deckInitService.InitializePhysicalCards(Deck, deckLocation, IsPlayerOne);
 
-        for (var i = Deck.Count - GameState.InitialNumberOfHandCards; i < Deck.Count; i++)
+        // Phase 17-18: Use DeckConfiguration instead of GameState for constants
+        for (var i = Deck.Count - DeckConfiguration.InitialNumberOfHandCards; i < Deck.Count; i++)
         {
             HandCards.Add(Deck[i]);
         }
 
-        Deck.RemoveRange(Deck.Count - GameState.InitialNumberOfHandCards, GameState.InitialNumberOfHandCards);
+        Deck.RemoveRange(Deck.Count - DeckConfiguration.InitialNumberOfHandCards, DeckConfiguration.InitialNumberOfHandCards);
         cardLocation.HideCards(HandCards.ToList());
 
         InvocationCards.CollectionChanged += InvocationCards_CollectionChanged;

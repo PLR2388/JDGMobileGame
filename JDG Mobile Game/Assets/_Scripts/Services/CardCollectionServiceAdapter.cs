@@ -1,24 +1,54 @@
 using Cards;
+using JDG.Infrastructure.DI;
+using JDG.Infrastructure.Services;
+using UnityEngine;
 
 /// <summary>
-/// Adapter that bridges ICardCollectionService to CardManager singleton.
+/// Adapter that bridges ICardCollectionService to CardCollectionService.
 /// Part of Phase 6 - temporary adapter during migration.
 ///
-/// This adapter allows CardPlacementService to be dependency-injected while
-/// still using CardManager singleton internally. Once CardManager is fully
-/// decomposed, this adapter can be replaced with direct CardCollectionService registration.
+/// Phase 17-18 Fix: Now creates CardCollectionService directly instead of using deleted CardManager.
+/// Finds PlayerCardManager components from the scene.
 ///
-/// Note: This is a temporary bridge pattern, similar to AudioService wrapping AudioSystem.
+/// This adapter allows CardPlacementService to be dependency-injected while
+/// finding scene dependencies. Once PlayerCardManager is fully migrated to services,
+/// this adapter can be replaced with direct CardCollectionService registration in DI.
 /// </summary>
 public class CardCollectionServiceAdapter : ICardCollectionService
 {
+    private readonly CardCollectionService _cardCollectionService;
+
+    public CardCollectionServiceAdapter()
+    {
+        // Phase 17-18 Fix: Create CardCollectionService directly
+        var gameStateService = ServiceLocator.Get<GameStateService>();
+
+        // Find the two PlayerCardManager components in the scene
+        var playerCardManagers = Object.FindObjectsOfType<PlayerCardManager>();
+
+        if (playerCardManagers.Length < 2)
+        {
+            Debug.LogError($"CardCollectionServiceAdapter: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}");
+        }
+
+        // PlayerCardManager for player 1 should be first (by convention/scene order)
+        var player1CardManager = playerCardManagers[0];
+        var player2CardManager = playerCardManagers[1];
+
+        _cardCollectionService = new CardCollectionService(
+            gameStateService,
+            player1CardManager,
+            player2CardManager
+        );
+    }
+
     public PlayerCards GetCurrentPlayerCards()
     {
-        return CardManager.Instance.GetCurrentPlayerCards();
+        return _cardCollectionService.GetCurrentPlayerCards();
     }
 
     public PlayerCards GetOpponentPlayerCards()
     {
-        return CardManager.Instance.GetOpponentPlayerCards();
+        return _cardCollectionService.GetOpponentPlayerCards();
     }
 }
