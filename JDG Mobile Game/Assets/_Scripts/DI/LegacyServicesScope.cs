@@ -18,6 +18,9 @@ namespace JDG.DI
             builder.Register<IAudioService, AudioService>(Lifetime.Singleton);
             builder.Register<ILocalizationService, LocalizationService>(Lifetime.Singleton);
             builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
+
+            // Phase 19-20: Register InputManager MonoBehaviour from scene, then InputService
+            builder.RegisterComponentInHierarchy<InputManager>();
             builder.Register<IInputService, InputService>(Lifetime.Singleton);
 
             // Phase 1: Input System Services
@@ -43,11 +46,13 @@ namespace JDG.DI
             builder.Register<IDeckInitializationService, DeckInitializationService>(Lifetime.Singleton);
 
             // Phase 9: Card Pool Service
-            // CardPoolService removes CardPoolManager singleton access from UI components
+            // Phase 19-20: Register CardPoolManager MonoBehaviour from scene, then adapter service
+            builder.RegisterComponentInHierarchy<CardPoolManager>();
             builder.Register<ICardPoolService, CardPoolService>(Lifetime.Singleton);
 
             // Phase 9: Card Selection Service
-            // CardSelectionService removes CardSelectionManager singleton access from UI components
+            // Phase 19-20: Register CardSelectionManager MonoBehaviour from scene, then adapter service
+            builder.RegisterComponentInHierarchy<CardSelectionManager>();
             builder.Register<ICardSelectionService, CardSelectionService>(Lifetime.Singleton);
 
             // Phase 9: Invocation Menu Service
@@ -59,6 +64,11 @@ namespace JDG.DI
             // Phase 19-20: Register RoundDisplayManager MonoBehaviour from scene, then adapter service
             builder.RegisterComponentInHierarchy<RoundDisplayManager>();
             builder.Register<IRoundDisplayService, RoundDisplayService>(Lifetime.Singleton);
+
+            // Phase 19-20: UI Manager
+            // UIManager delegates to presenters (CardDisplayPresenter, DialogPresenter, CardSelectorPresenter)
+            // Registered for use by GameLoop during transition to full MVP pattern
+            builder.RegisterComponentInHierarchy<UIManager>();
 
             // Phase 17-18: Deck Management Service
             // DeckManagementService replaces GameState singleton for deck data storage

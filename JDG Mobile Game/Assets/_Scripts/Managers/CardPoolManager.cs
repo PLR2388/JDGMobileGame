@@ -7,8 +7,9 @@ using VContainer;
 /// Generates GameObjects to be used in CardSelector.
 /// Serves as a pool to store Image card GameObjects when they are not actively used in a card selector.
 /// Phase 17-18: Removed GameState singleton and FindObjectsOfType dependencies.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
 /// </summary>
-public class CardPoolManager : StaticInstance<CardPoolManager>
+public class CardPoolManager : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
     [SerializeField] public Transform cardPoolHolder;
@@ -33,10 +34,10 @@ public class CardPoolManager : StaticInstance<CardPoolManager>
     /// <summary>
     /// Called when the script instance is being loaded.
     /// Initializes the card pool.
+    /// Phase 19-20: No longer calls base.Awake() since not a singleton.
     /// </summary>
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         // Initialization moved to Start() to ensure DI has completed
     }
 

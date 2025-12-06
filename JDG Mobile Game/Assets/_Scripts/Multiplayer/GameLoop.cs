@@ -11,6 +11,7 @@ using JDG.Infrastructure.Services;
 
 /// <summary>
 /// Phase 17-18: Removed CardManager singleton dependency via Phase 4 services.
+/// Phase 19-20: Injected UIManager instead of using .Instance.
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
@@ -27,9 +28,13 @@ public class GameLoop : MonoBehaviour
     protected ITurnService _turnService;
     protected ICardDrawService _cardDrawService;
 
+    // Phase 19-20: Injected UIManager (protected so TutoPlayerGameLoop can access)
+    protected UIManager _uiManager;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
+    /// Phase 19-20: Added UIManager injection.
     /// </summary>
     [Inject]
     public void Construct(
@@ -41,7 +46,8 @@ public class GameLoop : MonoBehaviour
         ICombatService combatService,
         ICardCollectionService cardCollectionService,
         ITurnService turnService,
-        ICardDrawService cardDrawService)
+        ICardDrawService cardDrawService,
+        UIManager uiManager)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -52,6 +58,7 @@ public class GameLoop : MonoBehaviour
         _cardCollectionService = cardCollectionService;
         _turnService = turnService;
         _cardDrawService = cardDrawService;
+        _uiManager = uiManager;
     }
 
     // Start is called before the first frame update
@@ -83,7 +90,8 @@ public class GameLoop : MonoBehaviour
             SceneLoaderSystem.LoadMainScreen();
         }
 
-        UIManager.Instance.DisplayPauseMenu(PositiveAction);
+        // Phase 19-20: Use injected UIManager instead of .Instance
+        _uiManager.DisplayPauseMenu(PositiveAction);
     }
 
     /// <summary>
@@ -91,7 +99,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void OnReleaseTouch(TouchEndedEvent evt)
     {
-        UIManager.Instance.HideBigImage();
+        // Phase 19-20: Use injected UIManager instead of .Instance
+        _uiManager.HideBigImage();
     }
 
     /// <summary>
@@ -153,7 +162,8 @@ public class GameLoop : MonoBehaviour
         var cardTouch = _raycastService.GetTouchedCard();
         if (cardTouch != null)
         {
-            UIManager.Instance.DisplayCardOnLargeView(cardTouch);
+            // Phase 19-20: Use injected UIManager instead of .Instance
+            _uiManager.DisplayCardOnLargeView(cardTouch);
         }
     }
 
@@ -274,7 +284,8 @@ public class GameLoop : MonoBehaviour
             InputManager.Instance.EnableDetectionTouch();
         }
 
-        UIManager.Instance.DisplayOpponentAvailableMessageBox(invocationCards, PositiveAction, NegativeAction);
+        // Phase 19-20: Use injected UIManager instead of .Instance
+        _uiManager.DisplayOpponentAvailableMessageBox(invocationCards, PositiveAction, NegativeAction);
     }
 
     /// <summary>

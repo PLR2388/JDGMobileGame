@@ -6,8 +6,8 @@ using UnityEngine;
 /// Implementation of ICardInstantiationService that handles physical card GameObject creation.
 /// Migrated from UnitManager singleton in Phase 17-18.
 ///
-/// Phase 17-18 Fix: Now gets prefab from CardPoolManager instead of deleted UnitManager.
-/// This is temporary until Phase 19-20 when CardPoolManager is removed.
+/// Phase 17-18: Migrated from UnitManager singleton.
+/// Phase 19-20: Now injects CardPoolManager instead of using .Instance.
 ///
 /// This service is responsible for:
 /// - Instantiating card prefabs
@@ -22,17 +22,15 @@ public class CardInstantiationService : ICardInstantiationService
     private readonly Quaternion _playerOneRotation = Quaternion.Euler(0, 180, 0);
     private const float PositionOffset = 0.1f;
 
-    public CardInstantiationService()
+    public CardInstantiationService(CardPoolManager cardPoolManager)
     {
-        // Phase 17-18 Fix: Get prefab from CardPoolManager instead of deleted UnitManager
-        // CardPoolManager has the prefab serialized from the Unity scene
-        // This will be replaced with proper DI in Phase 19-20
-        if (CardPoolManager.Instance != null)
+        // Phase 19-20: Inject CardPoolManager and access prefab via reflection
+        // We use reflection because prefabCard is a private serialized field that Unity sets from the scene
+        if (cardPoolManager != null)
         {
-            // Access the prefabCard via reflection to maintain encapsulation
             var field = typeof(CardPoolManager).GetField("prefabCard",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            _prefabCard = (GameObject)field?.GetValue(CardPoolManager.Instance);
+            _prefabCard = (GameObject)field?.GetValue(cardPoolManager);
         }
 
         if (_prefabCard == null)

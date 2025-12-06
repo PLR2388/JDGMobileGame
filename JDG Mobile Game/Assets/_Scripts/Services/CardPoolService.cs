@@ -2,18 +2,23 @@ using Cards;
 using UnityEngine;
 
 /// <summary>
-/// Implementation of ICardPoolService.
-/// Bridges to legacy CardPoolManager singleton during migration.
-///
-/// Part of Phase 9 - Removes singleton dependencies from UI components.
-/// This service will be refactored once CardPoolManager lifecycle is managed by DI.
+/// Adapter service that bridges ICardPoolService to CardPoolManager.
+/// Phase 9: Temporary bridge during migration from singleton to DI.
+/// Phase 19-20: Now injects CardPoolManager instead of using .Instance.
 /// </summary>
 public class CardPoolService : ICardPoolService
 {
-    public Transform CardPoolHolder => CardPoolManager.Instance?.cardPoolHolder;
+    private readonly CardPoolManager _cardPoolManager;
+
+    public CardPoolService(CardPoolManager cardPoolManager)
+    {
+        _cardPoolManager = cardPoolManager;
+    }
+
+    public Transform CardPoolHolder => _cardPoolManager.cardPoolHolder;
 
     public GameObject GetPooledObject(InGameCard inGameCard)
     {
-        return CardPoolManager.Instance?.GetPooledObject(inGameCard);
+        return _cardPoolManager.GetPooledObject(inGameCard);
     }
 }

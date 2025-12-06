@@ -8,10 +8,11 @@ using UnityEngine.UI;
 /// <summary>
 /// Phase 5: UIManager is being decomposed into focused presenters (MVP pattern).
 /// This class now delegates to CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
 /// UIManager will eventually be removed once all callsites migrate to the new presenters.
 /// </summary>
-[System.Obsolete("UIManager is being phased out. Use CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter directly via dependency injection instead. This singleton will be removed in a future phase.")]
-public class UIManager : Singleton<UIManager>
+[System.Obsolete("UIManager is being phased out. Use CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter directly via dependency injection instead. This MonoBehaviour will be removed in a future phase.")]
+public class UIManager : MonoBehaviour
 {
     [SerializeField] private GameObject bigImageCard;
     [SerializeField] protected GameObject nextPhaseButton;
@@ -26,10 +27,10 @@ public class UIManager : Singleton<UIManager>
 
     /// <summary>
     /// Initialize component references and presenters.
+    /// Phase 19-20: No longer calls base.Awake() since not a singleton.
     /// </summary>
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         bigImageCardImage = bigImageCard.GetComponent<Image>();
 
         // Phase 5: Create presenter instances

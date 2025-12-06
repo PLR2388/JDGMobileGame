@@ -13,7 +13,8 @@ namespace JDG.Infrastructure.Services
     /// Wraps the existing InputManager and publishes events to EventBus.
     /// Uses dual publishing pattern - both UnityEvents (old) and EventBus (new).
     ///
-    /// Note: This is a regular class, not a MonoBehaviour. InputManager (singleton)
+    /// Phase 19-20: Now injects InputManager instead of using .Instance.
+    /// Note: This is a regular class, not a MonoBehaviour. InputManager MonoBehaviour
     /// handles the Update loop. This service just provides a clean interface.
     /// </summary>
     public class InputService : IInputService
@@ -26,10 +27,10 @@ namespace JDG.Infrastructure.Services
         private readonly List<Action<TouchEventData>> _longTouchHandlers = new();
         private readonly List<System.Action> _backButtonHandlers = new();
 
-        public InputService(IEventBus eventBus)
+        public InputService(IEventBus eventBus, InputManager inputManager)
         {
             _eventBus = eventBus;
-            _inputManager = InputManager.Instance;
+            _inputManager = inputManager;
 
             // Subscribe to InputManager's static events and republish through our handlers + EventBus
             InputManager.OnTouch.AddListener(OnTouchStarted);

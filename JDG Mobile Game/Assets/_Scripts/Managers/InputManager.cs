@@ -1,7 +1,12 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class InputManager : Singleton<InputManager>
+/// <summary>
+/// Handles input detection including touch/click and Android back button.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
+/// TODO Phase 23: Migrate static UnityEvents to EventBus (OnTouch, OnLongTouch, OnReleaseTouch, OnBackPressed).
+/// </summary>
+public class InputManager : MonoBehaviour
 {
     [SerializeField] private float clickDuration = 2f;
 

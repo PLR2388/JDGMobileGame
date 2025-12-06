@@ -3,57 +3,54 @@ using Cards;
 using UnityEngine.Events;
 
 /// <summary>
-/// Implementation of ICardSelectionService.
-/// Bridges to legacy CardSelectionManager singleton during migration.
-///
-/// Part of Phase 9 - Removes singleton dependencies from UI components.
-/// This service will be refactored once CardSelectionManager lifecycle is managed by DI.
+/// Adapter service that bridges ICardSelectionService to CardSelectionManager.
+/// Phase 9: Temporary bridge during migration from singleton to DI.
+/// Phase 19-20: Now injects CardSelectionManager instead of using .Instance.
 /// </summary>
 public class CardSelectionService : ICardSelectionService
 {
-    public UnityEvent<InGameCard> CardSelected => CardSelectionManager.Instance?.CardSelected;
-    public UnityEvent<InGameCard> CardDeselected => CardSelectionManager.Instance?.CardDeselected;
-    public UnityEvent SelectionChanged => CardSelectionManager.Instance?.SelectionChanged;
+    private readonly CardSelectionManager _cardSelectionManager;
 
-    public List<InGameCard> SelectedCards => CardSelectionManager.Instance?.SelectedCards ?? new List<InGameCard>();
+    public CardSelectionService(CardSelectionManager cardSelectionManager)
+    {
+        _cardSelectionManager = cardSelectionManager;
+    }
+
+    public UnityEvent<InGameCard> CardSelected => _cardSelectionManager.CardSelected;
+    public UnityEvent<InGameCard> CardDeselected => _cardSelectionManager.CardDeselected;
+    public UnityEvent SelectionChanged => _cardSelectionManager.SelectionChanged;
+
+    public List<InGameCard> SelectedCards => _cardSelectionManager.SelectedCards;
 
     public bool MultipleCardSelection
     {
-        get => CardSelectionManager.Instance?.MultipleCardSelection ?? false;
-        set
-        {
-            if (CardSelectionManager.Instance != null)
-                CardSelectionManager.Instance.MultipleCardSelection = value;
-        }
+        get => _cardSelectionManager.MultipleCardSelection;
+        set => _cardSelectionManager.MultipleCardSelection = value;
     }
 
     public int MultipleSelectionLimit
     {
-        get => CardSelectionManager.Instance?.MultipleSelectionLimit ?? 1;
-        set
-        {
-            if (CardSelectionManager.Instance != null)
-                CardSelectionManager.Instance.MultipleSelectionLimit = value;
-        }
+        get => _cardSelectionManager.MultipleSelectionLimit;
+        set => _cardSelectionManager.MultipleSelectionLimit = value;
     }
 
     public void SelectCard(InGameCard card)
     {
-        CardSelectionManager.Instance?.SelectCard(card);
+        _cardSelectionManager.SelectCard(card);
     }
 
     public void UnselectCard(InGameCard card)
     {
-        CardSelectionManager.Instance?.UnselectCard(card);
+        _cardSelectionManager.UnselectCard(card);
     }
 
     public void ClearSelection()
     {
-        CardSelectionManager.Instance?.ClearSelection();
+        _cardSelectionManager.ClearSelection();
     }
 
     public bool IsCardSelected(InGameCard card)
     {
-        return CardSelectionManager.Instance?.IsCardSelected(card) ?? false;
+        return _cardSelectionManager.IsCardSelected(card);
     }
 }

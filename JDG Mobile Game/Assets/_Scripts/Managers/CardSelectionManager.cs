@@ -1,8 +1,14 @@
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 using Cards;
 
-public class CardSelectionManager: StaticInstance<CardSelectionManager>
+/// <summary>
+/// Manages card selection state and events.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
+/// TODO Phase 23: Migrate UnityEvents to EventBus.
+/// </summary>
+public class CardSelectionManager : MonoBehaviour
 {
     // Events
     public UnityEvent<InGameCard> CardSelected = new UnityEvent<InGameCard>();
