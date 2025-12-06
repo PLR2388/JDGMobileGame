@@ -1,15 +1,20 @@
 using _Scripts.Units.Invocation;
 using Cards;
 
+/// <summary>
+/// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+/// </summary>
 public class InvocationCardHandler : CardHandler
 {
-    public InvocationCardHandler(InGameMenuScript menuScript) : base(menuScript)
+    public InvocationCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService)
+        : base(menuScript, cardCollectionService)
     {
     }
 
     public override void HandleCard(InGameCard card)
     {
-        var playerCard = CardManager.Instance.GetCurrentPlayerCards();
+        // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+        var playerCard = cardCollectionService.GetCurrentPlayerCards();
         menuScript.putCardButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD));
         var invocationCard = card as InGameInvocationCard;
         menuScript.putCardButton.interactable =

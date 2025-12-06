@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Represents the tutorial version of the in-game menu.
+/// Phase 17-18: Inherits ICardCollectionService from base class.
 /// </summary>
 public class TutoInGameMenuScript : InGameMenuScript
 {
@@ -145,7 +146,8 @@ public class TutoInGameMenuScript : InGameMenuScript
         SetHandVisibility(true);
         UpdateButtonText(LocalizationKeys.BUTTON_BACK);
         UnselectButton();
-        HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
+        // Phase 17-18: Use ICardCollectionService from base class instead of CardManager.Instance
+        HandCardDisplay.HandCardChange.Invoke(_cardCollectionService.GetCurrentPlayerCards().HandCards);
     }
 
     /// <summary>
@@ -156,15 +158,16 @@ public class TutoInGameMenuScript : InGameMenuScript
         SetHandVisibility(false);
         UpdateButtonText(LocalizationKeys.BUTTON_HAND);
         UnselectButton();
-        
+
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
-        
+
         if (DialogueTutoHandler.Instance.CurrentDialogIndex == PutCardIndex)
         {
             DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
         }
-        if (CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)
+        // Phase 17-18: Use ICardCollectionService from base class instead of CardManager.Instance
+        if (_cardCollectionService.GetCurrentPlayerCards().InvocationCards.Count == 2)
         {
             HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
         }

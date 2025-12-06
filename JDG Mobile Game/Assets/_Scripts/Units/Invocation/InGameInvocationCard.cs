@@ -3,9 +3,13 @@ using System.Linq;
 using _Scripts.Cards.InvocationCards;
 using Cards;
 using Cards.InvocationCards;
+using JDG.Infrastructure.DI;
 
 namespace _Scripts.Units.Invocation
 {
+    /// <summary>
+    /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+    /// </summary>
     public class InGameInvocationCard : InGameCard
     {
         public InvocationCard BaseInvocationCard;
@@ -195,11 +199,14 @@ namespace _Scripts.Units.Invocation
 
         /// <summary>
         /// Checks if invoking the card is possible.
+        /// Phase 17-18: Uses ICardCollectionService instead of CardManager.Instance.
         /// </summary>
         /// <returns>true if invocation is possible; otherwise, false.</returns>
         public bool IsInvocationPossible()
         {
-            return CanBeSummoned(CardManager.Instance.GetCurrentPlayerCards());
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            var cardCollectionService = ServiceLocator.Get<ICardCollectionService>();
+            return CanBeSummoned(cardCollectionService.GetCurrentPlayerCards());
         }
 
         /// <summary>

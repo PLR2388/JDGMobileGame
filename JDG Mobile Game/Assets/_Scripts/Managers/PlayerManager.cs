@@ -4,11 +4,13 @@ using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
 /// Manages player-related functionalities such as retrieving the current player status or handling attacks on the opponent.
 /// Phase 3: Now uses IPlayerService for state management. PlayerStatus MonoBehaviours are kept
 /// temporarily to maintain UI compatibility during migration.
+/// Phase 17-18: Removed CardManager singleton dependency via ICombatService.
 /// </summary>
 public class PlayerManager : Singleton<PlayerManager>
 {
@@ -22,6 +24,19 @@ public class PlayerManager : Singleton<PlayerManager>
     // Phase 3: Temporary bridge to PlayerService during migration
     // This will be removed when PlayerManager singleton is fully replaced
     private IPlayerService PlayerService => ServiceLocator.Get<IPlayerService>();
+
+    // Phase 17-18: Injected dependency
+    private ICombatService _combatService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 17-18: Inject ICombatService instead of CardManager.Instance.
+    /// </summary>
+    [Inject]
+    public void Construct(ICombatService combatService)
+    {
+        _combatService = combatService;
+    }
 
     /// <summary>
     /// Retrieves the current player's status.
@@ -68,6 +83,7 @@ public class PlayerManager : Singleton<PlayerManager>
     /// Handles the attack on the opponent player.
     /// If the opponent has a shield, it decrements the shield. Otherwise, it computes the damage and applies it.
     /// Phase 3: Now uses PlayerService for state management and event publishing.
+    /// Phase 17-18: Now uses ICombatService instead of CardManager.Instance.
     /// </summary>
     public void HandleAttackIfOpponentIsPlayer()
     {
@@ -80,7 +96,8 @@ public class PlayerManager : Singleton<PlayerManager>
         }
         else
         {
-            var diff = CardManager.Instance.ComputeDamageAttack();
+            // Phase 17-18: Use ICombatService instead of CardManager.Instance
+            var diff = _combatService.ComputeDamageAttack();
             PlayerService.ChangeHealth(opponentId, (int)diff);
         }
 

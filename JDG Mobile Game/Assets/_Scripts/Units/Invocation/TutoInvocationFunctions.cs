@@ -8,11 +8,15 @@ namespace Cards.InvocationCards
     /// <summary>
     /// Tutorial-specific invocation functions.
     /// Phase 6: Updated to use CardPlacementService like InvocationFunctions.
+    /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
     /// </summary>
     public class TutoInvocationFunctions : InvocationFunctions
     {
         // Phase 6: Use service for business logic
         private ICardPlacementService TutoCardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+
+        // Phase 17-18: Use service for card collection access
+        private ICardCollectionService CardCollectionService => ServiceLocator.Get<ICardCollectionService>();
 
         private void Start()
         {
@@ -45,7 +49,8 @@ namespace Cards.InvocationCards
             if (invocationCard.Title == CardNameMappings.CardNameMap[CardNames.ClichéRaciste])
             {
                 var cardName = CardNameMappings.CardNameMap[CardNames.Tentacules];
-                var playerCards = CardManager.Instance.GetCurrentPlayerCards();
+                // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+                var playerCards = CardCollectionService.GetCurrentPlayerCards();
                 var config = new MessageBoxConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                     string.Format(

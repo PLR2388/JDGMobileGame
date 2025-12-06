@@ -147,18 +147,20 @@ namespace OnePlayer
             string attacker = attack[0];
             string defender = attack.Length > 1 && !string.IsNullOrEmpty(attack[1]) ? attack[1] : CardNameMappings.CardNameMap[CardNames.Player];
 
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
             InGameInvocationCard attackerInvocationCard =
-                CardManager.Instance.GetCurrentPlayerCards().InvocationCards.First(card => card.Title == attacker);
+                _cardCollectionService.GetCurrentPlayerCards().InvocationCards.First(card => card.Title == attacker);
 
-            PlayerCards opponentPlayerCards = CardManager.Instance.GetOpponentPlayerCards();
+            PlayerCards opponentPlayerCards = _cardCollectionService.GetOpponentPlayerCards();
 
             InGameInvocationCard opponentInvocationCard = defender == CardNameMappings.CardNameMap[CardNames.Player]
                 ? opponentPlayerCards.Player as InGameInvocationCard
                 : opponentPlayerCards.InvocationCards
                     .First(card => card.Title == defender);
 
-            CardManager.Instance.Attacker = attackerInvocationCard;
-            CardManager.Instance.Opponent = opponentInvocationCard;
+            // Phase 17-18: Use ICombatService instead of CardManager.Instance
+            _combatService.Attacker = attackerInvocationCard;
+            _combatService.Opponent = opponentInvocationCard;
             ComputeAttack();
 
             if (defender == CardNameMappings.CardNameMap[CardNames.Player])
@@ -172,9 +174,10 @@ namespace OnePlayer
         /// </summary>
         /// <param name="putCard">The name of the card to be placed.</param>
 
-        private static void PlaceCard(string putCard)
+        private void PlaceCard(string putCard)
         {
-            PlayerCards playerCards = CardManager.Instance.GetCurrentPlayerCards();
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            PlayerCards playerCards = _cardCollectionService.GetCurrentPlayerCards();
             if (putCard.Contains(EquipSymbol))
             {
                 EquipInvocationCard(putCard, playerCards);
@@ -214,7 +217,7 @@ namespace OnePlayer
         /// </summary>
         /// <param name="putCard">Card data for equipment and invocation card.</param>
         /// <param name="playerCards">Current player's card details.</param>
-        private static void EquipInvocationCard(string putCard, PlayerCards playerCards)
+        private void EquipInvocationCard(string putCard, PlayerCards playerCards)
         {
 
             var cardNames = putCard.Split('>');
@@ -230,10 +233,11 @@ namespace OnePlayer
             playerCards.HandCards.Remove(equipmentCard);
             foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
             {
+                // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
                 equipmentCardEquipmentAbility.ApplyEffect(
                     invocationCard,
                     playerCards,
-                    CardManager.Instance.GetOpponentPlayerCards()
+                    _cardCollectionService.GetOpponentPlayerCards()
                 );
             }
         }
@@ -302,7 +306,8 @@ namespace OnePlayer
         /// </summary>
         public new void DisplayAvailableOpponent()
         {
-            var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
+            // Phase 17-18: Use ICombatService instead of CardManager.Instance
+            var notEmptyOpponent = _combatService.BuildValidTargets();
             DisplayOpponentMessageBox(notEmptyOpponent);
             InputManager.Instance.DisableDetectionTouch();
         }
@@ -317,7 +322,8 @@ namespace OnePlayer
             {
                 if (invocationCard?.Title == CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages])
                 {
-                    CardManager.Instance.Opponent = invocationCard;
+                    // Phase 17-18: Use ICombatService instead of CardManager.Instance
+                    _combatService.Opponent = invocationCard;
                     ComputeAttack();
                     HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
                     miniCardMenu.SetActive(false);
@@ -362,7 +368,8 @@ namespace OnePlayer
             _invocationMenuService.Enable();
             ChoosePhaseMusic();
 
-            if (_gameStateService.TurnNumber == 2 && CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            if (_gameStateService.TurnNumber == 2 && _cardCollectionService.GetCurrentPlayerCards().InvocationCards.Count == 2)
             {
                 HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
             }

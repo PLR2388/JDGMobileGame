@@ -2,14 +2,18 @@ using Cards;
 
 /// <summary>
 /// Handler responsible for field card-specific behaviors in the game.
+/// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
 /// </summary>
 public class FieldCardHandler : CardHandler
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="FieldCardHandler"/> class.
+    /// Phase 17-18: Added cardCollectionService parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
-    public FieldCardHandler(InGameMenuScript menuScript) : base(menuScript)
+    /// <param name="cardCollectionService">The service for accessing player card collections.</param>
+    public FieldCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService)
+        : base(menuScript, cardCollectionService)
     {
     }
 
@@ -19,7 +23,8 @@ public class FieldCardHandler : CardHandler
     /// <param name="card">The in-game card to be handled.</param>
     public override void HandleCard(InGameCard card)
     {
-        var playerCard = CardManager.Instance.GetCurrentPlayerCards();
+        // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+        var playerCard = cardCollectionService.GetCurrentPlayerCards();
         menuScript.putCardButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD));
         menuScript.putCardButton.interactable = playerCard.FieldCard == null;
     }

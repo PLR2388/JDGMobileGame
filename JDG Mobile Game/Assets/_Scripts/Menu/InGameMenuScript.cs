@@ -3,12 +3,16 @@ using Cards;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 /// <summary>
 /// Manages in-game card interactions, handling events, and displaying UI elements related to cards.
+/// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
 /// </summary>
 public class InGameMenuScript : MonoBehaviour
 {
+    // Phase 17-18: Injected dependency
+    private ICardCollectionService _cardCollectionService;
     // Serialized fields for UI components
     [SerializeField] protected TextMeshProUGUI buttonText;
     [SerializeField] protected GameObject handScreen;
@@ -54,15 +58,26 @@ public class InGameMenuScript : MonoBehaviour
     protected readonly Dictionary<CardType, CardHandler> CardHandlerMap = new Dictionary<CardType, CardHandler>();
 
     /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 17-18: Inject ICardCollectionService instead of CardManager.Instance.
+    /// </summary>
+    [Inject]
+    public void Construct(ICardCollectionService cardCollectionService)
+    {
+        _cardCollectionService = cardCollectionService;
+    }
+
+    /// <summary>
     /// Initializes handlers for different types of cards.
+    /// Phase 17-18: Pass ICardCollectionService to handlers.
     /// </summary>
     protected void InitializeCardHandlers()
     {
-        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this);
-        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this);
-        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this);
-        CardHandlerMap[CardType.Field] = new FieldCardHandler(this);
-        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this);
+        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService);
+        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService);
+        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService);
+        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService);
+        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService);
     }
 
     /// <summary>
@@ -162,7 +177,8 @@ public class InGameMenuScript : MonoBehaviour
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
             inHandButton.SetActive(true);
-            HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            HandCardDisplay.HandCardChange.Invoke(_cardCollectionService.GetCurrentPlayerCards().HandCards);
         }
         else
         {
@@ -202,7 +218,8 @@ public class InGameMenuScript : MonoBehaviour
         handScreen.SetActive(true);
         backgroundInformation.SetActive(false);
         buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
-        HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
+        // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+        HandCardDisplay.HandCardChange.Invoke(_cardCollectionService.GetCurrentPlayerCards().HandCards);
     }
 
     /// <summary>

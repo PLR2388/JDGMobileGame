@@ -1,14 +1,29 @@
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 /// <summary>
 /// Manages the invocation menu, including its buttons and their states.
+/// Phase 17-18: Removed CardManager singleton dependency via ICombatService.
 /// </summary>
 public class InvocationMenuManager : StaticInstance<InvocationMenuManager>
 {
     [SerializeField] private GameObject invocationMenu;
      private Button attackButton;
      private Button actionButton;
+
+    // Phase 17-18: Injected dependency
+    private ICombatService _combatService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 17-18: Inject ICombatService instead of CardManager.Instance.
+    /// </summary>
+    [Inject]
+    public void Construct(ICombatService combatService)
+    {
+        _combatService = combatService;
+    }
 
      /// <summary>
      /// Initialize the manager, caching necessary components.
@@ -28,7 +43,8 @@ public class InvocationMenuManager : StaticInstance<InvocationMenuManager>
      /// </summary>
     public void UpdateAttackButton()
     {
-        attackButton.interactable = CardManager.Instance.CanAttackerAttack();
+        // Phase 17-18: Use ICombatService instead of CardManager.Instance
+        attackButton.interactable = _combatService.CanAttackerAttack();
     }
 
      /// <summary>
@@ -41,12 +57,15 @@ public class InvocationMenuManager : StaticInstance<InvocationMenuManager>
         invocationMenu.SetActive(true);
 
         attackButton.gameObject.SetActive(isAttackPhase);
-        attackButton.interactable = CardManager.Instance.CanAttackerAttack();
+        // Phase 17-18: Use ICombatService instead of CardManager.Instance
+        attackButton.interactable = _combatService.CanAttackerAttack();
 
-        bool hasAttackerAction = CardManager.Instance.HasAttackerAction();
+        // Phase 17-18: Use ICombatService instead of CardManager.Instance
+        bool hasAttackerAction = _combatService.HasAttackerAction();
         actionButton.gameObject.SetActive(hasAttackerAction && !isAttackPhase);
         if (hasAttackerAction)
-            actionButton.interactable = CardManager.Instance.IsSpecialActionPossible();
+            // Phase 17-18: Use ICombatService instead of CardManager.Instance
+            actionButton.interactable = _combatService.IsSpecialActionPossible();
 
         invocationMenu.transform.position = mousePosition;
     }

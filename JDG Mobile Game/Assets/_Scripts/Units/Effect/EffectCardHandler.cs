@@ -4,14 +4,18 @@ using Cards.EffectCards;
 
 /// <summary>
 /// Handler responsible for effect card-specific behaviors in the game.
+/// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
 /// </summary>
 public class EffectCardHandler : CardHandler
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="EffectCardHandler"/> class.
+    /// Phase 17-18: Added cardCollectionService parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
-    public EffectCardHandler(InGameMenuScript menuScript) : base(menuScript)
+    /// <param name="cardCollectionService">The service for accessing player card collections.</param>
+    public EffectCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService)
+        : base(menuScript, cardCollectionService)
     {
     }
 
@@ -21,8 +25,9 @@ public class EffectCardHandler : CardHandler
     /// <param name="card">The in-game card to be handled.</param>
     public override void HandleCard(InGameCard card)
     {
-        var playerCard = CardManager.Instance.GetCurrentPlayerCards();
-        var opponentPlayerCard = CardManager.Instance.GetOpponentPlayerCards();
+        // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+        var playerCard = cardCollectionService.GetCurrentPlayerCards();
+        var opponentPlayerCard = cardCollectionService.GetOpponentPlayerCards();
         var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
         var effectCard = card as InGameEffectCard;
         menuScript.putCardButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD));
