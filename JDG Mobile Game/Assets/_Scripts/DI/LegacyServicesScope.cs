@@ -57,6 +57,14 @@ namespace JDG.DI
             // Phase 9: Round Display Service
             // RoundDisplayService removes RoundDisplayManager singleton access from GameLoop
             builder.Register<IRoundDisplayService, RoundDisplayService>(Lifetime.Singleton);
+
+            // Phase 17-18: Deck Management Service
+            // DeckManagementService replaces GameState singleton for deck data storage
+            builder.Register<IDeckManagementService, DeckManagementService>(Lifetime.Singleton);
+
+            // Phase 17-18: Card Instantiation Service
+            // CardInstantiationService replaces UnitManager singleton for GameObject creation
+            builder.Register<ICardInstantiationService, CardInstantiationService>(Lifetime.Singleton);
         }
     }
 }

@@ -1,25 +1,43 @@
 using System.Collections.Generic;
 using Cards;
+using JDG.Application.Services;
 using UnityEngine;
 
 /// <summary>
 /// Implementation of IDeckInitializationService.
-/// Bridges to legacy GameState and UnitManager singletons during migration.
+/// Phase 17-18: Refactored to use DI services instead of GameState and UnitManager singletons.
 ///
-/// Part of Phase 8 - Removes singleton dependencies from PlayerCards.
-/// This service will be refactored once GameState and UnitManager are fully replaced.
+/// Now uses:
+/// - IDeckManagementService for deck data (replaces GameState.Instance)
+/// - ICardInstantiationService for GameObject creation (replaces UnitManager.Instance)
 /// </summary>
 public class DeckInitializationService : IDeckInitializationService
 {
+    private readonly IDeckManagementService _deckManagementService;
+    private readonly ICardInstantiationService _cardInstantiationService;
+
+    public DeckInitializationService(
+        IDeckManagementService deckManagementService,
+        ICardInstantiationService cardInstantiationService)
+    {
+        _deckManagementService = deckManagementService;
+        _cardInstantiationService = cardInstantiationService;
+    }
+
     public List<InGameCard> GetPlayerDeck(bool isPlayerOne)
     {
         return isPlayerOne
-            ? GameState.Instance.Player1DeckCards
-            : GameState.Instance.Player2DeckCards;
+            ? _deckManagementService.Player1DeckCards
+            : _deckManagementService.Player2DeckCards;
     }
 
     public void InitializePhysicalCards(List<InGameCard> deck, Vector3 deckLocation, bool isPlayerOne)
     {
-        UnitManager.Instance.InitPhysicalCards(deck, deckLocation, isPlayerOne);
+        _cardInstantiationService.InitializePhysicalCards(
+            deck,
+            deckLocation.x,
+            deckLocation.y,
+            deckLocation.z,
+            isPlayerOne);
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Domain.ValueObjects;
 using Menu;
 using UnityEngine;
 using VContainer;
 
 /// <summary>
 /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
+/// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
 /// </summary>
 public class InfiniteScroll : MonoBehaviour
 {
@@ -23,6 +25,9 @@ public class InfiniteScroll : MonoBehaviour
     // Phase 9: Injected dependencies
     private ICardSelectionService _cardSelectionService;
 
+    // Phase 17-18: Injected dependencies
+    private IDeckManagementService _deckManagementService;
+
     private readonly string[] removeCardTitles =
     {
         CardNameMappings.CardNameMap[CardNames.AttaqueDeLaTourEiffel],
@@ -33,23 +38,25 @@ public class InfiniteScroll : MonoBehaviour
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 9: Inject ICardSelectionService instead of using singleton.
+    /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
     /// </summary>
     [Inject]
-    public void Construct(ICardSelectionService cardSelectionService)
+    public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService)
     {
         _cardSelectionService = cardSelectionService;
+        _deckManagementService = deckManagementService;
     }
 
     // Start is called before the first frame update
     private void Start()
     {
-        deck1AllCards = GameState.Instance.deck1AllCards;
-        deck2AllCards = GameState.Instance.deck2AllCards;
+        deck1AllCards = _deckManagementService.Deck1AllCards;
+        deck2AllCards = _deckManagementService.Deck2AllCards;
         DisplayAvailableCards(deck1AllCards);
 
         // Phase 9: Use injected service instead of _cardSelectionService
         _cardSelectionService.MultipleCardSelection = true;
-        _cardSelectionService.MultipleSelectionLimit = GameState.MaxDeckCards;
+        _cardSelectionService.MultipleSelectionLimit = DeckConfiguration.MaxDeckCards;
         _cardSelectionService.CardSelected.AddListener(OnSelectCard);
         _cardSelectionService.CardDeselected.AddListener(OnUnSelectCard);
         CardChoice.ChangeChoicePlayer.AddListener(OnChangePlayer);

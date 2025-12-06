@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Domain.ValueObjects;
 using Sound;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,6 +13,7 @@ namespace Menu
     /// <summary>
     /// Manages the card choices and selections in the game menu.
     /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
+    /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
@@ -30,14 +32,19 @@ namespace Menu
         // Phase 9: Injected dependencies
         private ICardSelectionService _cardSelectionService;
 
+        // Phase 17-18: Injected dependencies
+        private IDeckManagementService _deckManagementService;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
+        /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
         /// </summary>
         [Inject]
-        public void Construct(ICardSelectionService cardSelectionService)
+        public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService)
         {
             _cardSelectionService = cardSelectionService;
+            _deckManagementService = deckManagementService;
         }
 
         /// <summary>
@@ -77,7 +84,7 @@ namespace Menu
             var deck = new List<Card>();
             var numberSelected = CheckCard(deck);
 
-            if (numberSelected == GameState.MaxDeckCards)
+            if (numberSelected == DeckConfiguration.MaxDeckCards)
             {
                 CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(isPlayerOneCardChosen);
                 if (isPlayerOneCardChosen)
@@ -87,7 +94,7 @@ namespace Menu
                     isPlayerOneCardChosen = false;
                     ChangeChoicePlayer.Invoke(1);
 
-                    GameState.Instance.Player2DeckCards =
+                    _deckManagementService.Player2DeckCards =
                         deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2)).ToList();
                 }
                 else
@@ -95,14 +102,14 @@ namespace Menu
                     isPlayerOneCardChosen = true;
                     ChangeChoicePlayer.Invoke(2);
 
-                    GameState.Instance.Player1DeckCards =
+                    _deckManagementService.Player1DeckCards =
                         deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1)).ToList();
                     DeselectAllCards();
                 }
             }
             else
             {
-                var remainedCards = GameState.MaxDeckCards - numberSelected;
+                var remainedCards = DeckConfiguration.MaxDeckCards - numberSelected;
                 CardChoiceUIManager.Instance.DisplayMessageBox(remainedCards);
             }
         }
@@ -146,22 +153,22 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var deck1AllCard = FilterCards(GameState.Instance.deck1AllCards);
-            var deck2AllCard = FilterCards(GameState.Instance.deck2AllCards);
+            var deck1AllCard = FilterCards(_deckManagementService.Deck1AllCards);
+            var deck2AllCard = FilterCards(_deckManagementService.Deck2AllCards);
 
-            while (deck1.Count != GameState.MaxDeckCards)
+            while (deck1.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
 
-            while (deck2.Count != GameState.MaxDeckCards)
+            while (deck2.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck2AllCard, deck2);
             }
 
-            GameState.Instance.Player1DeckCards =
+            _deckManagementService.Player1DeckCards =
                 deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.Player2DeckCards =
+            _deckManagementService.Player2DeckCards =
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneLoaderSystem.LoadGameScreen();
@@ -175,8 +182,8 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var deck1AllCard = GameState.Instance.deck1AllCards;
-            var deck2AllCard = GameState.Instance.deck2AllCards;
+            var deck1AllCard = _deckManagementService.Deck1AllCards;
+            var deck2AllCard = _deckManagementService.Deck2AllCards;
 
             deck2.Add(GetSpecificCard(CardNames.LycéeMagiqueGeorgesPompidou, deck2AllCard));
             deck1.Add(GetSpecificCard(CardNames.SandrineLePorteManteauExtraterrestre, deck1AllCard));
@@ -184,7 +191,7 @@ namespace Menu
             deck1.Add(GetSpecificCard(CardNames.AlphaMan, deck1AllCard));
             deck1.Add(GetSpecificCard(CardNames.FiltreDégueulasseFMV, deck1AllCard));
 
-            while (deck1.Count != GameState.MaxDeckCards)
+            while (deck1.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
@@ -192,16 +199,16 @@ namespace Menu
             deck1.Reverse();
 
 
-            while (deck2.Count != GameState.MaxDeckCards)
+            while (deck2.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck2AllCard, deck2);
             }
 
             deck2.Reverse();
 
-            GameState.Instance.Player1DeckCards =
+            _deckManagementService.Player1DeckCards =
                 deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.Player2DeckCards =
+            _deckManagementService.Player2DeckCards =
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneLoaderSystem.LoadGameScreen();

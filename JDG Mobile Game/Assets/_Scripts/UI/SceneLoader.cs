@@ -1,10 +1,27 @@
 ﻿using Sound;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
 
+/// <summary>
+/// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
+/// </summary>
 public class SceneLoader : MonoBehaviour
 {
     private const string TutorialScene = "TutoPlayerGame";
+
+    // Phase 17-18: Injected dependencies
+    private IDeckManagementService _deckManagementService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
+    /// </summary>
+    [Inject]
+    public void Construct(IDeckManagementService deckManagementService)
+    {
+        _deckManagementService = deckManagementService;
+    }
 
     /// <summary>
     /// Quits the game application.
@@ -20,9 +37,9 @@ public class SceneLoader : MonoBehaviour
     /// </summary>
     public void GoToTutorial()
     {
-        if (GameState.Instance != null)
+        if (_deckManagementService != null)
         {
-            GameState.Instance.BuildDeckForTuto();
+            _deckManagementService.BuildTutorialDecks();
         }
 
         if (AudioSystem.Instance != null)
