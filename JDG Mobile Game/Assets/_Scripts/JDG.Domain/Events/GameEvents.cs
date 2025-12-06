@@ -47,6 +47,14 @@ namespace JDG.Domain.Events
         public int TurnNumber;
     }
 
+    /// <summary>
+    /// Published when cards are reset for a new turn.
+    /// Phase 21-22: Replaces PlayerCards.ResetInvocationCardNewTurn() side effects.
+    /// </summary>
+    public struct CardsResetForNewTurnEvent
+    {
+    }
+
     // ============================================
     // CARD EVENTS
     // ============================================

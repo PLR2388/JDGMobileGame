@@ -7,6 +7,7 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using Cards.InvocationCards;
+using JDG.Application.UseCases;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
 using VContainer;
@@ -15,6 +16,7 @@ using VContainer;
 /// Represent all the cards of a player.
 /// Phase 8: Removed singleton dependencies (GameState, UnitManager).
 /// Phase 17-18: Now uses DeckConfiguration for constants.
+/// Phase 21-22: Extracted BuildPlayer and ResetInvocationCardNewTurn to use cases.
 /// Uses dependency injection for deck initialization.
 /// </summary>
 public class PlayerCards : MonoBehaviour
@@ -30,6 +32,10 @@ public class PlayerCards : MonoBehaviour
 
     // Phase 8: Injected dependencies
     private IDeckInitializationService _deckInitService;
+
+    // Phase 21-22: Injected use cases
+    private SummonPlayerEntityUseCase _summonPlayerEntityUseCase;
+    private ResetCardsForNewTurnUseCase _resetCardsForNewTurnUseCase;
 
     public bool IsPlayerOne
     {
@@ -69,16 +75,26 @@ public class PlayerCards : MonoBehaviour
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 8: Inject IDeckInitializationService instead of using singletons.
+    /// Phase 21-22: Inject use cases for business logic extraction.
     /// </summary>
     [Inject]
-    public void Construct(IDeckInitializationService deckInitService)
+    public void Construct(
+        IDeckInitializationService deckInitService,
+        SummonPlayerEntityUseCase summonPlayerEntityUseCase,
+        ResetCardsForNewTurnUseCase resetCardsForNewTurnUseCase)
     {
         _deckInitService = deckInitService;
+        _summonPlayerEntityUseCase = summonPlayerEntityUseCase;
+        _resetCardsForNewTurnUseCase = resetCardsForNewTurnUseCase;
     }
 
+    /// <summary>
+    /// Creates the player entity card.
+    /// Phase 21-22: Delegates to SummonPlayerEntityUseCase.
+    /// </summary>
     public void BuildPlayer()
     {
-        Player = IsPlayerOne ? CardFactory.CreateInGameCard(playerInvocationCard, CardOwner.Player1) : CardFactory.CreateInGameCard(playerInvocationCard, CardOwner.Player2);
+        Player = _summonPlayerEntityUseCase.Execute(playerInvocationCard, IsPlayerOne);
     }
 
     // Start is called before the first frame update
@@ -107,15 +123,12 @@ public class PlayerCards : MonoBehaviour
     }
 
     /// <summary>
-    /// Reset the attack number of invocations during a new turn
+    /// Reset the attack number of invocations during a new turn.
+    /// Phase 21-22: Delegates to ResetCardsForNewTurnUseCase.
     /// </summary>
     public void ResetInvocationCardNewTurn()
     {
-        foreach (var invocationCard in InvocationCards.Where(invocationCard =>
-                     invocationCard?.Title != null))
-        {
-            invocationCard.ResetNewTurn();
-        }
+        _resetCardsForNewTurnUseCase.Execute(InvocationCards);
     }
 
     /// <summary>

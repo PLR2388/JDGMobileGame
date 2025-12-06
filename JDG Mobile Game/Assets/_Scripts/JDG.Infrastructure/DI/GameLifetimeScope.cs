@@ -55,6 +55,10 @@ namespace JDG.Infrastructure.DI
             // Combat Use Cases (Transient)
             builder.Register<AttackUseCase>(Lifetime.Transient);
 
+            // Phase 21-22: Player & Card Management Use Cases
+            builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient);
+            builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
+
             // ============================================
             // ABILITY SYSTEM - Phase 14
             // ============================================
