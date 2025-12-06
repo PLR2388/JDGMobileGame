@@ -309,7 +309,8 @@ namespace OnePlayer
             // Phase 17-18: Use ICombatService instead of CardManager.Instance
             var notEmptyOpponent = _combatService.BuildValidTargets();
             DisplayOpponentMessageBox(notEmptyOpponent);
-            InputManager.Instance.DisableDetectionTouch();
+            // Phase 19-20: Use injected InputManager from base class instead of .Instance
+            _inputManager.DisableDetectionTouch();
         }
 
         /// <summary>
@@ -329,7 +330,8 @@ namespace OnePlayer
                     miniCardMenu.SetActive(false);
                     HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
                 }
-                InputManager.Instance.EnableDetectionTouch();
+                // Phase 19-20: Use injected InputManager from base class instead of .Instance
+                _inputManager.EnableDetectionTouch();
             }
 
             var config = new CardSelectorConfig(

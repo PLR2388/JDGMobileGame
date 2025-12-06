@@ -31,10 +31,13 @@ public class GameLoop : MonoBehaviour
     // Phase 19-20: Injected UIManager (protected so TutoPlayerGameLoop can access)
     protected UIManager _uiManager;
 
+    // Phase 19-20: Injected InputManager (protected so TutoPlayerGameLoop can access)
+    protected InputManager _inputManager;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
-    /// Phase 19-20: Added UIManager injection.
+    /// Phase 19-20: Added UIManager and InputManager injection.
     /// </summary>
     [Inject]
     public void Construct(
@@ -47,7 +50,8 @@ public class GameLoop : MonoBehaviour
         ICardCollectionService cardCollectionService,
         ITurnService turnService,
         ICardDrawService cardDrawService,
-        UIManager uiManager)
+        UIManager uiManager,
+        InputManager inputManager)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -59,6 +63,7 @@ public class GameLoop : MonoBehaviour
         _turnService = turnService;
         _cardDrawService = cardDrawService;
         _uiManager = uiManager;
+        _inputManager = inputManager;
     }
 
     // Start is called before the first frame update
@@ -259,7 +264,8 @@ public class GameLoop : MonoBehaviour
         // Phase 17-18: Use ICombatService instead of CardManager.Instance
         var notEmptyOpponent = _combatService.BuildValidTargets();
         DisplayOpponentMessageBox(notEmptyOpponent);
-        InputManager.Instance.DisableDetectionTouch();
+        // Phase 19-20: Use injected InputManager instead of .Instance
+        _inputManager.DisableDetectionTouch();
     }
 
     /// <summary>
@@ -276,12 +282,14 @@ public class GameLoop : MonoBehaviour
                 _combatService.Opponent = invocationCard;
                 ComputeAttack();
             }
-            InputManager.Instance.EnableDetectionTouch();
+            // Phase 19-20: Use injected InputManager instead of .Instance
+            _inputManager.EnableDetectionTouch();
         }
 
         void NegativeAction()
         {
-            InputManager.Instance.EnableDetectionTouch();
+            // Phase 19-20: Use injected InputManager instead of .Instance
+            _inputManager.EnableDetectionTouch();
         }
 
         // Phase 19-20: Use injected UIManager instead of .Instance
