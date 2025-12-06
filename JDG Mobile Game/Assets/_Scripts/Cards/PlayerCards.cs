@@ -7,12 +7,14 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using Cards.InvocationCards;
+using JDG.Domain.ValueObjects;
 using UnityEngine;
 using VContainer;
 
 /// <summary>
 /// Represent all the cards of a player.
 /// Phase 8: Removed singleton dependencies (GameState, UnitManager).
+/// Phase 17-18: Now uses DeckConfiguration for constants.
 /// Uses dependency injection for deck initialization.
 /// </summary>
 public class PlayerCards : MonoBehaviour

@@ -11,8 +11,8 @@ using VContainer;
 /// </summary>
 public class InGameMenuScript : MonoBehaviour
 {
-    // Phase 17-18: Injected dependency
-    private ICardCollectionService _cardCollectionService;
+    // Phase 17-18: Injected dependency (protected so TutoInGameMenuScript can access)
+    protected ICardCollectionService _cardCollectionService;
     // Serialized fields for UI components
     [SerializeField] protected TextMeshProUGUI buttonText;
     [SerializeField] protected GameObject handScreen;
