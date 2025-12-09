@@ -77,8 +77,9 @@ public class HandleCardAddedToFieldUseCase
         // Publish event to notify other systems
         _eventBus.Publish(new CardAddedToFieldEvent
         {
-            AddedCard = newInvocationCard,
-            Owner = newInvocationCard.CardOwner
+            CardId = newInvocationCard.Id,
+            Owner = newInvocationCard.CardOwner,
+            CardType = JDG.Domain.CardType.Invocation
         });
     }
 }

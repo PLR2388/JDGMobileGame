@@ -106,16 +106,6 @@ namespace JDG.Domain.Events
     }
 
     /// <summary>
-    /// Published when a card is added to the field (invocation zone).
-    /// Phase 21-22: Replaces PlayerCards.OnInvocationCardAdded() side effects.
-    /// </summary>
-    public struct CardAddedToFieldEvent
-    {
-        public object AddedCard; // Using object to avoid dependency on InGameCard (legacy type)
-        public CardOwner Owner;
-    }
-
-    /// <summary>
     /// Published when a player's hand card count changes.
     /// Phase 21-22: Replaces PlayerCards.OnHandCardsChange() side effects.
     /// </summary>
@@ -283,17 +273,6 @@ namespace JDG.Domain.Events
     // ============================================
     // UI EVENTS
     // ============================================
-
-    /// <summary>
-    /// Published when hand cards collection changes.
-    /// Replaces HandCardDisplay.HandCardChange static event.
-    /// </summary>
-    public struct HandCardsChangedEvent
-    {
-        public CardOwner Owner;
-        public int NewCount;
-        public int Delta; // +1 for add, -1 for remove
-    }
 
     /// <summary>
     /// Published when a UI button is clicked.
