@@ -84,7 +84,9 @@ namespace JDG.DI
             builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
             builder.Register<HandleCardDeathUseCase>(Lifetime.Transient);
             builder.Register<HandleCardAddedToFieldUseCase>(Lifetime.Transient);
+            builder.Register<HandleCardRemovedFromFieldUseCase>(Lifetime.Transient);
             builder.Register<HandleHandCardsChangeUseCase>(Lifetime.Transient);
+            builder.Register<HandleFieldCardChangedUseCase>(Lifetime.Transient);
         }
     }
 }

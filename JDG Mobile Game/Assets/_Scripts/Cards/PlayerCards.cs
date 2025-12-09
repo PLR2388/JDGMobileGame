@@ -37,7 +37,9 @@ public class PlayerCards : MonoBehaviour
     private ResetCardsForNewTurnUseCase _resetCardsForNewTurnUseCase;
     private HandleCardDeathUseCase _handleCardDeathUseCase;
     private HandleCardAddedToFieldUseCase _handleCardAddedToFieldUseCase;
+    private HandleCardRemovedFromFieldUseCase _handleCardRemovedFromFieldUseCase;
     private HandleHandCardsChangeUseCase _handleHandCardsChangeUseCase;
+    private HandleFieldCardChangedUseCase _handleFieldCardChangedUseCase;
 
     public bool IsPlayerOne
     {
@@ -57,12 +59,10 @@ public class PlayerCards : MonoBehaviour
         get => _fieldCard;
         set
         {
+            // Phase 21-22: Delegate field card change handling to use case
             if (_fieldCard != value && _fieldCard != null)
             {
-                foreach (var fieldCardFieldAbility in _fieldCard.FieldAbilities)
-                {
-                    fieldCardFieldAbility.OnFieldCardRemoved(this);
-                }
+                _handleFieldCardChangedUseCase.HandleFieldCardRemoved(_fieldCard, this);
             }
 
             _fieldCard = value;
@@ -86,14 +86,18 @@ public class PlayerCards : MonoBehaviour
         ResetCardsForNewTurnUseCase resetCardsForNewTurnUseCase,
         HandleCardDeathUseCase handleCardDeathUseCase,
         HandleCardAddedToFieldUseCase handleCardAddedToFieldUseCase,
-        HandleHandCardsChangeUseCase handleHandCardsChangeUseCase)
+        HandleCardRemovedFromFieldUseCase handleCardRemovedFromFieldUseCase,
+        HandleHandCardsChangeUseCase handleHandCardsChangeUseCase,
+        HandleFieldCardChangedUseCase handleFieldCardChangedUseCase)
     {
         _deckInitService = deckInitService;
         _summonPlayerEntityUseCase = summonPlayerEntityUseCase;
         _resetCardsForNewTurnUseCase = resetCardsForNewTurnUseCase;
         _handleCardDeathUseCase = handleCardDeathUseCase;
         _handleCardAddedToFieldUseCase = handleCardAddedToFieldUseCase;
+        _handleCardRemovedFromFieldUseCase = handleCardRemovedFromFieldUseCase;
         _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase;
+        _handleFieldCardChangedUseCase = handleFieldCardChangedUseCase;
     }
 
     /// <summary>
@@ -170,22 +174,13 @@ public class PlayerCards : MonoBehaviour
     }
 
     /// <summary>
-    /// Remove power on a invocation removed from field
+    /// Remove power on a invocation removed from field.
+    /// Phase 21-22: Delegates to HandleCardRemovedFromFieldUseCase.
     /// </summary>
     private void OnInvocationCardsRemoved()
     {
         var removedInvocationCard = oldInvocations.Except(InvocationCards).First();
-        var cloneInvocationCards = InvocationCards.ToList();
-        // Apply onCardRemove for invocation card that are still alive
-        foreach (var ability in cloneInvocationCards.SelectMany(inGameInvocationCard => inGameInvocationCard.Abilities))
-        {
-            ability.OnCardRemove(removedInvocationCard, this);
-        }
-
-        foreach (var effectAbility in EffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
-        {
-            effectAbility.OnInvocationCardRemoved(this, removedInvocationCard);
-        }
+        _handleCardRemovedFromFieldUseCase.Execute(removedInvocationCard, this);
     }
 
     /// <summary>
