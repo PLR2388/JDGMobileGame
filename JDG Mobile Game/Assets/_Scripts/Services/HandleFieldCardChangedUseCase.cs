@@ -1,4 +1,3 @@
-using Cards.FieldCard;
 using JDG.Application;
 using JDG.Domain.Events;
 
