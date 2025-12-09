@@ -164,124 +164,58 @@ public class PlayerCards : MonoBehaviour
     #region Event Handlers
 
     /// <summary>
-    /// Apply powers on a new invocation card on field.
-    /// Phase 21-22: Delegates to HandleCardAddedToFieldUseCase.
+    /// React to changes among invocation cards.
+    /// Phase 21-22: Delegates to use cases for business logic.
     /// </summary>
-    /// <param name="newInvocationCard"></param>
-    private void OnInvocationCardAdded(InGameInvocationCard newInvocationCard)
-    {
-        _handleCardAddedToFieldUseCase.Execute(newInvocationCard, this, opponentPlayerCards);
-    }
-
-    /// <summary>
-    /// Remove power on a invocation removed from field.
-    /// Phase 21-22: Delegates to HandleCardRemovedFromFieldUseCase.
-    /// </summary>
-    private void OnInvocationCardsRemoved()
-    {
-        var removedInvocationCard = oldInvocations.Except(InvocationCards).First();
-        _handleCardRemovedFromFieldUseCase.Execute(removedInvocationCard, this);
-    }
-
-    /// <summary>
-    /// Update Invocation cards location
-    /// </summary>
-    private void OnInvocationCardsChanged()
-    {
-        CardLocation.UpdateLocation.Invoke();
-    }
-
-    /// <summary>
-    /// React to changes among invocation cards
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void InvocationCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
-                OnInvocationCardAdded(InvocationCards.Last());
+                _handleCardAddedToFieldUseCase.Execute(InvocationCards.Last(), this, opponentPlayerCards);
                 break;
             case NotifyCollectionChangedAction.Remove:
-                OnInvocationCardsRemoved();
+                var removedCard = oldInvocations.Except(InvocationCards).First();
+                _handleCardRemovedFromFieldUseCase.Execute(removedCard, this);
                 break;
         }
 
-        OnInvocationCardsChanged();
+        CardLocation.UpdateLocation.Invoke();
         oldInvocations = InvocationCards.ToList();
     }
 
     /// <summary>
-    /// Reset and update powers for Invocation that goes to Yellow trash.
+    /// React to changes among Yellow cards (graveyard).
     /// Phase 21-22: Delegates to HandleCardDeathUseCase.
     /// </summary>
-    private void OnYellowTrashAdded()
-    {
-        var newYellowTrashCard = YellowCards.Last();
-        _handleCardDeathUseCase.Execute(newYellowTrashCard, this, opponentPlayerCards, canvas);
-    }
-
-    /// <summary>
-    /// React to changes among Yellow cards
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void YellowCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        switch (e.Action)
+        if (e.Action == NotifyCollectionChangedAction.Add)
         {
-            case NotifyCollectionChangedAction.Add:
-                OnYellowTrashAdded();
-                break;
+            _handleCardDeathUseCase.Execute(YellowCards.Last(), this, opponentPlayerCards, canvas);
         }
-
         CardLocation.UpdateLocation.Invoke();
     }
 
     /// <summary>
-    /// React to changes among Hand cards
+    /// React to changes among Hand cards.
+    /// Phase 21-22: Delegates to HandleHandCardsChangeUseCase.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void HandCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        switch (e.Action)
-        {
-            case NotifyCollectionChangedAction.Add:
-                OnHandCardsChange(1);
-                break;
-            case NotifyCollectionChangedAction.Remove:
-                OnHandCardsChange(-1);
-                break;
-        }
+        int delta = e.Action == NotifyCollectionChangedAction.Add ? 1 : -1;
+        _handleHandCardsChangeUseCase.Execute(this, delta);
+
+        CardLocation.UpdateLocation.Invoke();
+        HandCardDisplay.HandCardChange.Invoke(HandCards);
     }
 
     /// <summary>
-    /// React to changes among Effect cards
+    /// React to changes among Effect cards.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void EffectCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         CardLocation.UpdateLocation.Invoke();
-    }
-
-    /// <summary>
-    /// Update powers, location and display when Hand cards change.
-    /// Phase 21-22: Delegates to HandleHandCardsChangeUseCase for business logic.
-    /// </summary>
-    /// <param name="delta"></param>
-    private void OnHandCardsChange(int delta)
-    {
-        _handleHandCardsChangeUseCase.Execute(this, delta);
-
-        // UI updates remain in MonoBehaviour (not business logic)
-        CardLocation.UpdateLocation.Invoke();
-        HandCardDisplay.HandCardChange.Invoke(HandCards);
     }
 
     #endregion
