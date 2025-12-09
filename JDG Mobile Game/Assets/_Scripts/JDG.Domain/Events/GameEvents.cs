@@ -131,12 +131,12 @@ namespace JDG.Domain.Events
     /// <summary>
     /// Published when a card is added to the field.
     /// Triggers abilities that respond to new cards.
+    /// Phase 21-22: Uses object to avoid dependency on InGameCard (legacy type).
     /// </summary>
     public struct CardAddedToFieldEvent
     {
-        public Guid CardId;
+        public object AddedCard; // Using object to avoid dependency on InGameCard (legacy type)
         public CardOwner Owner;
-        public CardType CardType;
     }
 
     /// <summary>

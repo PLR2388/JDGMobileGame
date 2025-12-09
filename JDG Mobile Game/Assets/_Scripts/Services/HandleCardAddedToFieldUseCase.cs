@@ -75,11 +75,12 @@ public class HandleCardAddedToFieldUseCase
         }
 
         // Publish event to notify other systems
+        // Convert legacy CardOwner to Domain CardOwner
+        var domainOwner = (JDG.Domain.CardOwner)(int)newInvocationCard.CardOwner;
         _eventBus.Publish(new CardAddedToFieldEvent
         {
-            CardId = newInvocationCard.Id,
-            Owner = newInvocationCard.CardOwner,
-            CardType = JDG.Domain.CardType.Invocation
+            AddedCard = newInvocationCard,
+            Owner = domainOwner
         });
     }
 }

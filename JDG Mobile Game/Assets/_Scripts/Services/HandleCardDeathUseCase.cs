@@ -56,10 +56,12 @@ public class HandleCardDeathUseCase
             }
 
             // Publish event to notify other systems
+            // Convert legacy CardOwner to Domain CardOwner
+            var domainOwner = (JDG.Domain.CardOwner)(int)deadCard.CardOwner;
             _eventBus.Publish(new CardDiedEvent
             {
                 DeadCard = deadCard,
-                Owner = deadCard.CardOwner
+                Owner = domainOwner
             });
         }
     }
