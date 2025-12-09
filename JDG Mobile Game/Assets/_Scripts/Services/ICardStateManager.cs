@@ -1,29 +1,32 @@
 using System;
 using Cards;
+using JDG.Domain;
 
-namespace JDG.Application.Services
-{
-    /// <summary>
-    /// Service interface for managing card state during gameplay.
-    /// Phase 21-22: Created as part of InGameInvocationCard extraction pattern.
-    ///
-    /// TODO: Full implementation requires extensive refactoring of InGameInvocationCard (267 lines).
-    /// This interface defines the contract for what would be extracted:
-    /// - Attack counting and limits
-    /// - Blocking state
-    /// - Control state (who controls the card)
-    /// - Combat flags (CanDirectAttack, CantBeAttack, Aggro)
-    /// - Turn-based state (NumberOfTurnOnField, etc.)
-    /// - Condition tracking
-    ///
-    /// This extraction is deferred to a future phase due to:
-    /// 1. Complexity of card system (267 lines of interrelated state)
-    /// 2. Deep integration with ability system
-    /// 3. Needs comprehensive testing to avoid breaking gameplay
-    ///
-    /// Recommend creating Phase 21-22B specifically for this extraction.
-    /// </summary>
-    public interface ICardStateManager
+/// <summary>
+/// Service interface for managing card state during gameplay.
+/// Phase 21-22: Created as part of InGameInvocationCard extraction pattern.
+///
+/// NOTE: This interface is in the default assembly (Services folder) because it depends
+/// on legacy types (Cards namespace, InGameInvocationCard) that haven't been migrated
+/// to the Domain layer yet. Once card types are migrated, this can move to JDG.Application.
+///
+/// TODO: Full implementation requires extensive refactoring of InGameInvocationCard (267 lines).
+/// This interface defines the contract for what would be extracted:
+/// - Attack counting and limits
+/// - Blocking state
+/// - Control state (who controls the card)
+/// - Combat flags (CanDirectAttack, CantBeAttack, Aggro)
+/// - Turn-based state (NumberOfTurnOnField, etc.)
+/// - Condition tracking
+///
+/// This extraction is deferred to a future phase due to:
+/// 1. Complexity of card system (267 lines of interrelated state)
+/// 2. Deep integration with ability system
+/// 3. Needs comprehensive testing to avoid breaking gameplay
+///
+/// Recommend creating Phase 21-22B specifically for this extraction.
+/// </summary>
+public interface ICardStateManager
     {
         // Attack Management
         bool CanAttack(Guid cardId);
@@ -60,8 +63,7 @@ namespace JDG.Application.Services
         void DetachEquipment(Guid cardId);
         object GetEquipment(Guid cardId);
 
-        // Lifecycle
-        void RegisterCard(Guid cardId);
-        void UnregisterCard(Guid cardId);
-    }
+    // Lifecycle
+    void RegisterCard(Guid cardId);
+    void UnregisterCard(Guid cardId);
 }
