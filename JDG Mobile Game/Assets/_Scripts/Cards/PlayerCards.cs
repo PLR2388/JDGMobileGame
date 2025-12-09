@@ -35,6 +35,9 @@ public class PlayerCards : MonoBehaviour
     // Phase 21-22: Injected use cases
     private SummonPlayerEntityUseCase _summonPlayerEntityUseCase;
     private ResetCardsForNewTurnUseCase _resetCardsForNewTurnUseCase;
+    private HandleCardDeathUseCase _handleCardDeathUseCase;
+    private HandleCardAddedToFieldUseCase _handleCardAddedToFieldUseCase;
+    private HandleHandCardsChangeUseCase _handleHandCardsChangeUseCase;
 
     public bool IsPlayerOne
     {
@@ -80,11 +83,17 @@ public class PlayerCards : MonoBehaviour
     public void Construct(
         IDeckInitializationService deckInitService,
         SummonPlayerEntityUseCase summonPlayerEntityUseCase,
-        ResetCardsForNewTurnUseCase resetCardsForNewTurnUseCase)
+        ResetCardsForNewTurnUseCase resetCardsForNewTurnUseCase,
+        HandleCardDeathUseCase handleCardDeathUseCase,
+        HandleCardAddedToFieldUseCase handleCardAddedToFieldUseCase,
+        HandleHandCardsChangeUseCase handleHandCardsChangeUseCase)
     {
         _deckInitService = deckInitService;
         _summonPlayerEntityUseCase = summonPlayerEntityUseCase;
         _resetCardsForNewTurnUseCase = resetCardsForNewTurnUseCase;
+        _handleCardDeathUseCase = handleCardDeathUseCase;
+        _handleCardAddedToFieldUseCase = handleCardAddedToFieldUseCase;
+        _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase;
     }
 
     /// <summary>
@@ -151,41 +160,13 @@ public class PlayerCards : MonoBehaviour
     #region Event Handlers
 
     /// <summary>
-    /// Apply powers on a new invocation card on field
+    /// Apply powers on a new invocation card on field.
+    /// Phase 21-22: Delegates to HandleCardAddedToFieldUseCase.
     /// </summary>
     /// <param name="newInvocationCard"></param>
     private void OnInvocationCardAdded(InGameInvocationCard newInvocationCard)
     {
-        foreach (var inGameInvocationCard in opponentPlayerCards.InvocationCards)
-        {
-            var equipmentCard = inGameInvocationCard.EquipmentCard;
-            if (equipmentCard == null) continue;
-            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
-            {
-                equipmentCardEquipmentAbility.OnOpponentInvocationCardAdded(newInvocationCard);
-            }
-        }
-
-        foreach (var inGameInvocationCard in InvocationCards)
-        {
-            foreach (var ability in inGameInvocationCard.Abilities)
-            {
-                ability.OnCardAdded(newInvocationCard, this);
-            }
-        }
-
-        foreach (var effectAbility in EffectCards.SelectMany(effectCard => effectCard.EffectAbilities))
-        {
-            effectAbility.OnInvocationCardAdded(this, newInvocationCard);
-        }
-
-        if (FieldCard?.FieldAbilities != null)
-        {
-            foreach (var fieldAbility in FieldCard.FieldAbilities)
-            {
-                fieldAbility.OnInvocationCardAdded(newInvocationCard, this);
-            }
-        }
+        _handleCardAddedToFieldUseCase.Execute(newInvocationCard, this, opponentPlayerCards);
     }
 
     /// <summary>
@@ -238,23 +219,13 @@ public class PlayerCards : MonoBehaviour
     }
 
     /// <summary>
-    /// Reset and update powers for Invocation that goes to Yellow trash
+    /// Reset and update powers for Invocation that goes to Yellow trash.
+    /// Phase 21-22: Delegates to HandleCardDeathUseCase.
     /// </summary>
     private void OnYellowTrashAdded()
     {
         var newYellowTrashCard = YellowCards.Last();
-        if (newYellowTrashCard is InGameInvocationCard invocationCard)
-        {
-            invocationCard.UnblockAttack();
-            invocationCard.Attack = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
-            invocationCard.Defense = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
-            invocationCard.FreeCard();
-            invocationCard.ResetNewTurn();
-            foreach (var t in invocationCard.Abilities)
-            {
-                t.OnCardDeath(canvas, invocationCard, this, opponentPlayerCards);
-            }
-        }
+        _handleCardDeathUseCase.Execute(newYellowTrashCard, this, opponentPlayerCards, canvas);
     }
 
     /// <summary>
@@ -305,20 +276,15 @@ public class PlayerCards : MonoBehaviour
     }
 
     /// <summary>
-    /// Update powers, location and display when Hand cards change
+    /// Update powers, location and display when Hand cards change.
+    /// Phase 21-22: Delegates to HandleHandCardsChangeUseCase for business logic.
     /// </summary>
     /// <param name="delta"></param>
     private void OnHandCardsChange(int delta)
     {
-        foreach (var inGameInvocationCard in InvocationCards)
-        {
-            var equipmentCard = inGameInvocationCard.EquipmentCard;
-            if (equipmentCard == null) continue;
-            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
-            {
-                equipmentCardEquipmentAbility.OnHandCardsChange(inGameInvocationCard, this, delta);
-            }
-        }
+        _handleHandCardsChangeUseCase.Execute(this, delta);
+
+        // UI updates remain in MonoBehaviour (not business logic)
         CardLocation.UpdateLocation.Invoke();
         HandCardDisplay.HandCardChange.Invoke(HandCards);
     }

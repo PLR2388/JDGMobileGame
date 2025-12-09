@@ -96,6 +96,37 @@ namespace JDG.Domain.Events
     }
 
     /// <summary>
+    /// Published when a card dies and moves to the graveyard (yellow cards).
+    /// Phase 21-22: Replaces PlayerCards.OnYellowTrashAdded() side effects.
+    /// </summary>
+    public struct CardDiedEvent
+    {
+        public object DeadCard; // Using object to avoid dependency on InGameCard (legacy type)
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when a card is added to the field (invocation zone).
+    /// Phase 21-22: Replaces PlayerCards.OnInvocationCardAdded() side effects.
+    /// </summary>
+    public struct CardAddedToFieldEvent
+    {
+        public object AddedCard; // Using object to avoid dependency on InGameCard (legacy type)
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when a player's hand card count changes.
+    /// Phase 21-22: Replaces PlayerCards.OnHandCardsChange() side effects.
+    /// </summary>
+    public struct HandCardsChangedEvent
+    {
+        public CardOwner Owner;
+        public int NewHandCount;
+        public int Delta; // +1 for add, -1 for remove
+    }
+
+    /// <summary>
     /// Published when a card's stats change.
     /// </summary>
     public struct CardStatsChangedEvent

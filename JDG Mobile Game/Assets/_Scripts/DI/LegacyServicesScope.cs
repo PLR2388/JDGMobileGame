@@ -82,6 +82,9 @@ namespace JDG.DI
             // These are in the default assembly because they depend on legacy card types
             builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient);
             builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
+            builder.Register<HandleCardDeathUseCase>(Lifetime.Transient);
+            builder.Register<HandleCardAddedToFieldUseCase>(Lifetime.Transient);
+            builder.Register<HandleHandCardsChangeUseCase>(Lifetime.Transient);
         }
     }
 }

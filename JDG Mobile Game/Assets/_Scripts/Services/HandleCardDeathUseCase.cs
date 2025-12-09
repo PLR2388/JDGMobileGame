@@ -1,0 +1,66 @@
+using _Scripts.Units.Invocation;
+using Cards;
+using JDG.Application;
+using JDG.Domain.Events;
+using UnityEngine;
+
+/// <summary>
+/// Use case for handling card death and moving cards to the graveyard (yellow cards).
+/// Phase 21-22: Extracted from PlayerCards.OnYellowTrashAdded().
+///
+/// NOTE: This use case is in the default assembly (Services folder) because it depends
+/// on legacy types (InGameInvocationCard, PlayerCards) that haven't been migrated
+/// to the Domain layer yet.
+///
+/// This use case handles:
+/// - Resetting card stats to base values
+/// - Unblocking the card
+/// - Freeing the card from control/equipment
+/// - Triggering OnCardDeath abilities
+/// </summary>
+public class HandleCardDeathUseCase
+{
+    private readonly IEventBus _eventBus;
+
+    public HandleCardDeathUseCase(IEventBus eventBus)
+    {
+        _eventBus = eventBus;
+    }
+
+    /// <summary>
+    /// Handles a card's death, resetting its state and triggering death abilities.
+    /// </summary>
+    /// <param name="deadCard">The card that died.</param>
+    /// <param name="ownerPlayerCards">The PlayerCards instance that owns the dead card.</param>
+    /// <param name="opponentPlayerCards">The opponent's PlayerCards instance.</param>
+    /// <param name="canvas">The canvas transform for UI effects.</param>
+    public void Execute(
+        InGameCard deadCard,
+        PlayerCards ownerPlayerCards,
+        PlayerCards opponentPlayerCards,
+        Transform canvas)
+    {
+        if (deadCard is InGameInvocationCard invocationCard)
+        {
+            // Reset card state to base values
+            invocationCard.UnblockAttack();
+            invocationCard.Attack = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Attack;
+            invocationCard.Defense = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
+            invocationCard.FreeCard();
+            invocationCard.ResetNewTurn();
+
+            // Trigger death abilities
+            foreach (var ability in invocationCard.Abilities)
+            {
+                ability.OnCardDeath(canvas, invocationCard, ownerPlayerCards, opponentPlayerCards);
+            }
+
+            // Publish event to notify other systems
+            _eventBus.Publish(new CardDiedEvent
+            {
+                DeadCard = deadCard,
+                Owner = deadCard.CardOwner
+            });
+        }
+    }
+}
