@@ -1,8 +1,11 @@
 ﻿using System;
 using _Scripts.Units.Invocation;
+using JDG.Application;
+using JDG.Domain.Events;
 using JDG.Infrastructure.DI;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 
 namespace _Scripts.Cards.InvocationCards
 {
@@ -19,6 +22,7 @@ namespace _Scripts.Cards.InvocationCards
     /// Handles the operations related to invocation cards, including placing them on the field,
     /// canceling their effects, and more.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
+    /// Phase 23: Migrated static UnityEvent to EventBus (CancelInvocationEvent).
     /// </summary>
     public class InvocationFunctions : MonoBehaviour
     {
@@ -31,6 +35,19 @@ namespace _Scripts.Cards.InvocationCards
 
         // Phase 6: Use service for business logic
         private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+
+        // Phase 23: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+
+        /// <summary>
+        /// VContainer method injection for EventBus.
+        /// Phase 23: Inject IEventBus for static UnityEvent migration.
+        /// </summary>
+        [Inject]
+        public void Construct(IEventBus eventBus)
+        {
+            _eventBus = eventBus;
+        }
 
 
         /// <summary>
@@ -55,11 +72,20 @@ namespace _Scripts.Cards.InvocationCards
         /// <summary>
         /// Processes the cancellation effect on an invocation card.
         /// Phase 6: Delegates to CardPlacementService.
+        /// Phase 23: Publishes to EventBus in addition to service call.
         /// </summary>
         /// <param name="invocationCard">The invocation card to process.</param>
         private void OnCancelEffect(InGameInvocationCard invocationCard)
         {
             CardPlacementService.HandleInvocationCancelEffect(invocationCard);
+
+            // Phase 23: Publish to EventBus for decoupled subscribers
+            var domainOwner = (JDG.Domain.CardOwner)(int)invocationCard.CardOwner;
+            _eventBus.Publish(new InvocationCancelledEvent
+            {
+                CancelledCard = invocationCard,
+                Owner = domainOwner
+            });
         }
 
         /// <summary>
