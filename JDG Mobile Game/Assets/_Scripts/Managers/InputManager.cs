@@ -1,5 +1,6 @@
 using JDG.Application;
 using JDG.Domain.Events;
+using JDG.Domain.ValueObjects;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
@@ -120,9 +121,10 @@ public class InputManager : MonoBehaviour
         {
             totalDownTime = 0;
             isTouchInProgress = true;
+            var mousePos = Input.mousePosition;
             _eventBus.Publish(new TouchStartedEvent
             {
-                Position = (Vector2)Input.mousePosition,
+                Position = new JDG.Domain.ValueObjects.Vector2(mousePos.x, mousePos.y),
                 Timestamp = Time.time
             });
         }
@@ -135,9 +137,10 @@ public class InputManager : MonoBehaviour
             if (totalDownTime >= clickDuration)
             {
                 Debug.Log("Long click");
+                var mousePos = Input.mousePosition;
                 _eventBus.Publish(new LongTouchEvent
                 {
-                    Position = (Vector2)Input.mousePosition,
+                    Position = new JDG.Domain.ValueObjects.Vector2(mousePos.x, mousePos.y),
                     Duration = totalDownTime
                 });
             }
@@ -145,9 +148,10 @@ public class InputManager : MonoBehaviour
         if (IsJustStopTouching)
         {
             isTouchInProgress = false;
+            var mousePos = Input.mousePosition;
             _eventBus.Publish(new TouchEndedEvent
             {
-                Position = (Vector2)Input.mousePosition,
+                Position = new JDG.Domain.ValueObjects.Vector2(mousePos.x, mousePos.y),
                 Duration = totalDownTime
             });
         }

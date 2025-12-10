@@ -2,6 +2,7 @@ using System;
 using JDG.Application;
 using JDG.Domain;
 using JDG.Domain.Events;
+using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.DI;
 using UnityEngine.Events;
 
@@ -48,7 +49,7 @@ public class GameStateManager : Singleton<GameStateManager>
         var eventBus = ServiceLocator.Get<IEventBus>();
         eventBus.Publish(new PlayerTurnChangedEvent
         {
-            NewPlayer = isP1Turn ? PlayerId.Player1 : PlayerId.Player2,
+            NewPlayer = isP1Turn ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2,
             TurnNumber = numberOfTurn
         });
     }

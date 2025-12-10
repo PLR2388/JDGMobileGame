@@ -144,7 +144,7 @@ public class HandCardDisplay : MonoBehaviour
     /// Subscribes to hand card change events.
     /// Phase 23: Subscribes to EventBus instead of static UnityEvent.
     /// </summary>
-    private void SubscribeToEvents()
+    protected void SubscribeToEvents()
     {
         _handCardsSubscription = _eventBus?.Subscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
     }
@@ -153,7 +153,7 @@ public class HandCardDisplay : MonoBehaviour
     /// Unsubscribes from hand card change events.
     /// Phase 23: Disposes EventBus subscription.
     /// </summary>
-    private void UnsubscribeFromEvents()
+    protected void UnsubscribeFromEvents()
     {
         _handCardsSubscription?.Dispose();
     }

@@ -121,7 +121,7 @@ namespace JDG.Infrastructure.Services
             var eventData = new TouchEventData
             {
                 Position = evt.Position,
-                Timestamp = evt.Timestamp,
+                Timestamp = Time.time,
                 FingerId = 0
             };
 
