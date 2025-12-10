@@ -2,16 +2,23 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Cards;
+using JDG.Application;
+using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
-using UnityEngine;using UnityEngine.Events;
+using UnityEngine;
+using UnityEngine.Events;
+using VContainer;
 
 [Serializable]
 public class HandCardChangeEvent : UnityEvent<ObservableCollection<InGameCard>>
 {
 }
 
+/// <summary>
+/// Phase 23: Migrated from static UnityEvent to EventBus subscription.
+/// </summary>
 public class HandCardDisplay : MonoBehaviour
 {
     [SerializeField] protected GameObject prefabCard;
@@ -24,6 +31,19 @@ public class HandCardDisplay : MonoBehaviour
     // This will be removed when HandCardDisplay is refactored in Phase 6
     private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
     private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
+
+    // Phase 23: EventBus for static UnityEvent migration
+    private IEventBus _eventBus;
+
+    /// <summary>
+    /// VContainer method injection for EventBus.
+    /// Phase 23: Inject IEventBus for static UnityEvent migration.
+    /// </summary>
+    [Inject]
+    public void Construct(IEventBus eventBus)
+    {
+        _eventBus = eventBus;
+    }
 
     /// <summary>
     /// Called when the script instance is being loaded.
@@ -128,17 +148,33 @@ public class HandCardDisplay : MonoBehaviour
     
     /// <summary>
     /// Subscribes to hand card change events.
+    /// Phase 23: Subscribes to EventBus instead of static UnityEvent.
     /// </summary>
     private void SubscribeToEvents()
     {
-        HandCardChange.AddListener(DisplayHandCard);
+        HandCardChange.AddListener(DisplayHandCard); // Keep for backwards compatibility during migration
+        _eventBus?.Subscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
     }
 
     /// <summary>
     /// Unsubscribes from hand card change events.
+    /// Phase 23: Unsubscribes from EventBus.
     /// </summary>
     private void UnsubscribeFromEvents()
     {
         HandCardChange.RemoveListener(DisplayHandCard);
+        _eventBus?.Unsubscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
+    }
+
+    /// <summary>
+    /// Event handler for HandCardsDisplayChangedEvent.
+    /// Phase 23: Replaces static UnityEvent listener.
+    /// </summary>
+    private void OnHandCardsDisplayChanged(HandCardsDisplayChangedEvent evt)
+    {
+        if (evt.HandCards is ObservableCollection<InGameCard> handCards)
+        {
+            DisplayHandCard(handCards);
+        }
     }
 }

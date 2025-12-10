@@ -7,6 +7,8 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using Cards.InvocationCards;
+using JDG.Application;
+using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
 using VContainer;
@@ -16,6 +18,7 @@ using VContainer;
 /// Phase 8: Removed singleton dependencies (GameState, UnitManager).
 /// Phase 17-18: Now uses DeckConfiguration for constants.
 /// Phase 21-22: Extracted BuildPlayer and ResetInvocationCardNewTurn to use cases.
+/// Phase 23: Migrated static UnityEvents to EventBus (CardLocation.UpdateLocation).
 /// Uses dependency injection for deck initialization.
 /// </summary>
 public class PlayerCards : MonoBehaviour
@@ -40,6 +43,9 @@ public class PlayerCards : MonoBehaviour
     private HandleCardRemovedFromFieldUseCase _handleCardRemovedFromFieldUseCase;
     private HandleHandCardsChangeUseCase _handleHandCardsChangeUseCase;
     private HandleFieldCardChangedUseCase _handleFieldCardChangedUseCase;
+
+    // Phase 23: EventBus for static UnityEvent migration
+    private IEventBus _eventBus;
 
     public bool IsPlayerOne
     {
@@ -66,7 +72,8 @@ public class PlayerCards : MonoBehaviour
             }
 
             _fieldCard = value;
-            CardLocation.UpdateLocation.Invoke();
+            // Phase 23: Publish to EventBus instead of static UnityEvent
+            _eventBus.Publish(new CardLocationChangedEvent { Player = null });
         }
     }
 
@@ -78,6 +85,7 @@ public class PlayerCards : MonoBehaviour
     /// VContainer method injection for dependencies.
     /// Phase 8: Inject IDeckInitializationService instead of using singletons.
     /// Phase 21-22: Inject use cases for business logic extraction.
+    /// Phase 23: Inject IEventBus for static UnityEvent migration.
     /// </summary>
     [Inject]
     public void Construct(
@@ -88,7 +96,8 @@ public class PlayerCards : MonoBehaviour
         HandleCardAddedToFieldUseCase handleCardAddedToFieldUseCase,
         HandleCardRemovedFromFieldUseCase handleCardRemovedFromFieldUseCase,
         HandleHandCardsChangeUseCase handleHandCardsChangeUseCase,
-        HandleFieldCardChangedUseCase handleFieldCardChangedUseCase)
+        HandleFieldCardChangedUseCase handleFieldCardChangedUseCase,
+        IEventBus eventBus)
     {
         _deckInitService = deckInitService;
         _summonPlayerEntityUseCase = summonPlayerEntityUseCase;
@@ -98,6 +107,7 @@ public class PlayerCards : MonoBehaviour
         _handleCardRemovedFromFieldUseCase = handleCardRemovedFromFieldUseCase;
         _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase;
         _handleFieldCardChangedUseCase = handleFieldCardChangedUseCase;
+        _eventBus = eventBus;
     }
 
     /// <summary>
@@ -166,6 +176,7 @@ public class PlayerCards : MonoBehaviour
     /// <summary>
     /// React to changes among invocation cards.
     /// Phase 21-22: Delegates to use cases for business logic.
+    /// Phase 23: Publishes to EventBus instead of static UnityEvent.
     /// </summary>
     private void InvocationCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
@@ -180,13 +191,14 @@ public class PlayerCards : MonoBehaviour
                 break;
         }
 
-        CardLocation.UpdateLocation.Invoke();
+        _eventBus.Publish(new CardLocationChangedEvent { Player = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2 });
         oldInvocations = InvocationCards.ToList();
     }
 
     /// <summary>
     /// React to changes among Yellow cards (graveyard).
     /// Phase 21-22: Delegates to HandleCardDeathUseCase.
+    /// Phase 23: Publishes to EventBus instead of static UnityEvent.
     /// </summary>
     private void YellowCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
@@ -194,28 +206,31 @@ public class PlayerCards : MonoBehaviour
         {
             _handleCardDeathUseCase.Execute(YellowCards.Last(), this, opponentPlayerCards, canvas);
         }
-        CardLocation.UpdateLocation.Invoke();
+        _eventBus.Publish(new CardLocationChangedEvent { Player = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2 });
     }
 
     /// <summary>
     /// React to changes among Hand cards.
     /// Phase 21-22: Delegates to HandleHandCardsChangeUseCase.
+    /// Phase 23: Publishes to EventBus instead of static UnityEvents.
     /// </summary>
     private void HandCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         int delta = e.Action == NotifyCollectionChangedAction.Add ? 1 : -1;
         _handleHandCardsChangeUseCase.Execute(this, delta);
 
-        CardLocation.UpdateLocation.Invoke();
-        HandCardDisplay.HandCardChange.Invoke(HandCards);
+        var domainOwner = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        _eventBus.Publish(new CardLocationChangedEvent { Player = domainOwner });
+        _eventBus.Publish(new HandCardsDisplayChangedEvent { Player = domainOwner, HandCards = HandCards });
     }
 
     /// <summary>
     /// React to changes among Effect cards.
+    /// Phase 23: Publishes to EventBus instead of static UnityEvent.
     /// </summary>
     private void EffectCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        CardLocation.UpdateLocation.Invoke();
+        _eventBus.Publish(new CardLocationChangedEvent { Player = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2 });
     }
 
     #endregion

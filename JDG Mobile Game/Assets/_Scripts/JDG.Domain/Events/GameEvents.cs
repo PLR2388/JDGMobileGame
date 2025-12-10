@@ -306,6 +306,44 @@ namespace JDG.Domain.Events
         public CardOwner CurrentPlayer;
     }
 
+    /// <summary>
+    /// Published when card locations need to be updated on the UI.
+    /// Phase 23: Replaces CardLocation.UpdateLocation static UnityEvent.
+    /// </summary>
+    public struct CardLocationChangedEvent
+    {
+        public CardOwner? Player; // Optional: null if both players affected
+    }
+
+    /// <summary>
+    /// Published when hand cards display needs to be updated.
+    /// Phase 23: Replaces HandCardDisplay.HandCardChange static UnityEvent.
+    /// </summary>
+    public struct HandCardsDisplayChangedEvent
+    {
+        public CardOwner Player;
+        public object HandCards; // Using object to avoid dependency on ObservableCollection<InGameCard>
+    }
+
+    /// <summary>
+    /// Published when an invocation card effect is cancelled.
+    /// Phase 23: Replaces InvocationFunctions.CancelInvocationEvent static UnityEvent.
+    /// </summary>
+    public struct InvocationCancelledEvent
+    {
+        public object CancelledCard; // Using object to avoid dependency on InGameInvocationCard
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when choice player changes in card selection menu.
+    /// Phase 23: Replaces CardChoice.ChangeChoicePlayer static UnityEvent.
+    /// </summary>
+    public struct ChoicePlayerChangedEvent
+    {
+        public int PlayerIndex; // 0 or 1
+    }
+
     // ============================================
     // ABILITY EVENTS
     // ============================================

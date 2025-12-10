@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using _Scripts.Units.Invocation;
 using Cards.EffectCards;
+using JDG.Application;
+using JDG.Domain.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
@@ -10,6 +12,7 @@ namespace Cards
 {
     /// <summary>
     /// Phase 17-18: Removed UnitManager singleton dependency via ICardInstantiationService.
+    /// Phase 23: Migrated from static UnityEvent to EventBus subscription.
     /// </summary>
     public class CardLocation : MonoBehaviour
     {
@@ -28,14 +31,19 @@ namespace Cards
         // Phase 17-18: Injected dependencies
         private ICardInstantiationService _cardInstantiationService;
 
+        // Phase 23: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 17-18: Inject ICardInstantiationService instead of UnitManager.Instance.
+        /// Phase 23: Inject IEventBus for static UnityEvent migration.
         /// </summary>
         [Inject]
-        public void Construct(ICardInstantiationService cardInstantiationService)
+        public void Construct(ICardInstantiationService cardInstantiationService, IEventBus eventBus)
         {
             _cardInstantiationService = cardInstantiationService;
+            _eventBus = eventBus;
         }
 
         private static readonly PlayerCardLocations Player1Locations = new PlayerCardLocations
@@ -105,21 +113,34 @@ namespace Cards
         }
 
         /// <summary>
-        /// Initializes the player1Cards and player2Cards by getting the PlayerCards component from the serialized GameObjects. It also adds a listener to the UpdateLocation UnityEvent.
+        /// Initializes the player1Cards and player2Cards by getting the PlayerCards component from the serialized GameObjects.
+        /// Phase 23: Subscribes to EventBus instead of static UnityEvent.
         /// </summary>
         void Awake()
         {
             player1Cards = player1.GetComponent<PlayerCards>();
             player2Cards = player2.GetComponent<PlayerCards>();
-            UpdateLocation.AddListener(UpdateCardLocation);
+            UpdateLocation.AddListener(UpdateCardLocation); // Keep for backwards compatibility during migration
+            _eventBus.Subscribe<CardLocationChangedEvent>(OnCardLocationChanged);
         }
 
         /// <summary>
-        /// Removes the listener from the UpdateLocation UnityEvent when the object is destroyed.
+        /// Removes the listener when the object is destroyed.
+        /// Phase 23: Unsubscribes from EventBus.
         /// </summary>
         void OnDestroy()
         {
             UpdateLocation.RemoveListener(UpdateCardLocation);
+            _eventBus.Unsubscribe<CardLocationChangedEvent>(OnCardLocationChanged);
+        }
+
+        /// <summary>
+        /// Event handler for CardLocationChangedEvent.
+        /// Phase 23: Replaces static UnityEvent listener.
+        /// </summary>
+        private void OnCardLocationChanged(CardLocationChangedEvent evt)
+        {
+            UpdateCardLocation();
         }
 
         /// <summary>
