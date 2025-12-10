@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Cards;
+using JDG.Domain;
 using UnityEngine;
 
 namespace Cards.InvocationCards
 {
     /// <summary>
     /// Represents an invocation card in the game, extending the base functionality of the Card class.
+    /// Phase 24-25: Updated to use JDG.Domain.AbilityName instead of legacy global AbilityName.
     /// </summary>
     [CreateAssetMenu(fileName = "New Card", menuName = "InvocationCard")]
     public class InvocationCard : Card
@@ -22,11 +24,12 @@ namespace Cards.InvocationCards
         /// List of conditions associated with this invocation card.
         /// </summary>
         public List<ConditionName> Conditions = new List<ConditionName>();
-        
+
         /// <summary>
         /// List of abilities associated with this invocation card.
+        /// Phase 24-25: Now uses JDG.Domain.AbilityName (domain layer enum).
         /// </summary>
-        public List<AbilityName> Abilities = new List<AbilityName>();
+        public List<JDG.Domain.AbilityName> Abilities = new List<JDG.Domain.AbilityName>();
 
         private void Awake()
         {

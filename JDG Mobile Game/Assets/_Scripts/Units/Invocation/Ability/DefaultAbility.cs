@@ -1,3 +1,4 @@
+using JDG.Domain;
 
 /// <summary>
 /// Represents the default implementation of an ability. This is a base ability

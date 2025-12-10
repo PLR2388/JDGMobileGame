@@ -1,7 +1,8 @@
 ﻿using _Scripts.Cards.InvocationCards;
 using _Scripts.Units.Invocation;
-using JDG.Infrastructure.DI;
+using JDG.Application;
 using OnePlayer;
+using VContainer;
 
 namespace Cards.InvocationCards
 {
@@ -9,14 +10,25 @@ namespace Cards.InvocationCards
     /// Tutorial-specific invocation functions.
     /// Phase 6: Updated to use CardPlacementService like InvocationFunctions.
     /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+    /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// </summary>
     public class TutoInvocationFunctions : InvocationFunctions
     {
-        // Phase 6: Use service for business logic
-        private ICardPlacementService TutoCardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+        // Phase 24-25: Injected via VContainer
+        private ICardCollectionService _cardCollectionService;
 
-        // Phase 17-18: Use service for card collection access
-        private ICardCollectionService CardCollectionService => ServiceLocator.Get<ICardCollectionService>();
+        /// <summary>
+        /// VContainer method injection for dependencies.
+        /// Calls base class Construct to inject base dependencies.
+        /// Phase 24-25: Inject ICardCollectionService instead of ServiceLocator.
+        /// </summary>
+        [Inject]
+        public void Construct(ICardPlacementService cardPlacementService, ICardCollectionService cardCollectionService, JDG.Application.IEventBus eventBus)
+        {
+            // Call base class to inject base dependencies
+            base.Construct(cardPlacementService, eventBus);
+            _cardCollectionService = cardCollectionService;
+        }
 
         private void Start()
         {
@@ -26,12 +38,13 @@ namespace Cards.InvocationCards
         /// <summary>
         /// Places the invocation card on the field and applies its effect.
         /// Phase 6: Delegates to CardPlacementService, then applies tutorial-specific logic.
+        /// Phase 24-25: Uses inherited _cardPlacementService from base class.
         /// </summary>
         /// <param name="invocationCard">The invocation card to place on the field.</param>
         private void PutInvocationCard(InGameInvocationCard invocationCard)
         {
-            // Place card using service
-            bool success = TutoCardPlacementService.PlaceInvocationCard(invocationCard, canvas);
+            // Place card using inherited service from base class
+            bool success = _cardPlacementService.PlaceInvocationCard(invocationCard, canvas);
 
             if (success)
             {
@@ -42,6 +55,7 @@ namespace Cards.InvocationCards
 
         /// <summary>
         /// Applies tutorial-specific effect for certain cards.
+        /// Phase 24-25: Uses injected _cardCollectionService.
         /// </summary>
         /// <param name="invocationCard">The invocation card whose effect should be applied.</param>
         private void ApplyTutorialSpecificEffect(InGameInvocationCard invocationCard)
@@ -49,8 +63,8 @@ namespace Cards.InvocationCards
             if (invocationCard.Title == CardNameMappings.CardNameMap[CardNames.ClichéRaciste])
             {
                 var cardName = CardNameMappings.CardNameMap[CardNames.Tentacules];
-                // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
-                var playerCards = CardCollectionService.GetCurrentPlayerCards();
+                // Phase 24-25: Use injected _cardCollectionService
+                var playerCards = _cardCollectionService.GetCurrentPlayerCards();
                 var config = new MessageBoxConfig(
                     LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                     string.Format(

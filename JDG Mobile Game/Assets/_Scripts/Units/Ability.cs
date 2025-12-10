@@ -1,77 +1,7 @@
 using System.Linq;
 using _Scripts.Units.Invocation;
+using JDG.Domain;
 using UnityEngine;
-
-/// <summary>
-/// Represents a set of ability names that can be used in the game.
-///
-/// DEPRECATED: This enum is part of the legacy ability system.
-/// Use JDG.Domain.AbilityName instead.
-/// </summary>
-[System.Obsolete("Legacy enum. Use JDG.Domain.AbilityName instead.")]
-public enum AbilityName
-{
-    CanOnlyAttackItself,
-    AddSpatialFromDeck,
-    SacrificeArchibaldVonGrenier,
-    CantBeAttackIfComics,
-    CantLiveWithoutBenzaieOrBenzaieJeune,
-    GiveAtkDefToComics,
-    SendAllCardToHands,
-    SacrificeBenzaieJeune,
-    GetNounoursFromDeck,
-    SacrificeJoueurDuGrenier,
-    GetPetitePortionDeRizFromDeck,
-    InvokeTentacules,
-    GetLycéeMagiqueGeorgesPompidouFromDeck,
-    SacrificeSebDuGrenierOnHardCornerForAtkDef,
-    Win1Atk1DefDeveloper,
-    Sacrifice3Atk3Def,
-    ChangeFieldWithFieldFromDeck,
-    Win1ATK1DefJaponWith2ATK2DEFCondition,
-    InvokeDresseurBidulmon,
-    GetZozanKebabFromDeck,
-    SacrificeWizard,
-    GetConvocationAuLyceeFromDeck,
-    ProtectedBehindStarlightUnicorn,
-    GetCanardSignal,
-    SacrificeDeveloper3Atk3Def,
-    SacrificeHardCorner3Atk3Def,
-    CantBeAttackKill,
-    ComesBackFromDeath,
-    Sacrifice2Japan,
-    DestroyFieldATK,
-    KillOpponentInvocation,
-    CantLiveWithoutJDG,
-    GetForetElfesSylvains,
-    InvokeSebOrJDG,
-    CantLiveWithoutComics,
-    Sacrifice2Incarnation,
-    DestroyFieldDEF,
-    GetBenzaieJeuneFromDeck,
-    GetEquipmentCardWithoutAttack,
-    SacrificeGranolax,
-    SacrificeJDGOnStudioDevForAtkDef,
-    CantLiveWithoutHuman,
-    CopyBenzaieJeune,
-    SurviveOneTurn,
-    GiveDeathWhenDie,
-    ProtectBehindGreaterDef,
-    SacrificeSebDuGrenier,
-    Win1Atk1DefFistiland,
-    SacrificeClicheRaciste,
-    KillEnemyIfDestroy,
-    SacrificeToInvoke,
-    GetPatronInfogramesFromDeckYellowTrash,
-    CantLiveWithoutGranolaxOrMechaGranolax,
-    SkipOpponentAttackEveryTurn,
-    ComesBackFromDeath5Times,
-    CantLiveWithoutJapon,
-    Draw2Cards,
-    GiveAktDefToRpgMember,
-    GiveAktDefToFistilandMember,
-    Default
-}
 
 /// <summary>
 /// Provides a base class for all abilities in the game.
@@ -81,6 +11,8 @@ public enum AbilityName
 /// Use the new IAbility interface in JDG.Application.Abilities instead.
 /// See JDG.Application.Abilities.Implementations for migrated abilities.
 /// Migration Guide: Old abilities with Unity dependencies → New pure C# abilities using repositories/use cases.
+///
+/// Phase 24-25: Updated to use JDG.Domain.AbilityName (removed legacy global AbilityName enum).
 /// </summary>
 [System.Obsolete("Legacy ability system. Use IAbility interface from JDG.Application.Abilities instead. " +
                  "Migrate to new system using factories and dependency injection.")]
@@ -88,8 +20,9 @@ public abstract class Ability
 {
     /// <summary>
     /// The name of the ability.
+    /// Phase 24-25: Now uses JDG.Domain.AbilityName.
     /// </summary>
-    public AbilityName Name { get; set; }
+    public JDG.Domain.AbilityName Name { get; set; }
     
     /// <summary>
     /// A description of the ability.

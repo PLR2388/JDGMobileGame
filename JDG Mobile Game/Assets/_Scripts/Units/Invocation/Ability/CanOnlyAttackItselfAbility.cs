@@ -1,3 +1,4 @@
+using JDG.Domain;
 using UnityEngine;
 
 /// <summary>

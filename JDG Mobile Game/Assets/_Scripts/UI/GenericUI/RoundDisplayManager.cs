@@ -1,5 +1,4 @@
 using JDG.Domain.ValueObjects;
-using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
 using TMPro;
 using UnityEngine;
@@ -8,6 +7,7 @@ using VContainer;
 /// <summary>
 /// Manages the round display, including round text, player indicators, and camera orientation.
 /// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
+/// Phase 24-25: Removed ServiceLocator, using VContainer DI.
 /// </summary>
 public class RoundDisplayManager : MonoBehaviour
 {
@@ -18,11 +18,20 @@ public class RoundDisplayManager : MonoBehaviour
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
-    // Phase 2: Temporary bridge to GameStateService during migration
-    // This will be removed when RoundDisplayManager is replaced by Presenter in Phase 5
-    private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
-    private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
-    private Phase CurrentPhase => (Phase)(int)GameStateService.CurrentPhase; // Cast from JDG.Domain.Phase to global Phase
+    // Phase 24-25: Injected via VContainer
+    private GameStateService _gameStateService;
+    private bool IsP1Turn => _gameStateService.CurrentPlayer == PlayerId.Player1;
+    private Phase CurrentPhase => (Phase)(int)_gameStateService.CurrentPhase; // Cast from JDG.Domain.Phase to global Phase
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 24-25: Inject GameStateService instead of ServiceLocator.
+    /// </summary>
+    [Inject]
+    public void Construct(GameStateService gameStateService)
+    {
+        _gameStateService = gameStateService;
+    }
 
     /// <summary>
     /// Sets the displayed round text.

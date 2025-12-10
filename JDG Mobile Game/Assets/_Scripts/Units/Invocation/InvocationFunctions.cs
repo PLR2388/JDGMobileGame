@@ -2,7 +2,6 @@
 using _Scripts.Units.Invocation;
 using JDG.Application;
 using JDG.Domain.Events;
-using JDG.Infrastructure.DI;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
@@ -14,25 +13,28 @@ namespace _Scripts.Cards.InvocationCards
     /// canceling their effects, and more.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
     /// Phase 23: Migrated static UnityEvent to EventBus (CancelInvocationEvent).
+    /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// </summary>
     public class InvocationFunctions : MonoBehaviour
     {
         [SerializeField] protected Transform canvas;
 
-        // Phase 6: Use service for business logic
-        private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+        // Phase 24-25: Injected via VContainer (protected so TutoInvocationFunctions can access)
+        protected ICardPlacementService _cardPlacementService;
 
         // Phase 23: EventBus for static UnityEvent migration
         private IEventBus _eventBus;
         private IDisposable _invocationCancelledSubscription;
 
         /// <summary>
-        /// VContainer method injection for EventBus.
+        /// VContainer method injection for dependencies.
         /// Phase 23: Inject IEventBus for static UnityEvent migration.
+        /// Phase 24-25: Inject ICardPlacementService instead of ServiceLocator.
         /// </summary>
         [Inject]
-        public void Construct(IEventBus eventBus)
+        public void Construct(ICardPlacementService cardPlacementService, IEventBus eventBus)
         {
+            _cardPlacementService = cardPlacementService;
             _eventBus = eventBus;
         }
 
@@ -74,7 +76,7 @@ namespace _Scripts.Cards.InvocationCards
         {
             if (evt.CancelledCard is InGameInvocationCard invocationCard)
             {
-                CardPlacementService.HandleInvocationCancelEffect(invocationCard);
+                _cardPlacementService.HandleInvocationCancelEffect(invocationCard);
             }
         }
 
@@ -85,7 +87,7 @@ namespace _Scripts.Cards.InvocationCards
         /// <param name="invocationCard">The invocation card to place on the field.</param>
         private void PutInvocationCard(InGameInvocationCard invocationCard)
         {
-            bool success = CardPlacementService.PlaceInvocationCard(invocationCard, canvas);
+            bool success = _cardPlacementService.PlaceInvocationCard(invocationCard, canvas);
 
             if (!success)
             {

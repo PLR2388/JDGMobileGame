@@ -1,7 +1,6 @@
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.ValueObjects;
-using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 using VContainer;
@@ -11,31 +10,31 @@ using VContainer;
 /// Phase 3: Now uses IPlayerService for state management. PlayerStatus MonoBehaviours are kept
 /// temporarily to maintain UI compatibility during migration.
 /// Phase 17-18: Removed CardManager singleton dependency via ICombatService.
+/// Phase 24-25: Removed ServiceLocator, using VContainer DI.
 /// </summary>
 public class PlayerManager : Singleton<PlayerManager>
 {
     [SerializeField] private PlayerStatus playerStatus1;
     [SerializeField] private PlayerStatus playerStatus2;
 
-    // Phase 2: Temporary bridge to GameStateService during migration
-    private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
-    private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
+    // Phase 24-25: Injected via VContainer
+    private GameStateService _gameStateService;
+    private bool IsP1Turn => _gameStateService.CurrentPlayer == PlayerId.Player1;
 
-    // Phase 3: Temporary bridge to PlayerService during migration
-    // This will be removed when PlayerManager singleton is fully replaced
-    private IPlayerService PlayerService => ServiceLocator.Get<IPlayerService>();
-
-    // Phase 17-18: Injected dependency
+    private IPlayerService _playerService;
     private ICombatService _combatService;
 
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject ICombatService instead of CardManager.Instance.
+    /// Phase 24-25: Inject GameStateService and IPlayerService instead of ServiceLocator.
     /// </summary>
     [Inject]
-    public void Construct(ICombatService combatService)
+    public void Construct(ICombatService combatService, GameStateService gameStateService, IPlayerService playerService)
     {
         _combatService = combatService;
+        _gameStateService = gameStateService;
+        _playerService = playerService;
     }
 
     /// <summary>
@@ -68,11 +67,12 @@ public class PlayerManager : Singleton<PlayerManager>
     /// <summary>
     /// Initializes the shield count for both players to zero.
     /// Phase 3: Now uses PlayerService to manage state.
+    /// Phase 24-25: Uses injected _playerService.
     /// </summary>
     private void InitShieldCount()
     {
-        PlayerService.SetShieldCount(JDG.Domain.CardOwner.Player1, 0);
-        PlayerService.SetShieldCount(JDG.Domain.CardOwner.Player2, 0);
+        _playerService.SetShieldCount(JDG.Domain.CardOwner.Player1, 0);
+        _playerService.SetShieldCount(JDG.Domain.CardOwner.Player2, 0);
 
         // Sync legacy PlayerStatus MonoBehaviours with service state
         SyncPlayerStatusWithService(JDG.Domain.CardOwner.Player1);
@@ -84,21 +84,22 @@ public class PlayerManager : Singleton<PlayerManager>
     /// If the opponent has a shield, it decrements the shield. Otherwise, it computes the damage and applies it.
     /// Phase 3: Now uses PlayerService for state management and event publishing.
     /// Phase 17-18: Now uses ICombatService instead of CardManager.Instance.
+    /// Phase 24-25: Uses injected _playerService.
     /// </summary>
     public void HandleAttackIfOpponentIsPlayer()
     {
         var opponentId = IsP1Turn ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
 
         // Directly attack the player
-        if (PlayerService.HasShields(opponentId))
+        if (_playerService.HasShields(opponentId))
         {
-            PlayerService.DecrementShield(opponentId);
+            _playerService.DecrementShield(opponentId);
         }
         else
         {
             // Phase 17-18: Use ICombatService instead of CardManager.Instance
             var diff = _combatService.ComputeDamageAttack();
-            PlayerService.ChangeHealth(opponentId, (int)diff);
+            _playerService.ChangeHealth(opponentId, (int)diff);
         }
 
         // Sync legacy PlayerStatus MonoBehaviours with service state
@@ -108,10 +109,11 @@ public class PlayerManager : Singleton<PlayerManager>
     /// <summary>
     /// Syncs the legacy PlayerStatus MonoBehaviour with the current PlayerService state.
     /// This bridge method maintains UI compatibility during migration.
+    /// Phase 24-25: Uses injected _playerService.
     /// </summary>
     private void SyncPlayerStatusWithService(JDG.Domain.CardOwner playerId)
     {
-        var state = PlayerService.GetPlayerState(playerId);
+        var state = _playerService.GetPlayerState(playerId);
         var playerStatus = playerId == JDG.Domain.CardOwner.Player1 ? playerStatus1 : playerStatus2;
 
         // Update MonoBehaviour to match service state (without triggering events)

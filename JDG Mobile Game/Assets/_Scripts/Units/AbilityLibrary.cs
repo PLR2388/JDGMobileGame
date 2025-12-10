@@ -1,17 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Domain;
 
 /// <summary>
 /// Represents a library of abilities for cards.
 /// This library contains a collection of abilities that can be assigned to various cards based on their type and function.
+/// Phase 24-25: Updated to use JDG.Domain.AbilityName instead of legacy global AbilityName.
 /// </summary>
 public class AbilityLibrary : StaticInstance<AbilityLibrary>
 {
     /// <summary>
     /// Dictionary storing abilities keyed by their names.
+    /// Phase 24-25: Now uses JDG.Domain.AbilityName (domain layer enum).
     /// </summary>
-    public Dictionary<AbilityName, Ability> AbilityDictionary;
+    public Dictionary<JDG.Domain.AbilityName, Ability> AbilityDictionary;
 
     /// <summary>
     /// Initializes the ability dictionary upon object creation.

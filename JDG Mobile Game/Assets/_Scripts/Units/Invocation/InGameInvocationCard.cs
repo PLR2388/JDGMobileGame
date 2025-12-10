@@ -5,12 +5,12 @@ using Cards;
 using Cards.InvocationCards;
 using JDG.Application;
 using JDG.Domain.Events;
-using JDG.Infrastructure.DI;
 
 namespace _Scripts.Units.Invocation
 {
     /// <summary>
     /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+    /// Phase 24-25: Removed ServiceLocator, using constructor injection.
     /// </summary>
     public class InGameInvocationCard : InGameCard
     {
@@ -21,9 +21,14 @@ namespace _Scripts.Units.Invocation
 
         private const int DefaultNumberAttacksPerTurn = 1;
 
+        // Phase 24-25: Injected dependencies
+        private readonly IEventBus _eventBus;
+        private readonly ICardCollectionService _cardCollectionService;
+
         /// <summary>
         /// Gets or sets whether the card effect is canceled.
         /// Phase 23: Migrated from static UnityEvent to EventBus.
+        /// Phase 24-25: Uses injected _eventBus.
         /// </summary>
         public bool CancelEffect
         {
@@ -33,10 +38,9 @@ namespace _Scripts.Units.Invocation
                 cancelEffect = value;
                 UpdateInvocationCardForAbilities();
 
-                // Phase 23: Publish to EventBus instead of static UnityEvent
-                var eventBus = ServiceLocator.Get<IEventBus>();
+                // Phase 24-25: Use injected _eventBus
                 var domainOwner = (JDG.Domain.CardOwner)(int)CardOwner;
-                eventBus.Publish(new InvocationCancelledEvent
+                _eventBus.Publish(new InvocationCancelledEvent
                 {
                     CancelledCard = this,
                     Owner = domainOwner
@@ -62,14 +66,19 @@ namespace _Scripts.Units.Invocation
 
         /// <summary>
         /// Initializes an instance of the InGameInvocationCard.
+        /// Phase 24-25: Added dependency injection for IEventBus and ICardCollectionService.
         /// </summary>
         /// <param name="invocationCard">The base invocation card.</param>
         /// <param name="cardOwner">The owner of the card.</param>
+        /// <param name="eventBus">EventBus for publishing domain events.</param>
+        /// <param name="cardCollectionService">Service for accessing player cards.</param>
         /// <returns>A new InGameInvocationCard instance.</returns>
-        public InGameInvocationCard(InvocationCard invocationCard, CardOwner cardOwner)
+        public InGameInvocationCard(InvocationCard invocationCard, CardOwner cardOwner, IEventBus eventBus, ICardCollectionService cardCollectionService)
         {
             BaseInvocationCard = invocationCard;
             CardOwner = cardOwner;
+            _eventBus = eventBus;
+            _cardCollectionService = cardCollectionService;
             Reset();
         }
 
@@ -211,13 +220,13 @@ namespace _Scripts.Units.Invocation
         /// <summary>
         /// Checks if invoking the card is possible.
         /// Phase 17-18: Uses ICardCollectionService instead of CardManager.Instance.
+        /// Phase 24-25: Uses injected _cardCollectionService.
         /// </summary>
         /// <returns>true if invocation is possible; otherwise, false.</returns>
         public bool IsInvocationPossible()
         {
-            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
-            var cardCollectionService = ServiceLocator.Get<ICardCollectionService>();
-            return CanBeSummoned(cardCollectionService.GetCurrentPlayerCards());
+            // Phase 24-25: Use injected _cardCollectionService
+            return CanBeSummoned(_cardCollectionService.GetCurrentPlayerCards());
         }
 
         /// <summary>

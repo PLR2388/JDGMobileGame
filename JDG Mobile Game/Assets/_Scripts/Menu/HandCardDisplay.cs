@@ -5,7 +5,6 @@ using Cards;
 using JDG.Application;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
-using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,6 +12,7 @@ using VContainer;
 
 /// <summary>
 /// Phase 23: Migrated from static UnityEvent to EventBus subscription.
+/// Phase 24-25: Removed ServiceLocator, using VContainer DI.
 /// </summary>
 public class HandCardDisplay : MonoBehaviour
 {
@@ -20,23 +20,24 @@ public class HandCardDisplay : MonoBehaviour
 
     protected readonly List<GameObject> CreatedCards = new List<GameObject>();
 
-    // Phase 2: Temporary bridge to GameStateService during migration
-    // This will be removed when HandCardDisplay is refactored in Phase 6
-    private GameStateService GameStateService => ServiceLocator.Get<GameStateService>();
-    private bool IsP1Turn => GameStateService.CurrentPlayer == PlayerId.Player1;
+    // Phase 24-25: Injected via VContainer
+    private GameStateService _gameStateService;
+    private bool IsP1Turn => _gameStateService.CurrentPlayer == PlayerId.Player1;
 
     // Phase 23: EventBus for static UnityEvent migration
     private IEventBus _eventBus;
     private IDisposable _handCardsSubscription;
 
     /// <summary>
-    /// VContainer method injection for EventBus.
+    /// VContainer method injection for dependencies.
     /// Phase 23: Inject IEventBus for static UnityEvent migration.
+    /// Phase 24-25: Inject GameStateService instead of ServiceLocator.
     /// </summary>
     [Inject]
-    public void Construct(IEventBus eventBus)
+    public void Construct(IEventBus eventBus, GameStateService gameStateService)
     {
         _eventBus = eventBus;
+        _gameStateService = gameStateService;
     }
 
     /// <summary>

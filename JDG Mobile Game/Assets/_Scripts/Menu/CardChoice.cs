@@ -17,6 +17,7 @@ namespace Menu
     /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
     /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
     /// Phase 23: Migrated static UnityEvent to EventBus (ChangeChoicePlayer).
+    /// Phase 24-25: Added ICardCollectionService dependency for CardFactory.
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
@@ -36,18 +37,23 @@ namespace Menu
         // Phase 23: EventBus for static UnityEvent migration
         private IEventBus _eventBus;
 
+        // Phase 24-25: Injected for CardFactory
+        private ICardCollectionService _cardCollectionService;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
         /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
         /// Phase 23: Inject IEventBus for static UnityEvent migration.
+        /// Phase 24-25: Inject ICardCollectionService for CardFactory.
         /// </summary>
         [Inject]
-        public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService, IEventBus eventBus)
+        public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService, IEventBus eventBus, ICardCollectionService cardCollectionService)
         {
             _cardSelectionService = cardSelectionService;
             _deckManagementService = deckManagementService;
             _eventBus = eventBus;
+            _cardCollectionService = cardCollectionService;
         }
 
         /// <summary>
@@ -98,7 +104,7 @@ namespace Menu
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
 
                     _deckManagementService.Player2DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2)).ToList();
+                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, _cardCollectionService)).ToList();
                 }
                 else
                 {
@@ -106,7 +112,7 @@ namespace Menu
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 2 });
 
                     _deckManagementService.Player1DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1)).ToList();
+                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, _cardCollectionService)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -170,9 +176,9 @@ namespace Menu
             }
 
             _deckManagementService.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, _cardCollectionService)).ToList();
             _deckManagementService.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, _cardCollectionService)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneLoaderSystem.LoadGameScreen();
         }
@@ -210,9 +216,9 @@ namespace Menu
             deck2.Reverse();
 
             _deckManagementService.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
+                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, _cardCollectionService)).ToList();
             _deckManagementService.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
+                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, _cardCollectionService)).ToList();
             AudioSystem.Instance.StopMusic();
             SceneLoaderSystem.LoadGameScreen();
         }

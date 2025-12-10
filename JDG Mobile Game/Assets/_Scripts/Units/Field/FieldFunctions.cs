@@ -1,19 +1,27 @@
-﻿using JDG.Infrastructure.DI;
+﻿using JDG.Application;
 using Sound;
 using UnityEngine;
+using VContainer;
 
 namespace Cards.FieldCards
 {
     /// <summary>
     /// Provides functionalities related to field cards in the game, such as placing a card on the field.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
+    /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// </summary>
     public class FieldFunctions : MonoBehaviour
     {
         [SerializeField] private GameObject miniCardMenu; // The UI component representing a mini card menu.
 
-        // Phase 6: Use service for business logic
-        private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+        // Phase 24-25: Injected via VContainer
+        private ICardPlacementService _cardPlacementService;
+
+        [Inject]
+        public void Construct(ICardPlacementService cardPlacementService)
+        {
+            _cardPlacementService = cardPlacementService;
+        }
 
         /// <summary>
         /// Initialization method that sets up listeners for relevant events.
@@ -40,7 +48,7 @@ namespace Cards.FieldCards
         /// <param name="fieldCard">The field card to be placed on the field.</param>
         private void PutFieldCard(InGameFieldCard fieldCard)
         {
-            bool success = CardPlacementService.PlaceFieldCard(fieldCard);
+            bool success = _cardPlacementService.PlaceFieldCard(fieldCard);
 
             if (success)
             {

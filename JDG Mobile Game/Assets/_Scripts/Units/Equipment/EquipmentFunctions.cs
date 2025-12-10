@@ -1,21 +1,29 @@
 ﻿using System.Linq;
 using _Scripts.Units.Invocation;
-using JDG.Infrastructure.DI;
+using JDG.Application;
 using UnityEngine;
+using VContainer;
 
 namespace Cards.EquipmentCards
 {
     /// <summary>
     /// Handles the functionalities associated with equipment cards within the game.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
+    /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// </summary>
     public class EquipmentFunctions : MonoBehaviour
     {
         [SerializeField] private GameObject miniCardMenu;
         [SerializeField] private Transform canvas;
 
-        // Phase 6: Use service for business logic
-        private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+        // Phase 24-25: Injected via VContainer
+        private ICardPlacementService _cardPlacementService;
+
+        [Inject]
+        public void Construct(ICardPlacementService cardPlacementService)
+        {
+            _cardPlacementService = cardPlacementService;
+        }
 
         /// <summary>
         /// Initializes listeners for equipment card events.
@@ -43,7 +51,7 @@ namespace Cards.EquipmentCards
         private void DisplayEquipmentPopUp(InGameEquipmentCard equipmentCard)
         {
             // Get valid targets from service
-            var validTargets = CardPlacementService.GetEquipmentTargets(equipmentCard);
+            var validTargets = _cardPlacementService.GetEquipmentTargets(equipmentCard);
 
             // Display card selector UI
             var config = new CardSelectorConfig(
@@ -56,7 +64,7 @@ namespace Cards.EquipmentCards
                     if (card is InGameInvocationCard selectedInvocationCard)
                     {
                         // Delegate to service for business logic
-                        CardPlacementService.PlaceEquipmentCard(equipmentCard, selectedInvocationCard, canvas);
+                        _cardPlacementService.PlaceEquipmentCard(equipmentCard, selectedInvocationCard, canvas);
 
                         // Hide UI after placement
                         miniCardMenu.SetActive(false);

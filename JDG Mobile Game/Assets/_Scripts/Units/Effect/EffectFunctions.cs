@@ -1,19 +1,27 @@
-﻿using JDG.Infrastructure.DI;
+﻿using JDG.Application;
 using UnityEngine;
+using VContainer;
 
 namespace Cards.EffectCards
 {
     /// <summary>
     /// Handles the functionality related to effect cards within the game.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
+    /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// </summary>
     public class EffectFunctions : MonoBehaviour
     {
         [SerializeField] private GameObject miniCardMenu;
         [SerializeField] private Transform canvas;
 
-        // Phase 6: Use service for business logic
-        private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
+        // Phase 24-25: Injected via VContainer
+        private ICardPlacementService _cardPlacementService;
+
+        [Inject]
+        public void Construct(ICardPlacementService cardPlacementService)
+        {
+            _cardPlacementService = cardPlacementService;
+        }
 
         /// <summary>
         /// Initialization method. Subscribes to relevant events.
@@ -41,7 +49,7 @@ namespace Cards.EffectCards
         /// <param name="effectCard">The effect card the user put on the field.</param>
         private void PutEffectCard(InGameEffectCard effectCard)
         {
-            bool success = CardPlacementService.PlaceEffectCard(effectCard, canvas);
+            bool success = _cardPlacementService.PlaceEffectCard(effectCard, canvas);
 
             if (success)
             {

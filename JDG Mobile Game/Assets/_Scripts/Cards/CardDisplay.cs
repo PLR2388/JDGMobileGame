@@ -1,7 +1,12 @@
 ﻿using Cards;
+using JDG.Application;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
+/// <summary>
+/// Phase 24-25: Added VContainer injection for IEventBus and ICardCollectionService.
+/// </summary>
 public class CardDisplay : MonoBehaviour
 {
     private InGameCard _inGameCard;
@@ -9,6 +14,21 @@ public class CardDisplay : MonoBehaviour
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private bool isFaceHidden;
     private Image image;
+
+    // Phase 24-25: Injected via VContainer (nullable for display-only cards)
+    private IEventBus _eventBus;
+    private ICardCollectionService _cardCollectionService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 24-25: Inject IEventBus and ICardCollectionService for CardFactory.
+    /// </summary>
+    [Inject]
+    public void Construct(IEventBus eventBus, ICardCollectionService cardCollectionService)
+    {
+        _eventBus = eventBus;
+        _cardCollectionService = cardCollectionService;
+    }
 
     /// <summary>
     /// Public property for accessing and setting the InGameCard. When set, it also initializes the card and updates its material.
@@ -65,12 +85,13 @@ public class CardDisplay : MonoBehaviour
     /// <summary>
     /// Initializes the card. If the Card exists and InGameCard doesn't, a new InGameCard is created.
     /// If Card doesn't exist but InGameCard does, the base card of the InGameCard is set as the Card.
+    /// Phase 24-25: Passes dependencies to CardFactory.
     /// </summary>
     private void InitializeCard()
     {
         if (Card != null && InGameCard == null)
         {
-            InGameCard = CardFactory.CreateInGameCard(Card, CardOwner.NotDefined);
+            InGameCard = CardFactory.CreateInGameCard(Card, CardOwner.NotDefined, _eventBus, _cardCollectionService);
         }
         else if (Card == null && InGameCard != null)
         {
