@@ -258,8 +258,49 @@ For questions or issues:
 - Run tests to verify integration
 - Review this document for architecture overview
 
+### Phase 24-25: ServiceLocator Removal & Final Cleanup ✅ (Just Completed)
+
+#### ServiceLocator Elimination
+- ✅ **Complete removal from active gameplay code** - Zero ServiceLocator.Get() calls in MonoBehaviours
+  - Updated 9 MonoBehaviours to use VContainer dependency injection
+  - InvocationFunctions, EffectFunctions, FieldFunctions, EquipmentFunctions
+  - TutoInvocationFunctions (inheritance with DI pattern)
+  - HandCardDisplay, PlayerManager, RoundDisplayManager, CardDisplay
+
+#### Domain Model Dependency Injection
+- ✅ **InGameInvocationCard.cs** - Constructor injection pattern
+  - Accepts IEventBus and ICardCollectionService parameters
+  - Removed 2 ServiceLocator.Get() calls (CancelEffect setter, IsInvocationPossible)
+  - Dependencies passed through CardFactory
+
+#### Factory Pattern with DI
+- ✅ **CardFactory.cs** - Updated to support dependency injection
+  - CreateInGameCard accepts optional eventBus/cardCollectionService parameters
+  - Updated 11 callsites: SummonPlayerEntityUseCase, DeckManagementService (2), CardDisplay, CardChoice (6)
+
+#### AbilityName Enum Migration
+- ✅ **Migrated from global AbilityName to JDG.Domain.AbilityName**
+  - InvocationCard.cs ScriptableObject now uses domain enum
+  - Ability.cs base class updated (removed global enum)
+  - AbilityLibrary.cs dictionary uses domain enum
+  - All 31 legacy ability files updated with `using JDG.Domain;`
+  - Unity asset files (.asset) unaffected (enum values identical)
+
+#### Architecture Impact
+- ✅ **Zero ServiceLocator in active MonoBehaviours** - Only in obsolete/adapter code
+- ✅ **Domain enum properly scoped** - No global namespace pollution
+- ✅ **Dependency injection throughout** - Constructor/method injection patterns
+- ✅ **Inheritance with DI** - TutoInvocationFunctions → InvocationFunctions pattern established
+
+#### Code Metrics
+- MonoBehaviours migrated to DI: 9
+- ServiceLocator.Get() calls removed: 11
+- CardFactory callsites updated: 11
+- Legacy ability files updated: 31
+- Files modified: 48
+
 ---
 
-**Last Updated**: 2025-11-27
+**Last Updated**: 2025-12-10
 **Current Branch**: refactor-v3
-**Status**: Phase 9-12 Complete ✅
+**Status**: Phase 24-25 Complete ✅ (ServiceLocator Removed, AbilityName Migrated)
