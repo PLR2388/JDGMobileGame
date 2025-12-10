@@ -33,6 +33,7 @@ namespace Cards
 
         // Phase 23: EventBus for static UnityEvent migration
         private IEventBus _eventBus;
+        private IDisposable _cardLocationSubscription;
 
         /// <summary>
         /// VContainer method injection for dependencies.
@@ -121,17 +122,17 @@ namespace Cards
             player1Cards = player1.GetComponent<PlayerCards>();
             player2Cards = player2.GetComponent<PlayerCards>();
             UpdateLocation.AddListener(UpdateCardLocation); // Keep for backwards compatibility during migration
-            _eventBus.Subscribe<CardLocationChangedEvent>(OnCardLocationChanged);
+            _cardLocationSubscription = _eventBus.Subscribe<CardLocationChangedEvent>(OnCardLocationChanged);
         }
 
         /// <summary>
         /// Removes the listener when the object is destroyed.
-        /// Phase 23: Unsubscribes from EventBus.
+        /// Phase 23: Disposes EventBus subscription.
         /// </summary>
         void OnDestroy()
         {
             UpdateLocation.RemoveListener(UpdateCardLocation);
-            _eventBus.Unsubscribe<CardLocationChangedEvent>(OnCardLocationChanged);
+            _cardLocationSubscription?.Dispose();
         }
 
         /// <summary>

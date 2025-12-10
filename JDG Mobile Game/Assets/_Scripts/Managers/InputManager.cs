@@ -143,7 +143,7 @@ public class InputManager : MonoBehaviour
             OnTouch.Invoke();
             _eventBus.Publish(new TouchStartedEvent
             {
-                Position = Input.mousePosition,
+                Position = (Vector2)Input.mousePosition,
                 Timestamp = Time.time
             });
         }
@@ -159,7 +159,7 @@ public class InputManager : MonoBehaviour
                 OnLongTouch.Invoke();
                 _eventBus.Publish(new LongTouchEvent
                 {
-                    Position = Input.mousePosition,
+                    Position = (Vector2)Input.mousePosition,
                     Duration = totalDownTime
                 });
             }
@@ -170,7 +170,7 @@ public class InputManager : MonoBehaviour
             OnReleaseTouch.Invoke();
             _eventBus.Publish(new TouchEndedEvent
             {
-                Position = Input.mousePosition,
+                Position = (Vector2)Input.mousePosition,
                 Duration = totalDownTime
             });
         }

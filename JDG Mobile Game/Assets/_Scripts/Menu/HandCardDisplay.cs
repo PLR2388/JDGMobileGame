@@ -34,6 +34,7 @@ public class HandCardDisplay : MonoBehaviour
 
     // Phase 23: EventBus for static UnityEvent migration
     private IEventBus _eventBus;
+    private IDisposable _handCardsSubscription;
 
     /// <summary>
     /// VContainer method injection for EventBus.
@@ -153,17 +154,17 @@ public class HandCardDisplay : MonoBehaviour
     private void SubscribeToEvents()
     {
         HandCardChange.AddListener(DisplayHandCard); // Keep for backwards compatibility during migration
-        _eventBus?.Subscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
+        _handCardsSubscription = _eventBus?.Subscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
     }
 
     /// <summary>
     /// Unsubscribes from hand card change events.
-    /// Phase 23: Unsubscribes from EventBus.
+    /// Phase 23: Disposes EventBus subscription.
     /// </summary>
     private void UnsubscribeFromEvents()
     {
         HandCardChange.RemoveListener(DisplayHandCard);
-        _eventBus?.Unsubscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
+        _handCardsSubscription?.Dispose();
     }
 
     /// <summary>
