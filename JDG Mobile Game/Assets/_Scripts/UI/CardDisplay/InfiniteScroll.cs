@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Application;
+using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using Menu;
 using UnityEngine;
@@ -9,6 +12,7 @@ using VContainer;
 /// <summary>
 /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
 /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
+/// Phase 23: Migrated from static UnityEvent to EventBus subscription.
 /// </summary>
 public class InfiniteScroll : MonoBehaviour
 {
@@ -28,6 +32,10 @@ public class InfiniteScroll : MonoBehaviour
     // Phase 17-18: Injected dependencies
     private IDeckManagementService _deckManagementService;
 
+    // Phase 23: EventBus for static UnityEvent migration
+    private IEventBus _eventBus;
+    private IDisposable _choicePlayerSubscription;
+
     private readonly string[] removeCardTitles =
     {
         CardNameMappings.CardNameMap[CardNames.AttaqueDeLaTourEiffel],
@@ -39,12 +47,14 @@ public class InfiniteScroll : MonoBehaviour
     /// VContainer method injection for dependencies.
     /// Phase 9: Inject ICardSelectionService instead of using singleton.
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
+    /// Phase 23: Inject IEventBus for static UnityEvent migration.
     /// </summary>
     [Inject]
-    public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService)
+    public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService, IEventBus eventBus)
     {
         _cardSelectionService = cardSelectionService;
         _deckManagementService = deckManagementService;
+        _eventBus = eventBus;
     }
 
     // Start is called before the first frame update
@@ -59,17 +69,19 @@ public class InfiniteScroll : MonoBehaviour
         _cardSelectionService.MultipleSelectionLimit = DeckConfiguration.MaxDeckCards;
         _cardSelectionService.CardSelected.AddListener(OnSelectCard);
         _cardSelectionService.CardDeselected.AddListener(OnUnSelectCard);
-        CardChoice.ChangeChoicePlayer.AddListener(OnChangePlayer);
+
+        // Phase 23: Subscribe to EventBus instead of static UnityEvent
+        _choicePlayerSubscription = _eventBus.Subscribe<ChoicePlayerChangedEvent>(OnChoicePlayerChanged);
     }
 
 
     /// <summary>
-    /// Reset value when another player must choose his cards
+    /// Event handler for ChoicePlayerChangedEvent from EventBus.
+    /// Phase 23: Replaces static UnityEvent listener.
     /// </summary>
-    /// <param name="numberPlayer">Number representing the current player choosing his cards</param>
-    private void OnChangePlayer(int numberPlayer)
+    private void OnChoicePlayerChanged(ChoicePlayerChangedEvent evt)
     {
-        displayP1Card = numberPlayer == 1;
+        displayP1Card = evt.PlayerIndex == 1;
         numberOfSelectedCards = 0;
         numberOfRareCards = 0;
         DisplayAvailableCards(displayP1Card ? deck1AllCards : deck2AllCards);
@@ -179,9 +191,10 @@ public class InfiniteScroll : MonoBehaviour
 
     /// <summary>
     /// Remove Event listener attached
+    /// Phase 23: Disposes EventBus subscription.
     /// </summary>
     private void OnDestroy()
     {
-        CardChoice.ChangeChoicePlayer.RemoveListener(OnChangePlayer);
+        _choicePlayerSubscription?.Dispose();
     }
 }

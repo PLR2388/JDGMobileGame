@@ -42,19 +42,21 @@ public class TutoHandCardDisplay : HandCardDisplay
 
     /// <summary>
     /// Subscribes to necessary events for card display updates.
+    /// Phase 23: Removed HandCardChange static event, using base class EventBus subscription.
     /// </summary>
-    private void SubscribeToEvents()
+    private new void SubscribeToEvents()
     {
-        HandCardChange.AddListener(DisplayHandCard);
+        base.SubscribeToEvents(); // Subscribe to EventBus in base class
         DialogueUI.DialogIndex.AddListener(UpdateCurrentDialogIndex);
     }
 
     /// <summary>
     /// Unsubscribes from hand card change events.
+    /// Phase 23: Removed HandCardChange static event, using base class EventBus subscription.
     /// </summary>
-    private void UnsubscribeFromEvents()
+    private new void UnsubscribeFromEvents()
     {
-        HandCardChange.RemoveListener(DisplayHandCard);
+        base.UnsubscribeFromEvents(); // Unsubscribe from EventBus in base class
         DialogueUI.DialogIndex.RemoveListener(UpdateCurrentDialogIndex);
     }
 

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Cards;
+using JDG.Application;
+using JDG.Domain.Events;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,11 +10,15 @@ using VContainer;
 /// <summary>
 /// Manages in-game card interactions, handling events, and displaying UI elements related to cards.
 /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+/// Phase 23: Migrated HandCardChange invocations to EventBus.
 /// </summary>
 public class InGameMenuScript : MonoBehaviour
 {
     // Phase 17-18: Injected dependency (protected so TutoInGameMenuScript can access)
     protected ICardCollectionService _cardCollectionService;
+
+    // Phase 23: EventBus for hand card display events
+    protected IEventBus _eventBus;
     // Serialized fields for UI components
     [SerializeField] protected TextMeshProUGUI buttonText;
     [SerializeField] protected GameObject handScreen;
@@ -60,11 +66,13 @@ public class InGameMenuScript : MonoBehaviour
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject ICardCollectionService instead of CardManager.Instance.
+    /// Phase 23: Inject IEventBus for hand card display events.
     /// </summary>
     [Inject]
-    public void Construct(ICardCollectionService cardCollectionService)
+    public void Construct(ICardCollectionService cardCollectionService, IEventBus eventBus)
     {
         _cardCollectionService = cardCollectionService;
+        _eventBus = eventBus;
     }
 
     /// <summary>
@@ -178,7 +186,14 @@ public class InGameMenuScript : MonoBehaviour
             handScreen.SetActive(true);
             inHandButton.SetActive(true);
             // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
-            HandCardDisplay.HandCardChange.Invoke(_cardCollectionService.GetCurrentPlayerCards().HandCards);
+            // Phase 23: Publish to EventBus instead of static UnityEvent
+            var playerCards = _cardCollectionService.GetCurrentPlayerCards();
+            var domainOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+            _eventBus.Publish(new HandCardsDisplayChangedEvent
+            {
+                Player = domainOwner,
+                HandCards = playerCards.HandCards
+            });
         }
         else
         {
@@ -219,7 +234,14 @@ public class InGameMenuScript : MonoBehaviour
         backgroundInformation.SetActive(false);
         buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
         // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
-        HandCardDisplay.HandCardChange.Invoke(_cardCollectionService.GetCurrentPlayerCards().HandCards);
+        // Phase 23: Publish to EventBus instead of static UnityEvent
+        var playerCards = _cardCollectionService.GetCurrentPlayerCards();
+        var domainOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        _eventBus.Publish(new HandCardsDisplayChangedEvent
+        {
+            Player = domainOwner,
+            HandCards = playerCards.HandCards
+        });
     }
 
     /// <summary>

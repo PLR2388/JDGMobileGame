@@ -19,8 +19,6 @@ namespace Cards
         [SerializeField] private GameObject player1;
         [SerializeField] private GameObject player2;
 
-        public static readonly UnityEvent UpdateLocation = new UnityEvent();
-
         private const float CardYOffset = 0.5f;
         private const float HiddenCardPosition = 1000f;
         private readonly Vector3 secretHide = new Vector3(HiddenCardPosition, HiddenCardPosition, HiddenCardPosition);
@@ -121,7 +119,6 @@ namespace Cards
         {
             player1Cards = player1.GetComponent<PlayerCards>();
             player2Cards = player2.GetComponent<PlayerCards>();
-            UpdateLocation.AddListener(UpdateCardLocation); // Keep for backwards compatibility during migration
             _cardLocationSubscription = _eventBus.Subscribe<CardLocationChangedEvent>(OnCardLocationChanged);
         }
 
@@ -131,7 +128,6 @@ namespace Cards
         /// </summary>
         void OnDestroy()
         {
-            UpdateLocation.RemoveListener(UpdateCardLocation);
             _cardLocationSubscription?.Dispose();
         }
 

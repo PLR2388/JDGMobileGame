@@ -1,4 +1,8 @@
 using System;
+using JDG.Application;
+using JDG.Domain;
+using JDG.Domain.Events;
+using JDG.Infrastructure.DI;
 using UnityEngine.Events;
 
 public enum Phase
@@ -33,19 +37,20 @@ public class GameStateManager : Singleton<GameStateManager>
     private int numberOfTurn = 0;
 
     /// <summary>
-    /// [OBSOLETE] Static UnityEvent for player turn changes.
-    /// Use EventBus with PlayerTurnChangedEvent instead for better testability and decoupling.
-    /// </summary>
-    [System.Obsolete("Use EventBus.Subscribe<PlayerTurnChangedEvent>() instead.")]
-    public static readonly UnityEvent ChangePlayer = new UnityEvent();
-    
-    /// <summary>
-    /// Toggles the current player's turn and invokes a change player event.
+    /// Toggles the current player's turn and publishes to EventBus.
+    /// Phase 23: Static UnityEvent removed, only EventBus used.
     /// </summary>
     private void ToggleTurn()
     {
         isP1Turn = !isP1Turn;
-        ChangePlayer.Invoke();
+
+        // Phase 23: Publish to EventBus
+        var eventBus = ServiceLocator.Get<IEventBus>();
+        eventBus.Publish(new PlayerTurnChangedEvent
+        {
+            NewPlayer = isP1Turn ? PlayerId.Player1 : PlayerId.Player2,
+            TurnNumber = numberOfTurn
+        });
     }
 
     /// <summary>

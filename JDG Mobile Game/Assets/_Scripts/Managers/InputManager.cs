@@ -102,26 +102,6 @@ public class InputManager : MonoBehaviour
         isTouchDetectionDisabled = true;
     }
 
-    /// <summary>
-    /// Event invoked when a touch/click starts.
-    /// </summary
-    public static readonly UnityEvent OnTouch = new UnityEvent();
-
-    /// <summary>
-    /// Event invoked when a long touch/click is detected.
-    /// </summary>
-    public static readonly UnityEvent OnLongTouch = new UnityEvent();
-
-    /// <summary>
-    /// Event invoked when a touch/click ends.
-    /// </summary>
-    public static readonly UnityEvent OnReleaseTouch = new UnityEvent();
-
-    /// <summary>
-    /// Event invoked when the Android back button is pressed.
-    /// </summary>
-    public static readonly UnityEvent OnBackPressed = new UnityEvent();
-
     private void Update()
     {
         HandleTouchInput();
@@ -130,7 +110,7 @@ public class InputManager : MonoBehaviour
 
     /// <summary>
     /// Handles touch and click input detection.
-    /// Phase 23: Publishes to EventBus in addition to static UnityEvents.
+    /// Phase 23: Publishes to EventBus (static UnityEvents removed).
     /// </summary>
     private void HandleTouchInput()
     {
@@ -140,7 +120,6 @@ public class InputManager : MonoBehaviour
         {
             totalDownTime = 0;
             isTouchInProgress = true;
-            OnTouch.Invoke();
             _eventBus.Publish(new TouchStartedEvent
             {
                 Position = (Vector2)Input.mousePosition,
@@ -156,7 +135,6 @@ public class InputManager : MonoBehaviour
             if (totalDownTime >= clickDuration)
             {
                 Debug.Log("Long click");
-                OnLongTouch.Invoke();
                 _eventBus.Publish(new LongTouchEvent
                 {
                     Position = (Vector2)Input.mousePosition,
@@ -167,7 +145,6 @@ public class InputManager : MonoBehaviour
         if (IsJustStopTouching)
         {
             isTouchInProgress = false;
-            OnReleaseTouch.Invoke();
             _eventBus.Publish(new TouchEndedEvent
             {
                 Position = (Vector2)Input.mousePosition,
@@ -178,7 +155,7 @@ public class InputManager : MonoBehaviour
 
     /// <summary>
     /// Handles the behavior for the Android back button.
-    /// Phase 23: Publishes to EventBus in addition to static UnityEvent.
+    /// Phase 23: Publishes to EventBus (static UnityEvent removed).
     /// </summary>
     private void HandleAndroidBackButton()
     {
@@ -187,7 +164,6 @@ public class InputManager : MonoBehaviour
         {
             // Make sure user is on Android platform
             // Check if Back was pressed this frame
-            OnBackPressed.Invoke();
             _eventBus.Publish(new BackButtonPressedEvent
             {
                 Timestamp = Time.time

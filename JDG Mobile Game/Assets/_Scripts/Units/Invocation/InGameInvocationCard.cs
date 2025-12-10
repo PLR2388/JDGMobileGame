@@ -3,6 +3,8 @@ using System.Linq;
 using _Scripts.Cards.InvocationCards;
 using Cards;
 using Cards.InvocationCards;
+using JDG.Application;
+using JDG.Domain.Events;
 using JDG.Infrastructure.DI;
 
 namespace _Scripts.Units.Invocation
@@ -21,6 +23,7 @@ namespace _Scripts.Units.Invocation
 
         /// <summary>
         /// Gets or sets whether the card effect is canceled.
+        /// Phase 23: Migrated from static UnityEvent to EventBus.
         /// </summary>
         public bool CancelEffect
         {
@@ -29,7 +32,15 @@ namespace _Scripts.Units.Invocation
             {
                 cancelEffect = value;
                 UpdateInvocationCardForAbilities();
-                InvocationFunctions.CancelInvocationEvent.Invoke(this);
+
+                // Phase 23: Publish to EventBus instead of static UnityEvent
+                var eventBus = ServiceLocator.Get<IEventBus>();
+                var domainOwner = (JDG.Domain.CardOwner)(int)CardOwner;
+                eventBus.Publish(new InvocationCancelledEvent
+                {
+                    CancelledCard = this,
+                    Owner = domainOwner
+                });
             }
         }
 

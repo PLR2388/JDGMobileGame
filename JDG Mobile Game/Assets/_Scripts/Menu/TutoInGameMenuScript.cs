@@ -147,7 +147,14 @@ public class TutoInGameMenuScript : InGameMenuScript
         UpdateButtonText(LocalizationKeys.BUTTON_BACK);
         UnselectButton();
         // Phase 17-18: Use ICardCollectionService from base class instead of CardManager.Instance
-        HandCardDisplay.HandCardChange.Invoke(_cardCollectionService.GetCurrentPlayerCards().HandCards);
+        // Phase 23: Publish to EventBus instead of static UnityEvent
+        var playerCards = _cardCollectionService.GetCurrentPlayerCards();
+        var domainOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        _eventBus.Publish(new JDG.Domain.Events.HandCardsDisplayChangedEvent
+        {
+            Player = domainOwner,
+            HandCards = playerCards.HandCards
+        });
     }
 
     /// <summary>

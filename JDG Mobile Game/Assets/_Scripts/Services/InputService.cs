@@ -10,10 +10,9 @@ namespace JDG.Infrastructure.Services
 {
     /// <summary>
     /// Infrastructure implementation of IInputService.
-    /// Wraps the existing InputManager and publishes events to EventBus.
-    /// Uses dual publishing pattern - both UnityEvents (old) and EventBus (new).
-    ///
+    /// Wraps the existing InputManager and provides events through EventBus.
     /// Phase 19-20: Now injects InputManager instead of using .Instance.
+    /// Phase 23: Updated to subscribe to EventBus instead of static UnityEvents.
     /// Note: This is a regular class, not a MonoBehaviour. InputManager MonoBehaviour
     /// handles the Update loop. This service just provides a clean interface.
     /// </summary>
@@ -27,16 +26,21 @@ namespace JDG.Infrastructure.Services
         private readonly List<Action<TouchEventData>> _longTouchHandlers = new();
         private readonly List<System.Action> _backButtonHandlers = new();
 
+        private IDisposable _touchStartedSubscription;
+        private IDisposable _longTouchSubscription;
+        private IDisposable _touchEndedSubscription;
+        private IDisposable _backButtonSubscription;
+
         public InputService(IEventBus eventBus, InputManager inputManager)
         {
             _eventBus = eventBus;
             _inputManager = inputManager;
 
-            // Subscribe to InputManager's static events and republish through our handlers + EventBus
-            InputManager.OnTouch.AddListener(OnTouchStarted);
-            InputManager.OnLongTouch.AddListener(OnLongTouchDetected);
-            InputManager.OnReleaseTouch.AddListener(OnTouchEnded);
-            InputManager.OnBackPressed.AddListener(OnBackButtonPressed);
+            // Phase 23: Subscribe to EventBus events instead of static UnityEvents
+            _touchStartedSubscription = _eventBus.Subscribe<TouchStartedEvent>(OnTouchStarted);
+            _longTouchSubscription = _eventBus.Subscribe<LongTouchEvent>(OnLongTouchDetected);
+            _touchEndedSubscription = _eventBus.Subscribe<TouchEndedEvent>(OnTouchEnded);
+            _backButtonSubscription = _eventBus.Subscribe<BackButtonPressedEvent>(OnBackButtonPressed);
         }
 
         public bool IsTouching => Input.GetMouseButton(0);
@@ -86,68 +90,47 @@ namespace JDG.Infrastructure.Services
             return new DisposableSubscription(() => { _backButtonHandlers.Remove(handler); });
         }
 
-        // Event handlers that republish InputManager events
-        private void OnTouchStarted()
+        // Event handlers that receive EventBus events and notify local handlers
+        // Phase 23: Updated to receive EventBus event parameters
+        private void OnTouchStarted(TouchStartedEvent evt)
         {
-            var unityPos = InputManager.TouchPosition;
             var eventData = new TouchEventData
             {
-                Position = ToVector2(unityPos),
-                Timestamp = Time.time,
+                Position = evt.Position,
+                Timestamp = evt.Timestamp,
                 FingerId = 0
             };
 
             NotifyHandlers(_touchStartedHandlers, eventData);
-            _eventBus.Publish(new TouchStartedEvent
-            {
-                Position = ToVector2(unityPos),
-                Timestamp = eventData.Timestamp
-            });
         }
 
-        private void OnLongTouchDetected()
+        private void OnLongTouchDetected(LongTouchEvent evt)
         {
-            var unityPos = InputManager.TouchPosition;
             var eventData = new TouchEventData
             {
-                Position = ToVector2(unityPos),
+                Position = evt.Position,
                 Timestamp = Time.time,
                 FingerId = 0
             };
 
             NotifyHandlers(_longTouchHandlers, eventData);
-            _eventBus.Publish(new LongTouchEvent
-            {
-                Position = ToVector2(unityPos),
-                Duration = 2f // InputManager's click duration
-            });
         }
 
-        private void OnTouchEnded()
+        private void OnTouchEnded(TouchEndedEvent evt)
         {
-            var unityPos = InputManager.TouchPosition;
             var eventData = new TouchEventData
             {
-                Position = ToVector2(unityPos),
-                Timestamp = Time.time,
+                Position = evt.Position,
+                Timestamp = evt.Timestamp,
                 FingerId = 0
             };
 
             NotifyHandlers(_touchEndedHandlers, eventData);
-            _eventBus.Publish(new TouchEndedEvent
-            {
-                Position = ToVector2(unityPos),
-                Duration = 0f
-            });
         }
 
-        private void OnBackButtonPressed()
+        private void OnBackButtonPressed(BackButtonPressedEvent evt)
         {
             NotifyHandlers(_backButtonHandlers);
-            _eventBus.Publish(new BackButtonPressedEvent
-            {
-                Timestamp = Time.time
-            });
         }
 
         private void NotifyHandlers(List<Action<TouchEventData>> handlers, TouchEventData eventData)

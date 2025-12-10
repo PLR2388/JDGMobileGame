@@ -9,15 +9,6 @@ using VContainer;
 
 namespace _Scripts.Cards.InvocationCards
 {
-
-    /// <summary>
-    /// Event class that's triggered when an invocation needs to be cancelled.
-    /// </summary>
-    [Serializable]
-    public class CancelInvocationEvent : UnityEvent<InGameInvocationCard>
-    {
-    }
-
     /// <summary>
     /// Handles the operations related to invocation cards, including placing them on the field,
     /// canceling their effects, and more.
@@ -28,16 +19,12 @@ namespace _Scripts.Cards.InvocationCards
     {
         [SerializeField] protected Transform canvas;
 
-        /// <summary>
-        /// Public event that is raised to cancel an invocation.
-        /// </summary>
-        public static readonly CancelInvocationEvent CancelInvocationEvent = new CancelInvocationEvent();
-
         // Phase 6: Use service for business logic
         private ICardPlacementService CardPlacementService => ServiceLocator.Get<ICardPlacementService>();
 
         // Phase 23: EventBus for static UnityEvent migration
         private IEventBus _eventBus;
+        private IDisposable _invocationCancelledSubscription;
 
         /// <summary>
         /// VContainer method injection for EventBus.
@@ -52,11 +39,22 @@ namespace _Scripts.Cards.InvocationCards
 
         /// <summary>
         /// Sets up the initial state and event listeners.
+        /// Phase 23: Subscribes to EventBus events.
         /// </summary>
         private void Start()
         {
             // Attach listeners
             AttachInvocationEventListeners();
+            _invocationCancelledSubscription = _eventBus.Subscribe<InvocationCancelledEvent>(OnInvocationCancelled);
+        }
+
+        /// <summary>
+        /// Cleanup method. Unsubscribes from events when the object is destroyed.
+        /// Phase 23: Disposes EventBus subscriptions.
+        /// </summary>
+        private void OnDestroy()
+        {
+            _invocationCancelledSubscription?.Dispose();
         }
 
 
@@ -66,26 +64,18 @@ namespace _Scripts.Cards.InvocationCards
         private void AttachInvocationEventListeners()
         {
             InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
-            CancelInvocationEvent.AddListener(OnCancelEffect);
         }
 
         /// <summary>
-        /// Processes the cancellation effect on an invocation card.
-        /// Phase 6: Delegates to CardPlacementService.
-        /// Phase 23: Publishes to EventBus in addition to service call.
+        /// Event handler for InvocationCancelledEvent from EventBus.
+        /// Phase 23: Replaces static UnityEvent listener.
         /// </summary>
-        /// <param name="invocationCard">The invocation card to process.</param>
-        private void OnCancelEffect(InGameInvocationCard invocationCard)
+        private void OnInvocationCancelled(InvocationCancelledEvent evt)
         {
-            CardPlacementService.HandleInvocationCancelEffect(invocationCard);
-
-            // Phase 23: Publish to EventBus for decoupled subscribers
-            var domainOwner = (JDG.Domain.CardOwner)(int)invocationCard.CardOwner;
-            _eventBus.Publish(new InvocationCancelledEvent
+            if (evt.CancelledCard is InGameInvocationCard invocationCard)
             {
-                CancelledCard = invocationCard,
-                Owner = domainOwner
-            });
+                CardPlacementService.HandleInvocationCancelEffect(invocationCard);
+            }
         }
 
         /// <summary>

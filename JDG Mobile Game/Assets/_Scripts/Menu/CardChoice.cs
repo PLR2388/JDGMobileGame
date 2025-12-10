@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Application;
+using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using Sound;
 using UnityEngine;
@@ -14,15 +16,11 @@ namespace Menu
     /// Manages the card choices and selections in the game menu.
     /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
     /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
+    /// Phase 23: Migrated static UnityEvent to EventBus (ChangeChoicePlayer).
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
         [SerializeField] private GameObject container;
-
-        /// <summary>
-        /// Event raised when the card choice of a player changes.
-        /// </summary>
-        public static readonly UnityEvent<int> ChangeChoicePlayer = new UnityEvent<int>();
 
         /// <summary>
         /// Indicates if the player one has chosen their cards.
@@ -35,16 +33,21 @@ namespace Menu
         // Phase 17-18: Injected dependencies
         private IDeckManagementService _deckManagementService;
 
+        // Phase 23: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
         /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
+        /// Phase 23: Inject IEventBus for static UnityEvent migration.
         /// </summary>
         [Inject]
-        public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService)
+        public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService, IEventBus eventBus)
         {
             _cardSelectionService = cardSelectionService;
             _deckManagementService = deckManagementService;
+            _eventBus = eventBus;
         }
 
         /// <summary>
@@ -92,7 +95,7 @@ namespace Menu
                     AudioSystem.Instance.StopMusic();
                     SceneLoaderSystem.LoadGameScreen();
                     isPlayerOneCardChosen = false;
-                    ChangeChoicePlayer.Invoke(1);
+                    _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
 
                     _deckManagementService.Player2DeckCards =
                         deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2)).ToList();
@@ -100,7 +103,7 @@ namespace Menu
                 else
                 {
                     isPlayerOneCardChosen = true;
-                    ChangeChoicePlayer.Invoke(2);
+                    _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 2 });
 
                     _deckManagementService.Player1DeckCards =
                         deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1)).ToList();
@@ -259,7 +262,7 @@ namespace Menu
                 // Phase 17-18: Use IDeckManagementService instead of GameState.Instance
                 _deckManagementService.Player1DeckCards = new List<InGameCard>();
                 DeselectAllCards();
-                ChangeChoicePlayer.Invoke(1);
+                _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
             }
             else
             {

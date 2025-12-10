@@ -11,11 +11,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
 
-[Serializable]
-public class HandCardChangeEvent : UnityEvent<ObservableCollection<InGameCard>>
-{
-}
-
 /// <summary>
 /// Phase 23: Migrated from static UnityEvent to EventBus subscription.
 /// </summary>
@@ -24,8 +19,6 @@ public class HandCardDisplay : MonoBehaviour
     [SerializeField] protected GameObject prefabCard;
 
     protected readonly List<GameObject> CreatedCards = new List<GameObject>();
-
-    public static readonly HandCardChangeEvent HandCardChange = new HandCardChangeEvent();
 
     // Phase 2: Temporary bridge to GameStateService during migration
     // This will be removed when HandCardDisplay is refactored in Phase 6
@@ -153,7 +146,6 @@ public class HandCardDisplay : MonoBehaviour
     /// </summary>
     private void SubscribeToEvents()
     {
-        HandCardChange.AddListener(DisplayHandCard); // Keep for backwards compatibility during migration
         _handCardsSubscription = _eventBus?.Subscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
     }
 
@@ -163,7 +155,6 @@ public class HandCardDisplay : MonoBehaviour
     /// </summary>
     private void UnsubscribeFromEvents()
     {
-        HandCardChange.RemoveListener(DisplayHandCard);
         _handCardsSubscription?.Dispose();
     }
 
