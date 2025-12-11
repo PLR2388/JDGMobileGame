@@ -1,23 +1,19 @@
 {
-    "name": "JDG.Legacy",
-    "rootNamespace": "",
+    "name": "JDG.UI",
+    "rootNamespace": "JDG.UI",
     "references": [
-        "Unity.TextMeshPro",
-        "Newtonsoft.Json",
-        "VContainer",
         "JDG.Domain",
         "JDG.Application",
-        "JDG.Infrastructure",
         "JDG.Presentation",
-        "JDG.UI",
-        "JDG.Cards"
+        "VContainer",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
