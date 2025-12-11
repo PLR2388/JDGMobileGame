@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GetTypeCardFromDeckWithoutAttackAbility : Ability
 {
-    private readonly CardType type;
+    private readonly Cards.CardType type;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetTypeCardFromDeckWithoutAttackAbility"/> class.
@@ -13,7 +13,7 @@ public class GetTypeCardFromDeckWithoutAttackAbility : Ability
     /// <param name="name">The name of the ability.</param>
     /// <param name="description">The description of the ability.</param>
     /// <param name="cardType">The type of card this ability is concerned with.</param>
-    public GetTypeCardFromDeckWithoutAttackAbility(AbilityName name, string description, CardType cardType)
+    public GetTypeCardFromDeckWithoutAttackAbility(AbilityName name, string description, Cards.CardType cardType)
     {
         Name = name;
         Description = description;

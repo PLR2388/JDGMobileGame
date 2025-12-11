@@ -177,10 +177,10 @@ namespace JDG.Bridge
             return (DomainCardFamily)System.Enum.Parse(typeof(DomainCardFamily), oldFamily.ToString());
         }
 
-        private static DomainAbilityName ConvertAbilityName(global::AbilityName oldAbility)
+        private static DomainAbilityName ConvertAbilityName(JDG.Domain.AbilityName abilityName)
         {
-            // The enums have the same names, so we can parse
-            return (DomainAbilityName)System.Enum.Parse(typeof(DomainAbilityName), oldAbility.ToString());
+            // Phase 24-25: AbilityName is now in JDG.Domain namespace (no conversion needed)
+            return abilityName;
         }
 
         private static DomainConditionName ConvertConditionName(global::ConditionName oldCondition)
