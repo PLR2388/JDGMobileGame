@@ -1,3 +1,4 @@
+using JDG.Domain;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Services;
 using TMPro;
@@ -8,6 +9,7 @@ using VContainer;
 /// Manages the round display, including round text, player indicators, and camera orientation.
 /// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
 /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
+/// Phase 27: Updated to use JDG.Domain.Phase after global Phase enum was removed with GameStateManager.
 /// </summary>
 public class RoundDisplayManager : MonoBehaviour
 {
@@ -21,7 +23,7 @@ public class RoundDisplayManager : MonoBehaviour
     // Phase 24-25: Injected via VContainer
     private GameStateService _gameStateService;
     private bool IsP1Turn => _gameStateService.CurrentPlayer == PlayerId.Player1;
-    private Phase CurrentPhase => (Phase)(int)_gameStateService.CurrentPhase; // Cast from JDG.Domain.Phase to global Phase
+    private Phase CurrentPhase => _gameStateService.CurrentPhase; // Phase 27: Direct use of JDG.Domain.Phase
 
     /// <summary>
     /// VContainer method injection for dependencies.

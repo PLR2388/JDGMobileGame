@@ -1,5 +1,4 @@
 using Cards;
-using JDG.Infrastructure.DI;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 
@@ -8,6 +7,7 @@ using UnityEngine;
 /// Part of Phase 6 - temporary adapter during migration.
 ///
 /// Phase 17-18 Fix: Now creates CardCollectionService directly instead of using deleted CardManager.
+/// Phase 27: Removed ServiceLocator usage - now uses constructor injection.
 /// Finds PlayerCardManager components from the scene.
 ///
 /// This adapter allows CardPlacementService to be dependency-injected while
@@ -18,10 +18,9 @@ public class CardCollectionServiceAdapter : ICardCollectionService
 {
     private readonly CardCollectionService _cardCollectionService;
 
-    public CardCollectionServiceAdapter()
+    public CardCollectionServiceAdapter(GameStateService gameStateService)
     {
-        // Phase 17-18 Fix: Create CardCollectionService directly
-        var gameStateService = ServiceLocator.Get<GameStateService>();
+        // Phase 27: Use injected GameStateService instead of ServiceLocator
 
         // Find the two PlayerCardManager components in the scene
         var playerCardManagers = Object.FindObjectsOfType<PlayerCardManager>();

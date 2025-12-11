@@ -9,6 +9,8 @@ namespace JDG.Infrastructure.Bootstrap
     /// Game bootstrapper - initializes the DI container and service locator.
     /// Attach this to a GameObject in your startup scene.
     /// Note: Card loading is handled by LegacyCardLoader (in default assembly).
+    /// Phase 27: Ability.GameStateService initialization moved to LegacyCardLoader
+    /// (cannot reference default assembly from JDG.Infrastructure).
     /// </summary>
     public class GameBootstrapper : MonoBehaviour
     {

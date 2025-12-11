@@ -1,6 +1,7 @@
 using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Domain;
+using JDG.Infrastructure.Services;
 using UnityEngine;
 
 /// <summary>
@@ -13,11 +14,19 @@ using UnityEngine;
 /// Migration Guide: Old abilities with Unity dependencies → New pure C# abilities using repositories/use cases.
 ///
 /// Phase 24-25: Updated to use JDG.Domain.AbilityName (removed legacy global AbilityName enum).
+/// Phase 27: Added GameStateService for legacy abilities (eliminates ServiceLocator usage).
 /// </summary>
 [System.Obsolete("Legacy ability system. Use IAbility interface from JDG.Application.Abilities instead. " +
                  "Migrate to new system using factories and dependency injection.")]
 public abstract class Ability
 {
+    /// <summary>
+    /// Shared GameStateService instance for legacy abilities.
+    /// Phase 27: Set once at initialization to remove ServiceLocator dependencies.
+    /// Public static to allow LegacyCardLoader (non-inheriting class) to initialize it.
+    /// </summary>
+    public static GameStateService GameStateService { get; set; }
+
     /// <summary>
     /// The name of the ability.
     /// Phase 24-25: Now uses JDG.Domain.AbilityName.

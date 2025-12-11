@@ -2,17 +2,22 @@ using VContainer;
 using VContainer.Unity;
 using JDG.Application.Services;
 using JDG.Infrastructure.Services;
+using JDG.Bridge;
 
 namespace JDG.DI
 {
     /// <summary>
     /// VContainer lifetime scope for legacy wrapper services.
     /// Registers services that wrap old singleton managers during migration.
+    /// Phase 27: Added LegacyCardLoader registration for dependency injection.
     /// </summary>
     public class LegacyServicesScope : LifetimeScope
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            // Phase 27: Register LegacyCardLoader MonoBehaviour for card loading
+            builder.RegisterComponentInHierarchy<LegacyCardLoader>();
+
             // Legacy wrapper services (wrap old singleton managers)
             // These will be removed once migration to new architecture is complete
             builder.Register<IAudioService, AudioService>(Lifetime.Singleton);
