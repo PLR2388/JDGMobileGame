@@ -41,7 +41,7 @@ namespace JDG.Infrastructure.Tests.Services
             // Assert
             Assert.AreEqual(1, _service.SelectedCards.Count);
             Assert.AreEqual(_card1, _service.SelectedCards[0]);
-            Assert.AreEqual(2, _eventBus.PublishedEvents.Count); // CardSelected + SelectionChanged
+            Assert.AreEqual(2, _eventBus.PublishedEvents.Count); // CardAddedToSelection + CardSelectionChanged
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace JDG.Infrastructure.Tests.Services
             // Assert
             Assert.AreEqual(1, _service.SelectedCards.Count);
             Assert.AreEqual(_card2, _service.SelectedCards[0]);
-            // Should have: CardDeselected (_card1), CardSelected (_card2), SelectionChanged x2
+            // Should have: CardRemovedFromSelection (_card1), CardAddedToSelection (_card2), CardSelectionChanged x2
             Assert.AreEqual(4, _eventBus.PublishedEvents.Count);
         }
 
@@ -138,7 +138,7 @@ namespace JDG.Infrastructure.Tests.Services
 
             // Assert
             Assert.AreEqual(0, _service.SelectedCards.Count);
-            Assert.AreEqual(2, _eventBus.PublishedEvents.Count); // CardDeselected + SelectionChanged
+            Assert.AreEqual(2, _eventBus.PublishedEvents.Count); // CardRemovedFromSelection + CardSelectionChanged
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace JDG.Infrastructure.Tests.Services
 
             // Assert
             Assert.AreEqual(0, _service.SelectedCards.Count);
-            // Should have: CardDeselected x3 + SelectionChanged
+            // Should have: CardRemovedFromSelection x3 + CardSelectionChanged
             Assert.AreEqual(4, _eventBus.PublishedEvents.Count);
         }
 
@@ -199,7 +199,7 @@ namespace JDG.Infrastructure.Tests.Services
 
             // Assert
             Assert.AreEqual(0, _service.SelectedCards.Count);
-            Assert.AreEqual(1, _eventBus.PublishedEvents.Count); // Just SelectionChanged
+            Assert.AreEqual(1, _eventBus.PublishedEvents.Count); // Just CardSelectionChanged
         }
 
         [Test]

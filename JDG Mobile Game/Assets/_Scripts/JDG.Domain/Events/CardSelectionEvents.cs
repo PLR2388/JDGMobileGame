@@ -1,36 +1,37 @@
 namespace JDG.Domain.Events
 {
     /// <summary>
-    /// Event published when a card is selected.
+    /// Event published when a card is added to the selection (CardSelectionService).
     /// Part of Phase 28 - replacing UnityEvent with EventBus.
+    /// Renamed from CardSelectedEvent to avoid conflict with GameEvents.cs CardSelectedEvent (which is for card clicks).
     /// </summary>
-    public struct CardSelectedEvent
+    public struct CardAddedToSelectionEvent
     {
         /// <summary>
-        /// The card that was selected.
+        /// The card that was added to selection.
         /// Using object type to avoid dependency on legacy InGameCard.
         /// </summary>
         public object Card { get; set; }
     }
 
     /// <summary>
-    /// Event published when a card is deselected.
+    /// Event published when a card is removed from the selection (CardSelectionService).
     /// Part of Phase 28 - replacing UnityEvent with EventBus.
     /// </summary>
-    public struct CardDeselectedEvent
+    public struct CardRemovedFromSelectionEvent
     {
         /// <summary>
-        /// The card that was deselected.
+        /// The card that was removed from selection.
         /// Using object type to avoid dependency on legacy InGameCard.
         /// </summary>
         public object Card { get; set; }
     }
 
     /// <summary>
-    /// Event published when the selection changes (any select/deselect operation).
+    /// Event published when the card selection set changes (any select/deselect operation).
     /// Part of Phase 28 - replacing UnityEvent with EventBus.
     /// </summary>
-    public struct SelectionChangedEvent
+    public struct CardSelectionChangedEvent
     {
         /// <summary>
         /// The number of cards currently selected.

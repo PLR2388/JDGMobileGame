@@ -47,7 +47,7 @@ namespace JDG.Infrastructure.Services
                 {
                     var oldestCard = _selectedCards[0];
                     _selectedCards.RemoveAt(0);
-                    _eventBus.Publish(new CardDeselectedEvent { Card = oldestCard });
+                    _eventBus.Publish(new CardRemovedFromSelectionEvent { Card = oldestCard });
                 }
             }
 
@@ -55,8 +55,8 @@ namespace JDG.Infrastructure.Services
             if (!_selectedCards.Contains(card))
             {
                 _selectedCards.Add(card);
-                _eventBus.Publish(new CardSelectedEvent { Card = card });
-                _eventBus.Publish(new SelectionChangedEvent { SelectedCount = _selectedCards.Count });
+                _eventBus.Publish(new CardAddedToSelectionEvent { Card = card });
+                _eventBus.Publish(new CardSelectionChangedEvent { SelectedCount = _selectedCards.Count });
             }
         }
 
@@ -67,8 +67,8 @@ namespace JDG.Infrastructure.Services
 
             if (_selectedCards.Remove(card))
             {
-                _eventBus.Publish(new CardDeselectedEvent { Card = card });
-                _eventBus.Publish(new SelectionChangedEvent { SelectedCount = _selectedCards.Count });
+                _eventBus.Publish(new CardRemovedFromSelectionEvent { Card = card });
+                _eventBus.Publish(new CardSelectionChangedEvent { SelectedCount = _selectedCards.Count });
             }
         }
 
@@ -80,10 +80,10 @@ namespace JDG.Infrastructure.Services
             {
                 var card = _selectedCards[0];
                 _selectedCards.RemoveAt(0);
-                _eventBus.Publish(new CardDeselectedEvent { Card = card });
+                _eventBus.Publish(new CardRemovedFromSelectionEvent { Card = card });
             }
 
-            _eventBus.Publish(new SelectionChangedEvent { SelectedCount = 0 });
+            _eventBus.Publish(new CardSelectionChangedEvent { SelectedCount = 0 });
         }
 
         /// <inheritdoc/>

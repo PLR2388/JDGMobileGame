@@ -34,12 +34,12 @@ public class CardSelectionManager : MonoBehaviour
         _eventBus = eventBus;
 
         // Subscribe to domain events and forward to UnityEvents for backward compatibility
-        _eventBus.Subscribe<CardSelectedEvent>(OnCardSelectedEvent);
-        _eventBus.Subscribe<CardDeselectedEvent>(OnCardDeselectedEvent);
-        _eventBus.Subscribe<SelectionChangedEvent>(OnSelectionChangedEvent);
+        _eventBus.Subscribe<CardAddedToSelectionEvent>(OnCardAddedToSelectionEvent);
+        _eventBus.Subscribe<CardRemovedFromSelectionEvent>(OnCardRemovedFromSelectionEvent);
+        _eventBus.Subscribe<CardSelectionChangedEvent>(OnCardSelectionChangedEvent);
     }
 
-    private void OnCardSelectedEvent(CardSelectedEvent evt)
+    private void OnCardAddedToSelectionEvent(CardAddedToSelectionEvent evt)
     {
         if (evt.Card is InGameCard card)
         {
@@ -47,7 +47,7 @@ public class CardSelectionManager : MonoBehaviour
         }
     }
 
-    private void OnCardDeselectedEvent(CardDeselectedEvent evt)
+    private void OnCardRemovedFromSelectionEvent(CardRemovedFromSelectionEvent evt)
     {
         if (evt.Card is InGameCard card)
         {
@@ -55,7 +55,7 @@ public class CardSelectionManager : MonoBehaviour
         }
     }
 
-    private void OnSelectionChangedEvent(SelectionChangedEvent evt)
+    private void OnCardSelectionChangedEvent(CardSelectionChangedEvent evt)
     {
         SelectionChanged.Invoke();
     }
