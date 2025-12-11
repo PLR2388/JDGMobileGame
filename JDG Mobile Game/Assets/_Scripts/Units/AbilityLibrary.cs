@@ -256,7 +256,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         new GetTypeCardFromDeckWithoutAttackAbility(
             AbilityName.GetEquipmentCardWithoutAttack,
             "Invocation can get Equipment card and loose its attack phase",
-            CardType.Equipment
+            Cards.CardType.Equipment
         ),
         new SacrificeCardAbility(
             AbilityName.SacrificeGranolax,

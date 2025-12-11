@@ -48,7 +48,7 @@ public class SacrificeToInvokeAbility : Ability
     public override bool IsActionPossible(PlayerCards playerCards)
     {
         return playerCards.YellowCards.Any(card =>
-            card.Type == CardType.Invocation &&
+            card.Type == Cards.CardType.Invocation &&
             card.Collector == false);
     }
 
@@ -61,7 +61,7 @@ public class SacrificeToInvokeAbility : Ability
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         List<InGameCard> invocationCards = playerCards.YellowCards.TakeWhile(card =>
-            card.Type == CardType.Invocation &&
+            card.Type == Cards.CardType.Invocation &&
             card.Collector == false).ToList();
         if (invocationCards.Count > 0)
         {

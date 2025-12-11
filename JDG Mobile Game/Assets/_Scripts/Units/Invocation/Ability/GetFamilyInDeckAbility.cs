@@ -48,7 +48,7 @@ public class GetFamilyInDeckAbility : Ability
             positiveAction: () =>
             {
                 List<InGameCard> familyCards = playerCards.Deck.FindAll(card =>
-                    card.Type == CardType.Invocation && (card as InGameInvocationCard)?.Families.Contains(family) == true);
+                    card.Type == Cards.CardType.Invocation && (card as InGameInvocationCard)?.Families.Contains(family) == true);
 
                 var config = new CardSelectorConfig(
                     string.Format(

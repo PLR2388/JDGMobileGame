@@ -40,7 +40,7 @@ public class OptionalChangeFieldFromDeckAbility : Ability
     /// <param name="opponentPlayerCards">The cards of the opponent player.</param>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
-        List<InGameCard> fieldCardsFromDeck = playerCards.Deck.FindAll(card => card.Type == CardType.Field);
+        List<InGameCard> fieldCardsFromDeck = playerCards.Deck.FindAll(card => card.Type == Cards.CardType.Field);
         if (fieldCardsFromDeck.Count > 0)
         {
             var config = new MessageBoxConfig(
