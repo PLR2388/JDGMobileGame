@@ -410,40 +410,8 @@ For questions or issues:
 
 ---
 
-### Phase 34: GitHub Actions CI/CD Setup ✅ (Just Completed)
-
-#### Workflow Configuration
-- ✅ **unity-tests.yml** - GitHub Actions workflow for automated testing
-  - Location: `.github/workflows/unity-tests.yml`
-  - Triggers on push to master/refactor-v3 and PRs to master
-  - Uses game-ci/unity-test-runner@v4
-  - Targets Unity 6000.0.60f1 (Unity 6)
-  - Runs EditMode tests (all 3 test assemblies)
-  - Generates coverage reports
-
-#### Required Secrets Setup
-To enable the workflow, add these secrets to GitHub repository settings:
-1. `UNITY_LICENSE` - Base64 encoded Unity .ulf license file
-2. `UNITY_EMAIL` - Unity account email
-3. `UNITY_PASSWORD` - Unity account password
-
-To get your Unity license:
-```bash
-# Run Unity to generate license request
-Unity -batchmode -createManualActivationFile
-# Activate at: https://license.unity3d.com/manual
-# Download .ulf file and base64 encode it
-base64 -i Unity_v6000.x.ulf
-```
-
-#### Features
-- Library folder caching for faster builds
-- Test results uploaded as artifacts
-- Code coverage reports generated
-- Runs on ubuntu-latest for cost efficiency
-
----
-
 **Last Updated**: 2025-12-12
 **Current Branch**: refactor-v3
-**Status**: Phase 34 Complete ✅ (GitHub Actions CI/CD Setup)
+**Status**: Phase 29 Complete ✅ (Complete Ability Registration)
+
+**Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.
