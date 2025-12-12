@@ -1,6 +1,9 @@
 using NUnit.Framework;
 using JDG.Presentation.Views;
 using UnityEngine;
+using System.Collections.Generic;
+using _Scripts.Units.Invocation;
+using Cards;
 
 /// <summary>
 /// Unit tests for InvocationMenuPresenter.
@@ -233,20 +236,24 @@ public class TestCombatService : ICombatService
     private bool _hasAction;
     private bool _actionPossible;
 
+    // Test configuration methods
     public void SetCanAttack(bool canAttack) => _canAttack = canAttack;
     public void SetHasAction(bool hasAction) => _hasAction = hasAction;
     public void SetActionPossible(bool actionPossible) => _actionPossible = actionPossible;
+
+    // ICombatService implementation
+    public InGameInvocationCard Attacker { get; set; }
+    public InGameInvocationCard Opponent { get; set; }
 
     public bool CanAttackerAttack() => _canAttack;
     public bool HasAttackerAction() => _hasAction;
     public bool IsSpecialActionPossible() => _actionPossible;
 
-    // Unused interface methods (not tested in presenter)
-    public void SetAttacker(object card) { }
-    public void ClearAttacker() { }
-    public object GetAttacker() => null;
-    public void PerformAttack(object defender) { }
-    public void PerformSpecialAction() { }
+    // Unused interface methods (not tested in presenter) - return defaults
+    public float ComputeDamageAttack() => 0f;
+    public void HandleAttack() { }
+    public List<InGameCard> BuildValidTargets() => new List<InGameCard>();
+    public void UseSpecialAction() { }
 }
 
 #endregion

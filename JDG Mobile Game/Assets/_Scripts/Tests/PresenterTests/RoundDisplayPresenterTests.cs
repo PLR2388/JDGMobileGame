@@ -117,7 +117,7 @@ public class RoundDisplayPresenterTests
         _view.SetPlayerTurnTextCalls.Clear(); // Clear initial call
 
         // Act
-        _eventBus.Publish(new PlayerTurnChangedEvent { NewPlayer = JDG.Domain.Enums.CardOwner.Player2 });
+        _eventBus.Publish(new PlayerTurnChangedEvent { NewPlayer = JDG.Domain.CardOwner.Player2 });
 
         // Assert
         Assert.AreEqual(1, _view.SetPlayerTurnTextCalls.Count);

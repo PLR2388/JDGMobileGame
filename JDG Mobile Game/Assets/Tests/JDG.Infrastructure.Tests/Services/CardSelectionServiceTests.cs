@@ -1,9 +1,12 @@
 using NUnit.Framework;
 using JDG.Application;
-using JDG.Infrastructure.Services;
-using JDG.Application.Services;
 using JDG.Domain.Events;
 using System.Collections.Generic;
+using System.Linq;
+
+// Use fully qualified names to avoid conflicts with legacy types in global namespace
+using ICardSelectionServiceNew = JDG.Application.Services.ICardSelectionService;
+using CardSelectionServiceNew = JDG.Infrastructure.Services.CardSelectionService;
 
 namespace JDG.Infrastructure.Tests.Services
 {
@@ -14,7 +17,7 @@ namespace JDG.Infrastructure.Tests.Services
     [TestFixture]
     public class CardSelectionServiceTests
     {
-        private ICardSelectionService _service;
+        private ICardSelectionServiceNew _service;
         private TestEventBus _eventBus;
         private TestCard _card1;
         private TestCard _card2;
@@ -24,7 +27,7 @@ namespace JDG.Infrastructure.Tests.Services
         public void SetUp()
         {
             _eventBus = new TestEventBus();
-            _service = new CardSelectionService(_eventBus);
+            _service = new CardSelectionServiceNew(_eventBus);
             _card1 = new TestCard("Card1");
             _card2 = new TestCard("Card2");
             _card3 = new TestCard("Card3");
@@ -77,8 +80,8 @@ namespace JDG.Infrastructure.Tests.Services
 
             // Assert
             Assert.AreEqual(2, _service.SelectedCards.Count);
-            Assert.Contains(_card1, _service.SelectedCards);
-            Assert.Contains(_card2, _service.SelectedCards);
+            Assert.IsTrue(_service.SelectedCards.Contains(_card1));
+            Assert.IsTrue(_service.SelectedCards.Contains(_card2));
         }
 
         [Test]
@@ -97,8 +100,8 @@ namespace JDG.Infrastructure.Tests.Services
             // Assert
             Assert.AreEqual(2, _service.SelectedCards.Count);
             Assert.IsFalse(_service.SelectedCards.Contains(_card1)); // Oldest removed
-            Assert.Contains(_card2, _service.SelectedCards);
-            Assert.Contains(_card3, _service.SelectedCards);
+            Assert.IsTrue(_service.SelectedCards.Contains(_card2));
+            Assert.IsTrue(_service.SelectedCards.Contains(_card3));
         }
 
         [Test]
