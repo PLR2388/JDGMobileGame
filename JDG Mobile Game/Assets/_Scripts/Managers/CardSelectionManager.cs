@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using Cards;
+using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using VContainer;

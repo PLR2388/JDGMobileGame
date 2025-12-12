@@ -1,14 +1,14 @@
 using NUnit.Framework;
 using JDG.Presentation.Presenters;
 using JDG.Presentation.Views;
+using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using System.Collections.Generic;
 
-namespace JDG.Presentation.Tests.Presenters
-{
+// Tests in default assembly to access presenters which depend on legacy services
     /// <summary>
     /// Unit tests for RoundDisplayPresenter.
     /// Part of Phase 28 - MonoBehaviour Wave 1 MVP migration.
@@ -241,13 +241,20 @@ namespace JDG.Presentation.Tests.Presenters
             return key; // Return key itself for testing
         }
 
-        public void SetLanguage(string languageCode)
+        public void SetLanguage(GameLanguage language)
         {
-            throw new System.NotImplementedException();
+            // No-op for testing
         }
 
-        public string CurrentLanguage => "en";
+        public GameLanguage GetCurrentLanguage()
+        {
+            return GameLanguage.English;
+        }
+
+        public bool HasKey(string key)
+        {
+            return true; // All keys exist in test
+        }
     }
 
     #endregion
-}

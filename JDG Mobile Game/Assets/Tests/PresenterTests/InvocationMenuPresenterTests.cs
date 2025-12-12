@@ -3,8 +3,7 @@ using JDG.Presentation.Presenters;
 using JDG.Presentation.Views;
 using UnityEngine;
 
-namespace JDG.Presentation.Tests.Presenters
-{
+// Tests in default assembly to access presenters which depend on legacy services
     /// <summary>
     /// Unit tests for InvocationMenuPresenter.
     /// Part of Phase 28 - MonoBehaviour Wave 1 MVP migration.
@@ -252,4 +251,3 @@ namespace JDG.Presentation.Tests.Presenters
     }
 
     #endregion
-}
