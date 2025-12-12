@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using JDG.Presentation.Presenters;
 using JDG.Presentation.Views;
 using UnityEngine;
 

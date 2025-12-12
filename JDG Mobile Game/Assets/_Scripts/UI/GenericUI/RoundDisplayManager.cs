@@ -3,7 +3,6 @@ using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Services;
-using JDG.Presentation.Presenters;
 using JDG.Presentation.Views;
 using TMPro;
 using UnityEngine;

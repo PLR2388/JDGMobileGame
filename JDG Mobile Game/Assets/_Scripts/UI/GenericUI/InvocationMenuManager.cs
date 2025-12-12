@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 using JDG.Presentation.Views;
-using JDG.Presentation.Presenters;
 
 /// <summary>
 /// View implementation for invocation context menu.
