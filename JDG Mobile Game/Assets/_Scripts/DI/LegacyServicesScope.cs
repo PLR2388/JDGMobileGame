@@ -58,7 +58,11 @@ namespace JDG.DI
             // Phase 9: Card Selection Service
             // Phase 19-20: Register CardSelectionManager MonoBehaviour from scene, then adapter service
             // Phase 28: Migrated to clean CardSelectionService - now uses EventBus instead of UnityEvents
+            // Phase 32: Register BOTH interfaces during migration:
+            //   - Legacy ICardSelectionService (global) for OnHover, CardChoice, etc.
+            //   - Clean JDG.Application.Services.ICardSelectionService for new code
             builder.RegisterComponentInHierarchy<CardSelectionManager>();
+            builder.Register<ICardSelectionService, CardSelectionService>(Lifetime.Singleton);
             builder.Register<JDG.Application.Services.ICardSelectionService, JDG.Infrastructure.Services.CardSelectionService>(Lifetime.Singleton);
 
             // Phase 9: Invocation Menu Service

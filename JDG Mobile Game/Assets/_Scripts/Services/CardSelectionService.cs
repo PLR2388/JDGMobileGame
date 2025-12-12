@@ -3,10 +3,15 @@ using Cards;
 using UnityEngine.Events;
 
 /// <summary>
-/// Adapter service that bridges ICardSelectionService to CardSelectionManager.
+/// LEGACY adapter service that bridges ICardSelectionService to CardSelectionManager.
 /// Phase 9: Temporary bridge during migration from singleton to DI.
 /// Phase 19-20: Now injects CardSelectionManager instead of using .Instance.
+///
+/// Phase 32: This implements the LEGACY ICardSelectionService (global namespace).
+/// For new code, use JDG.Infrastructure.Services.CardSelectionService which implements
+/// the clean JDG.Application.Services.ICardSelectionService.
 /// </summary>
+[System.Obsolete("Legacy adapter. Use JDG.Infrastructure.Services.CardSelectionService for new code.")]
 public class CardSelectionService : ICardSelectionService
 {
     private readonly CardSelectionManager _cardSelectionManager;

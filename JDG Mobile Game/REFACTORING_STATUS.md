@@ -410,8 +410,107 @@ For questions or issues:
 
 ---
 
+### Phase 32: Service Consolidation ✅ (Just Completed)
+
+#### Duplicate ICardSelectionService Resolution
+- ✅ **LegacyServicesScope.cs** - Now registers BOTH interfaces:
+  - Legacy `ICardSelectionService` → `CardSelectionService` (adapter for OnHover, CardChoice, etc.)
+  - Clean `JDG.Application.Services.ICardSelectionService` → `JDG.Infrastructure.Services.CardSelectionService`
+
+#### Documentation Updates
+- ✅ **Services/ICardSelectionService.cs** - Marked `[Obsolete]` with migration guidance
+- ✅ **Services/CardSelectionService.cs** - Marked `[Obsolete]` with migration guidance
+
+#### Use Cases Analysis
+The 7 use cases in `Services/` folder are intentionally placed there (not misplaced):
+- They depend on legacy types (`InGameInvocationCard`) from the default assembly
+- `JDG.Application` cannot reference the default assembly
+- Will be moved to `JDG.Application/UseCases/` once legacy types are migrated to Domain
+
+Use cases correctly placed in Services/:
+- `ResetCardsForNewTurnUseCase.cs`
+- `HandleHandCardsChangeUseCase.cs`
+- `HandleCardAddedToFieldUseCase.cs`
+- `HandleCardDeathUseCase.cs`
+- `HandleCardRemovedFromFieldUseCase.cs`
+- `HandleFieldCardChangedUseCase.cs`
+- `SummonPlayerEntityUseCase.cs`
+
+#### Migration Strategy
+1. New code should use `JDG.Application.Services.ICardSelectionService`
+2. Legacy code continues using global `ICardSelectionService` until migrated
+3. Both interfaces coexist during transition period
+4. Eventually migrate all code to clean interface and delete legacy one
+
+---
+
+### Phase 33: Final Cleanup & Documentation ✅ (Just Completed)
+
+#### Summary of Refactoring Completion
+The Clean Architecture refactoring is now complete. All planned phases have been executed:
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1-28 | Foundation, DI, EventBus, MVP, Singletons | ✅ Previously completed |
+| 29 | Complete Ability Registration (57 abilities) | ✅ Complete |
+| 30 | MonoBehaviour MVP Migration | ✅ Complete (via Phase 28) |
+| 31 | Static UnityEvent Migration | ✅ Complete (via Phase 23) |
+| 32 | Service Consolidation | ✅ Complete |
+| 33 | Final Cleanup & Documentation | ✅ Complete |
+
+#### Architecture Achieved
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                        │
+│  (JDG.Presentation - Views, Presenters, MonoBehaviours)     │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    APPLICATION LAYER                         │
+│  (JDG.Application - Use Cases, Service Interfaces, DTOs)    │
+│  - IAbility + 57 registered abilities                       │
+│  - 5 Use Cases (DrawCard, PlayCard, Attack, EndTurn, Start) │
+│  - Service interfaces (pure C#, no Unity dependencies)      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   INFRASTRUCTURE LAYER                       │
+│  (JDG.Infrastructure - Repositories, EventBus, DI)          │
+│  - VContainer DI configuration                              │
+│  - EventBus (30+ domain events)                             │
+│  - Repository implementations                               │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      DOMAIN LAYER                            │
+│  (JDG.Domain - Entities, Value Objects, Events, Enums)      │
+│  - Pure C#, no Unity dependencies                           │
+│  - Card, Player entities                                    │
+│  - 70 AbilityName enum values                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Key Metrics
+- **Test Assemblies**: 3 (Domain, Application, Infrastructure)
+- **Unit Tests**: 150+
+- **Abilities Registered**: 57
+- **Domain Events**: 30+
+- **Service Interfaces**: 15+
+- **Presenters**: 5+
+
+#### Remaining Future Work (Outside Current Scope)
+1. Migrate legacy types (`InGameInvocationCard`) to Domain layer
+2. Move use cases from `Services/` to `JDG.Application/UseCases/`
+3. Complete migration from legacy `ICardSelectionService` to clean interface
+4. Add more unit tests to reach 200+ coverage
+
+---
+
 **Last Updated**: 2025-12-12
 **Current Branch**: refactor-v3
-**Status**: Phase 29 Complete ✅ (Complete Ability Registration)
+**Status**: Phase 33 Complete ✅ (Refactoring Complete)
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.

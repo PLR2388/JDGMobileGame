@@ -3,13 +3,20 @@ using Cards;
 using UnityEngine.Events;
 
 /// <summary>
-/// Service for managing card selection state.
-/// Replaces CardSelectionManager singleton access.
-/// Part of Phase 9 - Remaining singleton elimination.
+/// LEGACY service interface for managing card selection state.
+/// Part of Phase 9 - Replaces CardSelectionManager singleton access.
 ///
-/// Note: This interface is in the default assembly because it references legacy types
-/// (InGameCard, UnityEvent). Will be migrated once InGameCard is replaced with domain Card entity.
+/// IMPORTANT: This is a LEGACY interface in the global namespace.
+/// There is also a CLEAN interface at JDG.Application.Services.ICardSelectionService.
+///
+/// Phase 32: Both interfaces coexist during migration:
+/// - This interface: Uses InGameCard and UnityEvents, for legacy code (OnHover, CardChoice, etc.)
+/// - Clean interface: Uses object and EventBus, for new code following Clean Architecture
+///
+/// Migration path: Gradually update code to use JDG.Application.Services.ICardSelectionService,
+/// then delete this legacy interface once no code depends on it.
 /// </summary>
+[System.Obsolete("Legacy interface. Use JDG.Application.Services.ICardSelectionService for new code.")]
 public interface ICardSelectionService
 {
     /// <summary>
