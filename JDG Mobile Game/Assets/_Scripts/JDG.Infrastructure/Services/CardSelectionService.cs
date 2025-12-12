@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 
