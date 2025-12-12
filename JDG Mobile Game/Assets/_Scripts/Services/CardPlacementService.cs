@@ -12,6 +12,7 @@ using UnityEngine;
 /// Service for managing card placement operations.
 /// Extracts business logic from *Functions MonoBehaviours.
 /// Part of Phase 6 - MonoBehaviour logic extraction.
+/// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 ///
 /// Note: This service is in the default assembly because it depends on legacy types.
 /// It will be moved to JDG.Infrastructure once legacy types are refactored.
@@ -19,10 +20,12 @@ using UnityEngine;
 public class CardPlacementService : ICardPlacementService
 {
     private readonly ICardCollectionService _cardCollectionService;
+    private readonly IPlayerStatusProvider _playerStatusProvider;
 
-    public CardPlacementService(ICardCollectionService cardCollectionService)
+    public CardPlacementService(ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
     {
         _cardCollectionService = cardCollectionService;
+        _playerStatusProvider = playerStatusProvider;
     }
 
     /// <summary>
@@ -75,9 +78,9 @@ public class CardPlacementService : ICardPlacementService
             return false;
 
         // Apply effect abilities
-        // Note: Still using PlayerManager singleton - will be refactored in later phase
-        var currentPlayerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
+        // Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance
+        var currentPlayerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
+        var opponentPlayerStatus = _playerStatusProvider.GetOpponentPlayerStatus();
 
         foreach (var effectCardEffectAbility in card.EffectAbilities)
         {

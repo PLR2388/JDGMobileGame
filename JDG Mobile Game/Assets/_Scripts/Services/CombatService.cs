@@ -14,18 +14,21 @@ using UnityEngine;
 /// JDG.Infrastructure once these types are fully refactored.
 ///
 /// Part of Phase 4 migration - decomposes CardManager god class.
+/// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// </summary>
 public class CombatService : ICombatService
 {
     private readonly ICardCollectionService _cardCollectionService;
+    private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly Transform _canvas;
 
     public InGameInvocationCard Attacker { get; set; }
     public InGameInvocationCard Opponent { get; set; }
 
-    public CombatService(ICardCollectionService cardCollectionService, Transform canvas)
+    public CombatService(ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider, Transform canvas)
     {
         _cardCollectionService = cardCollectionService;
+        _playerStatusProvider = playerStatusProvider;
         _canvas = canvas;
     }
 
@@ -60,7 +63,7 @@ public class CombatService : ICombatService
 
         if (Opponent.Title == CardNameMappings.CardNameMap[CardNames.Player])
         {
-            PlayerManager.Instance.HandleAttackIfOpponentIsPlayer();
+            _playerStatusProvider.HandleAttackIfOpponentIsPlayer();
         }
         else
         {
@@ -130,8 +133,8 @@ public class CombatService : ICombatService
     {
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
         var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
-        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        var opponentStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
+        var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
+        var opponentStatus = _playerStatusProvider.GetOpponentPlayerStatus();
 
         foreach (var ability in Opponent.Abilities)
         {

@@ -11,8 +11,9 @@ using VContainer;
 /// temporarily to maintain UI compatibility during migration.
 /// Phase 17-18: Removed CardManager singleton dependency via ICombatService.
 /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
+/// Phase 28: Removed singleton pattern, implements IPlayerStatusProvider for DI.
 /// </summary>
-public class PlayerManager : Singleton<PlayerManager>
+public class PlayerManager : MonoBehaviour, IPlayerStatusProvider
 {
     [SerializeField] private PlayerStatus playerStatus1;
     [SerializeField] private PlayerStatus playerStatus2;
@@ -57,10 +58,10 @@ public class PlayerManager : Singleton<PlayerManager>
 
     /// <summary>
     /// Awake method to initialize components and settings.
+    /// Phase 28: Removed Singleton base class, now regular MonoBehaviour.
     /// </summary>
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         InitShieldCount();
     }
 

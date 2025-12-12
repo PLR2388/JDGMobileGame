@@ -11,11 +11,15 @@ using VContainer;
 /// Manages in-game card interactions, handling events, and displaying UI elements related to cards.
 /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
 /// Phase 23: Migrated HandCardChange invocations to EventBus.
+/// Phase 28: Added IPlayerStatusProvider for player status access in card handlers.
 /// </summary>
 public class InGameMenuScript : MonoBehaviour
 {
     // Phase 17-18: Injected dependency (protected so TutoInGameMenuScript can access)
     protected ICardCollectionService _cardCollectionService;
+
+    // Phase 28: Injected player status provider
+    protected IPlayerStatusProvider _playerStatusProvider;
 
     // Phase 23: EventBus for hand card display events
     protected IEventBus _eventBus;
@@ -67,25 +71,28 @@ public class InGameMenuScript : MonoBehaviour
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject ICardCollectionService instead of CardManager.Instance.
     /// Phase 23: Inject IEventBus for hand card display events.
+    /// Phase 28: Inject IPlayerStatusProvider for player status access.
     /// </summary>
     [Inject]
-    public void Construct(ICardCollectionService cardCollectionService, IEventBus eventBus)
+    public void Construct(ICardCollectionService cardCollectionService, IEventBus eventBus, IPlayerStatusProvider playerStatusProvider)
     {
         _cardCollectionService = cardCollectionService;
         _eventBus = eventBus;
+        _playerStatusProvider = playerStatusProvider;
     }
 
     /// <summary>
     /// Initializes handlers for different types of cards.
     /// Phase 17-18: Pass ICardCollectionService to handlers.
+    /// Phase 28: Pass IPlayerStatusProvider to handlers.
     /// </summary>
     protected void InitializeCardHandlers()
     {
-        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService);
-        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService);
-        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService);
-        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService);
-        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService);
+        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService, _playerStatusProvider);
+        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService, _playerStatusProvider);
+        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService, _playerStatusProvider);
+        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService, _playerStatusProvider);
+        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService, _playerStatusProvider);
     }
 
     /// <summary>

@@ -5,17 +5,20 @@ using Cards.EffectCards;
 /// <summary>
 /// Handler responsible for effect card-specific behaviors in the game.
 /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+/// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// </summary>
 public class EffectCardHandler : CardHandler
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="EffectCardHandler"/> class.
     /// Phase 17-18: Added cardCollectionService parameter.
+    /// Phase 28: Added playerStatusProvider parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
-    public EffectCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService)
-        : base(menuScript, cardCollectionService)
+    /// <param name="playerStatusProvider">The provider for accessing player status.</param>
+    public EffectCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
+        : base(menuScript, cardCollectionService, playerStatusProvider)
     {
     }
 
@@ -28,7 +31,7 @@ public class EffectCardHandler : CardHandler
         // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
         var playerCard = cardCollectionService.GetCurrentPlayerCards();
         var opponentPlayerCard = cardCollectionService.GetOpponentPlayerCards();
-        var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
+        var opponentPlayerStatus = playerStatusProvider.GetOpponentPlayerStatus();
         var effectCard = card as InGameEffectCard;
         menuScript.putCardButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD));
         menuScript.putCardButton.interactable =

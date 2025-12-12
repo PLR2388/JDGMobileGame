@@ -280,7 +280,7 @@ namespace OnePlayer
                 _gameStateService.NextPhase();
             }
 
-            var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
+            var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
             if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
             {
                 _gameStateService.SetPhase(JDG.Domain.Phase.End);

@@ -3,11 +3,12 @@ using Cards;
 
 /// <summary>
 /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+/// Phase 28: Added IPlayerStatusProvider parameter.
 /// </summary>
 public class InvocationCardHandler : CardHandler
 {
-    public InvocationCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService)
-        : base(menuScript, cardCollectionService)
+    public InvocationCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
+        : base(menuScript, cardCollectionService, playerStatusProvider)
     {
     }
 

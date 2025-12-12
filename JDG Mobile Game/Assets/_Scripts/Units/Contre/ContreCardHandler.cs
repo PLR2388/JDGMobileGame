@@ -3,17 +3,20 @@ using Cards;
 /// <summary>
 /// Handler responsible for contre card-specific behaviors in the game.
 /// Phase 17-18: Updated constructor signature to match base class changes.
+/// Phase 28: Added IPlayerStatusProvider parameter.
 /// </summary>
 public class ContreCardHandler : CardHandler
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ContreCardHandler"/> class.
     /// Phase 17-18: Added cardCollectionService parameter.
+    /// Phase 28: Added playerStatusProvider parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
-    public ContreCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService)
-        : base(menuScript, cardCollectionService)
+    /// <param name="playerStatusProvider">The provider for accessing player status.</param>
+    public ContreCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
+        : base(menuScript, cardCollectionService, playerStatusProvider)
     {
     }
 

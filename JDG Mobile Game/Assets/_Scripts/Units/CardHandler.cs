@@ -3,6 +3,7 @@ using Cards;
 /// <summary>
 /// Represents a base class for handling card-specific behaviors within the game.
 /// Phase 17-18: Added ICardCollectionService for card state access.
+/// Phase 28: Added IPlayerStatusProvider for player status access.
 /// </summary>
 public abstract class CardHandler
 {
@@ -17,15 +18,23 @@ public abstract class CardHandler
     protected ICardCollectionService cardCollectionService;
 
     /// <summary>
+    /// Phase 28: Provider for accessing player status.
+    /// </summary>
+    protected IPlayerStatusProvider playerStatusProvider;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="CardHandler"/> class.
     /// Phase 17-18: Added cardCollectionService parameter.
+    /// Phase 28: Added playerStatusProvider parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
-    public CardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService)
+    /// <param name="playerStatusProvider">The provider for accessing player status.</param>
+    public CardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
     {
         this.menuScript = menuScript;
         this.cardCollectionService = cardCollectionService;
+        this.playerStatusProvider = playerStatusProvider;
     }
 
     /// <summary>

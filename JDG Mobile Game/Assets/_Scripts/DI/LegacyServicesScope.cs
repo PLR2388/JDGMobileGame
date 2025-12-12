@@ -76,6 +76,10 @@ namespace JDG.DI
             // Registered for use by GameLoop during transition to full MVP pattern
             builder.RegisterComponentInHierarchy<UIManager>();
 
+            // Phase 28: PlayerManager - removed singleton, now uses DI
+            // Provides player status access for services during turn
+            builder.RegisterComponentInHierarchy<PlayerManager>().As<IPlayerStatusProvider>();
+
             // Phase 17-18: Deck Management Service
             // DeckManagementService replaces GameState singleton for deck data storage
             builder.Register<IDeckManagementService, DeckManagementService>(Lifetime.Singleton);

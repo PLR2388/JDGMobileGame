@@ -12,6 +12,7 @@ using JDG.Infrastructure.Services;
 /// <summary>
 /// Phase 17-18: Removed CardManager singleton dependency via Phase 4 services.
 /// Phase 19-20: Injected UIManager instead of using .Instance.
+/// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
@@ -34,10 +35,14 @@ public class GameLoop : MonoBehaviour
     // Phase 19-20: Injected InputManager (protected so TutoPlayerGameLoop can access)
     protected InputManager _inputManager;
 
+    // Phase 28: IPlayerStatusProvider instead of PlayerManager.Instance
+    protected IPlayerStatusProvider _playerStatusProvider;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
     /// Phase 19-20: Added UIManager and InputManager injection.
+    /// Phase 28: Added IPlayerStatusProvider to replace PlayerManager.Instance.
     /// </summary>
     [Inject]
     public void Construct(
@@ -51,7 +56,8 @@ public class GameLoop : MonoBehaviour
         ITurnService turnService,
         ICardDrawService cardDrawService,
         UIManager uiManager,
-        InputManager inputManager)
+        InputManager inputManager,
+        IPlayerStatusProvider playerStatusProvider)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -64,6 +70,7 @@ public class GameLoop : MonoBehaviour
         _cardDrawService = cardDrawService;
         _uiManager = uiManager;
         _inputManager = inputManager;
+        _playerStatusProvider = playerStatusProvider;
     }
 
     // Start is called before the first frame update
@@ -188,7 +195,7 @@ public class GameLoop : MonoBehaviour
             _gameStateService.NextPhase();
         }
 
-        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
+        var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
         if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
         {
             _gameStateService.SetPhase(JDG.Domain.Phase.End);
@@ -314,8 +321,8 @@ public class GameLoop : MonoBehaviour
     private void HandlePlayerDeath()
     {
         // Check if one player die
-        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
+        var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
+        var opponentPlayerStatus = _playerStatusProvider.GetOpponentPlayerStatus();
         if (playerStatus.GetCurrentHealth() <= 0)
         {
             GameOver();

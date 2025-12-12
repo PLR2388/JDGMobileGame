@@ -15,31 +15,35 @@ using UnityEngine;
 /// once these types are fully refactored.
 ///
 /// Part of Phase 4 migration - decomposes CardManager god class.
+/// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// </summary>
 public class TurnService : ITurnService
 {
     private readonly GameStateService _gameStateService;
     private readonly PlayerCardManager _player1CardManager;
     private readonly PlayerCardManager _player2CardManager;
+    private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly Transform _canvas;
 
     public TurnService(
         GameStateService gameStateService,
         PlayerCardManager player1CardManager,
         PlayerCardManager player2CardManager,
+        IPlayerStatusProvider playerStatusProvider,
         Transform canvas)
     {
         _gameStateService = gameStateService;
         _player1CardManager = player1CardManager;
         _player2CardManager = player2CardManager;
+        _playerStatusProvider = playerStatusProvider;
         _canvas = canvas;
     }
 
     public void OnTurnStart()
     {
         var (playerCards, opponentCards) = GetCurrentAndOpponentCards();
-        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        var opponentStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
+        var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
+        var opponentStatus = _playerStatusProvider.GetOpponentPlayerStatus();
 
         playerCards.ResetInvocationCardNewTurn();
 
