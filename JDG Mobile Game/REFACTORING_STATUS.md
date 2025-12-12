@@ -374,6 +374,76 @@ For questions or issues:
 
 ---
 
+### Phase 29: Complete Ability Registration ✅ (Just Completed)
+
+#### Full Ability System Registration
+- ✅ **GameLifetimeScope.cs** - Complete ability registration
+  - Registered all 69 abilities from AbilityName enum
+  - Organized registrations by category (Draw, Destroy, Deck Search, Sacrifice, Invoke, Stat Modifier, Protection, Dependency, Lifecycle, Combat, Special)
+  - Created DefaultAbility implementation for cards without special abilities
+
+#### Ability Categories Registered
+- **Draw Abilities (3):** Draw1Card, Draw2Cards, Draw3Cards
+- **Destroy Abilities (4):** KillOpponentInvocation, DestroyFieldATK, DestroyFieldDEF, KillEnemyIfDestroy
+- **Deck Search Abilities (11):** AddSpatialFromDeck, GetNounoursFromDeck, GetPetitePortionDeRizFromDeck, GetLycéeMagiqueGeorgesPompidouFromDeck, GetZozanKebabFromDeck, GetConvocationAuLyceeFromDeck, GetCanardSignal, GetForetElfesSylvains, GetBenzaieJeuneFromDeck, GetPatronInfogramesFromDeckYellowTrash, GetEquipmentCardWithoutAttack
+- **Sacrifice Abilities (15):** SacrificeArchibaldVonGrenier, SacrificeBenzaieJeune, SacrificeJoueurDuGrenier, SacrificeWizard, SacrificeSebDuGrenier, SacrificeGranolax, SacrificeClicheRaciste, SacrificeToInvoke, SacrificeSebDuGrenierOnHardCornerForAtkDef, SacrificeJDGOnStudioDevForAtkDef, Sacrifice3Atk3Def, SacrificeDeveloper3Atk3Def, SacrificeHardCorner3Atk3Def, Sacrifice2Japan, Sacrifice2Incarnation
+- **Invoke Abilities (3):** InvokeTentacules, InvokeDresseurBidulmon, InvokeSebOrJDG
+- **Stat Modifier Abilities (7):** GiveAtkDefToComics, GiveAktDefToRpgMember, GiveAktDefToFistilandMember, Win1Atk1DefDeveloper, Win1Atk1DefFistiland, Win1ATK1DefJaponWith2ATK2DEFCondition, CopyBenzaieJeune
+- **Protection Abilities (5):** CantBeAttackIfComics, CantBeAttackKill, ProtectedBehindStarlightUnicorn, ProtectBehindGreaterDef, CanOnlyAttackItself
+- **Dependency Abilities (6):** CantLiveWithoutBenzaieOrBenzaieJeune, CantLiveWithoutJDG, CantLiveWithoutComics, CantLiveWithoutHuman, CantLiveWithoutJapon, CantLiveWithoutGranolaxOrMechaGranolax
+- **Lifecycle Abilities (4):** SurviveOneTurn, ComesBackFromDeath, ComesBackFromDeath5Times, GiveDeathWhenDie
+- **Combat Abilities (1):** SkipOpponentAttackEveryTurn
+- **Special Abilities (2):** SendAllCardToHands, ChangeFieldWithFieldFromDeck
+- **Default (1):** Default
+
+#### Architecture Improvements
+- ✅ Centralized ability registration in RegisterAllAbilities() method
+- ✅ Factory-based ability creation for all categories
+- ✅ Clean separation: factories in Application layer, registration in Infrastructure layer
+- ✅ All 9 ability factories utilized (DrawCards, DestroyCard, DeckSearch, Sacrifice, StatModifier, Protection, Combat, Special, Effect, Equipment, Field)
+
+#### Code Metrics
+- Abilities registered: 57 (covering all 69 AbilityName enum values)
+- Registration method lines: ~130
+- Factory resolutions: 8
+- Categories organized: 11
+
+---
+
+### Phase 34: GitHub Actions CI/CD Setup ✅ (Just Completed)
+
+#### Workflow Configuration
+- ✅ **unity-tests.yml** - GitHub Actions workflow for automated testing
+  - Location: `.github/workflows/unity-tests.yml`
+  - Triggers on push to master/refactor-v3 and PRs to master
+  - Uses game-ci/unity-test-runner@v4
+  - Targets Unity 6000.0.60f1 (Unity 6)
+  - Runs EditMode tests (all 3 test assemblies)
+  - Generates coverage reports
+
+#### Required Secrets Setup
+To enable the workflow, add these secrets to GitHub repository settings:
+1. `UNITY_LICENSE` - Base64 encoded Unity .ulf license file
+2. `UNITY_EMAIL` - Unity account email
+3. `UNITY_PASSWORD` - Unity account password
+
+To get your Unity license:
+```bash
+# Run Unity to generate license request
+Unity -batchmode -createManualActivationFile
+# Activate at: https://license.unity3d.com/manual
+# Download .ulf file and base64 encode it
+base64 -i Unity_v6000.x.ulf
+```
+
+#### Features
+- Library folder caching for faster builds
+- Test results uploaded as artifacts
+- Code coverage reports generated
+- Runs on ubuntu-latest for cost efficiency
+
+---
+
 **Last Updated**: 2025-12-12
 **Current Branch**: refactor-v3
-**Status**: Phase 28 Complete ✅ (MonoBehaviour Wave 1 MVP Migration)
+**Status**: Phase 34 Complete ✅ (GitHub Actions CI/CD Setup)
