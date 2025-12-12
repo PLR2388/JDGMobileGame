@@ -299,8 +299,81 @@ For questions or issues:
 - Legacy ability files updated: 31
 - Files modified: 48
 
+### Phase 28: MonoBehaviour Wave 1 MVP Migration ✅ (Just Completed)
+
+#### RoundDisplayManager MVP Pattern
+- ✅ **IRoundDisplayView** - View interface for round/turn display
+  - Location: `Assets/_Scripts/JDG.Presentation/Views/IRoundDisplayView.cs`
+  - Methods: SetRoundText, SetPlayerTurnText, SetInHandButtonVisible, RotateCamera
+
+- ✅ **RoundDisplayPresenter** - Business logic for round display
+  - Location: `Assets/_Scripts/Presenters/RoundDisplayPresenter.cs`
+  - Subscribes to PhaseChangedEvent, PlayerTurnChangedEvent via EventBus
+  - Handles display logic based on game state
+
+- ✅ **RoundDisplayManager** - Thin view implementation
+  - Updated to implement IRoundDisplayView
+  - Delegates business logic to RoundDisplayPresenter
+
+#### CardSelectionManager Service Pattern
+- ✅ **ICardSelectionService** - Service interface for card selection
+  - Location: `Assets/_Scripts/JDG.Application/Services/ICardSelectionService.cs`
+  - Methods: SelectCard, UnselectCard, ClearSelection, IsCardSelected
+
+- ✅ **CardSelectionService** - Pure C# service implementation
+  - Location: `Assets/_Scripts/JDG.Infrastructure/Services/CardSelectionService.cs`
+  - Publishes CardAddedToSelectionEvent, CardRemovedFromSelectionEvent
+
+- ✅ **CardSelectionManager** - Thin adapter
+  - Delegates to CardSelectionService
+  - Maintains UnityEvents for backward compatibility
+
+#### InvocationMenuManager MVP Pattern
+- ✅ **IInvocationMenuView** - View interface for invocation menu
+  - Location: `Assets/_Scripts/JDG.Presentation/Views/IInvocationMenuView.cs`
+
+- ✅ **InvocationMenuPresenter** - Business logic for invocation menu
+  - Location: `Assets/_Scripts/Presenters/InvocationMenuPresenter.cs`
+  - Handles attack button state, action button visibility
+
+- ✅ **InvocationMenuManager** - Thin view implementation
+  - Updated to implement IInvocationMenuView
+
+#### PlayerManager Singleton Removal
+- ✅ **IPlayerStatusProvider** - Interface replacing PlayerManager.Instance
+  - Location: `Assets/_Scripts/Services/IPlayerStatusProvider.cs`
+  - Methods: GetCurrentPlayerStatus, GetOpponentPlayerStatus, HandleAttackIfOpponentIsPlayer
+
+- ✅ **PlayerManager** - Removed Singleton<T> base class
+  - Now implements IPlayerStatusProvider
+  - Registered in VContainer via LegacyServicesScope
+
+- ✅ **Services updated to inject IPlayerStatusProvider**:
+  - TurnService, CombatService, CardPlacementService, GameLoop
+  - TutoPlayerGameLoop (uses inherited field)
+  - CardHandler base class and all 5 subclasses
+  - InGameMenuScript
+
+#### Already Well-Structured (No Changes Needed)
+- ✅ **InputManager** - Already uses EventBus + IInputService
+- ✅ **CardPoolManager** - Already uses VContainer DI, simple object pooling
+- ✅ **UIManager** - Already delegates to presenters (marked obsolete)
+
+#### Unit Tests Added
+- ✅ **RoundDisplayPresenterTests** - 7 tests for presenter logic
+- ✅ **InvocationMenuPresenterTests** - 10 tests for menu presenter
+- ✅ **CardSelectionServiceTests** - 18 tests for selection service
+
+#### Code Metrics
+- MonoBehaviours migrated to MVP: 3 (RoundDisplay, InvocationMenu, CardSelection)
+- Singleton patterns removed: 1 (PlayerManager)
+- New interfaces created: 4 (IRoundDisplayView, IInvocationMenuView, ICardSelectionService, IPlayerStatusProvider)
+- New presenters created: 2 (RoundDisplayPresenter, InvocationMenuPresenter)
+- New services created: 1 (CardSelectionService)
+- Unit tests added: 35
+
 ---
 
-**Last Updated**: 2025-12-10
+**Last Updated**: 2025-12-12
 **Current Branch**: refactor-v3
-**Status**: Phase 24-25 Complete ✅ (ServiceLocator Removed, AbilityName Migrated)
+**Status**: Phase 28 Complete ✅ (MonoBehaviour Wave 1 MVP Migration)
