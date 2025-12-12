@@ -1,5 +1,6 @@
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Core;
 using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
@@ -57,7 +58,7 @@ namespace JDG.Presentation.Presenters
             {
                 case Phase.End:
                     _view.SetInHandButtonVisible(true);
-                    _view.SetRoundText(_localizationService.GetLocalizedValue(LocalizationKeys.PHASE_DRAW));
+                    _view.SetRoundText(_localizationService.GetLocalizedValue(LocalizationKeys.PHASE_DRAW.ToString()));
 
                     if (shouldRotateCamera)
                     {
@@ -69,7 +70,7 @@ namespace JDG.Presentation.Presenters
 
                 case Phase.Attack:
                     _view.SetInHandButtonVisible(false);
-                    _view.SetRoundText(_localizationService.GetLocalizedValue(LocalizationKeys.PHASE_ATTACK));
+                    _view.SetRoundText(_localizationService.GetLocalizedValue(LocalizationKeys.PHASE_ATTACK.ToString()));
                     break;
 
                 // Add more phase handling as needed
@@ -84,19 +85,23 @@ namespace JDG.Presentation.Presenters
 
         private void OnPlayerTurnChanged(PlayerTurnChangedEvent evt)
         {
-            _currentPlayer = evt.NewPlayer;
+            // Convert CardOwner to PlayerId
+            _currentPlayer = evt.NewPlayer == JDG.Domain.Enums.CardOwner.Player1
+                ? PlayerId.Player1
+                : PlayerId.Player2;
             UpdatePlayerTurnText();
         }
 
         private void UpdateDisplay()
         {
             // Update phase text based on current phase
+            // Note: LocalizationKeys is an enum, need to convert to string
             string phaseText = _currentPhase switch
             {
-                Phase.Draw => _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_DRAW),
-                Phase.Choose => _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE),
-                Phase.Attack => _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_ATTACK),
-                Phase.End => _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_END),
+                Phase.Draw => _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_DRAW.ToString()),
+                Phase.Choose => _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE.ToString()),
+                Phase.Attack => _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_ATTACK.ToString()),
+                Phase.End => "", // PHASE_END not in LocalizationKeys enum
                 _ => ""
             };
 
@@ -109,8 +114,8 @@ namespace JDG.Presentation.Presenters
 
             // Note: Display shows the NEXT player's name at end phase
             string playerName = isPlayer1Turn
-                ? _localizationService.GetLocalizedValue(LocalizationKeys.PLAYER_TWO)
-                : _localizationService.GetLocalizedValue(LocalizationKeys.PLAYER_ONE);
+                ? _localizationService.GetLocalizedValue(LocalizationKeys.PLAYER_TWO.ToString())
+                : _localizationService.GetLocalizedValue(LocalizationKeys.PLAYER_ONE.ToString());
 
             _view.SetPlayerTurnText(playerName);
         }
