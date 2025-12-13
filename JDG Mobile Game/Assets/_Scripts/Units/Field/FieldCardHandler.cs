@@ -1,9 +1,11 @@
 using Cards;
+using JDG.Application.Services;
 
 /// <summary>
 /// Handler responsible for field card-specific behaviors in the game.
 /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
 /// Phase 28: Added IPlayerStatusProvider parameter.
+/// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// </summary>
 public class FieldCardHandler : CardHandler
 {
@@ -11,12 +13,18 @@ public class FieldCardHandler : CardHandler
     /// Initializes a new instance of the <see cref="FieldCardHandler"/> class.
     /// Phase 17-18: Added cardCollectionService parameter.
     /// Phase 28: Added playerStatusProvider parameter.
+    /// Phase 34: Added localizationService parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
     /// <param name="playerStatusProvider">The provider for accessing player status.</param>
-    public FieldCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
-        : base(menuScript, cardCollectionService, playerStatusProvider)
+    /// <param name="localizationService">The service for localized text values.</param>
+    public FieldCardHandler(
+        InGameMenuScript menuScript,
+        ICardCollectionService cardCollectionService,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService)
+        : base(menuScript, cardCollectionService, playerStatusProvider, localizationService)
     {
     }
 
@@ -28,7 +36,7 @@ public class FieldCardHandler : CardHandler
     {
         // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
         var playerCard = cardCollectionService.GetCurrentPlayerCards();
-        menuScript.putCardButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD));
+        menuScript.putCardButtonText.SetText(localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD));
         menuScript.putCardButton.interactable = playerCard.FieldCard == null;
     }
     

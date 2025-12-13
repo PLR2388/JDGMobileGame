@@ -13,6 +13,7 @@ using JDG.Infrastructure.Services;
 /// Phase 17-18: Removed CardManager singleton dependency via Phase 4 services.
 /// Phase 19-20: Injected UIManager instead of using .Instance.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
+/// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
@@ -38,11 +39,15 @@ public class GameLoop : MonoBehaviour
     // Phase 28: IPlayerStatusProvider instead of PlayerManager.Instance
     protected IPlayerStatusProvider _playerStatusProvider;
 
+    // Phase 34: ILocalizationService instead of LocalizationSystem.Instance
+    protected ILocalizationService _localizationService;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
     /// Phase 19-20: Added UIManager and InputManager injection.
     /// Phase 28: Added IPlayerStatusProvider to replace PlayerManager.Instance.
+    /// Phase 34: Added ILocalizationService to replace LocalizationSystem.Instance.
     /// </summary>
     [Inject]
     public void Construct(
@@ -57,7 +62,8 @@ public class GameLoop : MonoBehaviour
         ICardDrawService cardDrawService,
         UIManager uiManager,
         InputManager inputManager,
-        IPlayerStatusProvider playerStatusProvider)
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -71,6 +77,7 @@ public class GameLoop : MonoBehaviour
         _uiManager = uiManager;
         _inputManager = inputManager;
         _playerStatusProvider = playerStatusProvider;
+        _localizationService = localizationService;
     }
 
     // Start is called before the first frame update
@@ -344,8 +351,9 @@ public class GameLoop : MonoBehaviour
 
         ChoosePhase();
         // Phase 9: Use injected service instead of RoundDisplayManager.Instance
+        // Phase 34: Use injected ILocalizationService instead of LocalizationSystem.Instance
         _roundDisplayService.SetRoundText(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE)
+            _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE)
         );
     }
 

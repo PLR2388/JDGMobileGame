@@ -1,3 +1,4 @@
+using JDG.Application.Services;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -5,6 +6,7 @@ using UnityEngine.Events;
 /// Presenter for displaying dialog boxes and message boxes (MVP pattern).
 /// Replaces UIManager's message box responsibility.
 /// Part of Phase 5 - UIManager decomposition.
+/// Phase 34: Updated to use ILocalizationService instead of LocalizationSystem.Instance.
 ///
 /// Note: This presenter is in the default assembly during migration.
 /// It will be moved to JDG.Presentation once dependencies are refactored.
@@ -12,10 +14,12 @@ using UnityEngine.Events;
 public class DialogPresenter
 {
     private readonly Transform _canvas;
+    private readonly ILocalizationService _localizationService;
 
-    public DialogPresenter(Transform canvas)
+    public DialogPresenter(Transform canvas, ILocalizationService localizationService)
     {
         _canvas = canvas;
+        _localizationService = localizationService;
     }
 
     /// <summary>
@@ -25,8 +29,8 @@ public class DialogPresenter
     public void ShowPauseMenu(UnityAction onPositiveAction)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PAUSE_MESSAGE),
+            _localizationService.GetLocalizedValue(LocalizationKeys.PAUSE_TITLE),
+            _localizationService.GetLocalizedValue(LocalizationKeys.PAUSE_MESSAGE),
             showPositiveButton: true,
             showNegativeButton: true,
             positiveAction: onPositiveAction
@@ -68,7 +72,7 @@ public class DialogPresenter
     public void ShowWarning(string message)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
             message,
             showOkButton: true
         );

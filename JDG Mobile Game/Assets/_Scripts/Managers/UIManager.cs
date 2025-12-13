@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Application.Services;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using VContainer;
 
 /// <summary>
 /// Phase 5: UIManager is being decomposed into focused presenters (MVP pattern).
 /// This class now delegates to CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter.
 /// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
+/// Phase 34: Uses ILocalizationService via DI instead of LocalizationSystem.Instance.
 /// UIManager will eventually be removed once all callsites migrate to the new presenters.
 /// </summary>
 [System.Obsolete("UIManager is being phased out. Use CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter directly via dependency injection instead. This MonoBehaviour will be removed in a future phase.")]
@@ -25,6 +28,15 @@ public class UIManager : MonoBehaviour
     private DialogPresenter _dialogPresenter;
     private CardSelectorPresenter _cardSelectorPresenter;
 
+    // Phase 34: Injected services
+    private ILocalizationService _localizationService;
+
+    [Inject]
+    public void Construct(ILocalizationService localizationService)
+    {
+        _localizationService = localizationService;
+    }
+
     /// <summary>
     /// Initialize component references and presenters.
     /// Phase 19-20: No longer calls base.Awake() since not a singleton.
@@ -32,17 +44,21 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         bigImageCardImage = bigImageCard.GetComponent<Image>();
+    }
 
-        // Phase 5: Create presenter instances
+    private void Start()
+    {
+        // Phase 34: Create presenters in Start() to ensure injection has occurred
         InitializePresenters();
     }
 
     private void InitializePresenters()
     {
         // Phase 5: Create simple presenter instances (not MonoBehaviours)
+        // Phase 34: Pass ILocalizationService to presenters
         _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard);
-        _dialogPresenter = new DialogPresenter(canvas);
-        _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton);
+        _dialogPresenter = new DialogPresenter(canvas, _localizationService);
+        _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton, _localizationService);
     }
 
     /// <summary>

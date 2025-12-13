@@ -1,4 +1,5 @@
 ﻿using JDG.Application;
+using JDG.Application.Services;
 using UnityEngine;
 using VContainer;
 
@@ -8,6 +9,7 @@ namespace Cards.EffectCards
     /// Handles the functionality related to effect cards within the game.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
+    /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     public class EffectFunctions : MonoBehaviour
     {
@@ -17,10 +19,14 @@ namespace Cards.EffectCards
         // Phase 24-25: Injected via VContainer
         private ICardPlacementService _cardPlacementService;
 
+        // Phase 34: Injected via VContainer
+        private ILocalizationService _localizationService;
+
         [Inject]
-        public void Construct(ICardPlacementService cardPlacementService)
+        public void Construct(ICardPlacementService cardPlacementService, ILocalizationService localizationService)
         {
             _cardPlacementService = cardPlacementService;
+            _localizationService = localizationService;
         }
 
         /// <summary>
@@ -59,9 +65,10 @@ namespace Cards.EffectCards
             else
             {
                 // Show warning if field is full (4 effects max)
+                // Phase 34: Use injected ILocalizationService
                 var config = new MessageBoxConfig(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS),
+                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS),
                     showOkButton: true
                 );
                 MessageBox.Instance.CreateMessageBox(canvas, config);

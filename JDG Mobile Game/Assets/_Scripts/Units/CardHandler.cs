@@ -1,9 +1,11 @@
 using Cards;
+using JDG.Application.Services;
 
 /// <summary>
 /// Represents a base class for handling card-specific behaviors within the game.
 /// Phase 17-18: Added ICardCollectionService for card state access.
 /// Phase 28: Added IPlayerStatusProvider for player status access.
+/// Phase 34: Added ILocalizationService for localized strings.
 /// </summary>
 public abstract class CardHandler
 {
@@ -23,18 +25,30 @@ public abstract class CardHandler
     protected IPlayerStatusProvider playerStatusProvider;
 
     /// <summary>
+    /// Phase 34: Service for localized text values.
+    /// </summary>
+    protected ILocalizationService localizationService;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="CardHandler"/> class.
     /// Phase 17-18: Added cardCollectionService parameter.
     /// Phase 28: Added playerStatusProvider parameter.
+    /// Phase 34: Added localizationService parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
     /// <param name="playerStatusProvider">The provider for accessing player status.</param>
-    public CardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
+    /// <param name="localizationService">The service for localized text values.</param>
+    public CardHandler(
+        InGameMenuScript menuScript,
+        ICardCollectionService cardCollectionService,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService)
     {
         this.menuScript = menuScript;
         this.cardCollectionService = cardCollectionService;
         this.playerStatusProvider = playerStatusProvider;
+        this.localizationService = localizationService;
     }
 
     /// <summary>

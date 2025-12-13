@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Application;
+using JDG.Application.Services;
 using UnityEngine;
 using VContainer;
 
@@ -10,6 +11,7 @@ namespace Cards.EquipmentCards
     /// Handles the functionalities associated with equipment cards within the game.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
+    /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     public class EquipmentFunctions : MonoBehaviour
     {
@@ -19,10 +21,14 @@ namespace Cards.EquipmentCards
         // Phase 24-25: Injected via VContainer
         private ICardPlacementService _cardPlacementService;
 
+        // Phase 34: Injected via VContainer
+        private ILocalizationService _localizationService;
+
         [Inject]
-        public void Construct(ICardPlacementService cardPlacementService)
+        public void Construct(ICardPlacementService cardPlacementService, ILocalizationService localizationService)
         {
             _cardPlacementService = cardPlacementService;
+            _localizationService = localizationService;
         }
 
         /// <summary>
@@ -54,8 +60,9 @@ namespace Cards.EquipmentCards
             var validTargets = _cardPlacementService.GetEquipmentTargets(equipmentCard);
 
             // Display card selector UI
+            // Phase 34: Use injected ILocalizationService
             var config = new CardSelectorConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOCATION_FOR_EQUIPMENT),
+                _localizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOCATION_FOR_EQUIPMENT),
                 validTargets,
                 showNegativeButton: true,
                 showPositiveButton: true,

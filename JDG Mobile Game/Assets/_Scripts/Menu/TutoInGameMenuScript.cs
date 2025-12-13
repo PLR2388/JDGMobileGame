@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Represents the tutorial version of the in-game menu.
 /// Phase 17-18: Inherits ICardCollectionService from base class.
+/// Phase 34: Inherits ILocalizationService from base class.
 /// </summary>
 public class TutoInGameMenuScript : InGameMenuScript
 {
@@ -122,11 +123,12 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     /// <summary>
     /// Updates the button text based on the given localization key.
+    /// Phase 34: Uses inherited _localizationService instead of LocalizationSystem.Instance.
     /// </summary>
     /// <param name="key">Localization key for the button text.</param>
     private void UpdateButtonText(LocalizationKeys key)
     {
-        buttonTextMeshProUGUI.text = LocalizationSystem.Instance.GetLocalizedValue(key);
+        buttonTextMeshProUGUI.text = _localizationService.GetLocalizedValue(key);
     }
 
     /// <summary>

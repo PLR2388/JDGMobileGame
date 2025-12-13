@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Application.Services;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,6 +9,7 @@ using UnityEngine.Events;
 /// Presenter for card selection UI (MVP pattern).
 /// Replaces UIManager's opponent selection responsibility.
 /// Part of Phase 5 - UIManager decomposition.
+/// Phase 34: Updated to use ILocalizationService instead of LocalizationSystem.Instance.
 ///
 /// Note: This presenter is in the default assembly because it depends on legacy types
 /// (InGameCard, InGameInvocationCard). It will be moved to JDG.Presentation once
@@ -17,11 +19,13 @@ public class CardSelectorPresenter
 {
     private readonly Transform _canvas;
     private readonly GameObject _nextPhaseButton;
+    private readonly ILocalizationService _localizationService;
 
-    public CardSelectorPresenter(Transform canvas, GameObject nextPhaseButton)
+    public CardSelectorPresenter(Transform canvas, GameObject nextPhaseButton, ILocalizationService localizationService)
     {
         _canvas = canvas;
         _nextPhaseButton = nextPhaseButton;
+        _localizationService = localizationService;
     }
 
     /// <summary>
@@ -56,7 +60,7 @@ public class CardSelectorPresenter
         UnityAction onCancelled)
     {
         var config = new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
+            _localizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
             cards,
             showNegativeButton: true,
             showPositiveButton: true,
@@ -78,8 +82,8 @@ public class CardSelectorPresenter
     private void ShowNoTargetsWarning()
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_CANNOT_ATTACK_MESSAGE),
+            _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_CANNOT_ATTACK_MESSAGE),
             showOkButton: true
         );
 

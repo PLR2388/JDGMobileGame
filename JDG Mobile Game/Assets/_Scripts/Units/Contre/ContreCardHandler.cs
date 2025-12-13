@@ -1,9 +1,11 @@
 using Cards;
+using JDG.Application.Services;
 
 /// <summary>
 /// Handler responsible for contre card-specific behaviors in the game.
 /// Phase 17-18: Updated constructor signature to match base class changes.
 /// Phase 28: Added IPlayerStatusProvider parameter.
+/// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// </summary>
 public class ContreCardHandler : CardHandler
 {
@@ -11,12 +13,18 @@ public class ContreCardHandler : CardHandler
     /// Initializes a new instance of the <see cref="ContreCardHandler"/> class.
     /// Phase 17-18: Added cardCollectionService parameter.
     /// Phase 28: Added playerStatusProvider parameter.
+    /// Phase 34: Added localizationService parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
     /// <param name="playerStatusProvider">The provider for accessing player status.</param>
-    public ContreCardHandler(InGameMenuScript menuScript, ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
-        : base(menuScript, cardCollectionService, playerStatusProvider)
+    /// <param name="localizationService">The service for localized text values.</param>
+    public ContreCardHandler(
+        InGameMenuScript menuScript,
+        ICardCollectionService cardCollectionService,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService)
+        : base(menuScript, cardCollectionService, playerStatusProvider, localizationService)
     {
     }
 
@@ -26,7 +34,7 @@ public class ContreCardHandler : CardHandler
     /// <param name="card">The in-game card to be handled.</param>
     public override void HandleCard(InGameCard card)
     {
-        menuScript.putCardButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_CONTRE));
+        menuScript.putCardButtonText.SetText(localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_CONTRE));
         menuScript.putCardButton.interactable = true;
     }
 

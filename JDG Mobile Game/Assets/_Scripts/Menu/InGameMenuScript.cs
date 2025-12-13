@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Cards;
 using JDG.Application;
+using JDG.Application.Services;
 using JDG.Domain.Events;
 using TMPro;
 using UnityEngine;
@@ -12,6 +13,7 @@ using VContainer;
 /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
 /// Phase 23: Migrated HandCardChange invocations to EventBus.
 /// Phase 28: Added IPlayerStatusProvider for player status access in card handlers.
+/// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// </summary>
 public class InGameMenuScript : MonoBehaviour
 {
@@ -23,6 +25,9 @@ public class InGameMenuScript : MonoBehaviour
 
     // Phase 23: EventBus for hand card display events
     protected IEventBus _eventBus;
+
+    // Phase 34: ILocalizationService instead of LocalizationSystem.Instance
+    protected ILocalizationService _localizationService;
     // Serialized fields for UI components
     [SerializeField] protected TextMeshProUGUI buttonText;
     [SerializeField] protected GameObject handScreen;
@@ -72,27 +77,34 @@ public class InGameMenuScript : MonoBehaviour
     /// Phase 17-18: Inject ICardCollectionService instead of CardManager.Instance.
     /// Phase 23: Inject IEventBus for hand card display events.
     /// Phase 28: Inject IPlayerStatusProvider for player status access.
+    /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     [Inject]
-    public void Construct(ICardCollectionService cardCollectionService, IEventBus eventBus, IPlayerStatusProvider playerStatusProvider)
+    public void Construct(
+        ICardCollectionService cardCollectionService,
+        IEventBus eventBus,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService)
     {
         _cardCollectionService = cardCollectionService;
         _eventBus = eventBus;
         _playerStatusProvider = playerStatusProvider;
+        _localizationService = localizationService;
     }
 
     /// <summary>
     /// Initializes handlers for different types of cards.
     /// Phase 17-18: Pass ICardCollectionService to handlers.
     /// Phase 28: Pass IPlayerStatusProvider to handlers.
+    /// Phase 34: Pass ILocalizationService to handlers.
     /// </summary>
     protected void InitializeCardHandlers()
     {
-        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService, _playerStatusProvider);
-        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService, _playerStatusProvider);
-        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService, _playerStatusProvider);
-        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService, _playerStatusProvider);
-        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService, _playerStatusProvider);
+        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
+        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
+        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
+        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
+        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
     }
 
     /// <summary>
@@ -187,7 +199,7 @@ public class InGameMenuScript : MonoBehaviour
     {
         if (detailCardPanel.activeSelf)
         {
-            detailButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS));
+            detailButtonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS));
             miniMenuCard.SetActive(false);
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
@@ -208,7 +220,7 @@ public class InGameMenuScript : MonoBehaviour
 
             miniMenuCard.transform.position = buttonGroupPosition;
 
-            detailButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
+            detailButtonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().InGameCard =
                 CurrentSelectedCard;
             detailCardPanel.SetActive(true);
@@ -239,7 +251,7 @@ public class InGameMenuScript : MonoBehaviour
     {
         handScreen.SetActive(true);
         backgroundInformation.SetActive(false);
-        buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
+        buttonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
         // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
         // Phase 23: Publish to EventBus instead of static UnityEvent
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
@@ -260,6 +272,6 @@ public class InGameMenuScript : MonoBehaviour
         detailCardPanel.SetActive(false);
         handScreen.SetActive(false);
         backgroundInformation.SetActive(true);
-        buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
+        buttonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
     }
 }
