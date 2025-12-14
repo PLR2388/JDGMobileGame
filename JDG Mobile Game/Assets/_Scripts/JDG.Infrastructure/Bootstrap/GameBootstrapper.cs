@@ -1,16 +1,14 @@
 using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 using JDG.Infrastructure.DI;
 
 namespace JDG.Infrastructure.Bootstrap
 {
     /// <summary>
-    /// Game bootstrapper - initializes the DI container and service locator.
+    /// Game bootstrapper - initializes the DI container.
     /// Attach this to a GameObject in your startup scene.
     /// Note: Card loading is handled by LegacyCardLoader (in default assembly).
-    /// Phase 27: Ability.GameStateService initialization moved to LegacyCardLoader
-    /// (cannot reference default assembly from JDG.Infrastructure).
+    /// Phase 27: Ability.GameStateService initialization moved to LegacyCardLoader.
+    /// Phase 41: Removed ServiceLocator - all code now uses VContainer DI directly.
     /// </summary>
     public class GameBootstrapper : MonoBehaviour
     {
@@ -21,22 +19,14 @@ namespace JDG.Infrastructure.Bootstrap
             // Ensure this GameObject persists across scenes
             DontDestroyOnLoad(gameObject);
 
-            // Initialize the service locator with the VContainer resolver
             if (_lifetimeScope != null)
             {
-                ServiceLocator.Initialize(_lifetimeScope.Container);
-                Debug.Log("GameBootstrapper: Service locator initialized");
+                Debug.Log("GameBootstrapper: VContainer DI initialized");
             }
             else
             {
                 Debug.LogError("GameBootstrapper: GameLifetimeScope not assigned!");
             }
-        }
-
-        private void OnDestroy()
-        {
-            // Clean up the service locator
-            ServiceLocator.Clear();
         }
     }
 }
