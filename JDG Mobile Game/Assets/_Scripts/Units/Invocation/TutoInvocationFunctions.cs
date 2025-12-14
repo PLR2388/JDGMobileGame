@@ -13,27 +13,31 @@ namespace Cards.InvocationCards
     /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
     /// </summary>
     public class TutoInvocationFunctions : InvocationFunctions
     {
         // Phase 24-25: Injected via VContainer
         private ICardCollectionService _cardCollectionService;
+        // Note: _dialogService is inherited from InvocationFunctions (Phase 35)
 
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Calls base class Construct to inject base dependencies.
         /// Phase 24-25: Inject ICardCollectionService instead of ServiceLocator.
         /// Phase 34: Inject ILocalizationService for localized strings.
+        /// Phase 35: Inject IDialogService for dialog display.
         /// </summary>
         [Inject]
         public void Construct(
             ICardPlacementService cardPlacementService,
             ICardCollectionService cardCollectionService,
             JDG.Application.IEventBus eventBus,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IDialogService dialogService)
         {
-            // Call base class to inject base dependencies (including localizationService)
-            base.Construct(cardPlacementService, eventBus, localizationService);
+            // Call base class to inject base dependencies (including localizationService and dialogService)
+            base.Construct(cardPlacementService, eventBus, localizationService, dialogService);
             _cardCollectionService = cardCollectionService;
         }
 
@@ -63,6 +67,7 @@ namespace Cards.InvocationCards
         /// <summary>
         /// Applies tutorial-specific effect for certain cards.
         /// Phase 24-25: Uses injected _cardCollectionService.
+        /// Phase 35: Uses injected _dialogService instead of MessageBox.Instance.
         /// </summary>
         /// <param name="invocationCard">The invocation card whose effect should be applied.</param>
         private void ApplyTutorialSpecificEffect(InGameInvocationCard invocationCard)
@@ -73,22 +78,24 @@ namespace Cards.InvocationCards
                 // Phase 24-25: Use injected _cardCollectionService
                 var playerCards = _cardCollectionService.GetCurrentPlayerCards();
                 // Phase 34: Use inherited _localizationService from base class
-                var config = new MessageBoxConfig(
-                    _localizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                    string.Format(
+                // Phase 35: Use injected _dialogService instead of MessageBox.Instance
+                var options = new MessageBoxOptions
+                {
+                    Title = _localizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    Message = string.Format(
                         _localizationService.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE),
                         cardName
                     ),
-                    showOkButton: true,
-                    okAction: () =>
+                    ShowOkButton = true,
+                    OnOk = () =>
                     {
                         InGameInvocationCard card = playerCards.Deck.Find(card => card.Title == cardName) as InGameInvocationCard;
                         playerCards.Deck.Remove(card);
                         playerCards.InvocationCards.Add(card);
                         HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
                     }
-                );
-                MessageBox.Instance.CreateMessageBox(canvas, config);
+                };
+                _dialogService.ShowMessageBox(canvas, options);
             }
         }
     }

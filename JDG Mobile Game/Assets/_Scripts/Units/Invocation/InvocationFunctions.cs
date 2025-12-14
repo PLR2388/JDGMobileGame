@@ -16,6 +16,7 @@ namespace _Scripts.Cards.InvocationCards
     /// Phase 23: Migrated static UnityEvent to EventBus (CancelInvocationEvent).
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
     /// </summary>
     public class InvocationFunctions : MonoBehaviour
     {
@@ -31,21 +32,27 @@ namespace _Scripts.Cards.InvocationCards
         // Phase 34: ILocalizationService (protected so TutoInvocationFunctions can access)
         protected ILocalizationService _localizationService;
 
+        // Phase 35: IDialogService (protected so TutoInvocationFunctions can access)
+        protected IDialogService _dialogService;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 23: Inject IEventBus for static UnityEvent migration.
         /// Phase 24-25: Inject ICardPlacementService instead of ServiceLocator.
         /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
+        /// Phase 35: Inject IDialogService instead of MessageBox.Instance.
         /// </summary>
         [Inject]
         public void Construct(
             ICardPlacementService cardPlacementService,
             IEventBus eventBus,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IDialogService dialogService)
         {
             _cardPlacementService = cardPlacementService;
             _eventBus = eventBus;
             _localizationService = localizationService;
+            _dialogService = dialogService;
         }
 
 
@@ -93,6 +100,7 @@ namespace _Scripts.Cards.InvocationCards
         /// <summary>
         /// Places the invocation card on the field and applies its effect.
         /// Phase 6: Delegates to CardPlacementService.
+        /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
         /// </summary>
         /// <param name="invocationCard">The invocation card to place on the field.</param>
         private void PutInvocationCard(InGameInvocationCard invocationCard)
@@ -103,12 +111,12 @@ namespace _Scripts.Cards.InvocationCards
             {
                 // Show warning if field is full (4 invocations max)
                 // Phase 34: Use injected ILocalizationService
-                var config = new MessageBoxConfig(
+                // Phase 35: Use injected IDialogService instead of MessageBox.Instance
+                _dialogService.ShowWarning(
+                    canvas,
                     _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS),
-                    showOkButton: true
+                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
                 );
-                MessageBox.Instance.CreateMessageBox(canvas, config);
             }
         }
     }

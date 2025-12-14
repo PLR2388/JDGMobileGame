@@ -10,6 +10,7 @@ namespace Cards.EffectCards
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
     /// </summary>
     public class EffectFunctions : MonoBehaviour
     {
@@ -22,11 +23,18 @@ namespace Cards.EffectCards
         // Phase 34: Injected via VContainer
         private ILocalizationService _localizationService;
 
+        // Phase 35: Injected via VContainer
+        private IDialogService _dialogService;
+
         [Inject]
-        public void Construct(ICardPlacementService cardPlacementService, ILocalizationService localizationService)
+        public void Construct(
+            ICardPlacementService cardPlacementService,
+            ILocalizationService localizationService,
+            IDialogService dialogService)
         {
             _cardPlacementService = cardPlacementService;
             _localizationService = localizationService;
+            _dialogService = dialogService;
         }
 
         /// <summary>
@@ -51,6 +59,7 @@ namespace Cards.EffectCards
         /// Processes the placement of an effect card on the field. If there are less than 4 effect cards on the field, it applies the card's effects.
         /// Otherwise, a warning is shown to the player.
         /// Phase 6: Delegates to CardPlacementService.
+        /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
         /// </summary>
         /// <param name="effectCard">The effect card the user put on the field.</param>
         private void PutEffectCard(InGameEffectCard effectCard)
@@ -66,12 +75,12 @@ namespace Cards.EffectCards
             {
                 // Show warning if field is full (4 effects max)
                 // Phase 34: Use injected ILocalizationService
-                var config = new MessageBoxConfig(
+                // Phase 35: Use injected IDialogService instead of MessageBox.Instance
+                _dialogService.ShowWarning(
+                    canvas,
                     _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS),
-                    showOkButton: true
+                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS)
                 );
-                MessageBox.Instance.CreateMessageBox(canvas, config);
             }
         }
     }

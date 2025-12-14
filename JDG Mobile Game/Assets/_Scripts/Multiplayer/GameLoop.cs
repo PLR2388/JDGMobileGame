@@ -14,6 +14,7 @@ using JDG.Infrastructure.Services;
 /// Phase 19-20: Injected UIManager instead of using .Instance.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 35: Uses IDialogService instead of MessageBox/CardSelector.Instance.
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
@@ -42,12 +43,16 @@ public class GameLoop : MonoBehaviour
     // Phase 34: ILocalizationService instead of LocalizationSystem.Instance
     protected ILocalizationService _localizationService;
 
+    // Phase 35: IDialogService instead of MessageBox/CardSelector.Instance
+    protected IDialogService _dialogService;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
     /// Phase 19-20: Added UIManager and InputManager injection.
     /// Phase 28: Added IPlayerStatusProvider to replace PlayerManager.Instance.
     /// Phase 34: Added ILocalizationService to replace LocalizationSystem.Instance.
+    /// Phase 35: Added IDialogService to replace MessageBox/CardSelector.Instance.
     /// </summary>
     [Inject]
     public void Construct(
@@ -63,7 +68,8 @@ public class GameLoop : MonoBehaviour
         UIManager uiManager,
         InputManager inputManager,
         IPlayerStatusProvider playerStatusProvider,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IDialogService dialogService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -78,6 +84,7 @@ public class GameLoop : MonoBehaviour
         _inputManager = inputManager;
         _playerStatusProvider = playerStatusProvider;
         _localizationService = localizationService;
+        _dialogService = dialogService;
     }
 
     // Start is called before the first frame update

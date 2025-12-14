@@ -140,6 +140,146 @@ namespace JDG.Infrastructure.Services
             await ShowMessageBoxAsync("Information", message, MessageBoxType.Ok);
         }
 
+        // Phase 35: Synchronous callback-based methods for legacy pattern support
+
+        /// <summary>
+        /// Shows a message box with callback actions.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas (passed as object to avoid Unity dependency in interface)</param>
+        /// <param name="options">Message box configuration</param>
+        public void ShowMessageBox(object canvas, MessageBoxOptions options)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            var config = new MessageBoxConfig(
+                title: options.Title,
+                description: options.Message,
+                showOkButton: options.ShowOkButton,
+                okAction: options.OnOk != null ? new UnityEngine.Events.UnityAction(options.OnOk) : null,
+                showPositiveButton: options.ShowPositiveButton,
+                positiveAction: options.OnPositive != null ? new UnityEngine.Events.UnityAction(options.OnPositive) : null,
+                showNegativeButton: options.ShowNegativeButton,
+                negativeAction: options.OnNegative != null ? new UnityEngine.Events.UnityAction(options.OnNegative) : null
+            );
+
+            _messageBox.CreateMessageBox(canvasTransform, config);
+        }
+
+        /// <summary>
+        /// Shows an OK-only message box (warning style).
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        public void ShowWarning(object canvas, string title, string message, Action onOk = null)
+        {
+            ShowMessageBox(canvas, new MessageBoxOptions
+            {
+                Title = title,
+                Message = message,
+                ShowOkButton = true,
+                OnOk = onOk
+            });
+        }
+
+        /// <summary>
+        /// Shows a Yes/No confirmation dialog.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        public void ShowConfirm(object canvas, string title, string message, Action onYes, Action onNo = null)
+        {
+            ShowMessageBox(canvas, new MessageBoxOptions
+            {
+                Title = title,
+                Message = message,
+                ShowPositiveButton = true,
+                OnPositive = onYes,
+                ShowNegativeButton = true,
+                OnNegative = onNo
+            });
+        }
+
+        /// <summary>
+        /// Shows a card selector dialog with callback actions.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        public void ShowCardSelector(object canvas, CardSelectorOptions options)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            // Convert List<object> to List<InGameCard>
+            var cards = new List<Cards.InGameCard>();
+            if (options.Cards != null)
+            {
+                foreach (var card in options.Cards)
+                {
+                    if (card is Cards.InGameCard inGameCard)
+                    {
+                        cards.Add(inGameCard);
+                    }
+                }
+            }
+
+            // Create callbacks that convert InGameCard back to object
+            UnityEngine.Events.UnityAction<Cards.InGameCard> okSingle = null;
+            UnityEngine.Events.UnityAction<List<Cards.InGameCard>> okMultiple = null;
+            UnityEngine.Events.UnityAction<Cards.InGameCard> positiveSingle = null;
+            UnityEngine.Events.UnityAction<List<Cards.InGameCard>> positiveMultiple = null;
+
+            if (options.OnOkSingle != null)
+            {
+                okSingle = (card) => options.OnOkSingle(card);
+            }
+            if (options.OnOkMultiple != null)
+            {
+                okMultiple = (selectedCards) =>
+                {
+                    var objects = new List<object>();
+                    foreach (var card in selectedCards) objects.Add(card);
+                    options.OnOkMultiple(objects);
+                };
+            }
+            if (options.OnPositiveSingle != null)
+            {
+                positiveSingle = (card) => options.OnPositiveSingle(card);
+            }
+            if (options.OnPositiveMultiple != null)
+            {
+                positiveMultiple = (selectedCards) =>
+                {
+                    var objects = new List<object>();
+                    foreach (var card in selectedCards) objects.Add(card);
+                    options.OnPositiveMultiple(objects);
+                };
+            }
+
+            var config = new global::CardSelectorConfig(
+                title: options.Title,
+                cards: cards,
+                showOkButton: options.ShowOkButton,
+                showPositiveButton: options.ShowPositiveButton,
+                showNegativeButton: options.ShowNegativeButton,
+                okAction: okSingle,
+                okMultipleAction: okMultiple,
+                positiveAction: positiveSingle,
+                positiveMultipleAction: positiveMultiple,
+                negativeAction: options.OnNegative != null ? new UnityEngine.Events.UnityAction(options.OnNegative) : null,
+                numberCardSelection: options.NumberCardSelection,
+                showOrder: options.ShowOrder
+            );
+
+            _cardSelector.CreateCardSelection(canvasTransform, config);
+        }
+
         // Helper method to convert card GUIDs to InGameCard instances
         // TODO: This is a temporary bridge - should be improved
         private List<Cards.InGameCard> ConvertCardIds(List<Guid> cardIds)

@@ -28,8 +28,46 @@ namespace JDG.Application.Services
     }
 
     /// <summary>
+    /// Configuration for synchronous message box with callbacks.
+    /// Phase 35: Added to support callback-based dialog pattern.
+    /// </summary>
+    public class MessageBoxOptions
+    {
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public bool ShowOkButton { get; set; }
+        public bool ShowPositiveButton { get; set; }
+        public bool ShowNegativeButton { get; set; }
+        public Action OnOk { get; set; }
+        public Action OnPositive { get; set; }
+        public Action OnNegative { get; set; }
+    }
+
+    /// <summary>
+    /// Configuration for synchronous card selector with callbacks.
+    /// Phase 35: Added to support callback-based card selection pattern.
+    /// Uses object type for cards to avoid Unity dependency in Application layer.
+    /// </summary>
+    public class CardSelectorOptions
+    {
+        public string Title { get; set; }
+        public List<object> Cards { get; set; }
+        public bool ShowOkButton { get; set; }
+        public bool ShowPositiveButton { get; set; }
+        public bool ShowNegativeButton { get; set; }
+        public Action<object> OnOkSingle { get; set; }
+        public Action<List<object>> OnOkMultiple { get; set; }
+        public Action<object> OnPositiveSingle { get; set; }
+        public Action<List<object>> OnPositiveMultiple { get; set; }
+        public Action OnNegative { get; set; }
+        public int NumberCardSelection { get; set; } = 1;
+        public bool ShowOrder { get; set; }
+    }
+
+    /// <summary>
     /// Service for showing dialogs and UI prompts.
     /// Replaces MessageBox and CardSelector singletons.
+    /// Phase 35: Added synchronous callback methods to support legacy patterns.
     /// </summary>
     public interface IDialogService
     {
@@ -54,5 +92,46 @@ namespace JDG.Application.Services
         /// Shows an information message with OK button.
         /// </summary>
         Task ShowInfoAsync(string message);
+
+        // Phase 35: Synchronous callback-based methods for legacy pattern support
+        // These methods accept an object canvas parameter to support UnityEngine.Transform
+        // without adding Unity dependency to JDG.Application layer
+
+        /// <summary>
+        /// Shows a message box with callback actions.
+        /// Synchronous version for legacy code migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas (passed as object to avoid Unity dependency)</param>
+        /// <param name="options">Message box configuration</param>
+        void ShowMessageBox(object canvas, MessageBoxOptions options);
+
+        /// <summary>
+        /// Shows an OK-only message box.
+        /// Synchronous version for legacy code migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas</param>
+        /// <param name="title">Dialog title</param>
+        /// <param name="message">Dialog message</param>
+        /// <param name="onOk">Optional callback when OK is pressed</param>
+        void ShowWarning(object canvas, string title, string message, Action onOk = null);
+
+        /// <summary>
+        /// Shows a Yes/No confirmation dialog.
+        /// Synchronous version for legacy code migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas</param>
+        /// <param name="title">Dialog title</param>
+        /// <param name="message">Dialog message</param>
+        /// <param name="onYes">Callback when Yes/Positive is pressed</param>
+        /// <param name="onNo">Optional callback when No/Negative is pressed</param>
+        void ShowConfirm(object canvas, string title, string message, Action onYes, Action onNo = null);
+
+        /// <summary>
+        /// Shows a card selector dialog with callback actions.
+        /// Synchronous version for legacy code migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas</param>
+        /// <param name="options">Card selector configuration</param>
+        void ShowCardSelector(object canvas, CardSelectorOptions options);
     }
 }

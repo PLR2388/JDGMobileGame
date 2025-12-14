@@ -315,6 +315,7 @@ namespace OnePlayer
 
         /// <summary>
         /// Display the MessageBox with the available opponents
+        /// Phase 35: Uses inherited _dialogService instead of CardSelector.Instance.
         /// </summary>
         /// <param name="invocationCards">Available opponents list</param>
         private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
@@ -335,20 +336,22 @@ namespace OnePlayer
             }
 
             // Phase 34: Use inherited _localizationService from GameLoop
-            var config = new CardSelectorConfig(
-                _localizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
-                invocationCards,
-                showOkButton: true,
-                okAction: (invocationCard) =>
+            // Phase 35: Use inherited _dialogService instead of CardSelector.Instance
+            var cardObjects = new List<object>();
+            foreach (var card in invocationCards) cardObjects.Add(card);
+
+            var options = new CardSelectorOptions
+            {
+                Title = _localizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
+                Cards = cardObjects,
+                ShowOkButton = true,
+                OnOkSingle = (card) =>
                 {
-                    PositiveAction(invocationCard as InGameInvocationCard);
+                    PositiveAction(card as InGameInvocationCard);
                     nextPhaseButtonGameObject.SetActive(true);
                 }
-            );
-            CardSelector.Instance.CreateCardSelection(
-                canvas,
-                config
-            );
+            };
+            _dialogService.ShowCardSelector(canvas, options);
         }
 
         /// <summary>
