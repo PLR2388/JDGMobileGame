@@ -1,3 +1,4 @@
+using Cards;
 using JDG.Application.Services;
 using Sound;
 using UnityEngine;
@@ -80,6 +81,23 @@ namespace JDG.Infrastructure.Services
         public float GetSfxVolume()
         {
             return _audioSystem.SoundEffectVolume;
+        }
+
+        /// <summary>
+        /// Plays music associated with a card family.
+        /// Phase 37: Added to support CardPlacementService DI migration.
+        /// </summary>
+        /// <param name="family">The card family to play music for.</param>
+        public void PlayFamilyMusic(object family)
+        {
+            if (family is CardFamily cardFamily)
+            {
+                _audioSystem.PlayFamilyMusic(cardFamily);
+            }
+            else
+            {
+                Debug.LogWarning($"AudioService: Invalid family type: {family?.GetType().Name ?? "null"}");
+            }
         }
     }
 }

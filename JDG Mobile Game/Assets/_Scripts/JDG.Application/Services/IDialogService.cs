@@ -112,5 +112,24 @@ namespace JDG.Application.Services
         /// <param name="canvas">The Unity Transform canvas</param>
         /// <param name="options">Card selector configuration</param>
         void ShowCardSelector(object canvas, CardSelectorOptions options);
+
+        // Phase 38: Legacy config support methods for Ability base class migration
+        // These methods accept the legacy config types directly to simplify migration
+
+        /// <summary>
+        /// Shows a message box using the legacy MessageBoxConfig type.
+        /// Phase 38: Added for legacy Ability class migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas</param>
+        /// <param name="config">Legacy MessageBoxConfig object</param>
+        void ShowMessageBoxLegacy(object canvas, object config);
+
+        /// <summary>
+        /// Shows a card selector using the legacy CardSelectorConfig type.
+        /// Phase 38: Added for legacy Ability class migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas</param>
+        /// <param name="config">Legacy CardSelectorConfig object</param>
+        void ShowCardSelectorLegacy(object canvas, object config);
     }
 }

@@ -87,12 +87,15 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
     /// <param name="playerCards">The player's current cards.</param>
     /// <param name="opponentPlayerStatus">The opponent player's current status.</param>
     /// <param name="opponentPlayerCards">The opponent player's current cards.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
             string.Format(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONTINUE_APPLY_FAMILY_MESSAGE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_CONTINUE_APPLY_FAMILY_MESSAGE),
                 costPerTurn
             ),
             showPositiveButton: true,
@@ -106,7 +109,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
                 ResetInvocationsFamily(playerCards);
             }
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>

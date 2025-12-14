@@ -17,6 +17,7 @@ namespace _Scripts.Cards.InvocationCards
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
+    /// Phase 36: Subscribes to InvocationCardPlayRequestedEvent via EventBus.
     /// </summary>
     public class InvocationFunctions : MonoBehaviour
     {
@@ -28,6 +29,8 @@ namespace _Scripts.Cards.InvocationCards
         // Phase 23: EventBus for static UnityEvent migration
         private IEventBus _eventBus;
         private IDisposable _invocationCancelledSubscription;
+        // Phase 36: EventBus subscription for card play request
+        private IDisposable _invocationPlayRequestedSubscription;
 
         // Phase 34: ILocalizationService (protected so TutoInvocationFunctions can access)
         protected ILocalizationService _localizationService;
@@ -59,30 +62,39 @@ namespace _Scripts.Cards.InvocationCards
         /// <summary>
         /// Sets up the initial state and event listeners.
         /// Phase 23: Subscribes to EventBus events.
+        /// Phase 36: Subscribes to InvocationCardPlayRequestedEvent via EventBus.
         /// </summary>
         private void Start()
         {
-            // Attach listeners
-            AttachInvocationEventListeners();
+            // Phase 36: Subscribe to EventBus (primary)
+            _invocationPlayRequestedSubscription = _eventBus.Subscribe<InvocationCardPlayRequestedEvent>(OnInvocationCardPlayRequested);
             _invocationCancelledSubscription = _eventBus.Subscribe<InvocationCancelledEvent>(OnInvocationCancelled);
+
+            // Keep static event listener during migration (will be removed once EventBus is fully adopted)
+            // Note: Static events still fire during dual-dispatch period but we handle via EventBus now
         }
 
         /// <summary>
         /// Cleanup method. Unsubscribes from events when the object is destroyed.
         /// Phase 23: Disposes EventBus subscriptions.
+        /// Phase 36: Disposes InvocationCardPlayRequestedEvent subscription.
         /// </summary>
         private void OnDestroy()
         {
             _invocationCancelledSubscription?.Dispose();
+            _invocationPlayRequestedSubscription?.Dispose();
         }
 
-
         /// <summary>
-        /// Attaches listeners for invocation events.
+        /// Event handler for InvocationCardPlayRequestedEvent from EventBus.
+        /// Phase 36: Replaces static UnityEvent listener.
         /// </summary>
-        private void AttachInvocationEventListeners()
+        private void OnInvocationCardPlayRequested(InvocationCardPlayRequestedEvent evt)
         {
-            InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
+            if (evt.InvocationCard is InGameInvocationCard invocationCard)
+            {
+                PutInvocationCard(invocationCard);
+            }
         }
 
         /// <summary>

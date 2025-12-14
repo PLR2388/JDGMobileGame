@@ -19,21 +19,23 @@ public class OptionalChangeFieldFromDeckAbility : Ability
 
     /// <summary>
     /// Displays an OK message box with a message indicating no field card is set.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
-    private static void DisplayOkMessageBox(Transform canvas)
+    private void DisplayOkMessageBox(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_FIELD_CARD_SET_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_FIELD_CARD_SET_MESSAGE),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
     /// Applies the effect of the ability, offering an option to change the field card from the deck,
     /// if any field cards are available in the deck.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     /// <param name="playerCards">The cards of the current player.</param>
@@ -44,14 +46,14 @@ public class OptionalChangeFieldFromDeckAbility : Ability
         if (fieldCardsFromDeck.Count > 0)
         {
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_SET_FIELD_CARD_MESSAGE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_SET_FIELD_CARD_MESSAGE),
                 showNegativeButton: true,
                 showPositiveButton: true,
                 positiveAction: () =>
                 {
-                    var config = new CardSelectorConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SET_FIELD),
+                    var selectorConfig = new CardSelectorConfig(
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SET_FIELD),
                         fieldCardsFromDeck,
                         showNegativeButton: true,
                         showPositiveButton: true,
@@ -79,14 +81,14 @@ public class OptionalChangeFieldFromDeckAbility : Ability
                             DisplayOkMessageBox(canvas);
                         }
                     );
-                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                    DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
                 },
                 negativeAction: () =>
                 {
                     DisplayOkMessageBox(canvas);
                 }
             );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 }

@@ -47,10 +47,11 @@ public class DrawCardsAbility : Ability
 
         if (numberCardToDraw > 0)
         {
+            // Phase 38: Use static services instead of singletons
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DRAW_CARDS_MESSAGE),
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_DRAW_CARDS_MESSAGE),
                     numberCardToDraw
                 ),
                 showPositiveButton: true,
@@ -65,10 +66,7 @@ public class DrawCardsAbility : Ability
                     }
                 }
             );
-            MessageBox.Instance.CreateMessageBox(
-                canvas,
-                config
-            );
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 }

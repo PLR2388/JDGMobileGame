@@ -1,4 +1,6 @@
-﻿using JDG.Application;
+﻿using System;
+using JDG.Application;
+using JDG.Domain.Events;
 using Sound;
 using UnityEngine;
 using VContainer;
@@ -9,6 +11,7 @@ namespace Cards.FieldCards
     /// Provides functionalities related to field cards in the game, such as placing a card on the field.
     /// Phase 6: Refactored to delegate business logic to ICardPlacementService.
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
+    /// Phase 36: Subscribes to FieldCardPlayRequestedEvent via EventBus.
     /// </summary>
     public class FieldFunctions : MonoBehaviour
     {
@@ -17,28 +20,49 @@ namespace Cards.FieldCards
         // Phase 24-25: Injected via VContainer
         private ICardPlacementService _cardPlacementService;
 
+        // Phase 36: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+        private IDisposable _fieldPlayRequestedSubscription;
+
         [Inject]
-        public void Construct(ICardPlacementService cardPlacementService)
+        public void Construct(ICardPlacementService cardPlacementService, IEventBus eventBus)
         {
             _cardPlacementService = cardPlacementService;
+            _eventBus = eventBus;
         }
 
         /// <summary>
         /// Initialization method that sets up listeners for relevant events.
+        /// Phase 36: Subscribes to FieldCardPlayRequestedEvent via EventBus.
         /// </summary>
         private void Start()
         {
-            InGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
-            TutoInGameMenuScript.FieldCardEvent.AddListener(PutFieldCard);
+            // Phase 36: Subscribe to EventBus (primary)
+            _fieldPlayRequestedSubscription = _eventBus.Subscribe<FieldCardPlayRequestedEvent>(OnFieldCardPlayRequested);
+
+            // Keep static event listener during migration (will be removed once EventBus is fully adopted)
+            // Note: Static events still fire during dual-dispatch period but we handle via EventBus now
         }
-        
+
         /// <summary>
         /// Called when the object is being destroyed and unsubscribes from events.
+        /// Phase 36: Disposes EventBus subscriptions.
         /// </summary>
         private void OnDestroy()
         {
-            InGameMenuScript.FieldCardEvent.RemoveListener(PutFieldCard);
-            TutoInGameMenuScript.FieldCardEvent.RemoveListener(PutFieldCard);
+            _fieldPlayRequestedSubscription?.Dispose();
+        }
+
+        /// <summary>
+        /// Event handler for FieldCardPlayRequestedEvent from EventBus.
+        /// Phase 36: Replaces static UnityEvent listener.
+        /// </summary>
+        private void OnFieldCardPlayRequested(FieldCardPlayRequestedEvent evt)
+        {
+            if (evt.FieldCard is InGameFieldCard fieldCard)
+            {
+                PutFieldCard(fieldCard);
+            }
         }
 
         /// <summary>

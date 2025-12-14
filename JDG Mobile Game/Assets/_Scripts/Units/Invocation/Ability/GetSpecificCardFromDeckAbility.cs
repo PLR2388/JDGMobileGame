@@ -31,15 +31,18 @@ public class GetSpecificCardFromDeckAbility : Ability
     /// </summary>
     /// <param name="canvas">The game canvas where UI components will be displayed.</param>
     /// <param name="playerCards">The player's current cards.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     protected void GetSpecificCard(Transform canvas, PlayerCards playerCards)
     {
         bool hasCardInDeck = playerCards.Deck.Exists(card => card.Title == CardName);
         if (hasCardInDeck)
         {
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_SPECIFIC_CARD_IN_DECK_MESSAGE),
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_GET_SPECIFIC_CARD_IN_DECK_MESSAGE),
                     CardName
                 ),
                 showNegativeButton: true,
@@ -51,7 +54,7 @@ public class GetSpecificCardFromDeckAbility : Ability
                     playerCards.HandCards.Add(card);
                 }
             );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 

@@ -73,12 +73,15 @@ public class GetHPBackEffectAbility : EffectAbility
     /// <param name="canvas">The UI canvas.</param>
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="playerStatus">The player's status.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private void PerformSingleSacrifice(Transform canvas, PlayerCards playerCards, PlayerStatus playerStatus)
     {
         var invocationCards = new List<InGameCard>(playerCards.InvocationCards
             .Where(card => card.Attack >= atkDefCondition || card.Defense >= atkDefCondition).ToList());
         var config = new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
             invocationCards,
             showOkButton: true,
             okAction: (card) =>
@@ -90,19 +93,16 @@ public class GetHPBackEffectAbility : EffectAbility
                 }
                 else
                 {
-                    var config = new MessageBoxConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE),
+                    var warningConfig = new MessageBoxConfig(
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE),
                         showOkButton: true
                     );
-                    MessageBox.Instance.CreateMessageBox(
-                        canvas,
-                        config
-                    );
+                    DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
                 }
             }
         );
-        CardSelector.Instance.CreateCardSelection(canvas, config);
+        DialogService.ShowCardSelectorLegacy(canvas, config);
     }
     
     /// <summary>

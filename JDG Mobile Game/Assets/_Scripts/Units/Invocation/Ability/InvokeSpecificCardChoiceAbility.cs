@@ -26,20 +26,22 @@ public class InvokeSpecificCardChoiceAbility : Ability
 
     /// <summary>
     /// Displays a message box with information that no card was invoked.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas on which to display the message box.</param>
-    private static void DisplayOkMessage(Transform canvas)
+    private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
     /// Applies the effect of this ability.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas to display any UI elements.</param>
     /// <param name="playerCards">The player's cards.</param>
@@ -49,12 +51,12 @@ public class InvokeSpecificCardChoiceAbility : Ability
         bool hasCardInDeck = playerCards.Deck.Exists(card => cardChoices.Contains(card.Title));
         if (hasCardInDeck)
         {
-            string cardNameChoiceString = string.Join(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_OR_OPTION), cardChoices);
+            string cardNameChoiceString = string.Join(LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_OR_OPTION), cardChoices);
 
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE)
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE)
                     , cardNameChoiceString
                 ),
                 showNegativeButton: true,
@@ -63,8 +65,8 @@ public class InvokeSpecificCardChoiceAbility : Ability
                 {
                     List<InGameCard> cards =
                         playerCards.Deck.FindAll(card => cardChoices.Contains(card.Title));
-                    var config = new CardSelectorConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
+                    var selectorConfig = new CardSelectorConfig(
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
                         cards,
                         showNegativeButton: true,
                         showPositiveButton: true,
@@ -85,10 +87,10 @@ public class InvokeSpecificCardChoiceAbility : Ability
                             DisplayOkMessage(canvas);
                         }
                         );
-                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                    DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
                 }
             );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 }

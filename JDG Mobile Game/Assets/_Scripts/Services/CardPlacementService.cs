@@ -5,7 +5,7 @@ using Cards;
 using Cards.EffectCards;
 using Cards.EquipmentCards;
 using Cards.FieldCards;
-using Sound;
+using JDG.Application.Services;
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +13,7 @@ using UnityEngine;
 /// Extracts business logic from *Functions MonoBehaviours.
 /// Part of Phase 6 - MonoBehaviour logic extraction.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
+/// Phase 37: Uses IAudioService instead of AudioSystem.Instance.
 ///
 /// Note: This service is in the default assembly because it depends on legacy types.
 /// It will be moved to JDG.Infrastructure once legacy types are refactored.
@@ -21,11 +22,16 @@ public class CardPlacementService : ICardPlacementService
 {
     private readonly ICardCollectionService _cardCollectionService;
     private readonly IPlayerStatusProvider _playerStatusProvider;
+    private readonly IAudioService _audioService;
 
-    public CardPlacementService(ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider)
+    public CardPlacementService(
+        ICardCollectionService cardCollectionService,
+        IPlayerStatusProvider playerStatusProvider,
+        IAudioService audioService)
     {
         _cardCollectionService = cardCollectionService;
         _playerStatusProvider = playerStatusProvider;
+        _audioService = audioService;
     }
 
     /// <summary>
@@ -121,8 +127,8 @@ public class CardPlacementService : ICardPlacementService
         }
 
         // Play family-specific music
-        // Note: Still using AudioSystem singleton - will be refactored in later phase
-        AudioSystem.Instance.PlayFamilyMusic(card.Family);
+        // Phase 37: Use IAudioService instead of AudioSystem.Instance
+        _audioService.PlayFamilyMusic(card.Family);
 
         return true;
     }

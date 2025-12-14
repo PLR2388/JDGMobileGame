@@ -23,20 +23,22 @@ public class KillOpponentInvocationCardAbility : Ability
 
     /// <summary>
     /// Displays an informational message box indicating that there is no card available to destroy.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas transform.</param>
-    private static void DisplayOkMessage(Transform canvas)
+    private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
     /// Applies the effect of the ability, allowing the player to destroy an opponent's Invocation Card if available.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas transform.</param>
     /// <param name="playerCards">The collection of the current player's cards.</param>
@@ -47,8 +49,8 @@ public class KillOpponentInvocationCardAbility : Ability
         if (invocationCards.Count > 0)
         {
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DESTROY_OPPONENT_INVOCATION_MESSAGE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_DESTROY_OPPONENT_INVOCATION_MESSAGE),
                 showNegativeButton: true,
                 showPositiveButton: true,
                 positiveAction: () =>
@@ -60,8 +62,8 @@ public class KillOpponentInvocationCardAbility : Ability
                     }
                     else
                     {
-                        var config = new CardSelectorConfig(
-                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
+                        var selectorConfig = new CardSelectorConfig(
+                            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
                             new List<InGameCard>(invocationCards),
                             showNegativeButton: true,
                             showPositiveButton: true,
@@ -82,11 +84,11 @@ public class KillOpponentInvocationCardAbility : Ability
                                 DisplayOkMessage(canvas);
                             }
                         );
-                        CardSelector.Instance.CreateCardSelection(canvas, config);
+                        DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
                     }
                 }
             );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 }

@@ -304,5 +304,55 @@ namespace JDG.Infrastructure.Services
 
             return cards;
         }
+
+        // Phase 38: Legacy config support methods for Ability base class migration
+
+        /// <summary>
+        /// Shows a message box using the legacy MessageBoxConfig type.
+        /// Phase 38: Added for legacy Ability class migration.
+        /// Delegates directly to MessageBox.Instance.CreateMessageBox.
+        /// </summary>
+        public void ShowMessageBoxLegacy(object canvas, object config)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            if (config is MessageBoxConfig messageBoxConfig)
+            {
+                _messageBox.CreateMessageBox(canvasTransform, messageBoxConfig);
+            }
+            else
+            {
+                Debug.LogError($"DialogService: Invalid config type. Expected MessageBoxConfig, got {config?.GetType().Name ?? "null"}.");
+            }
+        }
+
+        /// <summary>
+        /// Shows a card selector using the legacy CardSelectorConfig type.
+        /// Phase 38: Added for legacy Ability class migration.
+        /// Delegates directly to CardSelector.Instance.CreateCardSelection.
+        /// </summary>
+        public void ShowCardSelectorLegacy(object canvas, object config)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            if (config is global::CardSelectorConfig cardSelectorConfig)
+            {
+                _cardSelector.CreateCardSelection(canvasTransform, cardSelectorConfig);
+            }
+            else
+            {
+                Debug.LogError($"DialogService: Invalid config type. Expected CardSelectorConfig, got {config?.GetType().Name ?? "null"}.");
+            }
+        }
     }
 }

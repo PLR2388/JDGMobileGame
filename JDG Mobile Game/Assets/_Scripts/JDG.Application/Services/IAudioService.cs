@@ -45,5 +45,12 @@ namespace JDG.Application.Services
         /// Gets the current sound effects volume.
         /// </summary>
         float GetSfxVolume();
+
+        /// <summary>
+        /// Plays music associated with a card family.
+        /// Phase 37: Added to support CardPlacementService DI migration.
+        /// </summary>
+        /// <param name="family">The card family to play music for.</param>
+        void PlayFamilyMusic(object family);
     }
 }

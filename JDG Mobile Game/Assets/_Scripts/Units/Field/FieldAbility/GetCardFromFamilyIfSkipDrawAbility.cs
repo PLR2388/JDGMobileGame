@@ -26,19 +26,17 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
 
     /// <summary>
     /// Displays a message indicating the action was successful.
+    /// Phase 38: Use FieldAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>
@@ -53,6 +51,7 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
 
     /// <summary>
     /// The behavior to execute at the start of a turn, which offers the player the choice to skip the draw phase for a card from the specified family.
+    /// Phase 38: Use FieldAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     /// <param name="playerCards">The player's current set of cards.</param>
@@ -67,14 +66,14 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
         if (validCards.Count > 0)
         {
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE),
                 showPositiveButton: true,
                 showNegativeButton: true,
                 positiveAction: () =>
                 {
-                    var config = new CardSelectorConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
+                    var selectorConfig = new CardSelectorConfig(
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
                         validCards,
                         showOkButton: true,
                         okAction: (selectedCard) =>
@@ -100,13 +99,10 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
                             }
                         }
                     );
-                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                    DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
                 }
             );
-            MessageBox.Instance.CreateMessageBox(
-                canvas,
-                config
-            );
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 }

@@ -42,6 +42,9 @@ public class OptionalSacrificeForAtkDefAbility : Ability
     /// <param name="canvas">The game canvas.</param>
     /// <param name="playerCards">The cards of the current player.</param>
     /// <param name="opponentPlayerCards">The cards of the opponent player.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         bool isFieldPresent = playerCards.FieldCard?.Title == requiredField;
@@ -50,9 +53,9 @@ public class OptionalSacrificeForAtkDefAbility : Ability
         if (isFieldPresent && isInvocationPresent)
         {
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_SACRIFICE_TO_BOOST_MESSAGE),
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_SACRIFICE_TO_BOOST_MESSAGE),
                     cardNameToSacrifice,
                     newAtk,
                     newDef,
@@ -71,7 +74,7 @@ public class OptionalSacrificeForAtkDefAbility : Ability
                     invocationCard.Defense = newDef;
                 }
             );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 

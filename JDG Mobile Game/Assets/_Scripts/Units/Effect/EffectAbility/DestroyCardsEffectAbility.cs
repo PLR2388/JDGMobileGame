@@ -139,19 +139,17 @@ public class DestroyCardsEffectAbility : EffectAbility
 
     /// <summary>
     /// Displays a warning message to the player.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas on which the message box is displayed.</param>
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>
@@ -160,6 +158,9 @@ public class DestroyCardsEffectAbility : EffectAbility
     /// <param name="canvas">The canvas to use for UI operations.</param>
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="opponentPlayerCard">The opponent player's card.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private void HandleCase0(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
         if (mustThrowFirstDeck)
@@ -174,7 +175,7 @@ public class DestroyCardsEffectAbility : EffectAbility
             var invocationCards = new List<InGameCard>(playerCards.InvocationCards);
 
             CardSelectorConfig config = CreateSacrificeInvocationConfig(canvas, playerCards, opponentPlayerCard, invocationCards);
-            CardSelector.Instance.CreateCardSelection(canvas, config);
+            DialogService.ShowCardSelectorLegacy(canvas, config);
         }
     }
 
@@ -184,6 +185,9 @@ public class DestroyCardsEffectAbility : EffectAbility
     /// <param name="canvas">The canvas to use for UI operations.</param>
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="opponentPlayerCard">The opponent player's card.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private void HandleCase1(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
         var cards = BuildAllPossibleCardsToDestroy(playerCards, opponentPlayerCard);
@@ -191,7 +195,7 @@ public class DestroyCardsEffectAbility : EffectAbility
         if (mustThrowHandCard)
         {
             CardSelectorConfig config = CreateRemoveHandCardConfig(canvas, playerCards, opponentPlayerCard, cards);
-            CardSelector.Instance.CreateCardSelection(canvas, config);
+            DialogService.ShowCardSelectorLegacy(canvas, config);
         }
         else
         {
@@ -207,10 +211,13 @@ public class DestroyCardsEffectAbility : EffectAbility
     /// <param name="opponentPlayerCard">The opponent player's cards.</param>
     /// <param name="invocationCards">The list of invocation cards.</param>
     /// <returns>A configuration for the card selector.</returns>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private CardSelectorConfig CreateSacrificeInvocationConfig(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, List<InGameCard> invocationCards)
     {
         return new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
             invocationCards,
             showOkButton: true,
             okAction: (card) =>
@@ -218,7 +225,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                 if (card is InGameInvocationCard invocationCard)
                 {
                     CardSelectorConfig innerConfig = CreateRemoveHandCardAfterSacrificeConfig(canvas, playerCards, opponentPlayerCard, invocationCard);
-                    CardSelector.Instance.CreateCardSelection(canvas, innerConfig);
+                    DialogService.ShowCardSelectorLegacy(canvas, innerConfig);
                 }
                 else
                 {
@@ -236,11 +243,14 @@ public class DestroyCardsEffectAbility : EffectAbility
     /// <param name="opponentPlayerCard">The opponent player's cards.</param>
     /// <param name="invocationCard">The sacrificed invocation card.</param>
     /// <returns>A configuration for the card selector.</returns>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private CardSelectorConfig CreateRemoveHandCardAfterSacrificeConfig(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
         InGameInvocationCard invocationCard)
     {
         return new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
             playerCards.HandCards.ToList(),
             showOkButton: true,
             okAction: handCard => HandleOkAction(handCard, canvas, playerCards, opponentPlayerCard, invocationCard)
@@ -323,10 +333,13 @@ public class DestroyCardsEffectAbility : EffectAbility
     /// <param name="opponentPlayerCard">The opponent's cards.</param>
     /// <param name="cardsToDestroy">List of cards eligible for destruction.</param>
     /// <returns>Returns a CardSelectorConfig for removing cards.</returns>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private CardSelectorConfig CreateRemoveHandCardConfig(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, List<InGameCard> cardsToDestroy)
     {
         return new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
             playerCards.HandCards.ToList(),
             showOkButton: true,
             okAction: (handCard) =>
@@ -352,11 +365,14 @@ public class DestroyCardsEffectAbility : EffectAbility
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="opponentPlayerCard">The opponent's cards.</param>
     /// <param name="cards">List of cards eligible for destruction.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private void DisplayMessageBoxToDestroyOneCard(Transform canvas, PlayerCards playerCards,
         PlayerCards opponentPlayerCard, List<InGameCard> cards)
     {
         var config = new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
             cards,
             showOkButton: true,
             okAction: (card) =>
@@ -371,7 +387,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                 }
             }
         );
-        CardSelector.Instance.CreateCardSelection(canvas, config);
+        DialogService.ShowCardSelectorLegacy(canvas, config);
     }
 
     /// <summary>

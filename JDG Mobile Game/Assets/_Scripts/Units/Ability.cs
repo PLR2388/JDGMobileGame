@@ -15,6 +15,7 @@ using UnityEngine;
 ///
 /// Phase 24-25: Updated to use JDG.Domain.AbilityName (removed legacy global AbilityName enum).
 /// Phase 27: Added GameStateService for legacy abilities (eliminates ServiceLocator usage).
+/// Phase 38: Added ILocalizationService and IDialogService for legacy abilities.
 /// </summary>
 [System.Obsolete("Legacy ability system. Use IAbility interface from JDG.Application.Abilities instead. " +
                  "Migrate to new system using factories and dependency injection.")]
@@ -26,6 +27,18 @@ public abstract class Ability
     /// Public static to allow LegacyCardLoader (non-inheriting class) to initialize it.
     /// </summary>
     public static GameStateService GameStateService { get; set; }
+
+    /// <summary>
+    /// Shared ILocalizationService instance for legacy abilities.
+    /// Phase 38: Set once at initialization to remove LocalizationSystem.Instance calls.
+    /// </summary>
+    public static JDG.Application.Services.ILocalizationService LocalizationService { get; set; }
+
+    /// <summary>
+    /// Shared IDialogService instance for legacy abilities.
+    /// Phase 38: Set once at initialization to remove MessageBox.Instance and CardSelector.Instance calls.
+    /// </summary>
+    public static JDG.Application.Services.IDialogService DialogService { get; set; }
 
     /// <summary>
     /// The name of the ability.

@@ -62,6 +62,9 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
     /// </summary>
     /// <param name="canvas">The canvas on which the UI is displayed.</param>
     /// <param name="playerCards">The player's cards.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private void HandleCardSelection(Transform canvas, PlayerCards playerCards)
     {
         var cards = GetCardSourceList(playerCards);
@@ -69,7 +72,7 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
         if (numberCards == 1)
         {
             var config = new CardSelectorConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
                 cards.ToList(),
                 showOkButton: true,
                 okAction: (card) =>
@@ -84,22 +87,23 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
                     }
                 }
             );
-            CardSelector.Instance.CreateCardSelection(canvas, config);
+            DialogService.ShowCardSelectorLegacy(canvas, config);
         }
     }
 
     /// <summary>
     /// Displays a warning message box.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas on which the UI is displayed.</param>
     private void DisplayWarningMessageBox(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>

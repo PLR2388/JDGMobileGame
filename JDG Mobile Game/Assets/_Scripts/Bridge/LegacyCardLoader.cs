@@ -1,5 +1,6 @@
 using UnityEngine;
 using JDG.Application.Repositories;
+using JDG.Application.Services;
 using JDG.Infrastructure.Repositories;
 using JDG.Infrastructure.Services;
 using VContainer;
@@ -12,6 +13,7 @@ namespace JDG.Bridge
     /// Attach this to the same GameObject as GameBootstrapper.
     /// Phase 27: Now uses VContainer dependency injection instead of ServiceLocator.
     /// Also initializes legacy Ability.GameStateService for old ability system.
+    /// Phase 38: Added ILocalizationService and IDialogService initialization.
     /// </summary>
     public class LegacyCardLoader : MonoBehaviour
     {
@@ -20,21 +22,46 @@ namespace JDG.Bridge
 
         private ICardRepository _cardRepository;
         private GameStateService _gameStateService;
+        private ILocalizationService _localizationService;
+        private IDialogService _dialogService;
 
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 27: Inject ICardRepository and GameStateService instead of using ServiceLocator.
+        /// Phase 38: Added ILocalizationService and IDialogService for legacy ability system.
         /// </summary>
         [Inject]
-        public void Construct(ICardRepository cardRepository, GameStateService gameStateService)
+        public void Construct(
+            ICardRepository cardRepository,
+            GameStateService gameStateService,
+            ILocalizationService localizationService,
+            IDialogService dialogService)
         {
             _cardRepository = cardRepository;
             _gameStateService = gameStateService;
+            _localizationService = localizationService;
+            _dialogService = dialogService;
 
             // Phase 27: Initialize legacy Ability base class with GameStateService
             // This must be done in default assembly since JDG.Infrastructure cannot reference default assembly
             Ability.GameStateService = gameStateService;
-            Debug.Log("LegacyCardLoader: Initialized Ability.GameStateService for legacy ability system");
+
+            // Phase 38: Initialize legacy Ability base class with ILocalizationService and IDialogService
+            // Eliminates LocalizationSystem.Instance, MessageBox.Instance, and CardSelector.Instance calls
+            Ability.LocalizationService = localizationService;
+            Ability.DialogService = dialogService;
+
+            // Phase 38: Initialize legacy EffectAbility base class with ILocalizationService and IDialogService
+            // EffectAbility is separate from Ability, so needs its own initialization
+            EffectAbility.LocalizationService = localizationService;
+            EffectAbility.DialogService = dialogService;
+
+            // Phase 38: Initialize legacy FieldAbility base class with ILocalizationService and IDialogService
+            // FieldAbility is separate from Ability and EffectAbility, so needs its own initialization
+            FieldAbility.LocalizationService = localizationService;
+            FieldAbility.DialogService = dialogService;
+
+            Debug.Log("LegacyCardLoader: Initialized Ability, EffectAbility, and FieldAbility services for legacy ability system");
         }
 
         private void Start()

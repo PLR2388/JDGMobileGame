@@ -32,23 +32,22 @@ public class LookHandCardsEffectAbility : EffectAbility
 
     /// <summary>
     /// Displays a message box with an OK button.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
     /// Applies the effect, allowing the player to view the opponent's hand cards.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     /// <param name="playerCards">The player's cards.</param>
@@ -62,7 +61,7 @@ public class LookHandCardsEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var config = new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
             opponentPlayerCard.HandCards.ToList(),
             showOkButton: true,
             numberCardSelection: 0,
@@ -74,11 +73,12 @@ public class LookHandCardsEffectAbility : EffectAbility
                 }
             }
         );
-        CardSelector.Instance.CreateCardSelection(canvas, config);
+        DialogService.ShowCardSelectorLegacy(canvas, config);
     }
 
     /// <summary>
-    /// Displays a choice for the player regarding hand cards: If he wants to remove one card from the opponent
+    /// Displays a choice for the player regarding hand cards: If he wants to remove one card from the opponent.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     /// <param name="playerCards">The player's cards.</param>
@@ -86,14 +86,14 @@ public class LookHandCardsEffectAbility : EffectAbility
     private void DisplayChoiceAboutHandCards(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_REMOVE_CARD_OPPONENT_HAND_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_REMOVE_CARD_OPPONENT_HAND_MESSAGE),
             showPositiveButton: true,
             showNegativeButton: true,
             positiveAction: () =>
             {
-                var config = new CardSelectorConfig(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
+                var selectorConfig = new CardSelectorConfig(
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
                     opponentPlayerCard.HandCards.ToList(),
                     showOkButton: true,
                     okAction: opponentCard =>
@@ -104,8 +104,8 @@ public class LookHandCardsEffectAbility : EffectAbility
                         }
                         else
                         {
-                            var config = new CardSelectorConfig(
-                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                            var playerSelectorConfig = new CardSelectorConfig(
+                                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                                 playerCards.HandCards.ToList(),
                                 showOkButton: true,
                                 okAction: (playerCard) =>
@@ -123,13 +123,13 @@ public class LookHandCardsEffectAbility : EffectAbility
                                     }
                                 }
                             );
-                            CardSelector.Instance.CreateCardSelection(canvas, config);
+                            DialogService.ShowCardSelectorLegacy(canvas, playerSelectorConfig);
                         }
                     }
                 );
-                CardSelector.Instance.CreateCardSelection(canvas, config);
+                DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
             }
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 }

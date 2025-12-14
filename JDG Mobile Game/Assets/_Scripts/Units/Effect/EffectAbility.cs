@@ -37,9 +37,22 @@ public enum EffectAbilityName
 /// <summary>
 /// Base class for effect abilities that can be applied in the game.
 /// EffectAbilities can influence gameplay by modifying card behaviors, player statuses, etc.
+/// Phase 38: Added static service properties for legacy abilities (eliminates singleton calls).
 /// </summary>
 public abstract class EffectAbility
 {
+    /// <summary>
+    /// Shared ILocalizationService instance for legacy effect abilities.
+    /// Phase 38: Set once at initialization to remove LocalizationSystem.Instance calls.
+    /// </summary>
+    public static JDG.Application.Services.ILocalizationService LocalizationService { get; set; }
+
+    /// <summary>
+    /// Shared IDialogService instance for legacy effect abilities.
+    /// Phase 38: Set once at initialization to remove MessageBox.Instance and CardSelector.Instance calls.
+    /// </summary>
+    public static JDG.Application.Services.IDialogService DialogService { get; set; }
+
     /// <summary>
     /// Gets or sets the name of the effect ability.
     /// </summary>

@@ -37,6 +37,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
 
     /// <summary>
     /// Applies the effect, allowing the player to view the deck cards.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     /// <param name="playerCards">The player's cards.</param>
@@ -50,8 +51,8 @@ public class LookDeckCardsEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_SEE_DECK_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_SEE_DECK_MESSAGE),
             showNegativeButton: true,
             showPositiveButton: true,
             positiveAction: () =>
@@ -63,11 +64,12 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 DisplayAndOrderCardMessageBox(canvas, opponentPlayerCard);
             }
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
     /// Displays and handles ordering of deck cards for the player.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
     /// <param name="playerCards">The player's cards to display and potentially rearrange.</param>
@@ -83,7 +85,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
             }
 
             var config = new CardSelectorConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 shortList,
                 numberCardSelection: numberCards,
                 showOrder: true,
@@ -102,13 +104,12 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 }
             );
 
-            CardSelector.Instance.CreateCardSelection(
-                canvas, config);
+            DialogService.ShowCardSelectorLegacy(canvas, config);
         }
         else
         {
             var config = new CardSelectorConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 deck,
                 numberCardSelection: deck.Count,
                 showOrder: true,
@@ -127,29 +128,23 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 }
             );
 
-            CardSelector.Instance.CreateCardSelection(
-                canvas,
-                config
-            );
+            DialogService.ShowCardSelectorLegacy(canvas, config);
         }
     }
     
     /// <summary>
     /// Displays a warning message when cards are not ordered.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas.</param>
-    private static void DisplayWarningOrderMessage(Transform canvas)
+    private void DisplayWarningOrderMessage(Transform canvas)
     {
-
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>

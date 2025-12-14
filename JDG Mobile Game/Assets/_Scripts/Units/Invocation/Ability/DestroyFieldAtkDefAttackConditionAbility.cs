@@ -37,19 +37,17 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
 
     /// <summary>
     /// Displays a message indicating there's no card that was destroyed
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The game canvas where UI components will be displayed.</param>
-    private static void DisplayOkMessage(Transform canvas)
+    private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_DESTROY_CARD_MESSAGE),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
@@ -84,17 +82,20 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
     /// <param name="canvas">The game canvas where UI components will be displayed.</param>
     /// <param name="playerCards">The player's current cards.</param>
     /// <param name="opponentPlayerCards">The opponent's current cards.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         string condition = divideAtkFactor > 1
-            ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.YOUR_ATTACK)
-            : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.YOUR_DEFENSE);
+            ? LocalizationService.GetLocalizedValue(LocalizationKeys.YOUR_ATTACK)
+            : LocalizationService.GetLocalizedValue(LocalizationKeys.YOUR_DEFENSE);
         int value = divideAtkFactor > 1 ? divideAtkFactor : divideDefFactor;
 
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
             string.Format(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_DIVIDE_TO_DESTROY_FIELD_MESSAGE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_DIVIDE_TO_DESTROY_FIELD_MESSAGE),
                 condition, value
             ),
             showPositiveButton: true,
@@ -118,8 +119,8 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
                 }
                 else if (fieldCardsToDestroy.Count > 1)
                 {
-                    var config = new CardSelectorConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
+                    var selectorConfig = new CardSelectorConfig(
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
                         fieldCardsToDestroy,
                         showNegativeButton: true,
                         showPositiveButton: true,
@@ -139,7 +140,7 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
                             DisplayOkMessage(canvas);
                         }
                         );
-                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                    DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
                 }
                 else
                 {
@@ -147,6 +148,6 @@ public class DestroyFieldAtkDefAttackConditionAbility : Ability
                 }
             }
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 }

@@ -1,4 +1,5 @@
 using Cards;
+using JDG.Application;
 using JDG.Application.Services;
 
 /// <summary>
@@ -6,6 +7,7 @@ using JDG.Application.Services;
 /// Phase 17-18: Updated constructor signature to match base class changes.
 /// Phase 28: Added IPlayerStatusProvider parameter.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 36: Added IEventBus parameter.
 /// </summary>
 public class ContreCardHandler : CardHandler
 {
@@ -14,17 +16,20 @@ public class ContreCardHandler : CardHandler
     /// Phase 17-18: Added cardCollectionService parameter.
     /// Phase 28: Added playerStatusProvider parameter.
     /// Phase 34: Added localizationService parameter.
+    /// Phase 36: Added eventBus parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
     /// <param name="playerStatusProvider">The provider for accessing player status.</param>
     /// <param name="localizationService">The service for localized text values.</param>
+    /// <param name="eventBus">The event bus for publishing card events.</param>
     public ContreCardHandler(
         InGameMenuScript menuScript,
         ICardCollectionService cardCollectionService,
         IPlayerStatusProvider playerStatusProvider,
-        ILocalizationService localizationService)
-        : base(menuScript, cardCollectionService, playerStatusProvider, localizationService)
+        ILocalizationService localizationService,
+        IEventBus eventBus)
+        : base(menuScript, cardCollectionService, playerStatusProvider, localizationService, eventBus)
     {
     }
 

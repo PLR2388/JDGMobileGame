@@ -49,10 +49,18 @@ public class InGameMenuScript : MonoBehaviour
     [SerializeField] protected GameObject invocationMenu;
 
     // Static events for various card interactions
+    // Phase 36: These static events are being replaced by EventBus.
+    // CardHandlers now publish to EventBus first, then invoke these for backwards compatibility.
+    // TODO: Remove these once all subscribers have migrated to EventBus.
+    [System.Obsolete("Use EventBus with InvocationCardPlayRequestedEvent/EffectCardPlayRequestedEvent/etc. instead")]
     public static readonly CardEvent EventClick = new CardEvent();
+    [System.Obsolete("Use EventBus with InvocationCardPlayRequestedEvent instead")]
     public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
+    [System.Obsolete("Use EventBus with FieldCardPlayRequestedEvent instead")]
     public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
+    [System.Obsolete("Use EventBus with EffectCardPlayRequestedEvent instead")]
     public static readonly EffectCardEvent EffectCardEvent = new EffectCardEvent();
+    [System.Obsolete("Use EventBus with EquipmentCardPlayRequestedEvent instead")]
     public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
 
 
@@ -97,14 +105,15 @@ public class InGameMenuScript : MonoBehaviour
     /// Phase 17-18: Pass ICardCollectionService to handlers.
     /// Phase 28: Pass IPlayerStatusProvider to handlers.
     /// Phase 34: Pass ILocalizationService to handlers.
+    /// Phase 36: Pass IEventBus to handlers for static UnityEvent migration.
     /// </summary>
     protected void InitializeCardHandlers()
     {
-        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
-        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
-        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
-        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
-        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService);
+        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
     }
 
     /// <summary>

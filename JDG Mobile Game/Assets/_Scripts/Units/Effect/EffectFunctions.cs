@@ -1,5 +1,7 @@
-﻿using JDG.Application;
+﻿using System;
+using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain.Events;
 using UnityEngine;
 using VContainer;
 
@@ -11,6 +13,7 @@ namespace Cards.EffectCards
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
+    /// Phase 36: Subscribes to EffectCardPlayRequestedEvent via EventBus.
     /// </summary>
     public class EffectFunctions : MonoBehaviour
     {
@@ -26,33 +29,55 @@ namespace Cards.EffectCards
         // Phase 35: Injected via VContainer
         private IDialogService _dialogService;
 
+        // Phase 36: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+        private IDisposable _effectPlayRequestedSubscription;
+
         [Inject]
         public void Construct(
             ICardPlacementService cardPlacementService,
             ILocalizationService localizationService,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            IEventBus eventBus)
         {
             _cardPlacementService = cardPlacementService;
             _localizationService = localizationService;
             _dialogService = dialogService;
+            _eventBus = eventBus;
         }
 
         /// <summary>
         /// Initialization method. Subscribes to relevant events.
+        /// Phase 36: Subscribes to EffectCardPlayRequestedEvent via EventBus.
         /// </summary>
         private void Start()
         {
-            InGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
-            TutoInGameMenuScript.EffectCardEvent.AddListener(PutEffectCard);
+            // Phase 36: Subscribe to EventBus (primary)
+            _effectPlayRequestedSubscription = _eventBus.Subscribe<EffectCardPlayRequestedEvent>(OnEffectCardPlayRequested);
+
+            // Keep static event listener during migration (will be removed once EventBus is fully adopted)
+            // Note: Static events still fire during dual-dispatch period but we handle via EventBus now
         }
-        
+
         /// <summary>
         /// Cleanup method. Unsubscribes from events when the object is destroyed.
+        /// Phase 36: Disposes EventBus subscriptions.
         /// </summary>
         private void OnDestroy()
         {
-            InGameMenuScript.EffectCardEvent.RemoveListener(PutEffectCard);
-            TutoInGameMenuScript.EffectCardEvent.RemoveListener(PutEffectCard);
+            _effectPlayRequestedSubscription?.Dispose();
+        }
+
+        /// <summary>
+        /// Event handler for EffectCardPlayRequestedEvent from EventBus.
+        /// Phase 36: Replaces static UnityEvent listener.
+        /// </summary>
+        private void OnEffectCardPlayRequested(EffectCardPlayRequestedEvent evt)
+        {
+            if (evt.EffectCard is InGameEffectCard effectCard)
+            {
+                PutEffectCard(effectCard);
+            }
         }
 
         /// <summary>

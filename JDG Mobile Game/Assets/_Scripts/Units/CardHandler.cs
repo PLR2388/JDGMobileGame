@@ -1,4 +1,5 @@
 using Cards;
+using JDG.Application;
 using JDG.Application.Services;
 
 /// <summary>
@@ -6,6 +7,7 @@ using JDG.Application.Services;
 /// Phase 17-18: Added ICardCollectionService for card state access.
 /// Phase 28: Added IPlayerStatusProvider for player status access.
 /// Phase 34: Added ILocalizationService for localized strings.
+/// Phase 36: Added IEventBus for static UnityEvent migration.
 /// </summary>
 public abstract class CardHandler
 {
@@ -30,25 +32,34 @@ public abstract class CardHandler
     protected ILocalizationService localizationService;
 
     /// <summary>
+    /// Phase 36: EventBus for publishing card play events.
+    /// </summary>
+    protected IEventBus eventBus;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="CardHandler"/> class.
     /// Phase 17-18: Added cardCollectionService parameter.
     /// Phase 28: Added playerStatusProvider parameter.
     /// Phase 34: Added localizationService parameter.
+    /// Phase 36: Added eventBus parameter.
     /// </summary>
     /// <param name="menuScript">The in-game menu script associated with this handler.</param>
     /// <param name="cardCollectionService">The service for accessing player card collections.</param>
     /// <param name="playerStatusProvider">The provider for accessing player status.</param>
     /// <param name="localizationService">The service for localized text values.</param>
+    /// <param name="eventBus">The event bus for publishing card events.</param>
     public CardHandler(
         InGameMenuScript menuScript,
         ICardCollectionService cardCollectionService,
         IPlayerStatusProvider playerStatusProvider,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IEventBus eventBus)
     {
         this.menuScript = menuScript;
         this.cardCollectionService = cardCollectionService;
         this.playerStatusProvider = playerStatusProvider;
         this.localizationService = localizationService;
+        this.eventBus = eventBus;
     }
 
     /// <summary>

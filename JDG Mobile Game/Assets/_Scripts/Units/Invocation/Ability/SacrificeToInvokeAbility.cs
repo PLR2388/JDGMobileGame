@@ -24,20 +24,21 @@ public class SacrificeToInvokeAbility : Ability
 
     /// <summary>
     /// Displays a message indicating that no cards were invoked.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas to display the message on.</param>
-    private static void DisplayOkMessage(Transform canvas)
+    private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_INVOKED_CARD_MESSAGE),
             showOkButton: true,
             okAction: () =>
             {
-                
+
             }
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
@@ -58,6 +59,9 @@ public class SacrificeToInvokeAbility : Ability
     /// <param name="canvas">The canvas to display any UI elements on.</param>
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="opponentPlayerCards">The opponent's player cards.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         List<InGameCard> invocationCards = playerCards.YellowCards.TakeWhile(card =>
@@ -66,17 +70,17 @@ public class SacrificeToInvokeAbility : Ability
         if (invocationCards.Count > 0)
         {
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_NON_COLLECTOR_BY_SACRFICE_MESSAGE),
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_NON_COLLECTOR_BY_SACRFICE_MESSAGE),
                     invocationCard.Title
                 ),
                 showPositiveButton: true,
                 showNegativeButton: true,
                 positiveAction: () =>
                 {
-                    var config = new CardSelectorConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
+                    var selectorConfig = new CardSelectorConfig(
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
                         invocationCards,
                         showNegativeButton: true,
                         showPositiveButton: true,
@@ -99,10 +103,10 @@ public class SacrificeToInvokeAbility : Ability
                             DisplayOkMessage(canvas);
                         }
                     );
-                    CardSelector.Instance.CreateCardSelection(canvas, config);
+                    DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
                 }
             );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 

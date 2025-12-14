@@ -51,26 +51,27 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
 
     /// <summary>
     /// Displays a message indicating the obligation of choosing a card/cards for sacrifice.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas to display the message on.</param>
     /// <param name="numberOfCards">The number of cards that need to be sacrificed.</param>
-    private static void DisplayOkMessage(Transform canvas, int numberOfCards)
+    private void DisplayOkMessage(Transform canvas, int numberOfCards)
     {
         string message = numberOfCards == 1
-            ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE)
+            ? LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE)
             : string.Format(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICES),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICES),
                 numberOfCards
             );
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
             message,
             showOkButton: true,
             okAction: () =>
             {
             }
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
@@ -79,6 +80,9 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
     /// <param name="canvas">The canvas to display any UI elements on.</param>
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="opponentPlayerCards">The opponent's player cards.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         List<InGameInvocationCard> invocationCards = GetValidInvocationCards(playerCards);
@@ -97,8 +101,8 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
 
             bool isMultipleSelected = numberCard > 1;
             string message = isMultipleSelected
-                ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICES)
-                : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE);
+                ? LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICES)
+                : LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE);
 
             var config = new CardSelectorConfig(
                 message,
@@ -137,7 +141,7 @@ public class SacrificeCardMinAtkMinDefFamilyNumberAbility : Ability
                     }
                 }
                 );
-            CardSelector.Instance.CreateCardSelection(canvas, config);
+            DialogService.ShowCardSelectorLegacy(canvas, config);
         }
     }
 }

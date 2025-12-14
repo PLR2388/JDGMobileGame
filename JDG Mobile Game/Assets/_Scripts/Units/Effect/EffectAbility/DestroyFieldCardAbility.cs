@@ -30,6 +30,9 @@ public class DestroyFieldCardAbility : EffectAbility
     /// <param name="opponentPlayerCard">The cards of the opponent player.</param>
     /// <param name="playerStatus">The status of the player.</param>
     /// <param name="opponentStatus">The status of the opponent player.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
         PlayerStatus playerStatus,
         PlayerStatus opponentStatus)
@@ -39,7 +42,7 @@ public class DestroyFieldCardAbility : EffectAbility
         var cards = CollectFieldCards(playerCards, opponentPlayerCard);
 
         var config = new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
             cards,
             showOkButton: true,
             okAction: (card) =>
@@ -47,11 +50,12 @@ public class DestroyFieldCardAbility : EffectAbility
                 HandleSelectedCard(canvas, playerCards, opponentPlayerCard, playerStatus, card);
             }
         );
-        CardSelector.Instance.CreateCardSelection(canvas, config);
+        DialogService.ShowCardSelectorLegacy(canvas, config);
     }
-    
+
     /// <summary>
     /// Handles the selected card.
+    /// Phase 38: Use EffectAbility static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas to draw on.</param>
     /// <param name="playerCards">The cards of the player.</param>
@@ -60,18 +64,14 @@ public class DestroyFieldCardAbility : EffectAbility
     /// <param name="card">The selected card to handle.</param>
     private void HandleSelectedCard(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, PlayerStatus playerStatus, InGameCard card)
     {
-
         if (card == null)
         {
-            var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            var warningConfig = new MessageBoxConfig(
+                LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
                 showOkButton: true
             );
-            MessageBox.Instance.CreateMessageBox(
-                canvas,
-                config
-            );
+            DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
         }
         else
         {

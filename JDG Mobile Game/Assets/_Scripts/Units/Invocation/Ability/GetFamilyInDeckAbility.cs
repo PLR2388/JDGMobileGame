@@ -35,12 +35,15 @@ public class GetFamilyInDeckAbility : Ability
     /// <param name="canvas">The game canvas where UI components will be displayed.</param>
     /// <param name="playerCards">The player's current cards.</param>
     /// <param name="opponentPlayerCards">The opponent's current cards.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
             string.Format(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_GET_CARD_FROM_FAMILY_MESSAGE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_GET_CARD_FROM_FAMILY_MESSAGE),
                 family.ToName()
             ),
             showNegativeButton: true,
@@ -50,9 +53,9 @@ public class GetFamilyInDeckAbility : Ability
                 List<InGameCard> familyCards = playerCards.Deck.FindAll(card =>
                     card.Type == Cards.CardType.Invocation && (card as InGameInvocationCard)?.Families.Contains(family) == true);
 
-                var config = new CardSelectorConfig(
+                var selectorConfig = new CardSelectorConfig(
                     string.Format(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FAMILY_CARD),
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FAMILY_CARD),
                         family.ToName()
                     ),
                     familyCards,
@@ -61,15 +64,12 @@ public class GetFamilyInDeckAbility : Ability
                     {
                         if (card == null)
                         {
-                            var config = new MessageBoxConfig(
-                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                            var warningConfig = new MessageBoxConfig(
+                                LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                                LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
                                 showOkButton: true
                             );
-                            MessageBox.Instance.CreateMessageBox(
-                                canvas,
-                                config
-                            );
+                            DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
                         }
                         else
                         {
@@ -78,12 +78,9 @@ public class GetFamilyInDeckAbility : Ability
                         }
                     }
                 );
-                CardSelector.Instance.CreateCardSelection(canvas, config);
+                DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
             }
         );
-        MessageBox.Instance.CreateMessageBox(
-            canvas,
-            config
-        );
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 }

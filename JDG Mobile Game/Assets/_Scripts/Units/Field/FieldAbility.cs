@@ -27,6 +27,18 @@ public enum FieldAbilityName
 public abstract class FieldAbility
 {
     /// <summary>
+    /// Static localization service for legacy abilities.
+    /// Phase 38: Provides DI-compatible localization without changing ability constructors.
+    /// </summary>
+    public static JDG.Application.Services.ILocalizationService LocalizationService { get; set; }
+
+    /// <summary>
+    /// Static dialog service for legacy abilities.
+    /// Phase 38: Provides DI-compatible dialogs without changing ability constructors.
+    /// </summary>
+    public static JDG.Application.Services.IDialogService DialogService { get; set; }
+
+    /// <summary>
     /// Gets or sets the name of the field ability.
     /// </summary>
     public FieldAbilityName Name { get; set; }

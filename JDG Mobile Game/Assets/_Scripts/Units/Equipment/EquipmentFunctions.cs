@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain.Events;
 using UnityEngine;
 using VContainer;
 
@@ -14,6 +16,7 @@ namespace Cards.EquipmentCards
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 35: Uses IDialogService instead of CardSelector.Instance.
+    /// Phase 36: Subscribes to EquipmentCardPlayRequestedEvent via EventBus.
     /// </summary>
     public class EquipmentFunctions : MonoBehaviour
     {
@@ -29,33 +32,55 @@ namespace Cards.EquipmentCards
         // Phase 35: Injected via VContainer
         private IDialogService _dialogService;
 
+        // Phase 36: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+        private IDisposable _equipmentPlayRequestedSubscription;
+
         [Inject]
         public void Construct(
             ICardPlacementService cardPlacementService,
             ILocalizationService localizationService,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            IEventBus eventBus)
         {
             _cardPlacementService = cardPlacementService;
             _localizationService = localizationService;
             _dialogService = dialogService;
+            _eventBus = eventBus;
         }
 
         /// <summary>
         /// Initializes listeners for equipment card events.
+        /// Phase 36: Subscribes to EquipmentCardPlayRequestedEvent via EventBus.
         /// </summary>
         private void Start()
         {
-            InGameMenuScript.EquipmentCardEvent.AddListener(DisplayEquipmentPopUp);
-            TutoInGameMenuScript.EquipmentCardEvent.AddListener(DisplayEquipmentPopUp);
+            // Phase 36: Subscribe to EventBus (primary)
+            _equipmentPlayRequestedSubscription = _eventBus.Subscribe<EquipmentCardPlayRequestedEvent>(OnEquipmentCardPlayRequested);
+
+            // Keep static event listener during migration (will be removed once EventBus is fully adopted)
+            // Note: Static events still fire during dual-dispatch period but we handle via EventBus now
         }
 
         /// <summary>
         /// Cleans up listeners upon object destruction.
+        /// Phase 36: Disposes EventBus subscriptions.
         /// </summary>
         private void OnDestroy()
         {
-            InGameMenuScript.EquipmentCardEvent.RemoveListener(DisplayEquipmentPopUp);
-            TutoInGameMenuScript.EquipmentCardEvent.RemoveListener(DisplayEquipmentPopUp);
+            _equipmentPlayRequestedSubscription?.Dispose();
+        }
+
+        /// <summary>
+        /// Event handler for EquipmentCardPlayRequestedEvent from EventBus.
+        /// Phase 36: Replaces static UnityEvent listener.
+        /// </summary>
+        private void OnEquipmentCardPlayRequested(EquipmentCardPlayRequestedEvent evt)
+        {
+            if (evt.EquipmentCard is InGameEquipmentCard equipmentCard)
+            {
+                DisplayEquipmentPopUp(equipmentCard);
+            }
         }
 
         /// <summary>

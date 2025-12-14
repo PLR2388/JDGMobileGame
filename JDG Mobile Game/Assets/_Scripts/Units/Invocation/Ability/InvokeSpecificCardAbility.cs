@@ -28,15 +28,18 @@ public class InvokeSpecificCardAbility : Ability
     /// <param name="canvas">The canvas to display any UI elements.</param>
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="opponentPlayerCards">The opponent player's cards.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
     {
         bool hasCardInDeck = playerCards.Deck.Exists(card => card.Title == cardName);
         if (hasCardInDeck)
         {
             var config = new MessageBoxConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                 string.Format(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE),
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE),
                     cardName
                 ),
                 showNegativeButton: true,
@@ -48,7 +51,7 @@ public class InvokeSpecificCardAbility : Ability
                     playerCards.InvocationCards.Add(card);
                 }
             );
-            MessageBox.Instance.CreateMessageBox(canvas, config);
+            DialogService.ShowMessageBoxLegacy(canvas, config);
         }
     }
 }

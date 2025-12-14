@@ -77,13 +77,16 @@ public class LimitHandCardsEffectAbility : EffectAbility
     /// <param name="canvas">The UI canvas to display messages.</param>
     /// <param name="playerCards">The player's cards to check and adjust.</param>
     /// <param name="currentCardCount">The current number of cards in hand.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     private void PromptToRemoveExtraCards(Transform canvas, PlayerCards playerCards, int currentCardCount)
     {
         int extraCards = currentCardCount - numberCards;
 
         var config = new CardSelectorConfig(
             string.Format(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                 playerCards.IsPlayerOne ? "1" : "2",
                 extraCards),
             playerCards.HandCards.ToList(),
@@ -102,17 +105,17 @@ public class LimitHandCardsEffectAbility : EffectAbility
                 else
                 {
                     var warningConfig = new MessageBoxConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
                         string.Format(
-                            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARDS),
+                            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARDS),
                             extraCards
                         ),
                         showOkButton: true
                     );
-                    MessageBox.Instance.CreateMessageBox(canvas, warningConfig);
+                    DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
                 }
             }
         );
-        CardSelector.Instance.CreateCardSelection(canvas, config);
+        DialogService.ShowCardSelectorLegacy(canvas, config);
     }
 }

@@ -424,4 +424,49 @@ namespace JDG.Domain.Events
         public int HealAmount;
         public int NewHP;
     }
+
+    // ============================================
+    // CARD PLAY REQUEST EVENTS
+    // Phase 36: Replaces static UnityEvents in InGameMenuScript
+    // ============================================
+
+    /// <summary>
+    /// Published when user requests to play an invocation card.
+    /// Phase 36: Replaces InGameMenuScript.InvocationCardEvent static UnityEvent.
+    /// </summary>
+    public struct InvocationCardPlayRequestedEvent
+    {
+        public object InvocationCard; // Using object to avoid dependency on InGameInvocationCard
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when user requests to play a field card.
+    /// Phase 36: Replaces InGameMenuScript.FieldCardEvent static UnityEvent.
+    /// </summary>
+    public struct FieldCardPlayRequestedEvent
+    {
+        public object FieldCard; // Using object to avoid dependency on InGameFieldCard
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when user requests to play an effect card.
+    /// Phase 36: Replaces InGameMenuScript.EffectCardEvent static UnityEvent.
+    /// </summary>
+    public struct EffectCardPlayRequestedEvent
+    {
+        public object EffectCard; // Using object to avoid dependency on InGameEffectCard
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when user requests to play an equipment card.
+    /// Phase 36: Replaces InGameMenuScript.EquipmentCardEvent static UnityEvent.
+    /// </summary>
+    public struct EquipmentCardPlayRequestedEvent
+    {
+        public object EquipmentCard; // Using object to avoid dependency on InGameEquipmentCard
+        public CardOwner Owner;
+    }
 }

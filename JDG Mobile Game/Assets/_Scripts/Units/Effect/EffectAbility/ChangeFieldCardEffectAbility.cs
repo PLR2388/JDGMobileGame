@@ -40,6 +40,9 @@ public class ChangeFieldCardEffectAbility : EffectAbility
     /// <param name="opponentPlayerCard">The cards held by the opponent.</param>
     /// <param name="playerStatus">The current status of the player.</param>
     /// <param name="opponentStatus">The current status of the opponent.</param>
+    /// <summary>
+    /// Phase 38: Use EffectAbility static services instead of singletons.
+    /// </summary>
     public override void ApplyEffect(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard,
         PlayerStatus playerStatus,
         PlayerStatus opponentStatus)
@@ -47,7 +50,7 @@ public class ChangeFieldCardEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
         var fieldCards = playerCards.Deck.Where(card => card.Type == CardType.Field).ToList();
         var config = new CardSelectorConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FIELD),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_FIELD),
             fieldCards,
             showOkButton: true,
             okAction: (card) =>
@@ -66,18 +69,15 @@ public class ChangeFieldCardEffectAbility : EffectAbility
                 }
                 else
                 {
-                    var config = new MessageBoxConfig(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_FIELD_CARD),
+                    var warningConfig = new MessageBoxConfig(
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_FIELD_CARD),
                         showOkButton: true
                     );
-                    MessageBox.Instance.CreateMessageBox(
-                        canvas,
-                        config
-                    );
+                    DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
                 }
             }
         );
-        CardSelector.Instance.CreateCardSelection(canvas, config);
+        DialogService.ShowCardSelectorLegacy(canvas, config);
     }
 }

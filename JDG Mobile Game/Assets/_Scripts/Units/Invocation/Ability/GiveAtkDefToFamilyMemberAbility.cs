@@ -28,16 +28,17 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
 
     /// <summary>
     /// Displays a message box with a predefined OK message.
+    /// Phase 38: Use static services instead of singletons.
     /// </summary>
     /// <param name="canvas">The canvas to display the message on.</param>
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_WIN_STARS_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.INFORMATION_NO_WIN_STARS_MESSAGE),
             showOkButton: true
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
@@ -58,6 +59,9 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
     /// <param name="canvas">The canvas to display any UI elements.</param>
     /// <param name="playerCards">The player's cards.</param>
     /// <param name="opponentCards">The opponent player's cards.</param>
+    /// <summary>
+    /// Phase 38: Use static services instead of singletons.
+    /// </summary>
     public override void OnCardActionTouched(Transform canvas, PlayerCards playerCards, PlayerCards opponentCards)
     {
         base.OnCardActionTouched(canvas, playerCards, opponentCards);
@@ -66,16 +70,16 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
             return;
         }
         var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TITLE),
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TRANSFER_ATK_DEF_MESSAGE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TITLE),
+            LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_CONFIRM_TRANSFER_ATK_DEF_MESSAGE),
             showNegativeButton: true,
             showPositiveButton: true,
             positiveAction: () =>
             {
                 var invocationsCardsValid = new List<InGameCard>(playerCards.InvocationCards.Where(inGameInvocationCard =>
                     inGameInvocationCard.Families.Contains(family) && inGameInvocationCard.Title != invocationCard.Title).ToList());
-                var config = new CardSelectorConfig(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_RECEIVER_CARD),
+                var selectorConfig = new CardSelectorConfig(
+                    LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_RECEIVER_CARD),
                     invocationsCardsValid,
                     showNegativeButton: true,
                     showPositiveButton: true,
@@ -100,10 +104,10 @@ public class GiveAtkDefToFamilyMemberAbility : Ability
                         DisplayOkMessage(canvas);
                     }
                     );
-                CardSelector.Instance.CreateCardSelection(canvas, config);
+                DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
             }
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
+        DialogService.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
