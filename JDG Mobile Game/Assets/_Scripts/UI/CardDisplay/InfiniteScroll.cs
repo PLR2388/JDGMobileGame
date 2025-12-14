@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using JDG.Application;
+using JDG.Application.Services;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using Menu;
@@ -13,6 +14,8 @@ using VContainer;
 /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
 /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
 /// Phase 23: Migrated from static UnityEvent to EventBus subscription.
+/// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 35: Uses IDialogService instead of MessageBox.Instance.
 /// </summary>
 public class InfiniteScroll : MonoBehaviour
 {
@@ -36,6 +39,12 @@ public class InfiniteScroll : MonoBehaviour
     private IEventBus _eventBus;
     private IDisposable _choicePlayerSubscription;
 
+    // Phase 34: Injected dependencies
+    private ILocalizationService _localizationService;
+
+    // Phase 35: Injected dependencies
+    private IDialogService _dialogService;
+
     private readonly string[] removeCardTitles =
     {
         CardNameMappings.CardNameMap[CardNames.AttaqueDeLaTourEiffel],
@@ -48,13 +57,22 @@ public class InfiniteScroll : MonoBehaviour
     /// Phase 9: Inject ICardSelectionService instead of using singleton.
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
     /// Phase 23: Inject IEventBus for static UnityEvent migration.
+    /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 35: Inject IDialogService instead of MessageBox.Instance.
     /// </summary>
     [Inject]
-    public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService, IEventBus eventBus)
+    public void Construct(
+        ICardSelectionService cardSelectionService,
+        IDeckManagementService deckManagementService,
+        IEventBus eventBus,
+        ILocalizationService localizationService,
+        IDialogService dialogService)
     {
         _cardSelectionService = cardSelectionService;
         _deckManagementService = deckManagementService;
         _eventBus = eventBus;
+        _localizationService = localizationService;
+        _dialogService = dialogService;
     }
 
     // Start is called before the first frame update
@@ -107,6 +125,7 @@ public class InfiniteScroll : MonoBehaviour
     /// <summary>
     /// Checks if the number of rare cards selected exceeds the maximum allowed limit.
     /// If it does, the provided card is unselected, and a warning message is displayed.
+    /// Phase 34: Uses injected ILocalizationService.
     /// </summary>
     /// <param name="card">The card to check and possibly unselect.</param>
     private void CheckNumberOfRareCards(InGameCard card)
@@ -116,14 +135,15 @@ public class InfiniteScroll : MonoBehaviour
         {
             _cardSelectionService.UnselectCard(card);
             DisplayMessageBox(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_COLLECTOR_CARD)
+                _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_COLLECTOR_CARD)
             );
         }
     }
-    
+
     /// <summary>
     /// Checks if the total number of selected cards exceeds the maximum allowed limit.
     /// If it does, the provided card is unselected, and a warning message is displayed.
+    /// Phase 34: Uses injected ILocalizationService.
     /// </summary>
     /// <param name="card">The card to check and possibly unselect.</param>
     private void CheckNumberOfSelectedCards(InGameCard card)
@@ -133,7 +153,7 @@ public class InfiniteScroll : MonoBehaviour
         {
             _cardSelectionService.UnselectCard(card);
             DisplayMessageBox(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
+                _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_NUMBER_CARDS)
             );
         }
     }
@@ -177,16 +197,17 @@ public class InfiniteScroll : MonoBehaviour
 
     /// <summary>
     /// Display a warning messageBox with a ok button and a custom message
+    /// Phase 34: Uses injected ILocalizationService.
+    /// Phase 35: Uses injected IDialogService.
     /// </summary>
     /// <param name="msg"></param>
     private void DisplayMessageBox(string msg)
     {
-        var config = new MessageBoxConfig(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            msg,
-            showOkButton: true
+        _dialogService.ShowWarning(
+            canvas,
+            _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            msg
         );
-        MessageBox.Instance.CreateMessageBox(canvas, config);
     }
 
     /// <summary>
