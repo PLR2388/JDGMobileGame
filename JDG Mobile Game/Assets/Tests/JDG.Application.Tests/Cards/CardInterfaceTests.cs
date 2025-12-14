@@ -1,0 +1,266 @@
+using System.Collections.Generic;
+using JDG.Application.Cards;
+using JDG.Domain;
+using NUnit.Framework;
+
+namespace JDG.Application.Tests.Cards
+{
+    /// <summary>
+    /// Unit tests for card interfaces created in Phase 41.
+    /// Tests verify interface contracts and test double implementations.
+    /// </summary>
+    [TestFixture]
+    public class CardInterfaceTests
+    {
+        #region IInGameCard Tests
+
+        [Test]
+        public void TestInGameCard_ImplementsIInGameCard()
+        {
+            // Arrange & Act
+            IInGameCard card = new TestInGameCard("Test Card", CardOwner.Player1);
+
+            // Assert
+            Assert.IsNotNull(card);
+            Assert.AreEqual("Test Card", card.Title);
+            Assert.AreEqual(CardOwner.Player1, card.CardOwner);
+        }
+
+        [Test]
+        public void TestInGameCard_SupportsPlayer2()
+        {
+            // Arrange & Act
+            IInGameCard card = new TestInGameCard("Player2 Card", CardOwner.Player2);
+
+            // Assert
+            Assert.AreEqual(CardOwner.Player2, card.CardOwner);
+        }
+
+        [Test]
+        public void TestInGameCard_SupportsNotDefined()
+        {
+            // Arrange & Act
+            IInGameCard card = new TestInGameCard("Undefined Card", CardOwner.NotDefined);
+
+            // Assert
+            Assert.AreEqual(CardOwner.NotDefined, card.CardOwner);
+        }
+
+        #endregion
+
+        #region IInGameInvocationCard Tests
+
+        [Test]
+        public void TestInvocationCard_ImplementsIInGameInvocationCard()
+        {
+            // Arrange & Act
+            IInGameInvocationCard card = new TestInGameInvocationCard(
+                "Invocation Card",
+                CardOwner.Player1,
+                attack: 100,
+                defense: 50
+            );
+
+            // Assert
+            Assert.IsNotNull(card);
+            Assert.AreEqual("Invocation Card", card.Title);
+            Assert.AreEqual(100, card.Attack);
+            Assert.AreEqual(50, card.Defense);
+        }
+
+        [Test]
+        public void TestInvocationCard_AttackAndDefenseAreSettable()
+        {
+            // Arrange
+            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+
+            // Act
+            card.Attack = 150;
+            card.Defense = 75;
+
+            // Assert
+            Assert.AreEqual(150, card.Attack);
+            Assert.AreEqual(75, card.Defense);
+        }
+
+        [Test]
+        public void TestInvocationCard_ResetNewTurn_TracksCall()
+        {
+            // Arrange
+            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+
+            // Act
+            card.ResetNewTurn();
+
+            // Assert
+            Assert.IsTrue(card.ResetNewTurnCalled);
+        }
+
+        [Test]
+        public void TestInvocationCard_UnblockAttack_TracksCall()
+        {
+            // Arrange
+            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+
+            // Act
+            card.UnblockAttack();
+
+            // Assert
+            Assert.IsTrue(card.UnblockAttackCalled);
+        }
+
+        [Test]
+        public void TestInvocationCard_FreeCard_TracksCall()
+        {
+            // Arrange
+            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+
+            // Act
+            card.FreeCard();
+
+            // Assert
+            Assert.IsTrue(card.FreeCardCalled);
+        }
+
+        [Test]
+        public void TestInvocationCard_BaseStats_AreImmutable()
+        {
+            // Arrange
+            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+
+            // Act - Modify current stats
+            card.Attack = 200;
+            card.Defense = 100;
+
+            // Assert - Base stats unchanged
+            Assert.AreEqual(100, card.BaseAttack);
+            Assert.AreEqual(50, card.BaseDefense);
+        }
+
+        #endregion
+
+        #region IPlayerCardCollection Tests
+
+        [Test]
+        public void TestPlayerCardCollection_ImplementsInterface()
+        {
+            // Arrange & Act
+            IPlayerCardCollection collection = new TestPlayerCardCollection(isPlayerOne: true);
+
+            // Assert
+            Assert.IsNotNull(collection);
+            Assert.IsTrue(collection.IsPlayerOne);
+            Assert.AreEqual(CardOwner.Player1, collection.Owner);
+        }
+
+        [Test]
+        public void TestPlayerCardCollection_Player2_HasCorrectOwner()
+        {
+            // Arrange & Act
+            IPlayerCardCollection collection = new TestPlayerCardCollection(isPlayerOne: false);
+
+            // Assert
+            Assert.IsFalse(collection.IsPlayerOne);
+            Assert.AreEqual(CardOwner.Player2, collection.Owner);
+        }
+
+        [Test]
+        public void TestPlayerCardCollection_HasEmptyCollections()
+        {
+            // Arrange & Act
+            IPlayerCardCollection collection = new TestPlayerCardCollection(isPlayerOne: true);
+
+            // Assert
+            Assert.IsNotNull(collection.InvocationCards);
+            Assert.IsNotNull(collection.EffectCards);
+            Assert.IsNotNull(collection.HandCards);
+            Assert.AreEqual(0, collection.HandCardCount);
+        }
+
+        #endregion
+    }
+
+    #region Test Implementations
+
+    /// <summary>
+    /// Test implementation of IInGameCard.
+    /// </summary>
+    public class TestInGameCard : IInGameCard
+    {
+        public string Title { get; }
+        public CardOwner CardOwner { get; }
+
+        public TestInGameCard(string title, CardOwner owner)
+        {
+            Title = title;
+            CardOwner = owner;
+        }
+    }
+
+    /// <summary>
+    /// Test implementation of IInGameInvocationCard.
+    /// Tracks method calls for test verification.
+    /// </summary>
+    public class TestInGameInvocationCard : IInGameInvocationCard
+    {
+        public string Title { get; }
+        public CardOwner CardOwner { get; }
+        public float Attack { get; set; }
+        public float Defense { get; set; }
+        public float BaseAttack { get; }
+        public float BaseDefense { get; }
+        public IReadOnlyList<object> Abilities => new List<object>();
+        public IInGameEquipmentCard EquipmentCard => null;
+
+        // Tracking properties
+        public bool ResetNewTurnCalled { get; private set; }
+        public bool UnblockAttackCalled { get; private set; }
+        public bool FreeCardCalled { get; private set; }
+
+        public TestInGameInvocationCard(string title, CardOwner owner, float attack, float defense)
+        {
+            Title = title;
+            CardOwner = owner;
+            Attack = attack;
+            Defense = defense;
+            BaseAttack = attack;
+            BaseDefense = defense;
+        }
+
+        public void ResetNewTurn()
+        {
+            ResetNewTurnCalled = true;
+        }
+
+        public void UnblockAttack()
+        {
+            UnblockAttackCalled = true;
+        }
+
+        public void FreeCard()
+        {
+            FreeCardCalled = true;
+        }
+    }
+
+    /// <summary>
+    /// Test implementation of IPlayerCardCollection.
+    /// </summary>
+    public class TestPlayerCardCollection : IPlayerCardCollection
+    {
+        public bool IsPlayerOne { get; }
+        public CardOwner Owner => IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        public IReadOnlyList<IInGameInvocationCard> InvocationCards { get; } = new List<IInGameInvocationCard>();
+        public IReadOnlyList<IInGameEffectCard> EffectCards { get; } = new List<IInGameEffectCard>();
+        public IInGameFieldCard FieldCard => null;
+        public IReadOnlyList<IInGameCard> HandCards { get; } = new List<IInGameCard>();
+        public int HandCardCount => HandCards.Count;
+
+        public TestPlayerCardCollection(bool isPlayerOne)
+        {
+            IsPlayerOne = isPlayerOne;
+        }
+    }
+
+    #endregion
+}
