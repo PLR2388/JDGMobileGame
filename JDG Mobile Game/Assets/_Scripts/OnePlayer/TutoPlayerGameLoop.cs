@@ -334,8 +334,9 @@ namespace OnePlayer
                 _inputManager.EnableDetectionTouch();
             }
 
+            // Phase 34: Use inherited _localizationService from GameLoop
             var config = new CardSelectorConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
+                _localizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
                 invocationCards,
                 showOkButton: true,
                 okAction: (invocationCard) =>

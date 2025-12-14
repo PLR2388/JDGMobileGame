@@ -1,6 +1,7 @@
 ﻿using _Scripts.Cards.InvocationCards;
 using _Scripts.Units.Invocation;
 using JDG.Application;
+using JDG.Application.Services;
 using OnePlayer;
 using VContainer;
 
@@ -11,6 +12,7 @@ namespace Cards.InvocationCards
     /// Phase 6: Updated to use CardPlacementService like InvocationFunctions.
     /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
+    /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     public class TutoInvocationFunctions : InvocationFunctions
     {
@@ -21,12 +23,17 @@ namespace Cards.InvocationCards
         /// VContainer method injection for dependencies.
         /// Calls base class Construct to inject base dependencies.
         /// Phase 24-25: Inject ICardCollectionService instead of ServiceLocator.
+        /// Phase 34: Inject ILocalizationService for localized strings.
         /// </summary>
         [Inject]
-        public void Construct(ICardPlacementService cardPlacementService, ICardCollectionService cardCollectionService, JDG.Application.IEventBus eventBus)
+        public void Construct(
+            ICardPlacementService cardPlacementService,
+            ICardCollectionService cardCollectionService,
+            JDG.Application.IEventBus eventBus,
+            ILocalizationService localizationService)
         {
-            // Call base class to inject base dependencies
-            base.Construct(cardPlacementService, eventBus);
+            // Call base class to inject base dependencies (including localizationService)
+            base.Construct(cardPlacementService, eventBus, localizationService);
             _cardCollectionService = cardCollectionService;
         }
 
@@ -65,10 +72,11 @@ namespace Cards.InvocationCards
                 var cardName = CardNameMappings.CardNameMap[CardNames.Tentacules];
                 // Phase 24-25: Use injected _cardCollectionService
                 var playerCards = _cardCollectionService.GetCurrentPlayerCards();
+                // Phase 34: Use inherited _localizationService from base class
                 var config = new MessageBoxConfig(
-                    LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+                    _localizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
                     string.Format(
-                        LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE),
+                        _localizationService.GetLocalizedValue(LocalizationKeys.QUESTION_INVOKE_SPECIFIC_CARD_MESSAGE),
                         cardName
                     ),
                     showOkButton: true,
