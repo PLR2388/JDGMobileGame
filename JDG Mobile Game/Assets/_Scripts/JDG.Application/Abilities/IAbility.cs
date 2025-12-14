@@ -37,15 +37,24 @@ namespace JDG.Application.Abilities
     /// </summary>
     public class AbilityResult
     {
-        public bool IsSuccess { get; }
-        public string Message { get; }
-        public bool RequiresUserInput { get; }
+        public bool IsSuccess { get; internal set; }
+        public string Message { get; internal set; }
+        public bool RequiresUserInput { get; internal set; }
 
-        private AbilityResult(bool isSuccess, string message, bool requiresUserInput = false)
+        /// <summary>
+        /// Phase 7.1: Flag indicating this ability needs legacy execution path.
+        /// Used during migration from old Ability system to new IAbility system.
+        /// </summary>
+        public bool RequiresLegacyExecution { get; internal set; }
+
+        internal AbilityResult() { }
+
+        private AbilityResult(bool isSuccess, string message, bool requiresUserInput = false, bool requiresLegacy = false)
         {
             IsSuccess = isSuccess;
             Message = message;
             RequiresUserInput = requiresUserInput;
+            RequiresLegacyExecution = requiresLegacy;
         }
 
         public static AbilityResult Success(string message = "")
@@ -56,6 +65,13 @@ namespace JDG.Application.Abilities
 
         public static AbilityResult NeedsUserInput(string message)
             => new AbilityResult(true, message, requiresUserInput: true);
+
+        /// <summary>
+        /// Phase 7.1: Creates a result indicating this ability requires legacy execution.
+        /// Used by LegacyAbilityAdapter when new context is insufficient.
+        /// </summary>
+        public static AbilityResult NeedsLegacyExecution(string message)
+            => new AbilityResult(false, message, requiresLegacy: true);
     }
 
     /// <summary>

@@ -1,11 +1,14 @@
 using NUnit.Framework;
 using JDG.Application.UseCases;
 using JDG.Application.Repositories;
+using JDG.Application;
 using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 using JDG.Domain.Enums;
 using JDG.Domain.Events;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JDG.Application.Tests.UseCases
 {
@@ -265,6 +268,77 @@ namespace JDG.Application.Tests.UseCases
             // Assert
             Assert.IsFalse(result.IsSuccess);
             Assert.AreEqual("Invalid attacker card", result.Message);
+        }
+    }
+
+    // Test double for IPlayerRepository
+    public class TestPlayerRepository : IPlayerRepository
+    {
+        private readonly Dictionary<PlayerId, Player> _players = new Dictionary<PlayerId, Player>();
+
+        public void AddPlayer(Player player) => _players[player.Id] = player;
+
+        public Player GetPlayer(PlayerId playerId) => _players.ContainsKey(playerId) ? _players[playerId] : null;
+
+        public void SavePlayer(Player player) => _players[player.Id] = player;
+
+        public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetPlayer(PlayerId playerId)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    // Test double for ICardRepository
+    public class TestCardRepository : ICardRepository
+    {
+        private readonly Dictionary<CardId, Card> _cards = new Dictionary<CardId, Card>();
+
+        public void AddCard(Card card) => _cards[card.Id] = card;
+
+        public Card GetCard(CardId cardId) => _cards.ContainsKey(cardId) ? _cards[cardId] : null;
+
+        public Card CreateCardInstance(string cardDefinitionName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Card> GetAllCardDefinitions() => _cards.Values;
+
+        public IEnumerable<Card> GetCardsByType(JDG.Domain.CardType type) => _cards.Values.Where(c => c.Type == type);
+
+        public IEnumerable<Card> GetCardsByFamily(CardFamily family) =>
+            _cards.Values.Where(c => c.Families != null && c.Families.Contains(family));
+
+        public Card GetCardByTitle(string title) => _cards.Values.FirstOrDefault(c => c.Title == title);
+    }
+
+    // Test double for IEventBus
+    public class TestEventBus : IEventBus
+    {
+        public List<object> PublishedEvents { get; } = new List<object>();
+
+        public void Publish<T>(T eventData) where T : struct
+        {
+            PublishedEvents.Add(eventData);
+        }
+
+        public IDisposable Subscribe<T>(Action<T> handler) where T : struct
+        {
+            return new DummyDisposable();
+        }
+
+        public void ClearSubscriptions<T>() where T : struct { }
+
+        public void ClearAllSubscriptions() { }
+
+        private class DummyDisposable : IDisposable
+        {
+            public void Dispose() { }
         }
     }
 }

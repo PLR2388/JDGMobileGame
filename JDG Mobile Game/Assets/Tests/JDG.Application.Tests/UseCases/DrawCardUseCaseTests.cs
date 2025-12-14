@@ -102,51 +102,5 @@ namespace JDG.Application.Tests.UseCases
         }
     }
 
-    // Test double for IPlayerRepository
-    public class TestPlayerRepository : IPlayerRepository
-    {
-        private readonly Dictionary<PlayerId, Player> _players = new Dictionary<PlayerId, Player>();
-
-        public void AddPlayer(Player player) => _players[player.Id] = player;
-
-        public Player GetPlayer(PlayerId playerId) => _players.ContainsKey(playerId) ? _players[playerId] : null;
-
-        public void SavePlayer(Player player) => _players[player.Id] = player;
-
-        public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetPlayer(PlayerId playerId)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    // Test double for IEventBus
-    public class TestEventBus : IEventBus
-    {
-        public List<object> PublishedEvents { get; } = new List<object>();
-
-        public void Publish<T>(T eventData) where T : struct
-        {
-            PublishedEvents.Add(eventData);
-        }
-
-        public System.IDisposable Subscribe<T>(System.Action<T> handler) where T : struct
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ClearSubscriptions<T>() where T : struct
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ClearAllSubscriptions()
-        {
-            PublishedEvents.Clear();
-        }
-    }
+    // Test doubles moved to AttackUseCaseTests.cs to avoid duplication
 }

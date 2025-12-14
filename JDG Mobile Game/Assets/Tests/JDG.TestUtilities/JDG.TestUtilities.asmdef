@@ -1,10 +1,15 @@
 {
-    "name": "JDG.Domain.Tests",
-    "rootNamespace": "JDG.Domain.Tests",
+    "name": "JDG.TestUtilities",
+    "rootNamespace": "JDG.TestUtilities",
     "references": [
-        "JDG.Domain"
+        "JDG.Domain",
+        "JDG.Application",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
@@ -18,5 +23,5 @@
         "UNITY_INCLUDE_TESTS"
     ],
     "versionDefines": [],
-    "noEngineReferences": true
+    "noEngineReferences": false
 }

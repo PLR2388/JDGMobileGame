@@ -124,27 +124,5 @@ namespace JDG.Application.Tests.UseCases
         }
     }
 
-    // Test double for ICardRepository
-    public class TestCardRepository : ICardRepository
-    {
-        private readonly Dictionary<CardId, Card> _cards = new Dictionary<CardId, Card>();
-
-        public void AddCard(Card card) => _cards[card.Id] = card;
-
-        public Card GetCard(CardId cardId) => _cards.ContainsKey(cardId) ? _cards[cardId] : null;
-
-        public Card CreateCardInstance(string cardDefinitionName)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<Card> GetAllCardDefinitions() => _cards.Values;
-
-        public IEnumerable<Card> GetCardsByType(DomainCardType type) => _cards.Values.Where(c => c.Type == type);
-
-        public IEnumerable<Card> GetCardsByFamily(CardFamily family) =>
-            _cards.Values.Where(c => c.Families != null && c.Families.Contains(family));
-
-        public Card GetCardByTitle(string title) => _cards.Values.FirstOrDefault(c => c.Title == title);
-    }
+    // Test doubles (TestPlayerRepository, TestCardRepository, TestEventBus) moved to AttackUseCaseTests.cs to avoid duplication
 }

@@ -97,7 +97,7 @@ namespace JDG.Infrastructure.Tests.Repositories
 
         public Card CreateCardInstance(string cardDefinitionName) => throw new System.NotImplementedException();
         public IEnumerable<Card> GetAllCardDefinitions() => _cards.Values;
-        public IEnumerable<Card> GetCardsByType(CardType type) => throw new System.NotImplementedException();
+        public IEnumerable<Card> GetCardsByType(JDG.Domain.CardType type) => throw new System.NotImplementedException();
         public IEnumerable<Card> GetCardsByFamily(CardFamily family) => throw new System.NotImplementedException();
         public Card GetCardByTitle(string title) => throw new System.NotImplementedException();
     }
