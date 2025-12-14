@@ -172,10 +172,10 @@ namespace JDG.Infrastructure.Services
         }
 
         /// <summary>
-        /// Shows an OK-only message box (warning style).
+        /// Shows an OK-only message box (warning style) with callback.
         /// Phase 35: Synchronous version for legacy code migration.
         /// </summary>
-        public void ShowWarning(object canvas, string title, string message, Action onOk = null)
+        public void ShowWarning(object canvas, string title, string message, Action onOk)
         {
             ShowMessageBox(canvas, new MessageBoxOptions
             {
@@ -187,10 +187,19 @@ namespace JDG.Infrastructure.Services
         }
 
         /// <summary>
+        /// Shows an OK-only message box (warning style) without callback.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        public void ShowWarning(object canvas, string title, string message)
+        {
+            ShowWarning(canvas, title, message, null);
+        }
+
+        /// <summary>
         /// Shows a Yes/No confirmation dialog.
         /// Phase 35: Synchronous version for legacy code migration.
         /// </summary>
-        public void ShowConfirm(object canvas, string title, string message, Action onYes, Action onNo = null)
+        public void ShowConfirm(object canvas, string title, string message, Action onYes, Action onNo)
         {
             ShowMessageBox(canvas, new MessageBoxOptions
             {
