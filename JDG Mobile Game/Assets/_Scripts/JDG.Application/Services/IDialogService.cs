@@ -106,36 +106,6 @@ namespace JDG.Application.Services
         void ShowMessageBox(object canvas, MessageBoxOptions options);
 
         /// <summary>
-        /// Shows an OK-only message box.
-        /// Synchronous version for legacy code migration.
-        /// </summary>
-        /// <param name="canvas">The Unity Transform canvas</param>
-        /// <param name="title">Dialog title</param>
-        /// <param name="message">Dialog message</param>
-        /// <param name="onOk">Optional callback when OK is pressed (can be null)</param>
-        void ShowWarning(object canvas, string title, string message, Action onOk);
-
-        /// <summary>
-        /// Shows an OK-only message box without callback.
-        /// Synchronous version for legacy code migration.
-        /// </summary>
-        /// <param name="canvas">The Unity Transform canvas</param>
-        /// <param name="title">Dialog title</param>
-        /// <param name="message">Dialog message</param>
-        void ShowWarning(object canvas, string title, string message);
-
-        /// <summary>
-        /// Shows a Yes/No confirmation dialog.
-        /// Synchronous version for legacy code migration.
-        /// </summary>
-        /// <param name="canvas">The Unity Transform canvas</param>
-        /// <param name="title">Dialog title</param>
-        /// <param name="message">Dialog message</param>
-        /// <param name="onYes">Callback when Yes/Positive is pressed</param>
-        /// <param name="onNo">Optional callback when No/Negative is pressed (can be null)</param>
-        void ShowConfirm(object canvas, string title, string message, Action onYes, Action onNo);
-
-        /// <summary>
         /// Shows a card selector dialog with callback actions.
         /// Synchronous version for legacy code migration.
         /// </summary>

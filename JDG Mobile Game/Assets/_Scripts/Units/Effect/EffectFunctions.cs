@@ -76,11 +76,12 @@ namespace Cards.EffectCards
                 // Show warning if field is full (4 effects max)
                 // Phase 34: Use injected ILocalizationService
                 // Phase 35: Use injected IDialogService instead of MessageBox.Instance
-                _dialogService.ShowWarning(
-                    canvas,
-                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                    _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS)
-                );
+                _dialogService.ShowMessageBox(canvas, new MessageBoxOptions
+                {
+                    Title = _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                    Message = _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_LIMIT_EFFECT_CARDS),
+                    ShowOkButton = true
+                });
             }
         }
     }

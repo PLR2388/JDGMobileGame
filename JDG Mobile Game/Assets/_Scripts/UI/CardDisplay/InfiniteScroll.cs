@@ -203,11 +203,12 @@ public class InfiniteScroll : MonoBehaviour
     /// <param name="msg"></param>
     private void DisplayMessageBox(string msg)
     {
-        _dialogService.ShowWarning(
-            canvas,
-            _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            msg
-        );
+        _dialogService.ShowMessageBox(canvas, new MessageBoxOptions
+        {
+            Title = _localizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            Message = msg,
+            ShowOkButton = true
+        });
     }
 
     /// <summary>

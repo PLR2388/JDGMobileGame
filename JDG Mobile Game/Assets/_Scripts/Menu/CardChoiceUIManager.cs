@@ -72,11 +72,12 @@ namespace Menu
         /// <param name="remainedCards">The number of cards remaining to be chosen.</param>
         public void DisplayMessageBox(int remainedCards)
         {
-            _dialogService.ShowWarning(
-                canvas,
-                _localizationService.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_TITLE),
-                string.Format(_localizationService.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_MESSAGE), remainedCards)
-            );
+            _dialogService.ShowMessageBox(canvas, new MessageBoxOptions
+            {
+                Title = _localizationService.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_TITLE),
+                Message = string.Format(_localizationService.GetLocalizedValue(LocalizationKeys.MODIFY_DECK_MESSAGE), remainedCards),
+                ShowOkButton = true
+            });
         }
     }
 }
