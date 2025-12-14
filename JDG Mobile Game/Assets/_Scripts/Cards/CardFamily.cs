@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JDG.Application.Services;
 
 namespace Cards
 {
@@ -20,8 +21,18 @@ namespace Cards
         Any
     }
 
+    /// <summary>
+    /// Provides extension methods related to the CardFamily enum.
+    /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
+    /// </summary>
     public static class CardFamilyExtensions
     {
+        /// <summary>
+        /// Shared ILocalizationService instance for CardFamily extensions.
+        /// Phase 39: Set once at initialization to remove LocalizationSystem.Instance calls.
+        /// </summary>
+        public static ILocalizationService LocalizationService { get; set; }
+
         private static readonly Dictionary<CardFamily, LocalizationKeys> CardFamilyLocalizationMap = new Dictionary<CardFamily, LocalizationKeys>
         {
             { CardFamily.Comics, LocalizationKeys.FAMILY_COMICS },
@@ -42,7 +53,13 @@ namespace Cards
         {
             if (CardFamilyLocalizationMap.TryGetValue(family, out var localizationKey))
             {
-                return LocalizationSystem.Instance.GetLocalizedValue(localizationKey);
+                // Phase 39: Use injected ILocalizationService instead of LocalizationSystem.Instance
+                if (LocalizationService != null)
+                {
+                    return LocalizationService.GetLocalizedValue(localizationKey.ToString());
+                }
+                // Fallback to singleton if service not initialized (during startup)
+                return LocalizationSystem.Instance?.GetLocalizedValue(localizationKey) ?? localizationKey.ToString();
             }
 
             throw new ArgumentOutOfRangeException(nameof(family), family, "Unmapped card family.");

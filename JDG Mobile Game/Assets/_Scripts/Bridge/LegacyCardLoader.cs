@@ -61,7 +61,13 @@ namespace JDG.Bridge
             FieldAbility.LocalizationService = localizationService;
             FieldAbility.DialogService = dialogService;
 
-            Debug.Log("LegacyCardLoader: Initialized Ability, EffectAbility, and FieldAbility services for legacy ability system");
+            // Phase 39: Initialize extension classes with ILocalizationService
+            // These static extension methods need the service for localization
+            Cards.CardTypeExtensions.LocalizationService = localizationService;
+            Cards.CardFamilyExtensions.LocalizationService = localizationService;
+            MessageBoxBaseComponentExtensions.LocalizationService = localizationService;
+
+            Debug.Log("LegacyCardLoader: Initialized Ability, EffectAbility, FieldAbility, CardType, CardFamily, and MessageBox services for legacy systems");
         }
 
         private void Start()

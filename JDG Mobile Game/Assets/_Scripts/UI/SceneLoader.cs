@@ -1,10 +1,12 @@
-﻿using Sound;
+﻿using JDG.Application.Services;
+using Sound;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 
 /// <summary>
 /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
+/// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
@@ -12,15 +14,19 @@ public class SceneLoader : MonoBehaviour
 
     // Phase 17-18: Injected dependencies
     private IDeckManagementService _deckManagementService;
+    // Phase 39: ILocalizationService instead of LocalizationSystem.Instance
+    private ILocalizationService _localizationService;
 
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
+    /// Phase 39: Inject ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     [Inject]
-    public void Construct(IDeckManagementService deckManagementService)
+    public void Construct(IDeckManagementService deckManagementService, ILocalizationService localizationService)
     {
         _deckManagementService = deckManagementService;
+        _localizationService = localizationService;
     }
 
     /// <summary>
@@ -52,12 +58,14 @@ public class SceneLoader : MonoBehaviour
 
     /// <summary>
     /// Handles the onClick event for the story button. Shows a toast message.
+    /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     public void OnClickStory()
     {
-        ShowAndroidToastMessage(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TOAST_ASK)
-        );
+        var message = _localizationService?.GetLocalizedValue(LocalizationKeys.TOAST_ASK.ToString())
+                      ?? LocalizationSystem.Instance?.GetLocalizedValue(LocalizationKeys.TOAST_ASK)
+                      ?? LocalizationKeys.TOAST_ASK.ToString();
+        ShowAndroidToastMessage(message);
     }
 
     /// <summary>

@@ -34,14 +34,17 @@ namespace JDG.Infrastructure.Services
         {
             if (card == null) return;
 
+            // If card is already selected, do nothing
+            if (_selectedCards.Contains(card)) return;
+
             // In single selection mode, clear previous selection
             if (!MultipleCardSelection && _selectedCards.Count > 0)
             {
                 ClearSelection();
             }
 
-            // Enforce selection limit
-            if (_selectedCards.Count >= MultipleSelectionLimit)
+            // Enforce selection limit in multiple selection mode
+            if (MultipleCardSelection && _selectedCards.Count >= MultipleSelectionLimit)
             {
                 // Remove oldest selection to make room
                 if (_selectedCards.Count > 0)
@@ -49,16 +52,14 @@ namespace JDG.Infrastructure.Services
                     var oldestCard = _selectedCards[0];
                     _selectedCards.RemoveAt(0);
                     _eventBus.Publish(new CardRemovedFromSelectionEvent { Card = oldestCard });
+                    _eventBus.Publish(new CardSelectionChangedEvent { SelectedCount = _selectedCards.Count });
                 }
             }
 
-            // Add card if not already selected
-            if (!_selectedCards.Contains(card))
-            {
-                _selectedCards.Add(card);
-                _eventBus.Publish(new CardAddedToSelectionEvent { Card = card });
-                _eventBus.Publish(new CardSelectionChangedEvent { SelectedCount = _selectedCards.Count });
-            }
+            // Add card
+            _selectedCards.Add(card);
+            _eventBus.Publish(new CardAddedToSelectionEvent { Card = card });
+            _eventBus.Publish(new CardSelectionChangedEvent { SelectedCount = _selectedCards.Count });
         }
 
         /// <inheritdoc/>

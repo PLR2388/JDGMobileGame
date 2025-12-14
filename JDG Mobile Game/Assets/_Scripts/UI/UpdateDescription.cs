@@ -1,8 +1,13 @@
 ﻿using System.Globalization;
 using Cards;
 using Cards.InvocationCards;
+using JDG.Application.Services;
 using UnityEngine;
+using VContainer;
 
+/// <summary>
+/// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// </summary>
 public class UpdateDescription : MonoBehaviour
 {
     [SerializeField] private TMPro.TextMeshProUGUI titleCardText;
@@ -18,6 +23,19 @@ public class UpdateDescription : MonoBehaviour
     private CardDisplay cardDisplay;
     private Card previousCard;
 
+    // Phase 39: ILocalizationService instead of LocalizationSystem.Instance
+    private ILocalizationService _localizationService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 39: Inject ILocalizationService instead of LocalizationSystem.Instance.
+    /// </summary>
+    [Inject]
+    public void Construct(ILocalizationService localizationService)
+    {
+        _localizationService = localizationService;
+    }
+
     /// <summary>
     /// Initializes the component when the script instance is being loaded.
     /// </summary>
@@ -28,15 +46,14 @@ public class UpdateDescription : MonoBehaviour
 
     /// <summary>
     /// Updates the details specific to Invocation cards.
+    /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     private void UpdateInvocationCardDetails()
     {
         allInvocationOptions.SetActive(true);
-        cardTypeText.text =
-            string.Format(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD),
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_INVOCATION)
-            );
+        var typeCard = GetLocalizedValue(LocalizationKeys.TYPE_CARD);
+        var typeInvocation = GetLocalizedValue(LocalizationKeys.TYPE_INVOCATION);
+        cardTypeText.text = string.Format(typeCard, typeInvocation);
         var invocationCard = card as InvocationCard;
         var baseInvocationCardStats = invocationCard?.BaseInvocationCardStats;
         if (baseInvocationCardStats != null)
@@ -62,13 +79,27 @@ public class UpdateDescription : MonoBehaviour
 
     /// <summary>
     /// Updates the details specific to non-Invocation cards.
+    /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     private void UpdateOtherCardDetails()
     {
         allInvocationOptions.SetActive(false);
-        cardTypeText.text =
-            string.Format(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.TYPE_CARD),
-                card.Type.ToName());
+        var typeCard = GetLocalizedValue(LocalizationKeys.TYPE_CARD);
+        cardTypeText.text = string.Format(typeCard, card.Type.ToName());
+    }
+
+    /// <summary>
+    /// Helper method to get localized value using injected service or fallback to singleton.
+    /// Phase 39: Added for centralized localization access.
+    /// </summary>
+    private string GetLocalizedValue(LocalizationKeys key)
+    {
+        if (_localizationService != null)
+        {
+            return _localizationService.GetLocalizedValue(key.ToString());
+        }
+        // Fallback to singleton if service not injected
+        return LocalizationSystem.Instance?.GetLocalizedValue(key) ?? key.ToString();
     }
 
     /// <summary>
