@@ -1,5 +1,7 @@
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application.Services;
@@ -9,17 +11,14 @@ using UnityEngine.Events;
 /// <summary>
 /// Unit tests for CardSelectorPresenter.
 /// Part of Phase 39+ - Test coverage improvement sprint.
-///
-/// NOTE: Many tests are limited because CardSelectorPresenter uses CardSelector.Instance
-/// and MessageBox.Instance directly. After Phase 40 (IDialogService injection),
-/// more comprehensive tests can be added.
-/// TODO: Add comprehensive tests after Phase 40 refactoring.
+/// Phase 40: Updated to use IDialogService injection for comprehensive testing.
 /// </summary>
 [TestFixture]
 public class CardSelectorPresenterTests
 {
     private CardSelectorPresenter _presenter;
     private TestLocalizationServiceForSelector _localizationService;
+    private MockDialogServiceForSelector _dialogService;
     private GameObject _canvasObject;
     private GameObject _nextPhaseButton;
     private Transform _canvas;
@@ -31,7 +30,8 @@ public class CardSelectorPresenterTests
         _nextPhaseButton = new GameObject("NextPhaseButton");
         _canvas = _canvasObject.transform;
         _localizationService = new TestLocalizationServiceForSelector();
-        _presenter = new CardSelectorPresenter(_canvas, _nextPhaseButton, _localizationService);
+        _dialogService = new MockDialogServiceForSelector();
+        _presenter = new CardSelectorPresenter(_canvas, _nextPhaseButton, _localizationService, _dialogService);
     }
 
     [TearDown]
@@ -39,11 +39,11 @@ public class CardSelectorPresenterTests
     {
         if (_canvasObject != null)
         {
-            Object.DestroyImmediate(_canvasObject);
+            UnityEngine.Object.DestroyImmediate(_canvasObject);
         }
         if (_nextPhaseButton != null)
         {
-            Object.DestroyImmediate(_nextPhaseButton);
+            UnityEngine.Object.DestroyImmediate(_nextPhaseButton);
         }
     }
 
@@ -60,7 +60,7 @@ public class CardSelectorPresenterTests
     public void Constructor_WithNullCanvas_DoesNotThrow()
     {
         // Arrange & Act
-        var presenter = new CardSelectorPresenter(null, _nextPhaseButton, _localizationService);
+        var presenter = new CardSelectorPresenter(null, _nextPhaseButton, _localizationService, _dialogService);
 
         // Assert
         Assert.IsNotNull(presenter);
@@ -70,7 +70,7 @@ public class CardSelectorPresenterTests
     public void Constructor_WithNullNextPhaseButton_DoesNotThrow()
     {
         // Arrange & Act
-        var presenter = new CardSelectorPresenter(_canvas, null, _localizationService);
+        var presenter = new CardSelectorPresenter(_canvas, null, _localizationService, _dialogService);
 
         // Assert
         Assert.IsNotNull(presenter);
@@ -80,7 +80,17 @@ public class CardSelectorPresenterTests
     public void Constructor_WithNullLocalizationService_DoesNotThrow()
     {
         // Arrange & Act
-        var presenter = new CardSelectorPresenter(_canvas, _nextPhaseButton, null);
+        var presenter = new CardSelectorPresenter(_canvas, _nextPhaseButton, null, _dialogService);
+
+        // Assert
+        Assert.IsNotNull(presenter);
+    }
+
+    [Test]
+    public void Constructor_WithNullDialogService_DoesNotThrow()
+    {
+        // Arrange & Act
+        var presenter = new CardSelectorPresenter(_canvas, _nextPhaseButton, _localizationService, null);
 
         // Assert
         Assert.IsNotNull(presenter);
@@ -90,7 +100,7 @@ public class CardSelectorPresenterTests
     public void Constructor_WithAllNullParameters_DoesNotThrow()
     {
         // Arrange & Act
-        var presenter = new CardSelectorPresenter(null, null, null);
+        var presenter = new CardSelectorPresenter(null, null, null, null);
 
         // Assert
         Assert.IsNotNull(presenter);
@@ -99,17 +109,11 @@ public class CardSelectorPresenterTests
     #endregion
 
     #region ShowOpponentSelector Tests
+    // Phase 40: Now using IDialogService injection for comprehensive testing
 
     [Test]
-    public void ShowOpponentSelector_WithNullTargets_ShowsWarning_WhenSingletonAvailable()
+    public void ShowOpponentSelector_WithNullTargets_ShowsWarning()
     {
-        // Skip test if singletons are not available
-        if (MessageBox.Instance == null)
-        {
-            Assert.Ignore("MessageBox singleton not available in test environment");
-            return;
-        }
-
         // Arrange
         bool callbackInvoked = false;
         UnityAction<InGameInvocationCard> onSelected = (card) => callbackInvoked = true;
@@ -120,18 +124,13 @@ public class CardSelectorPresenterTests
 
         // Assert - Verify localization was called (for warning title/message)
         Assert.IsTrue(_localizationService.GetLocalizedValueCalled);
+        // Verify ShowMessageBoxLegacy was called (for warning)
+        Assert.IsTrue(_dialogService.ShowMessageBoxLegacyCalled);
     }
 
     [Test]
-    public void ShowOpponentSelector_WithEmptyTargets_ShowsWarning_WhenSingletonAvailable()
+    public void ShowOpponentSelector_WithEmptyTargets_ShowsWarning()
     {
-        // Skip test if singletons are not available
-        if (MessageBox.Instance == null)
-        {
-            Assert.Ignore("MessageBox singleton not available in test environment");
-            return;
-        }
-
         // Arrange
         var emptyList = new List<InGameCard>();
         UnityAction<InGameInvocationCard> onSelected = (card) => { };
@@ -142,6 +141,8 @@ public class CardSelectorPresenterTests
 
         // Assert - Verify localization was called
         Assert.IsTrue(_localizationService.GetLocalizedValueCalled);
+        // Verify ShowMessageBoxLegacy was called (for warning)
+        Assert.IsTrue(_dialogService.ShowMessageBoxLegacyCalled);
     }
 
     [Test]
@@ -152,17 +153,6 @@ public class CardSelectorPresenterTests
         var emptyList = new List<InGameCard>();
         UnityAction<InGameInvocationCard> onSelected = (card) => { };
         UnityAction onCancelled = () => { };
-
-        // Skip full test if singleton not available
-        if (MessageBox.Instance == null)
-        {
-            // At minimum, verify button hiding logic works
-            // The method tries to hide the button before checking targets
-            // Since we can't fully test without singleton, just verify initial state
-            Assert.IsTrue(_nextPhaseButton.activeSelf);
-            Assert.Ignore("MessageBox singleton not available - partial test only");
-            return;
-        }
 
         // Act
         _presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled);
@@ -175,20 +165,77 @@ public class CardSelectorPresenterTests
     public void ShowOpponentSelector_WithNullNextPhaseButton_DoesNotThrow()
     {
         // Arrange
-        var presenter = new CardSelectorPresenter(_canvas, null, _localizationService);
+        var presenter = new CardSelectorPresenter(_canvas, null, _localizationService, _dialogService);
         var emptyList = new List<InGameCard>();
         UnityAction<InGameInvocationCard> onSelected = (card) => { };
         UnityAction onCancelled = () => { };
 
-        // Skip if singleton not available
-        if (MessageBox.Instance == null)
-        {
-            Assert.Ignore("MessageBox singleton not available in test environment");
-            return;
-        }
-
         // Act & Assert - Should not throw
         Assert.DoesNotThrow(() => presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled));
+    }
+
+    [Test]
+    public void ShowOpponentSelector_WithValidTargets_ShowsCardSelector()
+    {
+        // Arrange
+        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
+        UnityAction<InGameInvocationCard> onSelected = (card) => { };
+        UnityAction onCancelled = () => { };
+
+        // Act
+        _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
+
+        // Assert - Verify ShowCardSelectorLegacy was called
+        Assert.IsTrue(_dialogService.ShowCardSelectorLegacyCalled);
+        Assert.IsFalse(_dialogService.ShowMessageBoxLegacyCalled); // Should NOT show warning
+    }
+
+    [Test]
+    public void ShowOpponentSelector_WithValidTargets_PassesCanvasToDialogService()
+    {
+        // Arrange
+        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
+        UnityAction<InGameInvocationCard> onSelected = (card) => { };
+        UnityAction onCancelled = () => { };
+
+        // Act
+        _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
+
+        // Assert
+        Assert.AreEqual(_canvas, _dialogService.LastCanvas);
+    }
+
+    [Test]
+    public void ShowOpponentSelector_WithValidTargets_PassesCorrectConfigType()
+    {
+        // Arrange
+        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
+        UnityAction<InGameInvocationCard> onSelected = (card) => { };
+        UnityAction onCancelled = () => { };
+
+        // Act
+        _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
+
+        // Assert
+        Assert.IsInstanceOf<CardSelectorConfig>(_dialogService.LastCardSelectorConfig);
+    }
+
+    [Test]
+    public void ShowOpponentSelector_WithValidTargets_ConfigHasCorrectButtons()
+    {
+        // Arrange
+        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
+        UnityAction<InGameInvocationCard> onSelected = (card) => { };
+        UnityAction onCancelled = () => { };
+
+        // Act
+        _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
+
+        // Assert
+        var config = _dialogService.LastCardSelectorConfig as CardSelectorConfig;
+        Assert.IsNotNull(config);
+        Assert.IsTrue(config.ShowPositiveButton);
+        Assert.IsTrue(config.ShowNegativeButton);
     }
 
     #endregion
@@ -343,23 +390,37 @@ public class CardSelectorPresenterTests
     #region Edge Case Tests
 
     [Test]
-    public void ShowOpponentSelector_WithValidTargets_RequiresSingleton()
+    public void ShowOpponentSelector_WithValidTargets_DoesNotThrow()
     {
-        // This test documents that valid targets path requires CardSelector.Instance
-        // Skip test if singletons are not available
-        if (CardSelector.Instance == null || MessageBox.Instance == null)
-        {
-            Assert.Ignore("CardSelector or MessageBox singleton not available - this path requires singletons");
-            return;
-        }
-
         // Arrange
         var targets = new List<InGameCard> { new TestInGameCardForSelector() };
         UnityAction<InGameInvocationCard> onSelected = (card) => { };
         UnityAction onCancelled = () => { };
 
-        // Act & Assert - Should not throw when singletons available
+        // Act & Assert - Should not throw
         Assert.DoesNotThrow(() => _presenter.ShowOpponentSelector(targets, onSelected, onCancelled));
+    }
+
+    [Test]
+    public void ShowOpponentSelector_WithMultipleTargets_AllCardsPassedToConfig()
+    {
+        // Arrange
+        var targets = new List<InGameCard>
+        {
+            new TestInGameCardForSelector(),
+            new TestInGameCardForSelector(),
+            new TestInGameCardForSelector()
+        };
+        UnityAction<InGameInvocationCard> onSelected = (card) => { };
+        UnityAction onCancelled = () => { };
+
+        // Act
+        _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
+
+        // Assert
+        var config = _dialogService.LastCardSelectorConfig as CardSelectorConfig;
+        Assert.IsNotNull(config);
+        Assert.AreEqual(3, config.Cards.Count);
     }
 
     #endregion
@@ -418,6 +479,86 @@ public class TestInGameCardForSelector : InGameCard
     {
         title = "TestCard";
         materialCard = null; // No material needed for selection tests
+    }
+}
+
+/// <summary>
+/// Mock IDialogService for CardSelectorPresenter testing.
+/// Phase 40: Added to enable comprehensive presenter testing.
+/// Tracks method calls and captures parameters for verification.
+/// </summary>
+public class MockDialogServiceForSelector : IDialogService
+{
+    // ShowMessageBoxLegacy tracking
+    public bool ShowMessageBoxLegacyCalled { get; private set; }
+    public int ShowMessageBoxLegacyCallCount { get; private set; }
+    public object LastCanvas { get; private set; }
+    public object LastConfig { get; private set; }
+
+    // ShowCardSelectorLegacy tracking
+    public bool ShowCardSelectorLegacyCalled { get; private set; }
+    public int ShowCardSelectorLegacyCallCount { get; private set; }
+    public object LastCardSelectorConfig { get; private set; }
+
+    public void ShowMessageBoxLegacy(object canvas, object config)
+    {
+        ShowMessageBoxLegacyCalled = true;
+        ShowMessageBoxLegacyCallCount++;
+        LastCanvas = canvas;
+        LastConfig = config;
+    }
+
+    public void ShowCardSelectorLegacy(object canvas, object config)
+    {
+        ShowCardSelectorLegacyCalled = true;
+        ShowCardSelectorLegacyCallCount++;
+        LastCanvas = canvas;
+        LastCardSelectorConfig = config;
+    }
+
+    public Task<bool> ShowMessageBoxAsync(string title, string message, MessageBoxType type)
+    {
+        return Task.FromResult(true);
+    }
+
+    public Task<List<Guid>> ShowCardSelectorAsync(JDG.Application.Services.CardSelectorConfig config)
+    {
+        return Task.FromResult<List<Guid>>(null);
+    }
+
+    public Task<bool> ShowConfirmAsync(string message)
+    {
+        return Task.FromResult(true);
+    }
+
+    public Task ShowInfoAsync(string message)
+    {
+        return Task.CompletedTask;
+    }
+
+    public void ShowMessageBox(object canvas, MessageBoxOptions options)
+    {
+        ShowMessageBoxLegacyCalled = true;
+        ShowMessageBoxLegacyCallCount++;
+        LastCanvas = canvas;
+    }
+
+    public void ShowCardSelector(object canvas, CardSelectorOptions options)
+    {
+        ShowCardSelectorLegacyCalled = true;
+        ShowCardSelectorLegacyCallCount++;
+        LastCanvas = canvas;
+    }
+
+    public void Reset()
+    {
+        ShowMessageBoxLegacyCalled = false;
+        ShowMessageBoxLegacyCallCount = 0;
+        ShowCardSelectorLegacyCalled = false;
+        ShowCardSelectorLegacyCallCount = 0;
+        LastCanvas = null;
+        LastConfig = null;
+        LastCardSelectorConfig = null;
     }
 }
 

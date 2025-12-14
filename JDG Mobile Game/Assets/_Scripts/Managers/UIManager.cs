@@ -12,6 +12,7 @@ using VContainer;
 /// This class now delegates to CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter.
 /// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
 /// Phase 34: Uses ILocalizationService via DI instead of LocalizationSystem.Instance.
+/// Phase 40: Uses IDialogService via DI instead of MessageBox.Instance/CardSelector.Instance.
 /// UIManager will eventually be removed once all callsites migrate to the new presenters.
 /// </summary>
 [System.Obsolete("UIManager is being phased out. Use CardDisplayPresenter, DialogPresenter, and CardSelectorPresenter directly via dependency injection instead. This MonoBehaviour will be removed in a future phase.")]
@@ -30,11 +31,14 @@ public class UIManager : MonoBehaviour
 
     // Phase 34: Injected services
     private ILocalizationService _localizationService;
+    // Phase 40: IDialogService for presenters
+    private IDialogService _dialogService;
 
     [Inject]
-    public void Construct(ILocalizationService localizationService)
+    public void Construct(ILocalizationService localizationService, IDialogService dialogService)
     {
         _localizationService = localizationService;
+        _dialogService = dialogService;
     }
 
     /// <summary>
@@ -56,9 +60,10 @@ public class UIManager : MonoBehaviour
     {
         // Phase 5: Create simple presenter instances (not MonoBehaviours)
         // Phase 34: Pass ILocalizationService to presenters
+        // Phase 40: Pass IDialogService to presenters
         _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard);
-        _dialogPresenter = new DialogPresenter(canvas, _localizationService);
-        _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton, _localizationService);
+        _dialogPresenter = new DialogPresenter(canvas, _localizationService, _dialogService);
+        _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton, _localizationService, _dialogService);
     }
 
     /// <summary>

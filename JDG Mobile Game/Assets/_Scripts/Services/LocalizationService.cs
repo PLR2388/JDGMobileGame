@@ -52,6 +52,10 @@ namespace JDG.Infrastructure.Services
         public bool HasKey(string key)
         {
             // Check if the key exists as a LocalizationKeys enum value
+            if (string.IsNullOrEmpty(key))
+            {
+                return false;
+            }
             return System.Enum.IsDefined(typeof(LocalizationKeys), key);
         }
     }

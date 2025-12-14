@@ -10,6 +10,7 @@ using UnityEngine.Events;
 /// Replaces UIManager's opponent selection responsibility.
 /// Part of Phase 5 - UIManager decomposition.
 /// Phase 34: Updated to use ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 40: Updated to use IDialogService instead of CardSelector.Instance/MessageBox.Instance.
 ///
 /// Note: This presenter is in the default assembly because it depends on legacy types
 /// (InGameCard, InGameInvocationCard). It will be moved to JDG.Presentation once
@@ -20,12 +21,14 @@ public class CardSelectorPresenter
     private readonly Transform _canvas;
     private readonly GameObject _nextPhaseButton;
     private readonly ILocalizationService _localizationService;
+    private readonly IDialogService _dialogService;
 
-    public CardSelectorPresenter(Transform canvas, GameObject nextPhaseButton, ILocalizationService localizationService)
+    public CardSelectorPresenter(Transform canvas, GameObject nextPhaseButton, ILocalizationService localizationService, IDialogService dialogService)
     {
         _canvas = canvas;
         _nextPhaseButton = nextPhaseButton;
         _localizationService = localizationService;
+        _dialogService = dialogService;
     }
 
     /// <summary>
@@ -76,7 +79,8 @@ public class CardSelectorPresenter
             }
         );
 
-        CardSelector.Instance.CreateCardSelection(_canvas, config);
+        // Phase 40: Use IDialogService instead of CardSelector.Instance
+        _dialogService.ShowCardSelectorLegacy(_canvas, config);
     }
 
     private void ShowNoTargetsWarning()
@@ -87,7 +91,8 @@ public class CardSelectorPresenter
             showOkButton: true
         );
 
-        MessageBox.Instance.CreateMessageBox(_canvas, config);
+        // Phase 40: Use IDialogService instead of MessageBox.Instance
+        _dialogService.ShowMessageBoxLegacy(_canvas, config);
     }
 
     private void EnableNextPhaseButton()

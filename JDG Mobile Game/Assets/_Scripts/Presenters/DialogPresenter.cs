@@ -7,6 +7,7 @@ using UnityEngine.Events;
 /// Replaces UIManager's message box responsibility.
 /// Part of Phase 5 - UIManager decomposition.
 /// Phase 34: Updated to use ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 40: Updated to use IDialogService instead of MessageBox.Instance.
 ///
 /// Note: This presenter is in the default assembly during migration.
 /// It will be moved to JDG.Presentation once dependencies are refactored.
@@ -15,11 +16,13 @@ public class DialogPresenter
 {
     private readonly Transform _canvas;
     private readonly ILocalizationService _localizationService;
+    private readonly IDialogService _dialogService;
 
-    public DialogPresenter(Transform canvas, ILocalizationService localizationService)
+    public DialogPresenter(Transform canvas, ILocalizationService localizationService, IDialogService dialogService)
     {
         _canvas = canvas;
         _localizationService = localizationService;
+        _dialogService = dialogService;
     }
 
     /// <summary>
@@ -36,7 +39,8 @@ public class DialogPresenter
             positiveAction: onPositiveAction
         );
 
-        MessageBox.Instance.CreateMessageBox(_canvas, config);
+        // Phase 40: Use IDialogService instead of MessageBox.Instance
+        _dialogService.ShowMessageBoxLegacy(_canvas, config);
     }
 
     /// <summary>
@@ -62,7 +66,8 @@ public class DialogPresenter
             negativeAction: onNegativeAction
         );
 
-        MessageBox.Instance.CreateMessageBox(_canvas, config);
+        // Phase 40: Use IDialogService instead of MessageBox.Instance
+        _dialogService.ShowMessageBoxLegacy(_canvas, config);
     }
 
     /// <summary>
@@ -77,6 +82,7 @@ public class DialogPresenter
             showOkButton: true
         );
 
-        MessageBox.Instance.CreateMessageBox(_canvas, config);
+        // Phase 40: Use IDialogService instead of MessageBox.Instance
+        _dialogService.ShowMessageBoxLegacy(_canvas, config);
     }
 }
