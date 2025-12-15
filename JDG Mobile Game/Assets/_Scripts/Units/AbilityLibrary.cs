@@ -43,11 +43,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.CanOnlyAttackItself,
             "Opponent can only attack this card"
         ),
-        new GetFamilyInDeckAbility(
-            AbilityName.AddSpatialFromDeck,
-            "Add an invocation card belonging to the Spatial family from the deck to the hand",
-            CardFamily.Spatial
-        ),
+        // GetFamilyInDeckAbility (AddSpatialFromDeck) removed - Phase 42b
         new SacrificeCardAbility(
             AbilityName.SacrificeArchibaldVonGrenier,
             "Sacrifice Archibald Von Grenier",
