@@ -134,17 +134,17 @@ namespace JDG.TestUtilities
         /// <summary>
         /// Creates Player 1 with default settings.
         /// </summary>
-        public static Player CreatePlayer1(int deckSize = 30)
+        public static Player CreatePlayer1(int deckSize = 30, int maxHealth = 30)
         {
-            return CreatePlayer(PlayerId.Player1, deckSize);
+            return CreatePlayer(PlayerId.Player1, deckSize, maxHealth);
         }
 
         /// <summary>
         /// Creates Player 2 with default settings.
         /// </summary>
-        public static Player CreatePlayer2(int deckSize = 30)
+        public static Player CreatePlayer2(int deckSize = 30, int maxHealth = 30)
         {
-            return CreatePlayer(PlayerId.Player2, deckSize);
+            return CreatePlayer(PlayerId.Player2, deckSize, maxHealth);
         }
 
         /// <summary>

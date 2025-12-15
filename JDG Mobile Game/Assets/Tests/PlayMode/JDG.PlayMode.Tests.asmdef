@@ -1,11 +1,14 @@
 {
-    "name": "JDG.TestUtilities",
-    "rootNamespace": "JDG.TestUtilities",
+    "name": "JDG.PlayMode.Tests",
+    "rootNamespace": "JDG.PlayMode.Tests",
     "references": [
         "JDG.Domain",
         "JDG.Application",
+        "JDG.Infrastructure",
+        "JDG.TestUtilities",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
