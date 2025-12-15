@@ -149,10 +149,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
                 "Mecha-Granolax"
             }
         ),
-        new SkipOpponentAttackAbility(
-            AbilityName.SkipOpponentAttackEveryTurn,
-            "Player can choose to skip attack of one of his opponent invocation cards"
-        ),
+        // SkipOpponentAttackAbility removed - Phase 42b
         // BackToHandAfterDeathAbility (ComesBackFromDeath5Times) removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutJapon,
