@@ -89,11 +89,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // GetSpecificCardFromDeckAbility (GetZozanKebabFromDeck) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (SacrificeWizard) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetConvocationAuLyceeFromDeck) removed - Phase 42b
-        new ProtectBehindDuringAttackAbility(
-            AbilityName.ProtectedBehindStarlightUnicorn,
-            "Invocation protects himself behind Starlight Unicorn if present",
-            "Starlight Unicorn"
-        ),
+        // ProtectBehindDuringAttackAbility removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetCanardSignal) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (SacrificeDeveloper3Atk3Def, SacrificeHardCorner3Atk3Def) removed - Phase 42b
         // CantBeAttackAbility (CantBeAttackKill) removed - Phase 42b
