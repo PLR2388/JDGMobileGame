@@ -131,16 +131,8 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             family: CardFamily.Japan
         ),
         // DrawCardsAbility removed - Phase 42b: Using modern IAbility system
-        new GiveAtkDefToFamilyMemberAbility(
-            AbilityName.GiveAktDefToFistilandMember,
-            "Invocation can give his atk and def to Fistiland member",
-            CardFamily.Fistiland
-        ),
-        new GiveAtkDefToFamilyMemberAbility(
-            AbilityName.GiveAktDefToRpgMember,
-            "Invocation can give his atk and def to Rpg member",
-            CardFamily.Rpg
-        )
+        // GiveAtkDefToFamilyMemberAbility (GiveAktDefToFistilandMember) removed - Phase 42b
+        // GiveAtkDefToFamilyMemberAbility (GiveAktDefToRpgMember) removed - Phase 42b
         // DefaultAbility removed - Phase 42b: Using modern IAbility system
     };
 }
