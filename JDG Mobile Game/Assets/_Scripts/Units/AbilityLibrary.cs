@@ -278,11 +278,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Invocation copy atk and def Benzaie jeune",
             "Benzaie jeune"
         ),
-        new LimitTurnExistenceAbility(
-            AbilityName.SurviveOneTurn,
-            "Invocation survive only one turn",
-            1
-        ),
+        // LimitTurnExistenceAbility (SurviveOneTurn) removed - Phase 42b
         new GetSpecificCardAfterDeathAbility(
             AbilityName.GiveDeathWhenDie,
             "Invocation gives La Mort from deck to hand when he die",
