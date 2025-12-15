@@ -275,11 +275,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.SacrificeToInvoke,
             "Sacrifice Sheik Point to invoke non-collector card from yellow trash"
         ),
-        new GetSpecificCardFromDeckOrYellowCardAbility(
-            AbilityName.GetPatronInfogramesFromDeckYellowTrash,
-            "Get Patron D'Infogrames from deck or yellow trash",
-            "Patron D'Infogrames"
-        ),
+        // GetSpecificCardFromDeckOrYellowCardAbility removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutGranolaxOrMechaGranolax,
             "Invocation can't live without Granolax or Mecha-Granolax",
