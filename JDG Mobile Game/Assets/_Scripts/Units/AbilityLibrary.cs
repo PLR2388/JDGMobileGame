@@ -106,12 +106,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         // BackToHandAfterDeathAbility (ComesBackFromDeath) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice2Japan) removed - Phase 42b
-        new DestroyFieldAtkDefAttackConditionAbility(
-            AbilityName.DestroyFieldATK,
-            "Invocation can destroy a field but divide Atk by 2",
-            2,
-            1
-        ),
+        // DestroyFieldAtkDefAttackConditionAbility (DestroyFieldATK) removed - Phase 42b
         // KillOpponentInvocationCardAbility removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutJDG,
@@ -129,12 +124,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             family: CardFamily.Comics
         ),
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice2Incarnation) removed - Phase 42b
-        new DestroyFieldAtkDefAttackConditionAbility(
-            AbilityName.DestroyFieldDEF,
-            "Invocation can destroy a field but divide Def by 2",
-            1,
-            2
-        ),
+        // DestroyFieldAtkDefAttackConditionAbility (DestroyFieldDEF) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetBenzaieJeuneFromDeck) removed - Phase 42b
         // GetTypeCardFromDeckWithoutAttackAbility removed - Phase 42b
         // SacrificeCardAbility (SacrificeGranolax) removed - Phase 42b
