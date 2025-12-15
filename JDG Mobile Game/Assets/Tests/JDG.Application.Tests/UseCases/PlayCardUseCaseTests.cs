@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 // Alias to avoid conflict with Cards namespace CardType
-using DomainCardType = JDG.Domain.CardType;
+using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace JDG.Application.Tests.UseCases
 {

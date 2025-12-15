@@ -1,4 +1,5 @@
 using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Application.Repositories;
 using System.Linq;
 

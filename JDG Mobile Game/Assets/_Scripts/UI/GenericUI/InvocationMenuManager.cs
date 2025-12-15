@@ -1,13 +1,16 @@
+using JDG.Application.Services;
+using JDG.Presentation.Presenters;
+using JDG.Presentation.Views;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
-using JDG.Presentation.Views;
 
 /// <summary>
 /// View implementation for invocation context menu.
 /// Phase 17-18: Removed CardManager singleton dependency via ICombatService.
 /// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
 /// Phase 28: Migrated to MVP pattern - now implements IInvocationMenuView, business logic moved to InvocationMenuPresenter.
+/// Phase 40: Updated to use ICombatQueryService and JDG.Presentation.Presenters namespace.
 /// </summary>
 public class InvocationMenuManager : MonoBehaviour, IInvocationMenuView
 {
@@ -20,10 +23,10 @@ public class InvocationMenuManager : MonoBehaviour, IInvocationMenuView
 
     /// <summary>
     /// VContainer method injection for dependencies.
-    /// Phase 28: Injects services needed to create the presenter.
+    /// Phase 40: Now injects ICombatQueryService instead of ICombatService.
     /// </summary>
     [Inject]
-    public void Construct(ICombatService combatService)
+    public void Construct(ICombatQueryService combatService)
     {
         // Phase 28: Create presenter with this view and injected services
         _presenter = new InvocationMenuPresenter(this, combatService);

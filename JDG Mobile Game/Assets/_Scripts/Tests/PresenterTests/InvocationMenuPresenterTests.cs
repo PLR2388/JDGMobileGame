@@ -1,14 +1,13 @@
 using NUnit.Framework;
+using JDG.Application.Services;
+using JDG.Presentation.Presenters;
 using JDG.Presentation.Views;
 using UnityEngine;
-using System.Collections.Generic;
-using _Scripts.Units.Invocation;
-using Cards;
 
 /// <summary>
 /// Unit tests for InvocationMenuPresenter.
 /// Part of Phase 28 - MonoBehaviour Wave 1 MVP migration.
-/// Tests in default assembly to access presenters which depend on legacy services.
+/// Phase 40: Updated to use JDG.Presentation.Presenters and ICombatQueryService.
 /// </summary>
 [TestFixture]
 public class InvocationMenuPresenterTests
@@ -227,10 +226,11 @@ public class TestInvocationMenuView : IInvocationMenuView
 }
 
 /// <summary>
-/// Test double for ICombatService.
+/// Test double for ICombatQueryService.
+/// Phase 40: Now implements ICombatQueryService instead of ICombatService.
 /// Provides configurable combat state for testing.
 /// </summary>
-public class TestCombatService : ICombatService
+public class TestCombatService : ICombatQueryService
 {
     private bool _canAttack;
     private bool _hasAction;
@@ -241,19 +241,10 @@ public class TestCombatService : ICombatService
     public void SetHasAction(bool hasAction) => _hasAction = hasAction;
     public void SetActionPossible(bool actionPossible) => _actionPossible = actionPossible;
 
-    // ICombatService implementation
-    public InGameInvocationCard Attacker { get; set; }
-    public InGameInvocationCard Opponent { get; set; }
-
+    // ICombatQueryService implementation
     public bool CanAttackerAttack() => _canAttack;
     public bool HasAttackerAction() => _hasAction;
     public bool IsSpecialActionPossible() => _actionPossible;
-
-    // Unused interface methods (not tested in presenter) - return defaults
-    public float ComputeDamageAttack() => 0f;
-    public void HandleAttack() { }
-    public List<InGameCard> BuildValidTargets() => new List<InGameCard>();
-    public void UseSpecialAction() { }
 }
 
 #endregion

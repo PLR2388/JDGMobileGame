@@ -33,12 +33,15 @@ public class UIManager : MonoBehaviour
     private ILocalizationService _localizationService;
     // Phase 40: IDialogService for presenters
     private IDialogService _dialogService;
+    // Phase 39: ICardVisualService for presenter migration
+    private ICardVisualService _cardVisualService;
 
     [Inject]
-    public void Construct(ILocalizationService localizationService, IDialogService dialogService)
+    public void Construct(ILocalizationService localizationService, IDialogService dialogService, ICardVisualService cardVisualService)
     {
         _localizationService = localizationService;
         _dialogService = dialogService;
+        _cardVisualService = cardVisualService;
     }
 
     /// <summary>
@@ -61,7 +64,8 @@ public class UIManager : MonoBehaviour
         // Phase 5: Create simple presenter instances (not MonoBehaviours)
         // Phase 34: Pass ILocalizationService to presenters
         // Phase 40: Pass IDialogService to presenters
-        _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard);
+        // Phase 39: Pass ICardVisualService for Material resolution
+        _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard, _cardVisualService);
         _dialogPresenter = new DialogPresenter(canvas, _localizationService, _dialogService);
         _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton, _localizationService, _dialogService);
     }

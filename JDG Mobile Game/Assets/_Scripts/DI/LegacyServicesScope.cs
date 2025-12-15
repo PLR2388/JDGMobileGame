@@ -24,6 +24,10 @@ namespace JDG.DI
             builder.Register<ILocalizationService, LocalizationService>(Lifetime.Singleton);
             builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
 
+            // Phase 39: Card Visual Service
+            // Abstracts Unity Material dependencies for presenter migration
+            builder.Register<ICardVisualService, CardVisualService>(Lifetime.Singleton);
+
             // Phase 19-20: Register InputManager MonoBehaviour from scene, then InputService
             builder.RegisterComponentInHierarchy<InputManager>();
             builder.Register<IInputService, InputService>(Lifetime.Singleton);
@@ -97,6 +101,13 @@ namespace JDG.DI
             // Phase 17-18: Card Instantiation Service
             // CardInstantiationService replaces UnitManager singleton for GameObject creation
             builder.Register<ICardInstantiationService, CardInstantiationService>(Lifetime.Singleton);
+
+            // Phase 40: Combat Service
+            // CombatService manages combat operations (attack validation, targeting, execution)
+            // Registered as both ICombatService (full interface) and ICombatQueryService (subset for presenters)
+            builder.Register<CombatService>(Lifetime.Singleton);
+            builder.Register<ICombatService>(c => c.Resolve<CombatService>(), Lifetime.Singleton);
+            builder.Register<ICombatQueryService>(c => c.Resolve<CombatService>(), Lifetime.Singleton);
 
             // Phase 21-22: Player & Card Management Use Cases
             // These are in the default assembly because they depend on legacy card types

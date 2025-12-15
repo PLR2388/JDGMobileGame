@@ -309,7 +309,7 @@ namespace JDG.Application.Tests.UseCases
 
         public IEnumerable<Card> GetAllCardDefinitions() => _cards.Values;
 
-        public IEnumerable<Card> GetCardsByType(JDG.Domain.CardType type) => _cards.Values.Where(c => c.Type == type);
+        public IEnumerable<Card> GetCardsByType(CardType type) => _cards.Values.Where(c => c.Type == type);
 
         public IEnumerable<Card> GetCardsByFamily(CardFamily family) =>
             _cards.Values.Where(c => c.Families != null && c.Families.Contains(family));

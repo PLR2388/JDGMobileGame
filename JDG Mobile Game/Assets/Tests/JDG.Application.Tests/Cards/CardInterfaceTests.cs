@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using JDG.Application.Cards;
 using JDG.Domain;
+using JDG.Domain.Enums;
 using NUnit.Framework;
 
 namespace JDG.Application.Tests.Cards
@@ -184,27 +185,43 @@ namespace JDG.Application.Tests.Cards
 
     /// <summary>
     /// Test implementation of IInGameCard.
+    /// Phase 39: Updated with new interface properties.
     /// </summary>
     public class TestInGameCard : IInGameCard
     {
         public string Title { get; }
         public CardOwner CardOwner { get; }
+        public CardType Type { get; }
+        public bool Collector { get; }
+        public string Description { get; }
+        public string DetailedDescription { get; }
+        public string VisualId => Title;
 
-        public TestInGameCard(string title, CardOwner owner)
+        public TestInGameCard(string title, CardOwner owner, CardType type = CardType.Invocation)
         {
             Title = title;
             CardOwner = owner;
+            Type = type;
+            Collector = false;
+            Description = "";
+            DetailedDescription = "";
         }
     }
 
     /// <summary>
     /// Test implementation of IInGameInvocationCard.
     /// Tracks method calls for test verification.
+    /// Phase 39: Updated with new IInGameCard interface properties.
     /// </summary>
     public class TestInGameInvocationCard : IInGameInvocationCard
     {
         public string Title { get; }
         public CardOwner CardOwner { get; }
+        public CardType Type => CardType.Invocation;
+        public bool Collector { get; }
+        public string Description { get; }
+        public string DetailedDescription { get; }
+        public string VisualId => Title;
         public float Attack { get; set; }
         public float Defense { get; set; }
         public float BaseAttack { get; }
@@ -225,6 +242,9 @@ namespace JDG.Application.Tests.Cards
             Defense = defense;
             BaseAttack = attack;
             BaseDefense = defense;
+            Collector = false;
+            Description = "";
+            DetailedDescription = "";
         }
 
         public void ResetNewTurn()

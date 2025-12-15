@@ -509,8 +509,146 @@ The Clean Architecture refactoring is now complete. All planned phases have been
 
 ---
 
-**Last Updated**: 2025-12-12
+### Phase 39: IInGameCard Abstraction (In Progress)
+
+**Goal**: Abstract InGameCard dependencies to enable presenter migration to JDG.Presentation assembly.
+
+#### Problem
+Presenters in `Assets/_Scripts/Presenters/` cannot move to `JDG.Presentation` assembly because they depend on `InGameCard` (legacy type with `UnityEngine.Material` dependency).
+
+#### Solution
+1. **Extended IInGameCard interface** in JDG.Application with all presenter-needed properties:
+   - `Type` (CardType)
+   - `Collector` (bool)
+   - `Description` (string)
+   - `DetailedDescription` (string)
+   - `VisualId` (string - abstract Material identifier)
+
+2. **Created ICardVisualService** interface in JDG.Application:
+   - `GetMaterial(IInGameCard card)` - returns Material as object
+   - `GetMaterialByVisualId(string visualId)` - resolves by ID
+   - `HasVisual(IInGameCard card)` - checks if visual exists
+
+3. **Updated InGameCard** to implement IInGameCard:
+   - Added explicit interface implementations for domain types
+   - Type conversion helpers (CardType, CardOwner)
+   - Backward compatible with subclasses
+
+4. **Created CardVisualService** implementation in default assembly (Services/):
+   - Resolves Unity Material from IInGameCard
+   - Fallback to direct access for legacy compatibility
+   - Note: In default assembly (not JDG.Infrastructure) because it needs Cards namespace
+
+5. **Updated CardDisplayPresenter** to use interfaces:
+   - `ShowCard(IInGameCard card)` instead of `ShowCard(InGameCard card)`
+   - Uses ICardVisualService for Material resolution
+   - Legacy constructor maintained for backward compatibility
+
+6. **Registered services in DI**:
+   - `ICardVisualService` registered in LegacyServicesScope
+   - UIManager updated to inject and pass to presenters
+
+#### Files Created
+- `Assets/_Scripts/JDG.Application/Services/ICardVisualService.cs`
+- `Assets/_Scripts/JDG.Infrastructure/Services/CardVisualService.cs`
+- `Assets/Tests/JDG.Application.Tests/Cards/IInGameCardTests.cs`
+
+#### Files Modified
+- `Assets/_Scripts/JDG.Application/Cards/IInGameCard.cs`
+- `Assets/_Scripts/Units/InGameCard.cs`
+- `Assets/_Scripts/Presenters/CardDisplayPresenter.cs`
+- `Assets/_Scripts/Managers/UIManager.cs`
+- `Assets/_Scripts/DI/LegacyServicesScope.cs`
+
+#### Status: In Progress
+- ✅ IInGameCard interface extended
+- ✅ ICardVisualService created
+- ✅ InGameCard implements IInGameCard
+- ✅ CardVisualService implemented
+- ✅ CardDisplayPresenter uses interfaces
+- ⏳ Move presenters to JDG.Presentation (Phase 2)
+
+---
+
+### Phase 40: Presenter Migration to JDG.Presentation
+
+**Goal**: Create JDG.Core assembly and migrate presenters to JDG.Presentation.
+
+#### Part 1: JDG.Core Assembly & RoundDisplayPresenter
+
+1. **Created JDG.Core.asmdef**:
+   - Location: `Assets/_Scripts/Core/JDG.Core.asmdef`
+   - Contains `LocalizationKeys` enum
+   - Allows JDG.Presentation to reference localization keys
+
+2. **Updated JDG.Presentation.asmdef**:
+   - Added reference to JDG.Core
+
+3. **Migrated RoundDisplayPresenter**:
+   - Moved from `Assets/_Scripts/Presenters/` to `Assets/_Scripts/JDG.Presentation/Presenters/`
+   - Added `namespace JDG.Presentation.Presenters`
+   - First presenter successfully in proper assembly!
+
+#### Part 2: ICombatQueryService & InvocationMenuPresenter
+
+1. **Created ICombatQueryService interface**:
+   - Location: `Assets/_Scripts/JDG.Application/Services/ICombatQueryService.cs`
+   - Subset of ICombatService with only bool-returning methods
+   - No legacy type dependencies (can be in JDG.Application)
+
+2. **Updated ICombatService**:
+   - Now extends `ICombatQueryService`
+   - Removed duplicate method signatures
+
+3. **Registered CombatService in DI**:
+   - Added to `LegacyServicesScope.cs`
+   - Registered as both `ICombatService` and `ICombatQueryService`
+
+4. **Migrated InvocationMenuPresenter**:
+   - Moved to `Assets/_Scripts/JDG.Presentation/Presenters/`
+   - Now depends on `ICombatQueryService` instead of `ICombatService`
+   - Second presenter in proper assembly!
+
+#### Remaining Presenter Blockers
+
+| Presenter | Blocker | Resolution Path |
+|-----------|---------|-----------------|
+| CardDisplayPresenter | Uses `Cards.InGameCard` fallback | Remove fallback or extend abstraction |
+| DialogPresenter | Uses `MessageBoxConfig` (default assembly) | Move config to JDG.Presentation |
+| CardSelectorPresenter | Uses `InGameCard`, `InGameInvocationCard` | Abstract with interfaces |
+
+#### Files Created
+- `Assets/_Scripts/Core/JDG.Core.asmdef`
+- `Assets/_Scripts/JDG.Application/Services/ICombatQueryService.cs`
+- `Assets/_Scripts/JDG.Presentation/Presenters/RoundDisplayPresenter.cs`
+- `Assets/_Scripts/JDG.Presentation/Presenters/InvocationMenuPresenter.cs`
+
+#### Files Modified
+- `Assets/_Scripts/JDG.Presentation/JDG.Presentation.asmdef`
+- `Assets/_Scripts/Services/ICombatService.cs` (now extends ICombatQueryService)
+- `Assets/_Scripts/DI/LegacyServicesScope.cs` (added CombatService registration)
+- `Assets/_Scripts/UI/GenericUI/RoundDisplayManager.cs`
+- `Assets/_Scripts/UI/GenericUI/InvocationMenuManager.cs`
+- `Assets/_Scripts/Tests/PresenterTests/RoundDisplayPresenterTests.cs`
+- `Assets/_Scripts/Tests/PresenterTests/InvocationMenuPresenterTests.cs`
+
+#### Files Deleted
+- `Assets/_Scripts/Presenters/RoundDisplayPresenter.cs`
+- `Assets/_Scripts/Presenters/InvocationMenuPresenter.cs`
+
+#### Status: Complete
+- ✅ JDG.Core assembly created
+- ✅ ICombatQueryService interface created
+- ✅ RoundDisplayPresenter migrated to JDG.Presentation
+- ✅ InvocationMenuPresenter migrated to JDG.Presentation
+- ✅ CombatService registered in DI
+- ✅ Tests updated
+- 📋 3 presenters remaining in default assembly (blocked by legacy dependencies)
+
+---
+
+**Last Updated**: 2025-12-14
 **Current Branch**: refactor-v3
-**Status**: Phase 33 Complete ✅ (Refactoring Complete)
+**Status**: Phase 40 Complete (2 Presenters Migrated to JDG.Presentation)
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.

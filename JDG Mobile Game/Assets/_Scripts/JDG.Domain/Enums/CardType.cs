@@ -1,4 +1,4 @@
-namespace JDG.Domain
+namespace JDG.Domain.Enums
 {
     /// <summary>
     /// Defines different types of cards.
