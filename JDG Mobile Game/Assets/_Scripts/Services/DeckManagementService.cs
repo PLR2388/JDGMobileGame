@@ -16,6 +16,7 @@ using UnityEngine;
 /// Phase 17-18 Fix: Now uses ResourceSystem to load card data instead of GameState.
 /// Phase 24-25: Added IEventBus and ICardCollectionService dependencies for CardFactory.
 /// Phase 8: Uses ICardDataProvider instead of ResourceSystem.Instance.
+/// Phase 7: Added IAbilityProvider for ability system migration.
 /// </summary>
 public class DeckManagementService : IDeckManagementService
 {
@@ -23,6 +24,7 @@ public class DeckManagementService : IDeckManagementService
     private readonly IEventBus _eventBus;
     private readonly ICardCollectionService _cardCollectionService;
     private readonly ICardDataProvider _cardDataProvider;
+    private readonly IAbilityProvider _abilityProvider;
 
     public List<Card> Deck1AllCards { get; private set; } = new List<Card>();
     public List<Card> Deck2AllCards { get; private set; } = new List<Card>();
@@ -32,11 +34,13 @@ public class DeckManagementService : IDeckManagementService
     public DeckManagementService(
         IEventBus eventBus,
         ICardCollectionService cardCollectionService,
-        ICardDataProvider cardDataProvider)
+        ICardDataProvider cardDataProvider,
+        IAbilityProvider abilityProvider = null)
     {
         _eventBus = eventBus;
         _cardCollectionService = cardCollectionService;
         _cardDataProvider = cardDataProvider;
+        _abilityProvider = abilityProvider;
 
         // Phase 8: Use ICardDataProvider instead of ResourceSystem.Instance
         if (_cardDataProvider.IsLoaded)
@@ -115,7 +119,7 @@ public class DeckManagementService : IDeckManagementService
 
         CardChoice.GetRandomDeck(DeckConfiguration.MaxDeckCards - player1Deck.Count, ref player1Deck, Deck1AllCards);
         player1Deck.Reverse();
-        Player1DeckCards = player1Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, _cardCollectionService)).ToList();
+        Player1DeckCards = player1Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
     }
 
     /// <summary>
@@ -145,7 +149,7 @@ public class DeckManagementService : IDeckManagementService
         }
 
         player2Deck.Reverse();
-        Player2DeckCards = player2Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, _cardCollectionService)).ToList();
+        Player2DeckCards = player2Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
     }
 
     /// <summary>

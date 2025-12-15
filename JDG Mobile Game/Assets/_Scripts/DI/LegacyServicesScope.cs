@@ -115,6 +115,11 @@ namespace JDG.DI
             builder.Register<HandleCardRemovedFromFieldUseCase>(Lifetime.Transient);
             builder.Register<HandleHandCardsChangeUseCase>(Lifetime.Transient);
             builder.Register<HandleFieldCardChangedUseCase>(Lifetime.Transient);
+
+            // Phase 7: Ability Provider Service
+            // Bridges modern AbilityRegistry with legacy AbilityLibrary
+            // Uses Strangler Fig pattern - prefers modern system, falls back to legacy
+            builder.Register<IAbilityProvider, AbilityProviderService>(Lifetime.Singleton);
         }
     }
 }

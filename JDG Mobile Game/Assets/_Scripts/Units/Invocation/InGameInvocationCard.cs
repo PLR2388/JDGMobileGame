@@ -11,6 +11,7 @@ namespace _Scripts.Units.Invocation
     /// <summary>
     /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
     /// Phase 24-25: Removed ServiceLocator, using constructor injection.
+    /// Phase 7: Added IAbilityProvider for AbilityLibrary → AbilityRegistry migration.
     /// </summary>
     public class InGameInvocationCard : InGameCard
     {
@@ -24,6 +25,9 @@ namespace _Scripts.Units.Invocation
         // Phase 24-25: Injected dependencies
         private readonly IEventBus _eventBus;
         private readonly ICardCollectionService _cardCollectionService;
+
+        // Phase 7: Optional ability provider for migration from AbilityLibrary
+        private readonly IAbilityProvider _abilityProvider;
 
         /// <summary>
         /// Gets or sets whether the card effect is canceled.
@@ -67,18 +71,26 @@ namespace _Scripts.Units.Invocation
         /// <summary>
         /// Initializes an instance of the InGameInvocationCard.
         /// Phase 24-25: Added dependency injection for IEventBus and ICardCollectionService.
+        /// Phase 7: Added IAbilityProvider for ability system migration.
         /// </summary>
         /// <param name="invocationCard">The base invocation card.</param>
         /// <param name="cardOwner">The owner of the card.</param>
         /// <param name="eventBus">EventBus for publishing domain events.</param>
         /// <param name="cardCollectionService">Service for accessing player cards.</param>
+        /// <param name="abilityProvider">Optional provider for abilities (uses AbilityLibrary.Instance if null).</param>
         /// <returns>A new InGameInvocationCard instance.</returns>
-        public InGameInvocationCard(InvocationCard invocationCard, CardOwner cardOwner, IEventBus eventBus, ICardCollectionService cardCollectionService)
+        public InGameInvocationCard(
+            InvocationCard invocationCard,
+            CardOwner cardOwner,
+            IEventBus eventBus,
+            ICardCollectionService cardCollectionService,
+            IAbilityProvider abilityProvider = null)
         {
             BaseInvocationCard = invocationCard;
             CardOwner = cardOwner;
             _eventBus = eventBus;
             _cardCollectionService = cardCollectionService;
+            _abilityProvider = abilityProvider;
             Reset();
         }
 
@@ -120,8 +132,21 @@ namespace _Scripts.Units.Invocation
             IsAffectedByEffectCard = BaseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
             conditions = BaseInvocationCard.Conditions
                 .Select(conditionName => ConditionLibrary.Instance.ConditionDictionary[conditionName]).ToList();
-            Abilities = BaseInvocationCard.Abilities
-                .Select(abilityName => AbilityLibrary.Instance.AbilityDictionary[abilityName]).ToList();
+
+            // Phase 7: Use IAbilityProvider if available, otherwise fall back to AbilityLibrary.Instance
+            if (_abilityProvider != null)
+            {
+                Abilities = BaseInvocationCard.Abilities
+                    .Select(abilityName => _abilityProvider.GetAbility(abilityName))
+                    .Where(ability => ability != null)
+                    .ToList();
+            }
+            else
+            {
+                // Legacy path: direct AbilityLibrary access
+                Abilities = BaseInvocationCard.Abilities
+                    .Select(abilityName => AbilityLibrary.Instance.AbilityDictionary[abilityName]).ToList();
+            }
             UpdateInvocationCardForAbilities();
         }
         

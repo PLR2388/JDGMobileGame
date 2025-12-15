@@ -6,6 +6,7 @@ using VContainer;
 
 /// <summary>
 /// Phase 24-25: Added VContainer injection for IEventBus and ICardCollectionService.
+/// Phase 7: Added IAbilityProvider for ability system migration.
 /// </summary>
 public class CardDisplay : MonoBehaviour
 {
@@ -19,15 +20,20 @@ public class CardDisplay : MonoBehaviour
     private IEventBus _eventBus;
     private ICardCollectionService _cardCollectionService;
 
+    // Phase 7: IAbilityProvider for ability system migration
+    private IAbilityProvider _abilityProvider;
+
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 24-25: Inject IEventBus and ICardCollectionService for CardFactory.
+    /// Phase 7: Inject IAbilityProvider for ability system migration.
     /// </summary>
     [Inject]
-    public void Construct(IEventBus eventBus, ICardCollectionService cardCollectionService)
+    public void Construct(IEventBus eventBus, ICardCollectionService cardCollectionService, IAbilityProvider abilityProvider = null)
     {
         _eventBus = eventBus;
         _cardCollectionService = cardCollectionService;
+        _abilityProvider = abilityProvider;
     }
 
     /// <summary>
@@ -86,12 +92,13 @@ public class CardDisplay : MonoBehaviour
     /// Initializes the card. If the Card exists and InGameCard doesn't, a new InGameCard is created.
     /// If Card doesn't exist but InGameCard does, the base card of the InGameCard is set as the Card.
     /// Phase 24-25: Passes dependencies to CardFactory.
+    /// Phase 7: Passes IAbilityProvider to CardFactory.
     /// </summary>
     private void InitializeCard()
     {
         if (Card != null && InGameCard == null)
         {
-            InGameCard = CardFactory.CreateInGameCard(Card, CardOwner.NotDefined, _eventBus, _cardCollectionService);
+            InGameCard = CardFactory.CreateInGameCard(Card, CardOwner.NotDefined, _eventBus, _cardCollectionService, _abilityProvider);
         }
         else if (Card == null && InGameCard != null)
         {
