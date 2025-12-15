@@ -348,11 +348,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Tentacules cannot live without Japan invocation card",
             family: CardFamily.Japan
         ),
-        new DrawCardsAbility(
-            AbilityName.Draw2Cards,
-            "Can draw maximum 2 card when invoke",
-            2
-        ),
+        // DrawCardsAbility removed - Phase 42b: Using modern IAbility system
         new GiveAtkDefToFamilyMemberAbility(
             AbilityName.GiveAktDefToFistilandMember,
             "Invocation can give his atk and def to Fistiland member",
