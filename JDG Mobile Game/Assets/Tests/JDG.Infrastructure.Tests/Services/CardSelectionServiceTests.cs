@@ -247,6 +247,121 @@ namespace JDG.Infrastructure.Tests.Services
             Assert.IsFalse(_service.MultipleCardSelection);
         }
 
+        #region Event Publishing Tests
+
+        [Test]
+        public void SelectCard_PublishesCardAddedToSelectionEvent()
+        {
+            // Act
+            _service.SelectCard(_card1);
+
+            // Assert
+            var addedEvents = _eventBus.PublishedEvents
+                .OfType<CardAddedToSelectionEvent>()
+                .ToList();
+            Assert.AreEqual(1, addedEvents.Count);
+            Assert.AreEqual(_card1, addedEvents[0].Card);
+        }
+
+        [Test]
+        public void SelectCard_PublishesCardSelectionChangedEvent()
+        {
+            // Act
+            _service.SelectCard(_card1);
+
+            // Assert
+            var changedEvents = _eventBus.PublishedEvents
+                .OfType<CardSelectionChangedEvent>()
+                .ToList();
+            Assert.AreEqual(1, changedEvents.Count);
+            Assert.AreEqual(1, changedEvents[0].SelectedCount);
+        }
+
+        [Test]
+        public void UnselectCard_PublishesCardRemovedFromSelectionEvent()
+        {
+            // Arrange
+            _service.SelectCard(_card1);
+            _eventBus.PublishedEvents.Clear();
+
+            // Act
+            _service.UnselectCard(_card1);
+
+            // Assert
+            var removedEvents = _eventBus.PublishedEvents
+                .OfType<CardRemovedFromSelectionEvent>()
+                .ToList();
+            Assert.AreEqual(1, removedEvents.Count);
+            Assert.AreEqual(_card1, removedEvents[0].Card);
+        }
+
+        [Test]
+        public void ClearSelection_PublishesCardSelectionChangedEvent_WithZeroCount()
+        {
+            // Arrange
+            _service.SelectCard(_card1);
+            _eventBus.PublishedEvents.Clear();
+
+            // Act
+            _service.ClearSelection();
+
+            // Assert
+            var changedEvents = _eventBus.PublishedEvents
+                .OfType<CardSelectionChangedEvent>()
+                .ToList();
+            Assert.AreEqual(1, changedEvents.Count);
+            Assert.AreEqual(0, changedEvents[0].SelectedCount);
+        }
+
+        [Test]
+        public void SelectedCards_PersistsAcrossMultipleCalls()
+        {
+            // Arrange
+            _service.MultipleCardSelection = true;
+            _service.MultipleSelectionLimit = 5;
+
+            // Act - Select cards in multiple calls
+            _service.SelectCard(_card1);
+            var after1 = _service.SelectedCards.ToList();
+
+            _service.SelectCard(_card2);
+            var after2 = _service.SelectedCards.ToList();
+
+            _service.SelectCard(_card3);
+            var after3 = _service.SelectedCards.ToList();
+
+            // Assert - Each call should preserve previous selections
+            Assert.AreEqual(1, after1.Count);
+            Assert.AreEqual(2, after2.Count);
+            Assert.AreEqual(3, after3.Count);
+            Assert.IsTrue(after3.Contains(_card1));
+            Assert.IsTrue(after3.Contains(_card2));
+            Assert.IsTrue(after3.Contains(_card3));
+        }
+
+        [Test]
+        public void SelectedCards_ReturnsCopy_NotOriginalList()
+        {
+            // Arrange
+            _service.SelectCard(_card1);
+            var selectedCards = _service.SelectedCards;
+
+            // Act - Try to modify the returned list
+            try
+            {
+                selectedCards.Clear();
+            }
+            catch
+            {
+                // Some implementations may throw on modification
+            }
+
+            // Assert - Original selection should be unchanged
+            Assert.AreEqual(1, _service.SelectedCards.Count);
+        }
+
+        #endregion
+
         #region Test Helpers
 
         /// <summary>
