@@ -45,11 +45,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         // GetFamilyInDeckAbility (AddSpatialFromDeck) removed - Phase 42b
         // SacrificeCardAbility (SacrificeArchibaldVonGrenier) removed - Phase 42b
-        new CantBeAttackAbility(
-            AbilityName.CantBeAttackIfComics,
-            "Invocation can't be attack if there is another card on the field belonging to Comics family",
-            CardFamily.Comics
-        ),
+        // CantBeAttackAbility (CantBeAttackIfComics) removed - Phase 42b
         new GiveAtkDefFamilyAbility(
             AbilityName.GiveAtkDefToComics,
             "Invocation give 0.5 Atk and 0.5 Def to comic invocation card on field",
@@ -100,10 +96,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         // GetSpecificCardFromDeckAbility (GetCanardSignal) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (SacrificeDeveloper3Atk3Def, SacrificeHardCorner3Atk3Def) removed - Phase 42b
-        new CantBeAttackAbility(
-            AbilityName.CantBeAttackKill,
-            "Invocation can't be attacked or killed by other invocation cards"
-        ),
+        // CantBeAttackAbility (CantBeAttackKill) removed - Phase 42b
         // BackToHandAfterDeathAbility (ComesBackFromDeath) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice2Japan) removed - Phase 42b
         // DestroyFieldAtkDefAttackConditionAbility (DestroyFieldATK) removed - Phase 42b
