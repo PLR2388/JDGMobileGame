@@ -125,15 +125,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             }
         ),
         // GetSpecificCardFromDeckAbility (GetForetElfesSylvains) removed - Phase 42b
-        new InvokeSpecificCardChoiceAbility(
-            AbilityName.InvokeSebOrJDG,
-            "Offer the choice to invoke Joueur Du Grenier or Seb Du Grenier",
-            new List<string>
-            {
-                "Joueur Du Grenier",
-                "Seb Du Grenier"
-            }
-        ),
+        // InvokeSpecificCardChoiceAbility removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutComics,
             "Invocation cannot live without Comic invocation card",
