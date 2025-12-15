@@ -71,14 +71,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Tentacules"
         ),
         // GetSpecificCardFromDeckAbility (GetLycéeMagiqueGeorgesPompidouFromDeck) removed - Phase 42b
-        new OptionalSacrificeForAtkDefAbility(
-            AbilityName.SacrificeSebDuGrenierOnHardCornerForAtkDef,
-            "Sacrifice Seb du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
-            "Seb Du Grenier",
-            "Le Hard Corner",
-            4.5f,
-            4.5f
-        ),
+        // OptionalSacrificeForAtkDefAbility (SacrificeSebDuGrenierOnHardCornerForAtkDef) removed - Phase 42b
         new WinAtkDefFamilyAbility(
             AbilityName.Win1Atk1DefDeveloper,
             "Win 1 ATK and 1 DEF for every Developer on Field",
@@ -164,14 +157,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // GetSpecificCardFromDeckAbility (GetBenzaieJeuneFromDeck) removed - Phase 42b
         // GetTypeCardFromDeckWithoutAttackAbility removed - Phase 42b
         // SacrificeCardAbility (SacrificeGranolax) removed - Phase 42b
-        new OptionalSacrificeForAtkDefAbility(
-            AbilityName.SacrificeJDGOnStudioDevForAtkDef,
-            "Sacrifice Joueur Du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
-            "Joueur Du Grenier",
-            "Studio de développement",
-            4.5f,
-            4.5f
-        ),
+        // OptionalSacrificeForAtkDefAbility (SacrificeJDGOnStudioDevForAtkDef) removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutHuman,
             "Invocation cannot live without Human invocation card",
