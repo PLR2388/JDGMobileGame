@@ -39,10 +39,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
                 "Benzaie"
             }
         ),
-        new CanOnlyAttackItselfAbility(
-            AbilityName.CanOnlyAttackItself,
-            "Opponent can only attack this card"
-        ),
+        // CanOnlyAttackItselfAbility removed - Phase 42b
         // GetFamilyInDeckAbility (AddSpatialFromDeck) removed - Phase 42b
         // SacrificeCardAbility (SacrificeArchibaldVonGrenier) removed - Phase 42b
         // CantBeAttackAbility (CantBeAttackIfComics) removed - Phase 42b
