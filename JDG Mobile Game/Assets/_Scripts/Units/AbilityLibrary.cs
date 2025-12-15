@@ -57,10 +57,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // OptionalSacrificeForAtkDefAbility (SacrificeSebDuGrenierOnHardCornerForAtkDef) removed - Phase 42b
         // WinAtkDefFamilyAbility (Win1Atk1DefDeveloper) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice3Atk3Def) removed - Phase 42b
-        new OptionalChangeFieldFromDeckAbility(
-            AbilityName.ChangeFieldWithFieldFromDeck,
-            "Change current field with field from deck"
-        ),
+        // OptionalChangeFieldFromDeckAbility removed - Phase 42b
         // WinAtkDefFamilityAtkDefConditionAbility removed - Phase 42b
         // InvokeSpecificCardAbility (InvokeDresseurBidulmon) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetZozanKebabFromDeck) removed - Phase 42b
