@@ -19,6 +19,7 @@ namespace Menu
     /// Phase 23: Migrated static UnityEvent to EventBus (ChangeChoicePlayer).
     /// Phase 24-25: Added ICardCollectionService dependency for CardFactory.
     /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
+    /// Phase 8: Uses CardChoiceUIManager DI instead of .Instance.
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
@@ -44,6 +45,9 @@ namespace Menu
         // Phase 8: IAudioService instead of AudioSystem.Instance
         private JDG.Application.Services.IAudioService _audioService;
 
+        // Phase 8: CardChoiceUIManager DI instead of .Instance
+        private CardChoiceUIManager _cardChoiceUIManager;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
@@ -51,6 +55,7 @@ namespace Menu
         /// Phase 23: Inject IEventBus for static UnityEvent migration.
         /// Phase 24-25: Inject ICardCollectionService for CardFactory.
         /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
+        /// Phase 8: Inject CardChoiceUIManager instead of using .Instance.
         /// </summary>
         [Inject]
         public void Construct(
@@ -58,13 +63,15 @@ namespace Menu
             IDeckManagementService deckManagementService,
             IEventBus eventBus,
             ICardCollectionService cardCollectionService,
-            JDG.Application.Services.IAudioService audioService)
+            JDG.Application.Services.IAudioService audioService,
+            CardChoiceUIManager cardChoiceUIManager)
         {
             _cardSelectionService = cardSelectionService;
             _deckManagementService = deckManagementService;
             _eventBus = eventBus;
             _cardCollectionService = cardCollectionService;
             _audioService = audioService;
+            _cardChoiceUIManager = cardChoiceUIManager;
         }
 
         /// <summary>
@@ -106,7 +113,8 @@ namespace Menu
 
             if (numberSelected == DeckConfiguration.MaxDeckCards)
             {
-                CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(isPlayerOneCardChosen);
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.UpdateTitleAndButtonTextForPlayer(isPlayerOneCardChosen);
                 if (isPlayerOneCardChosen)
                 {
                     // Phase 8: Use IAudioService instead of AudioSystem.Instance
@@ -131,7 +139,8 @@ namespace Menu
             else
             {
                 var remainedCards = DeckConfiguration.MaxDeckCards - numberSelected;
-                CardChoiceUIManager.Instance.DisplayMessageBox(remainedCards);
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.DisplayMessageBox(remainedCards);
             }
         }
 
@@ -272,12 +281,14 @@ namespace Menu
 
         /// <summary>
         /// Handles the back action in the game menu.
+        /// Phase 8: Uses injected CardChoiceUIManager instead of .Instance.
         /// </summary>
         public void Back()
         {
             if (isPlayerOneCardChosen)
             {
-                CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(true);
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.UpdateTitleAndButtonTextForPlayer(true);
                 isPlayerOneCardChosen = false;
                 // Phase 17-18: Use IDeckManagementService instead of GameState.Instance
                 _deckManagementService.Player1DeckCards = new List<InGameCard>();
@@ -287,8 +298,9 @@ namespace Menu
             else
             {
                 DeselectAllCards();
-                CardChoiceUIManager.Instance.ShowChoiceCardMenu(false);
-                CardChoiceUIManager.Instance.ShowTwoPlayerModeMenu(true);
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.ShowChoiceCardMenu(false);
+                _cardChoiceUIManager.ShowTwoPlayerModeMenu(true);
             }
         }
     }

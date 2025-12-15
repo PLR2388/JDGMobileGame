@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using JDG.Application;
+using JDG.Application.Services;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Services;
 using Menu;
 using UnityEngine;
 
@@ -13,31 +15,42 @@ using UnityEngine;
 ///
 /// Phase 17-18 Fix: Now uses ResourceSystem to load card data instead of GameState.
 /// Phase 24-25: Added IEventBus and ICardCollectionService dependencies for CardFactory.
+/// Phase 8: Uses ICardDataProvider instead of ResourceSystem.Instance.
 /// </summary>
 public class DeckManagementService : IDeckManagementService
 {
     private List<Card> _allCards;
     private readonly IEventBus _eventBus;
     private readonly ICardCollectionService _cardCollectionService;
+    private readonly ICardDataProvider _cardDataProvider;
 
     public List<Card> Deck1AllCards { get; private set; } = new List<Card>();
     public List<Card> Deck2AllCards { get; private set; } = new List<Card>();
     public List<InGameCard> Player1DeckCards { get; set; } = new List<InGameCard>();
     public List<InGameCard> Player2DeckCards { get; set; } = new List<InGameCard>();
 
-    public DeckManagementService(IEventBus eventBus, ICardCollectionService cardCollectionService)
+    public DeckManagementService(
+        IEventBus eventBus,
+        ICardCollectionService cardCollectionService,
+        ICardDataProvider cardDataProvider)
     {
         _eventBus = eventBus;
         _cardCollectionService = cardCollectionService;
+        _cardDataProvider = cardDataProvider;
 
-        // Phase 17-18 Fix: Use ResourceSystem to get all cards instead of GameState
-        // ResourceSystem loads cards from Resources/Cards folder
-        if (ResourceSystem.Instance != null)
+        // Phase 8: Use ICardDataProvider instead of ResourceSystem.Instance
+        if (_cardDataProvider.IsLoaded)
         {
-            // Access Cards via reflection to maintain compatibility
-            var field = typeof(ResourceSystem).GetProperty("Cards",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            _allCards = (List<Card>)field?.GetValue(ResourceSystem.Instance);
+            // Get cards from the provider
+            if (_cardDataProvider is CardDataProvider typedProvider)
+            {
+                _allCards = typedProvider.GetAllCardsTyped();
+            }
+            else
+            {
+                // Fallback for other implementations
+                _allCards = _cardDataProvider.GetAllCards().Cast<Card>().ToList();
+            }
 
             if (_allCards != null && _allCards.Count > 0)
             {
@@ -46,7 +59,7 @@ public class DeckManagementService : IDeckManagementService
         }
         else
         {
-            Debug.LogWarning("DeckManagementService: ResourceSystem not initialized yet");
+            Debug.LogWarning("DeckManagementService: Card data not loaded yet");
         }
     }
 
