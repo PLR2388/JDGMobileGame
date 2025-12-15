@@ -1,3 +1,4 @@
+using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Application;
 using JDG.Application.Abilities;
@@ -6,6 +7,7 @@ using JDG.Domain;
 using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
+using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 /// <summary>
 /// Adapter that wraps a modern IAbility to satisfy the legacy Ability type.
@@ -147,6 +149,10 @@ public class ModernAbilityAdapter : Ability
 
         // Create a domain Card that represents the in-game card
         // Use the card's properties to build the domain entity
+        // Convert legacy Cards.CardFamily to JDG.Domain.Enums.CardFamily
+        var domainFamilies = inGameCard.Families?.Select(f => (DomainCardFamily)(int)f)
+            ?? Enumerable.Empty<DomainCardFamily>();
+
         return Card.CreateInvocation(
             CardId.New(),
             inGameCard.Title,
@@ -154,7 +160,7 @@ public class ModernAbilityAdapter : Ability
             inGameCard.BaseInvocationCard.DetailedDescription ?? "",
             (int)inGameCard.Attack,
             (int)inGameCard.Defense,
-            inGameCard.Families,
+            domainFamilies,
             inGameCard.IsAffectedByEffectCard
         );
     }
