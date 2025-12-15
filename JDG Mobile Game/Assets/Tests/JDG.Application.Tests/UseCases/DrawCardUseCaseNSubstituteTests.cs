@@ -125,7 +125,8 @@ namespace JDG.Application.Tests.UseCases
             // Arrange
             var deck = CardFactory.CreateDeck(5);
             var player = PlayerFactory.CreatePlayerWithCards(PlayerId.Player1, deck);
-            var expectedCard = player.Deck[0]; // First card in deck will be drawn
+            // Player.DrawCard() draws from END of deck (last element), not beginning
+            var expectedCard = player.Deck[^1];
             _playerRepository.GetPlayer(PlayerId.Player1).Returns(player);
 
             // Act
