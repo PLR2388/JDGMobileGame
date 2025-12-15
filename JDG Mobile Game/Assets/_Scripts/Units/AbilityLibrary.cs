@@ -201,10 +201,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.KillEnemyIfDestroy,
             "Invocation kills its opponent if detroy by another invocation card"
         ),
-        new SacrificeToInvokeAbility(
-            AbilityName.SacrificeToInvoke,
-            "Sacrifice Sheik Point to invoke non-collector card from yellow trash"
-        ),
+        // SacrificeToInvokeAbility removed - Phase 42b
         // GetSpecificCardFromDeckOrYellowCardAbility removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutGranolaxOrMechaGranolax,
