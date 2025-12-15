@@ -130,10 +130,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         // LimitTurnExistenceAbility (SurviveOneTurn) removed - Phase 42b
         // GetSpecificCardAfterDeathAbility removed - Phase 42b
-        new ProtectBehindDuringAttackDefConditionAbility(
-            AbilityName.ProtectBehindGreaterDef,
-            "Invocation protect itself behind invocation card with greater def"
-        ),
+        // ProtectBehindDuringAttackDefConditionAbility removed - Phase 42b
         // SacrificeCardAbility (SacrificeSebDuGrenier) removed - Phase 42b
         new WinAtkDefFamilyAbility(
             AbilityName.Win1Atk1DefFistiland,
