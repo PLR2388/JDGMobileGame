@@ -237,11 +237,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Benzaie jeune"
         ),
         // LimitTurnExistenceAbility (SurviveOneTurn) removed - Phase 42b
-        new GetSpecificCardAfterDeathAbility(
-            AbilityName.GiveDeathWhenDie,
-            "Invocation gives La Mort from deck to hand when he die",
-            "La Mort"
-        ),
+        // GetSpecificCardAfterDeathAbility removed - Phase 42b
         new ProtectBehindDuringAttackDefConditionAbility(
             AbilityName.ProtectBehindGreaterDef,
             "Invocation protect itself behind invocation card with greater def"
