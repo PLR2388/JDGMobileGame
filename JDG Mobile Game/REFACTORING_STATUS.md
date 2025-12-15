@@ -647,8 +647,46 @@ Presenters in `Assets/_Scripts/Presenters/` cannot move to `JDG.Presentation` as
 
 ---
 
-**Last Updated**: 2025-12-14
+### Phase 41: ICardSelectionService Final Migration ✅ (Completed)
+
+- ✅ Migrated all callers to `JDG.Application.Services.ICardSelectionService`
+- ✅ OnHover, CardState, CardChoice now use clean interface + EventBus
+- ✅ InfiniteScroll, CardSelector, DisplayCards migrated to EventBus
+- ✅ Deleted legacy `ICardSelectionService.cs` and `CardSelectionService.cs`
+- ✅ Updated `LegacyServicesScope` to remove legacy registration
+
+---
+
+### Phase 5: Legacy Ability Verification ✅ (Completed)
+
+**Goal**: Verify modern IAbility implementations cover all AbilityName enum values.
+
+#### Verification Results
+- ✅ **All 69 AbilityName enum values have modern implementations** registered in `GameLifetimeScope.cs`
+- ✅ **Legacy `Ability.cs` already marked `[System.Obsolete]`** (lines 20-21)
+- ✅ **Factories registered**: 11 ability factories (DrawCards, DestroyCard, DeckSearch, Sacrifice, StatModifier, Protection, Combat, Effect, Equipment, Field, Special)
+
+#### Legacy System Still Active (Strangler Fig Pattern)
+The legacy ability system remains in use for backward compatibility:
+- `AbilityLibrary.Instance.AbilityDictionary` used by `InGameInvocationCard.cs:124`
+- 31 legacy ability files in `Assets/_Scripts/Units/Invocation/Ability/`
+- Card type libraries: `FieldAbilityLibrary`, `EquipmentAbilityLibrary`, `EffectAbilityLibrary`
+
+#### Migration Path (Future Work)
+1. Update card loading to use `AbilityRegistry` instead of `AbilityLibrary`
+2. Once all cards use new system, remove legacy ability files
+3. Delete `AbilityLibrary.cs` and card-type ability libraries
+
+#### Test Coverage Added
+- EquipmentAbilityTests (7 abilities)
+- FieldAbilityTests (5 abilities)
+- SacrificeAbilityTests (3 abilities)
+- CombatAbilityTests (6 abilities)
+
+---
+
+**Last Updated**: 2025-12-15
 **Current Branch**: refactor-v3
-**Status**: Phase 40 Complete (2 Presenters Migrated to JDG.Presentation)
+**Status**: Phase 5 Complete (Legacy Ability Verification Done)
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.
