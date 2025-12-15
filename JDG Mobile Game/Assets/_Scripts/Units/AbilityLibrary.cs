@@ -43,13 +43,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // GetFamilyInDeckAbility (AddSpatialFromDeck) removed - Phase 42b
         // SacrificeCardAbility (SacrificeArchibaldVonGrenier) removed - Phase 42b
         // CantBeAttackAbility (CantBeAttackIfComics) removed - Phase 42b
-        new GiveAtkDefFamilyAbility(
-            AbilityName.GiveAtkDefToComics,
-            "Invocation give 0.5 Atk and 0.5 Def to comic invocation card on field",
-            CardFamily.Comics,
-            0.5f,
-            0.5f
-        ),
+        // GiveAtkDefFamilyAbility removed - Phase 42b
         new SendAllCardsInHand(
             AbilityName.SendAllCardToHands,
             "Invocation send all card from fields to hands except itself"
