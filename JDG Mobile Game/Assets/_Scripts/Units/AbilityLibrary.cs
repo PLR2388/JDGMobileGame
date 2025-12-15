@@ -74,31 +74,19 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Sacrifice Benzaie jeune",
             "Benzaie jeune"
         ),
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetNounoursFromDeck,
-            "Get Nounours from deck to hand",
-            "Nounours"
-        ),
+        // GetSpecificCardFromDeckAbility (GetNounoursFromDeck) removed - Phase 42b
         new SacrificeCardAbility(
             AbilityName.SacrificeJoueurDuGrenier,
             "Sacrifice Joueur du Grenier",
             "Joueur Du Grenier"
         ),
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetPetitePortionDeRizFromDeck,
-            "Get Petite portions de « riz » from deck to hand",
-            "Petite portions de « riz »"
-        ),
+        // GetSpecificCardFromDeckAbility (GetPetitePortionDeRizFromDeck) removed - Phase 42b
         new InvokeSpecificCardAbility(
             AbilityName.InvokeTentacules,
             "Invoke Tentacules from deck to field",
             "Tentacules"
         ),
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetLycéeMagiqueGeorgesPompidouFromDeck,
-            "Get Lycée magique Georges Pompidou from deck to hand",
-            "Lycée magique Georges Pompidou"
-        ),
+        // GetSpecificCardFromDeckAbility (GetLycéeMagiqueGeorgesPompidouFromDeck) removed - Phase 42b
         new OptionalSacrificeForAtkDefAbility(
             AbilityName.SacrificeSebDuGrenierOnHardCornerForAtkDef,
             "Sacrifice Seb du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
@@ -138,33 +126,19 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Invoke Dresseur de Bidulmon from deck to field",
             "Dresseur de Bidulmon"
         ),
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetZozanKebabFromDeck,
-            "Get Zozan Kebab from deck to hand",
-            "Zozan Kebab"
-        ),
+        // GetSpecificCardFromDeckAbility (GetZozanKebabFromDeck) removed - Phase 42b
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
             AbilityName.SacrificeWizard,
             "Invocation needs a sacrifice of a wizard invocation card",
             cardFamily: CardFamily.Wizard
         ),
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetConvocationAuLyceeFromDeck,
-            "Get Convocation au lycée from deck to hand",
-            "Convocation au lycée"
-        ),
+        // GetSpecificCardFromDeckAbility (GetConvocationAuLyceeFromDeck) removed - Phase 42b
         new ProtectBehindDuringAttackAbility(
             AbilityName.ProtectedBehindStarlightUnicorn,
             "Invocation protects himself behind Starlight Unicorn if present",
             "Starlight Unicorn"
         ),
-        // TODO : Not use right now as Canard-signal is a Contre card
-        // When this is done, add it to Inspecteur Magret
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetCanardSignal,
-            "Get Canard-signal from deck to hand",
-            "Canard-signal"
-        ),
+        // GetSpecificCardFromDeckAbility (GetCanardSignal) removed - Phase 42b
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
             AbilityName.SacrificeDeveloper3Atk3Def,
             "Invocation needs 2 developer sacrifice with at least 3 Atk or 3 Def",
@@ -212,11 +186,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
                 "Joueur Du Grenier"
             }
         ),
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetForetElfesSylvains,
-            "Get Forêt des elfes sylvains from deck to hand",
-            "Forêt des elfes sylvains"
-        ),
+        // GetSpecificCardFromDeckAbility (GetForetElfesSylvains) removed - Phase 42b
         new InvokeSpecificCardChoiceAbility(
             AbilityName.InvokeSebOrJDG,
             "Offer the choice to invoke Joueur Du Grenier or Seb Du Grenier",
@@ -245,11 +215,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             1,
             2
         ),
-        new GetSpecificCardFromDeckAbility(
-            AbilityName.GetBenzaieJeuneFromDeck,
-            "Get Benzaie jeune from deck to hand",
-            "Benzaie jeune"
-        ),
+        // GetSpecificCardFromDeckAbility (GetBenzaieJeuneFromDeck) removed - Phase 42b
         new GetTypeCardFromDeckWithoutAttackAbility(
             AbilityName.GetEquipmentCardWithoutAttack,
             "Invocation can get Equipment card and loose its attack phase",
