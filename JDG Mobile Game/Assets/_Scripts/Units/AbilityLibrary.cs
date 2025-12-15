@@ -212,11 +212,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             2
         ),
         // GetSpecificCardFromDeckAbility (GetBenzaieJeuneFromDeck) removed - Phase 42b
-        new GetTypeCardFromDeckWithoutAttackAbility(
-            AbilityName.GetEquipmentCardWithoutAttack,
-            "Invocation can get Equipment card and loose its attack phase",
-            Cards.CardType.Equipment
-        ),
+        // GetTypeCardFromDeckWithoutAttackAbility removed - Phase 42b
         new SacrificeCardAbility(
             AbilityName.SacrificeGranolax,
             "Sacrifice Granolax",
