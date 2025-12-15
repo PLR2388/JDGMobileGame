@@ -65,11 +65,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // GetSpecificCardFromDeckAbility (GetNounoursFromDeck) removed - Phase 42b
         // SacrificeCardAbility (SacrificeJoueurDuGrenier) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetPetitePortionDeRizFromDeck) removed - Phase 42b
-        new InvokeSpecificCardAbility(
-            AbilityName.InvokeTentacules,
-            "Invoke Tentacules from deck to field",
-            "Tentacules"
-        ),
+        // InvokeSpecificCardAbility (InvokeTentacules) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetLycéeMagiqueGeorgesPompidouFromDeck) removed - Phase 42b
         // OptionalSacrificeForAtkDefAbility (SacrificeSebDuGrenierOnHardCornerForAtkDef) removed - Phase 42b
         new WinAtkDefFamilyAbility(
@@ -93,11 +89,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             2,
             2
         ),
-        new InvokeSpecificCardAbility(
-            AbilityName.InvokeDresseurBidulmon,
-            "Invoke Dresseur de Bidulmon from deck to field",
-            "Dresseur de Bidulmon"
-        ),
+        // InvokeSpecificCardAbility (InvokeDresseurBidulmon) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetZozanKebabFromDeck) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (SacrificeWizard) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetConvocationAuLyceeFromDeck) removed - Phase 42b
