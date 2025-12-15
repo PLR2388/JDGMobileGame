@@ -61,15 +61,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.ChangeFieldWithFieldFromDeck,
             "Change current field with field from deck"
         ),
-        new WinAtkDefFamilityAtkDefConditionAbility(
-            AbilityName.Win1ATK1DefJaponWith2ATK2DEFCondition,
-            "Win 1 ATK and 1 DEF for every japon invocation card with 2 ATK and 2 DEF",
-            CardFamily.Japan,
-            1,
-            1,
-            2,
-            2
-        ),
+        // WinAtkDefFamilityAtkDefConditionAbility removed - Phase 42b
         // InvokeSpecificCardAbility (InvokeDresseurBidulmon) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetZozanKebabFromDeck) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (SacrificeWizard) removed - Phase 42b
