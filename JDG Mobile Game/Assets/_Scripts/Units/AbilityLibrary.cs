@@ -147,10 +147,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             1
         ),
         // SacrificeCardAbility (SacrificeClicheRaciste) removed - Phase 42b
-        new KillBothCardsIfAttackAbility(
-            AbilityName.KillEnemyIfDestroy,
-            "Invocation kills its opponent if detroy by another invocation card"
-        ),
+        // KillBothCardsIfAttackAbility removed - Phase 42b
         // SacrificeToInvokeAbility removed - Phase 42b
         // GetSpecificCardFromDeckOrYellowCardAbility removed - Phase 42b
         new CantLiveWithoutAbility(
