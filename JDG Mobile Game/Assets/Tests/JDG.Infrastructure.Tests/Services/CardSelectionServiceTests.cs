@@ -346,17 +346,23 @@ namespace JDG.Infrastructure.Tests.Services
             _service.SelectCard(_card1);
             var selectedCards = _service.SelectedCards;
 
-            // Act - Try to modify the returned list
-            try
+            // Act - Try to modify the returned collection via cast
+            // IReadOnlyList doesn't have Clear, but if it's backed by a mutable list,
+            // casting and clearing would affect the original
+            var mutableList = selectedCards as System.Collections.IList;
+            if (mutableList != null)
             {
-                selectedCards.Clear();
-            }
-            catch
-            {
-                // Some implementations may throw on modification
+                try
+                {
+                    mutableList.Clear();
+                }
+                catch
+                {
+                    // Some implementations may throw on modification
+                }
             }
 
-            // Assert - Original selection should be unchanged
+            // Assert - Original selection should be unchanged (proves immutability or copy)
             Assert.AreEqual(1, _service.SelectedCards.Count);
         }
 
