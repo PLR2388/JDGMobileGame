@@ -685,8 +685,53 @@ The legacy ability system remains in use for backward compatibility:
 
 ---
 
+### Phase 7: AbilityLibrary → AbilityRegistry Migration ✅ (Completed)
+
+**Goal**: Replace singleton `AbilityLibrary.Instance` with dependency-injected `IAbilityProvider` using Strangler Fig pattern.
+
+#### New Files Created
+| File | Purpose |
+|------|---------|
+| `Services/IAbilityProvider.cs` | Interface abstracting ability lookup |
+| `Services/AbilityProviderService.cs` | Routes between modern AbilityRegistry and legacy AbilityLibrary |
+| `Bridge/ModernAbilityAdapter.cs` | Wraps `IAbility` as legacy `Ability` type for compatibility |
+
+#### Files Modified
+| File | Change |
+|------|--------|
+| `Units/Invocation/InGameInvocationCard.cs` | Accepts optional `IAbilityProvider`, uses it if available |
+| `Units/CardFactory.cs` | Added `IAbilityProvider` parameter |
+| `Services/SummonPlayerEntityUseCase.cs` | Injects and passes `IAbilityProvider` |
+| `Services/DeckManagementService.cs` | Injects and passes `IAbilityProvider` |
+| `Menu/CardChoice.cs` | Injects and passes `IAbilityProvider` |
+| `Cards/CardDisplay.cs` | Injects and passes `IAbilityProvider` |
+| `DI/LegacyServicesScope.cs` | Registers `AbilityProviderService` |
+
+#### How It Works
+1. `AbilityProviderService` is injected wherever abilities are needed
+2. It first checks `AbilityRegistry` for modern `IAbility` implementations
+3. Modern abilities are wrapped in `ModernAbilityAdapter` for legacy compatibility
+4. Falls back to `AbilityLibrary.Instance` for unmigrated abilities
+5. Both systems coexist - no breaking changes
+
+#### Architecture Benefits
+- **No more singleton calls**: `AbilityLibrary.Instance` removed from card initialization
+- **Testability**: `IAbilityProvider` can be mocked in tests
+- **Gradual migration**: Strangler Fig pattern allows safe transition
+- **Migration tracking**: Service tracks which abilities use modern vs legacy system
+
+#### Next Steps (Phase 8 - Future)
+Once verified working in-game:
+1. Remove fallback to `AbilityLibrary.Instance` in `AbilityProviderService`
+2. Delete legacy files:
+   - `Assets/_Scripts/Units/Ability.cs`
+   - `Assets/_Scripts/Units/AbilityLibrary.cs`
+   - `Assets/_Scripts/Units/Invocation/Ability/*.cs` (31 files)
+
+---
+
 **Last Updated**: 2025-12-15
 **Current Branch**: refactor-v3
-**Status**: Phase 5 Complete (Legacy Ability Verification Done)
+**Status**: Phase 7 Complete (AbilityLibrary → AbilityRegistry Migration)
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.
