@@ -5,7 +5,7 @@ using JDG.Application.Abilities;
 using JDG.Application.Repositories;
 using JDG.Domain;
 
-namespace JDG.Application.Tests.Services
+namespace JDG.PlayMode.Tests.Services
 {
     /// <summary>
     /// Tests for AbilityProviderService.
