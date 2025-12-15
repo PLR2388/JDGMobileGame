@@ -44,11 +44,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Opponent can only attack this card"
         ),
         // GetFamilyInDeckAbility (AddSpatialFromDeck) removed - Phase 42b
-        new SacrificeCardAbility(
-            AbilityName.SacrificeArchibaldVonGrenier,
-            "Sacrifice Archibald Von Grenier",
-            "Archibald Von Grenier"
-        ),
+        // SacrificeCardAbility (SacrificeArchibaldVonGrenier) removed - Phase 42b
         new CantBeAttackAbility(
             AbilityName.CantBeAttackIfComics,
             "Invocation can't be attack if there is another card on the field belonging to Comics family",
@@ -65,17 +61,9 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.SendAllCardToHands,
             "Invocation send all card from fields to hands except itself"
         ),
-        new SacrificeCardAbility(
-            AbilityName.SacrificeBenzaieJeune,
-            "Sacrifice Benzaie jeune",
-            "Benzaie jeune"
-        ),
+        // SacrificeCardAbility (SacrificeBenzaieJeune) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetNounoursFromDeck) removed - Phase 42b
-        new SacrificeCardAbility(
-            AbilityName.SacrificeJoueurDuGrenier,
-            "Sacrifice Joueur du Grenier",
-            "Joueur Du Grenier"
-        ),
+        // SacrificeCardAbility (SacrificeJoueurDuGrenier) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetPetitePortionDeRizFromDeck) removed - Phase 42b
         new InvokeSpecificCardAbility(
             AbilityName.InvokeTentacules,
@@ -213,11 +201,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         ),
         // GetSpecificCardFromDeckAbility (GetBenzaieJeuneFromDeck) removed - Phase 42b
         // GetTypeCardFromDeckWithoutAttackAbility removed - Phase 42b
-        new SacrificeCardAbility(
-            AbilityName.SacrificeGranolax,
-            "Sacrifice Granolax",
-            "Granolax"
-        ),
+        // SacrificeCardAbility (SacrificeGranolax) removed - Phase 42b
         new OptionalSacrificeForAtkDefAbility(
             AbilityName.SacrificeJDGOnStudioDevForAtkDef,
             "Sacrifice Joueur Du Grenier on Hard Corner field to have 4,5 in ATK and DEF",
@@ -242,11 +226,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.ProtectBehindGreaterDef,
             "Invocation protect itself behind invocation card with greater def"
         ),
-        new SacrificeCardAbility(
-            AbilityName.SacrificeSebDuGrenier,
-            "Sacrifice Seb Du Grenier",
-            "Seb Du Grenier"
-        ),
+        // SacrificeCardAbility (SacrificeSebDuGrenier) removed - Phase 42b
         new WinAtkDefFamilyAbility(
             AbilityName.Win1Atk1DefFistiland,
             "Invocation wins 1 ATK and 1 DEF for every Fistiland on Field",
@@ -254,11 +234,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             1,
             1
         ),
-        new SacrificeCardAbility(
-            AbilityName.SacrificeClicheRaciste,
-            "Sacrifice Cliché Raciste",
-            "Cliché Raciste"
-        ),
+        // SacrificeCardAbility (SacrificeClicheRaciste) removed - Phase 42b
         new KillBothCardsIfAttackAbility(
             AbilityName.KillEnemyIfDestroy,
             "Invocation kills its opponent if detroy by another invocation card"
