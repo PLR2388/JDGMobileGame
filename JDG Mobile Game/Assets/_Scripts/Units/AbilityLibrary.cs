@@ -185,10 +185,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.CantBeAttackKill,
             "Invocation can't be attacked or killed by other invocation cards"
         ),
-        new BackToHandAfterDeathAbility(
-            AbilityName.ComesBackFromDeath,
-            "Invocation comes back to player hand everytime he died"
-        ),
+        // BackToHandAfterDeathAbility (ComesBackFromDeath) removed - Phase 42b
         new SacrificeCardMinAtkMinDefFamilyNumberAbility(
             AbilityName.Sacrifice2Japan,
             "Invocation needs 2 Japan sacrifice to be invoke",
@@ -338,11 +335,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             AbilityName.SkipOpponentAttackEveryTurn,
             "Player can choose to skip attack of one of his opponent invocation cards"
         ),
-        new BackToHandAfterDeathAbility(
-            AbilityName.ComesBackFromDeath5Times,
-            "Invocation comes back to player hand 5 times everytime he died",
-            5
-        ),
+        // BackToHandAfterDeathAbility (ComesBackFromDeath5Times) removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutJapon,
             "Tentacules cannot live without Japan invocation card",
