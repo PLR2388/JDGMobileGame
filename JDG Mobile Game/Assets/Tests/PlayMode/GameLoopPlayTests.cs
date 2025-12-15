@@ -5,6 +5,7 @@ using UnityEngine.TestTools;
 using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
+using JDG.Application.Repositories;
 using JDG.Infrastructure.Services;
 using JDG.PlayMode.Tests.TestHelpers;
 using Phase = JDG.Domain.Phase;
@@ -21,6 +22,7 @@ namespace JDG.PlayMode.Tests
     {
         private GameStateService _gameStateService;
         private TestEventBus _eventBus;
+        private TestGameStateRepository _gameStateRepository;
         private GameObject _testContainer;
 
         [SetUp]
@@ -28,7 +30,8 @@ namespace JDG.PlayMode.Tests
         {
             _testContainer = new GameObject("TestContainer");
             _eventBus = new TestEventBus();
-            _gameStateService = new GameStateService(_eventBus);
+            _gameStateRepository = new TestGameStateRepository();
+            _gameStateService = new GameStateService(_gameStateRepository, _eventBus);
         }
 
         [TearDown]
@@ -217,7 +220,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasPublishedEvent<PhaseChangedEvent>(),
+            Assert.IsTrue(_eventBus.HasEvent<PhaseChangedEvent>(),
                 "Should publish PhaseChangedEvent on phase transition");
         }
 
@@ -233,7 +236,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasPublishedEvent<PhaseChangedEvent>(),
+            Assert.IsTrue(_eventBus.HasEvent<PhaseChangedEvent>(),
                 "Should publish PhaseChangedEvent when setting phase directly");
         }
 
@@ -249,7 +252,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasPublishedEvent<PlayerTurnChangedEvent>(),
+            Assert.IsTrue(_eventBus.HasEvent<PlayerTurnChangedEvent>(),
                 "Should publish PlayerTurnChangedEvent on turn end");
         }
 
@@ -265,7 +268,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasPublishedEvent<TurnStartEvent>(),
+            Assert.IsTrue(_eventBus.HasEvent<TurnStartEvent>(),
                 "Should publish TurnStartEvent on new turn");
         }
 
@@ -344,7 +347,7 @@ namespace JDG.PlayMode.Tests
             // Arrange & Assert Player1
             Assert.AreEqual(PlayerId.Player1, _gameStateService.CurrentPlayer);
             var ownerP1 = _gameStateService.CurrentPlayer.ToCardOwner();
-            Assert.AreEqual(JDG.Domain.ValueObjects.CardOwner.Player1, ownerP1);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, ownerP1);
 
             // Act
             _gameStateService.HandleEndTurn();
@@ -352,11 +355,35 @@ namespace JDG.PlayMode.Tests
             // Assert Player2
             Assert.AreEqual(PlayerId.Player2, _gameStateService.CurrentPlayer);
             var ownerP2 = _gameStateService.CurrentPlayer.ToCardOwner();
-            Assert.AreEqual(JDG.Domain.ValueObjects.CardOwner.Player2, ownerP2);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player2, ownerP2);
 
             yield return null;
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// In-memory test implementation of IGameStateRepository.
+    /// </summary>
+    public class TestGameStateRepository : IGameStateRepository
+    {
+        public Phase CurrentPhase { get; private set; } = Phase.Draw;
+        public int TurnNumber { get; private set; } = 0;
+        public PlayerId CurrentPlayer { get; private set; } = PlayerId.Player1;
+        public bool IsGameOver { get; private set; } = false;
+
+        public void SetPhase(Phase phase) => CurrentPhase = phase;
+        public void IncrementTurn() => TurnNumber++;
+        public void SetCurrentPlayer(PlayerId playerId) => CurrentPlayer = playerId;
+        public void SwitchPlayer() => CurrentPlayer = CurrentPlayer == PlayerId.Player1 ? PlayerId.Player2 : PlayerId.Player1;
+        public void SetGameOver(bool isGameOver) => IsGameOver = isGameOver;
+        public void ResetGameState()
+        {
+            CurrentPhase = Phase.Draw;
+            TurnNumber = 0;
+            CurrentPlayer = PlayerId.Player1;
+            IsGameOver = false;
+        }
     }
 }

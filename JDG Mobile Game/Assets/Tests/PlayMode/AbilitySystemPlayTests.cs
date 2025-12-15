@@ -6,6 +6,8 @@ using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Domain;
 using JDG.Domain.ValueObjects;
+// Alias to avoid conflict with legacy CardFactory in global namespace
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using JDG.TestUtilities;
 
 namespace JDG.PlayMode.Tests
@@ -60,7 +62,7 @@ namespace JDG.PlayMode.Tests
         {
             // Arrange
             var ability = new TestDrawAbility(2);
-            var sourceCard = CardFactory.CreateInvocation("Test Card");
+            var sourceCard = TestCardFactory.CreateInvocation("Test Card");
             var context = new AbilityContext(
                 PlayerId.Player1,
                 PlayerId.Player2,
@@ -123,8 +125,8 @@ namespace JDG.PlayMode.Tests
         public IEnumerator AbilityContext_CarriesCorrectState()
         {
             // Arrange
-            var sourceCard = CardFactory.CreateInvocation("Source");
-            var targetCard = CardFactory.CreateInvocation("Target");
+            var sourceCard = TestCardFactory.CreateInvocation("Source");
+            var targetCard = TestCardFactory.CreateInvocation("Target");
 
             yield return null;
 

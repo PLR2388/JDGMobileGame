@@ -437,7 +437,7 @@ namespace JDG.Infrastructure.Tests.Integration
 
                 _eventBus.Publish(new CardDestroyedEvent
                 {
-                    CardId = context.TargetCard.Id,
+                    CardId = context.TargetCard.Id.ToGuid(),
                     Owner = context.OpponentPlayerId.ToCardOwner(),
                     Reason = "Destroyed by ability"
                 });
@@ -462,7 +462,7 @@ namespace JDG.Infrastructure.Tests.Integration
                 _defenseBonus = defenseBonus;
             }
 
-            public AbilityName Name => AbilityName.GiveFamilyStats;
+            public AbilityName Name => AbilityName.GiveAtkDefToComics;
             public string Description => $"+{_attackBonus}/{_defenseBonus} stats";
 
             public bool CanActivate(AbilityContext context) => true;
@@ -489,7 +489,7 @@ namespace JDG.Infrastructure.Tests.Integration
                 _preventAttacks = preventAttacks;
             }
 
-            public AbilityName Name => AbilityName.CantBeAttacked;
+            public AbilityName Name => AbilityName.CantBeAttackKill;
             public string Description => "Cannot be attacked";
 
             public bool CanActivate(AbilityContext context) => true;
