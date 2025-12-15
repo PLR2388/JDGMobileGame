@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -220,7 +221,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasEvent<PhaseChangedEvent>(),
+            Assert.IsTrue(_eventBus.PublishedEvents.Any(e => e is PhaseChangedEvent),
                 "Should publish PhaseChangedEvent on phase transition");
         }
 
@@ -236,7 +237,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasEvent<PhaseChangedEvent>(),
+            Assert.IsTrue(_eventBus.PublishedEvents.Any(e => e is PhaseChangedEvent),
                 "Should publish PhaseChangedEvent when setting phase directly");
         }
 
@@ -252,7 +253,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasEvent<PlayerTurnChangedEvent>(),
+            Assert.IsTrue(_eventBus.PublishedEvents.Any(e => e is PlayerTurnChangedEvent),
                 "Should publish PlayerTurnChangedEvent on turn end");
         }
 
@@ -268,7 +269,7 @@ namespace JDG.PlayMode.Tests
             yield return null;
 
             // Assert
-            Assert.IsTrue(_eventBus.HasEvent<TurnStartEvent>(),
+            Assert.IsTrue(_eventBus.PublishedEvents.Any(e => e is TurnStartEvent),
                 "Should publish TurnStartEvent on new turn");
         }
 
