@@ -148,12 +148,14 @@ public class ModernAbilityAdapter : Ability
         // Create a domain Card that represents the in-game card
         // Use the card's properties to build the domain entity
         return Card.CreateInvocation(
-            new CardId(inGameCard.Title.GetHashCode()),
+            CardId.New(),
             inGameCard.Title,
             inGameCard.BaseInvocationCard.Description ?? "",
+            inGameCard.BaseInvocationCard.DetailedDescription ?? "",
             (int)inGameCard.Attack,
             (int)inGameCard.Defense,
-            inGameCard.BaseInvocationCard.Family
+            inGameCard.Families,
+            inGameCard.IsAffectedByEffectCard
         );
     }
 
