@@ -53,6 +53,11 @@ namespace JDG.PlayMode.Tests.TestHelpers
             return false;
         }
 
+        /// <summary>
+        /// Alias for HasEvent for more intuitive test code.
+        /// </summary>
+        public bool HasPublishedEvent<T>() where T : struct => HasEvent<T>();
+
         public int CountEvents<T>() where T : struct
         {
             int count = 0;
