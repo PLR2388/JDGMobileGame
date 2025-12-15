@@ -100,11 +100,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Invocation cannot live without Human invocation card",
             family: CardFamily.Human
         ),
-        new CopyAtkDefAbility(
-            AbilityName.CopyBenzaieJeune,
-            "Invocation copy atk and def Benzaie jeune",
-            "Benzaie jeune"
-        ),
+        // CopyAtkDefAbility removed - Phase 42b
         // LimitTurnExistenceAbility (SurviveOneTurn) removed - Phase 42b
         // GetSpecificCardAfterDeathAbility removed - Phase 42b
         // ProtectBehindDuringAttackDefConditionAbility removed - Phase 42b
