@@ -55,13 +55,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // InvokeSpecificCardAbility (InvokeTentacules) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetLycéeMagiqueGeorgesPompidouFromDeck) removed - Phase 42b
         // OptionalSacrificeForAtkDefAbility (SacrificeSebDuGrenierOnHardCornerForAtkDef) removed - Phase 42b
-        new WinAtkDefFamilyAbility(
-            AbilityName.Win1Atk1DefDeveloper,
-            "Win 1 ATK and 1 DEF for every Developer on Field",
-            CardFamily.Developer,
-            1,
-            1
-        ),
+        // WinAtkDefFamilyAbility (Win1Atk1DefDeveloper) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice3Atk3Def) removed - Phase 42b
         new OptionalChangeFieldFromDeckAbility(
             AbilityName.ChangeFieldWithFieldFromDeck,
@@ -123,13 +117,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // GetSpecificCardAfterDeathAbility removed - Phase 42b
         // ProtectBehindDuringAttackDefConditionAbility removed - Phase 42b
         // SacrificeCardAbility (SacrificeSebDuGrenier) removed - Phase 42b
-        new WinAtkDefFamilyAbility(
-            AbilityName.Win1Atk1DefFistiland,
-            "Invocation wins 1 ATK and 1 DEF for every Fistiland on Field",
-            CardFamily.Fistiland,
-            1,
-            1
-        ),
+        // WinAtkDefFamilyAbility (Win1Atk1DefFistiland) removed - Phase 42b
         // SacrificeCardAbility (SacrificeClicheRaciste) removed - Phase 42b
         // KillBothCardsIfAttackAbility removed - Phase 42b
         // SacrificeToInvokeAbility removed - Phase 42b
