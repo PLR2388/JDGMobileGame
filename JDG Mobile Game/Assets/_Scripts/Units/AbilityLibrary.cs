@@ -86,12 +86,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             1,
             1
         ),
-        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.Sacrifice3Atk3Def,
-            "Invocation needs a sacrifice of an invocation that has at least 3 atk or 3 def",
-            3,
-            3
-        ),
+        // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice3Atk3Def) removed - Phase 42b
         new OptionalChangeFieldFromDeckAbility(
             AbilityName.ChangeFieldWithFieldFromDeck,
             "Change current field with field from deck"
@@ -111,11 +106,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Dresseur de Bidulmon"
         ),
         // GetSpecificCardFromDeckAbility (GetZozanKebabFromDeck) removed - Phase 42b
-        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.SacrificeWizard,
-            "Invocation needs a sacrifice of a wizard invocation card",
-            cardFamily: CardFamily.Wizard
-        ),
+        // SacrificeCardMinAtkMinDefFamilyNumberAbility (SacrificeWizard) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetConvocationAuLyceeFromDeck) removed - Phase 42b
         new ProtectBehindDuringAttackAbility(
             AbilityName.ProtectedBehindStarlightUnicorn,
@@ -123,35 +114,13 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Starlight Unicorn"
         ),
         // GetSpecificCardFromDeckAbility (GetCanardSignal) removed - Phase 42b
-        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.SacrificeDeveloper3Atk3Def,
-            "Invocation needs 2 developer sacrifice with at least 3 Atk or 3 Def",
-            3,
-            3,
-            CardFamily.Developer,
-            2
-        ),
-        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.SacrificeHardCorner3Atk3Def,
-            "Invocation needs 2 hard corner sacrifce with at least 3 Atk or 3 Def",
-            3,
-            3,
-            CardFamily.HardCorner,
-            2
-        ),
+        // SacrificeCardMinAtkMinDefFamilyNumberAbility (SacrificeDeveloper3Atk3Def, SacrificeHardCorner3Atk3Def) removed - Phase 42b
         new CantBeAttackAbility(
             AbilityName.CantBeAttackKill,
             "Invocation can't be attacked or killed by other invocation cards"
         ),
         // BackToHandAfterDeathAbility (ComesBackFromDeath) removed - Phase 42b
-        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.Sacrifice2Japan,
-            "Invocation needs 2 Japan sacrifice to be invoke",
-            0,
-            0,
-            CardFamily.Japan,
-            2
-        ),
+        // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice2Japan) removed - Phase 42b
         new DestroyFieldAtkDefAttackConditionAbility(
             AbilityName.DestroyFieldATK,
             "Invocation can destroy a field but divide Atk by 2",
@@ -185,14 +154,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             "Invocation cannot live without Comic invocation card",
             family: CardFamily.Comics
         ),
-        new SacrificeCardMinAtkMinDefFamilyNumberAbility(
-            AbilityName.Sacrifice2Incarnation,
-            "Invocation needs 2 Incarnation sacrifice to be invoke",
-            0,
-            0,
-            CardFamily.Incarnation,
-            2
-        ),
+        // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice2Incarnation) removed - Phase 42b
         new DestroyFieldAtkDefAttackConditionAbility(
             AbilityName.DestroyFieldDEF,
             "Invocation can destroy a field but divide Def by 2",
