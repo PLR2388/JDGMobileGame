@@ -1,4 +1,5 @@
 using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Application.Repositories;
 using System.Linq;
 
@@ -251,6 +252,69 @@ namespace JDG.Application.Abilities.Implementations
     }
 
     /// <summary>
+    /// Ability to destroy an opponent's invocation card.
+    /// Migrated from KillOpponentInvocationCardAbility.
+    /// </summary>
+    public class DestroyOpponentCardAbility : IAbility
+    {
+        private readonly IPlayerRepository _playerRepository;
+        private readonly CardType? _targetCardType;
+
+        public AbilityName Name { get; }
+        public string Description { get; }
+
+        public DestroyOpponentCardAbility(
+            AbilityName abilityName,
+            IPlayerRepository playerRepository,
+            CardType? targetCardType = null)
+        {
+            Name = abilityName;
+            _playerRepository = playerRepository;
+            _targetCardType = targetCardType;
+            Description = targetCardType.HasValue
+                ? $"Destroy opponent's {targetCardType} card"
+                : "Destroy opponent's card";
+        }
+
+        public bool CanActivate(AbilityContext context)
+        {
+            var opponent = _playerRepository.GetPlayer(context.OpponentPlayerId);
+            if (opponent == null) return false;
+
+            if (_targetCardType.HasValue)
+            {
+                return opponent.Field.Any(c => c.Type == _targetCardType.Value);
+            }
+            return opponent.Field.Any();
+        }
+
+        public AbilityResult Execute(AbilityContext context)
+        {
+            var opponent = _playerRepository.GetPlayer(context.OpponentPlayerId);
+            if (opponent == null)
+                return AbilityResult.Failure("Opponent not found");
+
+            var targetCards = _targetCardType.HasValue
+                ? opponent.Field.Where(c => c.Type == _targetCardType.Value).ToList()
+                : opponent.Field.ToList();
+
+            if (!targetCards.Any())
+                return AbilityResult.Failure("No valid targets");
+
+            // If only one target, destroy it directly
+            if (targetCards.Count == 1)
+            {
+                opponent.DestroyCardFromField(targetCards[0]);
+                _playerRepository.SavePlayer(opponent);
+                return AbilityResult.Success($"Destroyed {targetCards[0].Title}");
+            }
+
+            // Multiple targets - requires user selection
+            return AbilityResult.NeedsUserInput("Select card to destroy");
+        }
+    }
+
+    /// <summary>
     /// Factory for creating combat-related abilities.
     /// </summary>
     public class CombatAbilityFactory
@@ -290,6 +354,13 @@ namespace JDG.Application.Abilities.Implementations
         public DeathRewardAbility CreateDeathReward(AbilityName name, string rewardCardName)
         {
             return new DeathRewardAbility(name, rewardCardName, _playerRepository);
+        }
+
+        public DestroyOpponentCardAbility CreateDestroyOpponentCard(
+            AbilityName name,
+            CardType? targetCardType = null)
+        {
+            return new DestroyOpponentCardAbility(name, _playerRepository, targetCardType);
         }
     }
 }

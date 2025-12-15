@@ -99,5 +99,25 @@ namespace JDG.Infrastructure.Services
                 Debug.LogWarning($"AudioService: Invalid family type: {family?.GetType().Name ?? "null"}");
             }
         }
+
+        // ============================================
+        // Phase 8: Convenience methods for singleton migration
+        // ============================================
+
+        /// <summary>
+        /// Plays the transition sound effect.
+        /// </summary>
+        public void PlayTransitionSound()
+        {
+            _audioSystem.PlayTransitionSound();
+        }
+
+        /// <summary>
+        /// Plays the back navigation sound effect.
+        /// </summary>
+        public void PlayBackSound()
+        {
+            _audioSystem.PlayBackSound();
+        }
     }
 }

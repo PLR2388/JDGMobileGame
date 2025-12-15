@@ -18,6 +18,7 @@ namespace Menu
     /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
     /// Phase 23: Migrated static UnityEvent to EventBus (ChangeChoicePlayer).
     /// Phase 24-25: Added ICardCollectionService dependency for CardFactory.
+    /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
@@ -40,20 +41,30 @@ namespace Menu
         // Phase 24-25: Injected for CardFactory
         private ICardCollectionService _cardCollectionService;
 
+        // Phase 8: IAudioService instead of AudioSystem.Instance
+        private JDG.Application.Services.IAudioService _audioService;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
         /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
         /// Phase 23: Inject IEventBus for static UnityEvent migration.
         /// Phase 24-25: Inject ICardCollectionService for CardFactory.
+        /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
         /// </summary>
         [Inject]
-        public void Construct(ICardSelectionService cardSelectionService, IDeckManagementService deckManagementService, IEventBus eventBus, ICardCollectionService cardCollectionService)
+        public void Construct(
+            ICardSelectionService cardSelectionService,
+            IDeckManagementService deckManagementService,
+            IEventBus eventBus,
+            ICardCollectionService cardCollectionService,
+            JDG.Application.Services.IAudioService audioService)
         {
             _cardSelectionService = cardSelectionService;
             _deckManagementService = deckManagementService;
             _eventBus = eventBus;
             _cardCollectionService = cardCollectionService;
+            _audioService = audioService;
         }
 
         /// <summary>
@@ -98,7 +109,8 @@ namespace Menu
                 CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(isPlayerOneCardChosen);
                 if (isPlayerOneCardChosen)
                 {
-                    AudioSystem.Instance.StopMusic();
+                    // Phase 8: Use IAudioService instead of AudioSystem.Instance
+                    _audioService?.StopMusic();
                     SceneLoaderSystem.LoadGameScreen();
                     isPlayerOneCardChosen = false;
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
@@ -179,7 +191,8 @@ namespace Menu
                 deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, _cardCollectionService)).ToList();
             _deckManagementService.Player2DeckCards =
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, _cardCollectionService)).ToList();
-            AudioSystem.Instance.StopMusic();
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService?.StopMusic();
             SceneLoaderSystem.LoadGameScreen();
         }
 
@@ -219,7 +232,8 @@ namespace Menu
                 deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, _cardCollectionService)).ToList();
             _deckManagementService.Player2DeckCards =
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, _cardCollectionService)).ToList();
-            AudioSystem.Instance.StopMusic();
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService?.StopMusic();
             SceneLoaderSystem.LoadGameScreen();
         }
 

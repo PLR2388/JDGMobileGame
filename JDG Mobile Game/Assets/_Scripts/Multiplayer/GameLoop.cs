@@ -15,6 +15,7 @@ using JDG.Infrastructure.Services;
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// Phase 35: Uses IDialogService instead of MessageBox/CardSelector.Instance.
+/// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
@@ -46,6 +47,9 @@ public class GameLoop : MonoBehaviour
     // Phase 35: IDialogService instead of MessageBox/CardSelector.Instance
     protected IDialogService _dialogService;
 
+    // Phase 8: IAudioService instead of AudioSystem.Instance
+    protected IAudioService _audioService;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
@@ -53,6 +57,7 @@ public class GameLoop : MonoBehaviour
     /// Phase 28: Added IPlayerStatusProvider to replace PlayerManager.Instance.
     /// Phase 34: Added ILocalizationService to replace LocalizationSystem.Instance.
     /// Phase 35: Added IDialogService to replace MessageBox/CardSelector.Instance.
+    /// Phase 8: Added IAudioService to replace AudioSystem.Instance.
     /// </summary>
     [Inject]
     public void Construct(
@@ -69,7 +74,8 @@ public class GameLoop : MonoBehaviour
         InputManager inputManager,
         IPlayerStatusProvider playerStatusProvider,
         ILocalizationService localizationService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IAudioService audioService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -85,6 +91,7 @@ public class GameLoop : MonoBehaviour
         _playerStatusProvider = playerStatusProvider;
         _localizationService = localizationService;
         _dialogService = dialogService;
+        _audioService = audioService;
     }
 
     // Start is called before the first frame update
@@ -245,6 +252,7 @@ public class GameLoop : MonoBehaviour
 
     /// <summary>
     /// Choose the right Choose music
+    /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// </summary>
     protected void ChoosePhaseMusic()
     {
@@ -252,11 +260,13 @@ public class GameLoop : MonoBehaviour
         var currentFieldCard = _cardCollectionService.GetCurrentPlayerCards().FieldCard;
         if (currentFieldCard == null)
         {
-            AudioSystem.Instance.PlayMusic(Music.DrawPhase);
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService.PlayMusic(nameof(Music.DrawPhase));
         }
         else
         {
-            AudioSystem.Instance.PlayFamilyMusic(currentFieldCard.Family);
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService.PlayFamilyMusic(currentFieldCard.Family);
         }
     }
 
@@ -271,10 +281,12 @@ public class GameLoop : MonoBehaviour
 
     /// <summary>
     /// Play the attack music
+    /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// </summary>
     protected void PlayAttackMusic()
     {
-        AudioSystem.Instance.PlayMusic(Music.Fight);
+        // Phase 8: Use IAudioService instead of AudioSystem.Instance
+        _audioService.PlayMusic(nameof(Music.Fight));
     }
 
     /// <summary>

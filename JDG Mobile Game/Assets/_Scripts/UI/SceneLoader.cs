@@ -7,6 +7,7 @@ using VContainer;
 /// <summary>
 /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
 /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
@@ -16,17 +17,24 @@ public class SceneLoader : MonoBehaviour
     private IDeckManagementService _deckManagementService;
     // Phase 39: ILocalizationService instead of LocalizationSystem.Instance
     private ILocalizationService _localizationService;
+    // Phase 8: IAudioService instead of AudioSystem.Instance
+    private IAudioService _audioService;
 
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
     /// Phase 39: Inject ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
     /// </summary>
     [Inject]
-    public void Construct(IDeckManagementService deckManagementService, ILocalizationService localizationService)
+    public void Construct(
+        IDeckManagementService deckManagementService,
+        ILocalizationService localizationService,
+        IAudioService audioService)
     {
         _deckManagementService = deckManagementService;
         _localizationService = localizationService;
+        _audioService = audioService;
     }
 
     /// <summary>
@@ -40,6 +48,7 @@ public class SceneLoader : MonoBehaviour
 
     /// <summary>
     /// Navigates the player to the tutorial scene.
+    /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// </summary>
     public void GoToTutorial()
     {
@@ -48,10 +57,8 @@ public class SceneLoader : MonoBehaviour
             _deckManagementService.BuildTutorialDecks();
         }
 
-        if (AudioSystem.Instance != null)
-        {
-            AudioSystem.Instance.StopMusic();
-        }
+        // Phase 8: Use IAudioService instead of AudioSystem.Instance
+        _audioService?.StopMusic();
 
         SceneManager.LoadSceneAsync(TutorialScene, LoadSceneMode.Single);
     }

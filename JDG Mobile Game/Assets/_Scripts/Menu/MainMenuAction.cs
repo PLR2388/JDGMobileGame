@@ -1,12 +1,26 @@
+using JDG.Application.Services;
 using Sound;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
 /// Represents actions in the main menu related to sound and music playback.
 /// Provides methods to play different themes or sounds for various menu sections.
+/// Phase 8: Migrated from AudioSystem.Instance to IAudioService DI.
 /// </summary>
 public class MainMenuAction : MonoBehaviour
 {
+    private IAudioService _audioService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 8: Inject IAudioService instead of using AudioSystem.Instance.
+    /// </summary>
+    [Inject]
+    public void Construct(IAudioService audioService)
+    {
+        _audioService = audioService;
+    }
 
     /// <summary>
     /// Invoked when the script instance is being loaded.
@@ -22,7 +36,7 @@ public class MainMenuAction : MonoBehaviour
     /// </summary>
     public void PlayMainTheme()
     {
-        AudioSystem.Instance.PlayMusic(Music.MainTheme);
+        GetAudioService().PlayMusic(nameof(Music.MainTheme));
     }
 
     /// <summary>
@@ -30,7 +44,7 @@ public class MainMenuAction : MonoBehaviour
     /// </summary>
     public void PlayOnePlayerMenuMusic()
     {
-        AudioSystem.Instance.PlayMusic(Music.OnePlayerMenu);
+        GetAudioService().PlayMusic(nameof(Music.OnePlayerMenu));
     }
 
     /// <summary>
@@ -38,7 +52,7 @@ public class MainMenuAction : MonoBehaviour
     /// </summary>
     public void PlayTwoPlayerMenuMusic()
     {
-        AudioSystem.Instance.PlayMusic(Music.TwoPlayerMenu);
+        GetAudioService().PlayMusic(nameof(Music.TwoPlayerMenu));
     }
 
     /// <summary>
@@ -46,15 +60,15 @@ public class MainMenuAction : MonoBehaviour
     /// </summary>
     public void PlayOptionMenuMusic()
     {
-        AudioSystem.Instance.PlayMusic(Music.OptionMenu);
+        GetAudioService().PlayMusic(nameof(Music.OptionMenu));
     }
-    
+
     /// <summary>
     /// Plays the transition sound effect.
     /// </summary>
     public void PlayTransitionSound()
     {
-        AudioSystem.Instance.PlayTransitionSound();
+        GetAudioService().PlayTransitionSound();
     }
 
     /// <summary>
@@ -62,6 +76,20 @@ public class MainMenuAction : MonoBehaviour
     /// </summary>
     public void PlayBackSound()
     {
-        AudioSystem.Instance.PlayBackSound();
+        GetAudioService().PlayBackSound();
+    }
+
+    /// <summary>
+    /// Gets the audio service, falling back to singleton wrapper if DI not available.
+    /// Phase 8: Temporary fallback during migration - allows use in scenes without VContainer.
+    /// </summary>
+    private IAudioService GetAudioService()
+    {
+        if (_audioService != null)
+            return _audioService;
+
+        // Fallback for scenes without VContainer scope
+        // This allows gradual migration without breaking non-DI scenes
+        return new JDG.Infrastructure.Services.AudioService();
     }
 }

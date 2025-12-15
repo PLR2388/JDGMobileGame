@@ -52,5 +52,20 @@ namespace JDG.Application.Services
         /// </summary>
         /// <param name="family">The card family to play music for.</param>
         void PlayFamilyMusic(object family);
+
+        // ============================================
+        // Phase 8: Convenience methods for singleton migration
+        // These match the AudioSystem API to ease migration
+        // ============================================
+
+        /// <summary>
+        /// Plays the transition sound effect.
+        /// </summary>
+        void PlayTransitionSound();
+
+        /// <summary>
+        /// Plays the back navigation sound effect.
+        /// </summary>
+        void PlayBackSound();
     }
 }
