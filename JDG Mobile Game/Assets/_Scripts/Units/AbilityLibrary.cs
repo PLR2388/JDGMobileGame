@@ -44,10 +44,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // SacrificeCardAbility (SacrificeArchibaldVonGrenier) removed - Phase 42b
         // CantBeAttackAbility (CantBeAttackIfComics) removed - Phase 42b
         // GiveAtkDefFamilyAbility removed - Phase 42b
-        new SendAllCardsInHand(
-            AbilityName.SendAllCardToHands,
-            "Invocation send all card from fields to hands except itself"
-        ),
+        // SendAllCardsInHand removed - Phase 42b
         // SacrificeCardAbility (SacrificeBenzaieJeune) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetNounoursFromDeck) removed - Phase 42b
         // SacrificeCardAbility (SacrificeJoueurDuGrenier) removed - Phase 42b
