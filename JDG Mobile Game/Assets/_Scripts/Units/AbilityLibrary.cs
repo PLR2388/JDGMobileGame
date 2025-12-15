@@ -112,10 +112,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
             2,
             1
         ),
-        new KillOpponentInvocationCardAbility(
-            AbilityName.KillOpponentInvocation,
-            "Kill an invocation opponent when invoke"
-        ),
+        // KillOpponentInvocationCardAbility removed - Phase 42b
         new CantLiveWithoutAbility(
             AbilityName.CantLiveWithoutJDG,
             "Invocation can't live without Joueur Du Grenier",
