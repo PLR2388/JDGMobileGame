@@ -1,9 +1,11 @@
 using Cards;
 using UnityEngine;
+using JDG.Application.Services;
 
 /// <summary>
 /// Represents an abstract card state. Contains common functionality and provides the interface for concrete card states.
 /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
+/// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
 /// </summary>
 public abstract class CardState
 {

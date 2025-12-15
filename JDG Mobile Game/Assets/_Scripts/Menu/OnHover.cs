@@ -1,9 +1,12 @@
+using System;
 using Cards;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using VContainer;
+using JDG.Application;
+using JDG.Domain.Events;
 
 [System.Serializable]
 public class CardSelectedEvent : UnityEvent<InGameCard>
@@ -24,17 +27,22 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public bool bIsInGame = false;
 
-    // Phase 9: Injected dependencies
-    private ICardSelectionService _cardSelectionService;
+    // Phase 41: Migrated from legacy ICardSelectionService to clean architecture
+    private JDG.Application.Services.ICardSelectionService _cardSelectionService;
+    private IEventBus _eventBus;
+    private IDisposable _cardDeselectedSubscription;
 
     /// <summary>
     /// VContainer method injection for dependencies.
-    /// Phase 9: Inject ICardSelectionService instead of using singleton.
+    /// Phase 41: Inject clean ICardSelectionService and IEventBus instead of legacy service.
     /// </summary>
     [Inject]
-    public void Construct(ICardSelectionService cardSelectionService)
+    public void Construct(
+        JDG.Application.Services.ICardSelectionService cardSelectionService,
+        IEventBus eventBus)
     {
         _cardSelectionService = cardSelectionService;
+        _eventBus = eventBus;
     }
 
     /// <summary>
@@ -52,8 +60,8 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         CardSelector.NumberedCardEvent.AddListener(UpdateNumberOnCard);
         card = gameObject.GetComponent<CardDisplay>().InGameCard;
 
-        // Phase 9: Use injected service instead of CardSelectionManager.Instance
-        _cardSelectionService?.CardDeselected.AddListener(UnSelectCard);
+        // Phase 41: Subscribe to EventBus instead of legacy UnityEvent
+        _cardDeselectedSubscription = _eventBus?.Subscribe<CardRemovedFromSelectionEvent>(OnCardRemovedFromSelection);
 
         // Initialize default state
         SetState(new DefaultCardState(this, card, _cardSelectionService));
@@ -66,6 +74,20 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         // Unsubscribe from events
         CardSelector.NumberedCardEvent.RemoveListener(UpdateNumberOnCard);
+        // Phase 41: Dispose EventBus subscription
+        _cardDeselectedSubscription?.Dispose();
+    }
+
+    /// <summary>
+    /// Handles card removed from selection event.
+    /// Phase 41: EventBus handler replacing legacy UnityEvent listener.
+    /// </summary>
+    private void OnCardRemovedFromSelection(CardRemovedFromSelectionEvent evt)
+    {
+        if (evt.Card is InGameCard deselectedCard)
+        {
+            UnSelectCard(deselectedCard);
+        }
     }
 
     /// <summary>

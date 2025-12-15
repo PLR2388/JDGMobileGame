@@ -16,6 +16,7 @@ using VContainer;
 /// Phase 23: Migrated from static UnityEvent to EventBus subscription.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
+/// Phase 41: Migrated to clean ICardSelectionService with EventBus.
 /// </summary>
 public class InfiniteScroll : MonoBehaviour
 {
@@ -29,15 +30,17 @@ public class InfiniteScroll : MonoBehaviour
     private List<Card> deck1AllCards;
     private List<Card> deck2AllCards;
 
-    // Phase 9: Injected dependencies
+    // Phase 41: Migrated to clean ICardSelectionService
     private ICardSelectionService _cardSelectionService;
 
     // Phase 17-18: Injected dependencies
     private IDeckManagementService _deckManagementService;
 
-    // Phase 23: EventBus for static UnityEvent migration
+    // Phase 23 & 41: EventBus for event subscriptions
     private IEventBus _eventBus;
     private IDisposable _choicePlayerSubscription;
+    private IDisposable _cardSelectedSubscription;
+    private IDisposable _cardDeselectedSubscription;
 
     // Phase 34: Injected dependencies
     private ILocalizationService _localizationService;
@@ -59,6 +62,7 @@ public class InfiniteScroll : MonoBehaviour
     /// Phase 23: Inject IEventBus for static UnityEvent migration.
     /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 35: Inject IDialogService instead of MessageBox.Instance.
+    /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
     /// </summary>
     [Inject]
     public void Construct(
@@ -82,14 +86,38 @@ public class InfiniteScroll : MonoBehaviour
         deck2AllCards = _deckManagementService.Deck2AllCards;
         DisplayAvailableCards(deck1AllCards);
 
-        // Phase 9: Use injected service instead of _cardSelectionService
+        // Phase 41: Use clean service with EventBus subscriptions
         _cardSelectionService.MultipleCardSelection = true;
         _cardSelectionService.MultipleSelectionLimit = DeckConfiguration.MaxDeckCards;
-        _cardSelectionService.CardSelected.AddListener(OnSelectCard);
-        _cardSelectionService.CardDeselected.AddListener(OnUnSelectCard);
+        _cardSelectedSubscription = _eventBus.Subscribe<CardAddedToSelectionEvent>(OnCardSelected);
+        _cardDeselectedSubscription = _eventBus.Subscribe<CardRemovedFromSelectionEvent>(OnCardDeselected);
 
         // Phase 23: Subscribe to EventBus instead of static UnityEvent
         _choicePlayerSubscription = _eventBus.Subscribe<ChoicePlayerChangedEvent>(OnChoicePlayerChanged);
+    }
+
+    /// <summary>
+    /// EventBus handler for card selection.
+    /// Phase 41: Replaces UnityEvent CardSelected listener.
+    /// </summary>
+    private void OnCardSelected(CardAddedToSelectionEvent evt)
+    {
+        if (evt.Card is InGameCard card)
+        {
+            OnSelectCard(card);
+        }
+    }
+
+    /// <summary>
+    /// EventBus handler for card deselection.
+    /// Phase 41: Replaces UnityEvent CardDeselected listener.
+    /// </summary>
+    private void OnCardDeselected(CardRemovedFromSelectionEvent evt)
+    {
+        if (evt.Card is InGameCard card)
+        {
+            OnUnSelectCard(card);
+        }
     }
 
 
@@ -214,9 +242,12 @@ public class InfiniteScroll : MonoBehaviour
     /// <summary>
     /// Remove Event listener attached
     /// Phase 23: Disposes EventBus subscription.
+    /// Phase 41: Disposes card selection subscriptions.
     /// </summary>
     private void OnDestroy()
     {
         _choicePlayerSubscription?.Dispose();
+        _cardSelectedSubscription?.Dispose();
+        _cardDeselectedSubscription?.Dispose();
     }
 }

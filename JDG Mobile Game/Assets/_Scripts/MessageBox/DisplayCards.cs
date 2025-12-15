@@ -6,16 +6,18 @@ using System.Collections.Specialized;
 using Cards;
 using UnityEngine;
 using VContainer;
+using JDG.Application.Services;
 
 /// <summary>
 /// Phase 9: Removed CardPoolManager singleton dependency via DI.
+/// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
 /// </summary>
 public class DisplayCards : StaticInstance<DisplayCards>
 {
     private readonly ObservableCollection<InGameCard> _cardsList = new ObservableCollection<InGameCard>();
     private readonly List<GameObject> associatedGameObject = new List<GameObject>();
 
-    // Phase 9: Injected dependencies
+    // Phase 9 & 41: Injected dependencies
     private ICardPoolService _cardPoolService;
     private ICardSelectionService _cardSelectionService;
 
@@ -38,6 +40,7 @@ public class DisplayCards : StaticInstance<DisplayCards>
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 9: Inject services instead of using singletons.
+    /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
     /// </summary>
     [Inject]
     public void Construct(ICardPoolService cardPoolService, ICardSelectionService cardSelectionService)

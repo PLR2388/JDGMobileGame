@@ -20,6 +20,7 @@ namespace Menu
     /// Phase 24-25: Added ICardCollectionService dependency for CardFactory.
     /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// Phase 8: Uses CardChoiceUIManager DI instead of .Instance.
+    /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
@@ -30,8 +31,8 @@ namespace Menu
         /// </summary>
         public bool isPlayerOneCardChosen;
 
-        // Phase 9: Injected dependencies
-        private ICardSelectionService _cardSelectionService;
+        // Phase 41: Migrated to clean ICardSelectionService
+        private JDG.Application.Services.ICardSelectionService _cardSelectionService;
 
         // Phase 17-18: Injected dependencies
         private IDeckManagementService _deckManagementService;
@@ -56,10 +57,11 @@ namespace Menu
         /// Phase 24-25: Inject ICardCollectionService for CardFactory.
         /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
         /// Phase 8: Inject CardChoiceUIManager instead of using .Instance.
+        /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
         /// </summary>
         [Inject]
         public void Construct(
-            ICardSelectionService cardSelectionService,
+            JDG.Application.Services.ICardSelectionService cardSelectionService,
             IDeckManagementService deckManagementService,
             IEventBus eventBus,
             ICardCollectionService cardCollectionService,
