@@ -13,8 +13,29 @@ namespace JDG.DI
     /// </summary>
     public class MainScreenScope : LifetimeScope
     {
+        protected override void Awake()
+        {
+            // Debug: Check if parent scope exists
+            if (Parent == null)
+            {
+                UnityEngine.Debug.LogWarning(
+                    "MainScreenScope: No parent scope found! Make sure:\n" +
+                    "1. You started from the _preload scene (not MainScreen directly)\n" +
+                    "2. SharedServicesScope has 'Auto Run' checked in _preload scene\n" +
+                    "3. GameLifetimeScope has 'Auto Run' checked in _preload scene");
+            }
+            else
+            {
+                UnityEngine.Debug.Log($"MainScreenScope: Found parent scope: {Parent.GetType().Name}");
+            }
+
+            base.Awake();
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
+            UnityEngine.Debug.Log("MainScreenScope: Configuring...");
+
             // ============================================
             // MAINSCREEN SCENE MONOBEHAVIOURS
             // ============================================
@@ -25,6 +46,8 @@ namespace JDG.DI
             // Card Choice UI - deck selection screen
             builder.RegisterComponentInHierarchy<Menu.CardChoiceUIManager>();
             builder.RegisterComponentInHierarchy<Menu.CardChoice>();
+
+            UnityEngine.Debug.Log("MainScreenScope: Configuration complete");
         }
     }
 }

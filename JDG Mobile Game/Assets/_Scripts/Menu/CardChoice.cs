@@ -70,9 +70,9 @@ namespace Menu
             JDG.Application.Services.ICardSelectionService cardSelectionService,
             IDeckManagementService deckManagementService,
             IEventBus eventBus,
-            ICardCollectionService cardCollectionService,
             JDG.Application.Services.IAudioService audioService,
             CardChoiceUIManager cardChoiceUIManager,
+            ICardCollectionService cardCollectionService = null,
             IAbilityProvider abilityProvider = null)
         {
             _cardSelectionService = cardSelectionService;
