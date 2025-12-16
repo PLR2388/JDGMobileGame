@@ -84,6 +84,9 @@ namespace JDG.DI
             // Phase 8: CardChoiceUIManager - eliminates .Instance calls
             builder.RegisterComponentInHierarchy<Menu.CardChoiceUIManager>();
 
+            // Phase 45: CardChoice - needs DI for deck management and card creation
+            builder.RegisterComponentInHierarchy<Menu.CardChoice>();
+
             // Phase 28: PlayerManager - removed singleton, now uses DI
             // Provides player status access for services during turn
             builder.RegisterComponentInHierarchy<PlayerManager>().As<IPlayerStatusProvider>();
