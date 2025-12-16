@@ -75,6 +75,7 @@ namespace Menu
             ICardCollectionService cardCollectionService = null,
             IAbilityProvider abilityProvider = null)
         {
+            Debug.Log("CardChoice.Construct() called by VContainer!");
             _cardSelectionService = cardSelectionService;
             _deckManagementService = deckManagementService;
             _eventBus = eventBus;
@@ -82,6 +83,7 @@ namespace Menu
             _audioService = audioService;
             _cardChoiceUIManager = cardChoiceUIManager;
             _abilityProvider = abilityProvider;
+            Debug.Log($"CardChoice.Construct() complete. _deckManagementService = {(_deckManagementService != null ? "OK" : "NULL")}");
         }
 
         /// <summary>
@@ -190,6 +192,21 @@ namespace Menu
         /// </summary>
         public void RandomDeck()
         {
+            // Debug: Check all dependencies
+            Debug.Log($"CardChoice.RandomDeck() called. Checking dependencies:");
+            Debug.Log($"  _deckManagementService: {(_deckManagementService != null ? "OK" : "NULL")}");
+            Debug.Log($"  _eventBus: {(_eventBus != null ? "OK" : "NULL")}");
+            Debug.Log($"  _audioService: {(_audioService != null ? "OK" : "NULL")}");
+            Debug.Log($"  _cardChoiceUIManager: {(_cardChoiceUIManager != null ? "OK" : "NULL")}");
+            Debug.Log($"  _cardSelectionService: {(_cardSelectionService != null ? "OK" : "NULL")}");
+
+            if (_deckManagementService == null)
+            {
+                Debug.LogError("CardChoice: _deckManagementService is NULL! VContainer injection failed. " +
+                    "Check that SharedServicesScope is in _preload scene with Auto Run enabled.");
+                return;
+            }
+
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
