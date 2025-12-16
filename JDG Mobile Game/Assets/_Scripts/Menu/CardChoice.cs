@@ -41,29 +41,22 @@ namespace Menu
         // Phase 23: EventBus for static UnityEvent migration
         private IEventBus _eventBus;
 
-        // Phase 24-25: Injected for CardFactory
-        private ICardCollectionService _cardCollectionService;
-
         // Phase 8: IAudioService instead of AudioSystem.Instance
         private JDG.Application.Services.IAudioService _audioService;
 
         // Phase 8: CardChoiceUIManager DI instead of .Instance
         private CardChoiceUIManager _cardChoiceUIManager;
 
-        // Phase 7: IAbilityProvider for ability system migration
-        private IAbilityProvider _abilityProvider;
-
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
         /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
         /// Phase 23: Inject IEventBus for static UnityEvent migration.
-        /// Phase 24-25: Inject ICardCollectionService for CardFactory.
         /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
         /// Phase 8: Inject CardChoiceUIManager instead of using .Instance.
         /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
-        /// Phase 7: Inject IAbilityProvider for ability system migration.
-        /// Phase 46: Requires MainScreenScope in scene for proper DI.
+        /// Phase 46: Removed ICardCollectionService/IAbilityProvider (VContainer doesn't support optional params).
+        ///           These are passed as null to CardFactory since they're only available in Game scene.
         /// </summary>
         [Inject]
         public void Construct(
@@ -71,18 +64,14 @@ namespace Menu
             IDeckManagementService deckManagementService,
             IEventBus eventBus,
             JDG.Application.Services.IAudioService audioService,
-            CardChoiceUIManager cardChoiceUIManager,
-            ICardCollectionService cardCollectionService = null,
-            IAbilityProvider abilityProvider = null)
+            CardChoiceUIManager cardChoiceUIManager)
         {
             Debug.Log("CardChoice.Construct() called by VContainer!");
             _cardSelectionService = cardSelectionService;
             _deckManagementService = deckManagementService;
             _eventBus = eventBus;
-            _cardCollectionService = cardCollectionService;
             _audioService = audioService;
             _cardChoiceUIManager = cardChoiceUIManager;
-            _abilityProvider = abilityProvider;
             Debug.Log($"CardChoice.Construct() complete. _deckManagementService = {(_deckManagementService != null ? "OK" : "NULL")}");
         }
 
@@ -136,7 +125,7 @@ namespace Menu
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
 
                     _deckManagementService.Player2DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, null, null)).ToList();
                 }
                 else
                 {
@@ -144,7 +133,7 @@ namespace Menu
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 2 });
 
                     _deckManagementService.Player1DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, null, null)).ToList();
                     DeselectAllCards();
                 }
             }
@@ -224,9 +213,9 @@ namespace Menu
             }
 
             _deckManagementService.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, null, null)).ToList();
             _deckManagementService.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, null, null)).ToList();
             // Phase 8: Use IAudioService instead of AudioSystem.Instance
             _audioService?.StopMusic();
             SceneLoaderSystem.LoadGameScreen();
@@ -265,9 +254,9 @@ namespace Menu
             deck2.Reverse();
 
             _deckManagementService.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1, _eventBus, null, null)).ToList();
             _deckManagementService.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, null, null)).ToList();
             // Phase 8: Use IAudioService instead of AudioSystem.Instance
             _audioService?.StopMusic();
             SceneLoaderSystem.LoadGameScreen();
