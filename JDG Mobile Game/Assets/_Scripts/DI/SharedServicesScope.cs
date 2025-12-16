@@ -19,9 +19,17 @@ namespace JDG.DI
     ///
     /// Place this in the preload scene with Auto Run = true, Parent = None.
     /// Scene scopes (MainScreenScope, GameSceneScope) will auto-find this as parent.
+    /// Uses DontDestroyOnLoad to persist across scene loads.
     /// </summary>
     public class SharedServicesScope : LifetimeScope
     {
+        protected override void Awake()
+        {
+            // Persist across scene loads (scenes use LoadSceneMode.Single)
+            DontDestroyOnLoad(gameObject);
+            base.Awake();
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
             UnityEngine.Debug.Log("SharedServicesScope: Configuring ROOT scope...");

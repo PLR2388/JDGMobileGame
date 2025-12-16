@@ -9,10 +9,17 @@ namespace JDG.DI
     /// Phase 46: Split from LegacyServicesScope for proper scene-based DI.
     ///
     /// Place this on a GameObject in the MainScreen scene.
-    /// Set Parent to reference SharedServicesScope (or use Auto Run parent finding).
+    /// Auto Run = true, Parent = None (auto-finds SharedServicesScope).
     /// </summary>
     public class MainScreenScope : LifetimeScope
     {
+        protected override void Awake()
+        {
+            UnityEngine.Debug.Log("MainScreenScope: Awake called, looking for parent scope...");
+            base.Awake();
+            UnityEngine.Debug.Log($"MainScreenScope: After Awake, Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
             UnityEngine.Debug.Log("MainScreenScope: Configuring...");
