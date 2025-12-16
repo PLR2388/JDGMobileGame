@@ -21,14 +21,14 @@ namespace JDG.Presentation.Tests.Presenters
         private RoundDisplayPresenter _presenter;
         private TestRoundDisplayView _view;
         private TestEventBus _eventBus;
-        private TestLocalizationService _localizationService;
+        private RoundDisplayTestLocalizationService _localizationService;
 
         [SetUp]
         public void SetUp()
         {
             _view = new TestRoundDisplayView();
             _eventBus = new TestEventBus();
-            _localizationService = new TestLocalizationService();
+            _localizationService = new RoundDisplayTestLocalizationService();
             _presenter = new RoundDisplayPresenter(_view, _eventBus, _localizationService);
         }
 
@@ -235,8 +235,9 @@ namespace JDG.Presentation.Tests.Presenters
     /// <summary>
     /// Test double for ILocalizationService.
     /// Returns the key itself for simplicity.
+    /// Named uniquely to avoid conflict with other test files in same namespace.
     /// </summary>
-    internal class TestLocalizationService : ILocalizationService
+    internal class RoundDisplayTestLocalizationService : ILocalizationService
     {
         public string GetLocalizedValue(string key)
         {

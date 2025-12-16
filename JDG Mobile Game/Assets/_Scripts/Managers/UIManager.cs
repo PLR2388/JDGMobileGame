@@ -109,10 +109,13 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Displays a pause menu with given positive action.
     /// Phase 5: Now delegates to DialogPresenter
+    /// Phase 45: Convert UnityAction to Action for DialogPresenter compatibility.
     /// </summary>
     /// <param name="onPositiveAction">Action to execute on positive button click.</param>
     public void DisplayPauseMenu(UnityAction onPositiveAction)
     {
-        _dialogPresenter?.ShowPauseMenu(onPositiveAction);
+        // Convert UnityAction to System.Action for DialogPresenter
+        System.Action action = onPositiveAction != null ? () => onPositiveAction.Invoke() : (System.Action)null;
+        _dialogPresenter?.ShowPauseMenu(action);
     }
 }
