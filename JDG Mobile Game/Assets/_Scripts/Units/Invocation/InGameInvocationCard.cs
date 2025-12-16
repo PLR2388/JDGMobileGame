@@ -26,7 +26,7 @@ namespace _Scripts.Units.Invocation
         private readonly IEventBus _eventBus;
         private readonly ICardCollectionService _cardCollectionService;
 
-        // Phase 7: Optional ability provider for migration from AbilityLibrary
+        // Phase 42ag: Required ability provider (legacy AbilityLibrary removed)
         private readonly IAbilityProvider _abilityProvider;
 
         /// <summary>
@@ -71,20 +71,20 @@ namespace _Scripts.Units.Invocation
         /// <summary>
         /// Initializes an instance of the InGameInvocationCard.
         /// Phase 24-25: Added dependency injection for IEventBus and ICardCollectionService.
-        /// Phase 7: Added IAbilityProvider for ability system migration.
+        /// Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed).
         /// </summary>
         /// <param name="invocationCard">The base invocation card.</param>
         /// <param name="cardOwner">The owner of the card.</param>
         /// <param name="eventBus">EventBus for publishing domain events.</param>
         /// <param name="cardCollectionService">Service for accessing player cards.</param>
-        /// <param name="abilityProvider">Optional provider for abilities (uses AbilityLibrary.Instance if null).</param>
+        /// <param name="abilityProvider">Provider for abilities (required).</param>
         /// <returns>A new InGameInvocationCard instance.</returns>
         public InGameInvocationCard(
             InvocationCard invocationCard,
             CardOwner cardOwner,
             IEventBus eventBus,
             ICardCollectionService cardCollectionService,
-            IAbilityProvider abilityProvider = null)
+            IAbilityProvider abilityProvider)
         {
             BaseInvocationCard = invocationCard;
             CardOwner = cardOwner;
@@ -133,20 +133,11 @@ namespace _Scripts.Units.Invocation
             conditions = BaseInvocationCard.Conditions
                 .Select(conditionName => ConditionLibrary.Instance.ConditionDictionary[conditionName]).ToList();
 
-            // Phase 7: Use IAbilityProvider if available, otherwise fall back to AbilityLibrary.Instance
-            if (_abilityProvider != null)
-            {
-                Abilities = BaseInvocationCard.Abilities
-                    .Select(abilityName => _abilityProvider.GetAbility(abilityName))
-                    .Where(ability => ability != null)
-                    .ToList();
-            }
-            else
-            {
-                // Legacy path: direct AbilityLibrary access
-                Abilities = BaseInvocationCard.Abilities
-                    .Select(abilityName => AbilityLibrary.Instance.AbilityDictionary[abilityName]).ToList();
-            }
+            // Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed)
+            Abilities = BaseInvocationCard.Abilities
+                .Select(abilityName => _abilityProvider.GetAbility(abilityName))
+                .Where(ability => ability != null)
+                .ToList();
             UpdateInvocationCardForAbilities();
         }
         

@@ -7,15 +7,13 @@ using JDG.Infrastructure.DI;
 using UnityEngine;
 
 /// <summary>
-/// Service that provides abilities from the modern AbilityRegistry system,
-/// falling back to legacy AbilityLibrary when necessary.
+/// Service that provides abilities from the modern AbilityRegistry system.
 ///
 /// Phase 7: Part of AbilityLibrary → AbilityRegistry migration.
+/// Phase 42ag: Legacy AbilityLibrary removed - all abilities now use modern system.
 ///
-/// This service implements the Strangler Fig pattern:
-/// - First tries to get ability from modern AbilityRegistry
-/// - Wraps modern IAbility in ModernAbilityAdapter for legacy compatibility
-/// - Falls back to AbilityLibrary.Instance for abilities not yet migrated
+/// This service wraps modern IAbility implementations in ModernAbilityAdapter
+/// for compatibility with the legacy Ability base class interface.
 /// </summary>
 public class AbilityProviderService : IAbilityProvider
 {
@@ -50,8 +48,8 @@ public class AbilityProviderService : IAbilityProvider
     }
 
     /// <summary>
-    /// Gets an ability by name.
-    /// Prefers modern AbilityRegistry, falls back to AbilityLibrary.
+    /// Gets an ability by name from the modern AbilityRegistry.
+    /// Phase 42ag: Legacy fallback removed - all abilities use modern system.
     /// </summary>
     public Ability GetAbility(AbilityName abilityName)
     {
@@ -61,7 +59,7 @@ public class AbilityProviderService : IAbilityProvider
             return cachedAdapter;
         }
 
-        // Try modern system first
+        // Get from modern system
         if (_registry != null && _registry.IsRegistered(abilityName))
         {
             try
@@ -76,45 +74,23 @@ public class AbilityProviderService : IAbilityProvider
             }
             catch (System.Exception ex)
             {
-                Debug.LogWarning($"[AbilityProviderService] Failed to load '{abilityName}' from modern system: {ex.Message}. Falling back to legacy.");
+                Debug.LogError($"[AbilityProviderService] Failed to load '{abilityName}' from modern system: {ex.Message}");
+                return null;
             }
         }
 
-        // Fall back to legacy AbilityLibrary
-        if (AbilityLibrary.Instance != null &&
-            AbilityLibrary.Instance.AbilityDictionary != null &&
-            AbilityLibrary.Instance.AbilityDictionary.TryGetValue(abilityName, out var legacyAbility))
-        {
-            _legacyAbilitiesUsed.Add(abilityName);
-            Debug.Log($"[AbilityProviderService] Loaded ability '{abilityName}' from legacy AbilityLibrary");
-            return legacyAbility;
-        }
-
-        // Neither system has this ability
-        Debug.LogError($"[AbilityProviderService] Ability '{abilityName}' not found in modern or legacy system!");
+        // Ability not found
+        Debug.LogError($"[AbilityProviderService] Ability '{abilityName}' not found in AbilityRegistry!");
         return null;
     }
 
     /// <summary>
-    /// Checks if an ability exists in either system.
+    /// Checks if an ability exists in the AbilityRegistry.
+    /// Phase 42ag: Legacy fallback removed.
     /// </summary>
     public bool HasAbility(AbilityName abilityName)
     {
-        // Check modern system
-        if (_registry != null && _registry.IsRegistered(abilityName))
-        {
-            return true;
-        }
-
-        // Check legacy system
-        if (AbilityLibrary.Instance != null &&
-            AbilityLibrary.Instance.AbilityDictionary != null &&
-            AbilityLibrary.Instance.AbilityDictionary.ContainsKey(abilityName))
-        {
-            return true;
-        }
-
-        return false;
+        return _registry != null && _registry.IsRegistered(abilityName);
     }
 
     /// <summary>
