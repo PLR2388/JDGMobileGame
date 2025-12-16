@@ -15,18 +15,24 @@ namespace JDG.DI
     {
         protected override void Awake()
         {
-            // Debug: Check if parent scope exists
+            // VContainer's auto-parent-finding goes to the ROOT scope (GameLifetimeScope),
+            // but we need SharedServicesScope which has the actual service registrations.
+            // Explicitly find and set SharedServicesScope as our parent.
             if (Parent == null)
             {
-                UnityEngine.Debug.LogWarning(
-                    "MainScreenScope: No parent scope found! Make sure:\n" +
-                    "1. You started from the _preload scene (not MainScreen directly)\n" +
-                    "2. SharedServicesScope has 'Auto Run' checked in _preload scene\n" +
-                    "3. GameLifetimeScope has 'Auto Run' checked in _preload scene");
-            }
-            else
-            {
-                UnityEngine.Debug.Log($"MainScreenScope: Found parent scope: {Parent.GetType().Name}");
+                var sharedScope = FindObjectOfType<SharedServicesScope>();
+                if (sharedScope != null)
+                {
+                    Parent = sharedScope;
+                    UnityEngine.Debug.Log("MainScreenScope: Set parent to SharedServicesScope");
+                }
+                else
+                {
+                    UnityEngine.Debug.LogError(
+                        "MainScreenScope: Could not find SharedServicesScope! Make sure:\n" +
+                        "1. You started from the _preload scene (not MainScreen directly)\n" +
+                        "2. SharedServicesScope has 'Auto Run' checked in _preload scene");
+                }
             }
 
             base.Awake();
