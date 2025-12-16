@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: JDG.DI.SharedServicesScope
   autoRun: 1
   autoInjectGameObjects: []
 --- !u!1 &426272133
@@ -667,7 +667,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: JDG.Infrastructure.DI.GameLifetimeScope
+    TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
 --- !u!1 &1526392621
