@@ -33,9 +33,10 @@ namespace JDG.DI
             builder.RegisterComponentInHierarchy<CardPoolManager>();
             builder.Register<ICardPoolService, CardPoolService>(Lifetime.Singleton);
 
-            // Card Selection Manager - for in-game card selection
+            // Card Selection Manager - for in-game card selection UI
+            // Note: ICardSelectionService is registered in SharedServicesScope (pure C#)
+            // CardSelectionManager is the legacy UI MonoBehaviour
             builder.RegisterComponentInHierarchy<CardSelectionManager>();
-            builder.Register<JDG.Application.Services.ICardSelectionService, JDG.Infrastructure.Services.CardSelectionService>(Lifetime.Singleton);
 
             // Card Collection Service - bridges to CardManager
             builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Singleton);

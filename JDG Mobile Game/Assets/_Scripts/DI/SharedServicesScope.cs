@@ -67,6 +67,12 @@ namespace JDG.DI
             // ABILITY SYSTEM
             // ============================================
             builder.Register<IAbilityProvider, AbilityProviderService>(Lifetime.Singleton);
+
+            // ============================================
+            // CARD SELECTION SERVICE
+            // ============================================
+            // CardSelectionService is pure C# - only needs EventBus, no MonoBehaviour
+            builder.Register<JDG.Application.Services.ICardSelectionService, CardSelectionService>(Lifetime.Singleton);
         }
     }
 }

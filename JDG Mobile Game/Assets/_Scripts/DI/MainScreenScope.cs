@@ -1,6 +1,5 @@
 using VContainer;
 using VContainer.Unity;
-using JDG.Infrastructure.Services;
 
 namespace JDG.DI
 {
@@ -20,14 +19,8 @@ namespace JDG.DI
             // MAINSCREEN SCENE MONOBEHAVIOURS
             // ============================================
 
-            // Note: InputManager is NOT in MainScreen scene - only in Game scene
-            // If needed later, add InputManager GameObject to MainScreen scene
-
-            // Card Selection Manager - for deck building UI
-            // Note: Only register if CardSelectionManager exists in this scene
-            // If not present, comment out these lines
-            builder.RegisterComponentInHierarchy<CardSelectionManager>();
-            builder.Register<JDG.Application.Services.ICardSelectionService, JDG.Infrastructure.Services.CardSelectionService>(Lifetime.Singleton);
+            // Note: InputManager and CardSelectionManager are NOT in MainScreen scene
+            // ICardSelectionService is registered in SharedServicesScope (pure C#, no MonoBehaviour needed)
 
             // Card Choice UI - deck selection screen
             builder.RegisterComponentInHierarchy<Menu.CardChoiceUIManager>();
