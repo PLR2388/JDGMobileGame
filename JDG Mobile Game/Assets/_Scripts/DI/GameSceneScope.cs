@@ -1,3 +1,4 @@
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using JDG.Application.Services;
@@ -12,14 +13,35 @@ namespace JDG.DI
     /// Phase 46: Split from LegacyServicesScope for proper scene-based DI.
     ///
     /// Place this on a GameObject in the Game scene.
-    /// Set Parent to reference SharedServicesScope (or use Auto Run parent finding).
+    /// Auto Run = true, Parent = None (explicitly finds SharedServicesScope via EnqueueParent).
     /// </summary>
     public class GameSceneScope : LifetimeScope
     {
+        protected override void Awake()
+        {
+            Debug.Log("GameSceneScope: Awake called, looking for SharedServicesScope...");
+
+            // SharedServicesScope is in DontDestroyOnLoad, so auto-find doesn't work.
+            // We must explicitly enqueue it as parent before base.Awake() builds the container.
+            var sharedScope = FindObjectOfType<SharedServicesScope>();
+            if (sharedScope != null)
+            {
+                Debug.Log($"GameSceneScope: Found SharedServicesScope, enqueueing as parent");
+                EnqueueParent(sharedScope);
+            }
+            else
+            {
+                Debug.LogError("GameSceneScope: SharedServicesScope NOT FOUND! DI will fail.");
+            }
+
+            base.Awake();
+            Debug.Log($"GameSceneScope: After Awake, Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
-            UnityEngine.Debug.Log("GameSceneScope: Configuring...");
-            UnityEngine.Debug.Log($"GameSceneScope: Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+            Debug.Log("GameSceneScope: Configuring...");
+            Debug.Log($"GameSceneScope: Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
 
             // ============================================
             // GAME SCENE MONOBEHAVIOURS

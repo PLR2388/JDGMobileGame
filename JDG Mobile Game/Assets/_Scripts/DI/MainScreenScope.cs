@@ -1,3 +1,4 @@
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -9,15 +10,29 @@ namespace JDG.DI
     /// Phase 46: Split from LegacyServicesScope for proper scene-based DI.
     ///
     /// Place this on a GameObject in the MainScreen scene.
-    /// Auto Run = true, Parent = None (auto-finds SharedServicesScope).
+    /// Auto Run = true, Parent = None (explicitly finds SharedServicesScope via EnqueueParent).
     /// </summary>
     public class MainScreenScope : LifetimeScope
     {
         protected override void Awake()
         {
-            UnityEngine.Debug.Log("MainScreenScope: Awake called, looking for parent scope...");
+            Debug.Log("MainScreenScope: Awake called, looking for SharedServicesScope...");
+
+            // SharedServicesScope is in DontDestroyOnLoad, so auto-find doesn't work.
+            // We must explicitly enqueue it as parent before base.Awake() builds the container.
+            var sharedScope = FindObjectOfType<SharedServicesScope>();
+            if (sharedScope != null)
+            {
+                Debug.Log($"MainScreenScope: Found SharedServicesScope, enqueueing as parent");
+                EnqueueParent(sharedScope);
+            }
+            else
+            {
+                Debug.LogError("MainScreenScope: SharedServicesScope NOT FOUND! DI will fail.");
+            }
+
             base.Awake();
-            UnityEngine.Debug.Log($"MainScreenScope: After Awake, Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+            Debug.Log($"MainScreenScope: After Awake, Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
         }
 
         protected override void Configure(IContainerBuilder builder)
