@@ -30,15 +30,7 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
     /// </summary>
     private readonly List<Ability> abilities = new List<Ability>()
     {
-        new CantLiveWithoutAbility(
-            AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune,
-            "Invocation can't live without Benzaie or Benzaie jeune",
-            list: new List<string>
-            {
-                "Benzaie jeune",
-                "Benzaie"
-            }
-        ),
+        // CantLiveWithoutAbility (CantLiveWithoutBenzaieOrBenzaieJeune) removed - Phase 42b
         // CanOnlyAttackItselfAbility removed - Phase 42b
         // GetFamilyInDeckAbility (AddSpatialFromDeck) removed - Phase 42b
         // SacrificeCardAbility (SacrificeArchibaldVonGrenier) removed - Phase 42b
@@ -68,32 +60,17 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice2Japan) removed - Phase 42b
         // DestroyFieldAtkDefAttackConditionAbility (DestroyFieldATK) removed - Phase 42b
         // KillOpponentInvocationCardAbility removed - Phase 42b
-        new CantLiveWithoutAbility(
-            AbilityName.CantLiveWithoutJDG,
-            "Invocation can't live without Joueur Du Grenier",
-            list: new List<string>
-            {
-                "Joueur Du Grenier"
-            }
-        ),
+        // CantLiveWithoutAbility (CantLiveWithoutJDG) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetForetElfesSylvains) removed - Phase 42b
         // InvokeSpecificCardChoiceAbility removed - Phase 42b
-        new CantLiveWithoutAbility(
-            AbilityName.CantLiveWithoutComics,
-            "Invocation cannot live without Comic invocation card",
-            family: CardFamily.Comics
-        ),
+        // CantLiveWithoutAbility (CantLiveWithoutComics) removed - Phase 42b
         // SacrificeCardMinAtkMinDefFamilyNumberAbility (Sacrifice2Incarnation) removed - Phase 42b
         // DestroyFieldAtkDefAttackConditionAbility (DestroyFieldDEF) removed - Phase 42b
         // GetSpecificCardFromDeckAbility (GetBenzaieJeuneFromDeck) removed - Phase 42b
         // GetTypeCardFromDeckWithoutAttackAbility removed - Phase 42b
         // SacrificeCardAbility (SacrificeGranolax) removed - Phase 42b
         // OptionalSacrificeForAtkDefAbility (SacrificeJDGOnStudioDevForAtkDef) removed - Phase 42b
-        new CantLiveWithoutAbility(
-            AbilityName.CantLiveWithoutHuman,
-            "Invocation cannot live without Human invocation card",
-            family: CardFamily.Human
-        ),
+        // CantLiveWithoutAbility (CantLiveWithoutHuman) removed - Phase 42b
         // CopyAtkDefAbility removed - Phase 42b
         // LimitTurnExistenceAbility (SurviveOneTurn) removed - Phase 42b
         // GetSpecificCardAfterDeathAbility removed - Phase 42b
@@ -104,22 +81,10 @@ public class AbilityLibrary : StaticInstance<AbilityLibrary>
         // KillBothCardsIfAttackAbility removed - Phase 42b
         // SacrificeToInvokeAbility removed - Phase 42b
         // GetSpecificCardFromDeckOrYellowCardAbility removed - Phase 42b
-        new CantLiveWithoutAbility(
-            AbilityName.CantLiveWithoutGranolaxOrMechaGranolax,
-            "Invocation can't live without Granolax or Mecha-Granolax",
-            list: new List<string>
-            {
-                "Granolax",
-                "Mecha-Granolax"
-            }
-        ),
+        // CantLiveWithoutAbility (CantLiveWithoutGranolaxOrMechaGranolax) removed - Phase 42b
         // SkipOpponentAttackAbility removed - Phase 42b
         // BackToHandAfterDeathAbility (ComesBackFromDeath5Times) removed - Phase 42b
-        new CantLiveWithoutAbility(
-            AbilityName.CantLiveWithoutJapon,
-            "Tentacules cannot live without Japan invocation card",
-            family: CardFamily.Japan
-        ),
+        // CantLiveWithoutAbility (CantLiveWithoutJapon) removed - Phase 42b
         // DrawCardsAbility removed - Phase 42b: Using modern IAbility system
         // GiveAtkDefToFamilyMemberAbility (GiveAktDefToFistilandMember) removed - Phase 42b
         // GiveAtkDefToFamilyMemberAbility (GiveAktDefToRpgMember) removed - Phase 42b
