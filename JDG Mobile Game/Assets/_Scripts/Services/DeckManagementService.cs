@@ -33,8 +33,8 @@ public class DeckManagementService : IDeckManagementService
 
     public DeckManagementService(
         IEventBus eventBus,
-        ICardCollectionService cardCollectionService,
         ICardDataProvider cardDataProvider,
+        ICardCollectionService cardCollectionService = null,
         IAbilityProvider abilityProvider = null)
     {
         _eventBus = eventBus;
