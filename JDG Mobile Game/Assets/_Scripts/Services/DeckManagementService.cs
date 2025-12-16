@@ -17,14 +17,15 @@ using UnityEngine;
 /// Phase 24-25: Added IEventBus and ICardCollectionService dependencies for CardFactory.
 /// Phase 8: Uses ICardDataProvider instead of ResourceSystem.Instance.
 /// Phase 7: Added IAbilityProvider for ability system migration.
+/// Phase 46: Removed optional constructor params (VContainer doesn't support them).
+///           ICardCollectionService and IAbilityProvider are passed directly to CardFactory
+///           by callers (CardChoice) who have access to them.
 /// </summary>
 public class DeckManagementService : IDeckManagementService
 {
     private List<Card> _allCards;
     private readonly IEventBus _eventBus;
-    private readonly ICardCollectionService _cardCollectionService;
     private readonly ICardDataProvider _cardDataProvider;
-    private readonly IAbilityProvider _abilityProvider;
 
     public List<Card> Deck1AllCards { get; private set; } = new List<Card>();
     public List<Card> Deck2AllCards { get; private set; } = new List<Card>();
@@ -33,14 +34,10 @@ public class DeckManagementService : IDeckManagementService
 
     public DeckManagementService(
         IEventBus eventBus,
-        ICardDataProvider cardDataProvider,
-        ICardCollectionService cardCollectionService = null,
-        IAbilityProvider abilityProvider = null)
+        ICardDataProvider cardDataProvider)
     {
         _eventBus = eventBus;
-        _cardCollectionService = cardCollectionService;
         _cardDataProvider = cardDataProvider;
-        _abilityProvider = abilityProvider;
 
         // Phase 8: Use ICardDataProvider instead of ResourceSystem.Instance
         if (_cardDataProvider.IsLoaded)
@@ -119,7 +116,8 @@ public class DeckManagementService : IDeckManagementService
 
         CardChoice.GetRandomDeck(DeckConfiguration.MaxDeckCards - player1Deck.Count, ref player1Deck, Deck1AllCards);
         player1Deck.Reverse();
-        Player1DeckCards = player1Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+        // ICardCollectionService and IAbilityProvider are null for tutorial decks (passed by callers like CardChoice)
+        Player1DeckCards = player1Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, null, null)).ToList();
     }
 
     /// <summary>
@@ -149,7 +147,8 @@ public class DeckManagementService : IDeckManagementService
         }
 
         player2Deck.Reverse();
-        Player2DeckCards = player2Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, _cardCollectionService, _abilityProvider)).ToList();
+        // ICardCollectionService and IAbilityProvider are null for tutorial decks
+        Player2DeckCards = player2Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, null, null)).ToList();
     }
 
     /// <summary>
