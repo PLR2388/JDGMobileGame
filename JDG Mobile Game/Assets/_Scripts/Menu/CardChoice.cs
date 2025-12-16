@@ -53,9 +53,6 @@ namespace Menu
         // Phase 7: IAbilityProvider for ability system migration
         private IAbilityProvider _abilityProvider;
 
-        // Phase 45: Flag to track if DI was properly initialized
-        private bool _diInitialized;
-
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
@@ -66,6 +63,7 @@ namespace Menu
         /// Phase 8: Inject CardChoiceUIManager instead of using .Instance.
         /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
         /// Phase 7: Inject IAbilityProvider for ability system migration.
+        /// Phase 46: Requires MainScreenScope in scene for proper DI.
         /// </summary>
         [Inject]
         public void Construct(
@@ -84,78 +82,6 @@ namespace Menu
             _audioService = audioService;
             _cardChoiceUIManager = cardChoiceUIManager;
             _abilityProvider = abilityProvider;
-            _diInitialized = true;
-        }
-
-        /// <summary>
-        /// Unity Awake - ensure services are initialized.
-        /// Phase 45: Added fallback initialization if VContainer DI is not set up.
-        /// </summary>
-        private void Awake()
-        {
-            // VContainer injection runs before Awake, so if _diInitialized is false,
-            // VContainer DI is not set up properly in this scene
-            if (!_diInitialized)
-            {
-                Debug.LogWarning("CardChoice: VContainer DI not initialized. Using fallback initialization. " +
-                    "Please ensure LegacyServicesScope is attached to a GameObject in the scene.");
-                InitializeFallbackServices();
-            }
-        }
-
-        /// <summary>
-        /// Fallback initialization for when VContainer DI is not set up.
-        /// Creates minimal required services using FindObjectOfType and direct instantiation.
-        /// Phase 45: Added to handle scenes without proper VContainer setup.
-        /// </summary>
-        private void InitializeFallbackServices()
-        {
-            // Create EventBus if not injected
-            if (_eventBus == null)
-            {
-                _eventBus = new JDG.Infrastructure.Events.EventBus();
-            }
-
-            // Find CardChoiceUIManager in scene if not injected
-            if (_cardChoiceUIManager == null)
-            {
-                _cardChoiceUIManager = FindObjectOfType<CardChoiceUIManager>();
-            }
-
-            // Create CardSelectionService if not injected (only needs EventBus)
-            if (_cardSelectionService == null)
-            {
-                _cardSelectionService = new JDG.Infrastructure.Services.CardSelectionService(_eventBus);
-            }
-
-            // Create DeckManagementService if not injected
-            // Requires multiple dependencies, so we create a minimal stub
-            if (_deckManagementService == null)
-            {
-                // Get CardDataProvider (needs to load cards from resources)
-                var cardDataProvider = new JDG.Infrastructure.Services.CardDataProvider();
-
-                // Create minimal CardCollectionServiceAdapter (can be null for card choice)
-                ICardCollectionService cardCollection = null;
-
-                // Create AbilityProvider if not already set
-                if (_abilityProvider == null)
-                {
-                    var registry = new JDG.Application.Abilities.AbilityRegistry();
-                    _abilityProvider = new AbilityProviderService(registry, null, _eventBus);
-                }
-
-                _deckManagementService = new DeckManagementService(
-                    _eventBus,
-                    cardCollection,
-                    cardDataProvider,
-                    _abilityProvider);
-            }
-
-            // CardCollectionService can remain null for Main Screen scene
-            // (only used in game scene for field cards)
-
-            _diInitialized = true;
         }
 
         /// <summary>
