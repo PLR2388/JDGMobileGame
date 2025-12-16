@@ -1,0 +1,89 @@
+using System;
+using JDG.Application.Services;
+using UnityEngine;
+
+namespace JDG.Presentation.Presenters
+{
+    /// <summary>
+    /// Presenter for displaying dialog boxes and message boxes (MVP pattern).
+    /// Replaces UIManager's message box responsibility.
+    /// Part of Phase 5 - UIManager decomposition.
+    /// Phase 34: Updated to use ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 40: Updated to use IDialogService instead of MessageBox.Instance.
+    /// Phase 43: Migrated to JDG.Presentation using MessageBoxOptions instead of legacy MessageBoxConfig.
+    /// </summary>
+    public class DialogPresenter
+    {
+        private readonly Transform _canvas;
+        private readonly ILocalizationService _localizationService;
+        private readonly IDialogService _dialogService;
+
+        public DialogPresenter(Transform canvas, ILocalizationService localizationService, IDialogService dialogService)
+        {
+            _canvas = canvas;
+            _localizationService = localizationService;
+            _dialogService = dialogService;
+        }
+
+        /// <summary>
+        /// Displays a pause menu with the given action.
+        /// </summary>
+        /// <param name="onPositiveAction">Action to execute when user confirms.</param>
+        public void ShowPauseMenu(Action onPositiveAction)
+        {
+            var options = new MessageBoxOptions
+            {
+                Title = _localizationService.GetLocalizedValue("PAUSE_TITLE"),
+                Message = _localizationService.GetLocalizedValue("PAUSE_MESSAGE"),
+                ShowPositiveButton = true,
+                ShowNegativeButton = true,
+                OnPositive = onPositiveAction
+            };
+
+            _dialogService.ShowMessageBox(_canvas, options);
+        }
+
+        /// <summary>
+        /// Displays a generic message box.
+        /// </summary>
+        /// <param name="title">Dialog title.</param>
+        /// <param name="message">Dialog message.</param>
+        /// <param name="onPositiveAction">Optional action for positive button.</param>
+        /// <param name="onNegativeAction">Optional action for negative button.</param>
+        public void ShowMessageBox(
+            string title,
+            string message,
+            Action onPositiveAction = null,
+            Action onNegativeAction = null)
+        {
+            var options = new MessageBoxOptions
+            {
+                Title = title,
+                Message = message,
+                ShowPositiveButton = onPositiveAction != null,
+                ShowNegativeButton = onNegativeAction != null,
+                ShowOkButton = onPositiveAction == null && onNegativeAction == null,
+                OnPositive = onPositiveAction,
+                OnNegative = onNegativeAction
+            };
+
+            _dialogService.ShowMessageBox(_canvas, options);
+        }
+
+        /// <summary>
+        /// Displays a warning message box.
+        /// </summary>
+        /// <param name="message">Warning message to display.</param>
+        public void ShowWarning(string message)
+        {
+            var options = new MessageBoxOptions
+            {
+                Title = _localizationService.GetLocalizedValue("WARNING_TITLE"),
+                Message = message,
+                ShowOkButton = true
+            };
+
+            _dialogService.ShowMessageBox(_canvas, options);
+        }
+    }
+}

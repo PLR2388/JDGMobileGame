@@ -1,15 +1,16 @@
 using NUnit.Framework;
 using JDG.Application.Services;
+using JDG.Presentation.Presenters;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 
 /// <summary>
 /// Unit tests for DialogPresenter.
 /// Part of Phase 39+ - Test coverage improvement sprint.
 /// Phase 40: Updated to use IDialogService injection for comprehensive testing.
+/// Phase 43: Updated for migration to JDG.Presentation (uses MessageBoxOptions instead of MessageBoxConfig).
 /// </summary>
 [TestFixture]
 public class DialogPresenterTests
@@ -81,14 +82,13 @@ public class DialogPresenterTests
     #endregion
 
     #region ShowPauseMenu Tests
-    // Phase 40: Now using IDialogService injection for comprehensive testing
+    // Phase 43: Now using MessageBoxOptions via ShowMessageBox
 
     [Test]
     public void ShowPauseMenu_CallsLocalizationService()
     {
         // Arrange
-        bool wasCalled = false;
-        UnityAction testAction = () => wasCalled = true;
+        Action testAction = () => { };
 
         // Act
         _presenter.ShowPauseMenu(testAction);
@@ -101,21 +101,21 @@ public class DialogPresenterTests
     public void ShowPauseMenu_CallsDialogService()
     {
         // Arrange
-        UnityAction testAction = () => { };
+        Action testAction = () => { };
 
         // Act
         _presenter.ShowPauseMenu(testAction);
 
         // Assert
-        Assert.IsTrue(_dialogService.ShowMessageBoxLegacyCalled);
-        Assert.AreEqual(1, _dialogService.ShowMessageBoxLegacyCallCount);
+        Assert.IsTrue(_dialogService.ShowMessageBoxCalled);
+        Assert.AreEqual(1, _dialogService.ShowMessageBoxCallCount);
     }
 
     [Test]
     public void ShowPauseMenu_PassesCanvasToDialogService()
     {
         // Arrange
-        UnityAction testAction = () => { };
+        Action testAction = () => { };
 
         // Act
         _presenter.ShowPauseMenu(testAction);
@@ -125,22 +125,24 @@ public class DialogPresenterTests
     }
 
     [Test]
-    public void ShowPauseMenu_PassesCorrectConfigType()
+    public void ShowPauseMenu_PassesCorrectOptions()
     {
         // Arrange
-        UnityAction testAction = () => { };
+        Action testAction = () => { };
 
         // Act
         _presenter.ShowPauseMenu(testAction);
 
         // Assert
-        Assert.IsInstanceOf<MessageBoxConfig>(_dialogService.LastConfig);
+        Assert.IsNotNull(_dialogService.LastOptions);
+        Assert.IsTrue(_dialogService.LastOptions.ShowPositiveButton);
+        Assert.IsTrue(_dialogService.LastOptions.ShowNegativeButton);
     }
 
     #endregion
 
     #region ShowMessageBox Tests
-    // Phase 40: Now using IDialogService injection for comprehensive testing
+    // Phase 43: Now using MessageBoxOptions via ShowMessageBox
 
     [Test]
     public void ShowMessageBox_WithNullActions_CallsDialogService()
@@ -149,39 +151,37 @@ public class DialogPresenterTests
         _presenter.ShowMessageBox("Title", "Message", null, null);
 
         // Assert
-        Assert.IsTrue(_dialogService.ShowMessageBoxLegacyCalled);
+        Assert.IsTrue(_dialogService.ShowMessageBoxCalled);
     }
 
     [Test]
     public void ShowMessageBox_WithPositiveAction_SetsShowPositiveButton()
     {
         // Arrange
-        UnityAction positiveAction = () => { };
+        Action positiveAction = () => { };
 
         // Act
         _presenter.ShowMessageBox("Title", "Message", positiveAction, null);
 
         // Assert
-        var config = _dialogService.LastConfig as MessageBoxConfig;
-        Assert.IsNotNull(config);
-        Assert.IsTrue(config.ShowPositiveButton);
-        Assert.IsFalse(config.ShowNegativeButton);
+        Assert.IsNotNull(_dialogService.LastOptions);
+        Assert.IsTrue(_dialogService.LastOptions.ShowPositiveButton);
+        Assert.IsFalse(_dialogService.LastOptions.ShowNegativeButton);
     }
 
     [Test]
     public void ShowMessageBox_WithNegativeAction_SetsShowNegativeButton()
     {
         // Arrange
-        UnityAction negativeAction = () => { };
+        Action negativeAction = () => { };
 
         // Act
         _presenter.ShowMessageBox("Title", "Message", null, negativeAction);
 
         // Assert
-        var config = _dialogService.LastConfig as MessageBoxConfig;
-        Assert.IsNotNull(config);
-        Assert.IsFalse(config.ShowPositiveButton);
-        Assert.IsTrue(config.ShowNegativeButton);
+        Assert.IsNotNull(_dialogService.LastOptions);
+        Assert.IsFalse(_dialogService.LastOptions.ShowPositiveButton);
+        Assert.IsTrue(_dialogService.LastOptions.ShowNegativeButton);
     }
 
     [Test]
@@ -191,9 +191,8 @@ public class DialogPresenterTests
         _presenter.ShowMessageBox("Title", "Message", null, null);
 
         // Assert
-        var config = _dialogService.LastConfig as MessageBoxConfig;
-        Assert.IsNotNull(config);
-        Assert.IsTrue(config.ShowOkButton);
+        Assert.IsNotNull(_dialogService.LastOptions);
+        Assert.IsTrue(_dialogService.LastOptions.ShowOkButton);
     }
 
     [Test]
@@ -203,16 +202,15 @@ public class DialogPresenterTests
         _presenter.ShowMessageBox("Test Title", "Test Message", null, null);
 
         // Assert
-        var config = _dialogService.LastConfig as MessageBoxConfig;
-        Assert.IsNotNull(config);
-        Assert.AreEqual("Test Title", config.Title);
-        Assert.AreEqual("Test Message", config.Description);
+        Assert.IsNotNull(_dialogService.LastOptions);
+        Assert.AreEqual("Test Title", _dialogService.LastOptions.Title);
+        Assert.AreEqual("Test Message", _dialogService.LastOptions.Message);
     }
 
     #endregion
 
     #region ShowWarning Tests
-    // Phase 40: Now using IDialogService injection for comprehensive testing
+    // Phase 43: Now using MessageBoxOptions via ShowMessageBox
 
     [Test]
     public void ShowWarning_CallsLocalizationService()
@@ -231,7 +229,7 @@ public class DialogPresenterTests
         _presenter.ShowWarning("Test warning message");
 
         // Assert
-        Assert.IsTrue(_dialogService.ShowMessageBoxLegacyCalled);
+        Assert.IsTrue(_dialogService.ShowMessageBoxCalled);
     }
 
     [Test]
@@ -241,9 +239,8 @@ public class DialogPresenterTests
         _presenter.ShowWarning("Test warning message");
 
         // Assert
-        var config = _dialogService.LastConfig as MessageBoxConfig;
-        Assert.IsNotNull(config);
-        Assert.IsTrue(config.ShowOkButton);
+        Assert.IsNotNull(_dialogService.LastOptions);
+        Assert.IsTrue(_dialogService.LastOptions.ShowOkButton);
     }
 
     [Test]
@@ -253,94 +250,84 @@ public class DialogPresenterTests
         _presenter.ShowWarning("Test warning message");
 
         // Assert
-        var config = _dialogService.LastConfig as MessageBoxConfig;
-        Assert.IsNotNull(config);
-        Assert.AreEqual("Test warning message", config.Description);
+        Assert.IsNotNull(_dialogService.LastOptions);
+        Assert.AreEqual("Test warning message", _dialogService.LastOptions.Message);
     }
 
     #endregion
 
-    #region MessageBoxConfig Tests
+    #region MessageBoxOptions Tests
 
     [Test]
-    public void MessageBoxConfig_Constructor_SetsPropertiesCorrectly()
+    public void MessageBoxOptions_Constructor_SetsPropertiesCorrectly()
     {
         // Arrange & Act
         bool positiveActionCalled = false;
         bool negativeActionCalled = false;
-        UnityAction positiveAction = () => positiveActionCalled = true;
-        UnityAction negativeAction = () => negativeActionCalled = true;
+        Action positiveAction = () => positiveActionCalled = true;
+        Action negativeAction = () => negativeActionCalled = true;
 
-        // Constructor order: title, description, showOkButton, okAction, showPositiveButton, positiveAction, showNegativeButton, negativeAction
-        var config = new MessageBoxConfig(
-            title: "Test Title",
-            description: "Test Description",
-            showOkButton: false,
-            okAction: null,
-            showPositiveButton: true,
-            positiveAction: positiveAction,
-            showNegativeButton: true,
-            negativeAction: negativeAction
-        );
+        var options = new MessageBoxOptions
+        {
+            Title = "Test Title",
+            Message = "Test Description",
+            ShowOkButton = false,
+            ShowPositiveButton = true,
+            ShowNegativeButton = true,
+            OnPositive = positiveAction,
+            OnNegative = negativeAction
+        };
 
         // Assert
-        Assert.AreEqual("Test Title", config.Title);
-        Assert.AreEqual("Test Description", config.Description);
-        Assert.IsTrue(config.ShowPositiveButton);
-        Assert.IsTrue(config.ShowNegativeButton);
-        Assert.IsFalse(config.ShowOkButton);
+        Assert.AreEqual("Test Title", options.Title);
+        Assert.AreEqual("Test Description", options.Message);
+        Assert.IsTrue(options.ShowPositiveButton);
+        Assert.IsTrue(options.ShowNegativeButton);
+        Assert.IsFalse(options.ShowOkButton);
 
         // Verify actions are preserved
-        config.PositiveAction?.Invoke();
-        config.NegativeAction?.Invoke();
+        options.OnPositive?.Invoke();
+        options.OnNegative?.Invoke();
         Assert.IsTrue(positiveActionCalled);
         Assert.IsTrue(negativeActionCalled);
     }
 
     [Test]
-    public void MessageBoxConfig_DefaultShowOkButton_WhenNoActionButtons()
+    public void MessageBoxOptions_DefaultShowOkButton_WhenNoActionButtons()
     {
         // Arrange & Act
-        var config = new MessageBoxConfig(
-            title: "Title",
-            description: "Description",
-            showOkButton: true
-        );
+        var options = new MessageBoxOptions
+        {
+            Title = "Title",
+            Message = "Description",
+            ShowOkButton = true
+        };
 
         // Assert
-        Assert.IsTrue(config.ShowOkButton);
-        Assert.IsFalse(config.ShowPositiveButton);
-        Assert.IsFalse(config.ShowNegativeButton);
+        Assert.IsTrue(options.ShowOkButton);
+        Assert.IsFalse(options.ShowPositiveButton);
+        Assert.IsFalse(options.ShowNegativeButton);
     }
 
     [Test]
-    public void MessageBoxConfig_WithOkAction_StoresAction()
+    public void MessageBoxOptions_WithOkAction_StoresAction()
     {
         // Arrange
         bool okActionCalled = false;
-        UnityAction okAction = () => okActionCalled = true;
+        Action okAction = () => okActionCalled = true;
 
         // Act
-        var config = new MessageBoxConfig(
-            title: "Title",
-            description: "Description",
-            showOkButton: true,
-            okAction: okAction
-        );
+        var options = new MessageBoxOptions
+        {
+            Title = "Title",
+            Message = "Description",
+            ShowOkButton = true,
+            OnOk = okAction
+        };
 
         // Assert
-        config.OkAction?.Invoke();
+        options.OnOk?.Invoke();
         Assert.IsTrue(okActionCalled);
-    }
-
-    [Test]
-    public void MessageBoxConfig_InheritsFromUIConfig()
-    {
-        // Arrange & Act
-        var config = new MessageBoxConfig("Title", "Description");
-
-        // Assert
-        Assert.IsInstanceOf<UIConfig>(config);
     }
 
     #endregion
@@ -389,35 +376,53 @@ public class TestLocalizationServiceForDialog : ILocalizationService
 /// <summary>
 /// Mock IDialogService for testing.
 /// Phase 40: Added to enable comprehensive presenter testing.
-/// Tracks method calls and captures parameters for verification.
+/// Phase 43: Updated to track ShowMessageBox calls with MessageBoxOptions.
 /// </summary>
 public class MockDialogService : IDialogService
 {
-    // ShowMessageBoxLegacy tracking
+    // ShowMessageBox tracking (new method)
+    public bool ShowMessageBoxCalled { get; private set; }
+    public int ShowMessageBoxCallCount { get; private set; }
+    public object LastCanvas { get; private set; }
+    public MessageBoxOptions LastOptions { get; private set; }
+
+    // ShowCardSelector tracking
+    public bool ShowCardSelectorCalled { get; private set; }
+    public int ShowCardSelectorCallCount { get; private set; }
+    public CardSelectorOptions LastCardSelectorOptions { get; private set; }
+
+    // Legacy method tracking
     public bool ShowMessageBoxLegacyCalled { get; private set; }
     public int ShowMessageBoxLegacyCallCount { get; private set; }
-    public object LastCanvas { get; private set; }
-    public object LastConfig { get; private set; }
+    public object LastLegacyConfig { get; private set; }
 
-    // ShowCardSelectorLegacy tracking
-    public bool ShowCardSelectorLegacyCalled { get; private set; }
-    public int ShowCardSelectorLegacyCallCount { get; private set; }
-    public object LastCardSelectorConfig { get; private set; }
+    public void ShowMessageBox(object canvas, MessageBoxOptions options)
+    {
+        ShowMessageBoxCalled = true;
+        ShowMessageBoxCallCount++;
+        LastCanvas = canvas;
+        LastOptions = options;
+    }
+
+    public void ShowCardSelector(object canvas, CardSelectorOptions options)
+    {
+        ShowCardSelectorCalled = true;
+        ShowCardSelectorCallCount++;
+        LastCanvas = canvas;
+        LastCardSelectorOptions = options;
+    }
 
     public void ShowMessageBoxLegacy(object canvas, object config)
     {
         ShowMessageBoxLegacyCalled = true;
         ShowMessageBoxLegacyCallCount++;
         LastCanvas = canvas;
-        LastConfig = config;
+        LastLegacyConfig = config;
     }
 
     public void ShowCardSelectorLegacy(object canvas, object config)
     {
-        ShowCardSelectorLegacyCalled = true;
-        ShowCardSelectorLegacyCallCount++;
-        LastCanvas = canvas;
-        LastCardSelectorConfig = config;
+        // Not used in DialogPresenter tests
     }
 
     public Task<bool> ShowMessageBoxAsync(string title, string message, MessageBoxType type)
@@ -440,29 +445,18 @@ public class MockDialogService : IDialogService
         return Task.CompletedTask;
     }
 
-    public void ShowMessageBox(object canvas, MessageBoxOptions options)
-    {
-        ShowMessageBoxLegacyCalled = true;
-        ShowMessageBoxLegacyCallCount++;
-        LastCanvas = canvas;
-    }
-
-    public void ShowCardSelector(object canvas, CardSelectorOptions options)
-    {
-        ShowCardSelectorLegacyCalled = true;
-        ShowCardSelectorLegacyCallCount++;
-        LastCanvas = canvas;
-    }
-
     public void Reset()
     {
+        ShowMessageBoxCalled = false;
+        ShowMessageBoxCallCount = 0;
+        ShowCardSelectorCalled = false;
+        ShowCardSelectorCallCount = 0;
         ShowMessageBoxLegacyCalled = false;
         ShowMessageBoxLegacyCallCount = 0;
-        ShowCardSelectorLegacyCalled = false;
-        ShowCardSelectorLegacyCallCount = 0;
         LastCanvas = null;
-        LastConfig = null;
-        LastCardSelectorConfig = null;
+        LastOptions = null;
+        LastCardSelectorOptions = null;
+        LastLegacyConfig = null;
     }
 }
 
