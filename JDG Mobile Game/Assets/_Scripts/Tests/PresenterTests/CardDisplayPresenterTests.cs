@@ -285,16 +285,26 @@ public class MockInGameCard : IInGameCard
 {
     public string Title { get; set; } = "Test Card";
     public string Description { get; set; } = "Test Description";
+    public string DetailedDescription { get; set; } = "Test Detailed Description";
+    public JDG.Domain.CardOwner CardOwner { get; set; } = JDG.Domain.CardOwner.Player1;
+    public JDG.Domain.Enums.CardType Type { get; set; } = JDG.Domain.Enums.CardType.Invocation;
+    public bool Collector { get; set; } = false;
+    public string VisualId { get; set; } = "test_visual_id";
 }
 
 /// <summary>
 /// Mock implementation of ICardVisualService for testing.
+/// Phase 43: Updated to implement all ICardVisualService interface members.
 /// </summary>
 public class MockCardVisualService : ICardVisualService
 {
     public bool GetMaterialCalled { get; private set; }
+    public bool GetMaterialByVisualIdCalled { get; private set; }
+    public bool HasVisualCalled { get; private set; }
     public IInGameCard LastCard { get; private set; }
+    public string LastVisualId { get; private set; }
     public Material MaterialToReturn { get; set; }
+    public bool HasVisualResult { get; set; } = true;
 
     public object GetMaterial(IInGameCard card)
     {
@@ -303,11 +313,29 @@ public class MockCardVisualService : ICardVisualService
         return MaterialToReturn;
     }
 
+    public object GetMaterialByVisualId(string visualId)
+    {
+        GetMaterialByVisualIdCalled = true;
+        LastVisualId = visualId;
+        return MaterialToReturn;
+    }
+
+    public bool HasVisual(IInGameCard card)
+    {
+        HasVisualCalled = true;
+        LastCard = card;
+        return HasVisualResult;
+    }
+
     public void Reset()
     {
         GetMaterialCalled = false;
+        GetMaterialByVisualIdCalled = false;
+        HasVisualCalled = false;
         LastCard = null;
+        LastVisualId = null;
         MaterialToReturn = null;
+        HasVisualResult = true;
     }
 }
 
