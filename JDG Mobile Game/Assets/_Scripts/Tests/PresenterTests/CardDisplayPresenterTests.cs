@@ -1,23 +1,27 @@
 using NUnit.Framework;
 using UnityEngine;
-using Cards;
+using JDG.Application.Cards;
+using JDG.Application.Services;
+using JDG.Presentation.Presenters;
 
 /// <summary>
 /// Unit tests for CardDisplayPresenter.
 /// Part of Phase 39+ - Test coverage improvement sprint.
-/// Tests in default assembly to access presenters which depend on legacy types.
+/// Phase 43: Updated for migration to JDG.Presentation - uses ICardVisualService.
 /// </summary>
 [TestFixture]
 public class CardDisplayPresenterTests
 {
     private CardDisplayPresenter _presenter;
     private TestBigImageCard _testBigImageCard;
+    private MockCardVisualService _mockCardVisualService;
 
     [SetUp]
     public void SetUp()
     {
         _testBigImageCard = new TestBigImageCard();
-        _presenter = new CardDisplayPresenter(_testBigImageCard.GameObject);
+        _mockCardVisualService = new MockCardVisualService();
+        _presenter = new CardDisplayPresenter(_testBigImageCard.GameObject, _mockCardVisualService);
     }
 
     [TearDown]
@@ -29,7 +33,7 @@ public class CardDisplayPresenterTests
     #region Constructor Tests
 
     [Test]
-    public void Constructor_WithValidGameObject_CreatesPresenter()
+    public void Constructor_WithValidParameters_CreatesPresenter()
     {
         // Assert
         Assert.IsNotNull(_presenter);
@@ -39,7 +43,17 @@ public class CardDisplayPresenterTests
     public void Constructor_WithNullGameObject_DoesNotThrow()
     {
         // Arrange & Act
-        var presenter = new CardDisplayPresenter(null);
+        var presenter = new CardDisplayPresenter(null, _mockCardVisualService);
+
+        // Assert
+        Assert.IsNotNull(presenter);
+    }
+
+    [Test]
+    public void Constructor_WithNullCardVisualService_DoesNotThrow()
+    {
+        // Arrange & Act
+        var presenter = new CardDisplayPresenter(_testBigImageCard.GameObject, null);
 
         // Assert
         Assert.IsNotNull(presenter);
@@ -60,7 +74,7 @@ public class CardDisplayPresenterTests
     public void ShowCard_WithNullBigImageCard_DoesNotThrow()
     {
         // Arrange
-        var presenter = new CardDisplayPresenter(null);
+        var presenter = new CardDisplayPresenter(null, _mockCardVisualService);
 
         // Act & Assert (should not throw even with null GameObject)
         Assert.DoesNotThrow(() => presenter.ShowCard(null));
@@ -70,7 +84,7 @@ public class CardDisplayPresenterTests
     public void ShowCard_WithValidCard_ActivatesGameObject()
     {
         // Arrange
-        var testCard = new TestInGameCard();
+        var testCard = new MockInGameCard();
 
         // Act
         _presenter.ShowCard(testCard);
@@ -80,17 +94,47 @@ public class CardDisplayPresenterTests
     }
 
     [Test]
-    public void ShowCard_WithValidCard_SetsMaterial()
+    public void ShowCard_WithValidCard_CallsCardVisualService()
     {
         // Arrange
-        var testCard = new TestInGameCard();
-        var expectedMaterial = testCard.MaterialCard;
+        var testCard = new MockInGameCard();
+
+        // Act
+        _presenter.ShowCard(testCard);
+
+        // Assert
+        Assert.IsTrue(_mockCardVisualService.GetMaterialCalled);
+        Assert.AreEqual(testCard, _mockCardVisualService.LastCard);
+    }
+
+    [Test]
+    public void ShowCard_WithValidCard_SetsMaterialFromService()
+    {
+        // Arrange
+        var testCard = new MockInGameCard();
+        var expectedMaterial = new Material(Shader.Find("UI/Default"));
+        _mockCardVisualService.MaterialToReturn = expectedMaterial;
 
         // Act
         _presenter.ShowCard(testCard);
 
         // Assert
         Assert.AreEqual(expectedMaterial, _testBigImageCard.ImageMaterial);
+    }
+
+    [Test]
+    public void ShowCard_WhenServiceReturnsNull_DoesNotSetMaterial()
+    {
+        // Arrange
+        var testCard = new MockInGameCard();
+        _mockCardVisualService.MaterialToReturn = null;
+        var originalMaterial = _testBigImageCard.ImageMaterial;
+
+        // Act
+        _presenter.ShowCard(testCard);
+
+        // Assert - Material should remain unchanged (null)
+        Assert.IsNull(_testBigImageCard.ImageMaterial);
     }
 
     #endregion
@@ -101,7 +145,7 @@ public class CardDisplayPresenterTests
     public void HideCard_DeactivatesGameObject()
     {
         // Arrange - First show a card
-        var testCard = new TestInGameCard();
+        var testCard = new MockInGameCard();
         _presenter.ShowCard(testCard);
 
         // Act
@@ -115,7 +159,7 @@ public class CardDisplayPresenterTests
     public void HideCard_WithNullBigImageCard_DoesNotThrow()
     {
         // Arrange
-        var presenter = new CardDisplayPresenter(null);
+        var presenter = new CardDisplayPresenter(null, _mockCardVisualService);
 
         // Act & Assert
         Assert.DoesNotThrow(() => presenter.HideCard());
@@ -141,7 +185,7 @@ public class CardDisplayPresenterTests
     public void ShowThenHide_TogglesVisibilityCorrectly()
     {
         // Arrange
-        var testCard = new TestInGameCard();
+        var testCard = new MockInGameCard();
 
         // Act & Assert - Show
         _presenter.ShowCard(testCard);
@@ -160,16 +204,20 @@ public class CardDisplayPresenterTests
     public void ShowCard_MultipleTimes_UpdatesMaterialEachTime()
     {
         // Arrange
-        var card1 = new TestInGameCard("Material1");
-        var card2 = new TestInGameCard("Material2");
+        var card1 = new MockInGameCard();
+        var card2 = new MockInGameCard();
+        var material1 = new Material(Shader.Find("UI/Default")) { name = "Material1" };
+        var material2 = new Material(Shader.Find("UI/Default")) { name = "Material2" };
 
         // Act & Assert - Show first card
+        _mockCardVisualService.MaterialToReturn = material1;
         _presenter.ShowCard(card1);
-        Assert.AreEqual(card1.MaterialCard, _testBigImageCard.ImageMaterial);
+        Assert.AreEqual(material1, _testBigImageCard.ImageMaterial);
 
         // Act & Assert - Show second card
+        _mockCardVisualService.MaterialToReturn = material2;
         _presenter.ShowCard(card2);
-        Assert.AreEqual(card2.MaterialCard, _testBigImageCard.ImageMaterial);
+        Assert.AreEqual(material2, _testBigImageCard.ImageMaterial);
     }
 
     #endregion
@@ -185,7 +233,7 @@ public class TestBigImageCard : System.IDisposable
 {
     public GameObject GameObject { get; private set; }
     public bool IsActive { get; private set; }
-    public Material ImageMaterial { get; private set; }
+    public Material ImageMaterial => _image?.material;
     private UnityEngine.UI.Image _image;
 
     public TestBigImageCard()
@@ -210,18 +258,6 @@ public class TestBigImageCard : System.IDisposable
             Object.DestroyImmediate(GameObject);
         }
     }
-
-    /// <summary>
-    /// Helper to track material changes on the Image component.
-    /// Called from test to check material after ShowCard.
-    /// </summary>
-    public void UpdateTracking()
-    {
-        if (_image != null)
-        {
-            ImageMaterial = _image.material;
-        }
-    }
 }
 
 /// <summary>
@@ -243,21 +279,35 @@ public class GameObjectActiveTracker : MonoBehaviour
 }
 
 /// <summary>
-/// Test double for InGameCard.
-/// Provides minimal implementation for testing CardDisplayPresenter.
-/// Since InGameCard fields are protected, we use a subclass to set them.
+/// Mock implementation of IInGameCard for testing.
 /// </summary>
-public class TestInGameCard : InGameCard
+public class MockInGameCard : IInGameCard
 {
-    public TestInGameCard(string materialName = "TestMaterial")
+    public string Title { get; set; } = "Test Card";
+    public string Description { get; set; } = "Test Description";
+}
+
+/// <summary>
+/// Mock implementation of ICardVisualService for testing.
+/// </summary>
+public class MockCardVisualService : ICardVisualService
+{
+    public bool GetMaterialCalled { get; private set; }
+    public IInGameCard LastCard { get; private set; }
+    public Material MaterialToReturn { get; set; }
+
+    public object GetMaterial(IInGameCard card)
     {
-        // Set protected field via subclass constructor
-        materialCard = new Material(Shader.Find("UI/Default"));
-        if (materialCard != null)
-        {
-            materialCard.name = materialName;
-        }
-        title = "TestCard";
+        GetMaterialCalled = true;
+        LastCard = card;
+        return MaterialToReturn;
+    }
+
+    public void Reset()
+    {
+        GetMaterialCalled = false;
+        LastCard = null;
+        MaterialToReturn = null;
     }
 }
 
