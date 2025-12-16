@@ -16,33 +16,11 @@ namespace JDG.DI
     /// </summary>
     public class GameSceneScope : LifetimeScope
     {
-        protected override void Awake()
-        {
-            // VContainer's auto-parent-finding goes to the ROOT scope (GameLifetimeScope),
-            // but we need SharedServicesScope which has the actual service registrations.
-            // Explicitly find and set SharedServicesScope as our parent.
-            if (Parent == null)
-            {
-                var sharedScope = FindObjectOfType<SharedServicesScope>();
-                if (sharedScope != null)
-                {
-                    Parent = sharedScope;
-                    UnityEngine.Debug.Log("GameSceneScope: Set parent to SharedServicesScope");
-                }
-                else
-                {
-                    UnityEngine.Debug.LogError(
-                        "GameSceneScope: Could not find SharedServicesScope! Make sure:\n" +
-                        "1. You started from the _preload scene (not Game directly)\n" +
-                        "2. SharedServicesScope has 'Auto Run' checked in _preload scene");
-                }
-            }
-
-            base.Awake();
-        }
-
         protected override void Configure(IContainerBuilder builder)
         {
+            UnityEngine.Debug.Log("GameSceneScope: Configuring...");
+            UnityEngine.Debug.Log($"GameSceneScope: Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+
             // ============================================
             // GAME SCENE MONOBEHAVIOURS
             // ============================================
