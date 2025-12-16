@@ -1,0 +1,30 @@
+{
+    "name": "JDG.Presentation.Tests",
+    "rootNamespace": "JDG.Presentation.Tests",
+    "references": [
+        "JDG.Domain",
+        "JDG.Application",
+        "JDG.Infrastructure",
+        "JDG.Presentation",
+        "JDG.TestUtilities",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "VContainer",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "NSubstitute.dll",
+        "Castle.Core.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
