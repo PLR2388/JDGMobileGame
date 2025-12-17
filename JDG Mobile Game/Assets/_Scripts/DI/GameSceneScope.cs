@@ -3,7 +3,6 @@ using VContainer;
 using VContainer.Unity;
 using JDG.Application.Services;
 using JDG.Infrastructure.Services;
-using JDG.Bridge;
 
 namespace JDG.DI
 {
@@ -46,9 +45,7 @@ namespace JDG.DI
             // ============================================
             // GAME SCENE MONOBEHAVIOURS
             // ============================================
-
-            // Legacy Card Loader - loads card data
-            builder.RegisterComponentInHierarchy<LegacyCardLoader>();
+            // Note: LegacyCardLoader is in _preload scene, registered in SharedServicesScope
 
             // Input Manager - scene-specific
             builder.RegisterComponentInHierarchy<InputManager>();

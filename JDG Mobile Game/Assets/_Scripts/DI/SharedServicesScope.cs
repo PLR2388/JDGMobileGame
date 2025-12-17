@@ -6,6 +6,7 @@ using JDG.Application.Abilities.Implementations;
 using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Application.UseCases;
+using JDG.Bridge;
 using JDG.Infrastructure.Events;
 using JDG.Infrastructure.Repositories;
 using JDG.Infrastructure.Services;
@@ -33,6 +34,14 @@ namespace JDG.DI
         protected override void Configure(IContainerBuilder builder)
         {
             UnityEngine.Debug.Log("SharedServicesScope: Configuring ROOT scope...");
+
+            // ============================================
+            // PRELOAD SCENE MONOBEHAVIOURS
+            // ============================================
+
+            // Legacy Card Loader - loads card data and initializes legacy ability systems
+            // Must be registered here because it's in _preload scene, not Game scene
+            builder.RegisterComponentInHierarchy<LegacyCardLoader>();
 
             // ============================================
             // INFRASTRUCTURE LAYER - Event Bus & Repositories
