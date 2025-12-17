@@ -72,17 +72,14 @@ namespace JDG.DI
             // Card Placement Service - business logic for card placement
             builder.Register<ICardPlacementService, CardPlacementService>(Lifetime.Singleton);
 
-            // Deck Initialization Service
-            builder.Register<IDeckInitializationService, DeckInitializationService>(Lifetime.Singleton);
-
             // Card Data Provider - replaces ResourceSystem.Instance
             builder.Register<JDG.Application.Services.ICardDataProvider, JDG.Infrastructure.Services.CardDataProvider>(Lifetime.Singleton);
 
             // Deck Management Service - deck data storage
             builder.Register<IDeckManagementService, DeckManagementService>(Lifetime.Singleton);
 
-            // Card Instantiation Service - GameObject creation
-            builder.Register<ICardInstantiationService, CardInstantiationService>(Lifetime.Singleton);
+            // Note: ICardInstantiationService and IDeckInitializationService are registered in
+            // GameSceneScope because they depend on CardPoolManager (Game scene MonoBehaviour)
 
             // Combat Service - combat operations
             builder.Register<CombatService>(Lifetime.Singleton);
