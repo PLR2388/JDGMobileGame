@@ -36,14 +36,6 @@ namespace JDG.DI
             UnityEngine.Debug.Log("SharedServicesScope: Configuring ROOT scope...");
 
             // ============================================
-            // PRELOAD SCENE MONOBEHAVIOURS
-            // ============================================
-
-            // Legacy Card Loader - loads card data and initializes legacy ability systems
-            // Must be registered here because it's in _preload scene, not Game scene
-            builder.RegisterComponentInHierarchy<LegacyCardLoader>();
-
-            // ============================================
             // INFRASTRUCTURE LAYER - Event Bus & Repositories
             // ============================================
 
@@ -148,9 +140,20 @@ namespace JDG.DI
             builder.Register<FieldAbilityFactory>(Lifetime.Singleton);
             builder.Register<SpecialAbilityFactory>(Lifetime.Singleton);
 
-            // Register abilities after container is built
+            // Initialize legacy systems and register abilities after container is built
             builder.RegisterBuildCallback(container =>
             {
+                // Initialize legacy static fields
+                var gameStateService = container.Resolve<GameStateService>();
+                var localizationService = container.Resolve<ILocalizationService>();
+                var dialogService = container.Resolve<IDialogService>();
+                LegacySystemInitializer.Initialize(gameStateService, localizationService, dialogService);
+
+                // Load legacy cards
+                var cardRepository = container.Resolve<ICardRepository>();
+                LegacySystemInitializer.LoadCards(cardRepository);
+
+                // Register all abilities
                 RegisterAllAbilities(container);
             });
 
