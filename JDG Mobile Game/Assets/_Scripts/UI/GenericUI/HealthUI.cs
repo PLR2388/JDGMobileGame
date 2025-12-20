@@ -29,13 +29,21 @@ public class HealthUI : MonoBehaviour
     /// <summary>
     /// Initialization logic for the health UI.
     /// Phase 21-22: Subscribes to EventBus instead of static UnityEvent.
+    /// Phase 46: Moved EventBus subscription to Start to ensure VContainer injection is complete.
     /// </summary>
     private void Awake()
     {
         // Initialize the health text for both players at the start.
         SetHealthText(PlayerStatus.MaxHealth, true);
         SetHealthText(PlayerStatus.MaxHealth, false);
+    }
 
+    /// <summary>
+    /// Subscribe to events after VContainer injection is complete.
+    /// Phase 46: Moved from Awake to Start.
+    /// </summary>
+    private void Start()
+    {
         // Phase 21-22: Subscribe to EventBus PlayerHealthChangedEvent
         _eventBus.Subscribe<PlayerHealthChangedEvent>(OnPlayerHealthChanged);
     }

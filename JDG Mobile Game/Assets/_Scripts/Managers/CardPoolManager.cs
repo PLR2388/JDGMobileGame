@@ -14,21 +14,34 @@ public class CardPoolManager : MonoBehaviour
     [SerializeField] private GameObject prefabCard;
     [SerializeField] public Transform cardPoolHolder;
 
+    [Header("Physical Card Prefab (for game board)")]
+    [SerializeField] private GameObject physicalCardPrefab;
+
+    /// <summary>
+    /// Exposes the UI card prefab (with CardDisplay) for card pool/selection.
+    /// </summary>
+    public GameObject PrefabCard => prefabCard;
+
+    /// <summary>
+    /// Exposes the physical card prefab (with PhysicalCardDisplay) for game board cards.
+    /// Phase 46: Added separate prefab for physical cards on the game board.
+    /// </summary>
+    public GameObject PhysicalCardPrefab => physicalCardPrefab;
+
     private readonly List<GameObject> pooledCards = new List<GameObject>();
 
     // Phase 17-18: Injected dependencies
     private IDeckManagementService _deckManagementService;
-    private IDeckInitializationService _deckInitializationService;
 
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
+    /// Phase 46: Removed unused IDeckInitializationService to fix circular dependency.
     /// </summary>
     [Inject]
-    public void Construct(IDeckManagementService deckManagementService, IDeckInitializationService deckInitializationService)
+    public void Construct(IDeckManagementService deckManagementService)
     {
         _deckManagementService = deckManagementService;
-        _deckInitializationService = deckInitializationService;
     }
 
     /// <summary>

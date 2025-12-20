@@ -63,14 +63,16 @@ namespace JDG.DI
             // Card Visual Service - abstracts Unity Material dependencies
             builder.Register<ICardVisualService, CardVisualService>(Lifetime.Singleton);
 
-            // Raycast Service
-            builder.Register<IRaycastService, RaycastService>(Lifetime.Singleton);
+            // Note: IRaycastService is registered in GameSceneScope because it depends on
+            // IInputService, which depends on InputManager (scene-specific MonoBehaviour)
 
             // Player Service - manages player state
             builder.Register<IPlayerService, PlayerService>(Lifetime.Singleton);
 
-            // Card Placement Service - business logic for card placement
-            builder.Register<ICardPlacementService, CardPlacementService>(Lifetime.Singleton);
+            // Note: ICardPlacementService is NOT registered here because it depends on
+            // scene-specific services (ICardCollectionService, IPlayerStatusProvider).
+            // MonoBehaviours that need card placement should use CardPlacementService directly
+            // or we need to refactor the dependency structure.
 
             // Card Data Provider - replaces ResourceSystem.Instance
             builder.Register<JDG.Application.Services.ICardDataProvider, JDG.Infrastructure.Services.CardDataProvider>(Lifetime.Singleton);
@@ -78,13 +80,8 @@ namespace JDG.DI
             // Deck Management Service - deck data storage
             builder.Register<IDeckManagementService, DeckManagementService>(Lifetime.Singleton);
 
-            // Note: ICardInstantiationService and IDeckInitializationService are registered in
-            // GameSceneScope because they depend on CardPoolManager (Game scene MonoBehaviour)
-
-            // Combat Service - combat operations
-            builder.Register<CombatService>(Lifetime.Singleton);
-            builder.Register<ICombatService>(c => c.Resolve<CombatService>(), Lifetime.Singleton);
-            builder.Register<ICombatQueryService>(c => c.Resolve<CombatService>(), Lifetime.Singleton);
+            // Note: ICardInstantiationService, IDeckInitializationService, and CombatService are registered in
+            // GameSceneScope because they depend on scene-specific MonoBehaviours
 
             // Card Selection Service - pure C#, no MonoBehaviour needed
             builder.Register<JDG.Application.Services.ICardSelectionService, CardSelectionService>(Lifetime.Singleton);

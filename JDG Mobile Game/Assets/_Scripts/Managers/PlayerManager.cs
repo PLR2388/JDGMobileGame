@@ -57,10 +57,11 @@ public class PlayerManager : MonoBehaviour, IPlayerStatusProvider
     }
 
     /// <summary>
-    /// Awake method to initialize components and settings.
+    /// Start method to initialize components and settings.
     /// Phase 28: Removed Singleton base class, now regular MonoBehaviour.
+    /// Phase 46: Moved from Awake to Start to ensure VContainer injection is complete.
     /// </summary>
-    private void Awake()
+    private void Start()
     {
         InitShieldCount();
     }

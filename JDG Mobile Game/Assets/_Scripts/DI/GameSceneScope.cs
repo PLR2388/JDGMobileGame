@@ -1,87 +1,220 @@
+using _Scripts.Cards.InvocationCards;
+using Cards;
+using Cards.FieldCards;
+using Cards.EffectCards;
+using Cards.EquipmentCards;
+using JDG.Application.Services;
+using JDG.Infrastructure.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using JDG.Application.Services;
-using JDG.Infrastructure.Services;
 
 namespace JDG.DI
 {
     /// <summary>
     /// VContainer lifetime scope for Game scene.
-    /// Registers MonoBehaviours that exist only in the Game scene.
-    /// Phase 46: Split from LegacyServicesScope for proper scene-based DI.
-    ///
-    /// Place this on a GameObject in the Game scene.
-    /// Auto Run = true, Parent = None (explicitly finds SharedServicesScope via EnqueueParent).
+    /// Registers scene-specific services and handles MonoBehaviour injection.
     /// </summary>
     public class GameSceneScope : LifetimeScope
     {
         protected override void Awake()
         {
-            Debug.Log("GameSceneScope: Awake called, looking for SharedServicesScope...");
+            Debug.Log("GameSceneScope: Awake called");
 
-            // SharedServicesScope is in DontDestroyOnLoad, so auto-find doesn't work.
-            // We must explicitly enqueue it as parent before base.Awake() builds the container.
+            // Find SharedServicesScope in DontDestroyOnLoad
             var sharedScope = FindObjectOfType<SharedServicesScope>();
             if (sharedScope != null)
             {
-                Debug.Log($"GameSceneScope: Found SharedServicesScope, enqueueing as parent");
+                Debug.Log("GameSceneScope: Found SharedServicesScope, setting as parent");
                 EnqueueParent(sharedScope);
             }
             else
             {
-                Debug.LogError("GameSceneScope: SharedServicesScope NOT FOUND! DI will fail.");
+                Debug.LogError("GameSceneScope: SharedServicesScope NOT FOUND! Make sure _preload scene loads first.");
+                return;
             }
 
             base.Awake();
-            Debug.Log($"GameSceneScope: After Awake, Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
         }
 
         protected override void Configure(IContainerBuilder builder)
         {
-            Debug.Log("GameSceneScope: Configuring...");
-            Debug.Log($"GameSceneScope: Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+            Debug.Log("GameSceneScope: Configure called");
 
             // ============================================
-            // GAME SCENE MONOBEHAVIOURS
+            // SCENE MONOBEHAVIOURS (must be registered first for services that depend on them)
             // ============================================
-            // Note: LegacyCardLoader is in _preload scene, registered in SharedServicesScope
 
-            // Input Manager - scene-specific
-            builder.RegisterComponentInHierarchy<InputManager>();
-            builder.Register<IInputService, InputService>(Lifetime.Singleton);
+            // CardPoolManager - required by CardInstantiationService
+            var cardPoolManager = FindObjectOfType<CardPoolManager>();
+            if (cardPoolManager != null)
+            {
+                builder.RegisterInstance(cardPoolManager);
+                Debug.Log("GameSceneScope: Registered CardPoolManager instance");
+            }
+            else
+            {
+                Debug.LogError("GameSceneScope: CardPoolManager NOT FOUND in scene!");
+            }
 
-            // Card Pool Manager - manages card object pooling
-            builder.RegisterComponentInHierarchy<CardPoolManager>();
-            builder.Register<ICardPoolService, CardPoolService>(Lifetime.Singleton);
+            // InvocationMenuManager - required by InvocationMenuService
+            var invocationMenuManager = FindObjectOfType<InvocationMenuManager>();
+            if (invocationMenuManager != null)
+            {
+                builder.RegisterInstance(invocationMenuManager);
+                Debug.Log("GameSceneScope: Registered InvocationMenuManager instance");
+            }
 
-            // Card Instantiation Service - depends on CardPoolManager (must be after CardPoolManager)
-            builder.Register<ICardInstantiationService, CardInstantiationService>(Lifetime.Singleton);
+            // RoundDisplayManager - required by RoundDisplayService
+            var roundDisplayManager = FindObjectOfType<RoundDisplayManager>();
+            if (roundDisplayManager != null)
+            {
+                builder.RegisterInstance(roundDisplayManager);
+                Debug.Log("GameSceneScope: Registered RoundDisplayManager instance");
+            }
 
-            // Deck Initialization Service - depends on ICardInstantiationService
-            builder.Register<IDeckInitializationService, DeckInitializationService>(Lifetime.Singleton);
+            // InputManager - required by InputService
+            var inputManager = FindObjectOfType<InputManager>();
+            if (inputManager != null)
+            {
+                builder.RegisterInstance(inputManager);
+                Debug.Log("GameSceneScope: Registered InputManager instance");
+            }
+            else
+            {
+                Debug.LogError("GameSceneScope: InputManager NOT FOUND in scene!");
+            }
 
-            // Card Selection Manager - for in-game card selection UI
-            // Note: ICardSelectionService is registered in SharedServicesScope (pure C#)
-            // CardSelectionManager is the legacy UI MonoBehaviour
-            builder.RegisterComponentInHierarchy<CardSelectionManager>();
+            // ============================================
+            // SCENE-SPECIFIC SERVICES
+            // These depend on MonoBehaviours that only exist in this scene
+            // ============================================
 
-            // Card Collection Service - bridges to CardManager
-            builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Singleton);
+            // ICardCollectionService - requires PlayerCardManager from scene
+            builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Scoped);
 
-            // Invocation Menu Manager - card action menu
-            builder.RegisterComponentInHierarchy<InvocationMenuManager>();
-            builder.Register<IInvocationMenuService, InvocationMenuService>(Lifetime.Singleton);
+            // IPlayerStatusProvider - requires PlayerManager from scene
+            var playerManager = FindObjectOfType<PlayerManager>();
+            if (playerManager != null)
+            {
+                builder.RegisterInstance<IPlayerStatusProvider>(playerManager);
+                Debug.Log("GameSceneScope: Registered PlayerManager as IPlayerStatusProvider");
+            }
 
-            // Round Display Manager - turn/phase display
-            builder.RegisterComponentInHierarchy<RoundDisplayManager>();
-            builder.Register<IRoundDisplayService, RoundDisplayService>(Lifetime.Singleton);
+            // Canvas Transform for CombatService
+            var canvas = FindObjectOfType<Canvas>();
+            if (canvas != null)
+            {
+                builder.RegisterInstance(canvas.transform).As<Transform>();
+            }
 
-            // UI Manager - delegates to presenters (being phased out)
-            builder.RegisterComponentInHierarchy<UIManager>();
+            // ICardPlacementService - depends on ICardCollectionService, IPlayerStatusProvider
+            builder.Register<ICardPlacementService, CardPlacementService>(Lifetime.Scoped);
 
-            // Player Manager - player status provider
-            builder.RegisterComponentInHierarchy<PlayerManager>().As<IPlayerStatusProvider>();
+            // CombatService - depends on ICardCollectionService, IPlayerStatusProvider, Transform
+            builder.Register<CombatService>(Lifetime.Scoped);
+            builder.Register<ICombatService>(c => c.Resolve<CombatService>(), Lifetime.Scoped);
+            builder.Register<ICombatQueryService>(c => c.Resolve<CombatService>(), Lifetime.Scoped);
+
+            // ICardInstantiationService - depends on CardPoolManager (registered above)
+            builder.Register<ICardInstantiationService, CardInstantiationService>(Lifetime.Scoped);
+
+            // IDeckInitializationService - depends on IDeckManagementService (parent), ICardInstantiationService
+            builder.Register<IDeckInitializationService, DeckInitializationService>(Lifetime.Scoped);
+
+            // IInvocationMenuService - for UI menu
+            builder.Register<IInvocationMenuService, InvocationMenuService>(Lifetime.Scoped);
+
+            // IRoundDisplayService
+            builder.Register<IRoundDisplayService, RoundDisplayService>(Lifetime.Scoped);
+
+            // IInputService - depends on InputManager (registered above)
+            builder.Register<IInputService, InputService>(Lifetime.Scoped);
+
+            // IRaycastService - depends on IInputService
+            builder.Register<IRaycastService, RaycastService>(Lifetime.Scoped);
+
+            // Services that need PlayerCardManagers (player1 and player2)
+            var playerCardManagers = FindObjectsOfType<PlayerCardManager>();
+            if (playerCardManagers.Length >= 2)
+            {
+                // PlayerCardManagers are ordered by scene hierarchy - player 1 first
+                var player1CardManager = playerCardManagers[0];
+                var player2CardManager = playerCardManagers[1];
+
+                // ITurnService - depends on GameStateService, PlayerCardManagers, IPlayerStatusProvider, Transform
+                builder.Register<ITurnService>(container =>
+                {
+                    return new TurnService(
+                        container.Resolve<GameStateService>(),
+                        player1CardManager,
+                        player2CardManager,
+                        container.Resolve<IPlayerStatusProvider>(),
+                        container.Resolve<Transform>()
+                    );
+                }, Lifetime.Scoped);
+
+                // ICardDrawService - depends on GameStateService, PlayerCardManagers
+                builder.Register<ICardDrawService>(container =>
+                {
+                    return new CardDrawService(
+                        container.Resolve<GameStateService>(),
+                        player1CardManager,
+                        player2CardManager
+                    );
+                }, Lifetime.Scoped);
+
+                Debug.Log("GameSceneScope: Registered ITurnService and ICardDrawService with PlayerCardManagers");
+            }
+            else
+            {
+                Debug.LogError($"GameSceneScope: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}");
+            }
+
+            Debug.Log("GameSceneScope: Scene-specific services registered");
+
+            // ============================================
+            // MANUAL INJECTION for scene MonoBehaviours
+            // ============================================
+            builder.RegisterBuildCallback(container =>
+            {
+                Debug.Log("GameSceneScope: Injecting dependencies into scene MonoBehaviours...");
+
+                InjectAllOfType<PlayerCards>(container);
+                InjectAllOfType<PlayerStatus>(container);
+                InjectAllOfType<CardLocation>(container);
+                InjectAllOfType<GameLoop>(container);
+                InjectAllOfType<PlayerManager>(container);
+                InjectAllOfType<HealthUI>(container);
+                InjectAllOfType<RoundDisplayManager>(container);
+                InjectAllOfType<CardPoolManager>(container);
+                InjectAllOfType<InputManager>(container);
+                InjectAllOfType<UIManager>(container);
+                InjectAllOfType<InvocationFunctions>(container);
+                InjectAllOfType<FieldFunctions>(container);
+                InjectAllOfType<EffectFunctions>(container);
+                InjectAllOfType<EquipmentFunctions>(container);
+
+                Debug.Log("GameSceneScope: Injection complete");
+            });
+        }
+
+        private void InjectAllOfType<T>(IObjectResolver container) where T : Component
+        {
+            var components = FindObjectsOfType<T>();
+            foreach (var c in components)
+            {
+                try
+                {
+                    container.Inject(c);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"GameSceneScope: Failed to inject {typeof(T).Name}: {ex.Message}");
+                }
+            }
+            if (components.Length > 0)
+                Debug.Log($"GameSceneScope: Injected {components.Length} {typeof(T).Name}");
         }
     }
 }

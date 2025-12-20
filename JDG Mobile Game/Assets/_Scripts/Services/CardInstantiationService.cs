@@ -24,18 +24,16 @@ public class CardInstantiationService : ICardInstantiationService
 
     public CardInstantiationService(CardPoolManager cardPoolManager)
     {
-        // Phase 19-20: Inject CardPoolManager and access prefab via reflection
-        // We use reflection because prefabCard is a private serialized field that Unity sets from the scene
+        // Phase 46: Use PhysicalCardPrefab (with PhysicalCardDisplay) for game board cards
         if (cardPoolManager != null)
         {
-            var field = typeof(CardPoolManager).GetField("prefabCard",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            _prefabCard = (GameObject)field?.GetValue(cardPoolManager);
+            _prefabCard = cardPoolManager.PhysicalCardPrefab;
         }
 
         if (_prefabCard == null)
         {
-            Debug.LogError("CardInstantiationService: Could not access prefabCard from CardPoolManager");
+            Debug.LogError("CardInstantiationService: PhysicalCardPrefab is null on CardPoolManager. " +
+                "Assign the physical card prefab (with PhysicalCardDisplay component) in the Inspector.");
         }
 
         _cardNameToGameObject = new Dictionary<string, GameObject>();
@@ -52,10 +50,29 @@ public class CardInstantiationService : ICardInstantiationService
         float deckLocationZ,
         bool isPlayerOne)
     {
+        if (deck == null)
+        {
+            Debug.LogError("CardInstantiationService: Cannot initialize physical cards - deck is null");
+            return;
+        }
+
+        if (_prefabCard == null)
+        {
+            Debug.LogError("CardInstantiationService: Cannot initialize physical cards - prefabCard is null");
+            return;
+        }
+
         var deckLocation = new Vector3(deckLocationX, deckLocationY, deckLocationZ);
 
         for (var i = 0; i < deck.Count; i++)
         {
+            var card = deck[i];
+            if (card == null)
+            {
+                Debug.LogWarning($"CardInstantiationService: Skipping null card at index {i}");
+                continue;
+            }
+
             var newPhysicalCard = Object.Instantiate(_prefabCard, deckLocation, Quaternion.identity);
 
             // Player 1 cards are rotated 180 degrees
@@ -68,9 +85,19 @@ public class CardInstantiationService : ICardInstantiationService
             newPhysicalCard.transform.position = deckLocation + new Vector3(0, PositionOffset * i, 0);
 
             // Generate unique name and register
-            var newPhysicalCardName = GenerateCardName(deck[i], isPlayerOne);
+            var newPhysicalCardName = GenerateCardName(card, isPlayerOne);
             newPhysicalCard.name = newPhysicalCardName;
-            newPhysicalCard.GetComponent<PhysicalCardDisplay>().Card = deck[i];
+
+            var physicalCardDisplay = newPhysicalCard.GetComponent<PhysicalCardDisplay>();
+            if (physicalCardDisplay != null)
+            {
+                physicalCardDisplay.Card = card;
+            }
+            else
+            {
+                Debug.LogError($"CardInstantiationService: PhysicalCardDisplay component missing on prefab for card {card.Title}");
+            }
+
             _cardNameToGameObject.Add(newPhysicalCardName, newPhysicalCard);
         }
     }

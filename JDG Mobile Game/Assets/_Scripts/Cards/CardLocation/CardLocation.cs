@@ -114,12 +114,20 @@ namespace Cards
 
         /// <summary>
         /// Initializes the player1Cards and player2Cards by getting the PlayerCards component from the serialized GameObjects.
-        /// Phase 23: Subscribes to EventBus instead of static UnityEvent.
         /// </summary>
         void Awake()
         {
             player1Cards = player1.GetComponent<PlayerCards>();
             player2Cards = player2.GetComponent<PlayerCards>();
+        }
+
+        /// <summary>
+        /// Subscribes to EventBus events.
+        /// Phase 46: Moved from Awake to Start to ensure VContainer injection is complete.
+        /// Phase 23: Subscribes to EventBus instead of static UnityEvent.
+        /// </summary>
+        void Start()
+        {
             _cardLocationSubscription = _eventBus.Subscribe<CardLocationChangedEvent>(OnCardLocationChanged);
         }
 

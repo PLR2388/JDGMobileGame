@@ -10,24 +10,31 @@ namespace JDG.Infrastructure.Services
     /// </summary>
     public class LocalizationService : ILocalizationService
     {
-        private readonly LocalizationSystem _localizationSystem;
         private GameLanguage _currentLanguage;
+
+        // Lazy access to LocalizationSystem.Instance - avoids constructor timing issues
+        private LocalizationSystem LocalizationSystem => LocalizationSystem.Instance;
 
         public LocalizationService()
         {
-            // During migration, get the existing singleton
-            // TODO: Later, inject localization dependencies directly
-            _localizationSystem = LocalizationSystem.Instance;
             _currentLanguage = GameLanguage.French; // Default from original system
         }
 
         public string GetLocalizedValue(string key)
         {
+            // Lazily access the singleton
+            var locSystem = LocalizationSystem;
+            if (locSystem == null)
+            {
+                Debug.LogWarning($"LocalizationService: LocalizationSystem.Instance not yet available for key '{key}'");
+                return $"[{key}]";
+            }
+
             // For now, we need to convert string keys to the enum-based system
             // Try to parse the string as a LocalizationKeys enum
             if (System.Enum.TryParse<LocalizationKeys>(key, true, out var enumKey))
             {
-                return _localizationSystem.GetLocalizedValue(enumKey);
+                return locSystem.GetLocalizedValue(enumKey);
             }
             else
             {
