@@ -1,6 +1,8 @@
 using Cards;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.Events;
 
 /// <summary>
 /// Handler responsible for contre card-specific behaviors in the game.
@@ -45,10 +47,26 @@ public class ContreCardHandler : CardHandler
 
     /// <summary>
     /// Handles the card placement behavior for contre cards.
+    /// Contre cards have immediate effect and are discarded after use.
     /// </summary>
     /// <param name="card">The in-game card that is being placed.</param>
     public override void HandleCardPut(InGameCard card)
     {
-        throw new System.NotImplementedException();
+        if (card == null) return;
+
+        // Get the owner of the card
+        var playerCards = cardCollectionService.GetCurrentPlayerCards();
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+
+        // Publish the contre card play request event
+        eventBus.Publish(new ContreCardPlayRequestedEvent
+        {
+            ContreCard = card,
+            Owner = owner
+        });
+
+        // Note: The actual contre effect execution and discarding
+        // should be handled by a subscriber to ContreCardPlayRequestedEvent
+        // (e.g., a ContreCardService or the game loop)
     }
 }

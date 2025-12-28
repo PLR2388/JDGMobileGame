@@ -470,4 +470,14 @@ namespace JDG.Domain.Events
         public object EquipmentCard; // Using object to avoid dependency on InGameEquipmentCard
         public CardOwner Owner;
     }
+
+    /// <summary>
+    /// Published when user requests to play a contre (counter) card.
+    /// Contre cards are played in response to opponent actions and are discarded immediately.
+    /// </summary>
+    public struct ContreCardPlayRequestedEvent
+    {
+        public object ContreCard; // Using object to avoid dependency on InGameCard
+        public CardOwner Owner;
+    }
 }

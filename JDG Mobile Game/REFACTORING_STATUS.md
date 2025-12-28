@@ -730,8 +730,184 @@ Once verified working in-game:
 
 ---
 
-**Last Updated**: 2025-12-15
+---
+
+### Phase 42: Legacy Ability Cleanup ✅ (Completed)
+
+**Goal**: Remove all 31 legacy ability files now that modern IAbility implementations are active.
+
+#### Removed Files (31 total)
+Each legacy ability was verified working in modern AbilityRegistry before removal:
+
+| # | Legacy File | Modern Implementation |
+|---|-------------|----------------------|
+| 1-10 | `SacrificeCardMinAtkMinDefFamilyNumberAbility.cs`, `SacrificeToInvokeAbility.cs`, `OptionalSacrificeForAtkDefAbility.cs`, `InvokeSpecificCardAbility.cs`, `InvokeSpecificCardChoiceAbility.cs`, `KillOpponentInvocationCardAbility.cs`, `DestroyFieldAtkDefAttackConditionAbility.cs`, `CantBeAttackAbility.cs`, `KillBothCardsIfAttackAbility.cs`, `ProtectBehindDuringAttackAbility.cs` | SacrificeAbilityFactory, CombatAbilityFactory, ProtectionAbilityFactory |
+| 11-20 | `ProtectBehindDuringAttackDefConditionAbility.cs`, `CanOnlyAttackItselfAbility.cs`, `SkipOpponentAttackAbility.cs`, `GiveAtkDefFamilyAbility.cs`, `WinAtkDefFamilyAbility.cs`, `WinAtkDefFamilityAtkDefConditionAbility.cs`, `GiveAtkDefToFamilyMemberAbility.cs`, `CopyAtkDefAbility.cs`, `OptionalChangeFieldFromDeckAbility.cs`, `SendAllCardsInHand.cs` | StatModifierAbilityFactory, SpecialAbilityFactory |
+| 21-31 | `CantLiveWithoutAbility.cs` + remaining legacy files | All migrated to modern factories |
+
+#### Phase 42ag: Final Cleanup
+- ✅ Removed `AbilityLibrary.cs`
+- ✅ Removed legacy fallback from `AbilityProviderService.cs`
+- ✅ All ability resolution now goes through `AbilityRegistry` only
+
+#### Code Metrics
+- Legacy files deleted: 31
+- Lines of legacy code removed: ~2,500+
+- AbilityProviderService simplified: removed fallback path
+
+---
+
+### Phase 43: Presenter Migration Part 2 ✅ (Completed)
+
+**Goal**: Migrate remaining presenters to JDG.Presentation assembly.
+
+#### DialogPresenter Migration
+- ✅ Moved `DialogPresenter.cs` from `Assets/_Scripts/Presenters/` to `Assets/_Scripts/JDG.Presentation/Presenters/`
+- ✅ Added namespace `JDG.Presentation.Presenters`
+- ✅ Updated UIManager to import from new namespace
+
+#### CardDisplayPresenter Migration
+- ✅ Moved `CardDisplayPresenter.cs` to JDG.Presentation
+- ✅ Resolved legacy type dependencies through ICardVisualService
+
+#### Files Modified
+- `Assets/_Scripts/JDG.Presentation/Presenters/DialogPresenter.cs`
+- `Assets/_Scripts/JDG.Presentation/Presenters/CardDisplayPresenter.cs`
+- `Assets/_Scripts/Managers/UIManager.cs`
+- Test files migrated to `JDG.Presentation.Tests`
+
+#### Status
+- ✅ 4 presenters now in JDG.Presentation assembly:
+  - RoundDisplayPresenter
+  - InvocationMenuPresenter
+  - DialogPresenter
+  - CardDisplayPresenter
+- 📋 CardSelectorPresenter still in default assembly (blocked by InGameCard dependencies)
+
+---
+
+### Phase 46: DI Scope Restructuring ✅ (Completed)
+
+**Goal**: Simplify VContainer DI configuration by merging scopes.
+
+#### Changes
+1. **Merged GameLifetimeScope into SharedServicesScope**
+   - Single root scope instead of two separate roots
+   - All services registered in one place
+   - Simplified hierarchy
+
+2. **Scene Scope Connections**
+   - `GameSceneScope` and `MainScreenScope` use `EnqueueParent` pattern
+   - Explicitly find `SharedServicesScope` as parent
+   - Added `DontDestroyOnLoad` to `SharedServicesScope` for scene persistence
+
+3. **Service Location Updates**
+   - Moved `ICardSelectionService` registration to `SharedServicesScope`
+   - Removed MonoBehaviour dependency for selection service
+   - Fixed `CardChoice` fallback DI initialization
+
+4. **LegacyCardLoader Replacement**
+   - Replaced MonoBehaviour trigger with static `LegacySystemInitializer`
+   - Cards now load via `BuildCallback` in `SharedServicesScope`
+   - Cleaner initialization without scene dependencies
+
+#### DI Scope Hierarchy
+```
+SharedServicesScope (Root - DontDestroyOnLoad)
+├── All repositories (Singleton)
+├── All use cases (Transient)
+├── EventBus (Singleton)
+├── AbilityRegistry + Factories
+├── Service interfaces
+│
+├── GameSceneScope (Child - Game scene)
+│   ├── CardPoolManager
+│   ├── InputManager
+│   ├── GameLoop
+│   └── Scene-specific MonoBehaviours
+│
+└── MainScreenScope (Child - Main menu)
+    ├── Menu-specific services
+    └── CardChoice, DeckManagementService
+```
+
+#### Code Metrics
+- Scopes simplified: 2 → 1 root scope
+- Files deleted: `GameLifetimeScope.cs` (merged)
+- Debug logging added for DI troubleshooting
+
+---
+
+### Current Architecture Summary (Post Phase 46)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                        │
+│  JDG.Presentation: 4 Presenters (RoundDisplay, Invocation,  │
+│                    Dialog, CardDisplay)                      │
+│  Default Assembly: CardSelectorPresenter (legacy deps)      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    APPLICATION LAYER                         │
+│  JDG.Application:                                           │
+│  - 5 Core Use Cases (DrawCard, PlayCard, Attack, EndTurn,   │
+│                      StartGame)                              │
+│  - 57 IAbility implementations via 11 factories             │
+│  - Service interfaces (ICardVisualService, ICombatQuery)    │
+│  - Repository interfaces                                     │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   INFRASTRUCTURE LAYER                       │
+│  JDG.Infrastructure:                                         │
+│  - Repository implementations                                │
+│  - EventBus (30+ domain events)                             │
+│  - AbilityRegistry (all abilities registered)               │
+│  Default Assembly (Services/):                              │
+│  - 7 use cases dependent on legacy types                    │
+│  - CombatService, CardPlacementService                      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      DOMAIN LAYER                            │
+│  JDG.Domain: Pure C#, no Unity dependencies                 │
+│  - Card, Player entities                                    │
+│  - 70 AbilityName enum values                               │
+│  - Domain events                                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Key Metrics (Updated)
+
+| Metric | Count |
+|--------|-------|
+| Test Assemblies | 4 (Domain, Application, Infrastructure, Presentation) |
+| Unit Tests | 700+ |
+| Abilities (Modern) | 57 (all via factories) |
+| Abilities (Legacy) | 0 (all deleted) |
+| Domain Events | 30+ |
+| Service Interfaces | 15+ |
+| Presenters in JDG.Presentation | 4 |
+| DI Scopes | 3 (1 root + 2 scene) |
+
+---
+
+### Remaining Future Work
+
+1. **CardSelectorPresenter Migration** - Blocked by InGameCard/InGameInvocationCard dependencies
+2. **Use Cases Migration** - 7 use cases in `Services/` need legacy type migration to move to JDG.Application
+3. **InGameCard → Domain Entity** - Major refactor to move card types to pure domain layer
+4. **ContreCardHandler.HandleCardPut()** - NotImplementedException needs implementation
+5. **Repository Persistence** - `DeckRepository` save/load not implemented
+
+---
+
+**Last Updated**: 2025-12-28
 **Current Branch**: refactor-v3
-**Status**: Phase 7 Complete (AbilityLibrary → AbilityRegistry Migration)
+**Status**: Phase 46 Complete (DI Scope Restructuring)
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.
