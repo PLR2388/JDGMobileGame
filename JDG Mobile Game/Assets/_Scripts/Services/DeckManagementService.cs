@@ -20,17 +20,13 @@ using UnityEngine;
 /// Phase 46: IAbilityProvider is required (registered in SharedServicesScope).
 ///           ICardCollectionService is null (only available in Game scene).
 /// Phase 61: Added all ability providers (required by CardFactory).
+/// Phase 62: Uses ICardFactory via DI instead of static CardFactory.CreateInGameCard.
 /// </summary>
 public class DeckManagementService : IDeckManagementService
 {
     private List<Card> _allCards;
-    private readonly IEventBus _eventBus;
     private readonly ICardDataProvider _cardDataProvider;
-    private readonly IAbilityProvider _abilityProvider;
-    private readonly IFieldAbilityProvider _fieldAbilityProvider;
-    private readonly IEquipmentAbilityProvider _equipmentAbilityProvider;
-    private readonly IEffectAbilityProvider _effectAbilityProvider;
-    private readonly IConditionProvider _conditionProvider;
+    private readonly ICardFactory _cardFactory;
 
     public List<Card> Deck1AllCards { get; private set; } = new List<Card>();
     public List<Card> Deck2AllCards { get; private set; } = new List<Card>();
@@ -38,24 +34,14 @@ public class DeckManagementService : IDeckManagementService
     public List<InGameCard> Player2DeckCards { get; set; } = new List<InGameCard>();
 
     /// <summary>
-    /// Phase 61: Updated to require all ability providers.
+    /// Phase 62: Simplified constructor - uses ICardFactory instead of individual providers.
     /// </summary>
     public DeckManagementService(
-        IEventBus eventBus,
         ICardDataProvider cardDataProvider,
-        IAbilityProvider abilityProvider,
-        IFieldAbilityProvider fieldAbilityProvider,
-        IEquipmentAbilityProvider equipmentAbilityProvider,
-        IEffectAbilityProvider effectAbilityProvider,
-        IConditionProvider conditionProvider)
+        ICardFactory cardFactory)
     {
-        _eventBus = eventBus;
         _cardDataProvider = cardDataProvider;
-        _abilityProvider = abilityProvider;
-        _fieldAbilityProvider = fieldAbilityProvider;
-        _equipmentAbilityProvider = equipmentAbilityProvider;
-        _effectAbilityProvider = effectAbilityProvider;
-        _conditionProvider = conditionProvider;
+        _cardFactory = cardFactory;
 
         // Phase 8: Use ICardDataProvider instead of ResourceSystem.Instance
         if (_cardDataProvider.IsLoaded)
@@ -134,11 +120,11 @@ public class DeckManagementService : IDeckManagementService
 
         CardChoice.GetRandomDeck(DeckConfiguration.MaxDeckCards - player1Deck.Count, ref player1Deck, Deck1AllCards);
         player1Deck.Reverse();
-        // Phase 61: Pass all ability providers to CardFactory
-        // ICardCollectionService is null (only available in Game scene)
-        Player1DeckCards = player1Deck.Select(card => CardFactory.CreateInGameCard(
-            card, CardOwner.Player1, _eventBus, null, _abilityProvider,
-            _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
+        // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+        Player1DeckCards = player1Deck
+            .Select(card => _cardFactory.CreateCard(card, JDG.Domain.CardOwner.Player1) as InGameCard)
+            .Where(card => card != null)
+            .ToList();
     }
 
     /// <summary>
@@ -168,11 +154,11 @@ public class DeckManagementService : IDeckManagementService
         }
 
         player2Deck.Reverse();
-        // Phase 61: Pass all ability providers to CardFactory
-        // ICardCollectionService is null (only available in Game scene)
-        Player2DeckCards = player2Deck.Select(card => CardFactory.CreateInGameCard(
-            card, CardOwner.Player2, _eventBus, null, _abilityProvider,
-            _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
+        // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+        Player2DeckCards = player2Deck
+            .Select(card => _cardFactory.CreateCard(card, JDG.Domain.CardOwner.Player2) as InGameCard)
+            .Where(card => card != null)
+            .ToList();
     }
 
     /// <summary>

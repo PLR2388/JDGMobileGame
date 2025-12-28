@@ -47,14 +47,8 @@ namespace Menu
         // Phase 8: CardChoiceUIManager DI instead of .Instance
         private CardChoiceUIManager _cardChoiceUIManager;
 
-        // Phase 46: IAbilityProvider is required (registered in SharedServicesScope)
-        private IAbilityProvider _abilityProvider;
-
-        // Phase 61: All ability providers required by CardFactory
-        private JDG.Application.Services.IFieldAbilityProvider _fieldAbilityProvider;
-        private JDG.Application.Services.IEquipmentAbilityProvider _equipmentAbilityProvider;
-        private JDG.Application.Services.IEffectAbilityProvider _effectAbilityProvider;
-        private JDG.Application.Services.IConditionProvider _conditionProvider;
+        // Phase 62: ICardFactory for card creation (replaces individual providers)
+        private JDG.Application.Services.ICardFactory _cardFactory;
 
         // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
         private JDG.Application.Services.ISceneLoaderService _sceneLoaderService;
@@ -67,10 +61,8 @@ namespace Menu
         /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
         /// Phase 8: Inject CardChoiceUIManager instead of using .Instance.
         /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
-        /// Phase 46: IAbilityProvider is required (registered in SharedServicesScope).
-        ///           ICardCollectionService is null (only available in Game scene).
         /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
-        /// Phase 61: Added all ability providers (required by CardFactory).
+        /// Phase 62: Simplified - uses ICardFactory instead of individual ability providers.
         /// </summary>
         [Inject]
         public void Construct(
@@ -79,12 +71,8 @@ namespace Menu
             IEventBus eventBus,
             JDG.Application.Services.IAudioService audioService,
             CardChoiceUIManager cardChoiceUIManager,
-            IAbilityProvider abilityProvider,
             JDG.Application.Services.ISceneLoaderService sceneLoaderService,
-            JDG.Application.Services.IFieldAbilityProvider fieldAbilityProvider,
-            JDG.Application.Services.IEquipmentAbilityProvider equipmentAbilityProvider,
-            JDG.Application.Services.IEffectAbilityProvider effectAbilityProvider,
-            JDG.Application.Services.IConditionProvider conditionProvider)
+            JDG.Application.Services.ICardFactory cardFactory)
         {
             Debug.Log("CardChoice.Construct() called by VContainer!");
             _cardSelectionService = cardSelectionService;
@@ -92,12 +80,8 @@ namespace Menu
             _eventBus = eventBus;
             _audioService = audioService;
             _cardChoiceUIManager = cardChoiceUIManager;
-            _abilityProvider = abilityProvider;
             _sceneLoaderService = sceneLoaderService;
-            _fieldAbilityProvider = fieldAbilityProvider;
-            _equipmentAbilityProvider = equipmentAbilityProvider;
-            _effectAbilityProvider = effectAbilityProvider;
-            _conditionProvider = conditionProvider;
+            _cardFactory = cardFactory;
             Debug.Log($"CardChoice.Construct() complete. _deckManagementService = {(_deckManagementService != null ? "OK" : "NULL")}");
         }
 
@@ -151,22 +135,22 @@ namespace Menu
                     isPlayerOneCardChosen = false;
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
 
-                    // Phase 61: Pass all ability providers to CardFactory
-                    _deckManagementService.Player2DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(
-                            card, CardOwner.Player2, _eventBus, null, _abilityProvider,
-                            _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
+                    // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+                    _deckManagementService.Player2DeckCards = deck
+                        .Select(card => _cardFactory.CreateCard(card, JDG.Domain.CardOwner.Player2) as InGameCard)
+                        .Where(card => card != null)
+                        .ToList();
                 }
                 else
                 {
                     isPlayerOneCardChosen = true;
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 2 });
 
-                    // Phase 61: Pass all ability providers to CardFactory
-                    _deckManagementService.Player1DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(
-                            card, CardOwner.Player1, _eventBus, null, _abilityProvider,
-                            _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
+                    // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+                    _deckManagementService.Player1DeckCards = deck
+                        .Select(card => _cardFactory.CreateCard(card, JDG.Domain.CardOwner.Player1) as InGameCard)
+                        .Where(card => card != null)
+                        .ToList();
                     DeselectAllCards();
                 }
             }
@@ -221,7 +205,7 @@ namespace Menu
             Debug.Log($"  _audioService: {(_audioService != null ? "OK" : "NULL")}");
             Debug.Log($"  _cardChoiceUIManager: {(_cardChoiceUIManager != null ? "OK" : "NULL")}");
             Debug.Log($"  _cardSelectionService: {(_cardSelectionService != null ? "OK" : "NULL")}");
-            Debug.Log($"  _abilityProvider: {(_abilityProvider != null ? "OK" : "NULL")}");
+            Debug.Log($"  _cardFactory: {(_cardFactory != null ? "OK" : "NULL")}");
 
             if (_deckManagementService == null)
             {
@@ -273,15 +257,15 @@ namespace Menu
                 GetRandomCards(deck2AllCard, deck2);
             }
 
-            // Phase 61: Pass all ability providers to CardFactory
-            _deckManagementService.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(
-                    card1, CardOwner.Player1, _eventBus, null, _abilityProvider,
-                    _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
-            _deckManagementService.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(
-                    card2, CardOwner.Player2, _eventBus, null, _abilityProvider,
-                    _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
+            // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+            _deckManagementService.Player1DeckCards = deck1
+                .Select(card1 => _cardFactory.CreateCard(card1, JDG.Domain.CardOwner.Player1) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
+            _deckManagementService.Player2DeckCards = deck2
+                .Select(card2 => _cardFactory.CreateCard(card2, JDG.Domain.CardOwner.Player2) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
             // Phase 8: Use IAudioService instead of AudioSystem.Instance
             _audioService?.StopMusic();
             // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
@@ -320,15 +304,15 @@ namespace Menu
 
             deck2.Reverse();
 
-            // Phase 61: Pass all ability providers to CardFactory
-            _deckManagementService.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(
-                    card1, CardOwner.Player1, _eventBus, null, _abilityProvider,
-                    _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
-            _deckManagementService.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(
-                    card2, CardOwner.Player2, _eventBus, null, _abilityProvider,
-                    _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
+            // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+            _deckManagementService.Player1DeckCards = deck1
+                .Select(card1 => _cardFactory.CreateCard(card1, JDG.Domain.CardOwner.Player1) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
+            _deckManagementService.Player2DeckCards = deck2
+                .Select(card2 => _cardFactory.CreateCard(card2, JDG.Domain.CardOwner.Player2) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
             // Phase 8: Use IAudioService instead of AudioSystem.Instance
             _audioService?.StopMusic();
             // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem

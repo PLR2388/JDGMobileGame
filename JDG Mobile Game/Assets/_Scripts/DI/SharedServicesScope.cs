@@ -104,6 +104,22 @@ namespace JDG.DI
             // Phase 56: Condition provider (wraps ConditionLibrary for DI)
             builder.Register<IConditionProvider, ConditionProviderService>(Lifetime.Singleton);
 
+            // Phase 62: ICardFactory for card creation
+            // Note: ICardCollectionService is null here (scene-specific, only available in GameSceneScope)
+            // This is fine for deck building which doesn't need card collection queries
+            builder.Register<ICardFactory>(container =>
+            {
+                return new CardFactory(
+                    container.Resolve<IEventBus>(),
+                    null, // ICardCollectionService - only available in Game scene
+                    container.Resolve<IAbilityProvider>(),
+                    container.Resolve<IFieldAbilityProvider>(),
+                    container.Resolve<IEquipmentAbilityProvider>(),
+                    container.Resolve<IEffectAbilityProvider>(),
+                    container.Resolve<IConditionProvider>()
+                );
+            }, Lifetime.Singleton);
+
             // ============================================
             // APPLICATION LAYER - Use Cases
             // ============================================
