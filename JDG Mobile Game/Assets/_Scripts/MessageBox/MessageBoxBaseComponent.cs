@@ -88,16 +88,14 @@ public static class MessageBoxBaseComponentExtensions
         var buttonText = buttonTransform.GetComponentInChildren<TextMeshProUGUI>();
         var button = buttonTransform.gameObject;
 
-        // Phase 39: Use injected ILocalizationService instead of LocalizationSystem.Instance
-        if (LocalizationService != null)
+        // Phase 63: Removed fallback - LocalizationService is set by LegacySystemInitializer
+        if (LocalizationService == null)
         {
-            buttonText.text = LocalizationService.GetLocalizedValue(localizationKey.ToString());
+            throw new System.InvalidOperationException(
+                "MessageBoxBaseComponentExtensions.LocalizationService is not set. " +
+                "Ensure LegacySystemInitializer.Initialize() is called before using message box components.");
         }
-        else
-        {
-            // Fallback to singleton if service not initialized
-            buttonText.text = LocalizationSystem.Instance?.GetLocalizedValue(localizationKey) ?? localizationKey.ToString();
-        }
+        buttonText.text = LocalizationService.GetLocalizedValue(localizationKey.ToString());
 
         button.SetActive(setActive);
     }

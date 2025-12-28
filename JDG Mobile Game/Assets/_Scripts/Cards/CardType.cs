@@ -47,13 +47,14 @@ namespace Cards
         {
             if (CardTypeLocalizationKeyMap.TryGetValue(type, out var localizationKey))
             {
-                // Phase 39: Use injected ILocalizationService instead of LocalizationSystem.Instance
-                if (LocalizationService != null)
+                // Phase 63: Removed fallback - LocalizationService is set by LegacySystemInitializer
+                if (LocalizationService == null)
                 {
-                    return LocalizationService.GetLocalizedValue(localizationKey.ToString());
+                    throw new System.InvalidOperationException(
+                        "CardTypeExtensions.LocalizationService is not set. " +
+                        "Ensure LegacySystemInitializer.Initialize() is called before using card type extensions.");
                 }
-                // Fallback to singleton if service not initialized (during startup)
-                return LocalizationSystem.Instance?.GetLocalizedValue(localizationKey) ?? localizationKey.ToString();
+                return LocalizationService.GetLocalizedValue(localizationKey.ToString());
             }
             else
             {

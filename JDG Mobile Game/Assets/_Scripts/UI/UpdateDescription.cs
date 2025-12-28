@@ -89,17 +89,19 @@ public class UpdateDescription : MonoBehaviour
     }
 
     /// <summary>
-    /// Helper method to get localized value using injected service or fallback to singleton.
+    /// Helper method to get localized value using injected service.
     /// Phase 39: Added for centralized localization access.
+    /// Phase 63: Removed fallback - service is always injected via VContainer.
     /// </summary>
     private string GetLocalizedValue(LocalizationKeys key)
     {
-        if (_localizationService != null)
+        if (_localizationService == null)
         {
-            return _localizationService.GetLocalizedValue(key.ToString());
+            throw new System.InvalidOperationException(
+                "UpdateDescription._localizationService is not set. " +
+                "Ensure VContainer injection is configured correctly.");
         }
-        // Fallback to singleton if service not injected
-        return LocalizationSystem.Instance?.GetLocalizedValue(key) ?? key.ToString();
+        return _localizationService.GetLocalizedValue(key.ToString());
     }
 
     /// <summary>
