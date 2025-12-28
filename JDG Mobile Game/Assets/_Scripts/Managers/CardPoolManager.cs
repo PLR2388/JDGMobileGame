@@ -12,21 +12,77 @@ using VContainer;
 public class CardPoolManager : MonoBehaviour
 {
     [SerializeField] private GameObject prefabCard;
-    [SerializeField] public Transform cardPoolHolder;
+    [SerializeField] private Transform _cardPoolHolder;
+
+    /// <summary>
+    /// Transform to hold pooled card GameObjects.
+    /// Phase 47: Added auto-find fallback for cardPoolHolder child.
+    /// </summary>
+    public Transform cardPoolHolder
+    {
+        get
+        {
+            if (_cardPoolHolder == null)
+            {
+                // Try to find a child named "CardPoolHolder"
+                _cardPoolHolder = transform.Find("CardPoolHolder");
+                if (_cardPoolHolder == null)
+                {
+                    // Create one if not found
+                    var holder = new GameObject("CardPoolHolder");
+                    holder.transform.SetParent(transform);
+                    _cardPoolHolder = holder.transform;
+                }
+            }
+            return _cardPoolHolder;
+        }
+    }
 
     [Header("Physical Card Prefab (for game board)")]
     [SerializeField] private GameObject physicalCardPrefab;
 
     /// <summary>
     /// Exposes the UI card prefab (with CardDisplay) for card pool/selection.
+    /// Phase 47: Added Resources fallback if not assigned in Inspector.
     /// </summary>
-    public GameObject PrefabCard => prefabCard;
+    public GameObject PrefabCard
+    {
+        get
+        {
+            if (prefabCard == null)
+            {
+                prefabCard = Resources.Load<GameObject>("Prefabs/Card");
+                if (prefabCard == null)
+                {
+                    Debug.LogError("CardPoolManager: PrefabCard not found in Resources/Prefabs/Card. " +
+                        "Please assign it in the Inspector or add to Resources folder.");
+                }
+            }
+            return prefabCard;
+        }
+    }
 
     /// <summary>
     /// Exposes the physical card prefab (with PhysicalCardDisplay) for game board cards.
     /// Phase 46: Added separate prefab for physical cards on the game board.
+    /// Phase 47: Added Resources fallback if not assigned in Inspector.
     /// </summary>
-    public GameObject PhysicalCardPrefab => physicalCardPrefab;
+    public GameObject PhysicalCardPrefab
+    {
+        get
+        {
+            if (physicalCardPrefab == null)
+            {
+                physicalCardPrefab = Resources.Load<GameObject>("Prefabs/PhysicalCard");
+                if (physicalCardPrefab == null)
+                {
+                    Debug.LogError("CardPoolManager: PhysicalCardPrefab not found in Resources/Prefabs/PhysicalCard. " +
+                        "Please assign it in the Inspector or add to Resources folder.");
+                }
+            }
+            return physicalCardPrefab;
+        }
+    }
 
     private readonly List<GameObject> pooledCards = new List<GameObject>();
 
@@ -108,7 +164,7 @@ public class CardPoolManager : MonoBehaviour
     /// </summary>
     private void BuildNewCard(InGameCard inGameCard)
     {
-        var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity, cardPoolHolder);
+        var newCard = Instantiate(PrefabCard, Vector3.zero, Quaternion.identity, cardPoolHolder);
         newCard.GetComponent<CardDisplay>().InGameCard = inGameCard;
         newCard.SetActive(false);
         pooledCards.Add(newCard);

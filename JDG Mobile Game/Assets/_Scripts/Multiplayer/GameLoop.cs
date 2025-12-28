@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using _Scripts.Units.Invocation;
 using Cards;
@@ -102,6 +103,20 @@ public class GameLoop : MonoBehaviour
         _eventBus.Subscribe<TouchStartedEvent>(OnTouch);
         _eventBus.Subscribe<TouchEndedEvent>(OnReleaseTouch);
         _eventBus.Subscribe<BackButtonPressedEvent>(OnBackPressed);
+
+        // Defer Draw() to next frame to ensure all Start() methods complete first.
+        // This fixes the race condition where Draw() might run before PlayerCards.Start()
+        // has finished setting up hand cards and collection change handlers.
+        StartCoroutine(DeferredDraw());
+    }
+
+    /// <summary>
+    /// Waits one frame before drawing the first card, ensuring all MonoBehaviour
+    /// Start() methods have completed their initialization.
+    /// </summary>
+    private IEnumerator DeferredDraw()
+    {
+        yield return null; // Wait one frame
         Draw();
     }
 

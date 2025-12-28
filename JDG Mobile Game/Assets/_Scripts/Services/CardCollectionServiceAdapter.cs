@@ -23,7 +23,8 @@ public class CardCollectionServiceAdapter : ICardCollectionService
         // Phase 27: Use injected GameStateService instead of ServiceLocator
 
         // Find the two PlayerCardManager components in the scene
-        var playerCardManagers = Object.FindObjectsOfType<PlayerCardManager>();
+        // Note: Using InstanceID sort to maintain backwards-compatible order
+        var playerCardManagers = Object.FindObjectsByType<PlayerCardManager>(FindObjectsSortMode.InstanceID);
 
         if (playerCardManagers.Length < 2)
         {

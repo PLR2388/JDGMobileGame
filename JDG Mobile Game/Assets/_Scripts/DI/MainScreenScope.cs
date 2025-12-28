@@ -20,7 +20,7 @@ namespace JDG.DI
 
             // SharedServicesScope is in DontDestroyOnLoad, so auto-find doesn't work.
             // We must explicitly enqueue it as parent before base.Awake() builds the container.
-            var sharedScope = FindObjectOfType<SharedServicesScope>();
+            var sharedScope = FindFirstObjectByType<SharedServicesScope>();
             if (sharedScope != null)
             {
                 Debug.Log($"MainScreenScope: Found SharedServicesScope, enqueueing as parent");

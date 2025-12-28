@@ -37,4 +37,11 @@ public interface ICardInstantiationService
     /// <param name="cardGameObject">The found GameObject, or null if not found.</param>
     /// <returns>True if the card GameObject was found; otherwise, false.</returns>
     bool TryGetCardGameObject(string cardName, out GameObject cardGameObject);
+
+    /// <summary>
+    /// Gets the count of cards currently registered in the dictionary.
+    /// Useful for debugging to verify all cards were instantiated.
+    /// </summary>
+    /// <returns>The number of registered card GameObjects.</returns>
+    int GetDictionaryCount();
 }

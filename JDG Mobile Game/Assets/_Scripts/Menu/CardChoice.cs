@@ -193,6 +193,7 @@ namespace Menu
             Debug.Log($"  _audioService: {(_audioService != null ? "OK" : "NULL")}");
             Debug.Log($"  _cardChoiceUIManager: {(_cardChoiceUIManager != null ? "OK" : "NULL")}");
             Debug.Log($"  _cardSelectionService: {(_cardSelectionService != null ? "OK" : "NULL")}");
+            Debug.Log($"  _abilityProvider: {(_abilityProvider != null ? "OK" : "NULL")}");
 
             if (_deckManagementService == null)
             {
@@ -201,11 +202,38 @@ namespace Menu
                 return;
             }
 
+            // Check if card pools are initialized
+            if (_deckManagementService.Deck1AllCards == null || _deckManagementService.Deck1AllCards.Count == 0)
+            {
+                Debug.LogError("CardChoice: Deck1AllCards is empty! Cards not loaded. " +
+                    "Check CardDataProvider and Resources/Cards folder.");
+                // Try to reinitialize
+                _deckManagementService.ResetDeckPools();
+                if (_deckManagementService.Deck1AllCards == null || _deckManagementService.Deck1AllCards.Count == 0)
+                {
+                    Debug.LogError("CardChoice: Failed to initialize deck pools. Cannot start game.");
+                    return;
+                }
+            }
+
+            Debug.Log($"CardChoice: Deck1AllCards count = {_deckManagementService.Deck1AllCards.Count}");
+            Debug.Log($"CardChoice: Deck2AllCards count = {_deckManagementService.Deck2AllCards.Count}");
+
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
             var deck1AllCard = FilterCards(_deckManagementService.Deck1AllCards);
             var deck2AllCard = FilterCards(_deckManagementService.Deck2AllCards);
+
+            Debug.Log($"CardChoice: After filter - deck1AllCard count = {deck1AllCard.Count}");
+            Debug.Log($"CardChoice: After filter - deck2AllCard count = {deck2AllCard.Count}");
+
+            if (deck1AllCard.Count < DeckConfiguration.MaxDeckCards || deck2AllCard.Count < DeckConfiguration.MaxDeckCards)
+            {
+                Debug.LogError($"CardChoice: Not enough cards after filtering! Need {DeckConfiguration.MaxDeckCards}, " +
+                    $"have deck1={deck1AllCard.Count}, deck2={deck2AllCard.Count}");
+                return;
+            }
 
             while (deck1.Count != DeckConfiguration.MaxDeckCards)
             {

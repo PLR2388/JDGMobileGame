@@ -49,7 +49,7 @@ public class DialogueUI : MonoBehaviour
         currentSoundIndex = 0;
         typewriterEffect = GetComponent<TypewriterEffect>();
         responseHandler = GetComponent<ResponseHandler>();
-        audioSource = FindObjectOfType<AudioSource>();
+        audioSource = FindFirstObjectByType<AudioSource>();
         CloseDialogueBox();
         ShowDialogue(testDialogue);
         TriggerDoneEvent.AddListener(TriggerReceived);

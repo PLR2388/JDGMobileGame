@@ -38,15 +38,19 @@ public class HandCardDisplay : MonoBehaviour
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
+        // Subscribe immediately after injection since Awake/OnEnable may have already run
+        SubscribeToEvents();
+        Debug.Log($"HandCardDisplay.Construct: Injected, _eventBus={(_eventBus != null ? "OK" : "NULL")}");
     }
 
     /// <summary>
     /// Called when the script instance is being loaded.
-    /// Subscribes to relevant events.
+    /// Note: VContainer injection happens AFTER Awake(), so subscription is done in Construct().
     /// </summary>
     private void Awake()
     {
-        SubscribeToEvents();
+        // Don't subscribe here - _eventBus is not yet injected
+        // Subscription is done in Construct() after injection
     }
 
     /// <summary>
@@ -55,9 +59,18 @@ public class HandCardDisplay : MonoBehaviour
     /// <param name="handCards">Collection of in-game cards.</param>
     private void DisplayHandCard(ObservableCollection<InGameCard> handCards)
     {
+        Debug.Log($"HandCardDisplay.DisplayHandCard: Received {handCards.Count} cards, " +
+            $"IsP1Turn={IsP1Turn}, " +
+            $"FirstCardOwner={(handCards.Count > 0 ? handCards[0].CardOwner.ToString() : "N/A")}");
+
         if (handCards.Count == 0 || IsCurrentPlayerTurn(handCards[0]))
         {
+            Debug.Log($"HandCardDisplay.DisplayHandCard: Building {handCards.Count} cards");
             BuildCards(handCards);
+        }
+        else
+        {
+            Debug.Log($"HandCardDisplay.DisplayHandCard: Skipping - not current player's turn");
         }
     }
     
@@ -87,14 +100,35 @@ public class HandCardDisplay : MonoBehaviour
     /// <param name="handCards">Collection of in-game cards.</param>
     private void CreateCards(ObservableCollection<InGameCard> handCards)
     {
+        if (prefabCard == null)
+        {
+            Debug.LogError("HandCardDisplay.CreateCards: prefabCard is not assigned in Inspector!");
+            return;
+        }
+
         foreach (var handCard in handCards)
         {
             var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
             newCard.transform.SetParent(transform, true);
-            newCard.GetComponent<CardDisplay>().InGameCard = handCard;
-            newCard.GetComponent<OnHover>().bIsInGame = true;
+
+            var cardDisplay = newCard.GetComponent<CardDisplay>();
+            if (cardDisplay != null)
+            {
+                cardDisplay.InGameCard = handCard;
+            }
+            else
+            {
+                Debug.LogError($"HandCardDisplay.CreateCards: CardDisplay component not found on prefab for card '{handCard.Title}'");
+            }
+
+            var onHover = newCard.GetComponent<OnHover>();
+            if (onHover != null)
+            {
+                onHover.bIsInGame = true;
+            }
 
             CreatedCards.Add(newCard);
+            Debug.Log($"HandCardDisplay.CreateCards: Created card '{handCard.Title}'");
         }
 
         AdjustRectTransformSize(handCards.Count);
@@ -147,6 +181,12 @@ public class HandCardDisplay : MonoBehaviour
     /// </summary>
     protected void SubscribeToEvents()
     {
+        // Guard: Only subscribe if not already subscribed (prevents double subscription
+        // when both Construct() and OnEnable() call this method)
+        if (_handCardsSubscription != null)
+        {
+            return;
+        }
         _handCardsSubscription = _eventBus?.Subscribe<HandCardsDisplayChangedEvent>(OnHandCardsDisplayChanged);
     }
 
@@ -157,6 +197,7 @@ public class HandCardDisplay : MonoBehaviour
     protected void UnsubscribeFromEvents()
     {
         _handCardsSubscription?.Dispose();
+        _handCardsSubscription = null; // Clear reference so SubscribeToEvents() can resubscribe
     }
 
     /// <summary>
@@ -165,9 +206,18 @@ public class HandCardDisplay : MonoBehaviour
     /// </summary>
     private void OnHandCardsDisplayChanged(HandCardsDisplayChangedEvent evt)
     {
+        Debug.Log($"HandCardDisplay.OnHandCardsDisplayChanged: Event received, Player={evt.Player}, " +
+            $"HandCards type={(evt.HandCards?.GetType().Name ?? "null")}, " +
+            $"gameObject.activeInHierarchy={gameObject.activeInHierarchy}");
+
         if (evt.HandCards is ObservableCollection<InGameCard> handCards)
         {
             DisplayHandCard(handCards);
+        }
+        else
+        {
+            Debug.LogWarning($"HandCardDisplay: HandCards is not ObservableCollection<InGameCard>, " +
+                $"actual type={(evt.HandCards?.GetType().Name ?? "null")}");
         }
     }
 }

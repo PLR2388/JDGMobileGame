@@ -115,8 +115,7 @@ public class CardSelectorPresenterTests
     public void ShowOpponentSelector_WithNullTargets_ShowsWarning()
     {
         // Arrange
-        bool callbackInvoked = false;
-        UnityAction<InGameInvocationCard> onSelected = (card) => callbackInvoked = true;
+        UnityAction<InGameInvocationCard> onSelected = (_) => { };
         UnityAction onCancelled = () => { };
 
         // Act - This should show warning because no targets
@@ -247,10 +246,8 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         var testCards = new List<InGameCard> { new TestInGameCardForSelector() };
-        bool positiveActionCalled = false;
-        bool negativeActionCalled = false;
-        UnityAction<InGameCard> positiveAction = (card) => positiveActionCalled = true;
-        UnityAction negativeAction = () => negativeActionCalled = true;
+        UnityAction<InGameCard> positiveAction = (_) => { };
+        UnityAction negativeAction = () => { };
 
         // Act - Constructor: title, cards, showOkButton, showPositiveButton, showNegativeButton, okAction, okMultipleAction, positiveAction, positiveMultipleAction, negativeAction, numberCardSelection, showOrder
         var config = new CardSelectorConfig(

@@ -3,6 +3,7 @@ using Cards;
 using Cards.FieldCards;
 using Cards.EffectCards;
 using Cards.EquipmentCards;
+using Cards.InvocationCards;
 using JDG.Application.Services;
 using JDG.Infrastructure.Services;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace JDG.DI
             Debug.Log("GameSceneScope: Awake called");
 
             // Find SharedServicesScope in DontDestroyOnLoad
-            var sharedScope = FindObjectOfType<SharedServicesScope>();
+            var sharedScope = FindFirstObjectByType<SharedServicesScope>();
             if (sharedScope != null)
             {
                 Debug.Log("GameSceneScope: Found SharedServicesScope, setting as parent");
@@ -46,7 +47,7 @@ namespace JDG.DI
             // ============================================
 
             // CardPoolManager - required by CardInstantiationService
-            var cardPoolManager = FindObjectOfType<CardPoolManager>();
+            var cardPoolManager = FindFirstObjectByType<CardPoolManager>();
             if (cardPoolManager != null)
             {
                 builder.RegisterInstance(cardPoolManager);
@@ -58,7 +59,7 @@ namespace JDG.DI
             }
 
             // InvocationMenuManager - required by InvocationMenuService
-            var invocationMenuManager = FindObjectOfType<InvocationMenuManager>();
+            var invocationMenuManager = FindFirstObjectByType<InvocationMenuManager>();
             if (invocationMenuManager != null)
             {
                 builder.RegisterInstance(invocationMenuManager);
@@ -66,7 +67,7 @@ namespace JDG.DI
             }
 
             // RoundDisplayManager - required by RoundDisplayService
-            var roundDisplayManager = FindObjectOfType<RoundDisplayManager>();
+            var roundDisplayManager = FindFirstObjectByType<RoundDisplayManager>();
             if (roundDisplayManager != null)
             {
                 builder.RegisterInstance(roundDisplayManager);
@@ -74,7 +75,7 @@ namespace JDG.DI
             }
 
             // InputManager - required by InputService
-            var inputManager = FindObjectOfType<InputManager>();
+            var inputManager = FindFirstObjectByType<InputManager>();
             if (inputManager != null)
             {
                 builder.RegisterInstance(inputManager);
@@ -83,6 +84,18 @@ namespace JDG.DI
             else
             {
                 Debug.LogError("GameSceneScope: InputManager NOT FOUND in scene!");
+            }
+
+            // UIManager - required by GameLoop and other MonoBehaviours
+            var uiManager = FindFirstObjectByType<UIManager>();
+            if (uiManager != null)
+            {
+                builder.RegisterInstance(uiManager);
+                Debug.Log("GameSceneScope: Registered UIManager instance");
+            }
+            else
+            {
+                Debug.LogError("GameSceneScope: UIManager NOT FOUND in scene!");
             }
 
             // ============================================
@@ -94,7 +107,7 @@ namespace JDG.DI
             builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Scoped);
 
             // IPlayerStatusProvider - requires PlayerManager from scene
-            var playerManager = FindObjectOfType<PlayerManager>();
+            var playerManager = FindFirstObjectByType<PlayerManager>();
             if (playerManager != null)
             {
                 builder.RegisterInstance<IPlayerStatusProvider>(playerManager);
@@ -102,7 +115,7 @@ namespace JDG.DI
             }
 
             // Canvas Transform for CombatService
-            var canvas = FindObjectOfType<Canvas>();
+            var canvas = FindFirstObjectByType<Canvas>();
             if (canvas != null)
             {
                 builder.RegisterInstance(canvas.transform).As<Transform>();
@@ -135,7 +148,8 @@ namespace JDG.DI
             builder.Register<IRaycastService, RaycastService>(Lifetime.Scoped);
 
             // Services that need PlayerCardManagers (player1 and player2)
-            var playerCardManagers = FindObjectsOfType<PlayerCardManager>();
+            // Note: Using InstanceID sort to maintain backwards-compatible order
+            var playerCardManagers = FindObjectsByType<PlayerCardManager>(FindObjectsSortMode.InstanceID);
             if (playerCardManagers.Length >= 2)
             {
                 // PlayerCardManagers are ordered by scene hierarchy - player 1 first
@@ -194,6 +208,13 @@ namespace JDG.DI
                 InjectAllOfType<FieldFunctions>(container);
                 InjectAllOfType<EffectFunctions>(container);
                 InjectAllOfType<EquipmentFunctions>(container);
+                InjectAllOfType<InGameMenuScript>(container);
+                InjectAllOfType<HandCardDisplay>(container);
+                InjectAllOfType<OnHover>(container);
+                InjectAllOfType<CardSelector>(container);
+                InjectAllOfType<DisplayCards>(container);
+                InjectAllOfType<CardDisplay>(container);
+                InjectAllOfType<TutoInvocationFunctions>(container);
 
                 Debug.Log("GameSceneScope: Injection complete");
             });
@@ -201,7 +222,9 @@ namespace JDG.DI
 
         private void InjectAllOfType<T>(IObjectResolver container) where T : Component
         {
-            var components = FindObjectsOfType<T>();
+            // Include inactive GameObjects to ensure components on disabled parents get injected
+            // This is critical for HandCardDisplay which is on an inactive handScreen parent
+            var components = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var c in components)
             {
                 try

@@ -26,6 +26,13 @@ namespace JDG.DI
     {
         protected override void Awake()
         {
+            // Must be a root GameObject for DontDestroyOnLoad to work
+            // Detach from parent if we're a child object
+            if (transform.parent != null)
+            {
+                transform.SetParent(null);
+            }
+
             // Persist across scene loads (scenes use LoadSceneMode.Single)
             DontDestroyOnLoad(gameObject);
             base.Awake();

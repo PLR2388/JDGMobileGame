@@ -44,6 +44,7 @@ namespace Cards
         {
             _cardInstantiationService = cardInstantiationService;
             _eventBus = eventBus;
+            Debug.Log($"CardLocation.Construct: Received ICardInstantiationService (HashCode={cardInstantiationService?.GetHashCode()})");
         }
 
         private static readonly PlayerCardLocations Player1Locations = new PlayerCardLocations
@@ -164,9 +165,23 @@ namespace Cards
         /// <param name="cards"></param>
         public void HideCards(List<InGameCard> cards)
         {
+            if (_cardInstantiationService == null)
+            {
+                Debug.LogError("CardLocation.HideCards: _cardInstantiationService is null! VContainer injection may have failed.");
+                return;
+            }
+
             foreach (var card in cards)
             {
-                var cardGameObject = GetPhysicalCard(card, card.CardOwner == CardOwner.Player1);
+                bool isPlayerOne = card.CardOwner == CardOwner.Player1;
+                var cardGameObject = GetPhysicalCard(card, isPlayerOne);
+                if (cardGameObject == null)
+                {
+                    Debug.LogWarning($"CardLocation.HideCards: Could not find physical card for '{card.Title}' " +
+                        $"(CardOwner={card.CardOwner}, isPlayerOne={isPlayerOne}). " +
+                        $"Dictionary has {_cardInstantiationService.GetDictionaryCount()} entries.");
+                    continue;
+                }
                 cardGameObject.transform.position = secretHide;
             }
         }

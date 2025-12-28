@@ -108,6 +108,20 @@ public class PlayerCards : MonoBehaviour
         _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase;
         _handleFieldCardChangedUseCase = handleFieldCardChangedUseCase;
         _eventBus = eventBus;
+
+        // Initialize deck immediately after injection, before any Start() runs.
+        // This fixes the race condition where GameLoop.Start() tries to draw
+        // before PlayerCards.Start() has initialized the deck.
+        Deck = _deckInitService.GetPlayerDeck(IsPlayerOne);
+
+        // Create physical card GameObjects immediately in Construct() so they exist
+        // before any Start() methods run. This fixes the timing issue where
+        // GameLoop.Start() or other Start() methods tried to access cards that
+        // weren't yet created.
+        var deckLocation = CardLocation.GetDeckLocation(IsPlayerOne);
+        _deckInitService.InitializePhysicalCards(Deck, deckLocation, IsPlayerOne);
+
+        Debug.Log($"PlayerCards.Construct() - IsPlayerOne={IsPlayerOne}, Deck={Deck?.Count ?? 0} cards, Physical cards created");
     }
 
     /// <summary>
@@ -122,13 +136,12 @@ public class PlayerCards : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        // Phase 8: Use injected service instead of GameState.Instance
-        Deck = _deckInitService.GetPlayerDeck(IsPlayerOne);
-        var deckLocation = CardLocation.GetDeckLocation(IsPlayerOne);
+        Debug.Log($"PlayerCards.Start() - IsPlayerOne={IsPlayerOne}, Deck.Count={Deck?.Count ?? 0}");
 
-        // Phase 8: Use injected service instead of UnitManager.Instance
-        _deckInitService.InitializePhysicalCards(Deck, deckLocation, IsPlayerOne);
+        // Note: Deck and physical cards are initialized in Construct() to ensure
+        // they're ready before any Start() methods run.
 
+        // Move initial hand cards from deck to hand
         // Phase 17-18: Use DeckConfiguration instead of GameState for constants
         for (var i = Deck.Count - DeckConfiguration.InitialNumberOfHandCards; i < Deck.Count; i++)
         {

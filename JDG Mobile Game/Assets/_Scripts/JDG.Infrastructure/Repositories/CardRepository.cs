@@ -19,15 +19,15 @@ namespace JDG.Infrastructure.Repositories
     {
         private readonly Dictionary<CardId, Card> _cardInstances = new Dictionary<CardId, Card>();
         private readonly Dictionary<string, Card> _cardDefinitions = new Dictionary<string, Card>();
-        private bool _isInitialized;
 
         /// <summary>
         /// Marks the repository as initialized.
         /// Actual card loading is done by CardRepositoryInitializer (in default assembly).
+        /// Note: Currently a no-op but kept for interface compliance and future use.
         /// </summary>
         public void Initialize()
         {
-            _isInitialized = true;
+            // Intentionally empty - initialization is handled by CardRepositoryInitializer
         }
 
         public Card GetCard(CardId cardId)

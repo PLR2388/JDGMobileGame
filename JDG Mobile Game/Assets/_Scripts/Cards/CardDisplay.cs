@@ -129,9 +129,31 @@ public class CardDisplay : MonoBehaviour
 
     /// <summary>
     /// Updates the material used for the card's display.
+    /// Includes null safety to prevent NullReferenceException when called before Awake().
     /// </summary>
     private void UpdateCardMaterial()
     {
-        image.material = CurrentMaterial;
+        // Ensure image component is available (may be called before Awake)
+        if (image == null)
+        {
+            image = GetComponent<Image>();
+        }
+
+        if (image == null)
+        {
+            Debug.LogError($"CardDisplay.UpdateCardMaterial: Image component not found on {gameObject.name}");
+            return;
+        }
+
+        var material = CurrentMaterial;
+        if (material != null)
+        {
+            image.material = material;
+        }
+        else
+        {
+            Debug.LogWarning($"CardDisplay.UpdateCardMaterial: CurrentMaterial is null for card '{Card?.Title ?? "Unknown"}'");
+            image.material = defaultMaterial;
+        }
     }
 }

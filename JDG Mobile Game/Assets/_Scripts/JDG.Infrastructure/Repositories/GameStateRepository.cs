@@ -10,10 +10,10 @@ namespace JDG.Infrastructure.Repositories
     /// </summary>
     public class GameStateRepository : IGameStateRepository
     {
-        private JDG.Domain.Phase _currentPhase;
-        private int _turnNumber;
-        private PlayerId _currentPlayer;
-        private bool _isGameOver;
+        private JDG.Domain.Phase _currentPhase = JDG.Domain.Phase.Draw;
+        private int _turnNumber = 1;
+        private PlayerId _currentPlayer = PlayerId.Player1;
+        private bool _isGameOver = false;
 
         public JDG.Domain.Phase CurrentPhase => _currentPhase;
 

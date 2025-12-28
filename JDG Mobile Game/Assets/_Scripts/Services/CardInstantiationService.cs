@@ -37,6 +37,7 @@ public class CardInstantiationService : ICardInstantiationService
         }
 
         _cardNameToGameObject = new Dictionary<string, GameObject>();
+        Debug.Log($"CardInstantiationService: Created instance (HashCode={GetHashCode()})");
     }
 
     /// <summary>
@@ -98,7 +99,14 @@ public class CardInstantiationService : ICardInstantiationService
                 Debug.LogError($"CardInstantiationService: PhysicalCardDisplay component missing on prefab for card {card.Title}");
             }
 
+            if (_cardNameToGameObject.ContainsKey(newPhysicalCardName))
+            {
+                Debug.LogError($"CardInstantiationService: Duplicate card name '{newPhysicalCardName}'! Card already exists in dictionary.");
+                Object.Destroy(newPhysicalCard);
+                continue;
+            }
             _cardNameToGameObject.Add(newPhysicalCardName, newPhysicalCard);
+            Debug.Log($"CardInstantiationService: Added '{newPhysicalCardName}' (isPlayerOne={isPlayerOne}). Dictionary now has {_cardNameToGameObject.Count} entries.");
         }
     }
 
@@ -107,8 +115,23 @@ public class CardInstantiationService : ICardInstantiationService
     /// </summary>
     public bool TryGetCardGameObject(string cardName, out GameObject cardGameObject)
     {
-        return _cardNameToGameObject.TryGetValue(cardName, out cardGameObject);
+        bool found = _cardNameToGameObject.TryGetValue(cardName, out cardGameObject);
+        if (!found)
+        {
+            // Log all entries to debug naming issues
+            var allKeys = string.Join(", ", _cardNameToGameObject.Keys);
+            Debug.LogWarning($"CardInstantiationService: Card '{cardName}' not found. " +
+                $"Dictionary has {_cardNameToGameObject.Count} entries. Looking for P2 cards: " +
+                string.Join(", ", System.Linq.Enumerable.Where(_cardNameToGameObject.Keys, k => k.EndsWith("P2"))));
+        }
+        return found;
     }
+
+    /// <summary>
+    /// Gets the count of cards currently registered in the dictionary.
+    /// Useful for debugging to verify all cards were instantiated.
+    /// </summary>
+    public int GetDictionaryCount() => _cardNameToGameObject.Count;
 
     /// <summary>
     /// Generates a unique name for a card based on its title and player.

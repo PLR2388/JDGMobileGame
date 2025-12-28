@@ -67,7 +67,7 @@ namespace JDG.PlayMode.Tests
                 Object.DestroyImmediate(_canvas.gameObject);
 
             // Clean up all test objects
-            var allObjects = Object.FindObjectsOfType<GameObject>();
+            var allObjects = Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
             foreach (var obj in allObjects)
             {
                 if (obj.name.Contains("Player") || obj.name.Contains("Status") || obj.name.Contains("Canvas"))
