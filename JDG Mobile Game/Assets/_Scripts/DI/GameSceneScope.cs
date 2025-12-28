@@ -24,6 +24,15 @@ namespace JDG.DI
 
             // Find SharedServicesScope in DontDestroyOnLoad
             var sharedScope = FindFirstObjectByType<SharedServicesScope>();
+            if (sharedScope == null)
+            {
+                // SharedServicesScope not found - this happens when playing a scene directly
+                // from Unity Editor without going through _preload scene.
+                // Create SharedServicesScope dynamically to enable DI.
+                Debug.LogWarning("GameSceneScope: SharedServicesScope NOT FOUND! Creating dynamically for Editor playback...");
+                sharedScope = CreateSharedServicesScope();
+            }
+
             if (sharedScope != null)
             {
                 Debug.Log("GameSceneScope: Found SharedServicesScope, setting as parent");
@@ -31,11 +40,29 @@ namespace JDG.DI
             }
             else
             {
-                Debug.LogError("GameSceneScope: SharedServicesScope NOT FOUND! Make sure _preload scene loads first.");
+                Debug.LogError("GameSceneScope: Failed to create SharedServicesScope! DI will not work.");
                 return;
             }
 
             base.Awake();
+        }
+
+        /// <summary>
+        /// Creates SharedServicesScope dynamically when _preload scene wasn't loaded.
+        /// This enables playing Game/TutoPlayerGame scenes directly from the Unity Editor.
+        /// </summary>
+        private SharedServicesScope CreateSharedServicesScope()
+        {
+            Debug.Log("GameSceneScope: Creating SharedServicesScope dynamically...");
+
+            var sharedScopeGO = new GameObject("SharedServicesScope (Dynamic)");
+            var sharedScope = sharedScopeGO.AddComponent<SharedServicesScope>();
+
+            // SharedServicesScope.Awake() is called immediately by Unity when AddComponent runs,
+            // which sets up DontDestroyOnLoad and triggers VContainer's initialization.
+
+            Debug.Log("GameSceneScope: SharedServicesScope created and initialized");
+            return sharedScope;
         }
 
         protected override void Configure(IContainerBuilder builder)
@@ -194,6 +221,11 @@ namespace JDG.DI
             builder.RegisterBuildCallback(container =>
             {
                 Debug.Log("GameSceneScope: Injecting dependencies into scene MonoBehaviours...");
+
+                // IMPORTANT: TutoSceneInitializer must be injected FIRST (before PlayerCards)
+                // to ensure tutorial decks are built when loading TutoPlayerGame directly from Editor.
+                // Without this, PlayerCards.Construct() gets empty decks and GameOver() triggers.
+                InjectAllOfType<TutoSceneInitializer>(container);
 
                 InjectAllOfType<PlayerCards>(container);
                 InjectAllOfType<PlayerStatus>(container);

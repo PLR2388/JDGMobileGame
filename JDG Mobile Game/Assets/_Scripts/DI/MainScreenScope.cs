@@ -21,6 +21,15 @@ namespace JDG.DI
             // SharedServicesScope is in DontDestroyOnLoad, so auto-find doesn't work.
             // We must explicitly enqueue it as parent before base.Awake() builds the container.
             var sharedScope = FindFirstObjectByType<SharedServicesScope>();
+            if (sharedScope == null)
+            {
+                // SharedServicesScope not found - this happens when playing MainScreen directly
+                // from Unity Editor without going through _preload scene.
+                // Create SharedServicesScope dynamically to enable DI.
+                Debug.LogWarning("MainScreenScope: SharedServicesScope NOT FOUND! Creating dynamically for Editor playback...");
+                sharedScope = CreateSharedServicesScope();
+            }
+
             if (sharedScope != null)
             {
                 Debug.Log($"MainScreenScope: Found SharedServicesScope, enqueueing as parent");
@@ -28,11 +37,30 @@ namespace JDG.DI
             }
             else
             {
-                Debug.LogError("MainScreenScope: SharedServicesScope NOT FOUND! DI will fail.");
+                Debug.LogError("MainScreenScope: Failed to create SharedServicesScope! DI will not work.");
+                return;
             }
 
             base.Awake();
             Debug.Log($"MainScreenScope: After Awake, Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+        }
+
+        /// <summary>
+        /// Creates SharedServicesScope dynamically when _preload scene wasn't loaded.
+        /// This enables playing MainScreen scene directly from the Unity Editor.
+        /// </summary>
+        private SharedServicesScope CreateSharedServicesScope()
+        {
+            Debug.Log("MainScreenScope: Creating SharedServicesScope dynamically...");
+
+            var sharedScopeGO = new GameObject("SharedServicesScope (Dynamic)");
+            var sharedScope = sharedScopeGO.AddComponent<SharedServicesScope>();
+
+            // SharedServicesScope.Awake() is called immediately by Unity when AddComponent runs,
+            // which sets up DontDestroyOnLoad and triggers VContainer's initialization.
+
+            Debug.Log("MainScreenScope: SharedServicesScope created and initialized");
+            return sharedScope;
         }
 
         protected override void Configure(IContainerBuilder builder)
@@ -50,6 +78,10 @@ namespace JDG.DI
             // Card Choice UI - deck selection screen
             builder.RegisterComponentInHierarchy<Menu.CardChoiceUIManager>();
             builder.RegisterComponentInHierarchy<Menu.CardChoice>();
+
+            // SceneLoader - needs DI for IDeckManagementService, IAudioService, ILocalizationService
+            // Critical: Without this injection, BuildTutorialDecks() is never called when clicking Tutorial button
+            builder.RegisterComponentInHierarchy<SceneLoader>();
 
             UnityEngine.Debug.Log("MainScreenScope: Configuration complete");
         }
