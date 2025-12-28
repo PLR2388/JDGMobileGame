@@ -5,6 +5,7 @@ using Cards;
 using Cards.InvocationCards;
 using JDG.Application;
 using JDG.Application.Cards;
+using JDG.Application.Services;
 using JDG.Domain.Events;
 
 namespace _Scripts.Units.Invocation
@@ -30,6 +31,9 @@ namespace _Scripts.Units.Invocation
 
         // Phase 42ag: Required ability provider (legacy AbilityLibrary removed)
         private readonly IAbilityProvider _abilityProvider;
+
+        // Phase 56: Condition provider (replaces ConditionLibrary.Instance)
+        private readonly IConditionProvider _conditionProvider;
 
         /// <summary>
         /// Gets or sets whether the card effect is canceled.
@@ -74,25 +78,29 @@ namespace _Scripts.Units.Invocation
         /// Initializes an instance of the InGameInvocationCard.
         /// Phase 24-25: Added dependency injection for IEventBus and ICardCollectionService.
         /// Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed).
+        /// Phase 56: Added IConditionProvider to replace ConditionLibrary.Instance.
         /// </summary>
         /// <param name="invocationCard">The base invocation card.</param>
         /// <param name="cardOwner">The owner of the card.</param>
         /// <param name="eventBus">EventBus for publishing domain events.</param>
         /// <param name="cardCollectionService">Service for accessing player cards.</param>
         /// <param name="abilityProvider">Provider for abilities (required).</param>
+        /// <param name="conditionProvider">Provider for conditions (optional, uses legacy if null).</param>
         /// <returns>A new InGameInvocationCard instance.</returns>
         public InGameInvocationCard(
             InvocationCard invocationCard,
             CardOwner cardOwner,
             IEventBus eventBus,
             ICardCollectionService cardCollectionService,
-            IAbilityProvider abilityProvider)
+            IAbilityProvider abilityProvider,
+            IConditionProvider conditionProvider = null)
         {
             BaseInvocationCard = invocationCard;
             CardOwner = cardOwner;
             _eventBus = eventBus;
             _cardCollectionService = cardCollectionService;
             _abilityProvider = abilityProvider;
+            _conditionProvider = conditionProvider;
             Reset();
         }
 
@@ -132,8 +140,23 @@ namespace _Scripts.Units.Invocation
             Families = BaseInvocationCard.BaseInvocationCardStats.Families;
             EquipmentCard = null;
             IsAffectedByEffectCard = BaseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
-            conditions = BaseInvocationCard.Conditions
-                .Select(conditionName => ConditionLibrary.Instance.ConditionDictionary[conditionName]).ToList();
+
+            // Phase 56: Use injected provider if available, fallback to legacy library
+            if (_conditionProvider != null)
+            {
+                conditions = BaseInvocationCard.Conditions
+                    .Select(conditionName => _conditionProvider.GetCondition(conditionName) as global::Condition)
+                    .Where(condition => condition != null)
+                    .ToList();
+            }
+            else
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                // Fallback to legacy singleton for backward compatibility
+                conditions = BaseInvocationCard.Conditions
+                    .Select(conditionName => ConditionLibrary.Instance.ConditionDictionary[conditionName]).ToList();
+#pragma warning restore CS0618
+            }
 
             // Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed)
             Abilities = BaseInvocationCard.Abilities

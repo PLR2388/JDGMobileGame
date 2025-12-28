@@ -101,6 +101,9 @@ namespace JDG.DI
             builder.Register<IEquipmentAbilityProvider, EquipmentAbilityProviderService>(Lifetime.Singleton);
             builder.Register<IEffectAbilityProvider, EffectAbilityProviderService>(Lifetime.Singleton);
 
+            // Phase 56: Condition provider (wraps ConditionLibrary for DI)
+            builder.Register<IConditionProvider, ConditionProviderService>(Lifetime.Singleton);
+
             // ============================================
             // APPLICATION LAYER - Use Cases
             // ============================================
