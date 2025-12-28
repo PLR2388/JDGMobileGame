@@ -66,12 +66,11 @@ public class SceneLoader : MonoBehaviour
     /// <summary>
     /// Handles the onClick event for the story button. Shows a toast message.
     /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 54: Removed fallback pattern - DI is properly configured.
     /// </summary>
     public void OnClickStory()
     {
-        var message = _localizationService?.GetLocalizedValue(LocalizationKeys.TOAST_ASK.ToString())
-                      ?? LocalizationSystem.Instance?.GetLocalizedValue(LocalizationKeys.TOAST_ASK)
-                      ?? LocalizationKeys.TOAST_ASK.ToString();
+        var message = _localizationService.GetLocalizedValue(LocalizationKeys.TOAST_ASK.ToString());
         ShowAndroidToastMessage(message);
     }
 
