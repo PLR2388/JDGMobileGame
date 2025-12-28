@@ -50,6 +50,9 @@ namespace Menu
         // Phase 46: IAbilityProvider is required (registered in SharedServicesScope)
         private IAbilityProvider _abilityProvider;
 
+        // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
+        private JDG.Application.Services.ISceneLoaderService _sceneLoaderService;
+
         /// <summary>
         /// VContainer method injection for dependencies.
         /// Phase 9: Inject ICardSelectionService instead of using singleton.
@@ -60,6 +63,7 @@ namespace Menu
         /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
         /// Phase 46: IAbilityProvider is required (registered in SharedServicesScope).
         ///           ICardCollectionService is null (only available in Game scene).
+        /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
         /// </summary>
         [Inject]
         public void Construct(
@@ -68,7 +72,8 @@ namespace Menu
             IEventBus eventBus,
             JDG.Application.Services.IAudioService audioService,
             CardChoiceUIManager cardChoiceUIManager,
-            IAbilityProvider abilityProvider)
+            IAbilityProvider abilityProvider,
+            JDG.Application.Services.ISceneLoaderService sceneLoaderService)
         {
             Debug.Log("CardChoice.Construct() called by VContainer!");
             _cardSelectionService = cardSelectionService;
@@ -77,6 +82,7 @@ namespace Menu
             _audioService = audioService;
             _cardChoiceUIManager = cardChoiceUIManager;
             _abilityProvider = abilityProvider;
+            _sceneLoaderService = sceneLoaderService;
             Debug.Log($"CardChoice.Construct() complete. _deckManagementService = {(_deckManagementService != null ? "OK" : "NULL")}");
         }
 
@@ -125,7 +131,8 @@ namespace Menu
                 {
                     // Phase 8: Use IAudioService instead of AudioSystem.Instance
                     _audioService?.StopMusic();
-                    SceneLoaderSystem.LoadGameScreen();
+                    // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+                    _sceneLoaderService.LoadGameScreen();
                     isPlayerOneCardChosen = false;
                     _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
 
@@ -251,7 +258,8 @@ namespace Menu
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, null, _abilityProvider)).ToList();
             // Phase 8: Use IAudioService instead of AudioSystem.Instance
             _audioService?.StopMusic();
-            SceneLoaderSystem.LoadGameScreen();
+            // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+            _sceneLoaderService.LoadGameScreen();
         }
 
         /// <summary>
@@ -292,7 +300,8 @@ namespace Menu
                 deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2, _eventBus, null, _abilityProvider)).ToList();
             // Phase 8: Use IAudioService instead of AudioSystem.Instance
             _audioService?.StopMusic();
-            SceneLoaderSystem.LoadGameScreen();
+            // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+            _sceneLoaderService.LoadGameScreen();
         }
 
         /// <summary>

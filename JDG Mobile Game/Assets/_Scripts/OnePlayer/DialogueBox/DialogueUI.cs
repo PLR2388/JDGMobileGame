@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Linq;
+using JDG.Application.Services;
 using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 
 /// <summary>
 /// Unity event that broadcasts the current dialogue index.
@@ -24,6 +26,7 @@ public class TriggerDoneEvent : UnityEvent<NextDialogueTrigger>
 
 /// <summary>
 /// Represents the user interface for dialogues in the game.
+/// Phase 55: Uses ISceneLoaderService instead of SceneLoaderSystem static calls.
 /// </summary>
 public class DialogueUI : MonoBehaviour
 {
@@ -40,6 +43,19 @@ public class DialogueUI : MonoBehaviour
     private int currentSoundIndex = 0;
 
     private AudioSource audioSource;
+
+    // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
+    private ISceneLoaderService _sceneLoaderService;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
+    /// </summary>
+    [Inject]
+    public void Construct(ISceneLoaderService sceneLoaderService)
+    {
+        _sceneLoaderService = sceneLoaderService;
+    }
 
     /// <summary>
     /// Initialization method.
@@ -213,7 +229,8 @@ public class DialogueUI : MonoBehaviour
                 }
                 break;
             case NextDialogueTrigger.EndGame:
-                SceneLoaderSystem.LoadMainScreen();
+                // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+                _sceneLoaderService.LoadMainScreen();
                 return true;
             default:
                 throw new ArgumentOutOfRangeException();

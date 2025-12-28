@@ -51,6 +51,9 @@ public class GameLoop : MonoBehaviour
     // Phase 8: IAudioService instead of AudioSystem.Instance
     protected IAudioService _audioService;
 
+    // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
+    protected ISceneLoaderService _sceneLoaderService;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
@@ -59,6 +62,7 @@ public class GameLoop : MonoBehaviour
     /// Phase 34: Added ILocalizationService to replace LocalizationSystem.Instance.
     /// Phase 35: Added IDialogService to replace MessageBox/CardSelector.Instance.
     /// Phase 8: Added IAudioService to replace AudioSystem.Instance.
+    /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
     /// </summary>
     [Inject]
     public void Construct(
@@ -76,7 +80,8 @@ public class GameLoop : MonoBehaviour
         IPlayerStatusProvider playerStatusProvider,
         ILocalizationService localizationService,
         IDialogService dialogService,
-        IAudioService audioService)
+        IAudioService audioService,
+        ISceneLoaderService sceneLoaderService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -93,6 +98,7 @@ public class GameLoop : MonoBehaviour
         _localizationService = localizationService;
         _dialogService = dialogService;
         _audioService = audioService;
+        _sceneLoaderService = sceneLoaderService;
     }
 
     // Start is called before the first frame update
@@ -135,7 +141,8 @@ public class GameLoop : MonoBehaviour
     {
         void PositiveAction()
         {
-            SceneLoaderSystem.LoadMainScreen();
+            // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+            _sceneLoaderService.LoadMainScreen();
         }
 
         // Phase 19-20: Use injected UIManager instead of .Instance
@@ -287,11 +294,12 @@ public class GameLoop : MonoBehaviour
 
     /// <summary>
     /// Redirect player after a Gameover
+    /// Phase 55: Uses ISceneLoaderService instead of SceneLoaderSystem.
     /// </summary>
     private void GameOver()
     {
         _gameStateService.SetPhase(JDG.Domain.Phase.GameOver);
-        SceneLoaderSystem.LoadMainScreen();
+        _sceneLoaderService.LoadMainScreen();
     }
 
     /// <summary>

@@ -1,13 +1,13 @@
 ﻿using JDG.Application.Services;
 using Sound;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using VContainer;
 
 /// <summary>
 /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
 /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
+/// Phase 55: Uses ISceneLoaderService instead of direct SceneManager/Application calls.
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
@@ -19,36 +19,42 @@ public class SceneLoader : MonoBehaviour
     private ILocalizationService _localizationService;
     // Phase 8: IAudioService instead of AudioSystem.Instance
     private IAudioService _audioService;
+    // Phase 55: ISceneLoaderService instead of direct SceneManager/Application calls
+    private ISceneLoaderService _sceneLoaderService;
 
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
     /// Phase 39: Inject ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
+    /// Phase 55: Inject ISceneLoaderService instead of direct SceneManager/Application calls.
     /// </summary>
     [Inject]
     public void Construct(
         IDeckManagementService deckManagementService,
         ILocalizationService localizationService,
-        IAudioService audioService)
+        IAudioService audioService,
+        ISceneLoaderService sceneLoaderService)
     {
         _deckManagementService = deckManagementService;
         _localizationService = localizationService;
         _audioService = audioService;
+        _sceneLoaderService = sceneLoaderService;
     }
 
     /// <summary>
     /// Quits the game application.
+    /// Phase 55: Uses ISceneLoaderService instead of Application.Quit().
     /// </summary>
     public void QuitGame()
     {
-        Application.Quit();
-        Debug.Log("Quit!");
+        _sceneLoaderService.QuitGame();
     }
 
     /// <summary>
     /// Navigates the player to the tutorial scene.
     /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
+    /// Phase 55: Uses ISceneLoaderService instead of SceneManager.
     /// </summary>
     public void GoToTutorial()
     {
@@ -60,7 +66,8 @@ public class SceneLoader : MonoBehaviour
         // Phase 8: Use IAudioService instead of AudioSystem.Instance
         _audioService?.StopMusic();
 
-        SceneManager.LoadSceneAsync(TutorialScene, LoadSceneMode.Single);
+        // Phase 55: Use ISceneLoaderService instead of SceneManager
+        _sceneLoaderService.LoadSceneAsync(TutorialScene);
     }
 
     /// <summary>

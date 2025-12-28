@@ -84,6 +84,9 @@ namespace JDG.DI
             // Card Data Provider - replaces ResourceSystem.Instance
             builder.Register<JDG.Application.Services.ICardDataProvider, JDG.Infrastructure.Services.CardDataProvider>(Lifetime.Singleton);
 
+            // Scene Loader Service - replaces SceneLoaderSystem singleton (Phase 55)
+            builder.Register<ISceneLoaderService, SceneLoaderService>(Lifetime.Singleton);
+
             // Deck Management Service - deck data storage
             builder.Register<IDeckManagementService, DeckManagementService>(Lifetime.Singleton);
 

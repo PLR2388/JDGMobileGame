@@ -1,8 +1,10 @@
+using System;
 using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Responsible for loading different scenes.
 /// </summary>
+[Obsolete("Use ISceneLoaderService via dependency injection instead. Inject in constructor or use [Inject] attribute for MonoBehaviours.")]
 public class SceneLoaderSystem : StaticInstance<SceneLoaderSystem>
 {
     // Centralized storage for scene names.
