@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 /// <summary>
 /// Manages the localization of text resources based on the provided language.
+/// Phase 52: Marked obsolete - use ILocalizationService via dependency injection instead.
 /// </summary>
+[Obsolete("LocalizationSystem singleton is obsolete. Use ILocalizationService via dependency injection. Inject ILocalizationService in your constructor or use [Inject] attribute for MonoBehaviours.")]
 public class LocalizationSystem : StaticInstance<LocalizationSystem>
 {
     private Dictionary<string, string> localizedText;

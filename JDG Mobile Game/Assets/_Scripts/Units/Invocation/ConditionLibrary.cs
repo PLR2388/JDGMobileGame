@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
 
 /// <summary>
 /// Represents a library of conditions used in the game.
+/// Phase 52: Marked obsolete - use IConditionProvider via dependency injection instead.
+/// Note: IConditionProvider will be created in a future phase to replace this singleton.
 /// </summary>
+[Obsolete("ConditionLibrary singleton is obsolete. Will be replaced with IConditionProvider via dependency injection in a future phase.")]
 public class ConditionLibrary : StaticInstance<ConditionLibrary>
 {
     private readonly List<Condition> conditions = new List<Condition>()

@@ -7,7 +7,9 @@ namespace Sound
 {
     /// <summary>
     /// Manages the playback and control of audio, including both music and sound effects.
+    /// Phase 52: Marked obsolete - use IAudioService via dependency injection instead.
     /// </summary>
+    [Obsolete("AudioSystem singleton is obsolete. Use IAudioService via dependency injection. Inject IAudioService in your constructor or use [Inject] attribute for MonoBehaviours.")]
     public class AudioSystem : StaticInstance<AudioSystem>
     {
         [SerializeField] private Music[] musicNames;

@@ -16,9 +16,12 @@ public class NumberedCardEvent : UnityEvent<InGameCard, int>
 }
 
 /// <summary>
+/// Displays card selector dialogs for card selection.
 /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
 /// Phase 41: Migrated to clean ICardSelectionService with EventBus.
+/// Phase 52: Marked obsolete - use IDialogService via dependency injection instead.
 /// </summary>
+[Obsolete("CardSelector singleton is obsolete. Use IDialogService via dependency injection. Call _dialogService.ShowCardSelector() instead of CardSelector.Instance.CreateCardSelection().")]
 public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseComponent
 {
     #region Fields and Properties
