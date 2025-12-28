@@ -31,15 +31,16 @@ public class CardFactory : ICardFactory
     /// Creates a new CardFactory with injected dependencies.
     /// Phase 49: Added for ICardFactory implementation.
     /// Phase 56: Added IConditionProvider for InGameInvocationCard conditions.
+    /// Phase 61: Made all providers required (removed fallback patterns in InGameCard classes).
     /// </summary>
     public CardFactory(
         IEventBus eventBus,
         ICardCollectionService cardCollectionService,
         IAbilityProvider abilityProvider,
-        IFieldAbilityProvider fieldAbilityProvider = null,
-        IEquipmentAbilityProvider equipmentAbilityProvider = null,
-        IEffectAbilityProvider effectAbilityProvider = null,
-        IConditionProvider conditionProvider = null)
+        IFieldAbilityProvider fieldAbilityProvider,
+        IEquipmentAbilityProvider equipmentAbilityProvider,
+        IEffectAbilityProvider effectAbilityProvider,
+        IConditionProvider conditionProvider)
     {
         _eventBus = eventBus;
         _cardCollectionService = cardCollectionService;
@@ -53,7 +54,9 @@ public class CardFactory : ICardFactory
     /// <summary>
     /// Default constructor for backward compatibility when using static method.
     /// Phase 49: Kept for legacy code that uses static CreateInGameCard.
+    /// Phase 61: Only use for static method calls - instance methods require provider injection.
     /// </summary>
+    [System.Obsolete("Use the constructor with dependencies for proper DI. This exists only for static CreateInGameCard calls.")]
     public CardFactory()
     {
     }
@@ -102,18 +105,19 @@ public class CardFactory : ICardFactory
     /// Creates an instance of InGameCard based on the type and owner of the provided card.
     /// Phase 24-25: Added eventBus and cardCollectionService parameters for InGameInvocationCard dependency injection.
     /// Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed).
-    /// Phase 48: Added optional providers for Field, Equipment, and Effect cards.
-    /// Phase 56: Added optional IConditionProvider for InGameInvocationCard conditions.
+    /// Phase 48: Added providers for Field, Equipment, and Effect cards.
+    /// Phase 56: Added IConditionProvider for InGameInvocationCard conditions.
+    /// Phase 61: Made all providers required (removed fallback patterns in InGameCard classes).
     /// </summary>
     /// <param name="card">The base card for which the InGameCard is to be created.</param>
     /// <param name="cardOwner">The owner of the card.</param>
-    /// <param name="eventBus">EventBus for publishing domain events (required for InvocationCard).</param>
-    /// <param name="cardCollectionService">Service for accessing player cards (required for InvocationCard).</param>
-    /// <param name="abilityProvider">Provider for invocation abilities (required for InvocationCard).</param>
-    /// <param name="fieldAbilityProvider">Optional provider for field abilities.</param>
-    /// <param name="equipmentAbilityProvider">Optional provider for equipment abilities.</param>
-    /// <param name="effectAbilityProvider">Optional provider for effect abilities.</param>
-    /// <param name="conditionProvider">Optional provider for conditions.</param>
+    /// <param name="eventBus">EventBus for publishing domain events (required).</param>
+    /// <param name="cardCollectionService">Service for accessing player cards (required).</param>
+    /// <param name="abilityProvider">Provider for invocation abilities (required).</param>
+    /// <param name="fieldAbilityProvider">Provider for field abilities (required).</param>
+    /// <param name="equipmentAbilityProvider">Provider for equipment abilities (required).</param>
+    /// <param name="effectAbilityProvider">Provider for effect abilities (required).</param>
+    /// <param name="conditionProvider">Provider for conditions (required).</param>
     /// <returns>An instance of a specific InGameCard subtype based on the card provided.</returns>
     /// <exception cref="InvalidOperationException">Thrown when an unsupported card type is provided.</exception>
     public static InGameCard CreateInGameCard(
@@ -122,10 +126,10 @@ public class CardFactory : ICardFactory
         IEventBus eventBus,
         ICardCollectionService cardCollectionService,
         IAbilityProvider abilityProvider,
-        IFieldAbilityProvider fieldAbilityProvider = null,
-        IEquipmentAbilityProvider equipmentAbilityProvider = null,
-        IEffectAbilityProvider effectAbilityProvider = null,
-        IConditionProvider conditionProvider = null)
+        IFieldAbilityProvider fieldAbilityProvider,
+        IEquipmentAbilityProvider equipmentAbilityProvider,
+        IEffectAbilityProvider effectAbilityProvider,
+        IConditionProvider conditionProvider)
     {
         return card switch
         {

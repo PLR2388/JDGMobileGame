@@ -22,12 +22,13 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
 
     /// <summary>
     /// Initializes a new instance of <see cref="InGameFieldCard"/> using the base <see cref="FieldCard"/> data.
-    /// Phase 48: Added optional abilityProvider parameter for DI.
+    /// Phase 48: Added abilityProvider parameter for DI.
+    /// Phase 61: Made abilityProvider required (removed fallback to legacy singleton).
     /// </summary>
     /// <param name="fieldCard">The base field card data.</param>
     /// <param name="cardOwner">The owner of the card.</param>
-    /// <param name="abilityProvider">Optional ability provider (uses legacy library if null).</param>
-    public InGameFieldCard(FieldCard fieldCard, CardOwner cardOwner, IFieldAbilityProvider abilityProvider = null)
+    /// <param name="abilityProvider">Provider for field abilities (required).</param>
+    public InGameFieldCard(FieldCard fieldCard, CardOwner cardOwner, IFieldAbilityProvider abilityProvider)
     {
         baseFieldCard = fieldCard;
         CardOwner = cardOwner;
@@ -49,21 +50,11 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
         collector = baseFieldCard.Collector;
         Family = baseFieldCard.Family;
 
-        // Phase 48: Use injected provider if available, fallback to legacy library
-        if (_abilityProvider != null)
-        {
-            FieldAbilities = baseFieldCard.FieldAbilities
-                .Select(name => _abilityProvider.GetAbility(name))
-                .Where(ability => ability != null)
-                .ToList();
-        }
-        else
-        {
-            // Fallback to legacy singleton for backward compatibility
-            FieldAbilities = baseFieldCard.FieldAbilities.Select(
-                fieldAbilityName => FieldAbilityLibrary.Instance.FieldAbilityDictionary[fieldAbilityName]
-            ).ToList();
-        }
+        // Phase 61: Use injected provider (fallback removed)
+        FieldAbilities = baseFieldCard.FieldAbilities
+            .Select(name => _abilityProvider.GetAbility(name))
+            .Where(ability => ability != null)
+            .ToList();
     }
 
     #region IInGameFieldCard Implementation

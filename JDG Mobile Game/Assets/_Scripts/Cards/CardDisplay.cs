@@ -1,5 +1,6 @@
 ﻿using Cards;
 using JDG.Application;
+using JDG.Application.Services;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -7,6 +8,7 @@ using VContainer;
 /// <summary>
 /// Phase 24-25: Added VContainer injection for IEventBus and ICardCollectionService.
 /// Phase 7: Added IAbilityProvider for ability system migration.
+/// Phase 61: Added all ability providers (required by CardFactory).
 /// </summary>
 public class CardDisplay : MonoBehaviour
 {
@@ -23,17 +25,35 @@ public class CardDisplay : MonoBehaviour
     // Phase 7: IAbilityProvider for ability system migration
     private IAbilityProvider _abilityProvider;
 
+    // Phase 61: All ability providers required by CardFactory
+    private IFieldAbilityProvider _fieldAbilityProvider;
+    private IEquipmentAbilityProvider _equipmentAbilityProvider;
+    private IEffectAbilityProvider _effectAbilityProvider;
+    private IConditionProvider _conditionProvider;
+
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 24-25: Inject IEventBus and ICardCollectionService for CardFactory.
     /// Phase 7: Inject IAbilityProvider for ability system migration.
+    /// Phase 61: Inject all ability providers (required by CardFactory).
     /// </summary>
     [Inject]
-    public void Construct(IEventBus eventBus, ICardCollectionService cardCollectionService, IAbilityProvider abilityProvider = null)
+    public void Construct(
+        IEventBus eventBus,
+        ICardCollectionService cardCollectionService,
+        IAbilityProvider abilityProvider,
+        IFieldAbilityProvider fieldAbilityProvider,
+        IEquipmentAbilityProvider equipmentAbilityProvider,
+        IEffectAbilityProvider effectAbilityProvider,
+        IConditionProvider conditionProvider)
     {
         _eventBus = eventBus;
         _cardCollectionService = cardCollectionService;
         _abilityProvider = abilityProvider;
+        _fieldAbilityProvider = fieldAbilityProvider;
+        _equipmentAbilityProvider = equipmentAbilityProvider;
+        _effectAbilityProvider = effectAbilityProvider;
+        _conditionProvider = conditionProvider;
     }
 
     /// <summary>
@@ -93,12 +113,15 @@ public class CardDisplay : MonoBehaviour
     /// If Card doesn't exist but InGameCard does, the base card of the InGameCard is set as the Card.
     /// Phase 24-25: Passes dependencies to CardFactory.
     /// Phase 7: Passes IAbilityProvider to CardFactory.
+    /// Phase 61: Passes all ability providers to CardFactory.
     /// </summary>
     private void InitializeCard()
     {
         if (Card != null && InGameCard == null)
         {
-            InGameCard = CardFactory.CreateInGameCard(Card, CardOwner.NotDefined, _eventBus, _cardCollectionService, _abilityProvider);
+            InGameCard = CardFactory.CreateInGameCard(
+                Card, CardOwner.NotDefined, _eventBus, _cardCollectionService, _abilityProvider,
+                _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider);
         }
         else if (Card == null && InGameCard != null)
         {

@@ -19,6 +19,7 @@ using UnityEngine;
 /// Phase 7: Added IAbilityProvider for ability system migration.
 /// Phase 46: IAbilityProvider is required (registered in SharedServicesScope).
 ///           ICardCollectionService is null (only available in Game scene).
+/// Phase 61: Added all ability providers (required by CardFactory).
 /// </summary>
 public class DeckManagementService : IDeckManagementService
 {
@@ -26,20 +27,35 @@ public class DeckManagementService : IDeckManagementService
     private readonly IEventBus _eventBus;
     private readonly ICardDataProvider _cardDataProvider;
     private readonly IAbilityProvider _abilityProvider;
+    private readonly IFieldAbilityProvider _fieldAbilityProvider;
+    private readonly IEquipmentAbilityProvider _equipmentAbilityProvider;
+    private readonly IEffectAbilityProvider _effectAbilityProvider;
+    private readonly IConditionProvider _conditionProvider;
 
     public List<Card> Deck1AllCards { get; private set; } = new List<Card>();
     public List<Card> Deck2AllCards { get; private set; } = new List<Card>();
     public List<InGameCard> Player1DeckCards { get; set; } = new List<InGameCard>();
     public List<InGameCard> Player2DeckCards { get; set; } = new List<InGameCard>();
 
+    /// <summary>
+    /// Phase 61: Updated to require all ability providers.
+    /// </summary>
     public DeckManagementService(
         IEventBus eventBus,
         ICardDataProvider cardDataProvider,
-        IAbilityProvider abilityProvider)
+        IAbilityProvider abilityProvider,
+        IFieldAbilityProvider fieldAbilityProvider,
+        IEquipmentAbilityProvider equipmentAbilityProvider,
+        IEffectAbilityProvider effectAbilityProvider,
+        IConditionProvider conditionProvider)
     {
         _eventBus = eventBus;
         _cardDataProvider = cardDataProvider;
         _abilityProvider = abilityProvider;
+        _fieldAbilityProvider = fieldAbilityProvider;
+        _equipmentAbilityProvider = equipmentAbilityProvider;
+        _effectAbilityProvider = effectAbilityProvider;
+        _conditionProvider = conditionProvider;
 
         // Phase 8: Use ICardDataProvider instead of ResourceSystem.Instance
         if (_cardDataProvider.IsLoaded)
@@ -118,8 +134,11 @@ public class DeckManagementService : IDeckManagementService
 
         CardChoice.GetRandomDeck(DeckConfiguration.MaxDeckCards - player1Deck.Count, ref player1Deck, Deck1AllCards);
         player1Deck.Reverse();
+        // Phase 61: Pass all ability providers to CardFactory
         // ICardCollectionService is null (only available in Game scene)
-        Player1DeckCards = player1Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1, _eventBus, null, _abilityProvider)).ToList();
+        Player1DeckCards = player1Deck.Select(card => CardFactory.CreateInGameCard(
+            card, CardOwner.Player1, _eventBus, null, _abilityProvider,
+            _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
     }
 
     /// <summary>
@@ -149,8 +168,11 @@ public class DeckManagementService : IDeckManagementService
         }
 
         player2Deck.Reverse();
+        // Phase 61: Pass all ability providers to CardFactory
         // ICardCollectionService is null (only available in Game scene)
-        Player2DeckCards = player2Deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2, _eventBus, null, _abilityProvider)).ToList();
+        Player2DeckCards = player2Deck.Select(card => CardFactory.CreateInGameCard(
+            card, CardOwner.Player2, _eventBus, null, _abilityProvider,
+            _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider)).ToList();
     }
 
     /// <summary>

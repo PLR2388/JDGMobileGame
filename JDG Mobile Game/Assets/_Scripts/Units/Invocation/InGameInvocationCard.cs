@@ -79,13 +79,14 @@ namespace _Scripts.Units.Invocation
         /// Phase 24-25: Added dependency injection for IEventBus and ICardCollectionService.
         /// Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed).
         /// Phase 56: Added IConditionProvider to replace ConditionLibrary.Instance.
+        /// Phase 61: Made IConditionProvider required (removed fallback to legacy singleton).
         /// </summary>
         /// <param name="invocationCard">The base invocation card.</param>
         /// <param name="cardOwner">The owner of the card.</param>
         /// <param name="eventBus">EventBus for publishing domain events.</param>
         /// <param name="cardCollectionService">Service for accessing player cards.</param>
         /// <param name="abilityProvider">Provider for abilities (required).</param>
-        /// <param name="conditionProvider">Provider for conditions (optional, uses legacy if null).</param>
+        /// <param name="conditionProvider">Provider for conditions (required).</param>
         /// <returns>A new InGameInvocationCard instance.</returns>
         public InGameInvocationCard(
             InvocationCard invocationCard,
@@ -93,7 +94,7 @@ namespace _Scripts.Units.Invocation
             IEventBus eventBus,
             ICardCollectionService cardCollectionService,
             IAbilityProvider abilityProvider,
-            IConditionProvider conditionProvider = null)
+            IConditionProvider conditionProvider)
         {
             BaseInvocationCard = invocationCard;
             CardOwner = cardOwner;
@@ -141,22 +142,11 @@ namespace _Scripts.Units.Invocation
             EquipmentCard = null;
             IsAffectedByEffectCard = BaseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
 
-            // Phase 56: Use injected provider if available, fallback to legacy library
-            if (_conditionProvider != null)
-            {
-                conditions = BaseInvocationCard.Conditions
-                    .Select(conditionName => _conditionProvider.GetCondition(conditionName) as global::Condition)
-                    .Where(condition => condition != null)
-                    .ToList();
-            }
-            else
-            {
-#pragma warning disable CS0618 // Type or member is obsolete
-                // Fallback to legacy singleton for backward compatibility
-                conditions = BaseInvocationCard.Conditions
-                    .Select(conditionName => ConditionLibrary.Instance.ConditionDictionary[conditionName]).ToList();
-#pragma warning restore CS0618
-            }
+            // Phase 61: Use injected provider (fallback removed)
+            conditions = BaseInvocationCard.Conditions
+                .Select(conditionName => _conditionProvider.GetCondition(conditionName) as global::Condition)
+                .Where(condition => condition != null)
+                .ToList();
 
             // Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed)
             Abilities = BaseInvocationCard.Abilities

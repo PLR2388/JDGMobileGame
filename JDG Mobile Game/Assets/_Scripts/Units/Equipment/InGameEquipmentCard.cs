@@ -20,12 +20,13 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InGameEquipmentCard"/> class.
-    /// Phase 48: Added optional abilityProvider parameter for DI.
+    /// Phase 48: Added abilityProvider parameter for DI.
+    /// Phase 61: Made abilityProvider required (removed fallback to legacy singleton).
     /// </summary>
     /// <param name="equipmentCard">The base equipment card this in-game card is based on.</param>
     /// <param name="cardOwner">The owner of this card.</param>
-    /// <param name="abilityProvider">Optional ability provider (uses legacy library if null).</param>
-    public InGameEquipmentCard(EquipmentCard equipmentCard, CardOwner cardOwner, IEquipmentAbilityProvider abilityProvider = null)
+    /// <param name="abilityProvider">Provider for equipment abilities (required).</param>
+    public InGameEquipmentCard(EquipmentCard equipmentCard, CardOwner cardOwner, IEquipmentAbilityProvider abilityProvider)
     {
         baseEquipmentCard = equipmentCard;
         CardOwner = cardOwner;
@@ -46,21 +47,11 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
         materialCard = baseEquipmentCard.MaterialCard;
         collector = baseEquipmentCard.Collector;
 
-        // Phase 48: Use injected provider if available, fallback to legacy library
-        if (_abilityProvider != null)
-        {
-            EquipmentAbilities = baseEquipmentCard.EquipmentAbilities
-                .Select(name => _abilityProvider.GetAbility(name))
-                .Where(ability => ability != null)
-                .ToList();
-        }
-        else
-        {
-            // Fallback to legacy singleton for backward compatibility
-            EquipmentAbilities = baseEquipmentCard.EquipmentAbilities.Select(
-                equipmentAbilityName => EquipmentAbilityLibrary.Instance.EquipmentAbilityDictionary[equipmentAbilityName]
-            ).ToList();
-        }
+        // Phase 61: Use injected provider (fallback removed)
+        EquipmentAbilities = baseEquipmentCard.EquipmentAbilities
+            .Select(name => _abilityProvider.GetAbility(name))
+            .Where(ability => ability != null)
+            .ToList();
     }
 
     #region IInGameEquipmentCard Implementation
