@@ -8,6 +8,7 @@ using Cards;
 using Cards.EffectCards;
 using Cards.InvocationCards;
 using JDG.Application;
+using JDG.Application.Cards;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
@@ -19,9 +20,10 @@ using VContainer;
 /// Phase 17-18: Now uses DeckConfiguration for constants.
 /// Phase 21-22: Extracted BuildPlayer and ResetInvocationCardNewTurn to use cases.
 /// Phase 23: Migrated static UnityEvents to EventBus (CardLocation.UpdateLocation).
+/// Phase 53: Implements IPlayerCardCollection for abstraction.
 /// Uses dependency injection for deck initialization.
 /// </summary>
-public class PlayerCards : MonoBehaviour
+public class PlayerCards : MonoBehaviour, IPlayerCardCollection
 {
     #region Properties
 
@@ -256,6 +258,50 @@ public class PlayerCards : MonoBehaviour
     {
         _eventBus.Publish(new CardLocationChangedEvent { Player = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2 });
     }
+
+    #endregion
+
+    #region IPlayerCardCollection Implementation
+
+    /// <summary>
+    /// Gets the card owner for this collection.
+    /// Phase 53: Added for IPlayerCardCollection interface.
+    /// </summary>
+    JDG.Domain.CardOwner IPlayerCardCollection.Owner =>
+        IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+
+    /// <summary>
+    /// Gets the invocation cards as a read-only list of interface types.
+    /// Phase 53: Explicit implementation for IPlayerCardCollection interface.
+    /// </summary>
+    IReadOnlyList<IInGameInvocationCard> IPlayerCardCollection.InvocationCards =>
+        InvocationCards.Cast<IInGameInvocationCard>().ToList().AsReadOnly();
+
+    /// <summary>
+    /// Gets the effect cards as a read-only list of interface types.
+    /// Phase 53: Explicit implementation for IPlayerCardCollection interface.
+    /// </summary>
+    IReadOnlyList<IInGameEffectCard> IPlayerCardCollection.EffectCards =>
+        EffectCards.Cast<IInGameEffectCard>().ToList().AsReadOnly();
+
+    /// <summary>
+    /// Gets the current field card as an interface type.
+    /// Phase 53: Explicit implementation for IPlayerCardCollection interface.
+    /// </summary>
+    IInGameFieldCard IPlayerCardCollection.FieldCard => _fieldCard;
+
+    /// <summary>
+    /// Gets the cards in hand as a read-only list of interface types.
+    /// Phase 53: Explicit implementation for IPlayerCardCollection interface.
+    /// </summary>
+    IReadOnlyList<IInGameCard> IPlayerCardCollection.HandCards =>
+        HandCards.Cast<IInGameCard>().ToList().AsReadOnly();
+
+    /// <summary>
+    /// Gets the count of cards in hand.
+    /// Phase 53: Added for IPlayerCardCollection interface.
+    /// </summary>
+    int IPlayerCardCollection.HandCardCount => HandCards.Count;
 
     #endregion
 
