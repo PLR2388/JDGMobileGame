@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
@@ -5,7 +6,9 @@ using UnityEngine;
 
 /// <summary>
 /// Manages the resources related to the Card system, ensuring they're loaded and accessible.
+/// Phase 59: Marked obsolete - use ICardDataProvider via dependency injection instead.
 /// </summary>
+[Obsolete("ResourceSystem singleton is obsolete. Use ICardDataProvider via dependency injection. Inject ICardDataProvider in your constructor or use [Inject] attribute for MonoBehaviours.")]
 public class ResourceSystem : StaticInstance<ResourceSystem>
 {
     /// <summary>
