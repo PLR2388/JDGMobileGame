@@ -98,11 +98,12 @@ public class UIManager : MonoBehaviour
         UnityAction negativeAction)
     {
         // Phase 51: Convert legacy types to interface types
+        // Note: Use System.Action to avoid conflict with OnePlayer.Action enum
         IReadOnlyList<IInGameCard> cards = invocationCards?.Cast<IInGameCard>().ToList();
-        Action<IInGameInvocationCard> onSelected = positiveAction != null
+        System.Action<IInGameInvocationCard> onSelected = positiveAction != null
             ? (card) => positiveAction.Invoke(card as InGameInvocationCard)
             : null;
-        Action onCancelled = negativeAction != null ? () => negativeAction.Invoke() : null;
+        System.Action onCancelled = negativeAction != null ? () => negativeAction.Invoke() : null;
 
         _cardSelectorPresenter?.ShowOpponentSelector(cards, onSelected, onCancelled);
     }

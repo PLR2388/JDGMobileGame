@@ -308,14 +308,16 @@ namespace _Scripts.Units.Invocation
         /// <summary>
         /// Gets the base attack value from the card definition.
         /// Phase 49: Added for IInGameInvocationCard interface.
+        /// Note: BaseInvocationCardStats is a struct (value type), so no ?. operator is needed.
         /// </summary>
-        public float BaseAttack => BaseInvocationCard?.BaseInvocationCardStats?.Attack ?? 0;
+        public float BaseAttack => BaseInvocationCard?.BaseInvocationCardStats.Attack ?? 0;
 
         /// <summary>
         /// Gets the base defense value from the card definition.
         /// Phase 49: Added for IInGameInvocationCard interface.
+        /// Note: BaseInvocationCardStats is a struct (value type), so no ?. operator is needed.
         /// </summary>
-        public float BaseDefense => BaseInvocationCard?.BaseInvocationCardStats?.Defense ?? 0;
+        public float BaseDefense => BaseInvocationCard?.BaseInvocationCardStats.Defense ?? 0;
 
         /// <summary>
         /// Gets the abilities as a read-only list of objects.

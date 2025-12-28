@@ -120,8 +120,8 @@ public class CardSelectorPresenterTests
     public void ShowOpponentSelector_WithNullTargets_ShowsWarning()
     {
         // Arrange
-        Action<IInGameInvocationCard> onSelected = (_) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (_) => { };
+        System.Action onCancelled = () => { };
 
         // Act - This should show warning because no targets
         _presenter.ShowOpponentSelector(null, onSelected, onCancelled);
@@ -137,8 +137,8 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         IReadOnlyList<IInGameCard> emptyList = new List<IInGameCard>();
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act - This should show warning because empty targets
         _presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled);
@@ -155,8 +155,8 @@ public class CardSelectorPresenterTests
         // Arrange
         _nextPhaseButton.SetActive(true);
         IReadOnlyList<IInGameCard> emptyList = new List<IInGameCard>();
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled);
@@ -171,8 +171,8 @@ public class CardSelectorPresenterTests
         // Arrange
         var presenter = new CardSelectorPresenter(_canvas, null, _localizationService, _dialogService);
         IReadOnlyList<IInGameCard> emptyList = new List<IInGameCard>();
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act & Assert - Should not throw
         Assert.DoesNotThrow(() => presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled));
@@ -183,8 +183,8 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
@@ -199,8 +199,8 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
@@ -214,8 +214,8 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
@@ -229,8 +229,8 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
@@ -396,8 +396,8 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act & Assert - Should not throw
         Assert.DoesNotThrow(() => _presenter.ShowOpponentSelector(targets, onSelected, onCancelled));
@@ -413,8 +413,8 @@ public class CardSelectorPresenterTests
             new TestInGameCardForSelector(),
             new TestInGameCardForSelector()
         };
-        Action<IInGameInvocationCard> onSelected = (card) => { };
-        Action onCancelled = () => { };
+        System.Action<IInGameInvocationCard> onSelected = (card) => { };
+        System.Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
