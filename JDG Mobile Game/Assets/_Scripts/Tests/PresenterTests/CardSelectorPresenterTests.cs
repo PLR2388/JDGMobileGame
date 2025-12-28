@@ -1,10 +1,13 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Application.Cards;
 using JDG.Application.Services;
+using JDG.Presentation.Presenters;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +15,7 @@ using UnityEngine.Events;
 /// Unit tests for CardSelectorPresenter.
 /// Part of Phase 39+ - Test coverage improvement sprint.
 /// Phase 40: Updated to use IDialogService injection for comprehensive testing.
+/// Phase 51: Updated to use IInGameCard interfaces.
 /// </summary>
 [TestFixture]
 public class CardSelectorPresenterTests
@@ -110,38 +114,39 @@ public class CardSelectorPresenterTests
 
     #region ShowOpponentSelector Tests
     // Phase 40: Now using IDialogService injection for comprehensive testing
+    // Phase 51: Updated to use IInGameCard interfaces
 
     [Test]
     public void ShowOpponentSelector_WithNullTargets_ShowsWarning()
     {
         // Arrange
-        UnityAction<InGameInvocationCard> onSelected = (_) => { };
-        UnityAction onCancelled = () => { };
+        Action<IInGameInvocationCard> onSelected = (_) => { };
+        Action onCancelled = () => { };
 
         // Act - This should show warning because no targets
         _presenter.ShowOpponentSelector(null, onSelected, onCancelled);
 
         // Assert - Verify localization was called (for warning title/message)
         Assert.IsTrue(_localizationService.GetLocalizedValueCalled);
-        // Verify ShowMessageBoxLegacy was called (for warning)
-        Assert.IsTrue(_dialogService.ShowMessageBoxLegacyCalled);
+        // Verify ShowMessageBox was called (for warning)
+        Assert.IsTrue(_dialogService.ShowMessageBoxCalled);
     }
 
     [Test]
     public void ShowOpponentSelector_WithEmptyTargets_ShowsWarning()
     {
         // Arrange
-        var emptyList = new List<InGameCard>();
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> emptyList = new List<IInGameCard>();
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act - This should show warning because empty targets
         _presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled);
 
         // Assert - Verify localization was called
         Assert.IsTrue(_localizationService.GetLocalizedValueCalled);
-        // Verify ShowMessageBoxLegacy was called (for warning)
-        Assert.IsTrue(_dialogService.ShowMessageBoxLegacyCalled);
+        // Verify ShowMessageBox was called (for warning)
+        Assert.IsTrue(_dialogService.ShowMessageBoxCalled);
     }
 
     [Test]
@@ -149,9 +154,9 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         _nextPhaseButton.SetActive(true);
-        var emptyList = new List<InGameCard>();
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> emptyList = new List<IInGameCard>();
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled);
@@ -165,9 +170,9 @@ public class CardSelectorPresenterTests
     {
         // Arrange
         var presenter = new CardSelectorPresenter(_canvas, null, _localizationService, _dialogService);
-        var emptyList = new List<InGameCard>();
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> emptyList = new List<IInGameCard>();
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act & Assert - Should not throw
         Assert.DoesNotThrow(() => presenter.ShowOpponentSelector(emptyList, onSelected, onCancelled));
@@ -177,25 +182,25 @@ public class CardSelectorPresenterTests
     public void ShowOpponentSelector_WithValidTargets_ShowsCardSelector()
     {
         // Arrange
-        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
 
-        // Assert - Verify ShowCardSelectorLegacy was called
-        Assert.IsTrue(_dialogService.ShowCardSelectorLegacyCalled);
-        Assert.IsFalse(_dialogService.ShowMessageBoxLegacyCalled); // Should NOT show warning
+        // Assert - Verify ShowCardSelector was called
+        Assert.IsTrue(_dialogService.ShowCardSelectorCalled);
+        Assert.IsFalse(_dialogService.ShowMessageBoxCalled); // Should NOT show warning
     }
 
     [Test]
     public void ShowOpponentSelector_WithValidTargets_PassesCanvasToDialogService()
     {
         // Arrange
-        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
@@ -205,36 +210,36 @@ public class CardSelectorPresenterTests
     }
 
     [Test]
-    public void ShowOpponentSelector_WithValidTargets_PassesCorrectConfigType()
+    public void ShowOpponentSelector_WithValidTargets_PassesCorrectOptionsType()
     {
         // Arrange
-        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
 
-        // Assert
-        Assert.IsInstanceOf<CardSelectorConfig>(_dialogService.LastCardSelectorConfig);
+        // Assert - Now uses CardSelectorOptions instead of legacy CardSelectorConfig
+        Assert.IsNotNull(_dialogService.LastCardSelectorOptions);
     }
 
     [Test]
-    public void ShowOpponentSelector_WithValidTargets_ConfigHasCorrectButtons()
+    public void ShowOpponentSelector_WithValidTargets_OptionsHasCorrectButtons()
     {
         // Arrange
-        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
 
         // Assert
-        var config = _dialogService.LastCardSelectorConfig as CardSelectorConfig;
-        Assert.IsNotNull(config);
-        Assert.IsTrue(config.ShowPositiveButton);
-        Assert.IsTrue(config.ShowNegativeButton);
+        var options = _dialogService.LastCardSelectorOptions;
+        Assert.IsNotNull(options);
+        Assert.IsTrue(options.ShowPositiveButton);
+        Assert.IsTrue(options.ShowNegativeButton);
     }
 
     #endregion
@@ -390,34 +395,34 @@ public class CardSelectorPresenterTests
     public void ShowOpponentSelector_WithValidTargets_DoesNotThrow()
     {
         // Arrange
-        var targets = new List<InGameCard> { new TestInGameCardForSelector() };
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        IReadOnlyList<IInGameCard> targets = new List<IInGameCard> { new TestInGameCardForSelector() };
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act & Assert - Should not throw
         Assert.DoesNotThrow(() => _presenter.ShowOpponentSelector(targets, onSelected, onCancelled));
     }
 
     [Test]
-    public void ShowOpponentSelector_WithMultipleTargets_AllCardsPassedToConfig()
+    public void ShowOpponentSelector_WithMultipleTargets_AllCardsPassedToOptions()
     {
         // Arrange
-        var targets = new List<InGameCard>
+        IReadOnlyList<IInGameCard> targets = new List<IInGameCard>
         {
             new TestInGameCardForSelector(),
             new TestInGameCardForSelector(),
             new TestInGameCardForSelector()
         };
-        UnityAction<InGameInvocationCard> onSelected = (card) => { };
-        UnityAction onCancelled = () => { };
+        Action<IInGameInvocationCard> onSelected = (card) => { };
+        Action onCancelled = () => { };
 
         // Act
         _presenter.ShowOpponentSelector(targets, onSelected, onCancelled);
 
         // Assert
-        var config = _dialogService.LastCardSelectorConfig as CardSelectorConfig;
-        Assert.IsNotNull(config);
-        Assert.AreEqual(3, config.Cards.Count);
+        var options = _dialogService.LastCardSelectorOptions;
+        Assert.IsNotNull(options);
+        Assert.AreEqual(3, options.Cards.Count);
     }
 
     #endregion
@@ -482,35 +487,52 @@ public class TestInGameCardForSelector : InGameCard
 /// <summary>
 /// Mock IDialogService for CardSelectorPresenter testing.
 /// Phase 40: Added to enable comprehensive presenter testing.
+/// Phase 51: Updated to track ShowMessageBox and ShowCardSelector methods.
 /// Tracks method calls and captures parameters for verification.
 /// </summary>
 public class MockDialogServiceForSelector : IDialogService
 {
-    // ShowMessageBoxLegacy tracking
-    public bool ShowMessageBoxLegacyCalled { get; private set; }
-    public int ShowMessageBoxLegacyCallCount { get; private set; }
+    // ShowMessageBox tracking (modern method)
+    public bool ShowMessageBoxCalled { get; private set; }
+    public int ShowMessageBoxCallCount { get; private set; }
     public object LastCanvas { get; private set; }
-    public object LastConfig { get; private set; }
+    public MessageBoxOptions LastMessageBoxOptions { get; private set; }
 
-    // ShowCardSelectorLegacy tracking
+    // ShowCardSelector tracking (modern method)
+    public bool ShowCardSelectorCalled { get; private set; }
+    public int ShowCardSelectorCallCount { get; private set; }
+    public CardSelectorOptions LastCardSelectorOptions { get; private set; }
+
+    // Legacy tracking (still needed for some tests)
+    public bool ShowMessageBoxLegacyCalled { get; private set; }
     public bool ShowCardSelectorLegacyCalled { get; private set; }
-    public int ShowCardSelectorLegacyCallCount { get; private set; }
-    public object LastCardSelectorConfig { get; private set; }
+
+    public void ShowMessageBox(object canvas, MessageBoxOptions options)
+    {
+        ShowMessageBoxCalled = true;
+        ShowMessageBoxCallCount++;
+        LastCanvas = canvas;
+        LastMessageBoxOptions = options;
+    }
+
+    public void ShowCardSelector(object canvas, CardSelectorOptions options)
+    {
+        ShowCardSelectorCalled = true;
+        ShowCardSelectorCallCount++;
+        LastCanvas = canvas;
+        LastCardSelectorOptions = options;
+    }
 
     public void ShowMessageBoxLegacy(object canvas, object config)
     {
         ShowMessageBoxLegacyCalled = true;
-        ShowMessageBoxLegacyCallCount++;
         LastCanvas = canvas;
-        LastConfig = config;
     }
 
     public void ShowCardSelectorLegacy(object canvas, object config)
     {
         ShowCardSelectorLegacyCalled = true;
-        ShowCardSelectorLegacyCallCount++;
         LastCanvas = canvas;
-        LastCardSelectorConfig = config;
     }
 
     public Task<bool> ShowMessageBoxAsync(string title, string message, MessageBoxType type)
@@ -533,29 +555,17 @@ public class MockDialogServiceForSelector : IDialogService
         return Task.CompletedTask;
     }
 
-    public void ShowMessageBox(object canvas, MessageBoxOptions options)
-    {
-        ShowMessageBoxLegacyCalled = true;
-        ShowMessageBoxLegacyCallCount++;
-        LastCanvas = canvas;
-    }
-
-    public void ShowCardSelector(object canvas, CardSelectorOptions options)
-    {
-        ShowCardSelectorLegacyCalled = true;
-        ShowCardSelectorLegacyCallCount++;
-        LastCanvas = canvas;
-    }
-
     public void Reset()
     {
+        ShowMessageBoxCalled = false;
+        ShowMessageBoxCallCount = 0;
+        ShowCardSelectorCalled = false;
+        ShowCardSelectorCallCount = 0;
         ShowMessageBoxLegacyCalled = false;
-        ShowMessageBoxLegacyCallCount = 0;
         ShowCardSelectorLegacyCalled = false;
-        ShowCardSelectorLegacyCallCount = 0;
         LastCanvas = null;
-        LastConfig = null;
-        LastCardSelectorConfig = null;
+        LastMessageBoxOptions = null;
+        LastCardSelectorOptions = null;
     }
 }
 

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Presentation.Presenters;
 using UnityEngine;
@@ -85,6 +87,7 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Displays a message box to inform the user about the available opponents for invocation.
     /// Phase 5: Now delegates to CardSelectorPresenter
+    /// Phase 51: Converts legacy types to interface types for CardSelectorPresenter.
     /// </summary>
     /// <param name="invocationCards">List of invocable cards.</param>
     /// <param name="positiveAction">Action on positive button click.</param>
@@ -94,7 +97,14 @@ public class UIManager : MonoBehaviour
         UnityAction<InGameInvocationCard> positiveAction,
         UnityAction negativeAction)
     {
-        _cardSelectorPresenter?.ShowOpponentSelector(invocationCards, positiveAction, negativeAction);
+        // Phase 51: Convert legacy types to interface types
+        IReadOnlyList<IInGameCard> cards = invocationCards?.Cast<IInGameCard>().ToList();
+        Action<IInGameInvocationCard> onSelected = positiveAction != null
+            ? (card) => positiveAction.Invoke(card as InGameInvocationCard)
+            : null;
+        Action onCancelled = negativeAction != null ? () => negativeAction.Invoke() : null;
+
+        _cardSelectorPresenter?.ShowOpponentSelector(cards, onSelected, onCancelled);
     }
 
     /// <summary>
