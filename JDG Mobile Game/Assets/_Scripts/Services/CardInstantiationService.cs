@@ -25,15 +25,22 @@ public class CardInstantiationService : ICardInstantiationService
     public CardInstantiationService(CardPoolManager cardPoolManager)
     {
         // Phase 46: Use PhysicalCardPrefab (with PhysicalCardDisplay) for game board cards
-        if (cardPoolManager != null)
+        if (cardPoolManager == null)
         {
-            _prefabCard = cardPoolManager.PhysicalCardPrefab;
+            var errorMessage = "CardInstantiationService: CardPoolManager is null. " +
+                "Ensure CardPoolManager is registered in GameSceneScope before CardInstantiationService.";
+            Debug.LogError(errorMessage);
+            throw new System.ArgumentNullException(nameof(cardPoolManager), errorMessage);
         }
+
+        _prefabCard = cardPoolManager.PhysicalCardPrefab;
 
         if (_prefabCard == null)
         {
-            Debug.LogError("CardInstantiationService: PhysicalCardPrefab is null on CardPoolManager. " +
-                "Assign the physical card prefab (with PhysicalCardDisplay component) in the Inspector.");
+            var errorMessage = "CardInstantiationService: PhysicalCardPrefab is null on CardPoolManager. " +
+                "Assign the physical card prefab (with PhysicalCardDisplay component) in the Inspector.";
+            Debug.LogError(errorMessage);
+            throw new System.InvalidOperationException(errorMessage);
         }
 
         _cardNameToGameObject = new Dictionary<string, GameObject>();

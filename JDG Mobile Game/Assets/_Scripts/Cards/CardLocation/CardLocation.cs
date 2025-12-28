@@ -209,8 +209,20 @@ namespace Cards
         /// <param name="cardTag"></param>
         private void UpdateCardDisplay(GameObject cardGameObject, Vector3 position, bool shouldDisplay, string cardTag)
         {
+            if (cardGameObject == null)
+            {
+                Debug.LogWarning("CardLocation.UpdateCardDisplay: cardGameObject is null");
+                return;
+            }
+
             cardGameObject.transform.position = position;
             var displayComponent = cardGameObject.GetComponent<PhysicalCardDisplay>();
+            if (displayComponent == null)
+            {
+                Debug.LogWarning($"CardLocation.UpdateCardDisplay: PhysicalCardDisplay component not found on '{cardGameObject.name}'");
+                return;
+            }
+
             if (displayComponent.IsFaceHidden == shouldDisplay)
             {
                 if (shouldDisplay)
@@ -270,13 +282,17 @@ namespace Cards
         /// <param name="cardTag"></param>
         private void DisplayFieldCard(bool isPlayerOne, InGameFieldCard field, string cardTag)
         {
+            if (field == null) return;
 
-            if (field != null)
+            var cardGameObject = GetPhysicalCard(field, field.CardOwner == CardOwner.Player1);
+            if (cardGameObject == null)
             {
-                var cardGameObject = GetPhysicalCard(field, field.CardOwner == CardOwner.Player1);
-                var fieldCardLocation = isPlayerOne ? Player1Locations.FieldCard : Player2Locations.FieldCard;
-                UpdateCardDisplay(cardGameObject, fieldCardLocation, true, cardTag);
+                Debug.LogWarning($"CardLocation.DisplayFieldCard: Could not find physical card for field '{field.Title}'");
+                return;
             }
+
+            var fieldCardLocation = isPlayerOne ? Player1Locations.FieldCard : Player2Locations.FieldCard;
+            UpdateCardDisplay(cardGameObject, fieldCardLocation, true, cardTag);
         }
 
         /// <summary>

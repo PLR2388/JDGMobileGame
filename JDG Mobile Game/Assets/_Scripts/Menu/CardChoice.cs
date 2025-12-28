@@ -320,7 +320,8 @@ namespace Menu
         /// <param name="deck">The deck to which the card is added.</param>
         private static void GetRandomCards(IList<Card> allCards, ICollection<Card> deck)
         {
-            var randomIndex = Random.Range(0, allCards.Count - 1);
+            // BUG FIX: Random.Range(int, int) upper bound is exclusive, so Count-1 would exclude the last card
+            var randomIndex = Random.Range(0, allCards.Count);
             var card = allCards[randomIndex];
             if (card.Type == CardType.Contre) return;
             if (card == null) return;

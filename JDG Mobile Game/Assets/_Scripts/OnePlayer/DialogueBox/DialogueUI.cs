@@ -56,6 +56,15 @@ public class DialogueUI : MonoBehaviour
     }
 
     /// <summary>
+    /// Cleanup when the object is destroyed.
+    /// Removes the static event listener to prevent memory leaks.
+    /// </summary>
+    private void OnDestroy()
+    {
+        TriggerDoneEvent.RemoveListener(TriggerReceived);
+    }
+
+    /// <summary>
     /// Updates the current dialogue trigger.
     /// </summary>
     /// <param name="nextDialogueTrigger">The next dialogue trigger.</param>
@@ -81,30 +90,57 @@ public class DialogueUI : MonoBehaviour
     /// <returns>An IEnumerator for coroutine.</returns>
     private IEnumerator StepThroughDialogue(DialogueObject dialogueObject)
     {
-        var soundDialogIndex = dialogueObject.SoundDialogueIndex;
-        var audioClips = dialogueObject.AudioClips;
+        if (dialogueObject == null || dialogueObject.Dialogue == null)
+        {
+            Debug.LogError("DialogueUI.StepThroughDialogue: dialogueObject or Dialogue is null");
+            yield break;
+        }
+
+        var soundDialogIndex = dialogueObject.SoundDialogueIndex ?? Array.Empty<int>();
+        var audioClips = dialogueObject.AudioClips ?? Array.Empty<AudioClip>();
+
         for (int i = 0; i < dialogueObject.Dialogue.Length; i++)
         {
-             DialogIndex.Invoke(i);
+            DialogIndex.Invoke(i);
             string dialogue = dialogueObject.Dialogue[i];
 
             if (soundDialogIndex.Contains(i))
             {
-                var currentAudioClip = audioClips[currentSoundIndex];
-                var length = ComputeLengthText(dialogueObject, dialogue, soundDialogIndex, i);
-                typewriterEffect.AdaptSpeedToLength(currentAudioClip.length, length);
-                PlaySound(currentAudioClip);
+                // Bounds check for audioClips array
+                if (currentSoundIndex >= 0 && currentSoundIndex < audioClips.Length)
+                {
+                    var currentAudioClip = audioClips[currentSoundIndex];
+                    if (currentAudioClip != null)
+                    {
+                        var length = ComputeLengthText(dialogueObject, dialogue, soundDialogIndex, i);
+                        typewriterEffect?.AdaptSpeedToLength(currentAudioClip.length, length);
+                        PlaySound(currentAudioClip);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"DialogueUI: currentSoundIndex {currentSoundIndex} out of bounds for audioClips length {audioClips.Length}");
+                }
             }
-            
-            yield return typewriterEffect.Run(dialogue, textLabel);
+
+            // Null check for typewriterEffect
+            if (typewriterEffect != null)
+            {
+                yield return typewriterEffect.Run(dialogue, textLabel);
+            }
 
             if (i == dialogueObject.Dialogue.Length - 1 && dialogueObject.HasResponses) break;
-            
-            yield return new WaitUntil(() =>
+
+            // Bounds check for NextDialogueTriggers array
+            var triggers = dialogueObject.NextDialogueTriggers;
+            if (triggers != null && i < triggers.Length)
             {
-                NextDialogueTrigger nextDialogueTrigger = dialogueObject.NextDialogueTriggers[i];
-                return IsNextDialogueReady(nextDialogueTrigger);
-            });
+                yield return new WaitUntil(() =>
+                {
+                    NextDialogueTrigger nextDialogueTrigger = triggers[i];
+                    return IsNextDialogueReady(nextDialogueTrigger);
+                });
+            }
         }
 
         if (dialogueObject.HasResponses)

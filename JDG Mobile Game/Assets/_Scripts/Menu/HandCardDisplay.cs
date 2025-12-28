@@ -141,6 +141,11 @@ public class HandCardDisplay : MonoBehaviour
     protected void AdjustRectTransformSize(int cardCount)
     {
         var rectTransform = GetComponent<RectTransform>();
+        if (rectTransform == null)
+        {
+            Debug.LogWarning("HandCardDisplay.AdjustRectTransformSize: RectTransform component not found on GameObject");
+            return;
+        }
         rectTransform.sizeDelta = new UnityEngine.Vector2(420 * cardCount, rectTransform.sizeDelta.y);
     }
     

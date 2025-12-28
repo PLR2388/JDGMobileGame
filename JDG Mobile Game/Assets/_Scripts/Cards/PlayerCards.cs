@@ -47,6 +47,9 @@ public class PlayerCards : MonoBehaviour
     // Phase 23: EventBus for static UnityEvent migration
     private IEventBus _eventBus;
 
+    // Initialization guard to prevent double initialization
+    private bool _isInitialized;
+
     public bool IsPlayerOne
     {
         get => _isPlayerOne;
@@ -108,6 +111,14 @@ public class PlayerCards : MonoBehaviour
         _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase;
         _handleFieldCardChangedUseCase = handleFieldCardChangedUseCase;
         _eventBus = eventBus;
+
+        // Guard against double initialization (can happen if VContainer injects twice)
+        if (_isInitialized)
+        {
+            Debug.LogWarning($"PlayerCards.Construct() - Already initialized for IsPlayerOne={IsPlayerOne}, skipping");
+            return;
+        }
+        _isInitialized = true;
 
         // Initialize deck immediately after injection, before any Start() runs.
         // This fixes the race condition where GameLoop.Start() tries to draw

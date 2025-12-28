@@ -32,16 +32,17 @@ namespace JDG.Infrastructure.Repositories
 
         public Card GetCard(CardId cardId)
         {
-            return _cardInstances.ContainsKey(cardId) ? _cardInstances[cardId] : null;
+            return _cardInstances.TryGetValue(cardId, out var card) ? card : null;
         }
 
         public Card CreateCardInstance(string cardDefinitionName)
         {
-            if (!_cardDefinitions.ContainsKey(cardDefinitionName))
+            if (!_cardDefinitions.TryGetValue(cardDefinitionName, out var definition))
+            {
+                UnityEngine.Debug.LogWarning($"CardRepository.CreateCardInstance: Card definition '{cardDefinitionName}' not found. " +
+                    $"Available definitions: {_cardDefinitions.Count}");
                 return null;
-
-            // Get the card definition (template)
-            var definition = _cardDefinitions[cardDefinitionName];
+            }
 
             // Create a new instance with a unique CardId
             Card newInstance = CreateCardCopy(definition);

@@ -150,40 +150,41 @@ namespace JDG.DI
             // Services that need PlayerCardManagers (player1 and player2)
             // Note: Using InstanceID sort to maintain backwards-compatible order
             var playerCardManagers = FindObjectsByType<PlayerCardManager>(FindObjectsSortMode.InstanceID);
-            if (playerCardManagers.Length >= 2)
+            if (playerCardManagers.Length < 2)
             {
-                // PlayerCardManagers are ordered by scene hierarchy - player 1 first
-                var player1CardManager = playerCardManagers[0];
-                var player2CardManager = playerCardManagers[1];
-
-                // ITurnService - depends on GameStateService, PlayerCardManagers, IPlayerStatusProvider, Transform
-                builder.Register<ITurnService>(container =>
-                {
-                    return new TurnService(
-                        container.Resolve<GameStateService>(),
-                        player1CardManager,
-                        player2CardManager,
-                        container.Resolve<IPlayerStatusProvider>(),
-                        container.Resolve<Transform>()
-                    );
-                }, Lifetime.Scoped);
-
-                // ICardDrawService - depends on GameStateService, PlayerCardManagers
-                builder.Register<ICardDrawService>(container =>
-                {
-                    return new CardDrawService(
-                        container.Resolve<GameStateService>(),
-                        player1CardManager,
-                        player2CardManager
-                    );
-                }, Lifetime.Scoped);
-
-                Debug.Log("GameSceneScope: Registered ITurnService and ICardDrawService with PlayerCardManagers");
+                var errorMessage = $"GameSceneScope: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}. " +
+                    "Ensure both Player1 and Player2 GameObjects have PlayerCardManager components in the Game scene.";
+                Debug.LogError(errorMessage);
+                throw new System.InvalidOperationException(errorMessage);
             }
-            else
+
+            // PlayerCardManagers are ordered by scene hierarchy - player 1 first
+            var player1CardManager = playerCardManagers[0];
+            var player2CardManager = playerCardManagers[1];
+
+            // ITurnService - depends on GameStateService, PlayerCardManagers, IPlayerStatusProvider, Transform
+            builder.Register<ITurnService>(container =>
             {
-                Debug.LogError($"GameSceneScope: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}");
-            }
+                return new TurnService(
+                    container.Resolve<GameStateService>(),
+                    player1CardManager,
+                    player2CardManager,
+                    container.Resolve<IPlayerStatusProvider>(),
+                    container.Resolve<Transform>()
+                );
+            }, Lifetime.Scoped);
+
+            // ICardDrawService - depends on GameStateService, PlayerCardManagers
+            builder.Register<ICardDrawService>(container =>
+            {
+                return new CardDrawService(
+                    container.Resolve<GameStateService>(),
+                    player1CardManager,
+                    player2CardManager
+                );
+            }, Lifetime.Scoped);
+
+            Debug.Log("GameSceneScope: Registered ITurnService and ICardDrawService with PlayerCardManagers");
 
             Debug.Log("GameSceneScope: Scene-specific services registered");
 

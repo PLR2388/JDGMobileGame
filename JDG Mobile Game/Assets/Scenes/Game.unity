@@ -1286,7 +1286,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 397230410}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
         m_MethodName: UseSpecialAction
         m_Mode: 1
@@ -1612,12 +1612,9 @@ GameObject:
   - component: {fileID: 397230407}
   - component: {fileID: 397230408}
   - component: {fileID: 397230409}
-  - component: {fileID: 397230410}
   - component: {fileID: 397230411}
   - component: {fileID: 397230412}
-  - component: {fileID: 397230413}
   - component: {fileID: 397230415}
-  - component: {fileID: 397230414}
   - component: {fileID: 397230416}
   - component: {fileID: 397230417}
   - component: {fileID: 397230418}
@@ -1723,21 +1720,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player1: {fileID: 230530442}
   player2: {fileID: 2017354827}
---- !u!114 &397230410
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397230402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1e1bfbd5c2a4de409f33f5382014417, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvas: {fileID: 244790280}
-  player1CardManager: {fileID: 230530446}
-  player2CardManager: {fileID: 2017354831}
 --- !u!114 &397230411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1767,30 +1749,6 @@ MonoBehaviour:
   bigImageCard: {fileID: 793464781}
   nextPhaseButton: {fileID: 1957640249}
   canvas: {fileID: 244790280}
---- !u!114 &397230413
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397230402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 907416676358bcd4eb31e8c222df3e40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &397230414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 397230402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73f8f8b8b1696a34eab6cef696916f1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &397230415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3672,7 +3630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabCard: {fileID: 0}
-  cardPoolHolder: {fileID: 0}
+  _cardPoolHolder: {fileID: 0}
   physicalCardPrefab: {fileID: 0}
 --- !u!4 &1182202555
 Transform:
@@ -5155,7 +5113,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1809721686}
   - component: {fileID: 1809721687}
-  - component: {fileID: 1809721689}
   - component: {fileID: 1809721690}
   m_Layer: 0
   m_Name: MenuScript
@@ -5201,20 +5158,6 @@ MonoBehaviour:
   putCardButtonText: {fileID: 2122246939}
   putCardButton: {fileID: 1930089326}
   invocationMenu: {fileID: 1982540492}
---- !u!114 &1809721689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1809721685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f19c2b80b7957b247bd6ac9398dd011f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabCard: {fileID: 8735995293094144934, guid: eccb542f7f4467145afac2676d3f3c16,
-    type: 3}
 --- !u!114 &1809721690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5229,7 +5172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabCard: {fileID: 5528645795789417797, guid: 07baf689232351e4caa92a6fd2b8245e,
     type: 3}
-  cardPoolHolder: {fileID: 2114133802}
+  _cardPoolHolder: {fileID: 0}
   physicalCardPrefab: {fileID: 0}
 --- !u!1 &1849878650
 GameObject:

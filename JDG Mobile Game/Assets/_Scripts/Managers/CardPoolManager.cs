@@ -11,6 +11,10 @@ using VContainer;
 /// </summary>
 public class CardPoolManager : MonoBehaviour
 {
+    // Resource paths for prefabs (avoid magic strings)
+    private const string CardPrefabResourcePath = "Prefabs/Card";
+    private const string PhysicalCardPrefabResourcePath = "Prefabs/PhysicalCard";
+
     [SerializeField] private GameObject prefabCard;
     [SerializeField] private Transform _cardPoolHolder;
 
@@ -51,10 +55,10 @@ public class CardPoolManager : MonoBehaviour
         {
             if (prefabCard == null)
             {
-                prefabCard = Resources.Load<GameObject>("Prefabs/Card");
+                prefabCard = Resources.Load<GameObject>(CardPrefabResourcePath);
                 if (prefabCard == null)
                 {
-                    Debug.LogError("CardPoolManager: PrefabCard not found in Resources/Prefabs/Card. " +
+                    Debug.LogError($"CardPoolManager: PrefabCard not found in Resources/{CardPrefabResourcePath}. " +
                         "Please assign it in the Inspector or add to Resources folder.");
                 }
             }
@@ -73,10 +77,10 @@ public class CardPoolManager : MonoBehaviour
         {
             if (physicalCardPrefab == null)
             {
-                physicalCardPrefab = Resources.Load<GameObject>("Prefabs/PhysicalCard");
+                physicalCardPrefab = Resources.Load<GameObject>(PhysicalCardPrefabResourcePath);
                 if (physicalCardPrefab == null)
                 {
-                    Debug.LogError("CardPoolManager: PhysicalCardPrefab not found in Resources/Prefabs/PhysicalCard. " +
+                    Debug.LogError($"CardPoolManager: PhysicalCardPrefab not found in Resources/{PhysicalCardPrefabResourcePath}. " +
                         "Please assign it in the Inspector or add to Resources folder.");
                 }
             }
@@ -164,8 +168,22 @@ public class CardPoolManager : MonoBehaviour
     /// </summary>
     private void BuildNewCard(InGameCard inGameCard)
     {
+        if (PrefabCard == null)
+        {
+            Debug.LogError("CardPoolManager.BuildNewCard: PrefabCard is null, cannot create card");
+            return;
+        }
+
         var newCard = Instantiate(PrefabCard, Vector3.zero, Quaternion.identity, cardPoolHolder);
-        newCard.GetComponent<CardDisplay>().InGameCard = inGameCard;
+        var cardDisplay = newCard.GetComponent<CardDisplay>();
+        if (cardDisplay != null)
+        {
+            cardDisplay.InGameCard = inGameCard;
+        }
+        else
+        {
+            Debug.LogError($"CardPoolManager.BuildNewCard: CardDisplay component not found on prefab for card '{inGameCard?.Title ?? "Unknown"}'");
+        }
         newCard.SetActive(false);
         pooledCards.Add(newCard);
     }
@@ -196,7 +214,12 @@ public class CardPoolManager : MonoBehaviour
     /// </summary>
     private bool CardMatches(InGameCard inGameCard, GameObject cardGameObject)
     {
-        var card = cardGameObject.GetComponent<CardDisplay>().InGameCard;
+        if (cardGameObject == null) return false;
+
+        var cardDisplay = cardGameObject.GetComponent<CardDisplay>();
+        if (cardDisplay == null || cardDisplay.InGameCard == null) return false;
+
+        var card = cardDisplay.InGameCard;
         return inGameCard.CardOwner == card.CardOwner && inGameCard.Title == card.Title;
     }
 

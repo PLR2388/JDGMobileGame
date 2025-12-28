@@ -28,7 +28,10 @@ public class CardCollectionServiceAdapter : ICardCollectionService
 
         if (playerCardManagers.Length < 2)
         {
-            Debug.LogError($"CardCollectionServiceAdapter: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}");
+            var errorMessage = $"CardCollectionServiceAdapter: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}. " +
+                "Ensure both Player1 and Player2 GameObjects have PlayerCardManager components in the Game scene.";
+            Debug.LogError(errorMessage);
+            throw new System.InvalidOperationException(errorMessage);
         }
 
         // PlayerCardManager for player 1 should be first (by convention/scene order)
