@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using Cards.EquipmentCards;
+using JDG.Application.Cards;
 
 /// <summary>
 /// Represents an in-game version of an equipment card with its abilities.
+/// Phase 49: Implements IInGameEquipmentCard for complete abstraction.
 /// </summary>
-public class InGameEquipmentCard : InGameCard
+public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
 {
     private readonly EquipmentCard baseEquipmentCard;
     private readonly IEquipmentAbilityProvider _abilityProvider;
@@ -60,4 +62,15 @@ public class InGameEquipmentCard : InGameCard
             ).ToList();
         }
     }
+
+    #region IInGameEquipmentCard Implementation
+
+    /// <summary>
+    /// Gets the equipment abilities as a read-only list of objects.
+    /// Phase 49: Explicit implementation for IInGameEquipmentCard interface.
+    /// </summary>
+    IReadOnlyList<object> IInGameEquipmentCard.EquipmentAbilities =>
+        EquipmentAbilities.Cast<object>().ToList().AsReadOnly();
+
+    #endregion
 }

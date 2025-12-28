@@ -6,15 +6,93 @@ using Cards.EquipmentCards;
 using Cards.FieldCards;
 using Cards.InvocationCards;
 using JDG.Application;
+using JDG.Application.Cards;
+using JDG.Application.Services;
 
 /// <summary>
 /// Provides functionality to create specific instances of InGameCard based on the provided card type.
 /// Phase 24-25: Updated to accept dependencies for InGameInvocationCard constructor.
 /// Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed).
 /// Phase 48: Added card-type ability providers for Field, Equipment, and Effect cards.
+/// Phase 49: Implements ICardFactory for complete abstraction.
 /// </summary>
-public class CardFactory
+public class CardFactory : ICardFactory
 {
+    private readonly IEventBus _eventBus;
+    private readonly ICardCollectionService _cardCollectionService;
+    private readonly IAbilityProvider _abilityProvider;
+    private readonly IFieldAbilityProvider _fieldAbilityProvider;
+    private readonly IEquipmentAbilityProvider _equipmentAbilityProvider;
+    private readonly IEffectAbilityProvider _effectAbilityProvider;
+
+    /// <summary>
+    /// Creates a new CardFactory with injected dependencies.
+    /// Phase 49: Added for ICardFactory implementation.
+    /// </summary>
+    public CardFactory(
+        IEventBus eventBus,
+        ICardCollectionService cardCollectionService,
+        IAbilityProvider abilityProvider,
+        IFieldAbilityProvider fieldAbilityProvider = null,
+        IEquipmentAbilityProvider equipmentAbilityProvider = null,
+        IEffectAbilityProvider effectAbilityProvider = null)
+    {
+        _eventBus = eventBus;
+        _cardCollectionService = cardCollectionService;
+        _abilityProvider = abilityProvider;
+        _fieldAbilityProvider = fieldAbilityProvider;
+        _equipmentAbilityProvider = equipmentAbilityProvider;
+        _effectAbilityProvider = effectAbilityProvider;
+    }
+
+    /// <summary>
+    /// Default constructor for backward compatibility when using static method.
+    /// Phase 49: Kept for legacy code that uses static CreateInGameCard.
+    /// </summary>
+    public CardFactory()
+    {
+    }
+
+    #region ICardFactory Implementation
+
+    /// <inheritdoc />
+    public IInGameCard CreateCard(object card, JDG.Domain.CardOwner owner)
+    {
+        var legacyOwner = (CardOwner)(int)owner;
+        return CreateInGameCard((Card)card, legacyOwner, _eventBus, _cardCollectionService, _abilityProvider,
+            _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider);
+    }
+
+    /// <inheritdoc />
+    public IInGameInvocationCard CreateInvocationCard(object invocationCard, JDG.Domain.CardOwner owner)
+    {
+        var legacyOwner = (CardOwner)(int)owner;
+        return new InGameInvocationCard((InvocationCard)invocationCard, legacyOwner, _eventBus, _cardCollectionService, _abilityProvider);
+    }
+
+    /// <inheritdoc />
+    public IInGameEffectCard CreateEffectCard(object effectCard, JDG.Domain.CardOwner owner)
+    {
+        var legacyOwner = (CardOwner)(int)owner;
+        return new InGameEffectCard((EffectCard)effectCard, legacyOwner, _effectAbilityProvider);
+    }
+
+    /// <inheritdoc />
+    public IInGameFieldCard CreateFieldCard(object fieldCard, JDG.Domain.CardOwner owner)
+    {
+        var legacyOwner = (CardOwner)(int)owner;
+        return new InGameFieldCard((FieldCard)fieldCard, legacyOwner, _fieldAbilityProvider);
+    }
+
+    /// <inheritdoc />
+    public IInGameEquipmentCard CreateEquipmentCard(object equipmentCard, JDG.Domain.CardOwner owner)
+    {
+        var legacyOwner = (CardOwner)(int)owner;
+        return new InGameEquipmentCard((EquipmentCard)equipmentCard, legacyOwner, _equipmentAbilityProvider);
+    }
+
+    #endregion
+
     /// <summary>
     /// Creates an instance of InGameCard based on the type and owner of the provided card.
     /// Phase 24-25: Added eventBus and cardCollectionService parameters for InGameInvocationCard dependency injection.

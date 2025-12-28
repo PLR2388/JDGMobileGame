@@ -4,6 +4,7 @@ using _Scripts.Cards.InvocationCards;
 using Cards;
 using Cards.InvocationCards;
 using JDG.Application;
+using JDG.Application.Cards;
 using JDG.Domain.Events;
 
 namespace _Scripts.Units.Invocation
@@ -12,8 +13,9 @@ namespace _Scripts.Units.Invocation
     /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
     /// Phase 24-25: Removed ServiceLocator, using constructor injection.
     /// Phase 7: Added IAbilityProvider for AbilityLibrary → AbilityRegistry migration.
+    /// Phase 49: Implements IInGameInvocationCard for complete abstraction.
     /// </summary>
-    public class InGameInvocationCard : InGameCard
+    public class InGameInvocationCard : InGameCard, IInGameInvocationCard
     {
         public InvocationCard BaseInvocationCard;
         private bool blockAttackNextTurn;
@@ -300,5 +302,33 @@ namespace _Scripts.Units.Invocation
         {
             return Attack;
         }
+
+        #region IInGameInvocationCard Implementation
+
+        /// <summary>
+        /// Gets the base attack value from the card definition.
+        /// Phase 49: Added for IInGameInvocationCard interface.
+        /// </summary>
+        public float BaseAttack => BaseInvocationCard?.BaseInvocationCardStats?.Attack ?? 0;
+
+        /// <summary>
+        /// Gets the base defense value from the card definition.
+        /// Phase 49: Added for IInGameInvocationCard interface.
+        /// </summary>
+        public float BaseDefense => BaseInvocationCard?.BaseInvocationCardStats?.Defense ?? 0;
+
+        /// <summary>
+        /// Gets the abilities as a read-only list of objects.
+        /// Phase 49: Explicit implementation for IInGameInvocationCard interface.
+        /// </summary>
+        IReadOnlyList<object> IInGameInvocationCard.Abilities => Abilities.Cast<object>().ToList().AsReadOnly();
+
+        /// <summary>
+        /// Gets the equipment card as an interface type.
+        /// Phase 49: Explicit implementation for IInGameInvocationCard interface.
+        /// </summary>
+        IInGameEquipmentCard IInGameInvocationCard.EquipmentCard => EquipmentCard;
+
+        #endregion
     }
 }

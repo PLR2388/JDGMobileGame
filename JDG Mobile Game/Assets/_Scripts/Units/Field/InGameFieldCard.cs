@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using Cards.FieldCards;
+using JDG.Application.Cards;
 
 /// <summary>
 /// Represents a card on the field in the game with additional runtime behaviors.
+/// Phase 49: Implements IInGameFieldCard for complete abstraction.
 /// </summary>
-public class InGameFieldCard : InGameCard
+public class InGameFieldCard : InGameCard, IInGameFieldCard
 {
     private readonly FieldCard baseFieldCard;
     private readonly IFieldAbilityProvider _abilityProvider;
@@ -63,4 +65,15 @@ public class InGameFieldCard : InGameCard
             ).ToList();
         }
     }
+
+    #region IInGameFieldCard Implementation
+
+    /// <summary>
+    /// Gets the field abilities as a read-only list of objects.
+    /// Phase 49: Explicit implementation for IInGameFieldCard interface.
+    /// </summary>
+    IReadOnlyList<object> IInGameFieldCard.FieldAbilities =>
+        FieldAbilities.Cast<object>().ToList().AsReadOnly();
+
+    #endregion
 }

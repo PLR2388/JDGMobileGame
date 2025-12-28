@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using JDG.Application.Cards;
 
 namespace Cards.EffectCards
 {
     /// <summary>
     /// Represents an in-game effect card, which is derived from a base effect card and has additional in-game properties and behaviors.
+    /// Phase 49: Implements IInGameEffectCard for complete abstraction.
     /// </summary>
-    public class InGameEffectCard : InGameCard
+    public class InGameEffectCard : InGameCard, IInGameEffectCard
     {
         private readonly EffectCard baseEffectCard;
         private readonly IEffectAbilityProvider _abilityProvider;
@@ -60,5 +62,16 @@ namespace Cards.EffectCards
                 ).ToList();
             }
         }
+
+        #region IInGameEffectCard Implementation
+
+        /// <summary>
+        /// Gets the effect abilities as a read-only list of objects.
+        /// Phase 49: Explicit implementation for IInGameEffectCard interface.
+        /// </summary>
+        IReadOnlyList<object> IInGameEffectCard.EffectAbilities =>
+            EffectAbilities.Cast<object>().ToList().AsReadOnly();
+
+        #endregion
     }
 }
