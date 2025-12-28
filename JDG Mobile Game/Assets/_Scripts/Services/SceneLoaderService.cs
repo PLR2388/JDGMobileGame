@@ -48,7 +48,7 @@ namespace JDG.Infrastructure.Services
         public void QuitGame()
         {
             Debug.Log("SceneLoaderService: Quitting game...");
-            Application.Quit();
+            UnityEngine.Application.Quit();
         }
     }
 }
