@@ -4,6 +4,14 @@ using JDG.Application.Services;
 
 namespace Cards
 {
+    /// <summary>
+    /// Defines different card families/types.
+    /// </summary>
+    /// <remarks>
+    /// DEPRECATED: Use JDG.Domain.Enums.CardFamily instead for clean architecture compatibility.
+    /// This enum will be removed in a future version.
+    /// </remarks>
+    [Obsolete("Use JDG.Domain.Enums.CardFamily instead. This enum will be removed in Phase 54.")]
     public enum CardFamily
     {
         Comics,

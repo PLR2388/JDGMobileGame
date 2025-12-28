@@ -9,6 +9,7 @@ namespace Cards.EffectCards
     public class InGameEffectCard : InGameCard
     {
         private readonly EffectCard baseEffectCard;
+        private readonly IEffectAbilityProvider _abilityProvider;
 
         /// <summary>
         /// List of effect abilities associated with this card.
@@ -17,13 +18,16 @@ namespace Cards.EffectCards
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InGameEffectCard"/> class.
+        /// Phase 48: Added optional abilityProvider parameter for DI.
         /// </summary>
         /// <param name="effectCard">The base effect card from which the in-game card is derived.</param>
         /// <param name="cardOwner">The owner of the card.</param>
-        public InGameEffectCard(EffectCard effectCard, CardOwner cardOwner)
+        /// <param name="abilityProvider">Optional ability provider (uses legacy library if null).</param>
+        public InGameEffectCard(EffectCard effectCard, CardOwner cardOwner, IEffectAbilityProvider abilityProvider = null)
         {
             baseEffectCard = effectCard;
             CardOwner = cardOwner;
+            _abilityProvider = abilityProvider;
             Reset();
         }
 
@@ -39,9 +43,22 @@ namespace Cards.EffectCards
             type = baseEffectCard.Type;
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;
-            EffectAbilities = baseEffectCard.EffectAbilities.Select(
-                effectAbilityName => EffectAbilityLibrary.Instance.EffectAbilityDictionary[effectAbilityName]
-            ).ToList();
+
+            // Phase 48: Use injected provider if available, fallback to legacy library
+            if (_abilityProvider != null)
+            {
+                EffectAbilities = baseEffectCard.EffectAbilities
+                    .Select(name => _abilityProvider.GetAbility(name))
+                    .Where(ability => ability != null)
+                    .ToList();
+            }
+            else
+            {
+                // Fallback to legacy singleton for backward compatibility
+                EffectAbilities = baseEffectCard.EffectAbilities.Select(
+                    effectAbilityName => EffectAbilityLibrary.Instance.EffectAbilityDictionary[effectAbilityName]
+                ).ToList();
+            }
         }
     }
 }

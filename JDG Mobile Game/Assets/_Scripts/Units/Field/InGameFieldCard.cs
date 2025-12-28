@@ -9,6 +9,7 @@ using Cards.FieldCards;
 public class InGameFieldCard : InGameCard
 {
     private readonly FieldCard baseFieldCard;
+    private readonly IFieldAbilityProvider _abilityProvider;
 
     public CardFamily Family { get; private set; }
 
@@ -19,14 +20,16 @@ public class InGameFieldCard : InGameCard
 
     /// <summary>
     /// Initializes a new instance of <see cref="InGameFieldCard"/> using the base <see cref="FieldCard"/> data.
+    /// Phase 48: Added optional abilityProvider parameter for DI.
     /// </summary>
     /// <param name="fieldCard">The base field card data.</param>
     /// <param name="cardOwner">The owner of the card.</param>
-    /// <returns>An instance of <see cref="InGameFieldCard"/>.</returns>
-    public InGameFieldCard(FieldCard fieldCard, CardOwner cardOwner)
+    /// <param name="abilityProvider">Optional ability provider (uses legacy library if null).</param>
+    public InGameFieldCard(FieldCard fieldCard, CardOwner cardOwner, IFieldAbilityProvider abilityProvider = null)
     {
         baseFieldCard = fieldCard;
         CardOwner = cardOwner;
+        _abilityProvider = abilityProvider;
         Reset();
     }
 
@@ -43,8 +46,21 @@ public class InGameFieldCard : InGameCard
         materialCard = baseFieldCard.MaterialCard;
         collector = baseFieldCard.Collector;
         Family = baseFieldCard.Family;
-        FieldAbilities = baseFieldCard.FieldAbilities.Select(
-            fieldAbilityName => FieldAbilityLibrary.Instance.FieldAbilityDictionary[fieldAbilityName]
-        ).ToList();
+
+        // Phase 48: Use injected provider if available, fallback to legacy library
+        if (_abilityProvider != null)
+        {
+            FieldAbilities = baseFieldCard.FieldAbilities
+                .Select(name => _abilityProvider.GetAbility(name))
+                .Where(ability => ability != null)
+                .ToList();
+        }
+        else
+        {
+            // Fallback to legacy singleton for backward compatibility
+            FieldAbilities = baseFieldCard.FieldAbilities.Select(
+                fieldAbilityName => FieldAbilityLibrary.Instance.FieldAbilityDictionary[fieldAbilityName]
+            ).ToList();
+        }
     }
 }

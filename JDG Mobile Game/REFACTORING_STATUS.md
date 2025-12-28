@@ -906,8 +906,114 @@ SharedServicesScope (Root - DontDestroyOnLoad)
 
 ---
 
+### Phase 47: Duplicate Enum Consolidation ✅ (Completed)
+
+**Goal**: Mark all duplicate legacy enums as obsolete to guide migration to domain enums.
+
+#### Legacy Enums Marked [Obsolete]
+
+| Legacy Enum | Domain Replacement | File |
+|-------------|-------------------|------|
+| `CardOwner` (global) | `JDG.Domain.CardOwner` | `Assets/_Scripts/Cards/CardOwner.cs` |
+| `Cards.CardType` | `JDG.Domain.Enums.CardType` | `Assets/_Scripts/Cards/CardType.cs` |
+| `Cards.CardFamily` | `JDG.Domain.Enums.CardFamily` | `Assets/_Scripts/Cards/CardFamily.cs` |
+| `EquipmentAbilityName` (global) | `JDG.Domain.Enums.EquipmentAbilityName` | `Assets/_Scripts/Units/Equipment/EquipmentAbility.cs` |
+| `FieldAbilityName` (global) | `JDG.Domain.Enums.FieldAbilityName` | `Assets/_Scripts/Units/Field/FieldAbility.cs` |
+| `EffectAbilityName` (global) | `JDG.Domain.Enums.EffectAbilityName` | `Assets/_Scripts/Units/Effect/EffectAbility.cs` |
+| `ConditionName` (global) | `JDG.Domain.Enums.ConditionName` | `Assets/_Scripts/Units/Invocation/Condition.cs` |
+
+#### Legacy Base Classes Marked [Obsolete]
+
+| Legacy Class | Modern Replacement | File |
+|--------------|-------------------|------|
+| `EquipmentAbility` | `IAbility` from JDG.Application | `Assets/_Scripts/Units/Equipment/EquipmentAbility.cs` |
+| `FieldAbility` | `IAbility` from JDG.Application | `Assets/_Scripts/Units/Field/FieldAbility.cs` |
+| `EffectAbility` | `IAbility` from JDG.Application | `Assets/_Scripts/Units/Effect/EffectAbility.cs` |
+| `Condition` | `ICondition` from JDG.Application | `Assets/_Scripts/Units/Invocation/Condition.cs` |
+
+#### Migration Path
+
+All legacy enums and classes will be removed in Phase 54. During migration:
+1. New code should use `JDG.Domain.Enums.*` or `JDG.Domain.CardOwner`
+2. Existing code will show obsolete warnings
+3. Gradual migration prevents breaking changes
+
+#### Code Metrics
+- Enums marked obsolete: 7
+- Classes marked obsolete: 4
+- Domain enums verified: 9 (all exist in JDG.Domain/Enums/)
+
+---
+
+### Phase 48: Card-Type Ability Provider Migration ✅ (Completed)
+
+**Goal**: Abstract card-type ability libraries for DI-compatible access.
+
+#### Problem
+The InGameFieldCard, InGameEquipmentCard, and InGameEffectCard classes accessed abilities via singleton pattern (e.g., `FieldAbilityLibrary.Instance`), preventing testability and proper DI.
+
+#### Solution (Strangler Fig Pattern)
+
+1. **Created Provider Interfaces**:
+   - `IFieldAbilityProvider` - Abstracts FieldAbilityLibrary access
+   - `IEquipmentAbilityProvider` - Abstracts EquipmentAbilityLibrary access
+   - `IEffectAbilityProvider` - Abstracts EffectAbilityLibrary access
+
+2. **Created Provider Implementations**:
+   - `FieldAbilityProviderService` - Wraps FieldAbilityLibrary.Instance
+   - `EquipmentAbilityProviderService` - Wraps EquipmentAbilityLibrary.Instance
+   - `EffectAbilityProviderService` - Wraps EffectAbilityLibrary.Instance
+
+3. **Updated InGameCard Subclasses**:
+   - Added optional provider parameters to constructors
+   - Use injected provider if available, fallback to legacy for backward compatibility
+   - `InGameFieldCard(fieldCard, owner, abilityProvider = null)`
+   - `InGameEquipmentCard(equipmentCard, owner, abilityProvider = null)`
+   - `InGameEffectCard(effectCard, owner, abilityProvider = null)`
+
+4. **Updated CardFactory**:
+   - Added optional provider parameters for all three card types
+   - Passes providers to card constructors when available
+
+5. **Registered in DI (SharedServicesScope)**:
+   - `IFieldAbilityProvider → FieldAbilityProviderService`
+   - `IEquipmentAbilityProvider → EquipmentAbilityProviderService`
+   - `IEffectAbilityProvider → EffectAbilityProviderService`
+
+6. **Marked Libraries [Obsolete]**:
+   - `FieldAbilityLibrary`
+   - `EquipmentAbilityLibrary`
+   - `EffectAbilityLibrary`
+
+#### Files Created
+- `Assets/_Scripts/Services/IFieldAbilityProvider.cs`
+- `Assets/_Scripts/Services/IEquipmentAbilityProvider.cs`
+- `Assets/_Scripts/Services/IEffectAbilityProvider.cs`
+- `Assets/_Scripts/Services/FieldAbilityProviderService.cs`
+- `Assets/_Scripts/Services/EquipmentAbilityProviderService.cs`
+- `Assets/_Scripts/Services/EffectAbilityProviderService.cs`
+
+#### Files Modified
+- `Assets/_Scripts/Units/Field/InGameFieldCard.cs`
+- `Assets/_Scripts/Units/Equipment/InGameEquipmentCard.cs`
+- `Assets/_Scripts/Units/Effect/InGameEffectCard.cs`
+- `Assets/_Scripts/Units/CardFactory.cs`
+- `Assets/_Scripts/DI/SharedServicesScope.cs`
+- `Assets/_Scripts/Units/Field/FieldAbilityLibrary.cs` (added [Obsolete])
+- `Assets/_Scripts/Units/Equipment/EquipmentAbilityLibrary.cs` (added [Obsolete])
+- `Assets/_Scripts/Units/Effect/EffectAbilityLibrary.cs` (added [Obsolete])
+
+#### Migration Path
+Libraries remain functional during transition:
+1. New code should use injected providers
+2. Callers of CardFactory can pass providers
+3. Legacy callers continue to work (fallback to .Instance)
+4. Eventually, remove fallback and delete library files
+
+---
+
 **Last Updated**: 2025-12-28
 **Current Branch**: refactor-v3
-**Status**: Phase 46 Complete (DI Scope Restructuring)
+**Status**: Phase 48 Complete (Card-Type Ability Provider Migration)
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.

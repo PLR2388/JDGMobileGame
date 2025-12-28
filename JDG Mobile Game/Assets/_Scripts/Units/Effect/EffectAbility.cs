@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using UnityEngine;
@@ -5,6 +6,11 @@ using UnityEngine;
 /// <summary>
 /// Enumeration of names for various effect abilities in the game.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use JDG.Domain.Enums.EffectAbilityName instead for clean architecture compatibility.
+/// This enum will be removed in a future version.
+/// </remarks>
+[Obsolete("Use JDG.Domain.Enums.EffectAbilityName instead. This enum will be removed in Phase 54.")]
 public enum EffectAbilityName
 {
     LimitHandCardTo5,
@@ -39,6 +45,11 @@ public enum EffectAbilityName
 /// EffectAbilities can influence gameplay by modifying card behaviors, player statuses, etc.
 /// Phase 38: Added static service properties for legacy abilities (eliminates singleton calls).
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use IAbility from JDG.Application.Abilities instead.
+/// Legacy abilities are being replaced with clean architecture implementations.
+/// </remarks>
+[Obsolete("Use IAbility from JDG.Application.Abilities instead. This class will be removed in Phase 54.")]
 public abstract class EffectAbility
 {
     /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
@@ -5,6 +6,11 @@ using Cards;
 /// <summary>
 /// Represents a library that manages and provides access to various field abilities.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use IFieldAbilityProvider via dependency injection instead.
+/// This singleton pattern will be removed in Phase 54.
+/// </remarks>
+[Obsolete("Use IFieldAbilityProvider via DI instead. This class will be removed in Phase 54.")]
 public class FieldAbilityLibrary : StaticInstance<FieldAbilityLibrary>
 {
     /// <summary>

@@ -1,9 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
 /// Represents a library of equipment abilities, allowing for easy access and management of various equipment abilities.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use IEquipmentAbilityProvider via dependency injection instead.
+/// This singleton pattern will be removed in Phase 54.
+/// </remarks>
+[Obsolete("Use IEquipmentAbilityProvider via DI instead. This class will be removed in Phase 54.")]
 public class EquipmentAbilityLibrary : StaticInstance<EquipmentAbilityLibrary>
 {
     /// <summary>

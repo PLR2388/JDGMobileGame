@@ -8,6 +8,11 @@ namespace Cards
     /// <summary>
     /// Defines different types of cards.
     /// </summary>
+    /// <remarks>
+    /// DEPRECATED: Use JDG.Domain.Enums.CardType instead for clean architecture compatibility.
+    /// This enum will be removed in a future version.
+    /// </remarks>
+    [Obsolete("Use JDG.Domain.Enums.CardType instead. This enum will be removed in Phase 54.")]
     public enum CardType
     {
         Contre,

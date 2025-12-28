@@ -1,6 +1,13 @@
+using System;
+
 /// <summary>
 /// Enumerates the names of various conditions in the game.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use JDG.Domain.Enums.ConditionName instead for clean architecture compatibility.
+/// This enum will be removed in a future version.
+/// </remarks>
+[Obsolete("Use JDG.Domain.Enums.ConditionName instead. This enum will be removed in Phase 54.")]
 public enum ConditionName
 {
     BenzaieJeuneOrBenzaieOnField,
@@ -31,6 +38,11 @@ public enum ConditionName
 /// <summary>
 /// Represents an abstract condition that can be evaluated against player cards.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use ICondition from JDG.Application.Abilities instead.
+/// Legacy conditions are being replaced with clean architecture implementations.
+/// </remarks>
+[Obsolete("Use ICondition from JDG.Application.Abilities instead. This class will be removed in Phase 54.")]
 public abstract class Condition
 {
     /// <summary>

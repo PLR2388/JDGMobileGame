@@ -93,6 +93,11 @@ namespace JDG.DI
             // Card Selection Service - pure C#, no MonoBehaviour needed
             builder.Register<JDG.Application.Services.ICardSelectionService, CardSelectionService>(Lifetime.Singleton);
 
+            // Phase 48: Card-type ability providers (wrap legacy ability libraries for DI)
+            builder.Register<IFieldAbilityProvider, FieldAbilityProviderService>(Lifetime.Singleton);
+            builder.Register<IEquipmentAbilityProvider, EquipmentAbilityProviderService>(Lifetime.Singleton);
+            builder.Register<IEffectAbilityProvider, EffectAbilityProviderService>(Lifetime.Singleton);
+
             // ============================================
             // APPLICATION LAYER - Use Cases
             // ============================================

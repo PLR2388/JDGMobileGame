@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
@@ -5,6 +6,11 @@ using Cards;
 /// <summary>
 /// Represents a library of effect abilities that can be applied in the game.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use IEffectAbilityProvider via dependency injection instead.
+/// This singleton pattern will be removed in Phase 54.
+/// </remarks>
+[Obsolete("Use IEffectAbilityProvider via DI instead. This class will be removed in Phase 54.")]
 public class EffectAbilityLibrary : StaticInstance<EffectAbilityLibrary>
 {
     private readonly List<EffectAbility> effectAbilities = new List<EffectAbility>

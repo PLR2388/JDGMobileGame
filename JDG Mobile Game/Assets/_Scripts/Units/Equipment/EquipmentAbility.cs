@@ -1,8 +1,14 @@
+using System;
 using _Scripts.Units.Invocation;
 
 /// <summary>
 /// Enumerates different names for equipment abilities.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use JDG.Domain.Enums.EquipmentAbilityName instead for clean architecture compatibility.
+/// This enum will be removed in a future version.
+/// </remarks>
+[Obsolete("Use JDG.Domain.Enums.EquipmentAbilityName instead. This enum will be removed in Phase 54.")]
 public enum EquipmentAbilityName
 {
     MultiplyDefBy2ButPreventAttack,
@@ -29,6 +35,11 @@ public enum EquipmentAbilityName
 /// <summary>
 /// Defines the base class for equipment abilities in the game.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use IAbility from JDG.Application.Abilities instead.
+/// Legacy abilities are being replaced with clean architecture implementations.
+/// </remarks>
+[Obsolete("Use IAbility from JDG.Application.Abilities instead. This class will be removed in Phase 54.")]
 public abstract class EquipmentAbility
 {
     /// <summary>

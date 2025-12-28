@@ -1,3 +1,4 @@
+using System;
 using _Scripts.Units.Invocation;
 using Cards;
 using UnityEngine;
@@ -5,6 +6,11 @@ using UnityEngine;
 /// <summary>
 /// Enumeration representing different types of field abilities.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use JDG.Domain.Enums.FieldAbilityName instead for clean architecture compatibility.
+/// This enum will be removed in a future version.
+/// </remarks>
+[Obsolete("Use JDG.Domain.Enums.FieldAbilityName instead. This enum will be removed in Phase 54.")]
 public enum FieldAbilityName
 {
     Earn1DEFForSpatialFamily,
@@ -24,6 +30,11 @@ public enum FieldAbilityName
 /// <summary>
 /// Abstract class representing a field ability.
 /// </summary>
+/// <remarks>
+/// DEPRECATED: Use IAbility from JDG.Application.Abilities instead.
+/// Legacy abilities are being replaced with clean architecture implementations.
+/// </remarks>
+[Obsolete("Use IAbility from JDG.Application.Abilities instead. This class will be removed in Phase 54.")]
 public abstract class FieldAbility
 {
     /// <summary>
