@@ -1,10 +1,131 @@
+using System.Collections.Generic;
+using System.Linq;
+
 /// <summary>
-/// Provides equipment abilities using EquipmentAbilityLibrary.
-/// Phase 48: Wraps legacy singleton for DI-compatible access.
+/// Provides equipment abilities.
+/// Phase 48: Originally wrapped legacy singleton for DI-compatible access.
+/// Phase 84: Now owns the ability dictionary directly (EquipmentAbilityLibrary deleted).
 /// Will be migrated to use modern IAbility implementations in future phases.
 /// </summary>
+#pragma warning disable CS0618 // Suppress obsolete warnings for legacy ability types
 public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
 {
+    private readonly Dictionary<EquipmentAbilityName, EquipmentAbility> _abilityDictionary;
+
+    /// <summary>
+    /// Initializes the equipment ability provider with all abilities.
+    /// Phase 84: Moved from EquipmentAbilityLibrary.
+    /// </summary>
+    public EquipmentAbilityProviderService()
+    {
+        var abilities = new List<EquipmentAbility>
+        {
+            new MultiplyAtkDefAbility(
+                EquipmentAbilityName.MultiplyDefBy2ButPreventAttack,
+                "Multiply DEF by 2 but the invocation cannot attack",
+                defenseFactor: 2f,
+                shouldPreventAttack: true
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.Earn1ATKAndMinus1DEF,
+                "The invocation earns 1 ATK and -1 DEF",
+                1,
+                -1
+            ),
+            new DirectAttackAbility(
+                EquipmentAbilityName.DirectAttack,
+                "Invocation card can directly attack player"
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.EarnOneQuarterATKPerHandCards,
+                "Invocation earns 0.25 ATK per hands in his hand",
+                0.25f,
+                0f,
+                true
+            ),
+            new PreventAttackNewOpponentInvocationAbility(
+                EquipmentAbilityName.PreventNewOpponentToAttack,
+                "Prevent a freshly opponent invoke invocation to attack"
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.Remove1ATKAnd1DEF,
+                "Invocation looses 1 ATK and 1 DEF",
+                -1,
+                -1
+            ),
+            new SetAtkDefAbility(
+                EquipmentAbilityName.SetATKToOne,
+                "Invocation now has an ATK of 1",
+                1f
+            ),
+            new CantBeAttackDestroyByInvocationAbility(
+                EquipmentAbilityName.CantBeAttackByOtherInvocations,
+                "Invocation can't be attacked or destroyed by another invocation"
+            ),
+            new MultiplyAtkDefAbility(
+                EquipmentAbilityName.MultiplyAtkBy3,
+                "Multiply ATK by 3",
+                3
+            ),
+            new SetAtkDefAbility(
+                EquipmentAbilityName.SetDefToZero,
+                "Invocation now has a DEF of 0",
+                def: 0
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.Earn2ATK,
+                "Invocation earns 2 ATK",
+                2,
+                0
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.Earn3ATKAndMinus1DEF,
+                "Invocation ears 3 ATK and -1 DEF",
+                3,
+                -1
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.Earn1ATKAnd1DEF,
+                "Invocation earns 1 ATK and 1 DEF",
+                1,
+                1
+            ),
+            new MultiplyAtkDefAbility(
+                EquipmentAbilityName.MultiplyAtkBy2AndDefByHalf,
+                "Multiply ATK by 2 and DEF by 1/2",
+                2,
+                0.5f
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.EarnOneQuarterDEFPerHandCards,
+                "Invocation earns 0.25 DEF per hands in his hand",
+                0,
+                0.25f,
+                true
+            ),
+            new SwitchEquipmentCardAbility(
+                EquipmentAbilityName.SwitchEquipmentCard,
+                "Player can replace an equipment card by this one and add the previous to the yellow trash"
+            ),
+            new EarnAtkDefAbility(
+                EquipmentAbilityName.Loose2ATK,
+                "Invocation looses 2 ATK",
+                -2,
+                0
+            ),
+            new ProtectFromDestructionAbility(
+                EquipmentAbilityName.ProtectOneTimeFromDestruction,
+                "Equipment is destroyed instead of the invocation if the invocationCard should be destroyed"
+            ),
+            new CancelInvocationAbility(
+                EquipmentAbilityName.CancelInvocationAbility,
+                "Invocation whose has this equipment card loose its abilities"
+            )
+        };
+
+        _abilityDictionary = abilities.ToDictionary(ability => ability.Name, ability => ability);
+    }
+
     /// <summary>
     /// Gets an equipment ability by its name.
     /// </summary>
@@ -12,11 +133,7 @@ public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
     /// <returns>The equipment ability, or null if not found.</returns>
     public EquipmentAbility GetAbility(EquipmentAbilityName abilityName)
     {
-        var library = EquipmentAbilityLibrary.Instance;
-        if (library == null || library.EquipmentAbilityDictionary == null)
-            return null;
-
-        library.EquipmentAbilityDictionary.TryGetValue(abilityName, out var ability);
+        _abilityDictionary.TryGetValue(abilityName, out var ability);
         return ability;
     }
 
@@ -27,10 +144,7 @@ public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
     /// <returns>True if the ability exists.</returns>
     public bool HasAbility(EquipmentAbilityName abilityName)
     {
-        var library = EquipmentAbilityLibrary.Instance;
-        if (library == null || library.EquipmentAbilityDictionary == null)
-            return false;
-
-        return library.EquipmentAbilityDictionary.ContainsKey(abilityName);
+        return _abilityDictionary.ContainsKey(abilityName);
     }
 }
+#pragma warning restore CS0618
