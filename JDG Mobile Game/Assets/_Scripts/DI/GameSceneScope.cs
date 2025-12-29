@@ -146,13 +146,20 @@ namespace JDG.DI
             if (canvas != null)
             {
                 builder.RegisterInstance(canvas.transform).As<Transform>();
-
-                // Phase 65: Register ICanvasProvider for UseCases that need canvas access
-                var canvasProvider = new CanvasProviderService();
-                canvasProvider.SetCanvas(canvas.transform);
-                builder.RegisterInstance<ICanvasProvider>(canvasProvider);
-                Debug.Log("GameSceneScope: Registered CanvasProviderService as ICanvasProvider");
+                Debug.Log("GameSceneScope: Registered Canvas Transform");
             }
+
+            // Phase 84 Fix: Set canvas on the singleton CanvasProviderService from parent scope
+            // (ICanvasProvider is now registered in SharedServicesScope, we just set the canvas here)
+            builder.RegisterBuildCallback(container =>
+            {
+                if (canvas != null)
+                {
+                    var canvasProvider = container.Resolve<CanvasProviderService>();
+                    canvasProvider.SetCanvas(canvas.transform);
+                    Debug.Log("GameSceneScope: Set canvas on CanvasProviderService from parent scope");
+                }
+            });
 
             // ICardPlacementService - depends on ICardCollectionService, IPlayerStatusProvider
             builder.Register<ICardPlacementService, CardPlacementService>(Lifetime.Scoped);

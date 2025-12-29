@@ -145,6 +145,12 @@ namespace JDG.DI
             builder.Register<HandleCardDeathUseCase>(Lifetime.Transient); // Phase 82: Migrated
             builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient); // Phase 83: Migrated
 
+            // Phase 84 Fix: ICanvasProvider must be in root scope for AbilityExecutorAdapter
+            // Canvas is set later by GameSceneScope when game scene loads
+            builder.Register<CanvasProviderService>(Lifetime.Singleton);
+            builder.Register<ICanvasProvider>(container =>
+                container.Resolve<CanvasProviderService>(), Lifetime.Singleton);
+
             // Card State Services (Phase 71+)
             builder.Register<ICardStateService, CardStateService>(Lifetime.Singleton);
             builder.Register<IAbilityExecutor, AbilityExecutorAdapter>(Lifetime.Singleton);
