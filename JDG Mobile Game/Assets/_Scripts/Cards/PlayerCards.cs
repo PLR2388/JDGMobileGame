@@ -230,7 +230,8 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     {
         if (e.Action == NotifyCollectionChangedAction.Add)
         {
-            _handleCardDeathUseCase.Execute(YellowCards.Last(), this, opponentPlayerCards, canvas);
+            // Phase 65: Removed canvas parameter - now injected via ICanvasProvider
+            _handleCardDeathUseCase.Execute(YellowCards.Last(), this, opponentPlayerCards);
         }
         _eventBus.Publish(new CardLocationChangedEvent { Player = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2 });
     }

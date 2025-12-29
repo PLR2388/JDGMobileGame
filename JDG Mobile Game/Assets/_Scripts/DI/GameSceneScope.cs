@@ -146,6 +146,12 @@ namespace JDG.DI
             if (canvas != null)
             {
                 builder.RegisterInstance(canvas.transform).As<Transform>();
+
+                // Phase 65: Register ICanvasProvider for UseCases that need canvas access
+                var canvasProvider = new CanvasProviderService();
+                canvasProvider.SetCanvas(canvas.transform);
+                builder.RegisterInstance<ICanvasProvider>(canvasProvider);
+                Debug.Log("GameSceneScope: Registered CanvasProviderService as ICanvasProvider");
             }
 
             // ICardPlacementService - depends on ICardCollectionService, IPlayerStatusProvider

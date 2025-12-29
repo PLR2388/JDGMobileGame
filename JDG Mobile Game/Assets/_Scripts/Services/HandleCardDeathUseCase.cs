@@ -1,12 +1,14 @@
 using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application;
+using JDG.Application.Services;
 using JDG.Domain.Events;
 using UnityEngine;
 
 /// <summary>
 /// Use case for handling card death and moving cards to the graveyard (yellow cards).
 /// Phase 21-22: Extracted from PlayerCards.OnYellowTrashAdded().
+/// Phase 65: Updated to inject ICanvasProvider instead of passing Transform canvas.
 ///
 /// NOTE: This use case is in the default assembly (Services folder) because it depends
 /// on legacy types (InGameInvocationCard, PlayerCards) that haven't been migrated
@@ -21,24 +23,28 @@ using UnityEngine;
 public class HandleCardDeathUseCase
 {
     private readonly IEventBus _eventBus;
+    private readonly ICanvasProvider _canvasProvider;
 
-    public HandleCardDeathUseCase(IEventBus eventBus)
+    /// <summary>
+    /// Phase 65: Updated constructor to inject ICanvasProvider.
+    /// </summary>
+    public HandleCardDeathUseCase(IEventBus eventBus, ICanvasProvider canvasProvider)
     {
         _eventBus = eventBus;
+        _canvasProvider = canvasProvider;
     }
 
     /// <summary>
     /// Handles a card's death, resetting its state and triggering death abilities.
+    /// Phase 65: Canvas is now obtained from ICanvasProvider instead of parameter.
     /// </summary>
     /// <param name="deadCard">The card that died.</param>
     /// <param name="ownerPlayerCards">The PlayerCards instance that owns the dead card.</param>
     /// <param name="opponentPlayerCards">The opponent's PlayerCards instance.</param>
-    /// <param name="canvas">The canvas transform for UI effects.</param>
     public void Execute(
         InGameCard deadCard,
         PlayerCards ownerPlayerCards,
-        PlayerCards opponentPlayerCards,
-        Transform canvas)
+        PlayerCards opponentPlayerCards)
     {
         if (deadCard is InGameInvocationCard invocationCard)
         {
@@ -48,6 +54,9 @@ public class HandleCardDeathUseCase
             invocationCard.Defense = invocationCard.BaseInvocationCard.BaseInvocationCardStats.Defense;
             invocationCard.FreeCard();
             invocationCard.ResetNewTurn();
+
+            // Phase 65: Get canvas from provider
+            var canvas = _canvasProvider.GetGameCanvas() as Transform;
 
             // Trigger death abilities
             foreach (var ability in invocationCard.Abilities)
