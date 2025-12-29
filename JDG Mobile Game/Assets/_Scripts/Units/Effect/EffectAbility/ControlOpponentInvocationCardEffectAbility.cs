@@ -51,7 +51,7 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var config = new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CONTROLLED_INVOCATION),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CONTROLLED_INVOCATION),
             new List<InGameCard>(opponentPlayerCard.InvocationCards.ToList()),
             showOkButton: true,
             okAction: (card) =>
@@ -67,15 +67,15 @@ public class ControlOpponentInvocationCardEffectAbility : EffectAbility
                 else
                 {
                     var warningConfig = new MessageBoxConfig(
-                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                        Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
                         showOkButton: true
                     );
-                    DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
+                    Dialog.ShowMessageBoxLegacy(canvas, warningConfig);
                 }
             }
         );
-        DialogService.ShowCardSelectorLegacy(canvas, config);
+        Dialog.ShowCardSelectorLegacy(canvas, config);
     }
 
     /// <summary>

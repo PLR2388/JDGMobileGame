@@ -44,6 +44,7 @@ public enum EffectAbilityName
 /// Base class for effect abilities that can be applied in the game.
 /// EffectAbilities can influence gameplay by modifying card behaviors, player statuses, etc.
 /// Phase 38: Added static service properties for legacy abilities (eliminates singleton calls).
+/// Phase 66: Added instance properties with constructor injection for testability.
 /// </summary>
 /// <remarks>
 /// DEPRECATED: Use IAbility from JDG.Application.Abilities instead.
@@ -55,14 +56,48 @@ public abstract class EffectAbility
     /// <summary>
     /// Shared ILocalizationService instance for legacy effect abilities.
     /// Phase 38: Set once at initialization to remove LocalizationSystem.Instance calls.
+    /// Phase 66: Marked obsolete - use instance property Localization instead.
     /// </summary>
+    [Obsolete("Use instance property Localization instead. Will be removed in future phase.")]
     public static JDG.Application.Services.ILocalizationService LocalizationService { get; set; }
 
     /// <summary>
     /// Shared IDialogService instance for legacy effect abilities.
     /// Phase 38: Set once at initialization to remove MessageBox.Instance and CardSelector.Instance calls.
+    /// Phase 66: Marked obsolete - use instance property Dialog instead.
     /// </summary>
+    [Obsolete("Use instance property Dialog instead. Will be removed in future phase.")]
     public static JDG.Application.Services.IDialogService DialogService { get; set; }
+
+    // Phase 66: Instance properties for dependency injection
+    #pragma warning disable CS0618 // Using obsolete static properties for backward compatibility
+    /// <summary>
+    /// Instance-level localization service. Falls back to static property for backward compatibility.
+    /// </summary>
+    protected JDG.Application.Services.ILocalizationService Localization { get; }
+
+    /// <summary>
+    /// Instance-level dialog service. Falls back to static property for backward compatibility.
+    /// </summary>
+    protected JDG.Application.Services.IDialogService Dialog { get; }
+
+    /// <summary>
+    /// Constructor with optional dependency injection.
+    /// Phase 66: Enables testability while maintaining backward compatibility.
+    /// </summary>
+    protected EffectAbility(
+        JDG.Application.Services.ILocalizationService localization = null,
+        JDG.Application.Services.IDialogService dialog = null)
+    {
+        Localization = localization ?? LocalizationService;
+        Dialog = dialog ?? DialogService;
+    }
+
+    /// <summary>
+    /// Parameterless constructor for backward compatibility.
+    /// </summary>
+    protected EffectAbility() : this(null, null) { }
+    #pragma warning restore CS0618
 
     /// <summary>
     /// Gets or sets the name of the effect ability.

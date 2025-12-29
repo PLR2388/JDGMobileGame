@@ -32,11 +32,11 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>
@@ -66,14 +66,14 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
         if (validCards.Count > 0)
         {
             var config = new MessageBoxConfig(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
-                LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE),
+                Localization.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
+                Localization.GetLocalizedValue(LocalizationKeys.ACTION_SKIP_DRAW_FOR_FISTILAND_CARD_MESSAGE),
                 showPositiveButton: true,
                 showNegativeButton: true,
                 positiveAction: () =>
                 {
                     var selectorConfig = new CardSelectorConfig(
-                        LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
+                        Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
                         validCards,
                         showOkButton: true,
                         okAction: (selectedCard) =>
@@ -99,10 +99,10 @@ public class GetCardFromFamilyIfSkipDrawAbility : FieldAbility
                             }
                         }
                     );
-                    DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
+                    Dialog.ShowCardSelectorLegacy(canvas, selectorConfig);
                 }
             );
-            DialogService.ShowMessageBoxLegacy(canvas, config);
+            Dialog.ShowMessageBoxLegacy(canvas, config);
         }
     }
 }

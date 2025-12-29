@@ -93,9 +93,9 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
     public override void OnTurnStart(Transform canvas, PlayerStatus playerStatus, PlayerCards playerCards, PlayerStatus opponentPlayerStatus, PlayerCards opponentPlayerCards)
     {
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.ACTION_TITLE),
             string.Format(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.ACTION_CONTINUE_APPLY_FAMILY_MESSAGE),
+                Localization.GetLocalizedValue(LocalizationKeys.ACTION_CONTINUE_APPLY_FAMILY_MESSAGE),
                 costPerTurn
             ),
             showPositiveButton: true,
@@ -109,7 +109,7 @@ public class FamilyFieldToInvocationsEffectAbility : EffectAbility
                 ResetInvocationsFamily(playerCards);
             }
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>

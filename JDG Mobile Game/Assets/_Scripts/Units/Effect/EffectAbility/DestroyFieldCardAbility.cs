@@ -42,7 +42,7 @@ public class DestroyFieldCardAbility : EffectAbility
         var cards = CollectFieldCards(playerCards, opponentPlayerCard);
 
         var config = new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_FIELD_CARD),
             cards,
             showOkButton: true,
             okAction: (card) =>
@@ -50,7 +50,7 @@ public class DestroyFieldCardAbility : EffectAbility
                 HandleSelectedCard(canvas, playerCards, opponentPlayerCard, playerStatus, card);
             }
         );
-        DialogService.ShowCardSelectorLegacy(canvas, config);
+        Dialog.ShowCardSelectorLegacy(canvas, config);
     }
 
     /// <summary>
@@ -67,11 +67,11 @@ public class DestroyFieldCardAbility : EffectAbility
         if (card == null)
         {
             var warningConfig = new MessageBoxConfig(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
                 showOkButton: true
             );
-            DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
+            Dialog.ShowMessageBoxLegacy(canvas, warningConfig);
         }
         else
         {

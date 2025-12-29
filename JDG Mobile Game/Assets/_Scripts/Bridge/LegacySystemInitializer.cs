@@ -1,7 +1,6 @@
 using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Infrastructure.Repositories;
-using JDG.Infrastructure.Services;
 using UnityEngine;
 
 namespace JDG.Bridge
@@ -11,20 +10,22 @@ namespace JDG.Bridge
     /// Called from SharedServicesScope.RegisterBuildCallback to initialize
     /// legacy static fields without requiring a MonoBehaviour.
     /// Phase 46: Replaces LegacyCardLoader MonoBehaviour registration.
+    /// Phase 66: Removed GameStateService (was never accessed by any ability).
     /// </summary>
     public static class LegacySystemInitializer
     {
         /// <summary>
         /// Initializes all legacy static fields with DI services.
         /// Must be called after container is built.
+        /// Phase 66: Removed GameStateService parameter - was never used by abilities.
         /// </summary>
         public static void Initialize(
-            GameStateService gameStateService,
             ILocalizationService localizationService,
             IDialogService dialogService)
         {
+            // Phase 66: Static properties marked obsolete, wrapped with pragma
+            #pragma warning disable CS0618 // Suppress obsolete warning - intentional backward compatibility
             // Initialize legacy Ability base class
-            Ability.GameStateService = gameStateService;
             Ability.LocalizationService = localizationService;
             Ability.DialogService = dialogService;
 
@@ -35,6 +36,7 @@ namespace JDG.Bridge
             // Initialize legacy FieldAbility base class
             FieldAbility.LocalizationService = localizationService;
             FieldAbility.DialogService = dialogService;
+            #pragma warning restore CS0618
 
             // Initialize extension classes
             Cards.CardTypeExtensions.LocalizationService = localizationService;

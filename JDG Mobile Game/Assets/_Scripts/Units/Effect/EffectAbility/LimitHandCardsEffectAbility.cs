@@ -86,7 +86,7 @@ public class LimitHandCardsEffectAbility : EffectAbility
 
         var config = new CardSelectorConfig(
             string.Format(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                 playerCards.IsPlayerOne ? "1" : "2",
                 extraCards),
             playerCards.HandCards.ToList(),
@@ -105,17 +105,17 @@ public class LimitHandCardsEffectAbility : EffectAbility
                 else
                 {
                     var warningConfig = new MessageBoxConfig(
-                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
                         string.Format(
-                            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARDS),
+                            Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARDS),
                             extraCards
                         ),
                         showOkButton: true
                     );
-                    DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
+                    Dialog.ShowMessageBoxLegacy(canvas, warningConfig);
                 }
             }
         );
-        DialogService.ShowCardSelectorLegacy(canvas, config);
+        Dialog.ShowCardSelectorLegacy(canvas, config);
     }
 }

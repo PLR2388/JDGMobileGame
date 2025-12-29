@@ -72,7 +72,7 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
         if (numberCards == 1)
         {
             var config = new CardSelectorConfig(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
+                Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_CARD_FROM_DECK_YELLOW),
                 cards.ToList(),
                 showOkButton: true,
                 okAction: (card) =>
@@ -87,7 +87,7 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
                     }
                 }
             );
-            DialogService.ShowCardSelectorLegacy(canvas, config);
+            Dialog.ShowCardSelectorLegacy(canvas, config);
         }
     }
 
@@ -99,11 +99,11 @@ public class GetCardFromDeckYellowEffectAbility : EffectAbility
     private void DisplayWarningMessageBox(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>

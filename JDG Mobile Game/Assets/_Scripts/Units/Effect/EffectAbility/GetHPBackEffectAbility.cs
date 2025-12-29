@@ -81,7 +81,7 @@ public class GetHPBackEffectAbility : EffectAbility
         var invocationCards = new List<InGameCard>(playerCards.InvocationCards
             .Where(card => card.Attack >= atkDefCondition || card.Defense >= atkDefCondition).ToList());
         var config = new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
             invocationCards,
             showOkButton: true,
             okAction: (card) =>
@@ -94,15 +94,15 @@ public class GetHPBackEffectAbility : EffectAbility
                 else
                 {
                     var warningConfig = new MessageBoxConfig(
-                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                        LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE),
+                        Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                        Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_SACRIFICE),
                         showOkButton: true
                     );
-                    DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
+                    Dialog.ShowMessageBoxLegacy(canvas, warningConfig);
                 }
             }
         );
-        DialogService.ShowCardSelectorLegacy(canvas, config);
+        Dialog.ShowCardSelectorLegacy(canvas, config);
     }
     
     /// <summary>

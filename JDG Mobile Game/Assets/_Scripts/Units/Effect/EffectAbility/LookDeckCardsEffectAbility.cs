@@ -51,8 +51,8 @@ public class LookDeckCardsEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
-            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_SEE_DECK_MESSAGE),
+            Localization.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.QUESTION_CHOICE_SEE_DECK_MESSAGE),
             showNegativeButton: true,
             showPositiveButton: true,
             positiveAction: () =>
@@ -64,7 +64,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 DisplayAndOrderCardMessageBox(canvas, opponentPlayerCard);
             }
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
             }
 
             var config = new CardSelectorConfig(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
+                Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 shortList,
                 numberCardSelection: numberCards,
                 showOrder: true,
@@ -104,12 +104,12 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 }
             );
 
-            DialogService.ShowCardSelectorLegacy(canvas, config);
+            Dialog.ShowCardSelectorLegacy(canvas, config);
         }
         else
         {
             var config = new CardSelectorConfig(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
+                Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHANGE_ORDER_CARTES),
                 deck,
                 numberCardSelection: deck.Count,
                 showOrder: true,
@@ -128,7 +128,7 @@ public class LookDeckCardsEffectAbility : EffectAbility
                 }
             );
 
-            DialogService.ShowCardSelectorLegacy(canvas, config);
+            Dialog.ShowCardSelectorLegacy(canvas, config);
         }
     }
     
@@ -140,11 +140,11 @@ public class LookDeckCardsEffectAbility : EffectAbility
     private void DisplayWarningOrderMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_ORDER_CARDS),
             showOkButton: true
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>

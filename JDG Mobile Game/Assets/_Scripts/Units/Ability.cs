@@ -1,7 +1,6 @@
 using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Domain;
-using JDG.Infrastructure.Services;
 using UnityEngine;
 
 /// <summary>
@@ -14,30 +13,29 @@ using UnityEngine;
 /// Migration Guide: Old abilities with Unity dependencies → New pure C# abilities using repositories/use cases.
 ///
 /// Phase 24-25: Updated to use JDG.Domain.AbilityName (removed legacy global AbilityName enum).
-/// Phase 27: Added GameStateService for legacy abilities (eliminates ServiceLocator usage).
 /// Phase 38: Added ILocalizationService and IDialogService for legacy abilities.
+/// Phase 66: Removed unused GameStateService. Marked static services as obsolete.
 /// </summary>
 [System.Obsolete("Legacy ability system. Use IAbility interface from JDG.Application.Abilities instead. " +
                  "Migrate to new system using factories and dependency injection.")]
 public abstract class Ability
 {
-    /// <summary>
-    /// Shared GameStateService instance for legacy abilities.
-    /// Phase 27: Set once at initialization to remove ServiceLocator dependencies.
-    /// Public static to allow LegacyCardLoader (non-inheriting class) to initialize it.
-    /// </summary>
-    public static GameStateService GameStateService { get; set; }
+    // Phase 66: Removed GameStateService - was never accessed by any ability subclass
 
     /// <summary>
     /// Shared ILocalizationService instance for legacy abilities.
     /// Phase 38: Set once at initialization to remove LocalizationSystem.Instance calls.
+    /// Phase 66: Marked obsolete - use derived class instance properties (Localization) instead.
     /// </summary>
+    [System.Obsolete("Use derived class instance properties (Localization) instead. Will be removed in future phase.")]
     public static JDG.Application.Services.ILocalizationService LocalizationService { get; set; }
 
     /// <summary>
     /// Shared IDialogService instance for legacy abilities.
     /// Phase 38: Set once at initialization to remove MessageBox.Instance and CardSelector.Instance calls.
+    /// Phase 66: Marked obsolete - use derived class instance properties (Dialog) instead.
     /// </summary>
+    [System.Obsolete("Use derived class instance properties (Dialog) instead. Will be removed in future phase.")]
     public static JDG.Application.Services.IDialogService DialogService { get; set; }
 
     /// <summary>

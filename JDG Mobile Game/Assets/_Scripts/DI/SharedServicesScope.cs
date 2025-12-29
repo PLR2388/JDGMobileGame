@@ -172,10 +172,10 @@ namespace JDG.DI
             builder.RegisterBuildCallback(container =>
             {
                 // Initialize legacy static fields
-                var gameStateService = container.Resolve<GameStateService>();
+                // Phase 66: Removed GameStateService - was never accessed by abilities
                 var localizationService = container.Resolve<ILocalizationService>();
                 var dialogService = container.Resolve<IDialogService>();
-                LegacySystemInitializer.Initialize(gameStateService, localizationService, dialogService);
+                LegacySystemInitializer.Initialize(localizationService, dialogService);
 
                 // Load legacy cards
                 var cardRepository = container.Resolve<ICardRepository>();

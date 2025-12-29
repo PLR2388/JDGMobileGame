@@ -38,11 +38,11 @@ public class LookHandCardsEffectAbility : EffectAbility
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class LookHandCardsEffectAbility : EffectAbility
         base.ApplyEffect(canvas, playerCards, opponentPlayerCard, playerStatus, opponentStatus);
 
         var config = new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_OPPONENT_CARDS),
             opponentPlayerCard.HandCards.ToList(),
             showOkButton: true,
             numberCardSelection: 0,
@@ -73,7 +73,7 @@ public class LookHandCardsEffectAbility : EffectAbility
                 }
             }
         );
-        DialogService.ShowCardSelectorLegacy(canvas, config);
+        Dialog.ShowCardSelectorLegacy(canvas, config);
     }
 
     /// <summary>
@@ -86,14 +86,14 @@ public class LookHandCardsEffectAbility : EffectAbility
     private void DisplayChoiceAboutHandCards(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard)
     {
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
-            LocalizationService.GetLocalizedValue(LocalizationKeys.QUESTION_REMOVE_CARD_OPPONENT_HAND_MESSAGE),
+            Localization.GetLocalizedValue(LocalizationKeys.QUESTION_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.QUESTION_REMOVE_CARD_OPPONENT_HAND_MESSAGE),
             showPositiveButton: true,
             showNegativeButton: true,
             positiveAction: () =>
             {
                 var selectorConfig = new CardSelectorConfig(
-                    LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
+                    Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_OPPONENT_HAND),
                     opponentPlayerCard.HandCards.ToList(),
                     showOkButton: true,
                     okAction: opponentCard =>
@@ -105,7 +105,7 @@ public class LookHandCardsEffectAbility : EffectAbility
                         else
                         {
                             var playerSelectorConfig = new CardSelectorConfig(
-                                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+                                Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
                                 playerCards.HandCards.ToList(),
                                 showOkButton: true,
                                 okAction: (playerCard) =>
@@ -123,13 +123,13 @@ public class LookHandCardsEffectAbility : EffectAbility
                                     }
                                 }
                             );
-                            DialogService.ShowCardSelectorLegacy(canvas, playerSelectorConfig);
+                            Dialog.ShowCardSelectorLegacy(canvas, playerSelectorConfig);
                         }
                     }
                 );
-                DialogService.ShowCardSelectorLegacy(canvas, selectorConfig);
+                Dialog.ShowCardSelectorLegacy(canvas, selectorConfig);
             }
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
 }

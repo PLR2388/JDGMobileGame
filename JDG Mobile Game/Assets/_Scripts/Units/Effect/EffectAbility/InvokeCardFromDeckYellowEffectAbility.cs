@@ -61,7 +61,7 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
         if (fromYellowTrash)
         {
             var config = new CardSelectorConfig(
-                LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
+                Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_INVOKE),
                 playerCards.YellowCards.ToList(),
                 showOkButton: true,
                 okAction: (card) =>
@@ -74,15 +74,15 @@ public class InvokeCardFromDeckYellowEffectAbility : EffectAbility
                     else
                     {
                         var warningConfig = new MessageBoxConfig(
-                            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-                            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+                            Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+                            Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
                             showOkButton: true
                         );
-                        DialogService.ShowMessageBoxLegacy(canvas, warningConfig);
+                        Dialog.ShowMessageBoxLegacy(canvas, warningConfig);
                     }
                 }
             );
-            DialogService.ShowCardSelectorLegacy(canvas, config);
+            Dialog.ShowCardSelectorLegacy(canvas, config);
         }
     }
 }

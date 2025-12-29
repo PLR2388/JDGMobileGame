@@ -145,11 +145,11 @@ public class DestroyCardsEffectAbility : EffectAbility
     private void DisplayOkMessage(Transform canvas)
     {
         var config = new MessageBoxConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
-            LocalizationService.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_TITLE),
+            Localization.GetLocalizedValue(LocalizationKeys.WARNING_MUST_CHOOSE_CARD),
             showOkButton: true
         );
-        DialogService.ShowMessageBoxLegacy(canvas, config);
+        Dialog.ShowMessageBoxLegacy(canvas, config);
     }
     
     /// <summary>
@@ -175,7 +175,7 @@ public class DestroyCardsEffectAbility : EffectAbility
             var invocationCards = new List<InGameCard>(playerCards.InvocationCards);
 
             CardSelectorConfig config = CreateSacrificeInvocationConfig(canvas, playerCards, opponentPlayerCard, invocationCards);
-            DialogService.ShowCardSelectorLegacy(canvas, config);
+            Dialog.ShowCardSelectorLegacy(canvas, config);
         }
     }
 
@@ -195,7 +195,7 @@ public class DestroyCardsEffectAbility : EffectAbility
         if (mustThrowHandCard)
         {
             CardSelectorConfig config = CreateRemoveHandCardConfig(canvas, playerCards, opponentPlayerCard, cards);
-            DialogService.ShowCardSelectorLegacy(canvas, config);
+            Dialog.ShowCardSelectorLegacy(canvas, config);
         }
         else
         {
@@ -217,7 +217,7 @@ public class DestroyCardsEffectAbility : EffectAbility
     private CardSelectorConfig CreateSacrificeInvocationConfig(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, List<InGameCard> invocationCards)
     {
         return new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_SACRIFICE),
             invocationCards,
             showOkButton: true,
             okAction: (card) =>
@@ -225,7 +225,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                 if (card is InGameInvocationCard invocationCard)
                 {
                     CardSelectorConfig innerConfig = CreateRemoveHandCardAfterSacrificeConfig(canvas, playerCards, opponentPlayerCard, invocationCard);
-                    DialogService.ShowCardSelectorLegacy(canvas, innerConfig);
+                    Dialog.ShowCardSelectorLegacy(canvas, innerConfig);
                 }
                 else
                 {
@@ -250,7 +250,7 @@ public class DestroyCardsEffectAbility : EffectAbility
         InGameInvocationCard invocationCard)
     {
         return new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
             playerCards.HandCards.ToList(),
             showOkButton: true,
             okAction: handCard => HandleOkAction(handCard, canvas, playerCards, opponentPlayerCard, invocationCard)
@@ -339,7 +339,7 @@ public class DestroyCardsEffectAbility : EffectAbility
     private CardSelectorConfig CreateRemoveHandCardConfig(Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCard, List<InGameCard> cardsToDestroy)
     {
         return new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_REMOVE_CARD_FROM_HAND),
             playerCards.HandCards.ToList(),
             showOkButton: true,
             okAction: (handCard) =>
@@ -372,7 +372,7 @@ public class DestroyCardsEffectAbility : EffectAbility
         PlayerCards opponentPlayerCard, List<InGameCard> cards)
     {
         var config = new CardSelectorConfig(
-            LocalizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
+            Localization.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOICE_DESTROY_CARD),
             cards,
             showOkButton: true,
             okAction: (card) =>
@@ -387,7 +387,7 @@ public class DestroyCardsEffectAbility : EffectAbility
                 }
             }
         );
-        DialogService.ShowCardSelectorLegacy(canvas, config);
+        Dialog.ShowCardSelectorLegacy(canvas, config);
     }
 
     /// <summary>
