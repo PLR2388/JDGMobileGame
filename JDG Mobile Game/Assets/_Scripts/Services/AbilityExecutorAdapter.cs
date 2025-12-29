@@ -58,27 +58,13 @@ namespace Services
             IPlayerCardCollection opponentCards)
         {
             if (addedCard is InGameInvocationCard concreteAdded &&
-                ownerCards is PlayerCards concreteOwner &&
-                opponentCards is PlayerCards concreteOpponent)
+                ownerCards is PlayerCards concreteOwner)
             {
-                var canvas = _canvasProvider.GetGameCanvas() as Transform;
-
                 // Trigger abilities on the added card
+                // Ability.OnCardAdded signature: (InGameInvocationCard newCard, PlayerCards playerCards)
                 foreach (var ability in concreteAdded.Abilities)
                 {
-                    ability.OnCardAdded(canvas, concreteAdded, concreteOwner, concreteOpponent);
-                }
-
-                // Trigger abilities on existing cards that react to new cards
-                foreach (var invocation in concreteOwner.InvocationCards)
-                {
-                    if (invocation is InGameInvocationCard existingCard && existingCard != concreteAdded)
-                    {
-                        foreach (var ability in existingCard.Abilities)
-                        {
-                            ability.OnOtherCardAdded(canvas, concreteAdded, existingCard, concreteOwner, concreteOpponent);
-                        }
-                    }
+                    ability.OnCardAdded(concreteAdded, concreteOwner);
                 }
             }
         }
@@ -89,23 +75,22 @@ namespace Services
             IPlayerCardCollection opponentCards)
         {
             if (removedCard is InGameInvocationCard concreteRemoved &&
-                ownerCards is PlayerCards concreteOwner &&
-                opponentCards is PlayerCards concreteOpponent)
+                ownerCards is PlayerCards concreteOwner)
             {
-                var canvas = _canvasProvider.GetGameCanvas() as Transform;
-
                 // Trigger OnCardRemove on the removed card's abilities
+                // Ability.OnCardRemove signature: (InGameInvocationCard removeCard, PlayerCards playerCards)
                 foreach (var ability in concreteRemoved.Abilities)
                 {
-                    ability.OnCardRemove(canvas, concreteRemoved, concreteOwner, concreteOpponent);
+                    ability.OnCardRemove(concreteRemoved, concreteOwner);
                 }
 
                 // Trigger effect abilities that react to invocation removal
+                // EffectAbility.OnInvocationCardRemoved signature: (PlayerCards playerCards, InGameInvocationCard invocationCard)
                 foreach (var effectCard in concreteOwner.EffectCards)
                 {
                     foreach (var ability in effectCard.EffectAbilities)
                     {
-                        ability.OnInvocationCardRemoved(canvas, concreteRemoved, concreteOwner, concreteOpponent);
+                        ability.OnInvocationCardRemoved(concreteOwner, concreteRemoved);
                     }
                 }
             }
@@ -117,17 +102,15 @@ namespace Services
             IPlayerCardCollection ownerCards,
             IPlayerCardCollection opponentCards)
         {
-            if (ownerCards is PlayerCards concreteOwner &&
-                opponentCards is PlayerCards concreteOpponent)
+            if (ownerCards is PlayerCards concreteOwner)
             {
-                var canvas = _canvasProvider.GetGameCanvas() as Transform;
-
                 // Trigger OnFieldCardRemoved on old field card's abilities
+                // FieldAbility.OnFieldCardRemoved signature: (PlayerCards playerCards)
                 if (oldFieldCard is InGameFieldCard concreteOldField)
                 {
                     foreach (var ability in concreteOldField.FieldAbilities)
                     {
-                        ability.OnFieldCardRemoved(canvas, concreteOldField, concreteOwner, concreteOpponent);
+                        ability.OnFieldCardRemoved(concreteOwner);
                     }
                 }
             }
@@ -146,23 +129,19 @@ namespace Services
             {
                 var canvas = _canvasProvider.GetGameCanvas() as Transform;
 
-                // Execute field card turn start abilities
-                if (concretePlayer.FieldCard is InGameFieldCard fieldCard)
-                {
-                    foreach (var ability in fieldCard.FieldAbilities)
-                    {
-                        ability.OnTurnStart(canvas, concretePlayer, concreteOpponent);
-                    }
-                }
+                // Note: FieldAbility.OnTurnStart requires PlayerStatus which is not available
+                // through IPlayerCardCollection. Field ability turn start triggers should be
+                // handled by the game loop which has access to PlayerStatus.
 
                 // Execute invocation card turn start abilities
+                // Ability.OnTurnStart signature: (Transform canvas, PlayerCards playerCards, PlayerCards opponentPlayerCards)
                 foreach (var invocation in concretePlayer.InvocationCards)
                 {
                     if (invocation is InGameInvocationCard invocationCard)
                     {
                         foreach (var ability in invocationCard.Abilities)
                         {
-                            ability.OnTurnStart(canvas, invocationCard, concretePlayer, concreteOpponent);
+                            ability.OnTurnStart(canvas, concretePlayer, concreteOpponent);
                         }
                     }
                 }
@@ -173,23 +152,9 @@ namespace Services
             IPlayerCardCollection currentPlayerCards,
             IPlayerCardCollection opponentCards)
         {
-            if (currentPlayerCards is PlayerCards concretePlayer &&
-                opponentCards is PlayerCards concreteOpponent)
-            {
-                var canvas = _canvasProvider.GetGameCanvas() as Transform;
-
-                // Execute invocation card turn end abilities
-                foreach (var invocation in concretePlayer.InvocationCards)
-                {
-                    if (invocation is InGameInvocationCard invocationCard)
-                    {
-                        foreach (var ability in invocationCard.Abilities)
-                        {
-                            ability.OnTurnEnd(canvas, invocationCard, concretePlayer, concreteOpponent);
-                        }
-                    }
-                }
-            }
+            // Note: Legacy Ability class does not have OnTurnEnd method.
+            // Turn end logic should be handled by the game loop directly.
+            // This method is a no-op for now.
         }
 
         #endregion
@@ -202,12 +167,12 @@ namespace Services
             int oldCount,
             int newCount)
         {
-            if (playerCards is PlayerCards concretePlayer &&
-                opponentCards is PlayerCards concreteOpponent)
+            if (playerCards is PlayerCards concretePlayer)
             {
-                var canvas = _canvasProvider.GetGameCanvas() as Transform;
+                int delta = newCount - oldCount;
 
                 // Trigger equipment abilities that react to hand changes
+                // EquipmentAbility.OnHandCardsChange signature: (InGameInvocationCard invocationCard, PlayerCards playerCards, int delta)
                 foreach (var invocation in concretePlayer.InvocationCards)
                 {
                     if (invocation is InGameInvocationCard invocationCard &&
@@ -215,7 +180,7 @@ namespace Services
                     {
                         foreach (var ability in invocationCard.EquipmentCard.EquipmentAbilities)
                         {
-                            ability.OnHandCardsChange(canvas, invocationCard, concretePlayer, concreteOpponent);
+                            ability.OnHandCardsChange(invocationCard, concretePlayer, delta);
                         }
                     }
                 }
@@ -237,11 +202,10 @@ namespace Services
                 ownerCards is PlayerCards concreteOwner &&
                 opponentCards is PlayerCards concreteOpponent)
             {
-                var canvas = _canvasProvider.GetGameCanvas() as Transform;
-
+                // EquipmentAbility.ApplyEffect signature: (InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
                 foreach (var ability in concreteEquipment.EquipmentAbilities)
                 {
-                    ability.OnEquip(canvas, concreteTarget, concreteOwner, concreteOpponent);
+                    ability.ApplyEffect(concreteTarget, concreteOwner, concreteOpponent);
                 }
             }
         }
@@ -257,11 +221,10 @@ namespace Services
                 ownerCards is PlayerCards concreteOwner &&
                 opponentCards is PlayerCards concreteOpponent)
             {
-                var canvas = _canvasProvider.GetGameCanvas() as Transform;
-
+                // EquipmentAbility.RemoveEffect signature: (InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
                 foreach (var ability in concreteEquipment.EquipmentAbilities)
                 {
-                    ability.OnUnequip(canvas, concreteTarget, concreteOwner, concreteOpponent);
+                    ability.RemoveEffect(concreteTarget, concreteOwner, concreteOpponent);
                 }
             }
         }

@@ -212,9 +212,11 @@ namespace JDG.Application.Tests.Cards
     /// Test implementation of IInGameInvocationCard.
     /// Tracks method calls for test verification.
     /// Phase 39: Updated with new IInGameCard interface properties.
+    /// Phase 68: Updated with all Phase 72 interface members.
     /// </summary>
     public class TestInGameInvocationCard : IInGameInvocationCard
     {
+        // IInGameCard members
         public string Title { get; }
         public CardOwner CardOwner { get; }
         public CardType Type => CardType.Invocation;
@@ -222,17 +224,42 @@ namespace JDG.Application.Tests.Cards
         public string Description { get; }
         public string DetailedDescription { get; }
         public string VisualId => Title;
+
+        // Stats
         public float Attack { get; set; }
         public float Defense { get; set; }
         public float BaseAttack { get; }
         public float BaseDefense { get; }
-        public IReadOnlyList<object> Abilities => new List<object>();
-        public IInGameEquipmentCard EquipmentCard => null;
+        public CardFamily[] Families { get; set; } = System.Array.Empty<CardFamily>();
 
-        // Tracking properties
+        // Combat State
+        public bool CanDirectAttack { get; set; }
+        public bool CantBeAttack { get; set; }
+        public bool Aggro { get; set; }
+
+        // Ability State
+        public IReadOnlyList<object> Abilities => new List<object>();
+        public bool CancelEffect { get; set; }
+        public bool IsAffectedByEffectCard { get; set; } = true;
+
+        // Equipment
+        public IInGameEquipmentCard EquipmentCard { get; private set; }
+
+        // Control
+        public bool IsControlled { get; private set; }
+
+        // Turn/Field Tracking
+        public int NumberOfTurnOnField { get; private set; }
+        public int NumberOfDeaths { get; private set; }
+
+        // Tracking properties for tests
         public bool ResetNewTurnCalled { get; private set; }
         public bool UnblockAttackCalled { get; private set; }
         public bool FreeCardCalled { get; private set; }
+        public bool BlockAttackCalled { get; private set; }
+        public bool AttackTurnDoneCalled { get; private set; }
+        public bool ControlCardCalled { get; private set; }
+        public int LastSetRemainedAttack { get; private set; }
 
         public TestInGameInvocationCard(string title, CardOwner owner, float attack, float defense)
         {
@@ -247,6 +274,57 @@ namespace JDG.Application.Tests.Cards
             DetailedDescription = "";
         }
 
+        // Combat methods
+        public bool CanAttack() => true;
+
+        public void BlockAttack()
+        {
+            BlockAttackCalled = true;
+        }
+
+        public void AttackTurnDone()
+        {
+            AttackTurnDoneCalled = true;
+        }
+
+        public void SetRemainedAttackThisTurn(int number)
+        {
+            LastSetRemainedAttack = number;
+        }
+
+        // Ability methods
+        public bool HasAction() => false;
+
+        // Equipment methods
+        public void SetEquipmentCard(IInGameEquipmentCard card)
+        {
+            EquipmentCard = card;
+        }
+
+        // Control methods
+        public void ControlCard()
+        {
+            IsControlled = true;
+            ControlCardCalled = true;
+        }
+
+        public void FreeCard()
+        {
+            IsControlled = false;
+            FreeCardCalled = true;
+        }
+
+        // Turn/Field methods
+        public void IncrementNumberTurnOnField()
+        {
+            NumberOfTurnOnField++;
+        }
+
+        public void IncrementNumberDeaths()
+        {
+            NumberOfDeaths++;
+        }
+
         public void ResetNewTurn()
         {
             ResetNewTurnCalled = true;
@@ -255,11 +333,6 @@ namespace JDG.Application.Tests.Cards
         public void UnblockAttack()
         {
             UnblockAttackCalled = true;
-        }
-
-        public void FreeCard()
-        {
-            FreeCardCalled = true;
         }
     }
 

@@ -7,6 +7,7 @@ using JDG.Application;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 namespace _Scripts.Units.Invocation
 {
@@ -351,6 +352,16 @@ namespace _Scripts.Units.Invocation
         void IInGameInvocationCard.SetEquipmentCard(IInGameEquipmentCard card)
         {
             EquipmentCard = card as InGameEquipmentCard;
+        }
+
+        /// <summary>
+        /// Gets or sets the families via interface type.
+        /// Phase 68: Explicit implementation to convert between Cards.CardFamily and JDG.Domain.Enums.CardFamily.
+        /// </summary>
+        DomainCardFamily[] IInGameInvocationCard.Families
+        {
+            get => Families?.Select(f => (DomainCardFamily)(int)f).ToArray() ?? System.Array.Empty<DomainCardFamily>();
+            set => Families = value?.Select(f => (CardFamily)(int)f).ToArray();
         }
 
         #endregion
