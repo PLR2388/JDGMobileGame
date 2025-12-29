@@ -1,17 +1,16 @@
+using System;
 using JDG.Application;
 using JDG.Domain.Events;
 
 /// <summary>
 /// Use case for handling field card changes.
 /// Phase 21-22: Extracted from PlayerCards.FieldCard property setter.
+/// Phase 79: OBSOLETE - Use JDG.Application.UseCases.HandleFieldCardChangedUseCase instead.
 ///
-/// NOTE: This use case is in the default assembly (Services folder) because it depends
-/// on legacy types (InGameFieldCard, PlayerCards) that haven't been migrated
-/// to the Domain layer yet.
-///
-/// This use case handles triggering abilities when a field card is replaced:
-/// - Triggers OnFieldCardRemoved on the old field card's abilities
+/// This legacy version remains for backward compatibility with code that
+/// passes concrete InGameFieldCard and PlayerCards types.
 /// </summary>
+[Obsolete("Use JDG.Application.UseCases.HandleFieldCardChangedUseCase with IInGameFieldCard instead. Phase 79.")]
 public class HandleFieldCardChangedUseCase
 {
     private readonly IEventBus _eventBus;

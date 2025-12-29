@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Application;
@@ -6,17 +7,12 @@ using JDG.Domain.Events;
 /// <summary>
 /// Use case for handling a new invocation card being added to the field.
 /// Phase 21-22: Extracted from PlayerCards.OnInvocationCardAdded().
+/// Phase 80: OBSOLETE - Use JDG.Application.UseCases.HandleCardAddedToFieldUseCase instead.
 ///
-/// NOTE: This use case is in the default assembly (Services folder) because it depends
-/// on legacy types (InGameInvocationCard, PlayerCards) that haven't been migrated
-/// to the Domain layer yet.
-///
-/// This use case handles triggering abilities when a new card enters the field:
-/// - Opponent's equipment card abilities (OnOpponentInvocationCardAdded)
-/// - Existing invocation card abilities (OnCardAdded)
-/// - Effect card abilities (OnInvocationCardAdded)
-/// - Field card abilities (OnInvocationCardAdded)
+/// This legacy version remains for backward compatibility with code that
+/// passes concrete InGameInvocationCard and PlayerCards types.
 /// </summary>
+[Obsolete("Use JDG.Application.UseCases.HandleCardAddedToFieldUseCase with IInGameInvocationCard instead. Phase 80.")]
 public class HandleCardAddedToFieldUseCase
 {
     private readonly IEventBus _eventBus;

@@ -138,14 +138,12 @@ namespace JDG.DI
 
             // Migrated Use Cases (Phase 77+)
             builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
-
-            // Legacy Use Cases (depend on legacy types - will be migrated in future phases)
-            builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient);
-            builder.Register<HandleCardDeathUseCase>(Lifetime.Transient);
-            builder.Register<HandleCardAddedToFieldUseCase>(Lifetime.Transient);
-            builder.Register<HandleCardRemovedFromFieldUseCase>(Lifetime.Transient);
-            builder.Register<HandleHandCardsChangeUseCase>(Lifetime.Transient);
-            builder.Register<HandleFieldCardChangedUseCase>(Lifetime.Transient);
+            builder.Register<HandleHandCardsChangeUseCase>(Lifetime.Transient); // Phase 78: Migrated
+            builder.Register<HandleFieldCardChangedUseCase>(Lifetime.Transient); // Phase 79: Migrated
+            builder.Register<HandleCardAddedToFieldUseCase>(Lifetime.Transient); // Phase 80: Migrated
+            builder.Register<HandleCardRemovedFromFieldUseCase>(Lifetime.Transient); // Phase 81: Migrated
+            builder.Register<HandleCardDeathUseCase>(Lifetime.Transient); // Phase 82: Migrated
+            builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient); // Phase 83: Migrated
 
             // Card State Services (Phase 71+)
             builder.Register<ICardStateService, CardStateService>(Lifetime.Singleton);

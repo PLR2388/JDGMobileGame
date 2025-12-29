@@ -1,17 +1,17 @@
+using System;
 using JDG.Application;
 using JDG.Domain.Events;
 
 /// <summary>
 /// Use case for handling hand card count changes.
 /// Phase 21-22: Extracted from PlayerCards.OnHandCardsChange().
+/// Phase 78: OBSOLETE - Use JDG.Application.UseCases.HandleHandCardsChangeUseCase instead.
 ///
-/// NOTE: This use case is in the default assembly (Services folder) because it depends
-/// on legacy types (PlayerCards, InGameInvocationCard) that haven't been migrated
-/// to the Domain layer yet.
-///
-/// This use case handles triggering equipment abilities when hand card count changes.
-/// Equipment abilities can react to hand size (e.g., stat bonuses based on hand count).
+/// This legacy version remains for backward compatibility with code that
+/// passes concrete PlayerCards types. New code should use the Application layer
+/// version with IPlayerCardCollection interfaces.
 /// </summary>
+[Obsolete("Use JDG.Application.UseCases.HandleHandCardsChangeUseCase with IPlayerCardCollection instead. Phase 78.")]
 public class HandleHandCardsChangeUseCase
 {
     private readonly IEventBus _eventBus;

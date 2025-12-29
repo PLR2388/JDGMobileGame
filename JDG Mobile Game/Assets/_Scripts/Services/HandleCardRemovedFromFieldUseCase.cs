@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Application;
@@ -6,15 +7,12 @@ using JDG.Domain.Events;
 /// <summary>
 /// Use case for handling an invocation card being removed from the field.
 /// Phase 21-22: Extracted from PlayerCards.OnInvocationCardsRemoved().
+/// Phase 81: OBSOLETE - Use JDG.Application.UseCases.HandleCardRemovedFromFieldUseCase instead.
 ///
-/// NOTE: This use case is in the default assembly (Services folder) because it depends
-/// on legacy types (InGameInvocationCard, PlayerCards) that haven't been migrated
-/// to the Domain layer yet.
-///
-/// This use case handles triggering abilities when a card is removed from field:
-/// - Existing invocation card abilities (OnCardRemove)
-/// - Effect card abilities (OnInvocationCardRemoved)
+/// This legacy version remains for backward compatibility with code that
+/// passes concrete InGameInvocationCard and PlayerCards types.
 /// </summary>
+[Obsolete("Use JDG.Application.UseCases.HandleCardRemovedFromFieldUseCase with IInGameInvocationCard instead. Phase 81.")]
 public class HandleCardRemovedFromFieldUseCase
 {
     private readonly IEventBus _eventBus;

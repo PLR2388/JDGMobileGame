@@ -1,3 +1,4 @@
+using System;
 using Cards;
 using Cards.InvocationCards;
 using JDG.Application.Services;
@@ -6,14 +7,12 @@ using JDG.Application.Services;
 /// Use case for summoning/creating a player entity card.
 /// Phase 21-22: Extracted from PlayerCards.BuildPlayer().
 /// Phase 62: Simplified - uses ICardFactory instead of individual ability providers.
+/// Phase 83: OBSOLETE - Use JDG.Application.UseCases.SummonPlayerEntityUseCase instead.
 ///
-/// NOTE: This use case is in the default assembly (Services folder) because it depends
-/// on legacy types (InGameCard, InvocationCard) that haven't been migrated
-/// to the Domain layer yet. It will be moved to JDG.Application once card types are refactored.
-///
-/// This use case handles the creation of the player entity card (the player avatar)
-/// which is different from regular invocation cards.
+/// This legacy version remains for backward compatibility with code that
+/// requires concrete InGameCard return type.
 /// </summary>
+[Obsolete("Use JDG.Application.UseCases.SummonPlayerEntityUseCase with IInGameInvocationCard instead. Phase 83.")]
 public class SummonPlayerEntityUseCase
 {
     private readonly ICardFactory _cardFactory;

@@ -1,3 +1,4 @@
+using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application.Abilities;
@@ -58,13 +59,46 @@ namespace Services
             IPlayerCardCollection opponentCards)
         {
             if (addedCard is InGameInvocationCard concreteAdded &&
-                ownerCards is PlayerCards concreteOwner)
+                ownerCards is PlayerCards concreteOwner &&
+                opponentCards is PlayerCards concreteOpponent)
             {
-                // Trigger abilities on the added card
-                // Ability.OnCardAdded signature: (InGameInvocationCard newCard, PlayerCards playerCards)
-                foreach (var ability in concreteAdded.Abilities)
+                // 1. Trigger opponent's equipment abilities that react to new cards
+                foreach (var opponentCard in concreteOpponent.InvocationCards)
                 {
-                    ability.OnCardAdded(concreteAdded, concreteOwner);
+                    var equipmentCard = opponentCard.EquipmentCard;
+                    if (equipmentCard == null) continue;
+
+                    foreach (var equipmentAbility in equipmentCard.EquipmentAbilities)
+                    {
+                        equipmentAbility.OnOpponentInvocationCardAdded(concreteAdded);
+                    }
+                }
+
+                // 2. Trigger existing invocation card abilities on same field
+                foreach (var existingCard in concreteOwner.InvocationCards)
+                {
+                    foreach (var ability in existingCard.Abilities)
+                    {
+                        ability.OnCardAdded(concreteAdded, concreteOwner);
+                    }
+                }
+
+                // 3. Trigger effect card abilities
+                foreach (var effectCard in concreteOwner.EffectCards)
+                {
+                    foreach (var effectAbility in effectCard.EffectAbilities)
+                    {
+                        effectAbility.OnInvocationCardAdded(concreteOwner, concreteAdded);
+                    }
+                }
+
+                // 4. Trigger field card abilities
+                if (concreteOwner.FieldCard?.FieldAbilities != null)
+                {
+                    foreach (var fieldAbility in concreteOwner.FieldCard.FieldAbilities)
+                    {
+                        fieldAbility.OnInvocationCardAdded(concreteAdded, concreteOwner);
+                    }
                 }
             }
         }
@@ -77,14 +111,21 @@ namespace Services
             if (removedCard is InGameInvocationCard concreteRemoved &&
                 ownerCards is PlayerCards concreteOwner)
             {
-                // Trigger OnCardRemove on the removed card's abilities
+                // Clone the list to avoid modification during iteration
+                var remainingCards = concreteOwner.InvocationCards.ToList();
+
+                // 1. Trigger OnCardRemove on ALL remaining invocation cards' abilities
+                // This allows cards to react when other cards leave the field
                 // Ability.OnCardRemove signature: (InGameInvocationCard removeCard, PlayerCards playerCards)
-                foreach (var ability in concreteRemoved.Abilities)
+                foreach (var invocationCard in remainingCards)
                 {
-                    ability.OnCardRemove(concreteRemoved, concreteOwner);
+                    foreach (var ability in invocationCard.Abilities)
+                    {
+                        ability.OnCardRemove(concreteRemoved, concreteOwner);
+                    }
                 }
 
-                // Trigger effect abilities that react to invocation removal
+                // 2. Trigger effect abilities that react to invocation removal
                 // EffectAbility.OnInvocationCardRemoved signature: (PlayerCards playerCards, InGameInvocationCard invocationCard)
                 foreach (var effectCard in concreteOwner.EffectCards)
                 {

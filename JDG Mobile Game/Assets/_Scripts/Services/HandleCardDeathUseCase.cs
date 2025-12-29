@@ -1,3 +1,4 @@
+using System;
 using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application;
@@ -9,17 +10,12 @@ using UnityEngine;
 /// Use case for handling card death and moving cards to the graveyard (yellow cards).
 /// Phase 21-22: Extracted from PlayerCards.OnYellowTrashAdded().
 /// Phase 65: Updated to inject ICanvasProvider instead of passing Transform canvas.
+/// Phase 82: OBSOLETE - Use JDG.Application.UseCases.HandleCardDeathUseCase instead.
 ///
-/// NOTE: This use case is in the default assembly (Services folder) because it depends
-/// on legacy types (InGameInvocationCard, PlayerCards) that haven't been migrated
-/// to the Domain layer yet.
-///
-/// This use case handles:
-/// - Resetting card stats to base values
-/// - Unblocking the card
-/// - Freeing the card from control/equipment
-/// - Triggering OnCardDeath abilities
+/// This legacy version remains for backward compatibility with code that
+/// passes concrete InGameCard and PlayerCards types.
 /// </summary>
+[Obsolete("Use JDG.Application.UseCases.HandleCardDeathUseCase with IInGameInvocationCard instead. Phase 82.")]
 public class HandleCardDeathUseCase
 {
     private readonly IEventBus _eventBus;
