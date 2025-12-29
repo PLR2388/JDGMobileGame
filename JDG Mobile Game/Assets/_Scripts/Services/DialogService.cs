@@ -13,19 +13,24 @@ namespace JDG.Infrastructure.Services
     /// Infrastructure implementation of IDialogService.
     /// Wraps the existing MessageBox and CardSelector singletons during migration.
     /// Uses Strangler Fig pattern - delegates to old systems temporarily.
+    /// Phase 64: Changed to lazy resolution to avoid constructor singleton access.
     /// </summary>
     public class DialogService : IDialogService
     {
-        private readonly MessageBox _messageBox;
-        private readonly CardSelector _cardSelector;
         private Transform _canvas;
 
+        // Phase 64: Lazy resolution - access singletons when needed, not in constructor
+        // This allows DialogService to be constructed before MessageBox/CardSelector exist
+        #pragma warning disable CS0618 // Suppress obsolete warning - adapter service wraps singletons
+        private MessageBox MessageBox => MessageBox.Instance;
+        private CardSelector CardSelector => CardSelector.Instance;
+        #pragma warning restore CS0618
+
+        /// <summary>
+        /// Phase 64: Empty constructor - singletons accessed lazily via properties.
+        /// </summary>
         public DialogService()
         {
-            // During migration, get the existing singletons
-            // TODO: Later, inject dialog dependencies directly
-            _messageBox = MessageBox.Instance;
-            _cardSelector = CardSelector.Instance;
         }
 
         /// <summary>
@@ -90,7 +95,7 @@ namespace JDG.Infrastructure.Services
                     break;
             }
 
-            _messageBox.CreateMessageBox(_canvas, config);
+            MessageBox.CreateMessageBox(_canvas, config);
 
             return await tcs.Task;
         }
@@ -125,7 +130,7 @@ namespace JDG.Infrastructure.Services
                 numberCardSelection: config.MaxSelection
             );
 
-            _cardSelector.CreateCardSelection(_canvas, cardSelectorConfig);
+            CardSelector.CreateCardSelection(_canvas, cardSelectorConfig);
 
             return await tcs.Task;
         }
@@ -168,7 +173,7 @@ namespace JDG.Infrastructure.Services
                 negativeAction: options.OnNegative != null ? new UnityEngine.Events.UnityAction(options.OnNegative) : null
             );
 
-            _messageBox.CreateMessageBox(canvasTransform, config);
+            MessageBox.CreateMessageBox(canvasTransform, config);
         }
 
         /// <summary>
@@ -288,7 +293,7 @@ namespace JDG.Infrastructure.Services
                 showOrder: options.ShowOrder
             );
 
-            _cardSelector.CreateCardSelection(canvasTransform, config);
+            CardSelector.CreateCardSelection(canvasTransform, config);
         }
 
         // Helper method to convert card GUIDs to InGameCard instances
@@ -323,7 +328,7 @@ namespace JDG.Infrastructure.Services
 
             if (config is MessageBoxConfig messageBoxConfig)
             {
-                _messageBox.CreateMessageBox(canvasTransform, messageBoxConfig);
+                MessageBox.CreateMessageBox(canvasTransform, messageBoxConfig);
             }
             else
             {
@@ -347,7 +352,7 @@ namespace JDG.Infrastructure.Services
 
             if (config is global::CardSelectorConfig cardSelectorConfig)
             {
-                _cardSelector.CreateCardSelection(canvasTransform, cardSelectorConfig);
+                CardSelector.CreateCardSelection(canvasTransform, cardSelectorConfig);
             }
             else
             {
