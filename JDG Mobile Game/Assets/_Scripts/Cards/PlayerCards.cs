@@ -9,6 +9,7 @@ using Cards.EffectCards;
 using Cards.InvocationCards;
 using JDG.Application;
 using JDG.Application.Cards;
+using JDG.Application.UseCases;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
@@ -38,13 +39,14 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     private IDeckInitializationService _deckInitService;
 
     // Phase 21-22: Injected use cases
-    private SummonPlayerEntityUseCase _summonPlayerEntityUseCase;
-    private ResetCardsForNewTurnUseCase _resetCardsForNewTurnUseCase;
-    private HandleCardDeathUseCase _handleCardDeathUseCase;
-    private HandleCardAddedToFieldUseCase _handleCardAddedToFieldUseCase;
-    private HandleCardRemovedFromFieldUseCase _handleCardRemovedFromFieldUseCase;
-    private HandleHandCardsChangeUseCase _handleHandCardsChangeUseCase;
-    private HandleFieldCardChangedUseCase _handleFieldCardChangedUseCase;
+    // Phase 84: Updated to use JDG.Application.UseCases versions
+    private JDG.Application.UseCases.SummonPlayerEntityUseCase _summonPlayerEntityUseCase;
+    private JDG.Application.UseCases.ResetCardsForNewTurnUseCase _resetCardsForNewTurnUseCase;
+    private JDG.Application.UseCases.HandleCardDeathUseCase _handleCardDeathUseCase;
+    private JDG.Application.UseCases.HandleCardAddedToFieldUseCase _handleCardAddedToFieldUseCase;
+    private JDG.Application.UseCases.HandleCardRemovedFromFieldUseCase _handleCardRemovedFromFieldUseCase;
+    private JDG.Application.UseCases.HandleHandCardsChangeUseCase _handleHandCardsChangeUseCase;
+    private JDG.Application.UseCases.HandleFieldCardChangedUseCase _handleFieldCardChangedUseCase;
 
     // Phase 23: EventBus for static UnityEvent migration
     private IEventBus _eventBus;
@@ -71,9 +73,10 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
         set
         {
             // Phase 21-22: Delegate field card change handling to use case
+            // Phase 84: Updated to use JDG.Application.UseCases version with opponent cards
             if (_fieldCard != value && _fieldCard != null)
             {
-                _handleFieldCardChangedUseCase.HandleFieldCardRemoved(_fieldCard, this);
+                _handleFieldCardChangedUseCase.HandleFieldCardRemoved(_fieldCard, this, opponentPlayerCards);
             }
 
             _fieldCard = value;
@@ -95,13 +98,13 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     [Inject]
     public void Construct(
         IDeckInitializationService deckInitService,
-        SummonPlayerEntityUseCase summonPlayerEntityUseCase,
-        ResetCardsForNewTurnUseCase resetCardsForNewTurnUseCase,
-        HandleCardDeathUseCase handleCardDeathUseCase,
-        HandleCardAddedToFieldUseCase handleCardAddedToFieldUseCase,
-        HandleCardRemovedFromFieldUseCase handleCardRemovedFromFieldUseCase,
-        HandleHandCardsChangeUseCase handleHandCardsChangeUseCase,
-        HandleFieldCardChangedUseCase handleFieldCardChangedUseCase,
+        JDG.Application.UseCases.SummonPlayerEntityUseCase summonPlayerEntityUseCase,
+        JDG.Application.UseCases.ResetCardsForNewTurnUseCase resetCardsForNewTurnUseCase,
+        JDG.Application.UseCases.HandleCardDeathUseCase handleCardDeathUseCase,
+        JDG.Application.UseCases.HandleCardAddedToFieldUseCase handleCardAddedToFieldUseCase,
+        JDG.Application.UseCases.HandleCardRemovedFromFieldUseCase handleCardRemovedFromFieldUseCase,
+        JDG.Application.UseCases.HandleHandCardsChangeUseCase handleHandCardsChangeUseCase,
+        JDG.Application.UseCases.HandleFieldCardChangedUseCase handleFieldCardChangedUseCase,
         IEventBus eventBus)
     {
         _deckInitService = deckInitService;
@@ -140,10 +143,12 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     /// <summary>
     /// Creates the player entity card.
     /// Phase 21-22: Delegates to SummonPlayerEntityUseCase.
+    /// Phase 84: Updated to use JDG.Application.UseCases version.
     /// </summary>
     public void BuildPlayer()
     {
-        Player = _summonPlayerEntityUseCase.Execute(playerInvocationCard, IsPlayerOne);
+        var result = _summonPlayerEntityUseCase.Execute(playerInvocationCard, IsPlayerOne);
+        Player = result.EntityCard as InGameCard;
     }
 
     // Start is called before the first frame update
@@ -173,10 +178,11 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     /// <summary>
     /// Reset the attack number of invocations during a new turn.
     /// Phase 21-22: Delegates to ResetCardsForNewTurnUseCase.
+    /// Phase 84: Updated to use JDG.Application.UseCases version.
     /// </summary>
     public void ResetInvocationCardNewTurn()
     {
-        _resetCardsForNewTurnUseCase.Execute(InvocationCards);
+        _resetCardsForNewTurnUseCase.Execute(InvocationCards.Cast<IInGameInvocationCard>());
     }
 
     /// <summary>
@@ -240,11 +246,12 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     /// React to changes among Hand cards.
     /// Phase 21-22: Delegates to HandleHandCardsChangeUseCase.
     /// Phase 23: Publishes to EventBus instead of static UnityEvents.
+    /// Phase 84: Updated to use JDG.Application.UseCases version with opponent cards.
     /// </summary>
     private void HandCards_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         int delta = e.Action == NotifyCollectionChangedAction.Add ? 1 : -1;
-        _handleHandCardsChangeUseCase.Execute(this, delta);
+        _handleHandCardsChangeUseCase.Execute(this, opponentPlayerCards, delta);
 
         var domainOwner = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         _eventBus.Publish(new CardLocationChangedEvent { Player = domainOwner });
