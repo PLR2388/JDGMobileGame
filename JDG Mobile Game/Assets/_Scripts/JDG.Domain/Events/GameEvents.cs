@@ -480,4 +480,97 @@ namespace JDG.Domain.Events
         public object ContreCard; // Using object to avoid dependency on InGameCard
         public CardOwner Owner;
     }
+
+    // ============================================
+    // CARD STATE EVENTS
+    // Phase 75: Added for UseCase migration
+    // ============================================
+
+    /// <summary>
+    /// Published when a card's stats are reset to base values.
+    /// Phase 75: Used by HandleCardDeathUseCase and CardStateService.
+    /// </summary>
+    public struct CardStatsResetEvent
+    {
+        public ValueObjects.CardId CardId;
+        public CardOwner Owner;
+        public float BaseAttack;
+        public float BaseDefense;
+    }
+
+    /// <summary>
+    /// Published when a card is controlled by the opponent.
+    /// Phase 75: Used by abilities that take control of opponent cards.
+    /// </summary>
+    public struct CardControlledEvent
+    {
+        public ValueObjects.CardId CardId;
+        public CardOwner OriginalOwner;
+        public CardOwner NewController;
+    }
+
+    /// <summary>
+    /// Published when a card is freed from opponent control.
+    /// Phase 75: Used when control effects end.
+    /// </summary>
+    public struct CardFreedEvent
+    {
+        public ValueObjects.CardId CardId;
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when an invocation card's turn count is incremented.
+    /// Phase 75: Used for abilities that trigger after X turns on field.
+    /// </summary>
+    public struct InvocationTurnCountIncrementedEvent
+    {
+        public ValueObjects.CardId CardId;
+        public CardOwner Owner;
+        public int NewTurnCount;
+    }
+
+    /// <summary>
+    /// Published when an invocation card's death count is incremented.
+    /// Phase 75: Used for abilities that track death counts.
+    /// </summary>
+    public struct InvocationDeathCountIncrementedEvent
+    {
+        public ValueObjects.CardId CardId;
+        public CardOwner Owner;
+        public int NewDeathCount;
+    }
+
+    /// <summary>
+    /// Published when equipment is attached to an invocation card.
+    /// Phase 75: Used for equipment ability triggers.
+    /// </summary>
+    public struct EquipmentAttachedEvent
+    {
+        public ValueObjects.CardId EquipmentCardId;
+        public ValueObjects.CardId TargetCardId;
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when equipment is detached from an invocation card.
+    /// Phase 75: Used for equipment ability cleanup.
+    /// </summary>
+    public struct EquipmentDetachedEvent
+    {
+        public ValueObjects.CardId EquipmentCardId;
+        public ValueObjects.CardId PreviousTargetCardId;
+        public CardOwner Owner;
+    }
+
+    /// <summary>
+    /// Published when a field card is replaced.
+    /// Phase 75: Used for field card transition effects.
+    /// </summary>
+    public struct FieldCardReplacedEvent
+    {
+        public ValueObjects.CardId? OldFieldCardId;
+        public ValueObjects.CardId? NewFieldCardId;
+        public CardOwner Owner;
+    }
 }

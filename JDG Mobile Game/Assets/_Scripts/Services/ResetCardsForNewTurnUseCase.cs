@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
@@ -7,14 +8,13 @@ using JDG.Domain.Events;
 /// <summary>
 /// Use case for resetting card state at the start of a new turn.
 /// Phase 21-22: Extracted from PlayerCards.ResetInvocationCardNewTurn().
+/// Phase 77: OBSOLETE - Use JDG.Application.UseCases.ResetCardsForNewTurnUseCase instead.
 ///
-/// NOTE: This use case is in the default assembly (Services folder) because it depends
-/// on legacy types (InGameInvocationCard) that haven't been migrated to the Domain layer yet.
-/// It will be moved to JDG.Application once card types are refactored.
-///
-/// This use case handles resetting attack counts and other turn-based state
-/// for all invocation cards at the start of each turn.
+/// This legacy version remains for backward compatibility with code that
+/// passes concrete InGameInvocationCard types. New code should use the
+/// Application layer version with IInGameInvocationCard interfaces.
 /// </summary>
+[Obsolete("Use JDG.Application.UseCases.ResetCardsForNewTurnUseCase with IInGameInvocationCard instead. Phase 77.")]
 public class ResetCardsForNewTurnUseCase
 {
     private readonly IEventBus _eventBus;

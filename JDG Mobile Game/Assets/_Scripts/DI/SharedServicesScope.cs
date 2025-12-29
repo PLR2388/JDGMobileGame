@@ -10,6 +10,7 @@ using JDG.Bridge;
 using JDG.Infrastructure.Events;
 using JDG.Infrastructure.Repositories;
 using JDG.Infrastructure.Services;
+using Services; // For CardStateService, AbilityExecutorAdapter
 
 namespace JDG.DI
 {
@@ -135,14 +136,20 @@ namespace JDG.DI
             // Combat Use Cases
             builder.Register<AttackUseCase>(Lifetime.Transient);
 
-            // Legacy Use Cases (depend on legacy types)
-            builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient);
+            // Migrated Use Cases (Phase 77+)
             builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
+
+            // Legacy Use Cases (depend on legacy types - will be migrated in future phases)
+            builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient);
             builder.Register<HandleCardDeathUseCase>(Lifetime.Transient);
             builder.Register<HandleCardAddedToFieldUseCase>(Lifetime.Transient);
             builder.Register<HandleCardRemovedFromFieldUseCase>(Lifetime.Transient);
             builder.Register<HandleHandCardsChangeUseCase>(Lifetime.Transient);
             builder.Register<HandleFieldCardChangedUseCase>(Lifetime.Transient);
+
+            // Card State Services (Phase 71+)
+            builder.Register<ICardStateService, CardStateService>(Lifetime.Singleton);
+            builder.Register<IAbilityExecutor, AbilityExecutorAdapter>(Lifetime.Singleton);
 
             // ============================================
             // ABILITY SYSTEM

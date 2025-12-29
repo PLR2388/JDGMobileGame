@@ -344,6 +344,15 @@ namespace _Scripts.Units.Invocation
         /// </summary>
         IInGameEquipmentCard IInGameInvocationCard.EquipmentCard => EquipmentCard;
 
+        /// <summary>
+        /// Sets the equipment card via interface type.
+        /// Phase 72: Added for IInGameInvocationCard interface extension.
+        /// </summary>
+        void IInGameInvocationCard.SetEquipmentCard(IInGameEquipmentCard card)
+        {
+            EquipmentCard = card as InGameEquipmentCard;
+        }
+
         #endregion
     }
 }
