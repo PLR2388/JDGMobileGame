@@ -124,6 +124,7 @@ namespace JDG.Application.Tests.UseCases
             }
 
             public void ClearSubscriptions<T>() where T : struct { }
+            public void ClearAllSubscriptions() { }
         }
 
         private class TestDisposable : IDisposable
@@ -145,6 +146,8 @@ namespace JDG.Application.Tests.UseCases
             {
                 OnFieldCardChangedCalled = true;
             }
+            public void ExecuteOnEquipmentAttached(IInGameEquipmentCard equipment, IInGameInvocationCard target, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEquipmentDetached(IInGameEquipmentCard equipment, IInGameInvocationCard previousTarget, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
         }
 
         private class TestFieldCard : IInGameFieldCard
@@ -156,7 +159,7 @@ namespace JDG.Application.Tests.UseCases
             public string Description => "";
             public string DetailedDescription => "";
             public string VisualId => Title;
-            public IEnumerable<object> FieldAbilities => new List<object>();
+            public IReadOnlyList<object> FieldAbilities => new List<object>();
 
             public TestFieldCard(string title)
             {
@@ -167,6 +170,7 @@ namespace JDG.Application.Tests.UseCases
         private class TestPlayerCardCollection : IPlayerCardCollection
         {
             public CardOwner Owner { get; }
+            public bool IsPlayerOne => Owner == CardOwner.Player1;
             public IReadOnlyList<IInGameInvocationCard> InvocationCards => new List<IInGameInvocationCard>();
             public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
             public IInGameFieldCard FieldCard => null;

@@ -190,8 +190,6 @@ namespace JDG.Infrastructure.Tests.Services
         public void GetLocalizedValue_WithInvalidKey_ReturnsKeyInBrackets()
         {
             // Arrange
-            if (LocalizationSystem.Instance == null) Assert.Ignore("LocalizationSystem singleton not available");
-
             var service = new LocalizationService();
 
             // Act
@@ -207,8 +205,6 @@ namespace JDG.Infrastructure.Tests.Services
         public void GetLocalizedValue_WithEmptyKey_ReturnsEmptyInBrackets()
         {
             // Arrange
-            if (LocalizationSystem.Instance == null) Assert.Ignore("LocalizationSystem singleton not available");
-
             var service = new LocalizationService();
 
             // Act
@@ -223,8 +219,6 @@ namespace JDG.Infrastructure.Tests.Services
         public void GetLocalizedValue_ReturnsNonNullValue()
         {
             // Arrange
-            if (LocalizationSystem.Instance == null) Assert.Ignore("LocalizationSystem singleton not available");
-
             var service = new LocalizationService();
 
             // Act

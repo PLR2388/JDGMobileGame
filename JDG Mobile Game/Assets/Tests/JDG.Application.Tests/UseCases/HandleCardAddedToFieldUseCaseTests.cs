@@ -122,6 +122,7 @@ namespace JDG.Application.Tests.UseCases
             }
 
             public void ClearSubscriptions<T>() where T : struct { }
+            public void ClearAllSubscriptions() { }
         }
 
         private class TestDisposable : IDisposable
@@ -143,6 +144,8 @@ namespace JDG.Application.Tests.UseCases
             public void ExecuteOnTurnEnd(IPlayerCardCollection currentPlayer, IPlayerCardCollection opponent) { }
             public void ExecuteOnHandCardsChanged(IPlayerCardCollection playerCards, IPlayerCardCollection opponentCards, int oldCount, int newCount) { }
             public void ExecuteOnFieldCardChanged(IInGameFieldCard oldFieldCard, IInGameFieldCard newFieldCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEquipmentAttached(IInGameEquipmentCard equipment, IInGameInvocationCard target, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEquipmentDetached(IInGameEquipmentCard equipment, IInGameInvocationCard previousTarget, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
         }
 
         private class TestInvocationCard : IInGameInvocationCard
@@ -154,21 +157,21 @@ namespace JDG.Application.Tests.UseCases
             public string Description => "";
             public string DetailedDescription => "";
             public string VisualId => Title;
-            public int Attack { get; set; }
-            public int Defense { get; set; }
-            public int BaseAttack => 5;
-            public int BaseDefense => 5;
-            public bool CanDirectAttack => false;
-            public bool CantBeAttack => false;
-            public bool Aggro => false;
-            public bool CancelEffect => false;
-            public bool IsAffectedByEffectCard => true;
-            public bool IsControlled => false;
-            public int NumberOfTurnOnField => 0;
-            public int NumberOfDeaths => 0;
-            public IEnumerable<object> Abilities => new List<object>();
-            public IInGameEquipmentCard EquipmentCard => null;
-            public CardFamily[] Families => new CardFamily[0];
+            public float Attack { get; set; }
+            public float Defense { get; set; }
+            public float BaseAttack => 5f;
+            public float BaseDefense => 5f;
+            public bool CanDirectAttack { get; set; }
+            public bool CantBeAttack { get; set; }
+            public bool Aggro { get; set; }
+            public bool CancelEffect { get; set; }
+            public bool IsAffectedByEffectCard { get; set; } = true;
+            public bool IsControlled { get; private set; }
+            public int NumberOfTurnOnField { get; private set; }
+            public int NumberOfDeaths { get; private set; }
+            public IReadOnlyList<object> Abilities => new List<object>();
+            public IInGameEquipmentCard EquipmentCard { get; private set; }
+            public CardFamily[] Families { get; set; } = System.Array.Empty<CardFamily>();
 
             public TestInvocationCard(string title, CardOwner owner)
             {
@@ -177,22 +180,23 @@ namespace JDG.Application.Tests.UseCases
             }
 
             public void ResetNewTurn() { }
-            public void FreeCard() { }
+            public void FreeCard() { IsControlled = false; }
             public void UnblockAttack() { }
             public bool CanAttack() => true;
             public void BlockAttack() { }
             public void AttackTurnDone() { }
             public void SetRemainedAttackThisTurn(int count) { }
             public bool HasAction() => false;
-            public void SetEquipmentCard(IInGameEquipmentCard equipment) { }
-            public void ControlCard(CardOwner newOwner) { }
-            public void IncrementTurnOnField() { }
-            public void IncrementDeathCount() { }
+            public void SetEquipmentCard(IInGameEquipmentCard equipment) { EquipmentCard = equipment; }
+            public void ControlCard() { IsControlled = true; }
+            public void IncrementNumberTurnOnField() { NumberOfTurnOnField++; }
+            public void IncrementNumberDeaths() { NumberOfDeaths++; }
         }
 
         private class TestPlayerCardCollection : IPlayerCardCollection
         {
             public CardOwner Owner { get; }
+            public bool IsPlayerOne => Owner == CardOwner.Player1;
             public IReadOnlyList<IInGameInvocationCard> InvocationCards => new List<IInGameInvocationCard>();
             public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
             public IInGameFieldCard FieldCard => null;
