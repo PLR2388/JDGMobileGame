@@ -7,25 +7,43 @@ namespace JDG.Infrastructure.Services
 {
     /// <summary>
     /// Infrastructure implementation of IAudioService.
-    /// Wraps the existing AudioSystem singleton during migration.
-    /// Uses Strangler Fig pattern - delegates to AudioSystem.Instance temporarily.
+    /// Phase 8: Created to replace AudioSystem.Instance direct access.
+    /// Phase 84: Uses lazy access to AudioSystem for proper initialization timing.
+    /// Note: AudioSystem remains as a MonoBehaviour because AudioSource requires it.
+    /// Once all direct AudioSystem.Instance calls are removed, AudioSystem can be
+    /// converted to a non-singleton scene component.
     /// </summary>
     public class AudioService : IAudioService
     {
-        private readonly AudioSystem _audioSystem;
+        // Lazy access to AudioSystem - avoids constructor timing issues
+        // AudioSystem must exist in scene for audio to work
+        private AudioSystem AudioSystem
+        {
+            get
+            {
+#pragma warning disable CS0618 // Suppress obsolete warning - AudioSystem needed for AudioSource
+                return AudioSystem.Instance;
+#pragma warning restore CS0618
+            }
+        }
 
         public AudioService()
         {
-            // During migration, get the existing singleton
-            // TODO: Later, inject AudioSystem dependencies directly
-            _audioSystem = AudioSystem.Instance;
+            // Empty constructor - lazy access handles timing
         }
 
         public void PlayMusic(string musicName)
         {
+            var audioSystem = AudioSystem;
+            if (audioSystem == null)
+            {
+                Debug.LogWarning($"AudioService: AudioSystem not available");
+                return;
+            }
+
             if (System.Enum.TryParse<Music>(musicName, true, out var music))
             {
-                _audioSystem.PlayMusic(music);
+                audioSystem.PlayMusic(music);
             }
             else
             {
@@ -35,19 +53,29 @@ namespace JDG.Infrastructure.Services
 
         public void StopMusic()
         {
-            _audioSystem.StopMusic();
+            var audioSystem = AudioSystem;
+            if (audioSystem != null)
+            {
+                audioSystem.StopMusic();
+            }
         }
 
         public void PlaySoundEffect(string sfxName)
         {
-            // Map common sound effects
+            var audioSystem = AudioSystem;
+            if (audioSystem == null)
+            {
+                Debug.LogWarning($"AudioService: AudioSystem not available");
+                return;
+            }
+
             switch (sfxName.ToLower())
             {
                 case "transition":
-                    _audioSystem.PlayTransitionSound();
+                    audioSystem.PlayTransitionSound();
                     break;
                 case "back":
-                    _audioSystem.PlayBackSound();
+                    audioSystem.PlayBackSound();
                     break;
                 default:
                     Debug.LogWarning($"AudioService: Sound effect '{sfxName}' not found");
@@ -57,42 +85,56 @@ namespace JDG.Infrastructure.Services
 
         public void SetMasterVolume(float volume)
         {
-            // AudioSystem doesn't have separate master volume
-            // Apply to both music and sfx
             SetMusicVolume(volume);
             SetSfxVolume(volume);
         }
 
         public void SetMusicVolume(float volume)
         {
-            _audioSystem.ChangeMusicVolume(Mathf.Clamp01(volume));
+            var audioSystem = AudioSystem;
+            if (audioSystem != null)
+            {
+                audioSystem.ChangeMusicVolume(Mathf.Clamp01(volume));
+            }
         }
 
         public void SetSfxVolume(float volume)
         {
-            _audioSystem.ChangeSoundEffectVolume(Mathf.Clamp01(volume));
+            var audioSystem = AudioSystem;
+            if (audioSystem != null)
+            {
+                audioSystem.ChangeSoundEffectVolume(Mathf.Clamp01(volume));
+            }
         }
 
         public float GetMusicVolume()
         {
-            return _audioSystem.MusicVolume;
+            var audioSystem = AudioSystem;
+            return audioSystem != null ? audioSystem.MusicVolume : 0f;
         }
 
         public float GetSfxVolume()
         {
-            return _audioSystem.SoundEffectVolume;
+            var audioSystem = AudioSystem;
+            return audioSystem != null ? audioSystem.SoundEffectVolume : 0f;
         }
 
         /// <summary>
         /// Plays music associated with a card family.
         /// Phase 37: Added to support CardPlacementService DI migration.
         /// </summary>
-        /// <param name="family">The card family to play music for.</param>
         public void PlayFamilyMusic(object family)
         {
+            var audioSystem = AudioSystem;
+            if (audioSystem == null)
+            {
+                Debug.LogWarning($"AudioService: AudioSystem not available");
+                return;
+            }
+
             if (family is CardFamily cardFamily)
             {
-                _audioSystem.PlayFamilyMusic(cardFamily);
+                audioSystem.PlayFamilyMusic(cardFamily);
             }
             else
             {
@@ -100,16 +142,16 @@ namespace JDG.Infrastructure.Services
             }
         }
 
-        // ============================================
-        // Phase 8: Convenience methods for singleton migration
-        // ============================================
-
         /// <summary>
         /// Plays the transition sound effect.
         /// </summary>
         public void PlayTransitionSound()
         {
-            _audioSystem.PlayTransitionSound();
+            var audioSystem = AudioSystem;
+            if (audioSystem != null)
+            {
+                audioSystem.PlayTransitionSound();
+            }
         }
 
         /// <summary>
@@ -117,7 +159,11 @@ namespace JDG.Infrastructure.Services
         /// </summary>
         public void PlayBackSound()
         {
-            _audioSystem.PlayBackSound();
+            var audioSystem = AudioSystem;
+            if (audioSystem != null)
+            {
+                audioSystem.PlayBackSound();
+            }
         }
     }
 }

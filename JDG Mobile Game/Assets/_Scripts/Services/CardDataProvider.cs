@@ -8,8 +8,8 @@ namespace JDG.Infrastructure.Services
 {
     /// <summary>
     /// Infrastructure implementation of ICardDataProvider.
-    /// Wraps ResourceSystem singleton during migration.
-    /// Phase 8: Eliminates ResourceSystem.Instance direct access.
+    /// Phase 8: Created to replace ResourceSystem.Instance direct access.
+    /// Phase 84: Now loads directly from Resources (ResourceSystem deleted).
     /// </summary>
     public class CardDataProvider : ICardDataProvider
     {
@@ -18,32 +18,18 @@ namespace JDG.Infrastructure.Services
 
         public CardDataProvider()
         {
-            // Load cards from Resources folder
             LoadCards();
         }
 
         private void LoadCards()
         {
-            // Try to get from ResourceSystem if it exists
-            if (ResourceSystem.Instance != null)
-            {
-                // Access Cards via reflection to maintain compatibility
-                var property = typeof(ResourceSystem).GetProperty("Cards",
-                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                _cards = (List<Card>)property?.GetValue(ResourceSystem.Instance);
-
-                if (_cards != null && _cards.Count > 0)
-                {
-                    _cardsDict = _cards.ToDictionary(card => card.Title, card => card);
-                    return;
-                }
-            }
-
-            // Fallback: Load directly from Resources
+            // Load directly from Resources folder
             _cards = Resources.LoadAll<Card>("Cards").ToList();
+
             if (_cards != null && _cards.Count > 0)
             {
                 _cardsDict = _cards.ToDictionary(card => card.Title, card => card);
+                Debug.Log($"CardDataProvider: Loaded {_cards.Count} cards from Resources/Cards");
             }
             else
             {
