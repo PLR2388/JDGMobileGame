@@ -83,6 +83,9 @@ namespace JDG.DI
             // Critical: Without this injection, BuildTutorialDecks() is never called when clicking Tutorial button
             builder.RegisterComponentInHierarchy<SceneLoader>();
 
+            // Phase 84 Fix: MainMenuAction needs IAudioService injection for music playback
+            builder.RegisterComponentInHierarchy<MainMenuAction>();
+
             UnityEngine.Debug.Log("MainScreenScope: Configuration complete");
         }
     }

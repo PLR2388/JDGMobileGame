@@ -23,10 +23,11 @@ public class MainMenuAction : MonoBehaviour
     }
 
     /// <summary>
-    /// Invoked when the script instance is being loaded.
+    /// Invoked after all Awake calls complete.
+    /// Phase 84 Fix: Changed from Awake to Start to ensure VContainer injection completes first.
     /// Automatically plays the main theme music.
     /// </summary>
-    private void Awake()
+    private void Start()
     {
         PlayMainTheme();
     }
