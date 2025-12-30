@@ -1,0 +1,280 @@
+using System.Collections;
+using System.Linq;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
+using VContainer;
+using VContainer.Unity;
+using JDG.Application;
+using JDG.Application.Abilities;
+using JDG.Application.Repositories;
+using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.Events;
+using JDG.Infrastructure.Events;
+using JDG.Infrastructure.Repositories;
+using JDG.Infrastructure.Services;
+using JDG.PlayMode.Tests.TestHelpers;
+
+namespace JDG.PlayMode.Tests
+{
+    /// <summary>
+    /// PlayMode integration tests for service layer interactions.
+    /// Tests that services work correctly together in Unity runtime.
+    /// Phase 97: Service integration verification.
+    /// </summary>
+    [TestFixture]
+    public class ServiceIntegrationPlayTests
+    {
+        private LifetimeScope _testScope;
+        private GameObject _scopeObject;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _scopeObject = new GameObject("TestScope");
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            if (_testScope != null)
+            {
+                Object.DestroyImmediate(_testScope);
+            }
+            if (_scopeObject != null)
+            {
+                Object.DestroyImmediate(_scopeObject);
+            }
+        }
+
+        #region Service Resolution Tests
+
+        [UnityTest]
+        public IEnumerator AllCoreServices_ResolveSuccessfully()
+        {
+            // Arrange
+            _testScope = _scopeObject.AddComponent<FullServiceTestScope>();
+
+            yield return null;
+
+            // Act & Assert - All core services should resolve
+            using (LifetimeScope.EnqueueParent(_testScope))
+            {
+                var container = _testScope.Container;
+
+                // Infrastructure
+                Assert.IsNotNull(container.Resolve<IEventBus>(), "IEventBus should resolve");
+                Assert.IsNotNull(container.Resolve<IGameStateRepository>(), "IGameStateRepository should resolve");
+                Assert.IsNotNull(container.Resolve<IPlayerRepository>(), "IPlayerRepository should resolve");
+                Assert.IsNotNull(container.Resolve<ICardRepository>(), "ICardRepository should resolve");
+
+                // Services
+                Assert.IsNotNull(container.Resolve<GameStateService>(), "GameStateService should resolve");
+                Assert.IsNotNull(container.Resolve<ICardStateService>(), "ICardStateService should resolve");
+
+                // Ability System
+                Assert.IsNotNull(container.Resolve<AbilityRegistry>(), "AbilityRegistry should resolve");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator GameStateService_WorksWithEventBus_Integration()
+        {
+            // Arrange
+            _testScope = _scopeObject.AddComponent<FullServiceTestScope>();
+
+            yield return null;
+
+            using (LifetimeScope.EnqueueParent(_testScope))
+            {
+                var container = _testScope.Container;
+                var eventBus = container.Resolve<IEventBus>();
+                var gameStateService = container.Resolve<GameStateService>();
+
+                // Subscribe to phase change events
+                PhaseChangedEvent? receivedEvent = null;
+                eventBus.Subscribe<PhaseChangedEvent>(e => receivedEvent = e);
+
+                // Act - Change phase
+                gameStateService.NextPhase();
+
+                yield return null;
+
+                // Assert - Event should have been published
+                Assert.IsTrue(receivedEvent.HasValue, "PhaseChangedEvent should be received");
+                Assert.AreEqual(Phase.Draw, receivedEvent.Value.OldPhase);
+                Assert.AreEqual(Phase.Choose, receivedEvent.Value.NewPhase);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator CardStateService_WorksWithDomainEntities_Integration()
+        {
+            // Arrange
+            _testScope = _scopeObject.AddComponent<FullServiceTestScope>();
+
+            yield return null;
+
+            using (LifetimeScope.EnqueueParent(_testScope))
+            {
+                var container = _testScope.Container;
+                var cardStateService = container.Resolve<ICardStateService>();
+
+                // Create test state
+                var state = new JDG.Domain.Entities.InvocationCardState(
+                    cardDefinitionId: JDG.Domain.ValueObjects.CardId.New(),
+                    owner: CardOwner.Player1,
+                    baseAttack: 50,
+                    baseDefense: 100,
+                    families: new[] { JDG.Domain.Enums.CardFamily.Comics },
+                    abilities: System.Array.Empty<AbilityName>(),
+                    conditions: System.Array.Empty<JDG.Domain.Enums.ConditionName>(),
+                    isAffectedByEffect: true);
+
+                // Act - Apply damage
+                var isDestroyed = cardStateService.ApplyDamage(state, 30);
+
+                yield return null;
+
+                // Assert
+                Assert.IsFalse(isDestroyed);
+                Assert.AreEqual(70, state.CurrentDefense);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator GameStateService_EndGame_PublishesGameOverEvent()
+        {
+            // Arrange
+            _testScope = _scopeObject.AddComponent<FullServiceTestScope>();
+
+            yield return null;
+
+            using (LifetimeScope.EnqueueParent(_testScope))
+            {
+                var container = _testScope.Container;
+                var eventBus = container.Resolve<IEventBus>();
+                var gameStateService = container.Resolve<GameStateService>();
+
+                // Subscribe to game over events
+                GameOverEvent? receivedEvent = null;
+                eventBus.Subscribe<GameOverEvent>(e => receivedEvent = e);
+
+                // Act - End game
+                gameStateService.EndGame(CardOwner.Player1, "Test Victory");
+
+                yield return null;
+
+                // Assert
+                Assert.IsTrue(receivedEvent.HasValue, "GameOverEvent should be received");
+                Assert.AreEqual(CardOwner.Player1, receivedEvent.Value.Winner);
+                Assert.AreEqual("Test Victory", receivedEvent.Value.Reason);
+                Assert.AreEqual(Phase.GameOver, gameStateService.CurrentPhase);
+            }
+        }
+
+        #endregion
+
+        #region Full Turn Cycle Integration
+
+        [UnityTest]
+        public IEnumerator FullTurnCycle_PublishesAllExpectedEvents()
+        {
+            // Arrange
+            _testScope = _scopeObject.AddComponent<FullServiceTestScope>();
+
+            yield return null;
+
+            using (LifetimeScope.EnqueueParent(_testScope))
+            {
+                var container = _testScope.Container;
+                var eventBus = container.Resolve<IEventBus>() as EventBus;
+                var gameStateService = container.Resolve<GameStateService>();
+
+                // Track all events
+                var phaseChanges = 0;
+                var turnStarts = 0;
+                var turnEnds = 0;
+                var playerChanges = 0;
+
+                eventBus.Subscribe<PhaseChangedEvent>(_ => phaseChanges++);
+                eventBus.Subscribe<TurnStartEvent>(_ => turnStarts++);
+                eventBus.Subscribe<TurnEndEvent>(_ => turnEnds++);
+                eventBus.Subscribe<PlayerTurnChangedEvent>(_ => playerChanges++);
+
+                // Act - Complete one full turn
+                gameStateService.StartNewTurn();
+                gameStateService.NextPhase(); // Draw -> Choose
+                gameStateService.NextPhase(); // Choose -> Attack
+                gameStateService.NextPhase(); // Attack -> End
+                gameStateService.HandleEndTurn(); // Ends turn, switches player
+
+                yield return null;
+
+                // Assert
+                Assert.AreEqual(1, turnStarts, "Should have 1 turn start");
+                Assert.AreEqual(1, turnEnds, "Should have 1 turn end");
+                Assert.AreEqual(1, playerChanges, "Should have 1 player change");
+                Assert.GreaterOrEqual(phaseChanges, 4, "Should have at least 4 phase changes");
+            }
+        }
+
+        #endregion
+
+        #region Singleton Consistency Tests
+
+        [UnityTest]
+        public IEnumerator SingletonServices_ReturnSameInstance_AcrossResolutions()
+        {
+            // Arrange
+            _testScope = _scopeObject.AddComponent<FullServiceTestScope>();
+
+            yield return null;
+
+            using (LifetimeScope.EnqueueParent(_testScope))
+            {
+                var container = _testScope.Container;
+
+                // Resolve multiple times
+                var eventBus1 = container.Resolve<IEventBus>();
+                var eventBus2 = container.Resolve<IEventBus>();
+                var registry1 = container.Resolve<AbilityRegistry>();
+                var registry2 = container.Resolve<AbilityRegistry>();
+
+                yield return null;
+
+                // Assert - Singletons should be same instance
+                Assert.AreSame(eventBus1, eventBus2, "EventBus should be singleton");
+                Assert.AreSame(registry1, registry2, "AbilityRegistry should be singleton");
+            }
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Full service test scope with all core services registered.
+    /// </summary>
+    public class FullServiceTestScope : LifetimeScope
+    {
+        protected override void Configure(IContainerBuilder builder)
+        {
+            // Core Infrastructure
+            builder.Register<IEventBus, EventBus>(Lifetime.Singleton);
+
+            // Repositories
+            builder.Register<ICardRepository, CardRepository>(Lifetime.Singleton);
+            builder.Register<IPlayerRepository, PlayerRepository>(Lifetime.Singleton);
+            builder.Register<IDeckRepository, DeckRepository>(Lifetime.Singleton);
+            builder.Register<IGameStateRepository, GameStateRepository>(Lifetime.Singleton);
+
+            // Services
+            builder.Register<GameStateService>(Lifetime.Singleton);
+            builder.Register<ICardStateService, CardStateService>(Lifetime.Singleton);
+
+            // Ability System
+            builder.Register<AbilityRegistry>(Lifetime.Singleton);
+        }
+    }
+}
