@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using JDG.Application.Abilities;
 using JDG.Domain;
+using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 
 namespace JDG.Application.Tests.Scenarios
@@ -337,8 +338,8 @@ namespace JDG.Application.Tests.Scenarios
             var context = CreateContext(PlayerId.Player1);
 
             // Assert
-            Assert.AreEqual(PlayerId.Player1, context.Owner);
-            Assert.AreEqual(PlayerId.Player2, context.Opponent);
+            Assert.AreEqual(PlayerId.Player1, context.CurrentPlayerId);
+            Assert.AreEqual(PlayerId.Player2, context.OpponentPlayerId);
         }
 
         [Test]
@@ -348,8 +349,8 @@ namespace JDG.Application.Tests.Scenarios
             var context = CreateContext(PlayerId.Player2);
 
             // Assert
-            Assert.AreEqual(PlayerId.Player2, context.Owner);
-            Assert.AreEqual(PlayerId.Player1, context.Opponent);
+            Assert.AreEqual(PlayerId.Player2, context.CurrentPlayerId);
+            Assert.AreEqual(PlayerId.Player1, context.OpponentPlayerId);
         }
 
         #endregion

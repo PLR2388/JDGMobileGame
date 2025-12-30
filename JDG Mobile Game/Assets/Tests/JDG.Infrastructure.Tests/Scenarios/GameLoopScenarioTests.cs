@@ -11,7 +11,7 @@ using JDG.Infrastructure.Services;
 // Alias to avoid conflict with global namespace CardOwner
 using DomainCardOwner = JDG.Domain.CardOwner;
 
-namespace JDG.Application.Tests.Scenarios
+namespace JDG.Infrastructure.Tests.Scenarios
 {
     /// <summary>
     /// Scenario tests for game loop and turn cycle mechanics.
