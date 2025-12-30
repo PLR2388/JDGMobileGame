@@ -47,14 +47,19 @@ public class DialogueUI : MonoBehaviour
     // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
     private ISceneLoaderService _sceneLoaderService;
 
+    // Phase 90: ITutorialStateService replaces DialogueTutoHandler singleton
+    private ITutorialStateService _tutorialStateService;
+
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
+    /// Phase 90: Added ITutorialStateService to replace DialogueTutoHandler singleton.
     /// </summary>
     [Inject]
-    public void Construct(ISceneLoaderService sceneLoaderService)
+    public void Construct(ISceneLoaderService sceneLoaderService, ITutorialStateService tutorialStateService)
     {
         _sceneLoaderService = sceneLoaderService;
+        _tutorialStateService = tutorialStateService;
     }
 
     /// <summary>
@@ -118,6 +123,8 @@ public class DialogueUI : MonoBehaviour
         for (int i = 0; i < dialogueObject.Dialogue.Length; i++)
         {
             DialogIndex.Invoke(i);
+            // Phase 90: Also update tutorial state service
+            _tutorialStateService?.SetDialogIndex(i);
             string dialogue = dialogueObject.Dialogue[i];
 
             if (soundDialogIndex.Contains(i))

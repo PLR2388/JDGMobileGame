@@ -130,6 +130,12 @@ namespace JDG.DI
             // These depend on MonoBehaviours that only exist in this scene
             // ============================================
 
+            // Phase 86: ICardPoolService - wraps CardPoolManager for DI
+            builder.Register<ICardPoolService, CardPoolService>(Lifetime.Scoped);
+
+            // Phase 90: ITutorialStateService - replaces DialogueTutoHandler singleton
+            builder.Register<ITutorialStateService, TutorialStateService>(Lifetime.Scoped);
+
             // ICardCollectionService - requires PlayerCardManager from scene
             builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Scoped);
 

@@ -1,24 +1,39 @@
 ﻿using Cards;
+using JDG.Application.Services;
 using OnePlayer;
 using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 /// <summary>
 /// Represents the tutorial version of the in-game menu.
 /// Phase 17-18: Inherits ICardCollectionService from base class.
 /// Phase 34: Inherits ILocalizationService from base class.
+/// Phase 90: Uses ITutorialStateService instead of DialogueTutoHandler.Instance.
 /// </summary>
 public class TutoInGameMenuScript : InGameMenuScript
 {
     private const int CardDialogChangeIndex = 36;
     private const int PutCardIndex = 38;
 
+    // Phase 90: Tutorial state service replaces DialogueTutoHandler singleton
+    private ITutorialStateService _tutorialStateService;
+
     private TextMeshProUGUI buttonTextMeshProUGUI;
     private Button button;
     private HighLightButton highLightButton;
     private HighLightButton putCardHighLightButton;
+
+    /// <summary>
+    /// Phase 90: VContainer injection for tutorial-specific dependencies.
+    /// </summary>
+    [Inject]
+    public void ConstructTutorial(ITutorialStateService tutorialStateService)
+    {
+        _tutorialStateService = tutorialStateService;
+    }
 
     /// <summary>
     /// Awake method to cache component references.
@@ -48,7 +63,9 @@ public class TutoInGameMenuScript : InGameMenuScript
     /// <param name="card">The in-game card that was clicked.</param>
     private void ClickOnCard(InGameCard card)
     {
-        var authorizedCard = DialogueTutoHandler.Instance.CurrentDialogIndex > CardDialogChangeIndex
+        // Phase 90: Use injected service instead of singleton
+        var currentIndex = _tutorialStateService?.CurrentDialogIndex ?? 0;
+        var authorizedCard = currentIndex > CardDialogChangeIndex
             ? CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive]
             : CardNameMappings.CardNameMap[CardNames.ClichéRaciste];
         if (card.Title != authorizedCard) return;
@@ -171,7 +188,8 @@ public class TutoInGameMenuScript : InGameMenuScript
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
 
-        if (DialogueTutoHandler.Instance.CurrentDialogIndex == PutCardIndex)
+        // Phase 90: Use injected service instead of singleton
+        if (_tutorialStateService?.CurrentDialogIndex == PutCardIndex)
         {
             DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
         }

@@ -6,20 +6,23 @@ using UnityEngine;
 
 namespace JDG.Infrastructure.Tests.Services
 {
+    /// <summary>
+    /// Tests for AudioService.
+    /// Phase 88: Improved test isolation with proper categorization.
+    ///
+    /// Unit Tests: Tests that don't require AudioSystem (instantiation, interface checks)
+    /// Integration Tests: Tests that require AudioSystem singleton for audio playback
+    ///
+    /// Integration tests use Assert.Ignore when AudioSystem is unavailable,
+    /// allowing them to run in Unity Play Mode when the singleton exists.
+    /// </summary>
     [TestFixture]
     public class AudioServiceTests
     {
-        private IAudioService _audioService;
-
-        [SetUp]
-        public void Setup()
-        {
-            // Note: AudioService currently depends on AudioSystem.Instance
-            // These tests will only run if AudioSystem singleton exists in scene
-            // TODO: Refactor AudioService to accept dependencies for better testability
-        }
+        #region Unit Tests (No AudioSystem Required)
 
         [Test]
+        [Category("Unit")]
         public void AudioService_WhenCreated_ImplementsInterface()
         {
             // Arrange & Act
@@ -31,10 +34,71 @@ namespace JDG.Infrastructure.Tests.Services
         }
 
         [Test]
-        public void GetMusicVolume_ReturnsValidRange()
+        [Category("Unit")]
+        public void AudioService_WhenCreated_CanBeInstantiated()
+        {
+            // Arrange & Act & Assert
+            Assert.DoesNotThrow(() => new AudioService());
+        }
+
+        [Test]
+        [Category("Unit")]
+        public void GetMusicVolume_WithoutAudioSystem_ReturnsZero()
+        {
+            // AudioService returns 0 when AudioSystem is null (graceful degradation)
+            #pragma warning disable CS0618
+            if (AudioSystem.Instance != null)
+            {
+                Assert.Ignore("This test requires AudioSystem to be unavailable");
+            }
+            #pragma warning restore CS0618
+
+            // Arrange
+            var service = new AudioService();
+
+            // Act
+            var volume = service.GetMusicVolume();
+
+            // Assert - Returns 0 when AudioSystem is null
+            Assert.AreEqual(0f, volume);
+        }
+
+        [Test]
+        [Category("Unit")]
+        public void GetSfxVolume_WithoutAudioSystem_ReturnsZero()
+        {
+            #pragma warning disable CS0618
+            if (AudioSystem.Instance != null)
+            {
+                Assert.Ignore("This test requires AudioSystem to be unavailable");
+            }
+            #pragma warning restore CS0618
+
+            // Arrange
+            var service = new AudioService();
+
+            // Act
+            var volume = service.GetSfxVolume();
+
+            // Assert - Returns 0 when AudioSystem is null
+            Assert.AreEqual(0f, volume);
+        }
+
+        #endregion
+
+        #region Integration Tests (Require AudioSystem)
+
+        [Test]
+        [Category("Integration")]
+        public void GetMusicVolume_WithAudioSystem_ReturnsValidRange()
         {
             // Arrange
-            if (AudioSystem.Instance == null) Assert.Ignore("AudioSystem singleton not available");
+            #pragma warning disable CS0618
+            if (AudioSystem.Instance == null)
+            {
+                Assert.Ignore("AudioSystem singleton not available - run in Unity Play Mode");
+            }
+            #pragma warning restore CS0618
 
             var service = new AudioService();
 
@@ -47,10 +111,16 @@ namespace JDG.Infrastructure.Tests.Services
         }
 
         [Test]
-        public void GetSfxVolume_ReturnsValidRange()
+        [Category("Integration")]
+        public void GetSfxVolume_WithAudioSystem_ReturnsValidRange()
         {
             // Arrange
-            if (AudioSystem.Instance == null) Assert.Ignore("AudioSystem singleton not available");
+            #pragma warning disable CS0618
+            if (AudioSystem.Instance == null)
+            {
+                Assert.Ignore("AudioSystem singleton not available - run in Unity Play Mode");
+            }
+            #pragma warning restore CS0618
 
             var service = new AudioService();
 
@@ -63,10 +133,16 @@ namespace JDG.Infrastructure.Tests.Services
         }
 
         [Test]
-        public void SetMusicVolume_ClampsToValidRange()
+        [Category("Integration")]
+        public void SetMusicVolume_WithAudioSystem_ClampsToValidRange()
         {
             // Arrange
-            if (AudioSystem.Instance == null) Assert.Ignore("AudioSystem singleton not available");
+            #pragma warning disable CS0618
+            if (AudioSystem.Instance == null)
+            {
+                Assert.Ignore("AudioSystem singleton not available - run in Unity Play Mode");
+            }
+            #pragma warning restore CS0618
 
             var service = new AudioService();
 
@@ -82,5 +158,7 @@ namespace JDG.Infrastructure.Tests.Services
             Assert.LessOrEqual(volume1, 1f);
             Assert.GreaterOrEqual(volume2, 0f);
         }
+
+        #endregion
     }
 }

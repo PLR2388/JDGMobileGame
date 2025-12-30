@@ -11,8 +11,10 @@ using JDG.Application.Services;
 /// <summary>
 /// Phase 9: Removed CardPoolManager singleton dependency via DI.
 /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
+/// Phase 91: Converted from StaticInstance<T> to regular MonoBehaviour.
+/// All dependencies are injected via VContainer.
 /// </summary>
-public class DisplayCards : StaticInstance<DisplayCards>
+public class DisplayCards : MonoBehaviour
 {
     private readonly ObservableCollection<InGameCard> _cardsList = new ObservableCollection<InGameCard>();
     private readonly List<GameObject> associatedGameObject = new List<GameObject>();

@@ -10,8 +10,10 @@ namespace Menu
     /// Manages the UI related to the card choice in the game menu.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
+    /// Phase 91: Converted from StaticInstance<T> to regular MonoBehaviour.
+    /// All dependencies are injected via VContainer.
     /// </summary>
-    public class CardChoiceUIManager : StaticInstance<CardChoiceUIManager>
+    public class CardChoiceUIManager : MonoBehaviour
     {
         [SerializeField] private GameObject container;
         [SerializeField] private Transform canvas;

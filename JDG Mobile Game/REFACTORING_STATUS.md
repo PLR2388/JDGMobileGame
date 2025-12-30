@@ -1012,8 +1012,80 @@ Libraries remain functional during transition:
 
 ---
 
-**Last Updated**: 2025-12-28
+### Phase 85-91: Final Singleton Cleanup & Documentation ✅ (Completed 2025-12-29)
+
+**Goal**: Complete the singleton removal and clean up remaining legacy patterns.
+
+#### Phase 85: Mark Remaining Singletons [Obsolete]
+- ✅ Marked `DisplayCards`, `CardChoiceUIManager`, `DialogueTutoHandler` as [Obsolete]
+- All 3 classes already had VContainer DI set up via [Inject] methods
+
+#### Phase 86: Register ICardPoolService in GameSceneScope
+- ✅ Registered `ICardPoolService → CardPoolService` in GameSceneScope
+- Fixed gap where DisplayCards injected ICardPoolService but it wasn't explicitly registered
+
+#### Phase 87: Register Pure Logic Interfaces
+- ✅ Registered `ICombatLogic → CombatLogic` in SharedServicesScope
+- ✅ Registered `ICardPlacementLogic → CardPlacementLogic` in SharedServicesScope
+- Implementations already existed, just needed DI registration
+
+#### Phase 88: Improve Test Isolation
+- ✅ Updated `AudioServiceTests.cs` with proper categorization
+- Added [Category("Unit")] and [Category("Integration")] attributes
+- Added unit tests that run without AudioSystem singleton
+- Integration tests properly document Unity Play Mode requirement
+
+#### Phase 89: Implement Deck Persistence
+- ✅ Implemented PlayerPrefs persistence in `DeckRepository`
+- Decks saved with "JDG_Deck_" prefix
+- Deck list tracked in "JDG_DeckList" key
+- Auto-loads on DeckRepository construction
+
+#### Phase 90: Create ITutorialStateService
+- ✅ Created `ITutorialStateService` interface in JDG.Application
+- ✅ Created `TutorialStateService` implementation in Services
+- ✅ Registered in GameSceneScope
+- ✅ Updated `TutoInGameMenuScript` to use injected service
+- ✅ Updated `DialogueUI` to set tutorial state via service
+
+#### Phase 91: Remove StaticInstance Inheritance
+- ✅ Converted `DisplayCards` from `StaticInstance<T>` to `MonoBehaviour`
+- ✅ Converted `CardChoiceUIManager` from `StaticInstance<T>` to `MonoBehaviour`
+- ✅ Deleted `DialogueTutoHandler` (fully replaced by ITutorialStateService)
+- Remaining singletons (MessageBox, CardSelector, AudioSystem) still wrapped by adapter services
+
+#### Files Created
+- `Assets/_Scripts/JDG.Application/Services/ITutorialStateService.cs`
+- `Assets/_Scripts/Services/TutorialStateService.cs`
+
+#### Files Modified
+- `Assets/_Scripts/MessageBox/DisplayCards.cs` (removed StaticInstance inheritance)
+- `Assets/_Scripts/Menu/CardChoiceUIManager.cs` (removed StaticInstance inheritance)
+- `Assets/_Scripts/Menu/TutoInGameMenuScript.cs` (uses ITutorialStateService)
+- `Assets/_Scripts/OnePlayer/DialogueBox/DialogueUI.cs` (uses ITutorialStateService)
+- `Assets/_Scripts/DI/GameSceneScope.cs` (registered ICardPoolService, ITutorialStateService)
+- `Assets/_Scripts/DI/SharedServicesScope.cs` (registered ICombatLogic, ICardPlacementLogic)
+- `Assets/_Scripts/JDG.Infrastructure/Repositories/DeckRepository.cs` (PlayerPrefs persistence)
+- `Assets/Tests/JDG.Infrastructure.Tests/Services/AudioServiceTests.cs` (test categorization)
+
+#### Files Deleted
+- `Assets/_Scripts/OnePlayer/DialogueTutoHandler.cs` (replaced by ITutorialStateService)
+
+#### Current Singleton Status
+
+| Singleton | Status | DI Alternative |
+|-----------|--------|----------------|
+| AudioSystem | Wrapped by AudioService | IAudioService |
+| MessageBox | Wrapped by DialogService | IDialogService |
+| CardSelector | Wrapped by DialogService | IDialogService |
+| DisplayCards | **REMOVED** | Regular MonoBehaviour with VContainer |
+| CardChoiceUIManager | **REMOVED** | Regular MonoBehaviour with VContainer |
+| DialogueTutoHandler | **DELETED** | ITutorialStateService |
+
+---
+
+**Last Updated**: 2025-12-29
 **Current Branch**: refactor-v3
-**Status**: Phase 48 Complete (Card-Type Ability Provider Migration)
+**Status**: Phase 91 Complete (Final Singleton Cleanup)
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.
