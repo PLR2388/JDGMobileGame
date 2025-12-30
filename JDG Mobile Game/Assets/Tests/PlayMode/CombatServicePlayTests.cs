@@ -7,6 +7,7 @@ using UnityEngine.TestTools;
 using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application;
+using JDG.Application.Abilities;
 
 namespace JDG.PlayMode.Tests
 {
@@ -21,6 +22,7 @@ namespace JDG.PlayMode.Tests
         private CombatService _combatService;
         private ICardCollectionService _mockCardCollectionService;
         private IPlayerStatusProvider _mockPlayerStatusProvider;
+        private IAbilityExecutor _mockAbilityExecutor;
         private PlayerCards _currentPlayerCards;
         private PlayerCards _opponentPlayerCards;
         private PlayerStatus _currentPlayerStatus;
@@ -42,6 +44,7 @@ namespace JDG.PlayMode.Tests
             // Note: PlayerCards.Start() requires injected dependencies, so we use mocks instead
             _mockCardCollectionService = Substitute.For<ICardCollectionService>();
             _mockPlayerStatusProvider = Substitute.For<IPlayerStatusProvider>();
+            _mockAbilityExecutor = Substitute.For<IAbilityExecutor>();
 
             // Create mock PlayerStatus (MonoBehaviour required)
             var currentStatusObj = new GameObject("CurrentStatus");
@@ -55,6 +58,7 @@ namespace JDG.PlayMode.Tests
             _combatService = new CombatService(
                 _mockCardCollectionService,
                 _mockPlayerStatusProvider,
+                _mockAbilityExecutor,
                 _canvas);
         }
 
