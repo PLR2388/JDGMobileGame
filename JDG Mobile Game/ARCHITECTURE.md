@@ -312,6 +312,228 @@ Legacy code coexists with clean architecture:
 | 4-layer architecture | Clear boundaries, testable |
 | Factories for abilities | Flexible, DI-friendly |
 
+## Sequence Diagrams
+
+### Card Play Flow
+
+```
+┌────────┐     ┌──────────┐     ┌───────────────┐     ┌─────────────┐     ┌──────────┐
+│ Player │     │ GameLoop │     │ PlayCardUseCase│     │ Repository  │     │ EventBus │
+└───┬────┘     └────┬─────┘     └───────┬───────┘     └──────┬──────┘     └────┬─────┘
+    │               │                    │                    │                 │
+    │ Touch Card    │                    │                    │                 │
+    │──────────────>│                    │                    │                 │
+    │               │                    │                    │                 │
+    │               │ Execute(playerId, │                    │                 │
+    │               │   cardId)         │                    │                 │
+    │               │───────────────────>│                    │                 │
+    │               │                    │                    │                 │
+    │               │                    │ GetPlayer(id)     │                 │
+    │               │                    │───────────────────>│                 │
+    │               │                    │                    │                 │
+    │               │                    │ <─── Player ───────│                 │
+    │               │                    │                    │                 │
+    │               │                    │ player.PlayCard()  │                 │
+    │               │                    │──────┐             │                 │
+    │               │                    │      │             │                 │
+    │               │                    │<─────┘             │                 │
+    │               │                    │                    │                 │
+    │               │                    │ SavePlayer(player) │                 │
+    │               │                    │───────────────────>│                 │
+    │               │                    │                    │                 │
+    │               │                    │ Publish(CardPlayedEvent)            │
+    │               │                    │──────────────────────────────────────>│
+    │               │                    │                    │                 │
+    │               │ <── PlayCardResult─│                    │                 │
+    │               │                    │                    │                 │
+    │ Update UI     │                    │                    │                 │
+    │<──────────────│                    │                    │                 │
+```
+
+### Attack Flow
+
+```
+┌────────┐    ┌──────────┐    ┌─────────────┐    ┌─────────────┐    ┌──────────┐
+│ Player │    │ GameLoop │    │AttackUseCase│    │CombatService│    │ EventBus │
+└───┬────┘    └────┬─────┘    └──────┬──────┘    └──────┬──────┘    └────┬─────┘
+    │              │                  │                  │                │
+    │ Select       │                  │                  │                │
+    │ Attacker     │                  │                  │                │
+    │─────────────>│                  │                  │                │
+    │              │                  │                  │                │
+    │ Select       │                  │                  │                │
+    │ Target       │                  │                  │                │
+    │─────────────>│                  │                  │                │
+    │              │                  │                  │                │
+    │              │ Execute(attacker,│                  │                │
+    │              │   target)        │                  │                │
+    │              │─────────────────>│                  │                │
+    │              │                  │                  │                │
+    │              │                  │ CalculateDamage()│                │
+    │              │                  │─────────────────>│                │
+    │              │                  │                  │                │
+    │              │                  │ <── DamageResult─│                │
+    │              │                  │                  │                │
+    │              │                  │ Publish(AttackEvent)              │
+    │              │                  │───────────────────────────────────>│
+    │              │                  │                  │                │
+    │              │                  │ Publish(DamageDealtEvent)         │
+    │              │                  │───────────────────────────────────>│
+    │              │                  │                  │                │
+    │              │ <── AttackResult─│                  │                │
+```
+
+### Turn Lifecycle
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              TURN LIFECYCLE                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│   ┌──────────────┐      ┌──────────────┐      ┌──────────────┐             │
+│   │  DRAW PHASE  │ ───> │  PLAY PHASE  │ ───> │ ATTACK PHASE │             │
+│   └──────────────┘      └──────────────┘      └──────────────┘             │
+│         │                      │                      │                     │
+│         ▼                      ▼                      ▼                     │
+│   ┌──────────────┐      ┌──────────────┐      ┌──────────────┐             │
+│   │ DrawCardUse  │      │ PlayCardUse  │      │ AttackUseCase│             │
+│   │    Case      │      │    Case      │      │              │             │
+│   └──────────────┘      └──────────────┘      └──────────────┘             │
+│         │                      │                      │                     │
+│         ▼                      ▼                      ▼                     │
+│   CardDrawnEvent        CardPlayedEvent         AttackEvent                 │
+│                                                 DamageDealtEvent            │
+│                                                                             │
+│   After Attack Phase: EndTurnUseCase ──> TurnEndedEvent                    │
+│                                      ──> PlayerTurnChangedEvent            │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Component Interaction Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           COMPONENT INTERACTIONS                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────┐                              ┌─────────────────┐       │
+│  │   MonoBehaviour │                              │    Presenter    │       │
+│  │    (GameLoop)   │                              │ (RoundDisplay)  │       │
+│  └────────┬────────┘                              └────────┬────────┘       │
+│           │                                                │                │
+│           │ calls                                          │ subscribes     │
+│           ▼                                                ▼                │
+│  ┌─────────────────┐      publishes       ┌─────────────────────────┐      │
+│  │    Use Case     │ ──────────────────>  │       EventBus          │      │
+│  │ (DrawCardUseCase)│                      │                         │      │
+│  └────────┬────────┘                      └─────────────────────────┘      │
+│           │                                          │                      │
+│           │ uses                                     │ notifies             │
+│           ▼                                          ▼                      │
+│  ┌─────────────────┐                      ┌─────────────────┐              │
+│  │   Repository    │                      │     View        │              │
+│  │(PlayerRepository)│                      │ (MonoBehaviour) │              │
+│  └────────┬────────┘                      └─────────────────┘              │
+│           │                                                                 │
+│           │ stores                                                          │
+│           ▼                                                                 │
+│  ┌─────────────────┐                                                       │
+│  │  Domain Entity  │                                                       │
+│  │    (Player)     │                                                       │
+│  └─────────────────┘                                                       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Ability System Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            ABILITY SYSTEM                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                        AbilityRegistry                                 │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │ │
+│  │  │Draw1Card    │  │DestroyCard  │  │GiveFamilyATK│  │DirectAttack │  │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │ │
+│  │  │ProtectBehind│  │CopyStats    │  │Resurrection │  │FieldBonus   │  │ │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │ │
+│  │                        ... 57 abilities total ...                      │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                     │                                       │
+│                                     │ GetAbility(AbilityName)               │
+│                                     ▼                                       │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                         IAbility Interface                             │ │
+│  │  ┌─────────────────────────────────────────────────────────────────┐  │ │
+│  │  │  Name: AbilityName                                              │  │ │
+│  │  │  Description: string                                            │  │ │
+│  │  │  CanActivate(AbilityContext) : bool                            │  │ │
+│  │  │  Execute(AbilityContext) : AbilityResult                       │  │ │
+│  │  └─────────────────────────────────────────────────────────────────┘  │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                     │                                       │
+│                          ┌──────────┴──────────┐                           │
+│                          ▼                      ▼                           │
+│              ┌─────────────────┐    ┌─────────────────┐                    │
+│              │ AbilityContext  │    │  AbilityResult  │                    │
+│              │ - Card          │    │ - IsSuccess     │                    │
+│              │ - OwnerCards    │    │ - Message       │                    │
+│              │ - OpponentCards │    │ - RequiresInput │                    │
+│              │ - EventBus      │    └─────────────────┘                    │
+│              └─────────────────┘                                           │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## DI Container Scope Hierarchy
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       DI CONTAINER SCOPE HIERARCHY                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                   SharedServicesScope (ROOT)                           │ │
+│  │                   DontDestroyOnLoad - persists across scenes           │ │
+│  │  ┌─────────────────────────────────────────────────────────────────┐  │ │
+│  │  │ SINGLETONS (shared state):                                      │  │ │
+│  │  │ - IEventBus → EventBus                                          │  │ │
+│  │  │ - ICardRepository → CardRepository                              │  │ │
+│  │  │ - IPlayerRepository → PlayerRepository                          │  │ │
+│  │  │ - IGameStateRepository → GameStateRepository                    │  │ │
+│  │  │ - IAudioService → AudioService                                  │  │ │
+│  │  │ - ILocalizationService → LocalizationService                    │  │ │
+│  │  │ - IDialogService → DialogService                                │  │ │
+│  │  │ - AbilityRegistry (all 57 abilities)                            │  │ │
+│  │  └─────────────────────────────────────────────────────────────────┘  │ │
+│  │  ┌─────────────────────────────────────────────────────────────────┐  │ │
+│  │  │ TRANSIENT (new instance per request):                           │  │ │
+│  │  │ - StartGameUseCase, DrawCardUseCase, PlayCardUseCase            │  │ │
+│  │  │ - AttackUseCase, EndTurnUseCase                                 │  │ │
+│  │  └─────────────────────────────────────────────────────────────────┘  │ │
+│  └─────────────────────────────────────────────────────────────────────┬─┘ │
+│                                                                        │   │
+│        ┌───────────────────────────────────┬───────────────────────────┘   │
+│        │                                   │                               │
+│        ▼                                   ▼                               │
+│  ┌─────────────────────────┐    ┌─────────────────────────┐              │
+│  │    GameSceneScope       │    │   MainScreenScope       │              │
+│  │    (Game scene only)    │    │   (Menu scene only)     │              │
+│  │  ┌───────────────────┐  │    │  ┌───────────────────┐  │              │
+│  │  │ - CardPoolManager │  │    │  │ - CardChoice      │  │              │
+│  │  │ - InputManager    │  │    │  │ - DeckManagement  │  │              │
+│  │  │ - GameLoop        │  │    │  │   Service         │  │              │
+│  │  │ - PlayerCards x2  │  │    │  │ - Menu services   │  │              │
+│  │  └───────────────────┘  │    │  └───────────────────┘  │              │
+│  └─────────────────────────┘    └─────────────────────────┘              │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
 ## Future Work
 
 1. **CardSelectorPresenter** - Move to JDG.Presentation (blocked by InGameCard)

@@ -9,7 +9,7 @@ namespace JDG.Application.Tests.Abilities
 {
     /// <summary>
     /// Tests for the ability migration infrastructure.
-    /// Phase 7.1: Tests for LegacyAbilityAdapter and AbilityMigrationService.
+    /// Tests for AbilityResult and AbilityRegistry.
     /// </summary>
     [TestFixture]
     public class AbilityMigrationTests

@@ -67,8 +67,8 @@ namespace JDG.Application.Abilities
             => new AbilityResult(true, message, requiresUserInput: true);
 
         /// <summary>
-        /// Phase 7.1: Creates a result indicating this ability requires legacy execution.
-        /// Used by LegacyAbilityAdapter when new context is insufficient.
+        /// Creates a result indicating this ability requires legacy execution path.
+        /// Used during migration when modern context is insufficient.
         /// </summary>
         public static AbilityResult NeedsLegacyExecution(string message)
             => new AbilityResult(false, message, requiresLegacy: true);
