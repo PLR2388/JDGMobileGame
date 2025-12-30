@@ -1,11 +1,12 @@
 using JDG.Application.Services;
 using JDG.Domain.Entities;
 
-namespace Services
+namespace JDG.Infrastructure.Services
 {
     /// <summary>
     /// Implementation of ICardStateService for managing card state operations.
     /// Phase 71: Created as part of UseCase migration.
+    /// Phase 96: Moved to JDG.Infrastructure for proper testability.
     ///
     /// Provides domain logic for common card state operations.
     /// Pure C# logic - no Unity dependencies.

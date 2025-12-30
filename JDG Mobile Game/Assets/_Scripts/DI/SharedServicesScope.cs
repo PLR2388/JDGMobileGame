@@ -10,7 +10,7 @@ using JDG.Bridge;
 using JDG.Infrastructure.Events;
 using JDG.Infrastructure.Repositories;
 using JDG.Infrastructure.Services;
-using Services; // For CardStateService, AbilityExecutorAdapter
+using Services; // For AbilityExecutorAdapter (CardStateService moved to JDG.Infrastructure.Services)
 
 namespace JDG.DI
 {
