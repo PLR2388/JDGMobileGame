@@ -1,10 +1,13 @@
 using NUnit.Framework;
+using JDG.Application;
 using JDG.Application.UseCases;
 using JDG.Application.Repositories;
 using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 using JDG.Domain.Enums;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JDG.Application.Tests.UseCases
 {
@@ -102,5 +105,58 @@ namespace JDG.Application.Tests.UseCases
         }
     }
 
-    // Test doubles moved to AttackUseCaseTests.cs to avoid duplication
+    #region Test Doubles
+
+    /// <summary>
+    /// Test double for IPlayerRepository.
+    /// </summary>
+    public class TestPlayerRepository : IPlayerRepository
+    {
+        private readonly Dictionary<PlayerId, Player> _players = new Dictionary<PlayerId, Player>();
+
+        public void AddPlayer(Player player) => _players[player.Id] = player;
+
+        public Player GetPlayer(PlayerId playerId) => _players.ContainsKey(playerId) ? _players[playerId] : null;
+
+        public void SavePlayer(Player player) => _players[player.Id] = player;
+
+        public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetPlayer(PlayerId playerId)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Test double for IEventBus.
+    /// </summary>
+    public class TestEventBus : IEventBus
+    {
+        public List<object> PublishedEvents { get; } = new List<object>();
+
+        public void Publish<T>(T eventData) where T : struct
+        {
+            PublishedEvents.Add(eventData);
+        }
+
+        public IDisposable Subscribe<T>(Action<T> handler) where T : struct
+        {
+            return new DummyDisposable();
+        }
+
+        public void ClearSubscriptions<T>() where T : struct { }
+
+        public void ClearAllSubscriptions() { }
+
+        private class DummyDisposable : IDisposable
+        {
+            public void Dispose() { }
+        }
+    }
+
+    #endregion
 }
