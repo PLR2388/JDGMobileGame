@@ -4,7 +4,6 @@ using Cards;
 using Cards.EquipmentCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
-using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
 
 /// <summary>
 /// Represents an in-game version of an equipment card with its abilities.
@@ -54,20 +53,11 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
         collector = baseEquipmentCard.Collector;
 
         // Phase 117: Populate only modern abilities
+        // Phase 118: ScriptableObjects now use domain enums directly, no conversion needed
         ModernEquipmentAbilities = baseEquipmentCard.EquipmentAbilities
-            .Select(name => _abilityProvider.GetModernAbility(ConvertToDomainEnum(name)))
+            .Select(name => _abilityProvider.GetModernAbility(name))
             .Where(ability => ability != null)
             .ToList();
-    }
-
-    /// <summary>
-    /// Converts legacy EquipmentAbilityName to domain enum.
-    /// Phase 105: Bridge method for enum conversion during migration.
-    /// </summary>
-    private static DomainEquipmentAbilityName ConvertToDomainEnum(EquipmentAbilityName legacyName)
-    {
-        // Both enums have identical orderings, so integer cast works
-        return (DomainEquipmentAbilityName)(int)legacyName;
     }
 
     #region IInGameEquipmentCard Implementation

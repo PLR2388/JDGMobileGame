@@ -10,6 +10,7 @@ using Cards;
 using Cards.EffectCards;
 using Cards.EquipmentCards;
 using Cards.FieldCards;
+using JDG.Application.Abilities;
 using JDG.Application.Services;
 
 namespace JDG.PlayMode.Tests
@@ -26,6 +27,7 @@ namespace JDG.PlayMode.Tests
         private ICardCollectionService _mockCardCollectionService;
         private IPlayerStatusProvider _mockPlayerStatusProvider;
         private IAudioService _mockAudioService;
+        private IAbilityExecutor _mockAbilityExecutor;
         private PlayerCards _currentPlayerCards;
         private PlayerCards _opponentPlayerCards;
         private Transform _canvas;
@@ -41,11 +43,13 @@ namespace JDG.PlayMode.Tests
             _mockCardCollectionService = Substitute.For<ICardCollectionService>();
             _mockPlayerStatusProvider = Substitute.For<IPlayerStatusProvider>();
             _mockAudioService = Substitute.For<IAudioService>();
+            _mockAbilityExecutor = Substitute.For<IAbilityExecutor>();
 
             _cardPlacementService = new CardPlacementService(
                 _mockCardCollectionService,
                 _mockPlayerStatusProvider,
-                _mockAudioService);
+                _mockAudioService,
+                _mockAbilityExecutor);
         }
 
         [TearDown]
@@ -205,6 +209,7 @@ namespace JDG.PlayMode.Tests
             var cardCollectionService = Substitute.For<ICardCollectionService>();
             var playerStatusProvider = Substitute.For<IPlayerStatusProvider>();
             var audioService = Substitute.For<IAudioService>();
+            var abilityExecutor = Substitute.For<IAbilityExecutor>();
 
             yield return null;
 
@@ -212,7 +217,8 @@ namespace JDG.PlayMode.Tests
             var service = new CardPlacementService(
                 cardCollectionService,
                 playerStatusProvider,
-                audioService);
+                audioService,
+                abilityExecutor);
 
             // Assert
             Assert.IsNotNull(service);

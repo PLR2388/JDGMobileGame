@@ -96,9 +96,9 @@ public class TurnService : ITurnService
         PlayerCards playerCards,
         PlayerCards opponentCards)
     {
-        var owner = playerCards.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = playerCards.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
 
         foreach (var invocationCard in invocationCards)
@@ -111,7 +111,7 @@ public class TurnService : ITurnService
             // Phase 117: Use modern abilities with OnTurnStart trigger for equipment
             if (invocationCard.EquipmentCard != null)
             {
-                var equipContext = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+                var equipContext = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
                 foreach (var ability in invocationCard.EquipmentCard.ModernEquipmentAbilities)
                 {
@@ -138,14 +138,14 @@ public class TurnService : ITurnService
         PlayerCards opponentCards)
     {
         // Phase 115: Use modern abilities with IPassiveAbility.Trigger check
-        var owner = playerCards.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = playerCards.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
 
         foreach (var effectCard in effectCards)
         {
-            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
             foreach (var ability in effectCard.ModernEffectAbilities)
             {
@@ -170,11 +170,11 @@ public class TurnService : ITurnService
             return;
 
         // Phase 116: Use modern abilities with IPassiveAbility.Trigger check
-        var owner = playerCards.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = playerCards.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
-        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
         foreach (var ability in playerCards.FieldCard.ModernFieldAbilities)
         {

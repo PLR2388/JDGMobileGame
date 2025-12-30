@@ -52,16 +52,21 @@ namespace Services
         /// <summary>
         /// Converts an InGameCard to a domain Card for AbilityContext.
         /// Phase 117: Added for equipment ability context setup.
+        /// Phase 118: Updated to use factory method and public properties only.
         /// </summary>
         private JDG.Domain.Entities.Card ConvertToCard(InGameCard sourceCard)
         {
             if (sourceCard == null) return null;
 
-            // Create a minimal Card entity for context purposes
-            return new JDG.Domain.Entities.Card(
+            // Create a minimal Card entity for context purposes using factory method
+            // We use CreateEffect as it has minimal required parameters
+            return JDG.Domain.Entities.Card.CreateEffect(
+                JDG.Domain.ValueObjects.CardId.New(),
                 sourceCard.Title,
-                sourceCard.Description,
-                (JDG.Domain.Enums.CardType)(int)sourceCard.Type);
+                "", // Description not accessible
+                "", // DetailedDescription not accessible
+                null, // No abilities needed for context
+                sourceCard.Collector);
         }
 
         /// <summary>

@@ -38,6 +38,7 @@ namespace JDG.Domain.Entities
         public bool CancelEffect { get; private set; }
         public bool CanDirectAttack { get; private set; }
         public bool AttackBlocked { get; private set; }
+        public bool CantBeAttacked { get; private set; }
         public int BonusAttacks { get; private set; }
 
         // Equipment Card Properties
@@ -318,6 +319,16 @@ namespace JDG.Domain.Entities
         }
 
         /// <summary>
+        /// Sets whether this card can be attacked by other cards.
+        /// Used by equipment that protects from invocation attacks.
+        /// </summary>
+        public void SetCantBeAttacked(bool cantBeAttacked)
+        {
+            if (Type == CardType.Invocation)
+                CantBeAttacked = cantBeAttacked;
+        }
+
+        /// <summary>
         /// Sets the number of bonus attacks for this card.
         /// </summary>
         public void SetBonusAttacks(int bonus)
@@ -327,12 +338,13 @@ namespace JDG.Domain.Entities
         }
 
         /// <summary>
-        /// Resets turn-based runtime state (attack blocked, bonus attacks).
+        /// Resets turn-based runtime state (attack blocked, bonus attacks, cant be attacked).
         /// Called at start of each turn.
         /// </summary>
         public void ResetTurnState()
         {
             AttackBlocked = false;
+            CantBeAttacked = false;
             BonusAttacks = 0;
         }
 

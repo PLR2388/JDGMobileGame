@@ -257,7 +257,7 @@ public abstract class Ability
             var ownerId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(owner);
             var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
             var opponentId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(opponentOwner);
-            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
             isProtected = equipmentCard.ModernEquipmentAbilities
                 .OfType<JDG.Application.Abilities.IEquipmentAbility>()
@@ -287,7 +287,7 @@ public abstract class Ability
             var ownerId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(owner);
             var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
             var opponentId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(opponentOwner);
-            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
             foreach (var ability in equipmentCard.ModernEquipmentAbilities)
             {

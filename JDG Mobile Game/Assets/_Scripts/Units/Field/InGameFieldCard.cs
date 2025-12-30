@@ -4,7 +4,6 @@ using Cards;
 using Cards.FieldCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
-using DomainFieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
 
 /// <summary>
 /// Represents a card on the field in the game with additional runtime behaviors.
@@ -57,20 +56,11 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
         Family = baseFieldCard.Family;
 
         // Phase 116: Only populate modern abilities (legacy removed)
+        // Phase 118: ScriptableObjects now use domain enums directly, no conversion needed
         ModernFieldAbilities = baseFieldCard.FieldAbilities
-            .Select(name => _abilityProvider.GetModernAbility(ConvertToDomainEnum(name)))
+            .Select(name => _abilityProvider.GetModernAbility(name))
             .Where(ability => ability != null)
             .ToList();
-    }
-
-    /// <summary>
-    /// Converts legacy FieldAbilityName to domain enum.
-    /// Phase 105: Bridge method for enum conversion during migration.
-    /// </summary>
-    private static DomainFieldAbilityName ConvertToDomainEnum(FieldAbilityName legacyName)
-    {
-        // Both enums have identical orderings, so integer cast works
-        return (DomainFieldAbilityName)(int)legacyName;
     }
 
     #region IInGameFieldCard Implementation

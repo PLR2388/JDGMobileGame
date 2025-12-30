@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
-using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 
 namespace Cards.EffectCards
 {
@@ -54,20 +53,11 @@ namespace Cards.EffectCards
             collector = baseEffectCard.Collector;
 
             // Phase 114: Only populate modern abilities (legacy removed)
+            // Phase 118: ScriptableObjects now use domain enums directly, no conversion needed
             ModernEffectAbilities = baseEffectCard.EffectAbilities
-                .Select(name => _abilityProvider.GetModernAbility(ConvertToDomainEnum(name)))
+                .Select(name => _abilityProvider.GetModernAbility(name))
                 .Where(ability => ability != null)
                 .ToList();
-        }
-
-        /// <summary>
-        /// Converts legacy EffectAbilityName to domain enum.
-        /// Phase 105: Bridge method for enum conversion during migration.
-        /// </summary>
-        private static DomainEffectAbilityName ConvertToDomainEnum(EffectAbilityName legacyName)
-        {
-            // Both enums have identical orderings, so integer cast works
-            return (DomainEffectAbilityName)(int)legacyName;
         }
 
         #region IInGameEffectCard Implementation

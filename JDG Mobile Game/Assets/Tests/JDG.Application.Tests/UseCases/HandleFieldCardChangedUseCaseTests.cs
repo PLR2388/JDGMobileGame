@@ -148,6 +148,7 @@ namespace JDG.Application.Tests.UseCases
             }
             public void ExecuteOnEquipmentAttached(IInGameEquipmentCard equipment, IInGameInvocationCard target, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
             public void ExecuteOnEquipmentDetached(IInGameEquipmentCard equipment, IInGameInvocationCard previousTarget, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEffectCardPlayed(IInGameEffectCard effectCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
         }
 
         private class TestFieldCard : IInGameFieldCard
@@ -159,7 +160,7 @@ namespace JDG.Application.Tests.UseCases
             public string Description => "";
             public string DetailedDescription => "";
             public string VisualId => Title;
-            public IReadOnlyList<object> FieldAbilities => new List<object>();
+            public IReadOnlyList<IAbility> FieldAbilities => new List<IAbility>();
 
             public TestFieldCard(string title)
             {

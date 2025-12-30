@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using EffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 
 namespace Cards.EffectCards
 {

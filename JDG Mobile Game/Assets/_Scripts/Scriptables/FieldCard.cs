@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using FieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
 
 namespace Cards.FieldCards
 {

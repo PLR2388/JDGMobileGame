@@ -189,22 +189,22 @@ namespace JDG.Bridge
             return (DomainConditionName)System.Enum.Parse(typeof(DomainConditionName), oldCondition.ToString());
         }
 
-        private static DomainEquipmentAbilityName ConvertEquipmentAbilityName(global::EquipmentAbilityName oldAbility)
+        private static DomainEquipmentAbilityName ConvertEquipmentAbilityName(DomainEquipmentAbilityName ability)
         {
-            // The enums have the same names, so we can parse
-            return (DomainEquipmentAbilityName)System.Enum.Parse(typeof(DomainEquipmentAbilityName), oldAbility.ToString());
+            // Phase 116+: ScriptableObjects now use domain enums directly (no conversion needed)
+            return ability;
         }
 
-        private static DomainFieldAbilityName ConvertFieldAbilityName(global::FieldAbilityName oldAbility)
+        private static DomainFieldAbilityName ConvertFieldAbilityName(DomainFieldAbilityName ability)
         {
-            // The enums have the same names, so we can parse
-            return (DomainFieldAbilityName)System.Enum.Parse(typeof(DomainFieldAbilityName), oldAbility.ToString());
+            // Phase 116+: ScriptableObjects now use domain enums directly (no conversion needed)
+            return ability;
         }
 
-        private static DomainEffectAbilityName ConvertEffectAbilityName(global::EffectAbilityName oldAbility)
+        private static DomainEffectAbilityName ConvertEffectAbilityName(DomainEffectAbilityName ability)
         {
-            // The enums have the same names, so we can parse
-            return (DomainEffectAbilityName)System.Enum.Parse(typeof(DomainEffectAbilityName), oldAbility.ToString());
+            // Phase 116+: ScriptableObjects now use domain enums directly (no conversion needed)
+            return ability;
         }
     }
 }

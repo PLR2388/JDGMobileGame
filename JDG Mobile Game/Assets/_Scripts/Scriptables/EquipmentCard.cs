@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using EquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
 
 namespace Cards.EquipmentCards
 {

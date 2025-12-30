@@ -74,7 +74,7 @@ public class EffectCardHandler : CardHandler
         var ownerId = PlayerId.FromCardOwner(owner);
         var opponentOwner = isPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
-        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
         return effectCard.ModernEffectAbilities.All(ability => ability.CanActivate(context));
     }

@@ -124,11 +124,11 @@ public class CardPlacementService : ICardPlacementService
         currentPlayerCard.HandCards.Remove(card);
 
         // Phase 116: Apply field abilities using modern IAbility
-        var owner = currentPlayerCard.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var owner = currentPlayerCard.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = currentPlayerCard.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentOwner = currentPlayerCard.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
-        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
         foreach (var ability in card.ModernFieldAbilities)
         {

@@ -178,6 +178,7 @@ namespace JDG.Application.Tests.UseCases
             public void ExecuteOnFieldCardChanged(IInGameFieldCard oldFieldCard, IInGameFieldCard newFieldCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
             public void ExecuteOnEquipmentAttached(IInGameEquipmentCard equipment, IInGameInvocationCard target, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
             public void ExecuteOnEquipmentDetached(IInGameEquipmentCard equipment, IInGameInvocationCard previousTarget, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEffectCardPlayed(IInGameEffectCard effectCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
         }
 
         private class TestInvocationCard : IInGameInvocationCard
