@@ -53,7 +53,7 @@ namespace JDG.Application.Abilities
                 return AbilityResult.Failure("Player not found");
             }
 
-            int actualHealed = player.Heal(_healAmount);
+            float actualHealed = player.Heal(_healAmount);
             _playerRepository.SavePlayer(player);
 
             // Publish event

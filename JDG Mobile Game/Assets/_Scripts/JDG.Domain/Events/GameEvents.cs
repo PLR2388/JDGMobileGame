@@ -181,9 +181,9 @@ namespace JDG.Domain.Events
     public struct PlayerHealthChangedEvent
     {
         public CardOwner Player;
-        public int OldHealth;
-        public int NewHealth;
-        public int Delta;
+        public float OldHealth;
+        public float NewHealth;
+        public float Delta;
     }
 
     /// <summary>
@@ -202,9 +202,9 @@ namespace JDG.Domain.Events
     public struct PlayerDamagedEvent
     {
         public CardOwner PlayerId;
-        public int Damage;
-        public int HealthDamage;
-        public int CurrentHealth;
+        public float Damage;
+        public float HealthDamage;
+        public float CurrentHealth;
         public bool IsDefeated;
     }
 
@@ -422,8 +422,8 @@ namespace JDG.Domain.Events
     public struct PlayerHealedEvent
     {
         public CardOwner PlayerId;
-        public int HealAmount;
-        public int NewHP;
+        public float HealAmount;
+        public float NewHP;
     }
 
     // ============================================

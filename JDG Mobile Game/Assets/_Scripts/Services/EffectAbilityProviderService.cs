@@ -16,7 +16,7 @@ using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 public class EffectAbilityProviderService : IEffectAbilityProvider
 {
     private readonly Dictionary<EffectAbilityName, EffectAbility> _abilityDictionary;
-    private readonly Dictionary<DomainEffectAbilityName, IAbility> _modernAbilityDictionary;
+    private Dictionary<DomainEffectAbilityName, IAbility> _modernAbilityDictionary;
     private readonly EffectAbilityFactory _factory;
 
     /// <summary>

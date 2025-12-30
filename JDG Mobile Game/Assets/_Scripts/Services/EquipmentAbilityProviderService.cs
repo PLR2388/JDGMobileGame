@@ -15,7 +15,7 @@ using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
 public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
 {
     private readonly Dictionary<EquipmentAbilityName, EquipmentAbility> _abilityDictionary;
-    private readonly Dictionary<DomainEquipmentAbilityName, IAbility> _modernAbilityDictionary;
+    private Dictionary<DomainEquipmentAbilityName, IAbility> _modernAbilityDictionary;
     private readonly EquipmentAbilityFactory _factory;
 
     /// <summary>

@@ -17,7 +17,7 @@ using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 public class FieldAbilityProviderService : IFieldAbilityProvider
 {
     private readonly Dictionary<FieldAbilityName, FieldAbility> _abilityDictionary;
-    private readonly Dictionary<DomainFieldAbilityName, IAbility> _modernAbilityDictionary;
+    private Dictionary<DomainFieldAbilityName, IAbility> _modernAbilityDictionary;
     private readonly FieldAbilityFactory _factory;
 
     /// <summary>

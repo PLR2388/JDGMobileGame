@@ -184,11 +184,11 @@ namespace JDG.Infrastructure.Tests.Integration
             var player = _playerRepository.CreatePlayer(PlayerId.Player1, new[] { card.Id }, maxHealth: 30);
             Assert.IsNotNull(player, "Player should be created");
 
-            int initialHealth = player.Health;
+            float initialHealth = player.Health;
 
             // Act: Direct damage through domain entity
-            int damage = 10;
-            int actualDamage = player.TakeDamage(damage);
+            float damage = 10;
+            float actualDamage = player.TakeDamage(damage);
             _playerRepository.SavePlayer(player);
 
             // Assert
@@ -255,7 +255,7 @@ namespace JDG.Infrastructure.Tests.Integration
 
             // Act: Direct attack on Player 2
             var player2Before = _playerRepository.GetPlayer(PlayerId.Player2);
-            int healthBefore = player2Before.Health;
+            float healthBefore = player2Before.Health;
 
             var result = attackUseCase.ExecuteDirectAttack(PlayerId.Player1, cardToPlay.Id, PlayerId.Player2);
 

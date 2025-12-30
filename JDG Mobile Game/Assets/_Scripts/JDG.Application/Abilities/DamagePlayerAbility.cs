@@ -58,7 +58,7 @@ namespace JDG.Application.Abilities
             }
 
             // Deal damage (shields absorb damage first, then HP)
-            int healthDamage = player.TakeDamage(_damageAmount);
+            float healthDamage = player.TakeDamage(_damageAmount);
             _playerRepository.SavePlayer(player);
 
             // Publish event

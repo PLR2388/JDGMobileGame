@@ -109,7 +109,7 @@ namespace JDG.Application.UseCases
                 return AttackResult.Failure("Invalid attacker card");
 
             var damage = attackerCard.Stats.Value.Attack;
-            var healthDamage = defender.TakeDamage(damage);
+            float healthDamage = defender.TakeDamage(damage);
 
             _playerRepository.SavePlayer(defender);
 
@@ -136,7 +136,7 @@ namespace JDG.Application.UseCases
         public bool DefenderDestroyed { get; private set; }
         public bool AttackerDestroyed { get; private set; }
         public bool IsDirectAttack { get; private set; }
-        public int HealthDamage { get; private set; }
+        public float HealthDamage { get; private set; }
         public bool PlayerDefeated { get; private set; }
         public string Message { get; private set; }
 
@@ -150,7 +150,7 @@ namespace JDG.Application.UseCases
             Message = "Attack executed successfully"
         };
 
-        public static AttackResult DirectAttackSuccess(int damage, int healthDamage, bool playerDefeated) => new AttackResult
+        public static AttackResult DirectAttackSuccess(int damage, float healthDamage, bool playerDefeated) => new AttackResult
         {
             IsSuccess = true,
             Damage = damage,

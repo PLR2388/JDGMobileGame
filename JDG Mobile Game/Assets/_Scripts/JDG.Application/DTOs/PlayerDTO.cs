@@ -12,8 +12,8 @@ namespace JDG.Application.DTOs
     public class PlayerDTO
     {
         public int PlayerId { get; set; }
-        public int Health { get; set; }
-        public int MaxHealth { get; set; }
+        public float Health { get; set; }
+        public float MaxHealth { get; set; }
         public int Shields { get; set; }
         public bool BlockAttack { get; set; }
         public int DeckCount { get; set; }
