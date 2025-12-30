@@ -126,6 +126,30 @@ namespace JDG.Application.Abilities
         OnTurnEnd,          // At end of turn
         OnCardDrawn,        // When a card is drawn
         OnCardPlayed,       // When a card is played
-        Continuous          // Always active while card is on field
+        Continuous,         // Always active while card is on field
+        // Phase 117: Equipment-specific triggers
+        OnEquip,            // When equipment is attached to a card
+        OnUnequip,          // When equipment is detached from a card
+        OnHandChange        // When hand card count changes
+    }
+
+    /// <summary>
+    /// Interface for equipment-specific abilities.
+    /// Phase 117: Added to support equipment lifecycle methods.
+    /// </summary>
+    public interface IEquipmentAbility : IAbility
+    {
+        /// <summary>
+        /// Whether this equipment can always be placed, even on cards that already have equipment.
+        /// </summary>
+        bool CanAlwaysBePlaced { get; }
+
+        /// <summary>
+        /// Called before the equipped invocation is destroyed.
+        /// Return false to prevent destruction (equipment is destroyed instead).
+        /// </summary>
+        /// <param name="context">The ability context.</param>
+        /// <returns>True to allow destruction, false to prevent it.</returns>
+        bool OnPreDestroy(AbilityContext context);
     }
 }

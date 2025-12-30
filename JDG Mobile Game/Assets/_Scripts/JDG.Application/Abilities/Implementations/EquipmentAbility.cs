@@ -4,16 +4,38 @@ using JDG.Application.Repositories;
 namespace JDG.Application.Abilities.Implementations
 {
     /// <summary>
+    /// Base class for equipment abilities with common IEquipmentAbility implementation.
+    /// Phase 117: Added to provide default implementation for equipment abilities.
+    /// </summary>
+    public abstract class BaseEquipmentAbility : IEquipmentAbility, IPassiveAbility
+    {
+        public abstract AbilityName Name { get; }
+        public abstract string Description { get; }
+        public virtual bool CanAlwaysBePlaced => false;
+        public virtual AbilityTrigger Trigger => AbilityTrigger.OnEquip;
+
+        public abstract bool CanActivate(AbilityContext context);
+        public abstract AbilityResult Execute(AbilityContext context);
+
+        /// <summary>
+        /// Default implementation allows destruction.
+        /// Override to prevent destruction (e.g., protection abilities).
+        /// </summary>
+        public virtual bool OnPreDestroy(AbilityContext context) => true;
+    }
+
+    /// <summary>
     /// Equipment ability that sets specific ATK/DEF values.
     /// Migrated from SetAtkDefAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility.
     /// </summary>
-    public class SetStatsEquipmentAbility : IAbility
+    public class SetStatsEquipmentAbility : BaseEquipmentAbility
     {
         private readonly int _attack;
         private readonly int _defense;
 
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
 
         public SetStatsEquipmentAbility(int attack, int defense)
         {
@@ -23,12 +45,12 @@ namespace JDG.Application.Abilities.Implementations
             Description = $"Set ATK/DEF to {attack}/{defense}";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             if (context.TargetCard == null)
                 return AbilityResult.Failure("No target card");
@@ -41,14 +63,15 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that adds ATK/DEF bonuses.
     /// Migrated from EarnAtkDefAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility.
     /// </summary>
-    public class BonusStatsEquipmentAbility : IAbility
+    public class BonusStatsEquipmentAbility : BaseEquipmentAbility
     {
         private readonly int _attackBonus;
         private readonly int _defenseBonus;
 
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
 
         public BonusStatsEquipmentAbility(int attackBonus, int defenseBonus)
         {
@@ -58,12 +81,12 @@ namespace JDG.Application.Abilities.Implementations
             Description = $"+{attackBonus} ATK / +{defenseBonus} DEF";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             if (context.TargetCard == null)
                 return AbilityResult.Failure("No target card");
@@ -76,14 +99,15 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that multiplies ATK/DEF.
     /// Migrated from MultiplyAtkDefAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility.
     /// </summary>
-    public class MultiplyStatsEquipmentAbility : IAbility
+    public class MultiplyStatsEquipmentAbility : BaseEquipmentAbility
     {
         private readonly float _attackMultiplier;
         private readonly float _defenseMultiplier;
 
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
 
         public MultiplyStatsEquipmentAbility(float attackMultiplier, float defenseMultiplier)
         {
@@ -93,12 +117,12 @@ namespace JDG.Application.Abilities.Implementations
             Description = $"Multiply ATK by {attackMultiplier}x, DEF by {defenseMultiplier}x";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             if (context.TargetCard == null || !context.TargetCard.Stats.HasValue)
                 return AbilityResult.Failure("No target card or invalid stats");
@@ -114,11 +138,12 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that protects from destruction.
     /// Migrated from ProtectFromDestructionAbility, CantBeAttackDestroyByInvocationAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility with OnPreDestroy override.
     /// </summary>
-    public class ProtectFromDestructionEquipmentAbility : IAbility
+    public class ProtectFromDestructionEquipmentAbility : BaseEquipmentAbility
     {
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
 
         public ProtectFromDestructionEquipmentAbility()
         {
@@ -126,26 +151,33 @@ namespace JDG.Application.Abilities.Implementations
             Description = "Protects from destruction";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             // This is a passive protection - marks card as protected
             return AbilityResult.Success("Card protected from destruction");
         }
+
+        /// <summary>
+        /// Prevents destruction by returning false.
+        /// Equipment will be destroyed instead.
+        /// </summary>
+        public override bool OnPreDestroy(AbilityContext context) => false;
     }
 
     /// <summary>
     /// Equipment ability that cancels invocation abilities.
     /// Migrated from CancelInvocationAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility.
     /// </summary>
-    public class CancelAbilitiesEquipmentAbility : IAbility
+    public class CancelAbilitiesEquipmentAbility : BaseEquipmentAbility
     {
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
 
         public CancelAbilitiesEquipmentAbility()
         {
@@ -153,12 +185,12 @@ namespace JDG.Application.Abilities.Implementations
             Description = "Cancel equipped card's abilities";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             if (context.TargetCard == null)
                 return AbilityResult.Failure("No target card");
@@ -172,13 +204,15 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that switches equipment to another card.
     /// Migrated from SwitchEquipmentCardAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility with CanAlwaysBePlaced = true.
     /// </summary>
-    public class SwitchEquipmentAbility : IAbility
+    public class SwitchEquipmentAbility : BaseEquipmentAbility
     {
         private readonly IPlayerRepository _playerRepository;
 
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
+        public override bool CanAlwaysBePlaced => true;
 
         public SwitchEquipmentAbility(IPlayerRepository playerRepository)
         {
@@ -187,12 +221,12 @@ namespace JDG.Application.Abilities.Implementations
             Description = "Can be equipped to multiple cards";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return true; // Can always be placed on any card
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             return AbilityResult.Success("Equipment can be switched");
         }
@@ -201,11 +235,13 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that prevents attacking newly summoned opponent invocations.
     /// Migrated from PreventAttackNewOpponentInvocationAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility with OnCardPlayed trigger.
     /// </summary>
-    public class PreventAttackNewCardsEquipmentAbility : IAbility
+    public class PreventAttackNewCardsEquipmentAbility : BaseEquipmentAbility
     {
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
+        public override AbilityTrigger Trigger => AbilityTrigger.OnCardPlayed;
 
         public PreventAttackNewCardsEquipmentAbility()
         {
@@ -213,14 +249,18 @@ namespace JDG.Application.Abilities.Implementations
             Description = "Cannot attack newly summoned opponent cards";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
-            // Passive restriction ability
+            // Passive restriction - block attack on newly summoned cards
+            if (context.TargetCard != null)
+            {
+                context.TargetCard.BlockAttack();
+            }
             return AbilityResult.Success("Attack restriction applied");
         }
     }
@@ -228,11 +268,12 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that enables direct attack.
     /// Migrated from DirectAttackAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility.
     /// </summary>
-    public class DirectAttackEquipmentAbility : IAbility
+    public class DirectAttackEquipmentAbility : BaseEquipmentAbility
     {
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
 
         public DirectAttackEquipmentAbility()
         {
@@ -240,12 +281,12 @@ namespace JDG.Application.Abilities.Implementations
             Description = "Equipped card can attack player directly";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             if (context.TargetCard == null)
                 return AbilityResult.Failure("No target card");
@@ -258,15 +299,17 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that provides stats based on hand card count.
     /// Migrated from EarnAtkDefAbility with hand-based calculation.
+    /// Phase 117: Updated to extend BaseEquipmentAbility with OnHandChange trigger.
     /// </summary>
-    public class HandBasedStatsEquipmentAbility : IAbility
+    public class HandBasedStatsEquipmentAbility : BaseEquipmentAbility
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly float _attackPerCard;
         private readonly float _defensePerCard;
 
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
+        public override AbilityTrigger Trigger => AbilityTrigger.OnHandChange;
 
         public HandBasedStatsEquipmentAbility(
             IPlayerRepository playerRepository,
@@ -280,12 +323,12 @@ namespace JDG.Application.Abilities.Implementations
             Description = $"+{attackPerCard} ATK / +{defensePerCard} DEF per hand card";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
             if (context.TargetCard == null)
                 return AbilityResult.Failure("No target card");
@@ -306,11 +349,12 @@ namespace JDG.Application.Abilities.Implementations
     /// <summary>
     /// Equipment ability that prevents being attacked by other invocations.
     /// Migrated from CantBeAttackDestroyByInvocationAbility.
+    /// Phase 117: Updated to extend BaseEquipmentAbility with OnPreDestroy override.
     /// </summary>
-    public class CantBeAttackedEquipmentAbility : IAbility
+    public class CantBeAttackedEquipmentAbility : BaseEquipmentAbility
     {
-        public AbilityName Name { get; }
-        public string Description { get; }
+        public override AbilityName Name { get; }
+        public override string Description { get; }
 
         public CantBeAttackedEquipmentAbility()
         {
@@ -318,16 +362,25 @@ namespace JDG.Application.Abilities.Implementations
             Description = "Cannot be attacked by other invocations";
         }
 
-        public bool CanActivate(AbilityContext context)
+        public override bool CanActivate(AbilityContext context)
         {
             return context.TargetCard != null;
         }
 
-        public AbilityResult Execute(AbilityContext context)
+        public override AbilityResult Execute(AbilityContext context)
         {
-            // Passive protection - card marked as untargetable
+            // Mark card as untargetable by invocations
+            if (context.TargetCard != null)
+            {
+                context.TargetCard.SetCantBeAttacked(true);
+            }
             return AbilityResult.Success("Card cannot be attacked by invocations");
         }
+
+        /// <summary>
+        /// Prevents destruction by invocations.
+        /// </summary>
+        public override bool OnPreDestroy(AbilityContext context) => false;
     }
 
     /// <summary>

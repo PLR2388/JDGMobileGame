@@ -96,6 +96,11 @@ public class TurnService : ITurnService
         PlayerCards playerCards,
         PlayerCards opponentCards)
     {
+        var owner = playerCards.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = playerCards.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+
         foreach (var invocationCard in invocationCards)
         {
             foreach (var ability in invocationCard.Abilities)
@@ -103,11 +108,20 @@ public class TurnService : ITurnService
                 ability.OnTurnStart(_canvas, playerCards, opponentCards);
             }
 
+            // Phase 117: Use modern abilities with OnTurnStart trigger for equipment
             if (invocationCard.EquipmentCard != null)
             {
-                foreach (var equipmentAbility in invocationCard.EquipmentCard.EquipmentAbilities)
+                var equipContext = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+                foreach (var ability in invocationCard.EquipmentCard.ModernEquipmentAbilities)
                 {
-                    equipmentAbility.OnTurnStart(invocationCard);
+                    if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
+                    {
+                        if (ability.CanActivate(equipContext))
+                        {
+                            ability.Execute(equipContext);
+                        }
+                    }
                 }
             }
         }

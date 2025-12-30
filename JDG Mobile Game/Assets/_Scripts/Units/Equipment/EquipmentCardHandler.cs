@@ -38,6 +38,7 @@ public class EquipmentCardHandler : CardHandler
 
     /// <summary>
     /// Handles the card's behavior and updates the UI elements associated with an equipment card.
+    /// Phase 117: Uses CanAlwaysBePlaced property instead of iterating legacy abilities.
     /// </summary>
     /// <param name="card">The in-game card to be handled.</param>
     public override void HandleCard(InGameCard card)
@@ -47,12 +48,13 @@ public class EquipmentCardHandler : CardHandler
         var opponentPlayerCard = cardCollectionService.GetOpponentPlayerCards();
         menuScript.putCardButtonText.SetText(localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_EQUIP_INVOCATION));
         var equipmentCard = card as InGameEquipmentCard;
+        // Phase 117: Use CanAlwaysBePlaced property instead of legacy ability iteration
         menuScript.putCardButton.interactable =
             playerCard.InvocationCards.Count(inGameInvocationCard =>
                 inGameInvocationCard.EquipmentCard == null) > 0 ||
             opponentPlayerCard.InvocationCards.Count(inGameInvocationCard =>
                 inGameInvocationCard.EquipmentCard == null) > 0 ||
-            equipmentCard?.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut) == true
+            equipmentCard?.CanAlwaysBePlaced == true
             ;
     }
 

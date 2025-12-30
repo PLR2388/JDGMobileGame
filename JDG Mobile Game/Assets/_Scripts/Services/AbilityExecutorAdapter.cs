@@ -50,6 +50,21 @@ namespace Services
         }
 
         /// <summary>
+        /// Converts an InGameCard to a domain Card for AbilityContext.
+        /// Phase 117: Added for equipment ability context setup.
+        /// </summary>
+        private JDG.Domain.Entities.Card ConvertToCard(InGameCard sourceCard)
+        {
+            if (sourceCard == null) return null;
+
+            // Create a minimal Card entity for context purposes
+            return new JDG.Domain.Entities.Card(
+                sourceCard.Title,
+                sourceCard.Description,
+                (JDG.Domain.Enums.CardType)(int)sourceCard.Type);
+        }
+
+        /// <summary>
         /// Executes modern abilities that match the specified trigger.
         /// Phase 106: Enables parallel execution of modern abilities alongside legacy.
         /// </summary>
@@ -117,18 +132,14 @@ namespace Services
                 opponentCards is PlayerCards concreteOpponent)
             {
                 // 1. Trigger opponent's equipment abilities that react to new cards
+                // Phase 117: Uses only modern abilities with OnCardPlayed trigger
                 foreach (var opponentCard in concreteOpponent.InvocationCards)
                 {
                     var equipmentCard = opponentCard.EquipmentCard;
                     if (equipmentCard == null) continue;
 
-                    foreach (var equipmentAbility in equipmentCard.EquipmentAbilities)
-                    {
-                        equipmentAbility.OnOpponentInvocationCardAdded(concreteAdded);
-                    }
-
-                    // Phase 106: Modern equipment abilities
                     var equipContext = CreateAbilityContext(equipmentCard, opponentCard.CardOwner);
+                    equipContext.TargetCard = ConvertToCard(concreteAdded);
                     ExecuteModernAbilities(equipmentCard.ModernEquipmentAbilities, AbilityTrigger.OnCardPlayed, equipContext);
                 }
 
@@ -323,19 +334,15 @@ namespace Services
         {
             if (playerCards is PlayerCards concretePlayer)
             {
-                int delta = newCount - oldCount;
-
-                // Trigger equipment abilities that react to hand changes
-                // EquipmentAbility.OnHandCardsChange signature: (InGameInvocationCard invocationCard, PlayerCards playerCards, int delta)
+                // Phase 117: Uses only modern abilities with OnHandChange trigger
                 foreach (var invocation in concretePlayer.InvocationCards)
                 {
                     if (invocation is InGameInvocationCard invocationCard &&
                         invocationCard.EquipmentCard != null)
                     {
-                        foreach (var ability in invocationCard.EquipmentCard.EquipmentAbilities)
-                        {
-                            ability.OnHandCardsChange(invocationCard, concretePlayer, delta);
-                        }
+                        var context = CreateAbilityContext(invocationCard.EquipmentCard, invocationCard.CardOwner);
+                        context.TargetCard = ConvertToCard(invocationCard);
+                        ExecuteModernAbilities(invocationCard.EquipmentCard.ModernEquipmentAbilities, AbilityTrigger.OnHandChange, context);
                     }
                 }
             }
@@ -352,15 +359,12 @@ namespace Services
             IPlayerCardCollection opponentCards)
         {
             if (equipment is InGameEquipmentCard concreteEquipment &&
-                target is InGameInvocationCard concreteTarget &&
-                ownerCards is PlayerCards concreteOwner &&
-                opponentCards is PlayerCards concreteOpponent)
+                target is InGameInvocationCard concreteTarget)
             {
-                // EquipmentAbility.ApplyEffect signature: (InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
-                foreach (var ability in concreteEquipment.EquipmentAbilities)
-                {
-                    ability.ApplyEffect(concreteTarget, concreteOwner, concreteOpponent);
-                }
+                // Phase 117: Uses modern abilities with OnEquip trigger
+                var context = CreateAbilityContext(concreteEquipment, concreteTarget.CardOwner);
+                context.TargetCard = ConvertToCard(concreteTarget);
+                ExecuteModernAbilities(concreteEquipment.ModernEquipmentAbilities, AbilityTrigger.OnEquip, context);
             }
         }
 
@@ -371,15 +375,12 @@ namespace Services
             IPlayerCardCollection opponentCards)
         {
             if (equipment is InGameEquipmentCard concreteEquipment &&
-                previousTarget is InGameInvocationCard concreteTarget &&
-                ownerCards is PlayerCards concreteOwner &&
-                opponentCards is PlayerCards concreteOpponent)
+                previousTarget is InGameInvocationCard concreteTarget)
             {
-                // EquipmentAbility.RemoveEffect signature: (InGameInvocationCard invocationCard, PlayerCards playerCards, PlayerCards opponentPlayerCards)
-                foreach (var ability in concreteEquipment.EquipmentAbilities)
-                {
-                    ability.RemoveEffect(concreteTarget, concreteOwner, concreteOpponent);
-                }
+                // Phase 117: Uses modern abilities with OnUnequip trigger
+                var context = CreateAbilityContext(concreteEquipment, concreteTarget.CardOwner);
+                context.TargetCard = ConvertToCard(concreteTarget);
+                ExecuteModernAbilities(concreteEquipment.ModernEquipmentAbilities, AbilityTrigger.OnUnequip, context);
             }
         }
 

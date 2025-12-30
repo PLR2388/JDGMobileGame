@@ -5,20 +5,13 @@ using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
 /// Provides equipment abilities by name for InGameEquipmentCard.
 /// Phase 48: Abstracts EquipmentAbilityLibrary.Instance access for DI.
 /// Phase 103: Added GetModernAbility for IAbility migration.
+/// Phase 117: Removed legacy GetAbility method - now uses only modern IAbility.
 /// </summary>
 public interface IEquipmentAbilityProvider
 {
     /// <summary>
-    /// Gets a legacy equipment ability by its name.
-    /// Phase 103: Marked for deprecation - use GetModernAbility instead.
-    /// </summary>
-    /// <param name="abilityName">The ability name to look up.</param>
-    /// <returns>The equipment ability, or null if not found.</returns>
-    EquipmentAbility GetAbility(EquipmentAbilityName abilityName);
-
-    /// <summary>
     /// Gets a modern IAbility implementation by equipment ability name.
-    /// Phase 103: New method for clean architecture migration.
+    /// Phase 117: Now the primary (and only) lookup method.
     /// </summary>
     /// <param name="abilityName">The domain ability name to look up.</param>
     /// <returns>The modern ability, or null if not found.</returns>
@@ -29,5 +22,5 @@ public interface IEquipmentAbilityProvider
     /// </summary>
     /// <param name="abilityName">The ability name to check.</param>
     /// <returns>True if the ability exists.</returns>
-    bool HasAbility(EquipmentAbilityName abilityName);
+    bool HasAbility(DomainEquipmentAbilityName abilityName);
 }

@@ -239,8 +239,9 @@ public abstract class Ability
     }
 
     /// <summary>
-    /// Determines if the given invocation card is protected by an equipment card. Protection is based on 
+    /// Determines if the given invocation card is protected by an equipment card. Protection is based on
     /// any associated equipment ability that prevents the card's destruction.
+    /// Phase 117: Updated to use IEquipmentAbility.OnPreDestroy.
     /// </summary>
     /// <param name="attacker">The invocation card to check for protection.</param>
     /// <param name="playerCards">The cards of the associated player.</param>
@@ -251,7 +252,16 @@ public abstract class Ability
         var isProtected = false;
         if (equipmentCard != null)
         {
-            isProtected = equipmentCard.EquipmentAbilities.Any(ability => ability.OnInvocationPreDestroy(attacker, playerCards) == false);
+            // Phase 117: Use IEquipmentAbility.OnPreDestroy for protection check
+            var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+            var ownerId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(owner);
+            var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+            var opponentId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(opponentOwner);
+            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+            isProtected = equipmentCard.ModernEquipmentAbilities
+                .OfType<JDG.Application.Abilities.IEquipmentAbility>()
+                .Any(ability => !ability.OnPreDestroy(context));
         }
 
         return isProtected;
@@ -259,6 +269,7 @@ public abstract class Ability
 
     /// <summary>
     /// Executes actions associated with the death of a card that has a particular ability.
+    /// Phase 117: Equipment removal now uses modern abilities via OnUnequip trigger.
     /// </summary>
     /// <param name="canvas">The current game canvas.</param>
     /// <param name="deadCard">The card that died.</param>
@@ -271,10 +282,25 @@ public abstract class Ability
         var equipmentCard = deadCard.EquipmentCard;
         if (equipmentCard != null)
         {
-            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+            // Phase 117: Execute modern abilities with OnUnequip trigger
+            var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+            var ownerId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(owner);
+            var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+            var opponentId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(opponentOwner);
+            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+            foreach (var ability in equipmentCard.ModernEquipmentAbilities)
             {
-                equipmentCardEquipmentAbility.RemoveEffect(deadCard, playerCards, opponentPlayerCards);
+                if (ability is JDG.Application.Abilities.IPassiveAbility passiveAbility &&
+                    passiveAbility.Trigger == JDG.Application.Abilities.AbilityTrigger.OnUnequip)
+                {
+                    if (ability.CanActivate(context))
+                    {
+                        ability.Execute(context);
+                    }
+                }
             }
+
             playerCards.YellowCards.Add(equipmentCard);
             deadCard.EquipmentCard = null;
         }

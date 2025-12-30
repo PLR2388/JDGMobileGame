@@ -10,6 +10,7 @@ using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
 /// Represents an in-game version of an equipment card with its abilities.
 /// Phase 49: Implements IInGameEquipmentCard for complete abstraction.
 /// Phase 105: Added ModernEquipmentAbilities for IAbility migration.
+/// Phase 117: Removed legacy EquipmentAbilities - now uses only ModernEquipmentAbilities.
 /// </summary>
 public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
 {
@@ -17,14 +18,8 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
     private readonly IEquipmentAbilityProvider _abilityProvider;
 
     /// <summary>
-    /// List of legacy abilities associated with the equipment card.
-    /// Phase 105: Marked for deprecation - use ModernEquipmentAbilities instead.
-    /// </summary>
-    public List<EquipmentAbility> EquipmentAbilities = new List<EquipmentAbility>();
-
-    /// <summary>
     /// List of modern IAbility implementations for this card.
-    /// Phase 105: New property for clean architecture migration.
+    /// Phase 117: Now the primary (and only) ability storage.
     /// </summary>
     public List<IAbility> ModernEquipmentAbilities { get; private set; } = new List<IAbility>();
 
@@ -46,7 +41,7 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
 
     /// <summary>
     /// Resets the in-game equipment card's details to match its base equipment card.
-    /// Phase 105: Now populates both legacy and modern ability lists.
+    /// Phase 117: Now populates only modern ability list.
     /// </summary>
     private void Reset()
     {
@@ -58,14 +53,7 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
         materialCard = baseEquipmentCard.MaterialCard;
         collector = baseEquipmentCard.Collector;
 
-        // Phase 61: Use injected provider (fallback removed)
-        // Legacy abilities (for backward compatibility)
-        EquipmentAbilities = baseEquipmentCard.EquipmentAbilities
-            .Select(name => _abilityProvider.GetAbility(name))
-            .Where(ability => ability != null)
-            .ToList();
-
-        // Phase 105: Populate modern abilities
+        // Phase 117: Populate only modern abilities
         ModernEquipmentAbilities = baseEquipmentCard.EquipmentAbilities
             .Select(name => _abilityProvider.GetModernAbility(ConvertToDomainEnum(name)))
             .Where(ability => ability != null)
@@ -85,11 +73,18 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
     #region IInGameEquipmentCard Implementation
 
     /// <summary>
-    /// Gets the equipment abilities as a read-only list of objects.
-    /// Phase 49: Explicit implementation for IInGameEquipmentCard interface.
+    /// Gets the equipment abilities as a read-only list.
+    /// Phase 117: Now returns ModernEquipmentAbilities directly.
     /// </summary>
-    IReadOnlyList<object> IInGameEquipmentCard.EquipmentAbilities =>
-        EquipmentAbilities.Cast<object>().ToList().AsReadOnly();
+    IReadOnlyList<IAbility> IInGameEquipmentCard.EquipmentAbilities =>
+        ModernEquipmentAbilities.AsReadOnly();
+
+    /// <summary>
+    /// Whether this equipment can be placed on cards that already have equipment.
+    /// Phase 117: Checks if any ability has CanAlwaysBePlaced = true.
+    /// </summary>
+    public bool CanAlwaysBePlaced =>
+        ModernEquipmentAbilities.OfType<IEquipmentAbility>().Any(a => a.CanAlwaysBePlaced);
 
     #endregion
 }

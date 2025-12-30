@@ -232,14 +232,20 @@ namespace OnePlayer
 
             invocationCard?.SetEquipmentCard(equipmentCard);
             playerCards.HandCards.Remove(equipmentCard);
-            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
+
+            // Phase 117: Use modern abilities with OnEquip trigger
+            var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+            var ownerId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(owner);
+            var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+            var opponentId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(opponentOwner);
+            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+            foreach (var ability in equipmentCard.ModernEquipmentAbilities)
             {
-                // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
-                equipmentCardEquipmentAbility.ApplyEffect(
-                    invocationCard,
-                    playerCards,
-                    _cardCollectionService.GetOpponentPlayerCards()
-                );
+                if (ability.CanActivate(context))
+                {
+                    ability.Execute(context);
+                }
             }
         }
         

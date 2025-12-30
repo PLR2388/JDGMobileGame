@@ -147,6 +147,7 @@ public class CardPlacementService : ICardPlacementService
 
     /// <summary>
     /// Checks if an equipment card can be placed and returns valid targets.
+    /// Phase 117: Uses CanAlwaysBePlaced property instead of iterating legacy abilities.
     /// </summary>
     /// <param name="card">The equipment card to check.</param>
     /// <returns>List of valid invocation targets for the equipment.</returns>
@@ -163,12 +164,12 @@ public class CardPlacementService : ICardPlacementService
         var opponentInvocationCards = opponentPlayerCards.InvocationCards;
         var allInvocationCards = currentInvocationCards.Concat(opponentInvocationCards);
 
-        // Check if equipment has "CanAlwaysBePut" ability
-        var canAlwaysBePut = card.EquipmentAbilities.Any(ability => ability.CanAlwaysBePut);
+        // Phase 117: Use CanAlwaysBePlaced property instead of legacy ability iteration
+        var canAlwaysBePlaced = card.CanAlwaysBePlaced;
 
-        // Filter valid targets: all cards if CanAlwaysBePut, otherwise only cards without equipment
+        // Filter valid targets: all cards if CanAlwaysBePlaced, otherwise only cards without equipment
         var validTargets = allInvocationCards
-            .Where(invocationCard => canAlwaysBePut || invocationCard.EquipmentCard == null)
+            .Where(invocationCard => canAlwaysBePlaced || invocationCard.EquipmentCard == null)
             .Cast<InGameCard>()
             .ToList();
 
@@ -177,10 +178,11 @@ public class CardPlacementService : ICardPlacementService
 
     /// <summary>
     /// Places an equipment card on a target invocation.
+    /// Phase 117: Uses IAbilityExecutor for modern equipment ability execution.
     /// </summary>
     /// <param name="equipment">The equipment card to place.</param>
     /// <param name="target">The target invocation card.</param>
-    /// <param name="canvas">Canvas for UI operations (passed to abilities).</param>
+    /// <param name="canvas">Canvas for UI operations (no longer needed, kept for API compatibility).</param>
     /// <returns>True if placement was successful, false if equipment or target is null.</returns>
     public bool PlaceEquipmentCard(InGameEquipmentCard equipment, InGameInvocationCard target, Transform canvas)
     {
@@ -190,11 +192,8 @@ public class CardPlacementService : ICardPlacementService
         var currentPlayerCards = _cardCollectionService.GetCurrentPlayerCards();
         var opponentPlayerCards = _cardCollectionService.GetOpponentPlayerCards();
 
-        // Apply equipment abilities
-        foreach (var equipmentAbility in equipment.EquipmentAbilities)
-        {
-            equipmentAbility.ApplyEffect(target, currentPlayerCards, opponentPlayerCards);
-        }
+        // Phase 117: Execute equipment abilities through IAbilityExecutor
+        _abilityExecutor.ExecuteOnEquipmentAttached(equipment, target, currentPlayerCards, opponentPlayerCards);
 
         // Set equipment on invocation and remove from hand
         target.SetEquipmentCard(equipment);
