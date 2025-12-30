@@ -50,6 +50,9 @@ public abstract class Singleton<T> : StaticInstance<T> where T : MonoBehaviour {
 public abstract class PersistentSingleton<T> : Singleton<T> where T : MonoBehaviour {
     protected override void Awake() {
         base.Awake();
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad only works on root GameObjects.
+        // If this object has a parent, we need to call it on the root.
+        var root = transform.root.gameObject;
+        DontDestroyOnLoad(root);
     }
 }

@@ -83,10 +83,46 @@ namespace JDG.DI
             // Critical: Without this injection, BuildTutorialDecks() is never called when clicking Tutorial button
             builder.RegisterComponentInHierarchy<SceneLoader>();
 
-            // Phase 84 Fix: MainMenuAction needs IAudioService injection for music playback
+            // MainMenuAction - needs IAudioService injection for music playback
+            // Note: Using RegisterComponentInHierarchy alone doesn't guarantee injection
+            // We need explicit injection in RegisterBuildCallback (like GameSceneScope pattern)
             builder.RegisterComponentInHierarchy<MainMenuAction>();
 
+            // Phase 84 Fix: Manual injection for scene MonoBehaviours (same pattern as GameSceneScope)
+            builder.RegisterBuildCallback(container =>
+            {
+                UnityEngine.Debug.Log("MainScreenScope: Injecting dependencies into scene MonoBehaviours...");
+                InjectAllOfType<MainMenuAction>(container);
+                InjectAllOfType<SceneLoader>(container);
+                UnityEngine.Debug.Log("MainScreenScope: Injection complete");
+            });
+
             UnityEngine.Debug.Log("MainScreenScope: Configuration complete");
+        }
+
+        /// <summary>
+        /// Helper method to inject dependencies into all instances of a component type.
+        /// Same pattern as GameSceneScope.InjectAllOfType.
+        /// </summary>
+        private void InjectAllOfType<T>(VContainer.IObjectResolver container) where T : Component
+        {
+            // Include inactive GameObjects to ensure components on disabled parents get injected
+            var components = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var c in components)
+            {
+                try
+                {
+                    container.Inject(c);
+                }
+                catch (System.Exception ex)
+                {
+                    UnityEngine.Debug.LogError($"MainScreenScope: Failed to inject {typeof(T).Name}: {ex.Message}");
+                }
+            }
+            if (components.Length > 0)
+                UnityEngine.Debug.Log($"MainScreenScope: Injected {components.Length} {typeof(T).Name}");
+            else
+                UnityEngine.Debug.LogWarning($"MainScreenScope: No {typeof(T).Name} found in scene!");
         }
     }
 }
