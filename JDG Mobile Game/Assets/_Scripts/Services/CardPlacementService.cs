@@ -7,6 +7,8 @@ using Cards.EquipmentCards;
 using Cards.FieldCards;
 using JDG.Application.Abilities;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.ValueObjects;
 using UnityEngine;
 
 /// <summary>
@@ -16,6 +18,7 @@ using UnityEngine;
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 37: Uses IAudioService instead of AudioSystem.Instance.
 /// Phase 114: Uses IAbilityExecutor for effect card abilities.
+/// Phase 116: Uses modern IAbility for field card abilities.
 ///
 /// Note: This service is in the default assembly because it depends on legacy types.
 /// It will be moved to JDG.Infrastructure once legacy types are refactored.
@@ -101,6 +104,7 @@ public class CardPlacementService : ICardPlacementService
 
     /// <summary>
     /// Places a field card on the field.
+    /// Phase 116: Updated to use modern IAbility for field abilities.
     /// </summary>
     /// <param name="card">The field card to place.</param>
     /// <returns>True if placement was successful, false if field card slot is occupied or card is null.</returns>
@@ -119,10 +123,19 @@ public class CardPlacementService : ICardPlacementService
         currentPlayerCard.FieldCard = card;
         currentPlayerCard.HandCards.Remove(card);
 
-        // Apply field abilities
-        foreach (var ability in card.FieldAbilities)
+        // Phase 116: Apply field abilities using modern IAbility
+        var owner = currentPlayerCard.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = currentPlayerCard.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+        foreach (var ability in card.ModernFieldAbilities)
         {
-            ability.ApplyEffect(currentPlayerCard);
+            if (ability.CanActivate(context))
+            {
+                ability.Execute(context);
+            }
         }
 
         // Play family-specific music

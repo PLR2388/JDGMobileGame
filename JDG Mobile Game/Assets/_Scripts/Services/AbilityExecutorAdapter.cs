@@ -157,14 +157,9 @@ namespace Services
                 }
 
                 // 4. Trigger field card abilities
-                if (concreteOwner.FieldCard?.FieldAbilities != null)
+                // Phase 116: Removed legacy FieldAbility calls - now uses only modern IAbility
+                if (concreteOwner.FieldCard != null)
                 {
-                    foreach (var fieldAbility in concreteOwner.FieldCard.FieldAbilities)
-                    {
-                        fieldAbility.OnInvocationCardAdded(concreteAdded, concreteOwner);
-                    }
-
-                    // Phase 106: Modern field abilities
                     var fieldContext = CreateAbilityContext(concreteOwner.FieldCard, concreteOwner.FieldCard.CardOwner);
                     ExecuteModernAbilities(concreteOwner.FieldCard.ModernFieldAbilities, AbilityTrigger.OnCardPlayed, fieldContext);
                 }
@@ -212,17 +207,14 @@ namespace Services
             IPlayerCardCollection ownerCards,
             IPlayerCardCollection opponentCards)
         {
-            if (ownerCards is PlayerCards concreteOwner)
+            // Phase 116: Removed legacy FieldAbility calls - now uses only modern IAbility
+            // Note: Modern abilities don't have a specific trigger for field card removal yet
+            // This will be added when field removal triggers are needed
+            if (oldFieldCard is InGameFieldCard concreteOldField)
             {
-                // Trigger OnFieldCardRemoved on old field card's abilities
-                // FieldAbility.OnFieldCardRemoved signature: (PlayerCards playerCards)
-                if (oldFieldCard is InGameFieldCard concreteOldField)
-                {
-                    foreach (var ability in concreteOldField.FieldAbilities)
-                    {
-                        ability.OnFieldCardRemoved(concreteOwner);
-                    }
-                }
+                var context = CreateAbilityContext(concreteOldField, concreteOldField.CardOwner);
+                // Execute any OnDeath-like triggers for the removed field card
+                // Currently no specific trigger exists for field removal in AbilityTrigger enum
             }
         }
 

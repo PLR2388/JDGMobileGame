@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using Cards;
 using JDG.Application.Abilities;
 using JDG.Application.Abilities.Implementations;
 using JDG.Application.Repositories;
@@ -10,20 +8,18 @@ using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 /// <summary>
 /// Provides field abilities.
 /// Phase 48: Originally wrapped legacy singleton for DI-compatible access.
-/// Phase 84: Now owns the ability dictionary directly (FieldAbilityLibrary deleted).
+/// Phase 84: Owned the legacy ability dictionary directly.
 /// Phase 104: Added modern IAbility support via GetModernAbility.
+/// Phase 116: Removed legacy ability dictionary - now uses only modern IAbility.
 /// </summary>
-#pragma warning disable CS0618 // Suppress obsolete warnings for legacy ability types
 public class FieldAbilityProviderService : IFieldAbilityProvider
 {
-    private readonly Dictionary<FieldAbilityName, FieldAbility> _abilityDictionary;
     private Dictionary<DomainFieldAbilityName, IAbility> _modernAbilityDictionary;
     private readonly FieldAbilityFactory _factory;
 
     /// <summary>
-    /// Initializes the field ability provider with all abilities.
-    /// Phase 84: Moved from FieldAbilityLibrary.
-    /// Phase 104: Added modern ability factory initialization.
+    /// Initializes the field ability provider with modern abilities only.
+    /// Phase 116: Removed legacy ability initialization.
     /// </summary>
     public FieldAbilityProviderService(IPlayerRepository playerRepository = null)
     {
@@ -37,99 +33,17 @@ public class FieldAbilityProviderService : IFieldAbilityProvider
         {
             _modernAbilityDictionary = new Dictionary<DomainFieldAbilityName, IAbility>();
         }
-
-        var abilities = new List<FieldAbility>
-        {
-            new EarnATKDEFForFamilyAbility(
-                FieldAbilityName.Earn1DEFForSpatialFamily,
-                "Invocations whose family is Spatial earn 1 DEF",
-                0,
-                1,
-                CardFamily.Spatial
-            ),
-            new EarnATKDEFForFamilyAbility(
-                FieldAbilityName.Earn1HalfDEFAndMinusHalfATKForDevFamily,
-                "Invocations whose family is Developper earn 1.5 DEF and -0.5 ATK",
-                -0.5f,
-                1.5f,
-                CardFamily.Developer
-            ),
-            new ChangeInvocationFamilyAbility(
-                FieldAbilityName.ChangeJMBruitagesFamilyToDev,
-                "Jean-Michel Bruitages has the developer family if he is on field",
-                "Jean-Michel Bruitages",
-                CardFamily.Developer
-            ),
-            new ChangeInvocationFamilyAbility(
-                FieldAbilityName.ChangePatronInfogramFamilyToDev,
-                "Patron D'Infogrames has the developer family if he is on field",
-                "Patron D'Infogrames",
-                CardFamily.Developer
-            ),
-            new EarnATKDEFForFamilyAbility(
-                FieldAbilityName.Earn2DEFAndMinusOneATKForIncarnationFamily,
-                "Invocations whose family is Incarnation earn 2 DEF and -1 ATK",
-                -1,
-                2,
-                CardFamily.Incarnation
-            ),
-            new EarnHPPerFamilyOnTurnStartAbility(
-                FieldAbilityName.EarnHalfHPPerWizardInvocationEachTurn,
-                "Player recover 0.5 HP per invocations whose family is Wizard at each turn for which it plays",
-                0.5f,
-                CardFamily.Wizard
-            ),
-            new EarnATKDEFForFamilyAbility(
-                FieldAbilityName.Earn1ATKForJapanFamily,
-                "Invocations whose family is Japan earn 1 ATK",
-                1,
-                0,
-                CardFamily.Japan
-            ),
-            new EarnATKDEFForFamilyAbility(
-                FieldAbilityName.Earn1HalfATKAndMinusHalfDEFForHCFamily,
-                "Invocations whose family is Hard Corner earn 1.5 ATK and -0.5 DEF",
-                1.5f,
-                -0.5f,
-                CardFamily.HardCorner
-            ),
-            new DrawMoreCardsAbility(
-                FieldAbilityName.DrawOneMoreCard,
-                "Player can draw 2 cards per turn (1 additional)",
-                1
-            ),
-            new EarnATKDEFForFamilyAbility(
-                FieldAbilityName.EarnHalfATKAndDefForRpgFamily,
-                "Invocations whose family is Rpg earn 0.5 ATK and 0.5 DEF",
-                0.5f,
-                0.5f,
-                CardFamily.Rpg
-            ),
-            new GetCardFromFamilyIfSkipDrawAbility(
-                FieldAbilityName.SkipDrawToGetFistilandInvocation,
-                "Skip draw phase to get a Fistiland invocation from deck or yellow trash",
-                CardFamily.Fistiland
-            ),
-            new EarnATKDEFForFamilyAbility(
-                FieldAbilityName.Earn2ATKAndMinus1DEFForComicsFamily,
-                "Invocations whose family is Comics earn 2 ATK and -1 DEF",
-                2,
-                -1,
-                CardFamily.Comics
-            )
-        };
-
-        _abilityDictionary = abilities.ToDictionary(ability => ability.Name, ability => ability);
     }
 
     /// <summary>
-    /// Gets a field ability by its name.
+    /// Gets a modern IAbility implementation by field ability name.
+    /// Phase 116: Now the primary (and only) lookup method.
     /// </summary>
-    /// <param name="abilityName">The ability name to look up.</param>
-    /// <returns>The field ability, or null if not found.</returns>
-    public FieldAbility GetAbility(FieldAbilityName abilityName)
+    /// <param name="abilityName">The domain ability name to look up.</param>
+    /// <returns>The modern ability, or null if not found.</returns>
+    public IAbility GetModernAbility(DomainFieldAbilityName abilityName)
     {
-        _abilityDictionary.TryGetValue(abilityName, out var ability);
+        _modernAbilityDictionary.TryGetValue(abilityName, out var ability);
         return ability;
     }
 
@@ -138,21 +52,9 @@ public class FieldAbilityProviderService : IFieldAbilityProvider
     /// </summary>
     /// <param name="abilityName">The ability name to check.</param>
     /// <returns>True if the ability exists.</returns>
-    public bool HasAbility(FieldAbilityName abilityName)
+    public bool HasAbility(DomainFieldAbilityName abilityName)
     {
-        return _abilityDictionary.ContainsKey(abilityName);
-    }
-
-    /// <summary>
-    /// Gets a modern IAbility implementation by field ability name.
-    /// Phase 104: New method for clean architecture migration.
-    /// </summary>
-    /// <param name="abilityName">The domain ability name to look up.</param>
-    /// <returns>The modern ability, or null if not found.</returns>
-    public IAbility GetModernAbility(DomainFieldAbilityName abilityName)
-    {
-        _modernAbilityDictionary.TryGetValue(abilityName, out var ability);
-        return ability;
+        return _modernAbilityDictionary.ContainsKey(abilityName);
     }
 
     /// <summary>
@@ -198,4 +100,3 @@ public class FieldAbilityProviderService : IFieldAbilityProvider
         };
     }
 }
-#pragma warning restore CS0618

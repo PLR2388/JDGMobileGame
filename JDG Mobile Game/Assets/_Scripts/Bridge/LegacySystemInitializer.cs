@@ -8,7 +8,7 @@ namespace JDG.Bridge
     /// <summary>
     /// Bridge: Initializes legacy static fields with modern DI services.
     ///
-    /// <para><b>Purpose:</b> Legacy ability classes (Ability, FieldAbility) use static
+    /// <para><b>Purpose:</b> Legacy ability class (Ability) uses static
     /// properties for services. Since DI cannot inject into static fields, this initializer
     /// bridges the gap by setting these fields after the container is built.</para>
     ///
@@ -23,6 +23,7 @@ namespace JDG.Bridge
     /// <item>Phase 66: Removed unused GameStateService</item>
     /// <item>Phase 111: Documented as permanent bridge infrastructure</item>
     /// <item>Phase 115: Removed EffectAbility initialization (class deleted)</item>
+    /// <item>Phase 116: Removed FieldAbility initialization (class deleted)</item>
     /// </list>
     /// </summary>
     public static class LegacySystemInitializer
@@ -38,14 +39,11 @@ namespace JDG.Bridge
         {
             // Phase 66: Static properties marked obsolete, wrapped with pragma
             // Phase 115: Removed EffectAbility initialization (class deleted)
+            // Phase 116: Removed FieldAbility initialization (class deleted)
             #pragma warning disable CS0618 // Suppress obsolete warning - intentional backward compatibility
             // Initialize legacy Ability base class
             Ability.LocalizationService = localizationService;
             Ability.DialogService = dialogService;
-
-            // Initialize legacy FieldAbility base class
-            FieldAbility.LocalizationService = localizationService;
-            FieldAbility.DialogService = dialogService;
             #pragma warning restore CS0618
 
             // Initialize extension classes

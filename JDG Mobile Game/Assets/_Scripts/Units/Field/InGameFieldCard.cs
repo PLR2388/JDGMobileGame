@@ -10,6 +10,7 @@ using DomainFieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
 /// Represents a card on the field in the game with additional runtime behaviors.
 /// Phase 49: Implements IInGameFieldCard for complete abstraction.
 /// Phase 105: Added ModernFieldAbilities for IAbility migration.
+/// Phase 116: Removed legacy FieldAbilities - now uses only modern IAbility.
 /// </summary>
 public class InGameFieldCard : InGameCard, IInGameFieldCard
 {
@@ -19,14 +20,8 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
     public CardFamily Family { get; private set; }
 
     /// <summary>
-    /// List of legacy abilities associated with the field card.
-    /// Phase 105: Marked for deprecation - use ModernFieldAbilities instead.
-    /// </summary>
-    public List<FieldAbility> FieldAbilities = new List<FieldAbility>();
-
-    /// <summary>
     /// List of modern IAbility implementations for this card.
-    /// Phase 105: New property for clean architecture migration.
+    /// Phase 116: Now the primary (and only) ability storage.
     /// </summary>
     public List<IAbility> ModernFieldAbilities { get; private set; } = new List<IAbility>();
 
@@ -48,7 +43,7 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
 
     /// <summary>
     /// Resets the card's properties based on the underlying base field card.
-    /// Phase 105: Now populates both legacy and modern ability lists.
+    /// Phase 116: Now populates only modern ability list.
     /// </summary>
     private void Reset()
     {
@@ -61,14 +56,7 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
         collector = baseFieldCard.Collector;
         Family = baseFieldCard.Family;
 
-        // Phase 61: Use injected provider (fallback removed)
-        // Legacy abilities (for backward compatibility)
-        FieldAbilities = baseFieldCard.FieldAbilities
-            .Select(name => _abilityProvider.GetAbility(name))
-            .Where(ability => ability != null)
-            .ToList();
-
-        // Phase 105: Populate modern abilities
+        // Phase 116: Only populate modern abilities (legacy removed)
         ModernFieldAbilities = baseFieldCard.FieldAbilities
             .Select(name => _abilityProvider.GetModernAbility(ConvertToDomainEnum(name)))
             .Where(ability => ability != null)
@@ -88,11 +76,10 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
     #region IInGameFieldCard Implementation
 
     /// <summary>
-    /// Gets the field abilities as a read-only list of objects.
-    /// Phase 49: Explicit implementation for IInGameFieldCard interface.
+    /// Gets the field abilities as a read-only list.
+    /// Phase 116: Now returns modern IAbility instances directly.
     /// </summary>
-    IReadOnlyList<object> IInGameFieldCard.FieldAbilities =>
-        FieldAbilities.Cast<object>().ToList().AsReadOnly();
+    IReadOnlyList<IAbility> IInGameFieldCard.FieldAbilities => ModernFieldAbilities.AsReadOnly();
 
     #endregion
 }

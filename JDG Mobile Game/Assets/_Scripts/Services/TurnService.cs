@@ -147,13 +147,30 @@ public class TurnService : ITurnService
         }
     }
 
+    /// <summary>
+    /// Phase 116: Updated to use modern IAbility with AbilityTrigger.OnTurnStart.
+    /// </summary>
     private void ApplyFieldOnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus)
     {
-        if (playerCards.FieldCard != null)
+        if (playerCards.FieldCard == null)
+            return;
+
+        // Phase 116: Use modern abilities with IPassiveAbility.Trigger check
+        var owner = playerCards.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = playerCards.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+        foreach (var ability in playerCards.FieldCard.ModernFieldAbilities)
         {
-            foreach (var fieldAbility in playerCards.FieldCard.FieldAbilities)
+            // Only execute passive abilities with OnTurnStart trigger
+            if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
             {
-                fieldAbility.OnTurnStart(_canvas, playerCards, playerStatus);
+                if (ability.CanActivate(context))
+                {
+                    ability.Execute(context);
+                }
             }
         }
     }
