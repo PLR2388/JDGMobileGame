@@ -146,14 +146,9 @@ namespace Services
                 }
 
                 // 3. Trigger effect card abilities
+                // Phase 115: Removed legacy EffectAbility calls - now uses only modern IAbility
                 foreach (var effectCard in concreteOwner.EffectCards)
                 {
-                    foreach (var effectAbility in effectCard.EffectAbilities)
-                    {
-                        effectAbility.OnInvocationCardAdded(concreteOwner, concreteAdded);
-                    }
-
-                    // Phase 106: Modern effect abilities
                     if (effectCard is InGameEffectCard concreteEffect)
                     {
                         var effectContext = CreateAbilityContext(concreteEffect, concreteEffect.CardOwner);
@@ -205,16 +200,9 @@ namespace Services
                 }
 
                 // 2. Trigger effect abilities that react to invocation removal
-                // EffectAbility.OnInvocationCardRemoved signature: (PlayerCards playerCards, InGameInvocationCard invocationCard)
-                foreach (var effectCard in concreteOwner.EffectCards)
-                {
-                    foreach (var ability in effectCard.EffectAbilities)
-                    {
-                        ability.OnInvocationCardRemoved(concreteOwner, concreteRemoved);
-                    }
-
-                    // Phase 106: Modern effect abilities (no specific trigger for card removal yet)
-                }
+                // Phase 115: Removed legacy EffectAbility calls - now uses only modern IAbility
+                // Note: Modern abilities don't have a specific trigger for card removal yet
+                // This will be added when card removal triggers are needed for effect cards
             }
         }
 
@@ -399,6 +387,40 @@ namespace Services
                 foreach (var ability in concreteEquipment.EquipmentAbilities)
                 {
                     ability.RemoveEffect(concreteTarget, concreteOwner, concreteOpponent);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Effect Card Triggers
+
+        /// <summary>
+        /// Executes abilities when an effect card is played to the field.
+        /// Phase 114: Added for effect card ability migration.
+        /// </summary>
+        public void ExecuteOnEffectCardPlayed(
+            IInGameEffectCard effectCard,
+            IPlayerCardCollection ownerCards,
+            IPlayerCardCollection opponentCards)
+        {
+            if (effectCard is InGameEffectCard concreteEffect &&
+                ownerCards is PlayerCards concreteOwner)
+            {
+                // Phase 114: Execute modern abilities with OnCardPlayed trigger
+                var context = CreateAbilityContext(concreteEffect, concreteEffect.CardOwner);
+
+                // Execute all modern effect abilities
+                foreach (var ability in concreteEffect.ModernEffectAbilities)
+                {
+                    if (ability.CanActivate(context))
+                    {
+                        var result = ability.Execute(context);
+                        if (!result.IsSuccess && !string.IsNullOrEmpty(result.Message))
+                        {
+                            UnityEngine.Debug.LogWarning($"[AbilityExecutorAdapter] Effect ability failed: {result.Message}");
+                        }
+                    }
                 }
             }
         }

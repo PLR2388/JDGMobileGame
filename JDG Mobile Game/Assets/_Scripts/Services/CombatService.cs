@@ -3,6 +3,7 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
+using JDG.Application.Abilities.Implementations;
 using UnityEngine;
 
 /// <summary>
@@ -15,6 +16,7 @@ using UnityEngine;
 ///
 /// Part of Phase 4 migration - decomposes CardManager god class.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
+/// Phase 115: Updated to use modern EnableDirectAttackEffectAbility type.
 /// </summary>
 public class CombatService : ICombatService
 {
@@ -168,12 +170,15 @@ public class CombatService : ICombatService
         cards.RemoveAll(card => card is InGameInvocationCard invocationCard && invocationCard.CantBeAttack);
     }
 
+    /// <summary>
+    /// Phase 115: Updated to use modern EnableDirectAttackEffectAbility type.
+    /// </summary>
     private bool ShouldAddPlayerToTarget(
         System.Collections.ObjectModel.ObservableCollection<InGameEffectCard> effectCards,
         List<InGameCard> validTargets)
     {
         return !validTargets.Any() ||
-               effectCards.Any(card => card.EffectAbilities.Any(ability => ability is DirectAttackEffectAbility));
+               effectCards.Any(card => card.ModernEffectAbilities.Any(ability => ability is EnableDirectAttackEffectAbility));
     }
 
     private bool AttackerCanDirectAttack()

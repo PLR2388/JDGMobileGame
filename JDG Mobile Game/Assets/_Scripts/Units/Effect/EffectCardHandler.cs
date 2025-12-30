@@ -2,9 +2,11 @@ using System.Linq;
 using Cards;
 using Cards.EffectCards;
 using JDG.Application;
+using JDG.Application.Abilities;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
+using JDG.Domain.ValueObjects;
 
 /// <summary>
 /// Handler responsible for effect card-specific behaviors in the game.
@@ -12,6 +14,7 @@ using JDG.Domain.Events;
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// Phase 36: Uses IEventBus for static UnityEvent migration.
+/// Phase 114: Updated to use modern IAbility for ability checks.
 /// </summary>
 public class EffectCardHandler : CardHandler
 {
@@ -39,19 +42,41 @@ public class EffectCardHandler : CardHandler
 
     /// <summary>
     /// Handles the card's behavior and updates the UI elements associated with an effect card.
+    /// Phase 114: Updated to use modern IAbility.CanActivate() instead of legacy CanUseEffect().
     /// </summary>
     /// <param name="card">The in-game card to be handled.</param>
     public override void HandleCard(InGameCard card)
     {
         // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
         var playerCard = cardCollectionService.GetCurrentPlayerCards();
-        var opponentPlayerCard = cardCollectionService.GetOpponentPlayerCards();
-        var opponentPlayerStatus = playerStatusProvider.GetOpponentPlayerStatus();
         var effectCard = card as InGameEffectCard;
         menuScript.putCardButtonText.SetText(localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_PUT_CARD));
-        menuScript.putCardButton.interactable =
-            effectCard?.EffectAbilities.All(elt =>
-                elt.CanUseEffect(playerCard, opponentPlayerCard, opponentPlayerStatus)) == true && playerCard.EffectCards.Count < 4;
+
+        // Phase 114: Check if all modern abilities can activate
+        bool canPutCard = effectCard != null &&
+                          playerCard.EffectCards.Count < 4 &&
+                          CanAllAbilitiesActivate(effectCard, playerCard.IsPlayerOne);
+
+        menuScript.putCardButton.interactable = canPutCard;
+    }
+
+    /// <summary>
+    /// Checks if all modern abilities on the effect card can activate.
+    /// Phase 114: Helper method for modern ability check.
+    /// </summary>
+    private bool CanAllAbilitiesActivate(InGameEffectCard effectCard, bool isPlayerOne)
+    {
+        if (!effectCard.ModernEffectAbilities.Any())
+            return true;
+
+        // Create a minimal AbilityContext for the check
+        var owner = isPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = isPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+        return effectCard.ModernEffectAbilities.All(ability => ability.CanActivate(context));
     }
 
     /// <summary>

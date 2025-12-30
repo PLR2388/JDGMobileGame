@@ -10,6 +10,7 @@ namespace Cards.EffectCards
     /// Represents an in-game effect card, which is derived from a base effect card and has additional in-game properties and behaviors.
     /// Phase 49: Implements IInGameEffectCard for complete abstraction.
     /// Phase 105: Added ModernEffectAbilities for IAbility migration.
+    /// Phase 114: Removed legacy EffectAbilities - now uses only modern IAbility.
     /// </summary>
     public class InGameEffectCard : InGameCard, IInGameEffectCard
     {
@@ -17,14 +18,8 @@ namespace Cards.EffectCards
         private readonly IEffectAbilityProvider _abilityProvider;
 
         /// <summary>
-        /// List of legacy effect abilities associated with this card.
-        /// Phase 105: Marked for deprecation - use ModernEffectAbilities instead.
-        /// </summary>
-        public List<EffectAbility> EffectAbilities = new List<EffectAbility>();
-
-        /// <summary>
         /// List of modern IAbility implementations for this card.
-        /// Phase 105: New property for clean architecture migration.
+        /// Phase 114: Now the primary (and only) ability storage.
         /// </summary>
         public List<IAbility> ModernEffectAbilities { get; private set; } = new List<IAbility>();
 
@@ -46,7 +41,7 @@ namespace Cards.EffectCards
 
         /// <summary>
         /// Resets the in-game card properties to match those of the base effect card.
-        /// Phase 105: Now populates both legacy and modern ability lists.
+        /// Phase 114: Now populates only modern ability list.
         /// </summary>
         private void Reset()
         {
@@ -58,14 +53,7 @@ namespace Cards.EffectCards
             materialCard = baseEffectCard.MaterialCard;
             collector = baseEffectCard.Collector;
 
-            // Phase 61: Use injected provider (fallback removed)
-            // Legacy abilities (for backward compatibility)
-            EffectAbilities = baseEffectCard.EffectAbilities
-                .Select(name => _abilityProvider.GetAbility(name))
-                .Where(ability => ability != null)
-                .ToList();
-
-            // Phase 105: Populate modern abilities
+            // Phase 114: Only populate modern abilities (legacy removed)
             ModernEffectAbilities = baseEffectCard.EffectAbilities
                 .Select(name => _abilityProvider.GetModernAbility(ConvertToDomainEnum(name)))
                 .Where(ability => ability != null)
@@ -85,11 +73,10 @@ namespace Cards.EffectCards
         #region IInGameEffectCard Implementation
 
         /// <summary>
-        /// Gets the effect abilities as a read-only list of objects.
-        /// Phase 49: Explicit implementation for IInGameEffectCard interface.
+        /// Gets the effect abilities as a read-only list.
+        /// Phase 114: Now returns modern IAbility instances directly.
         /// </summary>
-        IReadOnlyList<object> IInGameEffectCard.EffectAbilities =>
-            EffectAbilities.Cast<object>().ToList().AsReadOnly();
+        IReadOnlyList<IAbility> IInGameEffectCard.EffectAbilities => ModernEffectAbilities.AsReadOnly();
 
         #endregion
     }

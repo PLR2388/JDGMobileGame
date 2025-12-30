@@ -2,6 +2,8 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
+using JDG.Application.Abilities;
+using JDG.Domain;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Services;
 using UnityEngine;
@@ -16,6 +18,7 @@ using UnityEngine;
 ///
 /// Part of Phase 4 migration - decomposes CardManager god class.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
+/// Phase 115: Updated to use modern IAbility for effect cards.
 /// </summary>
 public class TurnService : ITurnService
 {
@@ -110,6 +113,9 @@ public class TurnService : ITurnService
         }
     }
 
+    /// <summary>
+    /// Phase 115: Updated to use modern IAbility with AbilityTrigger.OnTurnStart.
+    /// </summary>
     private void ApplyEffectOnTurnStart(
         System.Collections.Generic.List<InGameEffectCard> effectCards,
         PlayerStatus playerStatus,
@@ -117,9 +123,27 @@ public class TurnService : ITurnService
         PlayerStatus opponentStatus,
         PlayerCards opponentCards)
     {
-        foreach (var ability in effectCards.SelectMany(card => card.EffectAbilities))
+        // Phase 115: Use modern abilities with IPassiveAbility.Trigger check
+        var owner = playerCards.IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = playerCards.IsPlayerOne ? CardOwner.Player2 : CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+
+        foreach (var effectCard in effectCards)
         {
-            ability.OnTurnStart(_canvas, playerStatus, playerCards, opponentStatus, opponentCards);
+            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.Enums.AbilityName.Default);
+
+            foreach (var ability in effectCard.ModernEffectAbilities)
+            {
+                // Only execute passive abilities with OnTurnStart trigger
+                if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
+                {
+                    if (ability.CanActivate(context))
+                    {
+                        ability.Execute(context);
+                    }
+                }
+            }
         }
     }
 

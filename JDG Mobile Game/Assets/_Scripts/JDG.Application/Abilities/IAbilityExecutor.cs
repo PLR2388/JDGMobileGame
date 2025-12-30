@@ -115,5 +115,18 @@ namespace JDG.Application.Abilities
             IPlayerCardCollection opponentCards);
 
         #endregion
+
+        #region Effect Card Triggers
+
+        /// <summary>
+        /// Executes abilities when an effect card is played to the field.
+        /// Phase 114: Added for effect card ability migration.
+        /// </summary>
+        void ExecuteOnEffectCardPlayed(
+            IInGameEffectCard effectCard,
+            IPlayerCardCollection ownerCards,
+            IPlayerCardCollection opponentCards);
+
+        #endregion
     }
 }

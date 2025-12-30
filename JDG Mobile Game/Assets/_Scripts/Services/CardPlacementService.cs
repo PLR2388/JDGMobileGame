@@ -5,6 +5,7 @@ using Cards;
 using Cards.EffectCards;
 using Cards.EquipmentCards;
 using Cards.FieldCards;
+using JDG.Application.Abilities;
 using JDG.Application.Services;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ using UnityEngine;
 /// Part of Phase 6 - MonoBehaviour logic extraction.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 37: Uses IAudioService instead of AudioSystem.Instance.
+/// Phase 114: Uses IAbilityExecutor for effect card abilities.
 ///
 /// Note: This service is in the default assembly because it depends on legacy types.
 /// It will be moved to JDG.Infrastructure once legacy types are refactored.
@@ -23,15 +25,18 @@ public class CardPlacementService : ICardPlacementService
     private readonly ICardCollectionService _cardCollectionService;
     private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly IAudioService _audioService;
+    private readonly IAbilityExecutor _abilityExecutor;
 
     public CardPlacementService(
         ICardCollectionService cardCollectionService,
         IPlayerStatusProvider playerStatusProvider,
-        IAudioService audioService)
+        IAudioService audioService,
+        IAbilityExecutor abilityExecutor)
     {
         _cardCollectionService = cardCollectionService;
         _playerStatusProvider = playerStatusProvider;
         _audioService = audioService;
+        _abilityExecutor = abilityExecutor;
     }
 
     /// <summary>
@@ -67,9 +72,10 @@ public class CardPlacementService : ICardPlacementService
 
     /// <summary>
     /// Places an effect card on the field.
+    /// Phase 114: Updated to use IAbilityExecutor for modern ability execution.
     /// </summary>
     /// <param name="card">The effect card to place.</param>
-    /// <param name="canvas">Canvas for UI operations (passed to abilities).</param>
+    /// <param name="canvas">Canvas for UI operations (no longer needed, kept for API compatibility).</param>
     /// <returns>True if placement was successful, false if field is full (4 cards max).</returns>
     public bool PlaceEffectCard(InGameEffectCard card, Transform canvas)
     {
@@ -83,15 +89,8 @@ public class CardPlacementService : ICardPlacementService
         if (currentPlayerCard.EffectCards.Count >= 4)
             return false;
 
-        // Apply effect abilities
-        // Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance
-        var currentPlayerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
-        var opponentPlayerStatus = _playerStatusProvider.GetOpponentPlayerStatus();
-
-        foreach (var effectCardEffectAbility in card.EffectAbilities)
-        {
-            effectCardEffectAbility.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCard, currentPlayerStatus, opponentPlayerStatus);
-        }
+        // Phase 114: Execute effect abilities through IAbilityExecutor
+        _abilityExecutor.ExecuteOnEffectCardPlayed(card, currentPlayerCard, opponentPlayerCard);
 
         // Remove from hand and add to field
         currentPlayerCard.HandCards.Remove(card);

@@ -5,20 +5,13 @@ using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 /// Provides effect abilities by name for InGameEffectCard.
 /// Phase 48: Abstracts EffectAbilityLibrary.Instance access for DI.
 /// Phase 102: Added GetModernAbility for IAbility migration.
+/// Phase 115: Removed legacy GetAbility - now uses only modern IAbility.
 /// </summary>
 public interface IEffectAbilityProvider
 {
     /// <summary>
-    /// Gets a legacy effect ability by its name.
-    /// Phase 102: Marked for deprecation - use GetModernAbility instead.
-    /// </summary>
-    /// <param name="abilityName">The ability name to look up.</param>
-    /// <returns>The effect ability, or null if not found.</returns>
-    EffectAbility GetAbility(EffectAbilityName abilityName);
-
-    /// <summary>
     /// Gets a modern IAbility implementation by effect ability name.
-    /// Phase 102: New method for clean architecture migration.
+    /// Phase 115: Now the primary (and only) lookup method.
     /// </summary>
     /// <param name="abilityName">The domain ability name to look up.</param>
     /// <returns>The modern ability, or null if not found.</returns>
@@ -29,5 +22,5 @@ public interface IEffectAbilityProvider
     /// </summary>
     /// <param name="abilityName">The ability name to check.</param>
     /// <returns>True if the ability exists.</returns>
-    bool HasAbility(EffectAbilityName abilityName);
+    bool HasAbility(DomainEffectAbilityName abilityName);
 }
