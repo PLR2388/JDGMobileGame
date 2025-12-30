@@ -27,21 +27,23 @@ namespace JDG.Infrastructure.Services
         /// Loads localized text data from a JSON file.
         /// Phase 84: Moved from LocalizationSystem.
         /// </summary>
-        private void LoadLocalizedText(string fileName)
+        /// <returns>True if file was loaded successfully, false otherwise.</returns>
+        private bool LoadLocalizedText(string fileName)
         {
-            _localizedText = new Dictionary<string, string>();
             TextAsset fileData = Resources.Load<TextAsset>(fileName);
 
             if (fileData == null)
             {
-                Debug.LogError($"LocalizationService: Cannot find localization file: {fileName}");
-                return;
+                Debug.LogWarning($"LocalizationService: Cannot find localization file: {fileName}");
+                return false;
             }
 
+            _localizedText = new Dictionary<string, string>();
             JObject jsonObject = JObject.Parse(fileData.text);
             ProcessJsonObject(jsonObject);
 
             Debug.Log($"LocalizationService: Loaded localization data from: {fileName}");
+            return true;
         }
 
         /// <summary>
@@ -103,8 +105,6 @@ namespace JDG.Infrastructure.Services
 
         public void SetLanguage(GameLanguage language)
         {
-            _currentLanguage = language;
-
             // Load appropriate language file
             string fileName = language switch
             {
@@ -113,7 +113,16 @@ namespace JDG.Infrastructure.Services
                 _ => DefaultLanguageFile
             };
 
-            LoadLocalizedText(fileName);
+            if (LoadLocalizedText(fileName))
+            {
+                _currentLanguage = language;
+            }
+            else
+            {
+                // Fall back to default language if requested file doesn't exist
+                Debug.LogWarning($"LocalizationService: Falling back to {_currentLanguage} (requested: {language})");
+                // Keep current language and dictionary unchanged
+            }
         }
 
         public GameLanguage GetCurrentLanguage()

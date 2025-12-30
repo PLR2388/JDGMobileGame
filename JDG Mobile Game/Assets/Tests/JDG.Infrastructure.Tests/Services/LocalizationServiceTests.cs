@@ -62,17 +62,32 @@ namespace JDG.Infrastructure.Tests.Services
         }
 
         [Test]
-        public void GetCurrentLanguage_AfterSetLanguage_ReturnsUpdatedLanguage()
+        public void GetCurrentLanguage_AfterSetLanguage_WhenFileExists_ReturnsUpdatedLanguage()
         {
             // Arrange
             var service = new LocalizationService();
-            service.SetLanguage(GameLanguage.English);
 
-            // Act
+            // Act - Set to French (which exists)
+            service.SetLanguage(GameLanguage.French);
             var language = service.GetCurrentLanguage();
 
             // Assert
-            Assert.AreEqual(GameLanguage.English, language);
+            Assert.AreEqual(GameLanguage.French, language);
+        }
+
+        [Test]
+        public void GetCurrentLanguage_AfterSetLanguage_WhenFileMissing_RetainsPreviousLanguage()
+        {
+            // Arrange
+            var service = new LocalizationService();
+            var initialLanguage = service.GetCurrentLanguage();
+
+            // Act - Try to set to English (file doesn't exist)
+            service.SetLanguage(GameLanguage.English);
+            var language = service.GetCurrentLanguage();
+
+            // Assert - Should fall back to previous language
+            Assert.AreEqual(initialLanguage, language);
         }
 
         #endregion
@@ -80,17 +95,31 @@ namespace JDG.Infrastructure.Tests.Services
         #region SetLanguage Tests
 
         [Test]
-        public void SetLanguage_UpdatesCurrentLanguage()
+        public void SetLanguage_WhenFileExists_UpdatesCurrentLanguage()
         {
             // Arrange
             var service = new LocalizationService();
 
-            // Act
-            service.SetLanguage(GameLanguage.English);
+            // Act - French file exists
+            service.SetLanguage(GameLanguage.French);
             var language = service.GetCurrentLanguage();
 
             // Assert
-            Assert.AreEqual(GameLanguage.English, language);
+            Assert.AreEqual(GameLanguage.French, language);
+        }
+
+        [Test]
+        public void SetLanguage_WhenFileMissing_KeepsPreviousLanguage()
+        {
+            // Arrange
+            var service = new LocalizationService();
+            Assert.AreEqual(GameLanguage.French, service.GetCurrentLanguage()); // Verify default
+
+            // Act - English file doesn't exist
+            service.SetLanguage(GameLanguage.English);
+
+            // Assert - Should still be French
+            Assert.AreEqual(GameLanguage.French, service.GetCurrentLanguage());
         }
 
         [Test]
@@ -98,7 +127,6 @@ namespace JDG.Infrastructure.Tests.Services
         {
             // Arrange
             var service = new LocalizationService();
-            service.SetLanguage(GameLanguage.English); // Change from default
 
             // Act
             service.SetLanguage(GameLanguage.French);
@@ -108,18 +136,17 @@ namespace JDG.Infrastructure.Tests.Services
         }
 
         [Test]
-        public void SetLanguage_MultipleTimes_UsesLastValue()
+        public void SetLanguage_MultipleTimes_OnlySuccessfulChangesApply()
         {
             // Arrange
             var service = new LocalizationService();
 
-            // Act
-            service.SetLanguage(GameLanguage.English);
-            service.SetLanguage(GameLanguage.French);
-            service.SetLanguage(GameLanguage.English);
+            // Act - English fails (no file), French succeeds
+            service.SetLanguage(GameLanguage.English); // Fails - no en.json
+            service.SetLanguage(GameLanguage.French);  // Succeeds
 
-            // Assert
-            Assert.AreEqual(GameLanguage.English, service.GetCurrentLanguage());
+            // Assert - Should be French (last successful change)
+            Assert.AreEqual(GameLanguage.French, service.GetCurrentLanguage());
         }
 
         #endregion
