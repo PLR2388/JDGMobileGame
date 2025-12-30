@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,9 +6,9 @@ using UnityEngine.UI;
 /// <summary>
 /// Displays message boxes with configurable buttons and text.
 /// Phase 52: Marked obsolete - use IDialogService via dependency injection instead.
+/// Phase 94: Removed StaticInstance inheritance - now a regular MonoBehaviour.
 /// </summary>
-[Obsolete("MessageBox singleton is obsolete. Use IDialogService via dependency injection. Call _dialogService.ShowMessageBox() instead of MessageBox.Instance.CreateMessageBox().")]
-public class MessageBox : StaticInstance<MessageBox>, IMessageBoxBaseComponent
+public class MessageBox : MonoBehaviour, IMessageBoxBaseComponent
 {
 
     [SerializeField] private GameObject prefab;

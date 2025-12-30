@@ -125,6 +125,30 @@ namespace JDG.DI
                 Debug.LogError("GameSceneScope: UIManager NOT FOUND in scene!");
             }
 
+            // Phase 94: MessageBox - required by DialogService
+            var messageBox = FindFirstObjectByType<MessageBox>();
+            if (messageBox != null)
+            {
+                builder.RegisterInstance(messageBox);
+                Debug.Log("GameSceneScope: Registered MessageBox instance");
+            }
+            else
+            {
+                Debug.LogWarning("GameSceneScope: MessageBox NOT FOUND in scene!");
+            }
+
+            // Phase 94: CardSelector - required by DialogService
+            var cardSelector = FindFirstObjectByType<CardSelector>();
+            if (cardSelector != null)
+            {
+                builder.RegisterInstance(cardSelector);
+                Debug.Log("GameSceneScope: Registered CardSelector instance");
+            }
+            else
+            {
+                Debug.LogWarning("GameSceneScope: CardSelector NOT FOUND in scene!");
+            }
+
             // ============================================
             // SCENE-SPECIFIC SERVICES
             // These depend on MonoBehaviours that only exist in this scene
@@ -164,6 +188,14 @@ namespace JDG.DI
                     var canvasProvider = container.Resolve<CanvasProviderService>();
                     canvasProvider.SetCanvas(canvas.transform);
                     Debug.Log("GameSceneScope: Set canvas on CanvasProviderService from parent scope");
+                }
+
+                // Phase 94: Set MessageBox and CardSelector on DialogService from parent scope
+                var dialogService = container.Resolve<IDialogService>() as DialogService;
+                if (dialogService != null && messageBox != null && cardSelector != null)
+                {
+                    dialogService.SetDialogComponents(messageBox, cardSelector);
+                    Debug.Log("GameSceneScope: Set dialog components on DialogService from parent scope");
                 }
             });
 
@@ -263,6 +295,7 @@ namespace JDG.DI
                 InjectAllOfType<InGameMenuScript>(container);
                 InjectAllOfType<HandCardDisplay>(container);
                 InjectAllOfType<OnHover>(container);
+                InjectAllOfType<MessageBox>(container);
                 InjectAllOfType<CardSelector>(container);
                 InjectAllOfType<DisplayCards>(container);
                 InjectAllOfType<CardDisplay>(container);

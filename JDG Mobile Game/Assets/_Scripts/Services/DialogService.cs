@@ -11,26 +11,35 @@ namespace JDG.Infrastructure.Services
 {
     /// <summary>
     /// Infrastructure implementation of IDialogService.
-    /// Wraps the existing MessageBox and CardSelector singletons during migration.
-    /// Uses Strangler Fig pattern - delegates to old systems temporarily.
     /// Phase 64: Changed to lazy resolution to avoid constructor singleton access.
+    /// Phase 94: Changed to use DI-injected instances instead of singletons.
+    /// MessageBox and CardSelector are set via SetDialogComponents() from GameSceneScope.
     /// </summary>
     public class DialogService : IDialogService
     {
         private Transform _canvas;
+        private MessageBox _messageBox;
+        private CardSelector _cardSelector;
 
-        // Phase 64: Lazy resolution - access singletons when needed, not in constructor
-        // This allows DialogService to be constructed before MessageBox/CardSelector exist
-        #pragma warning disable CS0618 // Suppress obsolete warning - adapter service wraps singletons
-        private MessageBox MessageBox => MessageBox.Instance;
-        private CardSelector CardSelector => CardSelector.Instance;
-        #pragma warning restore CS0618
+        // Phase 94: Properties access injected instances
+        private MessageBox MessageBox => _messageBox;
+        private CardSelector CardSelector => _cardSelector;
 
         /// <summary>
-        /// Phase 64: Empty constructor - singletons accessed lazily via properties.
+        /// Phase 64: Empty constructor - components set via SetDialogComponents().
         /// </summary>
         public DialogService()
         {
+        }
+
+        /// <summary>
+        /// Phase 94: Sets the dialog components from scene scope.
+        /// Called by GameSceneScope after finding the scene MonoBehaviours.
+        /// </summary>
+        public void SetDialogComponents(MessageBox messageBox, CardSelector cardSelector)
+        {
+            _messageBox = messageBox;
+            _cardSelector = cardSelector;
         }
 
         /// <summary>
