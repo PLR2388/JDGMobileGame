@@ -10,9 +10,9 @@ namespace Cards
     /// </summary>
     /// <remarks>
     /// DEPRECATED: Use JDG.Domain.Enums.CardType instead for clean architecture compatibility.
-    /// This enum will be removed in a future version.
+    /// This enum is kept for Unity ScriptableObject serialization - existing card assets reference these values.
     /// </remarks>
-    [Obsolete("Use JDG.Domain.Enums.CardType instead. This enum will be removed in Phase 54.")]
+    [Obsolete("Use JDG.Domain.Enums.CardType for new code. This enum is kept for Unity serialization compatibility.")]
     public enum CardType
     {
         Contre,

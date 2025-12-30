@@ -5,9 +5,9 @@ using System;
 /// </summary>
 /// <remarks>
 /// DEPRECATED: Use JDG.Domain.Enums.ConditionName instead for clean architecture compatibility.
-/// This enum will be removed in a future version.
+/// This enum is kept for Unity ScriptableObject serialization - existing card assets reference these values.
 /// </remarks>
-[Obsolete("Use JDG.Domain.Enums.ConditionName instead. This enum will be removed in Phase 54.")]
+[Obsolete("Use JDG.Domain.Enums.ConditionName for new code. This enum is kept for Unity serialization compatibility.")]
 public enum ConditionName
 {
     BenzaieJeuneOrBenzaieOnField,
@@ -40,9 +40,9 @@ public enum ConditionName
 /// </summary>
 /// <remarks>
 /// DEPRECATED: Use ICondition from JDG.Application.Abilities instead.
-/// Legacy conditions are being replaced with clean architecture implementations.
+/// This class is kept for backward compatibility - concrete implementations still inherit from it.
 /// </remarks>
-[Obsolete("Use ICondition from JDG.Application.Abilities instead. This class will be removed in Phase 54.")]
+[Obsolete("Use ICondition from JDG.Application.Abilities for new code. Kept for backward compatibility.")]
 public abstract class Condition
 {
     /// <summary>

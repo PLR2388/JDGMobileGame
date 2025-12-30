@@ -9,9 +9,9 @@ namespace Cards
     /// </summary>
     /// <remarks>
     /// DEPRECATED: Use JDG.Domain.Enums.CardFamily instead for clean architecture compatibility.
-    /// This enum will be removed in a future version.
+    /// This enum is kept for Unity ScriptableObject serialization - existing card assets reference these values.
     /// </remarks>
-    [Obsolete("Use JDG.Domain.Enums.CardFamily instead. This enum will be removed in Phase 54.")]
+    [Obsolete("Use JDG.Domain.Enums.CardFamily for new code. This enum is kept for Unity serialization compatibility.")]
     public enum CardFamily
     {
         Comics,

@@ -5,9 +5,9 @@ using System;
 /// </summary>
 /// <remarks>
 /// DEPRECATED: Use JDG.Domain.CardOwner instead for clean architecture compatibility.
-/// This enum will be removed in a future version.
+/// This enum is kept for Unity ScriptableObject serialization - existing card assets reference these values.
 /// </remarks>
-[Obsolete("Use JDG.Domain.CardOwner instead. This enum will be removed in Phase 54.")]
+[Obsolete("Use JDG.Domain.CardOwner for new code. This enum is kept for Unity serialization compatibility.")]
 public enum CardOwner
 {
     NotDefined,

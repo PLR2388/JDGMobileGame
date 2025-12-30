@@ -6,9 +6,9 @@ using _Scripts.Units.Invocation;
 /// </summary>
 /// <remarks>
 /// DEPRECATED: Use JDG.Domain.Enums.EquipmentAbilityName instead for clean architecture compatibility.
-/// This enum will be removed in a future version.
+/// This enum is kept for Unity ScriptableObject serialization - existing card assets reference these values.
 /// </remarks>
-[Obsolete("Use JDG.Domain.Enums.EquipmentAbilityName instead. This enum will be removed in Phase 54.")]
+[Obsolete("Use JDG.Domain.Enums.EquipmentAbilityName for new code. This enum is kept for Unity serialization compatibility.")]
 public enum EquipmentAbilityName
 {
     MultiplyDefBy2ButPreventAttack,
@@ -37,9 +37,9 @@ public enum EquipmentAbilityName
 /// </summary>
 /// <remarks>
 /// DEPRECATED: Use IAbility from JDG.Application.Abilities instead.
-/// Legacy abilities are being replaced with clean architecture implementations.
+/// This class is kept for backward compatibility - concrete implementations still inherit from it.
 /// </remarks>
-[Obsolete("Use IAbility from JDG.Application.Abilities instead. This class will be removed in Phase 54.")]
+[Obsolete("Use IAbility from JDG.Application.Abilities for new code. Kept for backward compatibility.")]
 public abstract class EquipmentAbility
 {
     /// <summary>
