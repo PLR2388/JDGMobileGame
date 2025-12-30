@@ -1,4 +1,6 @@
 using JDG.Application.Cards;
+using JDG.Application.Services;
+using JDG.Infrastructure.Services;
 using UnityEngine;
 using DomainCardOwner = JDG.Domain.CardOwner;
 using DomainCardType = JDG.Domain.Enums.CardType;
@@ -8,9 +10,31 @@ namespace Cards
     /// <summary>
     /// Represents a card used in the game with various properties and attributes.
     /// Phase 39: Implements IInGameCard to enable presenter migration to JDG.Presentation.
+    /// Phase 126: Added multilanguage support via ILocalizationService.
     /// </summary>
     public class InGameCard : IInGameCard
     {
+        #region Static Localization Service (Phase 126)
+
+        /// <summary>
+        /// Static localization service for card text resolution.
+        /// Phase 126: Enables lazy text resolution with fallback to ScriptableObject.
+        /// </summary>
+        private static ILocalizationService _localizationService;
+
+        /// <summary>
+        /// Sets the localization service for all InGameCard instances.
+        /// Called during game initialization.
+        /// Phase 126: Added for card multilanguage support.
+        /// </summary>
+        /// <param name="service">The localization service instance.</param>
+        public static void SetLocalizationService(ILocalizationService service)
+        {
+            _localizationService = service;
+        }
+
+        #endregion
+
         /// <summary>
         /// The base card information.
         /// </summary>
@@ -54,9 +78,31 @@ namespace Cards
         public CardOwner CardOwner { get; protected set; } = CardOwner.NotDefined;
 
         /// <summary>
-        /// Gets the title of the card.
+        /// Gets the card ID for localization lookup.
+        /// Generated from the ScriptableObject asset name.
+        /// Phase 126: Added for card multilanguage support.
         /// </summary>
-        public string Title => title;
+        public string CardId => LocalizationService.GenerateCardId(BaseCard?.name ?? title);
+
+        /// <summary>
+        /// Gets the title of the card.
+        /// Phase 126: Uses lazy resolution via localization service with fallback.
+        /// </summary>
+        public string Title => _localizationService?.GetCardTitle(CardId) ?? title;
+
+        /// <summary>
+        /// Gets the brief description of the card.
+        /// Phase 126: Uses lazy resolution via localization service with fallback.
+        /// </summary>
+        /// <returns>Localized description or fallback to ScriptableObject text.</returns>
+        public string GetDescription() => _localizationService?.GetCardDescription(CardId) ?? Description;
+
+        /// <summary>
+        /// Gets the detailed description of the card.
+        /// Phase 126: Uses lazy resolution via localization service with fallback.
+        /// </summary>
+        /// <returns>Localized detailed description or fallback to ScriptableObject text.</returns>
+        public string GetDetailedDescription() => _localizationService?.GetCardDetailedDescription(CardId) ?? DetailedDescription;
 
         /// <summary>
         /// Gets the type classification of the card (legacy type).
@@ -90,14 +136,16 @@ namespace Cards
         /// <summary>
         /// Gets the brief description of the card.
         /// Phase 39: Explicit implementation for IInGameCard interface.
+        /// Phase 126: Uses lazy resolution via GetDescription() for localization.
         /// </summary>
-        string IInGameCard.Description => Description;
+        string IInGameCard.Description => GetDescription();
 
         /// <summary>
         /// Gets the detailed description or lore of the card.
         /// Phase 39: Explicit implementation for IInGameCard interface.
+        /// Phase 126: Uses lazy resolution via GetDetailedDescription() for localization.
         /// </summary>
-        string IInGameCard.DetailedDescription => DetailedDescription;
+        string IInGameCard.DetailedDescription => GetDetailedDescription();
 
         /// <summary>
         /// Gets a value indicating whether the card is a collector's item.

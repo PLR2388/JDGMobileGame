@@ -258,6 +258,12 @@ namespace JDG.Presentation.Tests.Presenters
         {
             return true; // All keys exist in test
         }
+
+        // Phase 126: Card localization methods (no-op for testing)
+        public string GetCardTitle(string cardId) => null;
+        public string GetCardDescription(string cardId) => null;
+        public string GetCardDetailedDescription(string cardId) => null;
+        public bool HasCardLocalization(string cardId) => false;
     }
 
     #endregion

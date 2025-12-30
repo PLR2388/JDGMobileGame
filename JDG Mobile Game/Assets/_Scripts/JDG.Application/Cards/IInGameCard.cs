@@ -7,12 +7,21 @@ namespace JDG.Application.Cards
     /// Interface representing a card in the game.
     /// Phase 41: Created to abstract card dependencies for use cases.
     /// Phase 39: Extended with additional properties for presenter migration.
+    /// Phase 126: Added CardId for multilanguage localization support.
     /// Enables use cases and presenters to be moved to their proper assemblies and tested without Unity.
     /// </summary>
     public interface IInGameCard
     {
         /// <summary>
+        /// Gets the card ID for localization lookup.
+        /// Generated from the ScriptableObject asset name (e.g., "alpha-man").
+        /// Phase 126: Added for card multilanguage support.
+        /// </summary>
+        string CardId { get; }
+
+        /// <summary>
         /// Gets the title of the card.
+        /// Phase 126: Now supports lazy localization with fallback.
         /// </summary>
         string Title { get; }
 

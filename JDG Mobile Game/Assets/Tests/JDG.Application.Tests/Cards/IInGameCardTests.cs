@@ -127,6 +127,7 @@ namespace JDG.Application.Tests.Cards
         /// </summary>
         private class TestCard : IInGameCard
         {
+            public string CardId { get; }
             public string Title { get; }
             public CardOwner CardOwner { get; }
             public CardType Type { get; }
@@ -143,6 +144,7 @@ namespace JDG.Application.Tests.Cards
                 string description = "",
                 string detailedDescription = "")
             {
+                CardId = title.ToLowerInvariant().Replace(" ", "-");
                 Title = title;
                 CardOwner = owner;
                 Type = type;

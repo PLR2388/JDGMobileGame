@@ -30,6 +30,7 @@ namespace JDG.Bridge
         /// Initializes all legacy static fields with DI services.
         /// Must be called after container is built.
         /// Phase 118: Removed Ability class initialization (class deleted).
+        /// Phase 126: Added InGameCard localization service initialization.
         /// </summary>
         public static void Initialize(ILocalizationService localizationService)
         {
@@ -39,7 +40,10 @@ namespace JDG.Bridge
             Cards.CardFamilyExtensions.LocalizationService = localizationService;
             MessageBoxBaseComponentExtensions.LocalizationService = localizationService;
 
-            Debug.Log("LegacySystemInitializer: Initialized extension class static fields");
+            // Phase 126: Initialize card localization for multilanguage support
+            Cards.InGameCard.SetLocalizationService(localizationService);
+
+            Debug.Log("LegacySystemInitializer: Initialized extension class static fields and card localization");
         }
 
         /// <summary>

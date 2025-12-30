@@ -189,6 +189,7 @@ namespace JDG.Application.Tests.Cards
     /// </summary>
     public class TestInGameCard : IInGameCard
     {
+        public string CardId { get; }
         public string Title { get; }
         public CardOwner CardOwner { get; }
         public CardType Type { get; }
@@ -199,6 +200,7 @@ namespace JDG.Application.Tests.Cards
 
         public TestInGameCard(string title, CardOwner owner, CardType type = CardType.Invocation)
         {
+            CardId = title.ToLowerInvariant().Replace(" ", "-");
             Title = title;
             CardOwner = owner;
             Type = type;
@@ -217,6 +219,7 @@ namespace JDG.Application.Tests.Cards
     public class TestInGameInvocationCard : IInGameInvocationCard
     {
         // IInGameCard members
+        public string CardId { get; }
         public string Title { get; }
         public CardOwner CardOwner { get; }
         public CardType Type => CardType.Invocation;
@@ -263,6 +266,7 @@ namespace JDG.Application.Tests.Cards
 
         public TestInGameInvocationCard(string title, CardOwner owner, float attack, float defense)
         {
+            CardId = title.ToLowerInvariant().Replace(" ", "-");
             Title = title;
             CardOwner = owner;
             Attack = attack;

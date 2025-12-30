@@ -287,6 +287,7 @@ namespace JDG.Presentation.Tests.Presenters
     /// </summary>
     internal class MockInGameCard : IInGameCard
     {
+        public string CardId { get; set; } = "test-card";
         public string Title { get; set; } = "Test Card";
         public string Description { get; set; } = "Test Description";
         public string DetailedDescription { get; set; } = "Test Detailed Description";

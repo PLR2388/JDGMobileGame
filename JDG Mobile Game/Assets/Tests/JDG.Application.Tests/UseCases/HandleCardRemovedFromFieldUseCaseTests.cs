@@ -150,6 +150,7 @@ namespace JDG.Application.Tests.UseCases
 
         private class TestInvocationCard : IInGameInvocationCard
         {
+            public string CardId => Title.ToLowerInvariant().Replace(" ", "-");
             public string Title { get; }
             public CardOwner CardOwner { get; }
             public CardType Type => CardType.Invocation;
