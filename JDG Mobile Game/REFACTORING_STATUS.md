@@ -1278,6 +1278,159 @@ Libraries remain functional during transition:
 
 ---
 
+### Phase 115-119: Legacy Ability Class Removal ✅ (Completed 2025-12-30)
+
+**Goal**: Remove all legacy ability base classes after modern IAbility implementations are in use.
+
+#### Phase 115: Remove EffectAbility Base Class
+- ✅ Updated `InGameEffectCard.cs` to use only `ModernEffectAbilities`
+- ✅ Removed legacy `EffectAbilities` property
+- ✅ Updated `EffectAbilityProviderService.cs` to remove legacy dictionary
+- ✅ Deleted 18 legacy effect ability files from `Units/Effect/EffectAbility/`
+- ✅ Deleted `Units/Effect/EffectAbility.cs` base class
+
+#### Phase 116: Remove FieldAbility Base Class
+- ✅ Updated `InGameFieldCard.cs` to use only `ModernFieldAbilities`
+- ✅ Removed legacy `FieldAbilities` property
+- ✅ Updated `FieldAbilityProviderService.cs` to remove legacy dictionary
+- ✅ Deleted 5 legacy field ability files from `Units/Field/FieldAbility/`
+- ✅ Deleted `Units/Field/FieldAbility.cs` base class
+
+#### Phase 117: Remove EquipmentAbility Base Class
+- ✅ Updated `InGameEquipmentCard.cs` to use only `ModernEquipmentAbilities`
+- ✅ Removed legacy `EquipmentAbilities` property
+- ✅ Updated `EquipmentAbilityProviderService.cs` to remove legacy dictionary
+- ✅ Deleted 9 legacy equipment ability files from `Units/Equipment/EquipmentAbility/`
+- ✅ Deleted `Units/Equipment/EquipmentAbility.cs` base class
+
+#### Phase 118: Remove Ability Base Class
+- ✅ Updated `InGameInvocationCard.cs` to use only `ModernAbilities`
+- ✅ Removed legacy `Abilities` property
+- ✅ Updated `IAbilityProvider.cs` to remove legacy `GetAbility()` method
+- ✅ Updated `AbilityProviderService.cs` to only use `AbilityRegistry`
+- ✅ Deleted `Units/Ability.cs` base class
+- ✅ Deleted `Bridge/ModernAbilityAdapter.cs`
+- ✅ Updated `CombatService.cs` with combat logic extracted from Ability class
+- ✅ Updated `TurnService.cs` to use ModernAbilities for all card types
+
+#### Phase 119: Bridge Layer Simplification
+- ✅ Updated `LegacySystemInitializer.cs` to remove Ability class references
+- ✅ Updated `SharedServicesScope.cs` to match new signature
+- ✅ Updated `Bridge/README.md` documenting permanent infrastructure status
+
+#### Files Deleted (Phase 115-118)
+**Effect Abilities (18 files)**:
+- AddShieldsForUserEffectAbility.cs, ChangeFieldCardEffectAbility.cs
+- ControlOpponentInvocationCardEffectAbility.cs, DestroyCardsEffectAbility.cs
+- DestroyFieldCardAbility.cs, DirectAttackEffectAbility.cs
+- DivideDEFOpponentEffectAbility.cs, FamilyFieldToInvocationsEffectAbility.cs
+- GetCardFromDeckYellowEffectAbility.cs, GetHPBackEffectAbility.cs
+- IncrementNumberAttackEffectAbility.cs, InvokeCardFromDeckYellowEffectAbility.cs
+- LimitHandCardsEffectAbility.cs, LookDeckCardsEffectAbility.cs
+- LookHandCardsEffectAbility.cs, LooseHPOpponentEffectAbility.cs
+- SkipOpponentAttackEffectAbility.cs, SwitchAtkDefEffectAbility.cs
+
+**Field Abilities (5 files)**:
+- ChangeInvocationFamilyAbility.cs, DrawMoreCardsAbility.cs
+- EarnATKDEFForFamilyAbility.cs, EarnHPPerFamilyOnTurnStartAbility.cs
+- GetCardFromFamilyIfSkipDrawAbility.cs
+
+**Equipment Abilities (9 files)**:
+- CancelInvocationAbility.cs, CantBeAttackDestroyByInvocationAbility.cs
+- DirectAttackAbility.cs, EarnAtkDefAbility.cs
+- MultiplyAtkDefAbility.cs, PreventAttackNewOpponentInvocationAbility.cs
+- ProtectFromDestructionAbility.cs, SetAtkDefAbility.cs
+- SwitchEquipmentCardAbility.cs
+
+**Base Classes (4 files)**:
+- Units/Ability.cs
+- Units/Effect/EffectAbility.cs
+- Units/Field/FieldAbility.cs
+- Units/Equipment/EquipmentAbility.cs
+
+**Bridge Files (1 file)**:
+- Bridge/ModernAbilityAdapter.cs
+
+#### Code Metrics (Phase 115-119)
+- Legacy ability files deleted: 32
+- Lines of legacy code removed: ~4,000+
+- Provider services simplified (removed ~600 lines of dictionary code)
+- All ability resolution now uses AbilityRegistry exclusively
+
+---
+
+## Final Phase Summary (Updated)
+
+| Phase Range | Description | Files Changed |
+|-------------|-------------|---------------|
+| 1-8 | Foundation, DI, EventBus | ~50 |
+| 9-12 | Integration & Presentation | ~30 |
+| 13-28 | MVP Migration, Singletons | ~100 |
+| 29-33 | Ability Registration, Cleanup | ~40 |
+| 39-48 | Presenter Migration, Providers | ~60 |
+| 85-100 | Singleton Cleanup, Testing | ~40 |
+| 101-107 | Ability Migration Verification | ~20 |
+| 108-115 | Event Migration, Documentation | ~25 |
+| **115-119** | **Legacy Ability Class Removal** | **~50** |
+
+## Constraints (Updated)
+
+| Component | Reason |
+|-----------|--------|
+| AudioSystem.cs | Only class using PersistentSingleton, needed for AudioSource MonoBehaviour |
+| StaticInstance.cs | AudioSystem depends on PersistentSingleton base class |
+| Legacy Enums (CardFamily, CardType, etc.) | Unity ScriptableObject serialization stores enum values by integer |
+| ~~Legacy Ability Base Classes~~ | **REMOVED** - All abilities now use modern IAbility system |
+| Bridge Files (CardConverter, LegacySystemInitializer, CardRepositoryInitializer) | Permanent infrastructure for ScriptableObject → Domain conversion |
+
+## Architecture Status (Final)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                        │
+│  JDG.Presentation: 4 Presenters                             │
+│  - RoundDisplayPresenter                                     │
+│  - InvocationMenuPresenter                                   │
+│  - DialogPresenter                                           │
+│  - CardDisplayPresenter                                      │
+│  Default Assembly: CardSelectorPresenter (legacy deps)      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    APPLICATION LAYER                         │
+│  JDG.Application:                                           │
+│  - IAbility interface (sole ability contract)               │
+│  - 57 modern ability implementations via 11 factories       │
+│  - AbilityRegistry (centralized ability lookup)             │
+│  - Service interfaces                                       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   INFRASTRUCTURE LAYER                       │
+│  JDG.Infrastructure:                                         │
+│  - Repository implementations                                │
+│  - EventBus (30+ domain events)                             │
+│  Default Assembly (Services/):                              │
+│  - AbilityProviderService (routes to AbilityRegistry)       │
+│  - CombatService (extracted combat logic)                   │
+│  - TurnService (uses ModernAbilities)                       │
+│  - Bridge layer (permanent infrastructure)                  │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      DOMAIN LAYER                            │
+│  JDG.Domain: Pure C#, no Unity dependencies                 │
+│  - Card, Player entities                                    │
+│  - AbilityName enum (70 values)                             │
+│  - Domain events                                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
 **Last Updated**: 2025-12-30
 **Current Branch**: refactor-v3
-**Status**: ✅ REFACTORING COMPLETE (115 Phases)
+**Status**: ✅ REFACTORING COMPLETE (119 Phases)
