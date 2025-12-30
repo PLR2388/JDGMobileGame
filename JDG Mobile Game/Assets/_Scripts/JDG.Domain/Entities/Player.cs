@@ -22,8 +22,8 @@ namespace JDG.Domain.Entities
         private readonly List<Card> _graveyard;
 
         // Player State (ECS: can become components)
-        public int Health { get; private set; }
-        public int MaxHealth { get; }
+        public float Health { get; private set; }
+        public float MaxHealth { get; }
         public int Shields { get; private set; }
         public bool BlockAttack { get; private set; }
         public bool SkipCurrentDraw { get; set; }
@@ -40,7 +40,7 @@ namespace JDG.Domain.Entities
         public int FieldCount => _field.Count;
         public int GraveyardCount => _graveyard.Count;
 
-        public Player(PlayerId id, IEnumerable<Card> deck, int maxHealth = 30)
+        public Player(PlayerId id, IEnumerable<Card> deck, float maxHealth = 30f)
         {
             Id = id;
             MaxHealth = maxHealth;
@@ -183,24 +183,25 @@ namespace JDG.Domain.Entities
         /// Takes damage, reducing shields first, then health.
         /// Returns actual damage dealt to health (after shields).
         /// </summary>
-        public int TakeDamage(int damage)
+        public float TakeDamage(float damage)
         {
             if (damage <= 0)
-                return 0;
+                return 0f;
 
-            int healthDamage = 0;
+            float healthDamage = 0f;
 
             if (Shields > 0)
             {
-                int shieldsRemoved = Math.Min(Shields, damage);
-                Shields -= shieldsRemoved;
-                damage -= shieldsRemoved;
+                int shieldsToRemove = (int)Math.Min(Shields, Math.Ceiling(damage));
+                float damageAbsorbedByShields = Math.Min(shieldsToRemove, damage);
+                Shields -= shieldsToRemove;
+                damage -= damageAbsorbedByShields;
             }
 
             if (damage > 0)
             {
                 healthDamage = damage;
-                Health = Math.Max(0, Health - damage);
+                Health = Math.Max(0f, Health - damage);
             }
 
             return healthDamage;
@@ -210,12 +211,12 @@ namespace JDG.Domain.Entities
         /// Heals the player up to max health.
         /// Returns actual amount healed.
         /// </summary>
-        public int Heal(int amount)
+        public float Heal(float amount)
         {
             if (amount <= 0)
-                return 0;
+                return 0f;
 
-            int oldHealth = Health;
+            float oldHealth = Health;
             Health = Math.Min(MaxHealth, Health + amount);
             return Health - oldHealth;
         }
@@ -284,8 +285,8 @@ namespace JDG.Domain.Entities
     public struct PlayerSnapshot
     {
         public PlayerId Id;
-        public int Health;
-        public int MaxHealth;
+        public float Health;
+        public float MaxHealth;
         public int Shields;
         public bool BlockAttack;
         public int DeckCount;

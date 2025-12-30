@@ -36,6 +36,9 @@ namespace JDG.Domain.Entities
         // Runtime State (mutable during gameplay)
         public int TimesRevived { get; private set; }
         public bool CancelEffect { get; private set; }
+        public bool CanDirectAttack { get; private set; }
+        public bool AttackBlocked { get; private set; }
+        public int BonusAttacks { get; private set; }
 
         // Equipment Card Properties
         public IReadOnlyList<EquipmentAbilityName> EquipmentAbilities { get; }
@@ -278,6 +281,59 @@ namespace JDG.Domain.Entities
         public void SetCancelEffect(bool canceled)
         {
             CancelEffect = canceled;
+        }
+
+        /// <summary>
+        /// Enables direct attack for this card (can attack player directly).
+        /// </summary>
+        public void EnableDirectAttack()
+        {
+            if (Type == CardType.Invocation)
+                CanDirectAttack = true;
+        }
+
+        /// <summary>
+        /// Disables direct attack for this card.
+        /// </summary>
+        public void DisableDirectAttack()
+        {
+            CanDirectAttack = false;
+        }
+
+        /// <summary>
+        /// Blocks this card from attacking (for current turn).
+        /// </summary>
+        public void BlockAttack()
+        {
+            if (Type == CardType.Invocation)
+                AttackBlocked = true;
+        }
+
+        /// <summary>
+        /// Unblocks this card's attack ability.
+        /// </summary>
+        public void UnblockAttack()
+        {
+            AttackBlocked = false;
+        }
+
+        /// <summary>
+        /// Sets the number of bonus attacks for this card.
+        /// </summary>
+        public void SetBonusAttacks(int bonus)
+        {
+            if (Type == CardType.Invocation)
+                BonusAttacks = bonus;
+        }
+
+        /// <summary>
+        /// Resets turn-based runtime state (attack blocked, bonus attacks).
+        /// Called at start of each turn.
+        /// </summary>
+        public void ResetTurnState()
+        {
+            AttackBlocked = false;
+            BonusAttacks = 0;
         }
 
         /// <summary>

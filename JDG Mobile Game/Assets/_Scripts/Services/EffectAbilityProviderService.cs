@@ -1,24 +1,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Application.Abilities;
+using JDG.Application.Abilities.Implementations;
+using JDG.Application.Repositories;
+using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 
 /// <summary>
 /// Provides effect abilities.
 /// Phase 48: Originally wrapped legacy singleton for DI-compatible access.
 /// Phase 84: Now owns the ability dictionary directly (EffectAbilityLibrary deleted).
-/// Will be migrated to use modern IAbility implementations in future phases.
+/// Phase 102: Added modern IAbility support via GetModernAbility.
 /// </summary>
 #pragma warning disable CS0618 // Suppress obsolete warnings for legacy ability types
 public class EffectAbilityProviderService : IEffectAbilityProvider
 {
     private readonly Dictionary<EffectAbilityName, EffectAbility> _abilityDictionary;
+    private readonly Dictionary<DomainEffectAbilityName, IAbility> _modernAbilityDictionary;
+    private readonly EffectAbilityFactory _factory;
 
     /// <summary>
     /// Initializes the effect ability provider with all abilities.
     /// Phase 84: Moved from EffectAbilityLibrary.
+    /// Phase 102: Added modern ability factory initialization.
     /// </summary>
-    public EffectAbilityProviderService()
+    public EffectAbilityProviderService(IPlayerRepository playerRepository = null)
     {
+        // Initialize modern factory if repository provided
+        if (playerRepository != null)
+        {
+            _factory = new EffectAbilityFactory(playerRepository);
+            InitializeModernAbilities();
+        }
+        else
+        {
+            _modernAbilityDictionary = new Dictionary<DomainEffectAbilityName, IAbility>();
+        }
+
         var abilities = new List<EffectAbility>
         {
             new LimitHandCardsEffectAbility(
@@ -189,6 +207,78 @@ public class EffectAbilityProviderService : IEffectAbilityProvider
     public bool HasAbility(EffectAbilityName abilityName)
     {
         return _abilityDictionary.ContainsKey(abilityName);
+    }
+
+    /// <summary>
+    /// Gets a modern IAbility implementation by effect ability name.
+    /// Phase 102: New method for clean architecture migration.
+    /// </summary>
+    /// <param name="abilityName">The domain ability name to look up.</param>
+    /// <returns>The modern ability, or null if not found.</returns>
+    public IAbility GetModernAbility(DomainEffectAbilityName abilityName)
+    {
+        _modernAbilityDictionary.TryGetValue(abilityName, out var ability);
+        return ability;
+    }
+
+    /// <summary>
+    /// Initializes the modern ability dictionary with all effect abilities.
+    /// Maps DomainEffectAbilityName to IAbility implementations.
+    /// </summary>
+    private void InitializeModernAbilities()
+    {
+        _modernAbilityDictionary = new Dictionary<DomainEffectAbilityName, IAbility>
+        {
+            // Hand manipulation
+            [DomainEffectAbilityName.LimitHandCardTo5] = _factory.CreateLimitHand(5),
+
+            // Damage abilities
+            [DomainEffectAbilityName.Lose2Point5StarsByInvocations] = _factory.CreateDamageOpponent(
+                DamageCalculationType.ByPlayerInvocationCount, 2.5f),
+            [DomainEffectAbilityName.LooseHPBasedOnNumberInvocation] = _factory.CreateDamageOpponent(
+                DamageCalculationType.ByOpponentInvocationCount, 2.5f),
+            [DomainEffectAbilityName.Loose1HPPerOpponentHandCards] = _factory.CreateDamageOpponent(
+                DamageCalculationType.ByOpponentHandCount, 1f),
+
+            // Healing abilities
+            [DomainEffectAbilityName.GetHPFor1Sacrifice3ATKDEFCondition] = _factory.CreateHealPlayer(15f, 3),
+            [DomainEffectAbilityName.Get7HalfHPFor1Sacrifice] = _factory.CreateHealPlayer(7.5f),
+            [DomainEffectAbilityName.GetBackAllHPBySacrifice5AtkDef] = _factory.CreateHealPlayer(0f, 5), // 0 = full heal
+
+            // Attack modification abilities
+            [DomainEffectAbilityName.DirectAttackIfUnder5HP] = _factory.CreateEnableDirectAttack(5f),
+            [DomainEffectAbilityName.DoubleAttackPerTurn] = _factory.CreateDoubleAttacks(1),
+            [DomainEffectAbilityName.ManiabilitePourrieSkipAttackForOpponent] = _factory.CreateSkipAttackPhase(),
+
+            // Card destruction abilities
+            [DomainEffectAbilityName.DestroyAllCardsUnderManyConditions] = _factory.CreateDestroyMultiple(0), // All
+            [DomainEffectAbilityName.DestroyOneCardByRemovingOneHandCard] = _factory.CreateDestroyMultiple(1),
+            [DomainEffectAbilityName.DestroyEquipmentCard] = _factory.CreateDestroyMultiple(1),
+            [DomainEffectAbilityName.DestroyOpponentInvocationCard] = _factory.CreateDestroyMultiple(1),
+            [DomainEffectAbilityName.DestroyFieldFor7HalfCost] = _factory.CreateDestroyFieldCard(7.5f),
+
+            // Card manipulation abilities
+            [DomainEffectAbilityName.ChangeFieldCardFromDeck] = _factory.CreateChangeField(),
+            [DomainEffectAbilityName.GetCardFromYellowDeck] = _factory.CreateDrawFromGraveyard(),
+            [DomainEffectAbilityName.InvokeCardFromYellowTrash] = _factory.CreateInvokeFromDeck(),
+
+            // View abilities
+            [DomainEffectAbilityName.LookAndOrderDeckCards] = _factory.CreateLookDeck(5),
+            [DomainEffectAbilityName.LookOpponentHandCardsAndChangeIt] = _factory.CreateLookHand(),
+
+            // Stat modification abilities
+            [DomainEffectAbilityName.SwitchAtkDef] = _factory.CreateSwapStats(),
+            [DomainEffectAbilityName.DivideDEFOpponentBy2] = _factory.CreateDivideDefense(2),
+
+            // Shield abilities
+            [DomainEffectAbilityName.Add3ShieldsForUser] = _factory.CreateAddShields(3),
+
+            // Control abilities
+            [DomainEffectAbilityName.Control1OpponentInvocationCard] = _factory.CreateControlCard(),
+
+            // Field effect abilities
+            [DomainEffectAbilityName.ApplyFamilyFieldToInvocations] = _factory.CreateApplyFamilyField(0.5f)
+        };
     }
 }
 #pragma warning restore CS0618

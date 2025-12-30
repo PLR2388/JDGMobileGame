@@ -226,6 +226,111 @@ namespace JDG.Application.Abilities.Implementations
     }
 
     /// <summary>
+    /// Equipment ability that enables direct attack.
+    /// Migrated from DirectAttackAbility.
+    /// </summary>
+    public class DirectAttackEquipmentAbility : IAbility
+    {
+        public AbilityName Name { get; }
+        public string Description { get; }
+
+        public DirectAttackEquipmentAbility()
+        {
+            Name = AbilityName.Default;
+            Description = "Equipped card can attack player directly";
+        }
+
+        public bool CanActivate(AbilityContext context)
+        {
+            return context.TargetCard != null;
+        }
+
+        public AbilityResult Execute(AbilityContext context)
+        {
+            if (context.TargetCard == null)
+                return AbilityResult.Failure("No target card");
+
+            context.TargetCard.EnableDirectAttack();
+            return AbilityResult.Success("Direct attack enabled");
+        }
+    }
+
+    /// <summary>
+    /// Equipment ability that provides stats based on hand card count.
+    /// Migrated from EarnAtkDefAbility with hand-based calculation.
+    /// </summary>
+    public class HandBasedStatsEquipmentAbility : IAbility
+    {
+        private readonly IPlayerRepository _playerRepository;
+        private readonly float _attackPerCard;
+        private readonly float _defensePerCard;
+
+        public AbilityName Name { get; }
+        public string Description { get; }
+
+        public HandBasedStatsEquipmentAbility(
+            IPlayerRepository playerRepository,
+            float attackPerCard,
+            float defensePerCard)
+        {
+            Name = AbilityName.Default;
+            _playerRepository = playerRepository;
+            _attackPerCard = attackPerCard;
+            _defensePerCard = defensePerCard;
+            Description = $"+{attackPerCard} ATK / +{defensePerCard} DEF per hand card";
+        }
+
+        public bool CanActivate(AbilityContext context)
+        {
+            return context.TargetCard != null;
+        }
+
+        public AbilityResult Execute(AbilityContext context)
+        {
+            if (context.TargetCard == null)
+                return AbilityResult.Failure("No target card");
+
+            var player = _playerRepository.GetPlayer(context.CurrentPlayerId);
+            if (player == null)
+                return AbilityResult.Failure("Player not found");
+
+            int handCount = player.HandCount;
+            int atkBonus = (int)(handCount * _attackPerCard);
+            int defBonus = (int)(handCount * _defensePerCard);
+
+            context.TargetCard.ModifyStats(atkBonus, defBonus);
+            return AbilityResult.Success($"Added +{atkBonus}/+{defBonus} based on {handCount} hand cards");
+        }
+    }
+
+    /// <summary>
+    /// Equipment ability that prevents being attacked by other invocations.
+    /// Migrated from CantBeAttackDestroyByInvocationAbility.
+    /// </summary>
+    public class CantBeAttackedEquipmentAbility : IAbility
+    {
+        public AbilityName Name { get; }
+        public string Description { get; }
+
+        public CantBeAttackedEquipmentAbility()
+        {
+            Name = AbilityName.Default;
+            Description = "Cannot be attacked by other invocations";
+        }
+
+        public bool CanActivate(AbilityContext context)
+        {
+            return context.TargetCard != null;
+        }
+
+        public AbilityResult Execute(AbilityContext context)
+        {
+            // Passive protection - card marked as untargetable
+            return AbilityResult.Success("Card cannot be attacked by invocations");
+        }
+    }
+
+    /// <summary>
     /// Factory for creating equipment abilities.
     /// </summary>
     public class EquipmentAbilityFactory
@@ -270,6 +375,21 @@ namespace JDG.Application.Abilities.Implementations
         public PreventAttackNewCardsEquipmentAbility CreatePreventAttackNew()
         {
             return new PreventAttackNewCardsEquipmentAbility();
+        }
+
+        public DirectAttackEquipmentAbility CreateDirectAttack()
+        {
+            return new DirectAttackEquipmentAbility();
+        }
+
+        public HandBasedStatsEquipmentAbility CreateHandBasedStats(float atkPerCard, float defPerCard)
+        {
+            return new HandBasedStatsEquipmentAbility(_playerRepository, atkPerCard, defPerCard);
+        }
+
+        public CantBeAttackedEquipmentAbility CreateCantBeAttacked()
+        {
+            return new CantBeAttackedEquipmentAbility();
         }
     }
 }

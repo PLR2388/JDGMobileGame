@@ -13,8 +13,8 @@ namespace JDG.Application.Abilities.Implementations
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly CardFamily _targetFamily;
-        private readonly int _attackBonus;
-        private readonly int _defenseBonus;
+        private readonly float _attackBonus;
+        private readonly float _defenseBonus;
 
         public AbilityName Name { get; }
         public string Description { get; }
@@ -22,8 +22,8 @@ namespace JDG.Application.Abilities.Implementations
 
         public FamilyBoostFieldAbility(
             CardFamily targetFamily,
-            int attackBonus,
-            int defenseBonus,
+            float attackBonus,
+            float defenseBonus,
             IPlayerRepository playerRepository)
         {
             Name = AbilityName.Default;
@@ -52,7 +52,7 @@ namespace JDG.Application.Abilities.Implementations
 
             foreach (var card in familyCards)
             {
-                card.ModifyStats(_attackBonus, _defenseBonus);
+                card.ModifyStats((int)_attackBonus, (int)_defenseBonus);
             }
 
             _playerRepository.SavePlayer(player);
@@ -68,7 +68,7 @@ namespace JDG.Application.Abilities.Implementations
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly CardFamily _targetFamily;
-        private readonly int _hpPerCard;
+        private readonly float _hpPerCard;
 
         public AbilityName Name { get; }
         public string Description { get; }
@@ -76,7 +76,7 @@ namespace JDG.Application.Abilities.Implementations
 
         public HealPerFamilyFieldAbility(
             CardFamily targetFamily,
-            int hpPerCard,
+            float hpPerCard,
             IPlayerRepository playerRepository)
         {
             Name = AbilityName.Default;
@@ -102,9 +102,10 @@ namespace JDG.Application.Abilities.Implementations
             int familyCardCount = player.Field.Count(c =>
                 c.Families != null && c.Families.Contains(_targetFamily));
 
-            int totalHeal = familyCardCount * _hpPerCard;
+            float totalHeal = familyCardCount * _hpPerCard;
+            player.Heal(totalHeal);
+            _playerRepository.SavePlayer(player);
 
-            // This would call HealPlayerAbility or use a heal use case
             return AbilityResult.Success($"Healed {totalHeal} HP ({familyCardCount} × {_hpPerCard})");
         }
     }
@@ -233,6 +234,61 @@ namespace JDG.Application.Abilities.Implementations
     }
 
     /// <summary>
+    /// Field ability that changes a specific card's family by name.
+    /// Migrated from ChangeInvocationFamilyAbility (card-specific version).
+    /// </summary>
+    public class ChangeByNameFieldAbility : IAbility, IPassiveAbility
+    {
+        private readonly IPlayerRepository _playerRepository;
+        private readonly string _cardName;
+        private readonly CardFamily _newFamily;
+
+        public AbilityName Name { get; }
+        public string Description { get; }
+        public AbilityTrigger Trigger => AbilityTrigger.Continuous;
+
+        public ChangeByNameFieldAbility(
+            string cardName,
+            CardFamily newFamily,
+            IPlayerRepository playerRepository)
+        {
+            Name = AbilityName.Default;
+            _cardName = cardName;
+            _newFamily = newFamily;
+            _playerRepository = playerRepository;
+            Description = $"{cardName} gains {newFamily} family";
+        }
+
+        public bool CanActivate(AbilityContext context)
+        {
+            var player = _playerRepository.GetPlayer(context.CurrentPlayerId);
+            return player != null && player.Field.Any(c => c.Title == _cardName);
+        }
+
+        public AbilityResult Execute(AbilityContext context)
+        {
+            var player = _playerRepository.GetPlayer(context.CurrentPlayerId);
+            if (player == null)
+                return AbilityResult.Failure("Player not found");
+
+            var targetCard = player.Field.FirstOrDefault(c => c.Title == _cardName);
+            if (targetCard == null)
+                return AbilityResult.Failure($"{_cardName} not found on field");
+
+            // Add the new family to existing families
+            var families = targetCard.Families.ToList();
+            if (!families.Contains(_newFamily))
+            {
+                families.Add(_newFamily);
+                targetCard.SetFamilies(families);
+            }
+
+            _playerRepository.SavePlayer(player);
+            return AbilityResult.Success($"{_cardName} now has {_newFamily} family");
+        }
+    }
+
+    /// <summary>
     /// Factory for creating field abilities.
     /// </summary>
     public class FieldAbilityFactory
@@ -244,14 +300,19 @@ namespace JDG.Application.Abilities.Implementations
             _playerRepository = playerRepository;
         }
 
-        public FamilyBoostFieldAbility CreateFamilyBoost(CardFamily family, int atk, int def)
+        public FamilyBoostFieldAbility CreateFamilyBoost(CardFamily family, float atk, float def)
         {
             return new FamilyBoostFieldAbility(family, atk, def, _playerRepository);
         }
 
-        public HealPerFamilyFieldAbility CreateHealPerFamily(CardFamily family, int hpPerCard)
+        public HealPerFamilyFieldAbility CreateHealPerFamily(CardFamily family, float hpPerCard)
         {
             return new HealPerFamilyFieldAbility(family, hpPerCard, _playerRepository);
+        }
+
+        public ChangeByNameFieldAbility CreateChangeByName(string cardName, CardFamily newFamily)
+        {
+            return new ChangeByNameFieldAbility(cardName, newFamily, _playerRepository);
         }
 
         public ChangeFamilyFieldAbility CreateChangeFamily(CardFamily newFamily)
