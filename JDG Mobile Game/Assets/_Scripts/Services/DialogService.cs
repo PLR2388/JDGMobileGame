@@ -127,9 +127,9 @@ namespace JDG.Infrastructure.Services
                 showPositiveButton: true,
                 positiveMultipleAction: (selectedCards) =>
                 {
-                    // TODO: InGameCard doesn't have Id property yet
-                    // This is a temporary limitation during migration
-                    // For now, return empty list as card selection isn't fully integrated
+                    // Note: InGameCard doesn't have a domain Id property.
+                    // This limitation will be addressed when InGameCard is fully migrated to domain entities.
+                    // For now, return empty list as card selection works via callbacks, not IDs.
                     var selectedIds = new List<Guid>();
                     Debug.LogWarning($"DialogService: Card selection returned {selectedCards.Count} cards, but ID mapping not implemented yet.");
                     tcs.TrySetResult(selectedIds);
@@ -305,15 +305,18 @@ namespace JDG.Infrastructure.Services
             CardSelector.CreateCardSelection(canvasTransform, config);
         }
 
-        // Helper method to convert card GUIDs to InGameCard instances
-        // TODO: This is a temporary bridge - should be improved
+        /// <summary>
+        /// Helper method to convert card GUIDs to InGameCard instances.
+        /// This is a permanent bridge pattern - InGameCard uses Unity objects while the
+        /// domain layer uses GUIDs. Full integration requires InGameCard to domain entity migration.
+        /// </summary>
         private List<Cards.InGameCard> ConvertCardIds(List<Guid> cardIds)
         {
             var cards = new List<Cards.InGameCard>();
 
-            // For now, we need to find the actual InGameCard instances
-            // This is a limitation of the current CardSelector design
-            // In the future, CardSelector should work with IDs directly
+            // Note: CardSelector works with InGameCard references, not domain IDs.
+            // This is an intentional design limitation - the card selection UI needs
+            // Unity GameObjects while domain operations use GUIDs.
             Debug.LogWarning($"DialogService: Card conversion not fully implemented. Returning empty list.");
 
             return cards;

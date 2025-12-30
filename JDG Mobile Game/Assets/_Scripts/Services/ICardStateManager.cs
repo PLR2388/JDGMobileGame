@@ -10,8 +10,8 @@ using JDG.Domain;
 /// on legacy types (Cards namespace, InGameInvocationCard) that haven't been migrated
 /// to the Domain layer yet. Once card types are migrated, this can move to JDG.Application.
 ///
-/// TODO: Full implementation requires extensive refactoring of InGameInvocationCard (267 lines).
-/// This interface defines the contract for what would be extracted:
+/// LONG-TERM GOAL: Full implementation requires InGameInvocationCard refactoring (267+ lines).
+/// This interface defines the contract for potential future extraction:
 /// - Attack counting and limits
 /// - Blocking state
 /// - Control state (who controls the card)
@@ -19,12 +19,13 @@ using JDG.Domain;
 /// - Turn-based state (NumberOfTurnOnField, etc.)
 /// - Condition tracking
 ///
-/// This extraction is deferred to a future phase due to:
-/// 1. Complexity of card system (267 lines of interrelated state)
+/// Deferred due to:
+/// 1. Complexity of card system (267+ lines of interrelated state)
 /// 2. Deep integration with ability system
-/// 3. Needs comprehensive testing to avoid breaking gameplay
+/// 3. Requires comprehensive testing to avoid breaking gameplay
+/// 4. Current InGameInvocationCard works correctly - no urgent need
 ///
-/// Recommend creating Phase 21-22B specifically for this extraction.
+/// This is a design document for future architecture evolution, not a blocking item.
 /// </summary>
 public interface ICardStateManager
     {

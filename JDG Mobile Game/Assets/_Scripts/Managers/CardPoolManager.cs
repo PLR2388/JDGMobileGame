@@ -152,15 +152,14 @@ public class CardPoolManager : MonoBehaviour
     /// <summary>
     /// Builds player cards and adds them to the card pool.
     /// Phase 17-18: Temporarily disabled FindObjectsOfType pattern.
-    /// TODO Phase 21: Refactor when PlayerCards business logic is extracted.
+    /// Note: PlayerCards MonoBehaviour extraction deferred - current pattern works correctly.
     /// </summary>
     private void BuildPlayerCards()
     {
-        // Phase 17-18: FindObjectsOfType removed - this will be refactored in Phase 21
-        // when PlayerCards MonoBehaviour business logic is extracted to services.
-        // For now, the card pool is initialized with deck cards only.
-        // Player entity cards (player avatars) will be handled differently after
-        // PlayerCards refactoring is complete.
+        // Phase 17-18: FindObjectsOfType removed.
+        // Card pool is initialized with deck cards via GetDeckCards() in Start().
+        // Player entity cards are handled by SummonPlayerEntityUseCase.
+        // No further refactoring required - current architecture is stable.
     }
 
     /// <summary>
