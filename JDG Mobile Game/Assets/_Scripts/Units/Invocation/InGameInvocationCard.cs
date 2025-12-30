@@ -4,6 +4,7 @@ using _Scripts.Cards.InvocationCards;
 using Cards;
 using Cards.InvocationCards;
 using JDG.Application;
+using JDG.Application.Abilities;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Domain.Events;
@@ -16,6 +17,7 @@ namespace _Scripts.Units.Invocation
     /// Phase 24-25: Removed ServiceLocator, using constructor injection.
     /// Phase 7: Added IAbilityProvider for AbilityLibrary → AbilityRegistry migration.
     /// Phase 49: Implements IInGameInvocationCard for complete abstraction.
+    /// Phase 105: Added ModernAbilities for IAbility migration.
     /// </summary>
     public class InGameInvocationCard : InGameCard, IInGameInvocationCard
     {
@@ -66,7 +68,18 @@ namespace _Scripts.Units.Invocation
         public bool Aggro { get; set; }
 
         private List<global::Condition> conditions = new List<global::Condition>();
+
+        /// <summary>
+        /// List of legacy abilities associated with the invocation card.
+        /// Phase 105: Marked for deprecation - use ModernAbilities instead.
+        /// </summary>
         public List<Ability> Abilities = new List<Ability>();
+
+        /// <summary>
+        /// List of modern IAbility implementations for this card.
+        /// Phase 105: New property for clean architecture migration.
+        /// </summary>
+        public List<IAbility> ModernAbilities { get; private set; } = new List<IAbility>();
 
 
         public int NumberOfTurnOnField { get; private set; }
@@ -150,11 +163,18 @@ namespace _Scripts.Units.Invocation
                 .ToList();
 
             // Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed)
+            // Legacy abilities (for backward compatibility)
             Abilities = BaseInvocationCard.Abilities
                 .Select(abilityName => _abilityProvider.GetAbility(abilityName))
                 .Where(ability => ability != null)
                 .ToList();
             UpdateInvocationCardForAbilities();
+
+            // Phase 105: Populate modern abilities
+            ModernAbilities = BaseInvocationCard.Abilities
+                .Select(abilityName => _abilityProvider.GetModernAbility(abilityName))
+                .Where(ability => ability != null)
+                .ToList();
         }
         
         /// <summary>

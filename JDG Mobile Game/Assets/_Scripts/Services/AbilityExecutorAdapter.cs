@@ -1,9 +1,12 @@
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
+using Cards.EffectCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.ValueObjects;
 using UnityEngine;
 
 namespace Services
@@ -11,13 +14,13 @@ namespace Services
     /// <summary>
     /// Adapter bridging IAbilityExecutor to legacy Ability classes.
     /// Phase 74: Created as part of UseCase migration.
+    /// Phase 106: Updated to also execute modern IAbility implementations.
     ///
     /// This adapter allows use cases to trigger abilities without coupling
-    /// to the legacy Ability class. It wraps the legacy ability execution
-    /// and provides a clean interface.
+    /// to the legacy Ability class. It wraps both legacy ability execution
+    /// and modern IAbility execution, enabling gradual migration.
     ///
-    /// As abilities are migrated to pure domain implementations,
-    /// this adapter will delegate to new ability use cases instead.
+    /// Execution order: Legacy abilities first, then modern abilities.
     /// </summary>
     public class AbilityExecutorAdapter : IAbilityExecutor
     {
@@ -27,6 +30,52 @@ namespace Services
         {
             _canvasProvider = canvasProvider;
         }
+
+        #region Modern Ability Helpers
+
+        /// <summary>
+        /// Creates an AbilityContext for modern ability execution.
+        /// Phase 106: Bridge between legacy types and modern domain types.
+        /// </summary>
+        private AbilityContext CreateAbilityContext(
+            InGameCard sourceCard,
+            CardOwner owner,
+            AbilityName abilityName = AbilityName.Default)
+        {
+            var ownerId = PlayerId.FromCardOwner((JDG.Domain.CardOwner)(int)owner);
+            var opponentOwner = owner == CardOwner.Player1 ? CardOwner.Player2 : CardOwner.Player1;
+            var opponentId = PlayerId.FromCardOwner((JDG.Domain.CardOwner)(int)opponentOwner);
+
+            return new AbilityContext(ownerId, opponentId, null, abilityName);
+        }
+
+        /// <summary>
+        /// Executes modern abilities that match the specified trigger.
+        /// Phase 106: Enables parallel execution of modern abilities alongside legacy.
+        /// </summary>
+        private void ExecuteModernAbilities(
+            System.Collections.Generic.IEnumerable<IAbility> abilities,
+            AbilityTrigger trigger,
+            AbilityContext context)
+        {
+            foreach (var ability in abilities)
+            {
+                // Only execute passive abilities with matching trigger
+                if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == trigger)
+                {
+                    if (ability.CanActivate(context))
+                    {
+                        var result = ability.Execute(context);
+                        if (!result.IsSuccess && !string.IsNullOrEmpty(result.Message))
+                        {
+                            Debug.LogWarning($"[AbilityExecutorAdapter] Modern ability failed: {result.Message}");
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         #region Death Triggers
 
@@ -42,10 +91,15 @@ namespace Services
             {
                 var canvas = _canvasProvider.GetGameCanvas() as Transform;
 
+                // Legacy ability execution
                 foreach (var ability in concreteDeadCard.Abilities)
                 {
                     ability.OnCardDeath(canvas, concreteDeadCard, concreteOwner, concreteOpponent);
                 }
+
+                // Phase 106: Modern ability execution
+                var context = CreateAbilityContext(concreteDeadCard, concreteDeadCard.CardOwner);
+                ExecuteModernAbilities(concreteDeadCard.ModernAbilities, AbilityTrigger.OnDeath, context);
             }
         }
 
@@ -72,6 +126,10 @@ namespace Services
                     {
                         equipmentAbility.OnOpponentInvocationCardAdded(concreteAdded);
                     }
+
+                    // Phase 106: Modern equipment abilities
+                    var equipContext = CreateAbilityContext(equipmentCard, opponentCard.CardOwner);
+                    ExecuteModernAbilities(equipmentCard.ModernEquipmentAbilities, AbilityTrigger.OnCardPlayed, equipContext);
                 }
 
                 // 2. Trigger existing invocation card abilities on same field
@@ -81,6 +139,10 @@ namespace Services
                     {
                         ability.OnCardAdded(concreteAdded, concreteOwner);
                     }
+
+                    // Phase 106: Modern invocation abilities
+                    var invocContext = CreateAbilityContext(existingCard, existingCard.CardOwner);
+                    ExecuteModernAbilities(existingCard.ModernAbilities, AbilityTrigger.OnCardPlayed, invocContext);
                 }
 
                 // 3. Trigger effect card abilities
@@ -89,6 +151,13 @@ namespace Services
                     foreach (var effectAbility in effectCard.EffectAbilities)
                     {
                         effectAbility.OnInvocationCardAdded(concreteOwner, concreteAdded);
+                    }
+
+                    // Phase 106: Modern effect abilities
+                    if (effectCard is InGameEffectCard concreteEffect)
+                    {
+                        var effectContext = CreateAbilityContext(concreteEffect, concreteEffect.CardOwner);
+                        ExecuteModernAbilities(concreteEffect.ModernEffectAbilities, AbilityTrigger.OnCardPlayed, effectContext);
                     }
                 }
 
@@ -99,7 +168,15 @@ namespace Services
                     {
                         fieldAbility.OnInvocationCardAdded(concreteAdded, concreteOwner);
                     }
+
+                    // Phase 106: Modern field abilities
+                    var fieldContext = CreateAbilityContext(concreteOwner.FieldCard, concreteOwner.FieldCard.CardOwner);
+                    ExecuteModernAbilities(concreteOwner.FieldCard.ModernFieldAbilities, AbilityTrigger.OnCardPlayed, fieldContext);
                 }
+
+                // 5. Phase 106: Trigger OnSummon for the added card's modern abilities
+                var summonContext = CreateAbilityContext(concreteAdded, concreteAdded.CardOwner);
+                ExecuteModernAbilities(concreteAdded.ModernAbilities, AbilityTrigger.OnSummon, summonContext);
             }
         }
 
@@ -123,6 +200,8 @@ namespace Services
                     {
                         ability.OnCardRemove(concreteRemoved, concreteOwner);
                     }
+
+                    // Phase 106: Modern abilities (no specific trigger for card removal yet)
                 }
 
                 // 2. Trigger effect abilities that react to invocation removal
@@ -133,6 +212,8 @@ namespace Services
                     {
                         ability.OnInvocationCardRemoved(concreteOwner, concreteRemoved);
                     }
+
+                    // Phase 106: Modern effect abilities (no specific trigger for card removal yet)
                 }
             }
         }
@@ -180,10 +261,32 @@ namespace Services
                 {
                     if (invocation is InGameInvocationCard invocationCard)
                     {
+                        // Legacy abilities
                         foreach (var ability in invocationCard.Abilities)
                         {
                             ability.OnTurnStart(canvas, concretePlayer, concreteOpponent);
                         }
+
+                        // Phase 106: Modern abilities
+                        var context = CreateAbilityContext(invocationCard, invocationCard.CardOwner);
+                        ExecuteModernAbilities(invocationCard.ModernAbilities, AbilityTrigger.OnTurnStart, context);
+                    }
+                }
+
+                // Phase 106: Modern field abilities for turn start
+                if (concretePlayer.FieldCard != null)
+                {
+                    var fieldContext = CreateAbilityContext(concretePlayer.FieldCard, concretePlayer.FieldCard.CardOwner);
+                    ExecuteModernAbilities(concretePlayer.FieldCard.ModernFieldAbilities, AbilityTrigger.OnTurnStart, fieldContext);
+                }
+
+                // Phase 106: Modern effect abilities for turn start
+                foreach (var effectCard in concretePlayer.EffectCards)
+                {
+                    if (effectCard is InGameEffectCard concreteEffect)
+                    {
+                        var effectContext = CreateAbilityContext(concreteEffect, concreteEffect.CardOwner);
+                        ExecuteModernAbilities(concreteEffect.ModernEffectAbilities, AbilityTrigger.OnTurnStart, effectContext);
                     }
                 }
             }
@@ -195,7 +298,37 @@ namespace Services
         {
             // Note: Legacy Ability class does not have OnTurnEnd method.
             // Turn end logic should be handled by the game loop directly.
-            // This method is a no-op for now.
+
+            // Phase 106: Modern abilities DO support OnTurnEnd trigger
+            if (currentPlayerCards is PlayerCards concretePlayer)
+            {
+                // Invocation cards
+                foreach (var invocation in concretePlayer.InvocationCards)
+                {
+                    if (invocation is InGameInvocationCard invocationCard)
+                    {
+                        var context = CreateAbilityContext(invocationCard, invocationCard.CardOwner);
+                        ExecuteModernAbilities(invocationCard.ModernAbilities, AbilityTrigger.OnTurnEnd, context);
+                    }
+                }
+
+                // Field card
+                if (concretePlayer.FieldCard != null)
+                {
+                    var fieldContext = CreateAbilityContext(concretePlayer.FieldCard, concretePlayer.FieldCard.CardOwner);
+                    ExecuteModernAbilities(concretePlayer.FieldCard.ModernFieldAbilities, AbilityTrigger.OnTurnEnd, fieldContext);
+                }
+
+                // Effect cards
+                foreach (var effectCard in concretePlayer.EffectCards)
+                {
+                    if (effectCard is InGameEffectCard concreteEffect)
+                    {
+                        var effectContext = CreateAbilityContext(concreteEffect, concreteEffect.CardOwner);
+                        ExecuteModernAbilities(concreteEffect.ModernEffectAbilities, AbilityTrigger.OnTurnEnd, effectContext);
+                    }
+                }
+            }
         }
 
         #endregion

@@ -102,6 +102,29 @@ public class AbilityProviderService : IAbilityProvider
     }
 
     /// <summary>
+    /// Gets a modern IAbility implementation directly from the registry.
+    /// Phase 105: New method for clean architecture migration - bypasses ModernAbilityAdapter.
+    /// </summary>
+    /// <param name="abilityName">The ability name to look up.</param>
+    /// <returns>The modern ability, or null if not found.</returns>
+    public IAbility GetModernAbility(AbilityName abilityName)
+    {
+        if (_registry != null && _registry.IsRegistered(abilityName))
+        {
+            try
+            {
+                return _registry.GetAbility(abilityName);
+            }
+            catch (System.Exception ex)
+            {
+                UnityEngine.Debug.LogError($"[AbilityProviderService] Failed to get modern ability '{abilityName}': {ex.Message}");
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
     /// Gets migration statistics for reporting.
     /// </summary>
     public MigrationStats GetMigrationStats()
