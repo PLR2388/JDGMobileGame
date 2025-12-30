@@ -8,14 +8,11 @@ namespace JDG.Bridge
     /// <summary>
     /// Bridge: Initializes legacy static fields with modern DI services.
     ///
-    /// <para><b>Purpose:</b> Legacy ability class (Ability) uses static
-    /// properties for services. Since DI cannot inject into static fields, this initializer
-    /// bridges the gap by setting these fields after the container is built.</para>
+    /// <para><b>Purpose:</b> Extension methods use static properties for ILocalizationService.
+    /// Since DI cannot inject into static fields, this initializer bridges the gap
+    /// by setting these fields after the container is built.</para>
     ///
     /// <para><b>Called From:</b> SharedServicesScope.RegisterBuildCallback()</para>
-    ///
-    /// <para><b>Removal Condition:</b> When all legacy ability implementations are migrated
-    /// to IAbility interface. Until then, this initializer is essential infrastructure.</para>
     ///
     /// <para><b>History:</b></para>
     /// <list type="bullet">
@@ -24,6 +21,7 @@ namespace JDG.Bridge
     /// <item>Phase 111: Documented as permanent bridge infrastructure</item>
     /// <item>Phase 115: Removed EffectAbility initialization (class deleted)</item>
     /// <item>Phase 116: Removed FieldAbility initialization (class deleted)</item>
+    /// <item>Phase 118: Removed Ability initialization (class deleted)</item>
     /// </list>
     /// </summary>
     public static class LegacySystemInitializer
@@ -31,27 +29,17 @@ namespace JDG.Bridge
         /// <summary>
         /// Initializes all legacy static fields with DI services.
         /// Must be called after container is built.
-        /// Phase 66: Removed GameStateService parameter - was never used by abilities.
+        /// Phase 118: Removed Ability class initialization (class deleted).
         /// </summary>
-        public static void Initialize(
-            ILocalizationService localizationService,
-            IDialogService dialogService)
+        public static void Initialize(ILocalizationService localizationService)
         {
-            // Phase 66: Static properties marked obsolete, wrapped with pragma
-            // Phase 115: Removed EffectAbility initialization (class deleted)
-            // Phase 116: Removed FieldAbility initialization (class deleted)
-            #pragma warning disable CS0618 // Suppress obsolete warning - intentional backward compatibility
-            // Initialize legacy Ability base class
-            Ability.LocalizationService = localizationService;
-            Ability.DialogService = dialogService;
-            #pragma warning restore CS0618
-
-            // Initialize extension classes
+            // Phase 118: Removed Ability class initialization (class deleted)
+            // Initialize extension classes for localized names
             Cards.CardTypeExtensions.LocalizationService = localizationService;
             Cards.CardFamilyExtensions.LocalizationService = localizationService;
             MessageBoxBaseComponentExtensions.LocalizationService = localizationService;
 
-            Debug.Log("LegacySystemInitializer: Initialized all legacy static fields");
+            Debug.Log("LegacySystemInitializer: Initialized extension class static fields");
         }
 
         /// <summary>

@@ -1,12 +1,12 @@
 # Bridge Layer
 
-The Bridge layer provides compatibility between the legacy Unity-based card system and the modern clean architecture. These files are essential infrastructure, not temporary code.
+The Bridge layer provides compatibility between Unity's ScriptableObject-based card system and the modern clean architecture. These files are **permanent infrastructure**, not temporary migration code.
 
 ## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    MODERN ARCHITECTURE                           │
+│                    MODERN ARCHITECTURE                          │
 │  ┌─────────────┐   ┌─────────────┐   ┌─────────────────────┐   │
 │  │   Domain    │   │ Application │   │   Infrastructure    │   │
 │  │  (Entities) │   │ (Use Cases) │   │   (Repositories)    │   │
@@ -22,19 +22,15 @@ The Bridge layer provides compatibility between the legacy Unity-based card syst
     │          │                       │                  │
     │  ┌───────▼───────────────────────▼────────────┐    │
     │  │        CardRepositoryInitializer           │    │
-    │  └───────────────────┬────────────────────────┘    │
-    │                      │                              │
-    │  ┌───────────────────▼────────────────────────┐    │
-    │  │          ModernAbilityAdapter              │    │
     │  └────────────────────────────────────────────┘    │
     └────────────────────────┬────────────────────────────┘
                              │
 ┌────────────────────────────▼────────────────────────────────────┐
-│                    LEGACY ARCHITECTURE                           │
-│  ┌─────────────────┐   ┌─────────────────┐   ┌───────────────┐  │
-│  │ ScriptableObjects│   │  InGameCard    │   │Legacy Ability │  │
-│  │   (Card Data)    │   │ (Unity Objects)│   │ (Base Class)  │  │
-│  └─────────────────┘   └─────────────────┘   └───────────────┘  │
+│                    UNITY DATA LAYER                             │
+│  ┌─────────────────┐   ┌─────────────────┐                     │
+│  │ ScriptableObjects│   │  InGameCard    │                     │
+│  │   (Card Data)    │   │ (Unity Objects)│                     │
+│  └─────────────────┘   └─────────────────┘                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -42,13 +38,13 @@ The Bridge layer provides compatibility between the legacy Unity-based card syst
 
 ### LegacySystemInitializer.cs
 
-**Purpose**: Initializes legacy static fields with modern DI services.
+**Purpose**: Initializes static fields in extension classes with DI services.
 
-**Why It Exists**: Legacy ability classes (`Ability`, `EffectAbility`, `FieldAbility`) have static properties for services. DI can't inject into static fields, so this initializer bridges the gap.
+**Why It Exists**: Extension methods (CardTypeExtensions, CardFamilyExtensions, MessageBoxBaseComponentExtensions) use static properties for ILocalizationService. Since DI cannot inject into static fields, this initializer bridges the gap.
 
 **Called From**: `SharedServicesScope.RegisterBuildCallback()`
 
-**Removal Condition**: When all 33+ legacy ability implementations are migrated to `IAbility`.
+**Status**: **Permanent** - Required for extension method localization support.
 
 ```
 SharedServicesScope.Configure()
@@ -59,12 +55,16 @@ RegisterBuildCallback()
         ▼
 LegacySystemInitializer.Initialize()
         │
-        ├──► Ability.LocalizationService = ...
-        ├──► Ability.DialogService = ...
-        ├──► EffectAbility.LocalizationService = ...
-        ├──► FieldAbility.LocalizationService = ...
-        └──► CardTypeExtensions.LocalizationService = ...
+        ├──► CardTypeExtensions.LocalizationService = ...
+        ├──► CardFamilyExtensions.LocalizationService = ...
+        └──► MessageBoxBaseComponentExtensions.LocalizationService = ...
 ```
+
+**History**:
+- Phase 46: Replaced LegacyCardLoader MonoBehaviour
+- Phase 66: Removed unused GameStateService
+- Phase 111: Documented as permanent bridge infrastructure
+- Phase 115-118: Removed legacy ability class initialization (classes deleted)
 
 ---
 
@@ -74,26 +74,23 @@ LegacySystemInitializer.Initialize()
 
 **Why It Exists**: Unity stores card data in ScriptableObjects (serialized assets). The domain layer works with pure C# entities. This initializer bridges the two.
 
-**Called From**: `LegacySystemInitializer.Initialize()`
+**Called From**: `LegacySystemInitializer.LoadCards()`
 
-**Removal Condition**: **Permanent** - Always needed to load card data from Unity assets.
+**Status**: **Permanent** - Always needed to load card data from Unity assets.
 
 ```
-LegacySystemInitializer.Initialize()
+LegacySystemInitializer.LoadCards()
         │
         ▼
-CardRepositoryInitializer.LoadCards()
+CardRepositoryInitializer.Initialize()
         │
-        ├──► Resources.LoadAll<InvocationCard>()
-        ├──► Resources.LoadAll<EffectCard>()
-        ├──► Resources.LoadAll<FieldCard>()
-        └──► Resources.LoadAll<EquipmentCard>()
-                │
-                ▼
-        CardConverter.ToDomainCard()
-                │
-                ▼
-        CardRepository.Add()
+        ├──► Resources.LoadAll<Card>()
+        │
+        ▼
+CardConverter.ConvertToDomain()
+        │
+        ▼
+CardRepository.RegisterCardDefinition()
 ```
 
 ---
@@ -102,43 +99,17 @@ CardRepositoryInitializer.LoadCards()
 
 **Purpose**: Converts legacy ScriptableObject cards to domain `Card` entities.
 
-**Why It Exists**: ScriptableObjects use Unity types. Domain entities use pure C# types. This converter translates between them.
+**Why It Exists**: ScriptableObjects use Unity types and legacy enum namespaces. Domain entities use pure C# types and domain namespaces. This converter translates between them.
 
 **Key Conversions**:
 - `Cards.CardFamily` → `JDG.Domain.Enums.CardFamily`
-- `Cards.CardType` → `JDG.Domain.Enums.CardType`
-- `Ability.AbilityName` → `JDG.Domain.AbilityName`
-- `Sprite` → Image path (string)
+- `global::ConditionName` → `JDG.Domain.Enums.ConditionName`
+- `InvocationCard` → `DomainCard.CreateInvocation()`
+- `EquipmentCard` → `DomainCard.CreateEquipment()`
+- `FieldCard` → `DomainCard.CreateField()`
+- `EffectCard` → `DomainCard.CreateEffect()`
 
-**Removal Condition**: **Permanent** - Required until cards are stored in a different format (e.g., JSON, database).
-
----
-
-### ModernAbilityAdapter.cs
-
-**Purpose**: Wraps modern `IAbility` implementations to satisfy the legacy `Ability` base class interface.
-
-**Why It Exists**: Legacy `InGameCard` classes expect abilities that extend `Ability`. Modern abilities implement `IAbility`. This adapter allows modern abilities to work with legacy cards.
-
-**Used By**: `AbilityProviderService`, `AbilityExecutorAdapter`
-
-**Removal Condition**: When all `InGameCard` classes use `IAbility` instead of `Ability`.
-
-```
-AbilityProviderService.GetAbility()
-        │
-        ▼
-AbilityRegistry.Get(abilityName)
-        │
-        ▼
-IAbility implementation
-        │
-        ▼
-ModernAbilityAdapter.Wrap(ability)
-        │
-        ▼
-Legacy Ability-compatible object
-```
+**Status**: **Permanent** - Required until cards are stored in a different format (e.g., JSON, database).
 
 ---
 
@@ -148,45 +119,44 @@ Legacy Ability-compatible object
 SharedServicesScope
         │
         ▼
-LegacySystemInitializer ─────────────┐
-        │                             │
-        ▼                             ▼
-CardRepositoryInitializer     Static field initialization
-        │                     (Ability.LocalizationService, etc.)
+LegacySystemInitializer.Initialize() ────► Extension class static fields
+        │
         ▼
-CardConverter
+LegacySystemInitializer.LoadCards()
+        │
+        ▼
+CardRepositoryInitializer.Initialize()
+        │
+        ▼
+CardConverter.ConvertToDomain()
         │
         ▼
 CardRepository (Domain)
-
-
-AbilityRegistry ◄───── AbilityProviderService
-        │                     │
-        ▼                     ▼
-IAbility ──────────► ModernAbilityAdapter
-                              │
-                              ▼
-                     InGameCard classes
 ```
 
 ## Migration Status
 
-| File | Status | Removal Condition |
-|------|--------|-------------------|
-| LegacySystemInitializer | Active | When all legacy abilities deleted |
-| CardRepositoryInitializer | Permanent | Always needed (data loading) |
-| CardConverter | Permanent | Until cards use non-Unity format |
-| ModernAbilityAdapter | Active | When InGameCard uses IAbility |
+| File | Status | Notes |
+|------|--------|-------|
+| LegacySystemInitializer | **Permanent** | Initializes extension class static fields |
+| CardRepositoryInitializer | **Permanent** | Loads card data from Unity assets |
+| CardConverter | **Permanent** | Converts ScriptableObjects to domain entities |
+
+## Removed Files (Phase 118)
+
+| File | Removed Date | Reason |
+|------|--------------|--------|
+| ModernAbilityAdapter.cs | Phase 118 | Legacy Ability class deleted; no longer needed |
 
 ## Usage Guidelines
 
 1. **Don't delete these files** - They are essential infrastructure
-2. **Don't add new legacy patterns** - New code should use DI and IAbility
+2. **Don't add new bridge patterns** - New code should use DI and interfaces
 3. **Update documentation** when modifying these files
 4. **Test thoroughly** after any changes - these affect game startup
 
 ## Related Components
 
-- `Services/AbilityExecutorAdapter.cs` - Executes both legacy and modern abilities
+- `Services/AbilityExecutorAdapter.cs` - Executes modern IAbility implementations
 - `Services/CardCollectionServiceAdapter.cs` - Bridges ICardCollectionService to scene objects
 - `DI/SharedServicesScope.cs` - Calls LegacySystemInitializer

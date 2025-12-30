@@ -186,11 +186,10 @@ namespace JDG.DI
             // Initialize legacy systems and register abilities after container is built
             builder.RegisterBuildCallback(container =>
             {
-                // Initialize legacy static fields
-                // Phase 66: Removed GameStateService - was never accessed by abilities
+                // Initialize legacy static fields for extension methods
+                // Phase 118: Removed dialogService - Ability class deleted
                 var localizationService = container.Resolve<ILocalizationService>();
-                var dialogService = container.Resolve<IDialogService>();
-                LegacySystemInitializer.Initialize(localizationService, dialogService);
+                LegacySystemInitializer.Initialize(localizationService);
 
                 // Load legacy cards
                 var cardRepository = container.Resolve<ICardRepository>();
