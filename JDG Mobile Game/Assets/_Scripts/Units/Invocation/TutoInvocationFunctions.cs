@@ -1,7 +1,9 @@
-﻿using _Scripts.Cards.InvocationCards;
+﻿using System;
+using _Scripts.Cards.InvocationCards;
 using _Scripts.Units.Invocation;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain.Events;
 using OnePlayer;
 using VContainer;
 
@@ -14,12 +16,17 @@ namespace Cards.InvocationCards
     /// Phase 24-25: Removed ServiceLocator, using VContainer DI.
     /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
+    /// Phase 109: Migrated to EventBus - removed static event subscription.
     /// </summary>
     public class TutoInvocationFunctions : InvocationFunctions
     {
         // Phase 24-25: Injected via VContainer
         private ICardCollectionService _cardCollectionService;
         // Note: _dialogService is inherited from InvocationFunctions (Phase 35)
+
+        // Phase 109: EventBus subscription for card play
+        private IEventBus _tutoEventBus;
+        private IDisposable _tutoInvocationPlaySubscription;
 
         /// <summary>
         /// VContainer method injection for dependencies.
@@ -29,7 +36,7 @@ namespace Cards.InvocationCards
         /// Phase 35: Inject IDialogService for dialog display.
         /// </summary>
         [Inject]
-        public void Construct(
+        public new void Construct(
             ICardPlacementService cardPlacementService,
             ICardCollectionService cardCollectionService,
             JDG.Application.IEventBus eventBus,
@@ -39,11 +46,30 @@ namespace Cards.InvocationCards
             // Call base class to inject base dependencies (including localizationService and dialogService)
             base.Construct(cardPlacementService, eventBus, localizationService, dialogService);
             _cardCollectionService = cardCollectionService;
+            _tutoEventBus = eventBus;
         }
 
         private void Start()
         {
-            InGameMenuScript.InvocationCardEvent.AddListener(PutInvocationCard);
+            // Phase 109: Subscribe to EventBus instead of static event
+            _tutoInvocationPlaySubscription = _tutoEventBus?.Subscribe<InvocationCardPlayRequestedEvent>(OnTutoInvocationCardPlayRequested);
+        }
+
+        private void OnDestroy()
+        {
+            _tutoInvocationPlaySubscription?.Dispose();
+        }
+
+        /// <summary>
+        /// Tutorial-specific event handler for invocation card play.
+        /// Phase 109: Replaces static UnityEvent listener.
+        /// </summary>
+        private void OnTutoInvocationCardPlayRequested(InvocationCardPlayRequestedEvent evt)
+        {
+            if (evt.InvocationCard is InGameInvocationCard invocationCard)
+            {
+                PutInvocationCard(invocationCard);
+            }
         }
 
         /// <summary>

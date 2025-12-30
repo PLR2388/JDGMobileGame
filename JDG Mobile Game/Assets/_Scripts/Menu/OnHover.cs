@@ -143,16 +143,18 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     /// <summary>
     /// Handle card click events.
+    /// Phase 109: Publishes InGameCardClickedEvent via EventBus instead of static UnityEvent.
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
         if (bIsInGame)
         {
-            InGameMenuScript.EventClick.Invoke(card);
+            // Phase 109: Publish via EventBus instead of static event
+            _eventBus?.Publish(new InGameCardClickedEvent { Card = card });
         }
         else
         {
-            currentState.OnClick();    
+            currentState.OnClick();
         }
     }
 

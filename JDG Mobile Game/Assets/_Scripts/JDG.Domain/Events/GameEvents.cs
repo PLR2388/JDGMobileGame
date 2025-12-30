@@ -427,6 +427,20 @@ namespace JDG.Domain.Events
     }
 
     // ============================================
+    // CARD CLICK EVENTS
+    // Phase 109: Replaces InGameMenuScript.EventClick static UnityEvent
+    // ============================================
+
+    /// <summary>
+    /// Published when user clicks on a card in-game to show the card menu.
+    /// Phase 109: Replaces InGameMenuScript.EventClick static UnityEvent.
+    /// </summary>
+    public struct InGameCardClickedEvent
+    {
+        public object Card; // Using object to avoid dependency on InGameCard
+    }
+
+    // ============================================
     // CARD PLAY REQUEST EVENTS
     // Phase 36: Replaces static UnityEvents in InGameMenuScript
     // ============================================

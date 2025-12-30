@@ -62,16 +62,13 @@ namespace _Scripts.Cards.InvocationCards
         /// <summary>
         /// Sets up the initial state and event listeners.
         /// Phase 23: Subscribes to EventBus events.
-        /// Phase 36: Subscribes to InvocationCardPlayRequestedEvent via EventBus.
+        /// Phase 36/109: Subscribes to EventBus only - static events removed.
         /// </summary>
         private void Start()
         {
-            // Phase 36: Subscribe to EventBus (primary)
+            // Phase 36/109: Subscribe to EventBus
             _invocationPlayRequestedSubscription = _eventBus.Subscribe<InvocationCardPlayRequestedEvent>(OnInvocationCardPlayRequested);
             _invocationCancelledSubscription = _eventBus.Subscribe<InvocationCancelledEvent>(OnInvocationCancelled);
-
-            // Keep static event listener during migration (will be removed once EventBus is fully adopted)
-            // Note: Static events still fire during dual-dispatch period but we handle via EventBus now
         }
 
         /// <summary>

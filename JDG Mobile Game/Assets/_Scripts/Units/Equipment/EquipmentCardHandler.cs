@@ -58,13 +58,14 @@ public class EquipmentCardHandler : CardHandler
 
     /// <summary>
     /// Handles the card placement behavior for equipment cards.
+    /// Phase 109: Publishes EquipmentCardPlayRequestedEvent via EventBus only.
     /// </summary>
     /// <param name="card">The in-game card that is being placed.</param>
     public override void HandleCardPut(InGameCard card)
     {
         if (card is InGameEquipmentCard equipmentCard)
         {
-            // Phase 36: Publish via EventBus (primary)
+            // Phase 36/109: Publish via EventBus
             var playerCards = cardCollectionService.GetCurrentPlayerCards();
             var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
             eventBus.Publish(new EquipmentCardPlayRequestedEvent
@@ -72,9 +73,6 @@ public class EquipmentCardHandler : CardHandler
                 EquipmentCard = equipmentCard,
                 Owner = owner
             });
-
-            // Keep static event for backwards compatibility during migration
-            InGameMenuScript.EquipmentCardEvent.Invoke(equipmentCard);
         }
     }
 }

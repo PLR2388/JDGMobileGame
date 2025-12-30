@@ -33,15 +33,12 @@ namespace Cards.FieldCards
 
         /// <summary>
         /// Initialization method that sets up listeners for relevant events.
-        /// Phase 36: Subscribes to FieldCardPlayRequestedEvent via EventBus.
+        /// Phase 36/109: Subscribes to EventBus only - static events removed.
         /// </summary>
         private void Start()
         {
-            // Phase 36: Subscribe to EventBus (primary)
+            // Phase 36/109: Subscribe to EventBus
             _fieldPlayRequestedSubscription = _eventBus.Subscribe<FieldCardPlayRequestedEvent>(OnFieldCardPlayRequested);
-
-            // Keep static event listener during migration (will be removed once EventBus is fully adopted)
-            // Note: Static events still fire during dual-dispatch period but we handle via EventBus now
         }
 
         /// <summary>

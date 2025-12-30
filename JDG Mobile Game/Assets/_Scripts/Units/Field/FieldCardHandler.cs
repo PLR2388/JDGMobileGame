@@ -49,13 +49,14 @@ public class FieldCardHandler : CardHandler
 
     /// <summary>
     /// Handles the card placement behavior for field cards.
+    /// Phase 109: Publishes FieldCardPlayRequestedEvent via EventBus only.
     /// </summary>
     /// <param name="card">The in-game card that is being placed.</param>
     public override void HandleCardPut(InGameCard card)
     {
         if (card is InGameFieldCard fieldCard)
         {
-            // Phase 36: Publish via EventBus (primary)
+            // Phase 36/109: Publish via EventBus
             var playerCards = cardCollectionService.GetCurrentPlayerCards();
             var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
             eventBus.Publish(new FieldCardPlayRequestedEvent
@@ -63,9 +64,6 @@ public class FieldCardHandler : CardHandler
                 FieldCard = fieldCard,
                 Owner = owner
             });
-
-            // Keep static event for backwards compatibility during migration
-            InGameMenuScript.FieldCardEvent.Invoke(fieldCard);
         }
     }
 }

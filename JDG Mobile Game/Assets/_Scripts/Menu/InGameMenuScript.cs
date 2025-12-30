@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Cards;
 using JDG.Application;
 using JDG.Application.Services;
@@ -14,6 +15,7 @@ using VContainer;
 /// Phase 23: Migrated HandCardChange invocations to EventBus.
 /// Phase 28: Added IPlayerStatusProvider for player status access in card handlers.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 109: Fully migrated to EventBus - removed all static UnityEvents.
 /// </summary>
 public class InGameMenuScript : MonoBehaviour
 {
@@ -28,6 +30,9 @@ public class InGameMenuScript : MonoBehaviour
 
     // Phase 34: ILocalizationService instead of LocalizationSystem.Instance
     protected ILocalizationService _localizationService;
+
+    // Phase 109: EventBus subscription for card click events
+    private IDisposable _cardClickedSubscription;
     // Serialized fields for UI components
     [SerializeField] protected TextMeshProUGUI buttonText;
     [SerializeField] protected GameObject handScreen;
@@ -48,21 +53,12 @@ public class InGameMenuScript : MonoBehaviour
 
     [SerializeField] protected GameObject invocationMenu;
 
-    // Static events for various card interactions
-    // Phase 36: These static events are being replaced by EventBus.
-    // CardHandlers now publish to EventBus first, then invoke these for backwards compatibility.
-    // TODO: Remove these once all subscribers have migrated to EventBus.
-    [System.Obsolete("Use EventBus with InvocationCardPlayRequestedEvent/EffectCardPlayRequestedEvent/etc. instead")]
-    public static readonly CardEvent EventClick = new CardEvent();
-    [System.Obsolete("Use EventBus with InvocationCardPlayRequestedEvent instead")]
-    public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
-    [System.Obsolete("Use EventBus with FieldCardPlayRequestedEvent instead")]
-    public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
-    [System.Obsolete("Use EventBus with EffectCardPlayRequestedEvent instead")]
-    public static readonly EffectCardEvent EffectCardEvent = new EffectCardEvent();
-    [System.Obsolete("Use EventBus with EquipmentCardPlayRequestedEvent instead")]
-    public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
-
+    // Phase 109: Static events removed - all card interactions now use EventBus.
+    // EventClick → InGameCardClickedEvent
+    // InvocationCardEvent → InvocationCardPlayRequestedEvent
+    // FieldCardEvent → FieldCardPlayRequestedEvent
+    // EffectCardEvent → EffectCardPlayRequestedEvent
+    // EquipmentCardEvent → EquipmentCardPlayRequestedEvent
 
     private const float ButtonGroupPosX = 600f;
     private const float ButtonGroupPosY = 400f;
@@ -118,13 +114,36 @@ public class InGameMenuScript : MonoBehaviour
 
     /// <summary>
     /// Unity's start method, called before the first frame update. Initializes UI states and card handlers.
+    /// Phase 109: Subscribes to InGameCardClickedEvent via EventBus instead of static event.
     /// </summary>
     private void Start()
     {
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
-        EventClick.AddListener(ClickOnCard);
+        // Phase 109: Subscribe to EventBus instead of static event
+        _cardClickedSubscription = _eventBus?.Subscribe<InGameCardClickedEvent>(OnCardClicked);
         InitializeCardHandlers();
+    }
+
+    /// <summary>
+    /// Cleanup method. Unsubscribes from events when the object is destroyed.
+    /// Phase 109: Disposes EventBus subscriptions.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _cardClickedSubscription?.Dispose();
+    }
+
+    /// <summary>
+    /// Event handler for InGameCardClickedEvent from EventBus.
+    /// Phase 109: Replaces static UnityEvent listener.
+    /// </summary>
+    private void OnCardClicked(InGameCardClickedEvent evt)
+    {
+        if (evt.Card is InGameCard card)
+        {
+            ClickOnCard(card);
+        }
     }
 
     /// <summary>

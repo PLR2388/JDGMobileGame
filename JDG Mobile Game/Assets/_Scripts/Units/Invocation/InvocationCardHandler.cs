@@ -33,11 +33,15 @@ public class InvocationCardHandler : CardHandler
             invocationCard?.CanBeSummoned(playerCard) == true && playerCard.InvocationCards.Count < 4;
     }
 
+    /// <summary>
+    /// Phase 109: Publishes InvocationCardPlayRequestedEvent via EventBus only.
+    /// Static event removed - all subscribers now use EventBus.
+    /// </summary>
     public override void HandleCardPut(InGameCard card)
     {
         var invocationCard = card as InGameInvocationCard;
 
-        // Phase 36: Publish via EventBus (primary)
+        // Phase 36/109: Publish via EventBus
         var playerCards = cardCollectionService.GetCurrentPlayerCards();
         var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         eventBus.Publish(new InvocationCardPlayRequestedEvent
@@ -45,8 +49,5 @@ public class InvocationCardHandler : CardHandler
             InvocationCard = invocationCard,
             Owner = owner
         });
-
-        // Keep static event for backwards compatibility during migration
-        InGameMenuScript.InvocationCardEvent.Invoke(invocationCard);
     }
 }
