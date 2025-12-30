@@ -113,17 +113,7 @@ namespace JDG.DI
                 Debug.LogError("GameSceneScope: InputManager NOT FOUND in scene!");
             }
 
-            // UIManager - required by GameLoop and other MonoBehaviours
-            var uiManager = FindFirstObjectByType<UIManager>();
-            if (uiManager != null)
-            {
-                builder.RegisterInstance(uiManager);
-                Debug.Log("GameSceneScope: Registered UIManager instance");
-            }
-            else
-            {
-                Debug.LogError("GameSceneScope: UIManager NOT FOUND in scene!");
-            }
+            // Phase 127: UIManager removed - GameLoop now uses presenters directly
 
             // Phase 94: MessageBox - required by DialogService
             var messageBox = FindFirstObjectByType<MessageBox>();
@@ -287,7 +277,7 @@ namespace JDG.DI
                 InjectAllOfType<RoundDisplayManager>(container);
                 InjectAllOfType<CardPoolManager>(container);
                 InjectAllOfType<InputManager>(container);
-                InjectAllOfType<UIManager>(container);
+                // Phase 127: UIManager removed - no longer needed
                 InjectAllOfType<InvocationFunctions>(container);
                 InjectAllOfType<FieldFunctions>(container);
                 InjectAllOfType<EffectFunctions>(container);

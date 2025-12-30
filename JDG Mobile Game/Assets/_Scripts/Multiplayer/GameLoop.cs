@@ -1,7 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Application.Cards;
+using JDG.Presentation.Presenters;
 using Sound;
 using UnityEngine;
 using VContainer;
@@ -12,14 +16,18 @@ using JDG.Infrastructure.Services;
 
 /// <summary>
 /// Phase 17-18: Removed CardManager singleton dependency via Phase 4 services.
-/// Phase 19-20: Injected UIManager instead of using .Instance.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// Phase 35: Uses IDialogService instead of MessageBox/CardSelector.Instance.
 /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
+/// Phase 127: Removed UIManager - uses presenters directly.
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
+    // Phase 127: SerializeField references for presenter construction
+    [SerializeField] private GameObject bigImageCard;
+    [SerializeField] protected GameObject nextPhaseButton;
+    [SerializeField] protected Transform canvasTransform;
     // Phase 122: Changed to protected so TutoPlayerGameLoop can access for HighlightRequestedEvent
     protected IEventBus _eventBus;
     protected GameStateService _gameStateService;
@@ -34,8 +42,13 @@ public class GameLoop : MonoBehaviour
     protected ITurnService _turnService;
     protected ICardDrawService _cardDrawService;
 
-    // Phase 19-20: Injected UIManager (protected so TutoPlayerGameLoop can access)
-    protected UIManager _uiManager;
+    // Phase 127: Direct presenters replacing UIManager
+    protected CardDisplayPresenter _cardDisplayPresenter;
+    protected DialogPresenter _dialogPresenter;
+    protected CardSelectorPresenter _cardSelectorPresenter;
+
+    // Phase 127: ICardVisualService for CardDisplayPresenter
+    protected ICardVisualService _cardVisualService;
 
     // Phase 19-20: Injected InputManager (protected so TutoPlayerGameLoop can access)
     protected InputManager _inputManager;
@@ -58,12 +71,12 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
-    /// Phase 19-20: Added UIManager and InputManager injection.
     /// Phase 28: Added IPlayerStatusProvider to replace PlayerManager.Instance.
     /// Phase 34: Added ILocalizationService to replace LocalizationSystem.Instance.
     /// Phase 35: Added IDialogService to replace MessageBox/CardSelector.Instance.
     /// Phase 8: Added IAudioService to replace AudioSystem.Instance.
     /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
+    /// Phase 127: Removed UIManager, added ICardVisualService for presenters.
     /// </summary>
     [Inject]
     public void Construct(
@@ -76,13 +89,13 @@ public class GameLoop : MonoBehaviour
         ICardCollectionService cardCollectionService,
         ITurnService turnService,
         ICardDrawService cardDrawService,
-        UIManager uiManager,
         InputManager inputManager,
         IPlayerStatusProvider playerStatusProvider,
         ILocalizationService localizationService,
         IDialogService dialogService,
         IAudioService audioService,
-        ISceneLoaderService sceneLoaderService)
+        ISceneLoaderService sceneLoaderService,
+        ICardVisualService cardVisualService)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -93,18 +106,23 @@ public class GameLoop : MonoBehaviour
         _cardCollectionService = cardCollectionService;
         _turnService = turnService;
         _cardDrawService = cardDrawService;
-        _uiManager = uiManager;
         _inputManager = inputManager;
         _playerStatusProvider = playerStatusProvider;
         _localizationService = localizationService;
         _dialogService = dialogService;
         _audioService = audioService;
         _sceneLoaderService = sceneLoaderService;
+        _cardVisualService = cardVisualService;
     }
 
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        // Phase 127: Initialize presenters (replacing UIManager)
+        _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard, _cardVisualService);
+        _dialogPresenter = new DialogPresenter(canvasTransform, _localizationService, _dialogService);
+        _cardSelectorPresenter = new CardSelectorPresenter(canvasTransform, nextPhaseButton, _localizationService, _dialogService);
+
         // Subscribe to EventBus events instead of static UnityEvents
         _eventBus.Subscribe<LongTouchEvent>(OnLongTouch);
         _eventBus.Subscribe<TouchStartedEvent>(OnTouch);
@@ -146,8 +164,8 @@ public class GameLoop : MonoBehaviour
             _sceneLoaderService.LoadMainScreen();
         }
 
-        // Phase 19-20: Use injected UIManager instead of .Instance
-        _uiManager.DisplayPauseMenu(PositiveAction);
+        // Phase 127: Use DialogPresenter directly instead of UIManager
+        _dialogPresenter.ShowPauseMenu(PositiveAction);
     }
 
     /// <summary>
@@ -155,8 +173,8 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void OnReleaseTouch(TouchEndedEvent evt)
     {
-        // Phase 19-20: Use injected UIManager instead of .Instance
-        _uiManager.HideBigImage();
+        // Phase 127: Use CardDisplayPresenter directly instead of UIManager
+        _cardDisplayPresenter.HideCard();
     }
 
     /// <summary>
@@ -218,8 +236,8 @@ public class GameLoop : MonoBehaviour
         var cardTouch = _raycastService.GetTouchedCard();
         if (cardTouch != null)
         {
-            // Phase 19-20: Use injected UIManager instead of .Instance
-            _uiManager.DisplayCardOnLargeView(cardTouch);
+            // Phase 127: Use CardDisplayPresenter directly instead of UIManager
+            _cardDisplayPresenter.ShowCard(cardTouch);
         }
     }
 
@@ -327,30 +345,32 @@ public class GameLoop : MonoBehaviour
 
     /// <summary>
     /// Display the MessageBox with the available opponents
+    /// Phase 127: Uses CardSelectorPresenter directly with interface types.
     /// </summary>
     /// <param name="invocationCards">Available opponents list</param>
     private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
     {
-        void PositiveAction(InGameInvocationCard invocationCard)
+        void OnCardSelected(IInGameInvocationCard selectedCard)
         {
-            if (invocationCard != null)
+            if (selectedCard != null)
             {
                 // Phase 17-18: Use ICombatService instead of CardManager.Instance
-                _combatService.Opponent = invocationCard;
+                _combatService.Opponent = selectedCard as InGameInvocationCard;
                 ComputeAttack();
             }
             // Phase 19-20: Use injected InputManager instead of .Instance
             _inputManager.EnableDetectionTouch();
         }
 
-        void NegativeAction()
+        void OnCancelled()
         {
             // Phase 19-20: Use injected InputManager instead of .Instance
             _inputManager.EnableDetectionTouch();
         }
 
-        // Phase 19-20: Use injected UIManager instead of .Instance
-        _uiManager.DisplayOpponentAvailableMessageBox(invocationCards, PositiveAction, NegativeAction);
+        // Phase 127: Use CardSelectorPresenter directly with interface types
+        IReadOnlyList<IInGameCard> cards = invocationCards?.Cast<IInGameCard>().ToList();
+        _cardSelectorPresenter.ShowOpponentSelector(cards, OnCardSelected, OnCancelled);
     }
 
     /// <summary>

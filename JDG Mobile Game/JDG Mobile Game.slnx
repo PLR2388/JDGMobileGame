@@ -10,7 +10,6 @@
   <Project Path="JDG.Infrastructure.Tests.csproj" />
   <Project Path="JDG.Domain.Tests.csproj" />
   <Project Path="JDG.Core.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="JDG.TestUtilities.csproj" />
   <Project Path="JDG.TestUtilities.Editor.csproj" />
 </Solution>
