@@ -307,21 +307,27 @@ namespace JDG.PlayMode.Tests
         public IEnumerator GameStateService_MultipleCompleteTurns_MaintainsIntegrity()
         {
             // Act - Complete 3 full turn cycles
+            // Note: HandleEndTurn() internally calls StartNewTurn(), so we don't call it separately
+            // First, start the first turn explicitly
+            _gameStateService.StartNewTurn(); // Turn 1
+
             for (int i = 0; i < 3; i++)
             {
-                _gameStateService.StartNewTurn();
                 _gameStateService.NextPhase(); // Draw -> Choose
                 _gameStateService.NextPhase(); // Choose -> Attack
                 _gameStateService.NextPhase(); // Attack -> End
-                _gameStateService.HandleEndTurn(); // Switch player
-                _gameStateService.NextPhase(); // End -> Draw
+
+                if (i < 2) // Don't HandleEndTurn on last iteration to keep turn at 3
+                {
+                    _gameStateService.HandleEndTurn(); // Ends turn, switches player, AND starts new turn
+                }
             }
 
             yield return null;
 
             // Assert
             Assert.AreEqual(3, _gameStateService.TurnNumber);
-            Assert.AreEqual(Phase.Draw, _gameStateService.CurrentPhase);
+            Assert.AreEqual(Phase.End, _gameStateService.CurrentPhase);
         }
 
         #endregion

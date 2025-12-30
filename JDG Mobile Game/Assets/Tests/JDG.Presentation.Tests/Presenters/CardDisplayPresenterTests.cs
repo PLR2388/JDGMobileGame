@@ -135,8 +135,10 @@ namespace JDG.Presentation.Tests.Presenters
             // Act
             _presenter.ShowCard(testCard);
 
-            // Assert - Material should remain unchanged (null)
-            Assert.IsNull(_testBigImageCard.ImageMaterial);
+            // Assert - Material should remain unchanged (Unity Image has a default material, not null)
+            // The presenter correctly does NOT change the material when service returns null
+            Assert.AreEqual(originalMaterial, _testBigImageCard.ImageMaterial,
+                "Material should remain unchanged when service returns null");
         }
 
         #endregion
