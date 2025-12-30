@@ -1084,8 +1084,113 @@ Libraries remain functional during transition:
 
 ---
 
-**Last Updated**: 2025-12-29
+### Phase 93-100: Refactoring Completion ✅ (Completed 2025-12-30)
+
+**Goal**: Complete the refactoring with cleanup, tests, CI/CD, and documentation.
+
+#### Phase 93: Delete LegacyServicesScope
+- ✅ Deleted obsolete `LegacyServicesScope.cs` - fully replaced by SharedServicesScope
+- Verified no code or scene references remained
+
+#### Phase 94: Remove StaticInstance from MessageBox/CardSelector
+- ✅ Removed `StaticInstance<MessageBox>` inheritance from MessageBox.cs
+- ✅ Removed `StaticInstance<CardSelector>` inheritance from CardSelector.cs
+- ✅ Updated DialogService to use setter-based injection (`SetDialogComponents`)
+- ✅ Updated GameSceneScope to register instances and inject into DialogService
+- All UI singletons now use proper VContainer DI
+
+#### Phase 95: CardSelectorPresenter Tests
+- ✅ Verified CardSelectorPresenterTests already exists with 22+ tests
+- Tests located at `Assets/_Scripts/Tests/PresenterTests/CardSelectorPresenterTests.cs`
+- Uses legacy types from default assembly (correctly not in JDG.Presentation.Tests)
+
+#### Phase 96: Service Layer Tests
+- ✅ Migrated CardStateService from default assembly to JDG.Infrastructure.Services
+- ✅ Created CardStateServiceTests.cs with 29 comprehensive tests:
+  - Turn Management: ResetForNewTurn, IncrementTurnOnField
+  - Combat: ApplyDamage, CanAttack, RecordAttack
+  - Stats: ModifyStats, ResetToBaseStats, SetStats
+  - Death/Field Removal: PrepareForDeath, PrepareForFieldRemoval
+  - Control: TakeControl, ReleaseControl
+- CombatService/TurnService covered by existing CombatLogicTests (38 tests)
+
+#### Phase 97: PlayMode Integration Tests
+- ✅ Created ServiceIntegrationPlayTests.cs with 6 tests:
+  - AllCoreServices_ResolveSuccessfully
+  - GameStateService_WorksWithEventBus_Integration
+  - CardStateService_WorksWithDomainEntities_Integration
+  - GameStateService_EndGame_PublishesGameOverEvent
+  - FullTurnCycle_PublishesAllExpectedEvents
+  - SingletonServices_ReturnSameInstance_AcrossResolutions
+
+#### Phase 98: CI/CD GitHub Actions
+- ✅ Created `.github/workflows/unity-tests.yml`
+- Features:
+  - Runs on push to master/main/refactor-v3 and PRs
+  - EditMode tests with code coverage
+  - PlayMode tests with separate artifacts
+  - Unity Library caching for faster runs
+  - Build job (master only) for Android
+
+#### Phase 99: Documentation Updates
+- ✅ Updated REFACTORING_STATUS.md with Phases 93-100
+
+#### Files Created
+- `Assets/Tests/JDG.Infrastructure.Tests/Services/CardStateServiceTests.cs`
+- `Assets/Tests/PlayMode/ServiceIntegrationPlayTests.cs`
+- `.github/workflows/unity-tests.yml`
+
+#### Files Modified
+- `Assets/_Scripts/MessageBox/MessageBox.cs` (removed StaticInstance)
+- `Assets/_Scripts/MessageBox/CardSelector.cs` (removed StaticInstance)
+- `Assets/_Scripts/Services/DialogService.cs` (setter-based injection)
+- `Assets/_Scripts/DI/GameSceneScope.cs` (MessageBox/CardSelector registration)
+- `Assets/_Scripts/DI/SharedServicesScope.cs` (updated comment)
+- `Assets/_Scripts/JDG.Infrastructure/Services/CardStateService.cs` (moved from default assembly)
+
+#### Files Deleted
+- `Assets/_Scripts/DI/LegacyServicesScope.cs`
+- `Assets/_Scripts/Services/CardStateService.cs` (moved to JDG.Infrastructure)
+
+---
+
+## Refactoring Complete Summary
+
+### Final Statistics
+- **Phases Completed**: 100
+- **Test Count**: ~700 tests (672 EditMode + PlayMode)
+- **Assemblies**: 8 (4 main + 4 test)
+- **Services with DI**: 40+
+- **Singletons Removed**: MessageBox, CardSelector, DisplayCards, CardChoiceUIManager, DialogueTutoHandler, LegacyServicesScope
+
+### Architecture Achieved
+- Clean Architecture with 4 layers (Domain, Application, Infrastructure, Presentation)
+- VContainer dependency injection throughout
+- EventBus for decoupled communication
+- Modern IAbility system for all abilities
+- Adapter services for remaining legacy integration
+
+### Remaining Bridge Files (Working as Designed)
+| File | Purpose | Removal Criteria |
+|------|---------|------------------|
+| ModernAbilityAdapter | IAbility → Ability wrapper | All cards use IAbility |
+| LegacyAbilityAdapter | Ability → IAbility wrapper | All abilities migrated |
+| AbilityExecutorAdapter | IAbilityExecutor bridge | Ability system migrated |
+| CardCollectionServiceAdapter | Scene lookup bridge | PlayerCardManager in DI |
+| LegacySystemInitializer | Static field init | No static dependencies |
+| CardRepositoryInitializer | SO card loading | Legacy cards converted |
+| AbilityMigrationService | Migration tracking | All abilities migrated |
+| TutoSceneInitializer | Tutorial setup | Tutorial system refactored |
+
+### CI/CD
+- GitHub Actions workflow at `.github/workflows/unity-tests.yml`
+- Automated tests on push and PR
+- Build artifact generation for master branch
+
+---
+
+**Last Updated**: 2025-12-30
 **Current Branch**: refactor-v3
-**Status**: Phase 91 Complete (Final Singleton Cleanup)
+**Status**: ✅ REFACTORING COMPLETE
 
 **Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.
