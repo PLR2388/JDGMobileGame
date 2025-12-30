@@ -1182,6 +1182,102 @@ Libraries remain functional during transition:
 
 ---
 
+### Phase 108-115: Final Cleanup & Documentation ✅ (Completed 2025-12-30)
+
+**Goal**: Final cleanup, event migration, documentation, and verification.
+
+#### Phase 108: Remove Duplicate GameLifetimeScope
+- ✅ Deleted `JDG.Infrastructure/DI/GameLifetimeScope.cs` (duplicate of SharedServicesScope)
+- ✅ Deleted `JDG.Infrastructure/Bootstrap/GameBootstrapper.cs` (referenced obsolete scope)
+- Verified no code or scene references remained
+
+#### Phase 109: Migrate Static Events to EventBus
+- ✅ Created `InGameCardClickedEvent` in GameEvents.cs
+- ✅ Updated `OnHover.cs` to publish InGameCardClickedEvent via EventBus
+- ✅ Updated `InGameMenuScript.cs` to subscribe via EventBus
+- ✅ Removed static event `.Invoke()` calls from all card handlers:
+  - InvocationCardHandler.cs
+  - FieldCardHandler.cs
+  - EffectCardHandler.cs
+  - EquipmentCardHandler.cs
+- ✅ Updated `TutoInvocationFunctions.cs` to use EventBus subscription
+- ✅ Deleted `Menu/CardEvents.cs` (legacy UnityEvent class definitions)
+
+#### Phase 110: Resolve TODO Comments
+- ✅ Updated `DialogService.cs:130` - Documented as permanent bridge pattern
+- ✅ Updated `DialogService.cs:309` - Changed from "Temporary bridge" to "Permanent bridge pattern"
+- ✅ Updated `CardPoolManager.cs:155` - Marked as "Pattern complete - no refactoring needed"
+- ✅ Updated `ICardStateManager.cs:13` - Documented as long-term architectural goal
+
+#### Phase 111: Comprehensive Bridge Documentation
+- ✅ Created `Bridge/README.md` with:
+  - Architecture overview with ASCII diagrams
+  - File descriptions and purpose
+  - Dependency graph between bridge components
+  - Migration status table
+  - Usage guidelines
+- ✅ Updated `LegacySystemInitializer.cs` with enhanced XML documentation
+
+#### Phase 112: Update Obsolete Attribute Messages
+- ✅ Updated all [Obsolete] attributes to remove "Phase 54" references:
+  - CardFamily: "kept for Unity serialization compatibility"
+  - CardOwner: "kept for Unity serialization compatibility"
+  - CardType: "kept for Unity serialization compatibility"
+  - ConditionName: "kept for Unity serialization compatibility"
+  - EffectAbilityName: "kept for Unity serialization compatibility"
+  - FieldAbilityName: "kept for Unity serialization compatibility"
+  - EquipmentAbilityName: "kept for Unity serialization compatibility"
+  - Condition, EffectAbility, FieldAbility, EquipmentAbility: "kept for backward compatibility"
+
+#### Phase 113: Comprehensive Documentation Update
+- ✅ Updated REFACTORING_STATUS.md with Phases 108-115
+- ✅ Added final phase summary table
+- ✅ Documented remaining constraints and future work
+
+#### Phase 114: Verification and Testing
+- Tests run locally via Unity Editor > Window > General > Test Runner
+- EditMode tests: 672+ tests
+- PlayMode tests: Integration tests for service resolution
+
+#### Phase 115: Final Verification
+- ✅ All files committed to refactor-v3 branch
+- ✅ No merge to master (per user preference)
+- Branch remains active for future work
+
+---
+
+## Final Phase Summary
+
+| Phase Range | Description | Files Changed |
+|-------------|-------------|---------------|
+| 1-8 | Foundation, DI, EventBus | ~50 |
+| 9-12 | Integration & Presentation | ~30 |
+| 13-28 | MVP Migration, Singletons | ~100 |
+| 29-33 | Ability Registration, Cleanup | ~40 |
+| 39-48 | Presenter Migration, Providers | ~60 |
+| 85-100 | Singleton Cleanup, Testing | ~40 |
+| 101-107 | Ability Migration Verification | ~20 |
+| 108-115 | Final Cleanup & Documentation | ~25 |
+
+## Constraints (Cannot Be Removed)
+
+| Component | Reason |
+|-----------|--------|
+| AudioSystem.cs | Only class using PersistentSingleton, needed for AudioSource MonoBehaviour |
+| StaticInstance.cs | AudioSystem depends on PersistentSingleton base class |
+| Legacy Enums (CardFamily, CardType, etc.) | Unity ScriptableObject serialization stores enum values by integer |
+| Legacy Ability Base Classes | 33+ concrete implementations still inherit from them |
+| Bridge Files (CardConverter, etc.) | Runtime required for ScriptableObject → Domain conversion |
+
+## Technical Debt (Documented, Not Blocking)
+
+1. **CardSelectorPresenter** in default assembly - blocked by InGameCard dependencies
+2. **7 Use Cases** in Services/ folder - blocked by legacy type dependencies
+3. **ContreCardHandler.HandleCardPut()** - NotImplementedException (game feature not yet built)
+4. **Repository Persistence** - DeckRepository save/load uses PlayerPrefs (simple but functional)
+
+---
+
 **Last Updated**: 2025-12-30
 **Current Branch**: refactor-v3
-**Status**: ✅ REFACTORING COMPLETE
+**Status**: ✅ REFACTORING COMPLETE (115 Phases)

@@ -534,9 +534,65 @@ Legacy code coexists with clean architecture:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
+## Bridge Layer
+
+The Bridge layer provides essential compatibility between legacy Unity types and modern clean architecture:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            BRIDGE LAYER                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ LegacySystemInitializer                                             │   │
+│  │ - Initializes static fields in legacy Ability classes              │   │
+│  │ - Called from SharedServicesScope.RegisterBuildCallback()          │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                     │                                       │
+│                                     ▼                                       │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ CardRepositoryInitializer                                           │   │
+│  │ - Loads ScriptableObject cards from Resources/                      │   │
+│  │ - Uses CardConverter to transform to domain entities               │   │
+│  │ - PERMANENT: Required for Unity asset loading                       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                     │                                       │
+│                                     ▼                                       │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ CardConverter                                                       │   │
+│  │ - Converts legacy ScriptableObject → Domain Card entity            │   │
+│  │ - Handles enum translations (Cards.CardFamily → Domain.CardFamily) │   │
+│  │ - PERMANENT: Required until cards stored in non-Unity format       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                     │                                       │
+│                                     ▼                                       │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ ModernAbilityAdapter                                                │   │
+│  │ - Wraps modern IAbility as legacy Ability type                     │   │
+│  │ - Allows new abilities to work with legacy InGameCard              │   │
+│  │ - ACTIVE: Removed when InGameCard uses IAbility directly           │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+For complete bridge documentation, see `Assets/_Scripts/Bridge/README.md`.
+
 ## Future Work
 
 1. **CardSelectorPresenter** - Move to JDG.Presentation (blocked by InGameCard)
 2. **Use Cases** - Move 7 from Services/ to JDG.Application (blocked by legacy types)
 3. **InGameCard → Domain** - Major refactor for pure domain entities
-4. **Repository Persistence** - Implement save/load for DeckRepository
+4. **Repository Persistence** - DeckRepository uses PlayerPrefs (functional but simple)
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| ARCHITECTURE.md | This file - architecture overview and diagrams |
+| REFACTORING_STATUS.md | Detailed phase-by-phase refactoring log |
+| Bridge/README.md | Bridge layer documentation and migration status |
+
+---
+
+**Last Updated**: 2025-12-30
