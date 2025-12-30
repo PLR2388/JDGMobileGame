@@ -6,11 +6,23 @@ using UnityEngine;
 namespace JDG.Bridge
 {
     /// <summary>
-    /// Static initializer for legacy systems.
-    /// Called from SharedServicesScope.RegisterBuildCallback to initialize
-    /// legacy static fields without requiring a MonoBehaviour.
-    /// Phase 46: Replaces LegacyCardLoader MonoBehaviour registration.
-    /// Phase 66: Removed GameStateService (was never accessed by any ability).
+    /// Bridge: Initializes legacy static fields with modern DI services.
+    ///
+    /// <para><b>Purpose:</b> Legacy ability classes (Ability, EffectAbility, FieldAbility) use static
+    /// properties for services. Since DI cannot inject into static fields, this initializer
+    /// bridges the gap by setting these fields after the container is built.</para>
+    ///
+    /// <para><b>Called From:</b> SharedServicesScope.RegisterBuildCallback()</para>
+    ///
+    /// <para><b>Removal Condition:</b> When all 33+ legacy ability implementations are migrated
+    /// to IAbility interface. Until then, this initializer is essential infrastructure.</para>
+    ///
+    /// <para><b>History:</b></para>
+    /// <list type="bullet">
+    /// <item>Phase 46: Replaced LegacyCardLoader MonoBehaviour</item>
+    /// <item>Phase 66: Removed unused GameStateService</item>
+    /// <item>Phase 111: Documented as permanent bridge infrastructure</item>
+    /// </list>
     /// </summary>
     public static class LegacySystemInitializer
     {
