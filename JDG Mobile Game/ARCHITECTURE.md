@@ -76,7 +76,7 @@ This project follows **Clean Architecture** principles with 4 distinct layers, i
 │  │ JDG.Domain Assembly (Pure C# - NO Unity dependencies)                  ││
 │  │                                                                         ││
 │  │  Entities:            Value Objects:       Enums:                       ││
-│  │  - Card               - CardId             - AbilityName (70 values)    ││
+│  │  - Card               - CardId             - AbilityName (69 values)    ││
 │  │  - Player             - PlayerId           - CardType                   ││
 │  │  - PlayerState        - CardStats          - Phase                      ││
 │  │                       - Vector2            - CardOwner                  ││
@@ -279,31 +279,38 @@ _eventBus.Unsubscribe<CardPlayedEvent>(OnCardPlayed);
 
 ## Testing Strategy
 
-### Unit Tests (EditMode)
-- **Domain**: Entity creation, value object equality
-- **Application**: Use cases with mocked repositories
-- **Infrastructure**: Repository behavior, EventBus
-- **Presentation**: Presenters with mocked views
+### Test Assemblies (7 total)
 
-### Integration Tests (PlayMode)
-- Full game flow testing
-- DI container verification
-- EventBus propagation
+| Assembly | Type | Purpose |
+|----------|------|---------|
+| `JDG.Domain.Tests` | EditMode | Entity creation, value object equality |
+| `JDG.Application.Tests` | EditMode | Use cases, abilities, scenarios |
+| `JDG.Infrastructure.Tests` | EditMode | Services, repositories, EventBus |
+| `JDG.Presentation.Tests` | EditMode | Presenters with mocked views |
+| `JDG.PlayMode.Tests` | PlayMode | DI container, full game flow |
+| `JDG.TestUtilities` | Shared | Test doubles, fixtures |
+| `JDG.TestUtilities.Editor` | Editor | Editor-only test helpers |
+
+### Test Types
+- **Unit Tests** (EditMode): 615+ tests covering domain logic, use cases, services
+- **Scenario Tests**: Combat, abilities, card placement, game loop
+- **Integration Tests** (PlayMode): DI resolution, service wiring
+- **Presenter Tests**: MVP pattern with mocked views
 
 ### Test Utilities
-- `CardFactory` - Create test cards
-- `PlayerFactory` - Create test players
-- `GameStateFixtures` - Pre-configured scenarios
 - `NSubstitute` - Mocking framework
+- `TestEventBus` - Event capture and verification
+- `TestGameStateRepository` - In-memory game state
+- Scenario test fixtures in `JDG.Application.Tests/Scenarios/`
 
 ## Migration Strategy (Strangler Fig)
 
 Legacy code coexists with clean architecture:
 
 1. **Legacy types** (InGameCard, InGameInvocationCard) remain in default assembly
-2. **Interfaces** abstract legacy types (IInGameCard)
-3. **Adapters** bridge old → new (ModernAbilityAdapter, CardConverter)
-4. **Gradual migration** - new code uses clean patterns
+2. **Interfaces** abstract legacy types (IInGameCard, IInGameInvocationCard)
+3. **Bridge layer** converts Unity assets to domain entities (CardConverter)
+4. **Gradual migration** - new code uses clean patterns, old code wrapped by adapters
 
 ## Key Design Decisions
 
@@ -548,8 +555,10 @@ The Bridge layer provides essential compatibility between legacy Unity types and
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │ LegacySystemInitializer                                             │   │
-│  │ - Initializes static fields in legacy Ability classes              │   │
+│  │ - Initializes static fields in extension classes                   │   │
+│  │   (CardTypeExtensions, CardFamilyExtensions, etc.)                 │   │
 │  │ - Called from SharedServicesScope.RegisterBuildCallback()          │   │
+│  │ - PERMANENT: Required for extension method localization            │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                     │                                       │
 │                                     ▼                                       │
@@ -566,14 +575,6 @@ The Bridge layer provides essential compatibility between legacy Unity types and
 │  │ - Converts legacy ScriptableObject → Domain Card entity            │   │
 │  │ - Handles enum translations (Cards.CardFamily → Domain.CardFamily) │   │
 │  │ - PERMANENT: Required until cards stored in non-Unity format       │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                     │                                       │
-│                                     ▼                                       │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │ ModernAbilityAdapter                                                │   │
-│  │ - Wraps modern IAbility as legacy Ability type                     │   │
-│  │ - Allows new abilities to work with legacy InGameCard              │   │
-│  │ - ACTIVE: Removed when InGameCard uses IAbility directly           │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘

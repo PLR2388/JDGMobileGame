@@ -489,7 +489,7 @@ The Clean Architecture refactoring is now complete. All planned phases have been
 │  (JDG.Domain - Entities, Value Objects, Events, Enums)      │
 │  - Pure C#, no Unity dependencies                           │
 │  - Card, Player entities                                    │
-│  - 70 AbilityName enum values                               │
+│  - 69 AbilityName enum values                               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -876,7 +876,7 @@ SharedServicesScope (Root - DontDestroyOnLoad)
 │                      DOMAIN LAYER                            │
 │  JDG.Domain: Pure C#, no Unity dependencies                 │
 │  - Card, Player entities                                    │
-│  - 70 AbilityName enum values                               │
+│  - 69 AbilityName enum values                               │
 │  - Domain events                                            │
 └─────────────────────────────────────────────────────────────┘
 ```
