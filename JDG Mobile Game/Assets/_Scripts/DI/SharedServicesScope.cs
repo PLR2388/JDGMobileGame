@@ -129,16 +129,8 @@ namespace JDG.DI
             // APPLICATION LAYER - Use Cases
             // ============================================
 
-            // Game Flow Use Cases
-            builder.Register<StartGameUseCase>(Lifetime.Transient);
-            builder.Register<EndTurnUseCase>(Lifetime.Transient);
-
             // Card Use Cases
             builder.Register<DrawCardUseCase>(Lifetime.Transient);
-            builder.Register<PlayCardUseCase>(Lifetime.Transient);
-
-            // Combat Use Cases
-            builder.Register<AttackUseCase>(Lifetime.Transient);
 
             // Migrated Use Cases (Phase 77+)
             builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
