@@ -1124,13 +1124,8 @@ Libraries remain functional during transition:
   - SingletonServices_ReturnSameInstance_AcrossResolutions
 
 #### Phase 98: CI/CD GitHub Actions
-- ✅ Created `.github/workflows/unity-tests.yml`
-- Features:
-  - Runs on push to master/main/refactor-v3 and PRs
-  - EditMode tests with code coverage
-  - PlayMode tests with separate artifacts
-  - Unity Library caching for faster runs
-  - Build job (master only) for Android
+- ⏭️ Skipped - Requires Unity Pro license for headless builds
+- Tests run locally via Unity Editor > Window > General > Test Runner
 
 #### Phase 99: Documentation Updates
 - ✅ Updated REFACTORING_STATUS.md with Phases 93-100
@@ -1138,7 +1133,6 @@ Libraries remain functional during transition:
 #### Files Created
 - `Assets/Tests/JDG.Infrastructure.Tests/Services/CardStateServiceTests.cs`
 - `Assets/Tests/PlayMode/ServiceIntegrationPlayTests.cs`
-- `.github/workflows/unity-tests.yml`
 
 #### Files Modified
 - `Assets/_Scripts/MessageBox/MessageBox.cs` (removed StaticInstance)
@@ -1182,15 +1176,12 @@ Libraries remain functional during transition:
 | AbilityMigrationService | Migration tracking | All abilities migrated |
 | TutoSceneInitializer | Tutorial setup | Tutorial system refactored |
 
-### CI/CD
-- GitHub Actions workflow at `.github/workflows/unity-tests.yml`
-- Automated tests on push and PR
-- Build artifact generation for master branch
+### Testing
+- Run tests locally via Unity Editor > Window > General > Test Runner
+- CI/CD skipped (requires Unity Pro for headless builds)
 
 ---
 
 **Last Updated**: 2025-12-30
 **Current Branch**: refactor-v3
 **Status**: ✅ REFACTORING COMPLETE
-
-**Note**: GitHub Actions CI/CD requires Unity Pro license for headless builds. Tests can be run locally via Unity Editor > Window > General > Test Runner.
