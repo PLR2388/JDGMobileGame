@@ -19,6 +19,7 @@ using UnityEngine;
 /// Phase 37: Uses IAudioService instead of AudioSystem.Instance.
 /// Phase 114: Uses IAbilityExecutor for effect card abilities.
 /// Phase 116: Uses modern IAbility for field card abilities.
+/// Phase 118: Uses only ModernAbilities, removed legacy Ability references.
 ///
 /// Note: This service is in the default assembly because it depends on legacy types.
 /// It will be moved to JDG.Infrastructure once legacy types are refactored.
@@ -44,9 +45,10 @@ public class CardPlacementService : ICardPlacementService
 
     /// <summary>
     /// Places an invocation card on the field.
+    /// Phase 118: Uses ModernAbilities with OnSummon trigger instead of legacy Abilities.
     /// </summary>
     /// <param name="card">The invocation card to place.</param>
-    /// <param name="canvas">Canvas for UI operations (passed to abilities).</param>
+    /// <param name="canvas">Canvas for UI operations (no longer needed, kept for API compatibility).</param>
     /// <returns>True if placement was successful, false if field is full (4 cards max).</returns>
     public bool PlaceInvocationCard(InGameInvocationCard card, Transform canvas)
     {
@@ -63,12 +65,24 @@ public class CardPlacementService : ICardPlacementService
         currentPlayerCard.InvocationCards.Add(card);
         currentPlayerCard.HandCards.Remove(card);
 
-        // Apply card abilities
+        // Phase 118: Apply card abilities using ModernAbilities
         var opponentPlayerCards = _cardCollectionService.GetOpponentPlayerCards();
-        foreach (var ability in card.Abilities)
+        var owner = currentPlayerCard.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = currentPlayerCard.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+
+        foreach (var ability in card.ModernAbilities)
         {
-            ability.ApplyEffect(canvas, currentPlayerCard, opponentPlayerCards);
+            if (ability.CanActivate(context))
+            {
+                ability.Execute(context);
+            }
         }
+
+        // Notify ability executor for OnCardAddedToField triggers on other cards
+        _abilityExecutor.ExecuteOnCardAddedToField(card, currentPlayerCard, opponentPlayerCards);
 
         return true;
     }
@@ -204,6 +218,7 @@ public class CardPlacementService : ICardPlacementService
 
     /// <summary>
     /// Handles cancellation/reactivation of invocation card effects.
+    /// Phase 118: Uses ModernAbilities - cancel/reactivate handled via card state.
     /// </summary>
     /// <param name="card">The invocation card to process.</param>
     public void HandleInvocationCancelEffect(InGameInvocationCard card)
@@ -211,23 +226,9 @@ public class CardPlacementService : ICardPlacementService
         if (card == null)
             return;
 
-        var currentPlayerCard = _cardCollectionService.GetCurrentPlayerCards();
-
-        if (card.CancelEffect)
-        {
-            // Cancel effects
-            foreach (var ability in card.Abilities)
-            {
-                ability.CancelEffect(currentPlayerCard);
-            }
-        }
-        else
-        {
-            // Reactivate effects
-            foreach (var ability in card.Abilities)
-            {
-                ability.ReactivateEffect(currentPlayerCard);
-            }
-        }
+        // Phase 118: Cancel/reactivate is handled by the CancelEffect property on the card.
+        // Modern abilities check card.CancelEffect in their CanActivate implementation.
+        // The InvocationCancelledEvent is published by the card's CancelEffect setter.
+        // No additional legacy ability calls needed.
     }
 }

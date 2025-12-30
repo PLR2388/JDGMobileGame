@@ -19,6 +19,7 @@ using UnityEngine;
 /// Part of Phase 4 migration - decomposes CardManager god class.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 115: Updated to use modern IAbility for effect cards.
+/// Phase 118: Uses only ModernAbilities for all card types.
 /// </summary>
 public class TurnService : ITurnService
 {
@@ -91,6 +92,9 @@ public class TurnService : ITurnService
         return isP1Turn ? _player1CardManager : _player2CardManager;
     }
 
+    /// <summary>
+    /// Phase 118: Uses only ModernAbilities for invocation cards.
+    /// </summary>
     private void ApplyInvocationOnTurnStart(
         System.Collections.Generic.List<InGameInvocationCard> invocationCards,
         PlayerCards playerCards,
@@ -103,19 +107,28 @@ public class TurnService : ITurnService
 
         foreach (var invocationCard in invocationCards)
         {
-            foreach (var ability in invocationCard.Abilities)
+            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+
+            // Phase 118: Use modern abilities with OnTurnStart trigger for invocations
+            foreach (var ability in invocationCard.ModernAbilities)
             {
-                ability.OnTurnStart(_canvas, playerCards, opponentCards);
+                if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
+                {
+                    if (ability.CanActivate(context))
+                    {
+                        ability.Execute(context);
+                    }
+                }
             }
 
-            // Phase 117: Use modern abilities with OnTurnStart trigger for equipment
+            // Equipment abilities
             if (invocationCard.EquipmentCard != null)
             {
                 var equipContext = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
                 foreach (var ability in invocationCard.EquipmentCard.ModernEquipmentAbilities)
                 {
-                    if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
+                    if (ability is IPassiveAbility equipPassive && equipPassive.Trigger == AbilityTrigger.OnTurnStart)
                     {
                         if (ability.CanActivate(equipContext))
                         {

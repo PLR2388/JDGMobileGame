@@ -18,6 +18,7 @@ namespace _Scripts.Units.Invocation
     /// Phase 7: Added IAbilityProvider for AbilityLibrary → AbilityRegistry migration.
     /// Phase 49: Implements IInGameInvocationCard for complete abstraction.
     /// Phase 105: Added ModernAbilities for IAbility migration.
+    /// Phase 118: Removed legacy Abilities list, uses only ModernAbilities.
     /// </summary>
     public class InGameInvocationCard : InGameCard, IInGameInvocationCard
     {
@@ -42,6 +43,7 @@ namespace _Scripts.Units.Invocation
         /// Gets or sets whether the card effect is canceled.
         /// Phase 23: Migrated from static UnityEvent to EventBus.
         /// Phase 24-25: Uses injected _eventBus.
+        /// Phase 118: Removed UpdateInvocationCardForAbilities call.
         /// </summary>
         public bool CancelEffect
         {
@@ -49,7 +51,8 @@ namespace _Scripts.Units.Invocation
             set
             {
                 cancelEffect = value;
-                UpdateInvocationCardForAbilities();
+                // Phase 118: Removed UpdateInvocationCardForAbilities call
+                // Modern abilities check CancelEffect in their CanActivate implementation
 
                 // Phase 24-25: Use injected _eventBus
                 var domainOwner = (JDG.Domain.CardOwner)(int)CardOwner;
@@ -70,14 +73,8 @@ namespace _Scripts.Units.Invocation
         private List<global::Condition> conditions = new List<global::Condition>();
 
         /// <summary>
-        /// List of legacy abilities associated with the invocation card.
-        /// Phase 105: Marked for deprecation - use ModernAbilities instead.
-        /// </summary>
-        public List<Ability> Abilities = new List<Ability>();
-
-        /// <summary>
         /// List of modern IAbility implementations for this card.
-        /// Phase 105: New property for clean architecture migration.
+        /// Phase 118: This is now the only ability list (legacy Abilities removed).
         /// </summary>
         public List<IAbility> ModernAbilities { get; private set; } = new List<IAbility>();
 
@@ -162,31 +159,15 @@ namespace _Scripts.Units.Invocation
                 .Where(condition => condition != null)
                 .ToList();
 
-            // Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed)
-            // Legacy abilities (for backward compatibility)
-            Abilities = BaseInvocationCard.Abilities
-                .Select(abilityName => _abilityProvider.GetAbility(abilityName))
-                .Where(ability => ability != null)
-                .ToList();
-            UpdateInvocationCardForAbilities();
-
-            // Phase 105: Populate modern abilities
+            // Phase 118: Populate modern abilities only (legacy Abilities removed)
             ModernAbilities = BaseInvocationCard.Abilities
                 .Select(abilityName => _abilityProvider.GetModernAbility(abilityName))
                 .Where(ability => ability != null)
                 .ToList();
         }
         
-        /// <summary>
-        /// Updates the invocation card for abilities.
-        /// </summary>
-        private void UpdateInvocationCardForAbilities()
-        {
-            foreach (var ability in Abilities)
-            {
-                ability.InvocationCard = this;
-            }
-        }
+        // Phase 118: Removed UpdateInvocationCardForAbilities - no longer needed
+        // Modern IAbility implementations don't need a reference to the card
 
         /// <summary>
         /// Checks if the card can be summoned.
@@ -245,11 +226,16 @@ namespace _Scripts.Units.Invocation
 
         /// <summary>
         /// Checks if the card has an available action.
+        /// Phase 118: Uses ModernAbilities - action abilities can activate when not in passive mode.
         /// </summary>
         /// <returns>true if has action; otherwise, false.</returns>
         public bool HasAction()
         {
-            return Abilities.Exists(elt => elt.IsAction);
+            // Phase 118: An ability is an action if it can be manually activated
+            // and is not purely passive (doesn't have a specific trigger)
+            return ModernAbilities.Any(ability =>
+                !(ability is IPassiveAbility passiveAbility) ||
+                passiveAbility.Trigger == AbilityTrigger.Continuous);
         }
 
         /// <summary>
@@ -316,7 +302,7 @@ namespace _Scripts.Units.Invocation
         public void IncrementNumberTurnOnField()
         {
             NumberOfTurnOnField++;
-            UpdateInvocationCardForAbilities();
+            // Phase 118: Removed UpdateInvocationCardForAbilities call
         }
 
         /// <summary>
@@ -356,8 +342,9 @@ namespace _Scripts.Units.Invocation
         /// <summary>
         /// Gets the abilities as a read-only list of objects.
         /// Phase 49: Explicit implementation for IInGameInvocationCard interface.
+        /// Phase 118: Now returns ModernAbilities (legacy Abilities removed).
         /// </summary>
-        IReadOnlyList<object> IInGameInvocationCard.Abilities => Abilities.Cast<object>().ToList().AsReadOnly();
+        IReadOnlyList<object> IInGameInvocationCard.Abilities => ModernAbilities.Cast<object>().ToList().AsReadOnly();
 
         /// <summary>
         /// Gets the equipment card as an interface type.

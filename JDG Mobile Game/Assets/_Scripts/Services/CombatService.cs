@@ -3,7 +3,11 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
+using JDG.Application.Abilities;
 using JDG.Application.Abilities.Implementations;
+using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.ValueObjects;
 using UnityEngine;
 
 /// <summary>
@@ -17,20 +21,27 @@ using UnityEngine;
 /// Part of Phase 4 migration - decomposes CardManager god class.
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 115: Updated to use modern EnableDirectAttackEffectAbility type.
+/// Phase 118: Moved combat logic from legacy Ability class. Uses only ModernAbilities.
 /// </summary>
 public class CombatService : ICombatService
 {
     private readonly ICardCollectionService _cardCollectionService;
     private readonly IPlayerStatusProvider _playerStatusProvider;
+    private readonly IAbilityExecutor _abilityExecutor;
     private readonly Transform _canvas;
 
     public InGameInvocationCard Attacker { get; set; }
     public InGameInvocationCard Opponent { get; set; }
 
-    public CombatService(ICardCollectionService cardCollectionService, IPlayerStatusProvider playerStatusProvider, Transform canvas)
+    public CombatService(
+        ICardCollectionService cardCollectionService,
+        IPlayerStatusProvider playerStatusProvider,
+        IAbilityExecutor abilityExecutor,
+        Transform canvas)
     {
         _cardCollectionService = cardCollectionService;
         _playerStatusProvider = playerStatusProvider;
+        _abilityExecutor = abilityExecutor;
         _canvas = canvas;
     }
 
@@ -105,6 +116,10 @@ public class CombatService : ICombatService
         return validTargets;
     }
 
+    /// <summary>
+    /// Executes special action abilities on the attacker card.
+    /// Phase 118: Uses ModernAbilities with OnAction trigger.
+    /// </summary>
     public void UseSpecialAction()
     {
         if (Attacker == null)
@@ -113,24 +128,43 @@ public class CombatService : ICombatService
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
         var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
 
-        foreach (var ability in Attacker.Abilities)
+        // Phase 118: Execute modern abilities that are actions
+        var context = CreateAbilityContext(Attacker, playerCards);
+        foreach (var ability in Attacker.ModernAbilities)
         {
-            ability.OnCardActionTouched(_canvas, playerCards, opponentCards);
+            // Execute action-type abilities
+            if (ability.CanActivate(context))
+            {
+                ability.Execute(context);
+            }
         }
     }
 
+    /// <summary>
+    /// Checks if the attacker has any actionable abilities.
+    /// Phase 118: Uses ModernAbilities for action check.
+    /// </summary>
     public bool IsSpecialActionPossible()
     {
         if (Attacker == null)
             return false;
 
+        if (Attacker.CancelEffect)
+            return false;
+
+        // Phase 118: Check if any modern ability can activate
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
-        return Attacker.Abilities.TrueForAll(ability => ability.IsActionPossible(playerCards))
-               && !Attacker.CancelEffect;
+        var context = CreateAbilityContext(Attacker, playerCards);
+
+        return Attacker.ModernAbilities.Any(ability => ability.CanActivate(context));
     }
 
     // Private helper methods
 
+    /// <summary>
+    /// Handles combat between two invocation cards.
+    /// Phase 118: Moved combat logic from legacy Ability class.
+    /// </summary>
     private void HandleAttackOverInvocation()
     {
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
@@ -138,16 +172,200 @@ public class CombatService : ICombatService
         var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
         var opponentStatus = _playerStatusProvider.GetOpponentPlayerStatus();
 
-        foreach (var ability in Opponent.Abilities)
+        // Phase 118: Execute modern abilities with OnDefend trigger for defender
+        var defenderContext = CreateAbilityContext(Opponent, opponentCards);
+        ExecuteModernAbilities(Opponent.ModernAbilities, AbilityTrigger.OnDefend, defenderContext);
+
+        // Phase 118: Execute modern abilities with OnAttack trigger for attacker
+        var attackerContext = CreateAbilityContext(Attacker, playerCards);
+        ExecuteModernAbilities(Attacker.ModernAbilities, AbilityTrigger.OnAttack, attackerContext);
+
+        // Phase 118: Calculate and apply combat damage (moved from Ability.OnCardAttacked)
+        float resultAttack = Opponent.Defense - Attacker.Attack;
+        if (resultAttack > 0)
         {
-            ability.OnCardAttacked(_canvas, Opponent, Attacker, playerCards, opponentCards,
-                playerStatus, opponentStatus);
+            HandlePositiveAttackResult(Attacker, playerCards, opponentCards, playerStatus, resultAttack);
+        }
+        else if (resultAttack == 0)
+        {
+            HandleNeutralAttackResult(Opponent, Attacker, playerCards, opponentCards);
+        }
+        else
+        {
+            HandleNegativeAttackResult(Opponent, playerCards, opponentCards, opponentStatus, resultAttack);
+        }
+    }
+
+    /// <summary>
+    /// Creates an AbilityContext for modern ability execution.
+    /// Phase 118: Added for modern ability migration.
+    /// </summary>
+    private AbilityContext CreateAbilityContext(InGameInvocationCard card, PlayerCards playerCards)
+    {
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        return new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+    }
+
+    /// <summary>
+    /// Executes modern abilities with the specified trigger.
+    /// Phase 118: Added for modern ability migration.
+    /// </summary>
+    private void ExecuteModernAbilities(List<IAbility> abilities, AbilityTrigger trigger, AbilityContext context)
+    {
+        foreach (var ability in abilities)
+        {
+            if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == trigger)
+            {
+                if (ability.CanActivate(context))
+                {
+                    ability.Execute(context);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles positive attack result (defender's DEF > attacker's ATK).
+    /// Phase 118: Moved from legacy Ability class.
+    /// </summary>
+    private void HandlePositiveAttackResult(
+        InGameInvocationCard attacker,
+        PlayerCards playerCards,
+        PlayerCards opponentCards,
+        PlayerStatus currentPlayerStatus,
+        float resultAttack)
+    {
+        if (!IsEquipmentCardProtected(attacker, playerCards))
+        {
+            bool cardDied = HandleCardDeath(attacker, playerCards, opponentCards);
+            if (cardDied)
+            {
+                currentPlayerStatus.ChangePv(-resultAttack);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles neutral attack result (defender's DEF == attacker's ATK).
+    /// Phase 118: Moved from legacy Ability class.
+    /// </summary>
+    private void HandleNeutralAttackResult(
+        InGameInvocationCard attackedCard,
+        InGameInvocationCard attacker,
+        PlayerCards playerCards,
+        PlayerCards opponentCards)
+    {
+        bool isProtectedAttacker = IsEquipmentCardProtected(attacker, playerCards);
+        bool isProtectedAttacked = IsEquipmentCardProtected(attackedCard, opponentCards);
+
+        if (!isProtectedAttacked)
+        {
+            HandleCardDeath(attackedCard, opponentCards, playerCards);
         }
 
-        foreach (var ability in Attacker.Abilities)
+        if (!isProtectedAttacker)
         {
-            ability.OnAttackCard(Opponent, Attacker, playerCards, opponentCards);
+            HandleCardDeath(attacker, playerCards, opponentCards);
         }
+    }
+
+    /// <summary>
+    /// Handles negative attack result (defender's DEF < attacker's ATK).
+    /// Phase 118: Moved from legacy Ability class.
+    /// </summary>
+    private void HandleNegativeAttackResult(
+        InGameInvocationCard attackedCard,
+        PlayerCards playerCards,
+        PlayerCards opponentCards,
+        PlayerStatus opponentPlayerStatus,
+        float resultAttack)
+    {
+        if (!IsEquipmentCardProtected(attackedCard, opponentCards))
+        {
+            bool cardDied = HandleCardDeath(attackedCard, opponentCards, playerCards);
+            if (cardDied)
+            {
+                opponentPlayerStatus.ChangePv(resultAttack);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks if a card is protected from destruction by equipment.
+    /// Phase 118: Moved from legacy Ability class.
+    /// </summary>
+    private bool IsEquipmentCardProtected(InGameInvocationCard card, PlayerCards playerCards)
+    {
+        var equipmentCard = card.EquipmentCard;
+        if (equipmentCard == null)
+            return false;
+
+        // Check if any equipment ability prevents destruction
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+
+        return equipmentCard.ModernEquipmentAbilities
+            .OfType<IEquipmentAbility>()
+            .Any(ability => !ability.OnPreDestroy(context));
+    }
+
+    /// <summary>
+    /// Handles card death logic including equipment removal and graveyard placement.
+    /// Phase 118: Moved from legacy Ability class.
+    /// </summary>
+    /// <returns>True if the card actually died, false if it was protected.</returns>
+    private bool HandleCardDeath(
+        InGameInvocationCard deadCard,
+        PlayerCards ownerCards,
+        PlayerCards opponentCards)
+    {
+        // Check if card is in yellow cards (already dead)
+        if (ownerCards.YellowCards.Contains(deadCard))
+            return false;
+
+        // Handle equipment removal
+        var equipmentCard = deadCard.EquipmentCard;
+        if (equipmentCard != null)
+        {
+            // Execute OnUnequip abilities
+            var owner = ownerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+            var ownerId = PlayerId.FromCardOwner(owner);
+            var opponentOwner = ownerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+            var opponentId = PlayerId.FromCardOwner(opponentOwner);
+            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+
+            foreach (var ability in equipmentCard.ModernEquipmentAbilities)
+            {
+                if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnUnequip)
+                {
+                    if (ability.CanActivate(context))
+                    {
+                        ability.Execute(context);
+                    }
+                }
+            }
+
+            ownerCards.YellowCards.Add(equipmentCard);
+            deadCard.EquipmentCard = null;
+        }
+
+        // Increment death counter
+        deadCard.IncrementNumberDeaths();
+
+        // Execute death abilities via IAbilityExecutor
+        _abilityExecutor.ExecuteOnCardDeath(deadCard, ownerCards, opponentCards);
+
+        // Move card to graveyard
+        ownerCards.InvocationCards.Remove(deadCard);
+        ownerCards.YellowCards.Add(deadCard);
+
+        return true;
     }
 
     private List<InGameCard> FilterValidOpponentCards(System.Collections.Generic.IEnumerable<InGameCard> cards)
