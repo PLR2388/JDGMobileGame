@@ -1,5 +1,7 @@
-﻿using Cards;
+﻿using System;
+using Cards;
 using JDG.Application.Services;
+using JDG.Domain.Events;
 using OnePlayer;
 using OnePlayer.DialogueBox;
 using TMPro;
@@ -20,6 +22,9 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     // Phase 90: Tutorial state service replaces DialogueTutoHandler singleton
     private ITutorialStateService _tutorialStateService;
+
+    // Phase 109: EventBus subscription for card click events
+    private IDisposable _tutoCardClickedSubscription;
 
     private TextMeshProUGUI buttonTextMeshProUGUI;
     private Button button;
@@ -48,13 +53,35 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     /// <summary>
     /// Initializes the state of UI and card handlers.
+    /// Phase 109: Uses EventBus instead of static EventClick UnityEvent.
     /// </summary>
     private void Start()
     {
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
-        EventClick.AddListener(ClickOnCard);
+        _tutoCardClickedSubscription = _eventBus?.Subscribe<InGameCardClickedEvent>(OnTutoCardClicked);
         InitializeCardHandlers();
+    }
+
+    /// <summary>
+    /// Event handler for InGameCardClickedEvent from EventBus.
+    /// Phase 109: Replaces static UnityEvent listener.
+    /// </summary>
+    private void OnTutoCardClicked(InGameCardClickedEvent evt)
+    {
+        if (evt.Card is InGameCard card)
+        {
+            ClickOnCard(card);
+        }
+    }
+
+    /// <summary>
+    /// Cleanup EventBus subscription on destroy.
+    /// Phase 109: Added for proper resource cleanup.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _tutoCardClickedSubscription?.Dispose();
     }
     
     /// <summary>

@@ -3,7 +3,6 @@ using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Repositories;
 using JDG.Domain;
-using JDG.Infrastructure.DI;
 using UnityEngine;
 
 /// <summary>

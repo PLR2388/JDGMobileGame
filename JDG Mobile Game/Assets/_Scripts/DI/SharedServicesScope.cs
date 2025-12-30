@@ -304,7 +304,7 @@ namespace JDG.DI
             registry.Register(JDG.Domain.AbilityName.ChangeFieldWithFieldFromDeck, () => specialFactory.CreateOptionalChangeField());
 
             // DEFAULT ABILITY
-            registry.Register(JDG.Domain.AbilityName.Default, () => new JDG.Infrastructure.DI.DefaultAbility());
+            registry.Register(JDG.Domain.AbilityName.Default, () => new JDG.Application.Abilities.Implementations.DefaultAbility());
 
             UnityEngine.Debug.Log("SharedServicesScope: Abilities registered");
         }
