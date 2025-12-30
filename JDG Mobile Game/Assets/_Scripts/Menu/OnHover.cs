@@ -31,6 +31,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     private JDG.Application.Services.ICardSelectionService _cardSelectionService;
     private IEventBus _eventBus;
     private IDisposable _cardDeselectedSubscription;
+    private IDisposable _cardNumberedSubscription; // Phase 121: EventBus subscription
 
     /// <summary>
     /// VContainer method injection for dependencies.
@@ -52,16 +53,18 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     /// <summary>
     /// Initialize component references and set up event listeners.
+    /// Phase 121: Subscribe to CardNumberedEvent via EventBus.
     /// </summary>
     private void Start()
     {
         image = GetComponent<Image>();
         numberText = numberTextObject.GetComponent<Text>();
-        CardSelector.NumberedCardEvent.AddListener(UpdateNumberOnCard);
         card = gameObject.GetComponent<CardDisplay>().InGameCard;
 
         // Phase 41: Subscribe to EventBus instead of legacy UnityEvent
         _cardDeselectedSubscription = _eventBus?.Subscribe<CardRemovedFromSelectionEvent>(OnCardRemovedFromSelection);
+        // Phase 121: Subscribe to CardNumberedEvent via EventBus
+        _cardNumberedSubscription = _eventBus?.Subscribe<CardNumberedEvent>(OnCardNumbered);
 
         // Initialize default state
         SetState(new DefaultCardState(this, card, _cardSelectionService));
@@ -69,13 +72,14 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     /// <summary>
     /// Cleanup and unsubscribe from events.
+    /// Phase 121: Dispose CardNumberedEvent subscription.
     /// </summary>
     private void OnDestroy()
     {
-        // Unsubscribe from events
-        CardSelector.NumberedCardEvent.RemoveListener(UpdateNumberOnCard);
-        // Phase 41: Dispose EventBus subscription
+        // Phase 41: Dispose EventBus subscriptions
         _cardDeselectedSubscription?.Dispose();
+        // Phase 121: Dispose CardNumberedEvent subscription
+        _cardNumberedSubscription?.Dispose();
     }
 
     /// <summary>
@@ -87,6 +91,18 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
         if (evt.Card is InGameCard deselectedCard)
         {
             UnSelectCard(deselectedCard);
+        }
+    }
+
+    /// <summary>
+    /// Handles card numbered event.
+    /// Phase 121: EventBus handler replacing CardSelector.NumberedCardEvent static UnityEvent.
+    /// </summary>
+    private void OnCardNumbered(CardNumberedEvent evt)
+    {
+        if (evt.Card is InGameCard cardToModify)
+        {
+            UpdateNumberOnCard(cardToModify, evt.Number);
         }
     }
 
@@ -104,6 +120,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     /// <summary>
     /// Update the number displayed on the card.
+    /// Phase 121: Now called from OnCardNumbered EventBus handler.
     /// </summary>
     /// <param name="cardToModify">The card to modify.</param>
     /// <param name="numberToApply">The number to display on the card.</param>

@@ -10,24 +10,19 @@ using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 
-[System.Serializable]
-public class NumberedCardEvent : UnityEvent<InGameCard, int>
-{
-}
-
 /// <summary>
 /// Displays card selector dialogs for card selection.
 /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
 /// Phase 41: Migrated to clean ICardSelectionService with EventBus.
 /// Phase 52: Marked obsolete - use IDialogService via dependency injection instead.
 /// Phase 94: Removed StaticInstance inheritance - now a regular MonoBehaviour.
+/// Phase 121: Removed static NumberedCardEvent - now published via EventBus.
 /// </summary>
 public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
 {
     #region Fields and Properties
 
     [SerializeField] private GameObject prefab;
-    public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
 
     private bool displayNumberOnCard = false;
 
@@ -80,9 +75,10 @@ public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
     }
 
     /// <summary>
-    /// If the display number on card feature is enabled, it invokes the NumberedCardEvent
+    /// If the display number on card feature is enabled, it publishes CardNumberedEvent
     /// for each card in the list with its corresponding order.
     /// Phase 41: Cast from object to InGameCard for clean interface.
+    /// Phase 121: Changed from static UnityEvent.Invoke to EventBus.Publish.
     /// </summary>
     private void InvokeNumberedEventIfRequired()
     {
@@ -93,7 +89,7 @@ public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
             {
                 if (selectedCards[i] is InGameCard card)
                 {
-                    NumberedCardEvent.Invoke(card, i + 1);
+                    _eventBus?.Publish(new CardNumberedEvent { Card = card, Number = i + 1 });
                 }
             }
         }

@@ -427,6 +427,59 @@ namespace JDG.Domain.Events
     }
 
     // ============================================
+    // CARD SELECTION EVENTS
+    // Phase 121: Replaces CardSelector.NumberedCardEvent static UnityEvent
+    // ============================================
+
+    /// <summary>
+    /// Published when a card receives a selection order number (for multi-select).
+    /// Phase 121: Replaces CardSelector.NumberedCardEvent static UnityEvent.
+    /// </summary>
+    public struct CardNumberedEvent
+    {
+        public object Card; // Using object to avoid dependency on InGameCard
+        public int Number;
+    }
+
+    // ============================================
+    // HIGHLIGHT EVENTS
+    // Phase 122: Replaces HighLightPlane.Highlight static UnityEvent
+    // ============================================
+
+    /// <summary>
+    /// Published when a highlight effect is requested on a game element.
+    /// Phase 122: Replaces HighLightPlane.Highlight static UnityEvent.
+    /// </summary>
+    public struct HighlightRequestedEvent
+    {
+        public int Element; // HighlightElement enum value (Invocations, Space, Deck, etc.)
+        public bool IsActivated;
+    }
+
+    // ============================================
+    // DIALOGUE EVENTS
+    // Phase 123: Replaces DialogueUI static UnityEvents
+    // ============================================
+
+    /// <summary>
+    /// Published when a dialogue trigger is completed.
+    /// Phase 123: Replaces DialogueUI.TriggerDoneEvent static UnityEvent.
+    /// </summary>
+    public struct DialogueTriggerCompletedEvent
+    {
+        public int TriggerType; // NextDialogueTrigger enum value
+    }
+
+    /// <summary>
+    /// Published when the dialogue index changes.
+    /// Phase 123: Replaces DialogueUI.DialogIndex static UnityEvent.
+    /// </summary>
+    public struct DialogueIndexChangedEvent
+    {
+        public int DialogueIndex;
+    }
+
+    // ============================================
     // CARD CLICK EVENTS
     // Phase 109: Replaces InGameMenuScript.EventClick static UnityEvent
     // ============================================

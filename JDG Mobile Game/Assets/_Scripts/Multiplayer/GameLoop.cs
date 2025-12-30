@@ -20,7 +20,8 @@ using JDG.Infrastructure.Services;
 /// </summary>
 public class GameLoop : MonoBehaviour
 {
-    private IEventBus _eventBus;
+    // Phase 122: Changed to protected so TutoPlayerGameLoop can access for HighlightRequestedEvent
+    protected IEventBus _eventBus;
     protected GameStateService _gameStateService;
     protected IRaycastService _raycastService;
     protected IInvocationMenuService _invocationMenuService;

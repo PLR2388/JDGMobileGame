@@ -247,14 +247,17 @@ _eventBus.Subscribe<CardPlayedEvent>(OnCardPlayed);
 _eventBus.Unsubscribe<CardPlayedEvent>(OnCardPlayed);
 ```
 
-### Domain Events (30+)
+### Domain Events (40+)
 
 | Category | Events |
 |----------|--------|
 | Game | GameStartedEvent, PhaseChangedEvent, PlayerTurnChangedEvent |
-| Cards | CardPlayedEvent, CardDrawnEvent, CardDestroyedEvent |
+| Cards | CardPlayedEvent, CardDrawnEvent, CardDestroyedEvent, CardNumberedEvent |
 | Combat | AttackEvent, DamageDealtEvent |
 | Selection | CardAddedToSelectionEvent, CardRemovedFromSelectionEvent |
+| UI | InGameCardClickedEvent, HighlightRequestedEvent |
+| Dialogue | DialogueTriggerCompletedEvent, DialogueIndexChangedEvent |
+| Card Play | InvocationCardPlayRequestedEvent, FieldCardPlayRequestedEvent, EffectCardPlayRequestedEvent, EquipmentCardPlayRequestedEvent |
 
 ## MVP Pattern (Presentation)
 
@@ -584,6 +587,7 @@ For complete bridge documentation, see `Assets/_Scripts/Bridge/README.md`.
 2. **Use Cases** - Move 7 from Services/ to JDG.Application (blocked by legacy types)
 3. **InGameCard → Domain** - Major refactor for pure domain entities
 4. **Repository Persistence** - DeckRepository uses PlayerPrefs (functional but simple)
+5. **Card Storage Alternatives** - Investigate JSON/database storage to simplify Bridge layer (Phase 125)
 
 ## Documentation
 

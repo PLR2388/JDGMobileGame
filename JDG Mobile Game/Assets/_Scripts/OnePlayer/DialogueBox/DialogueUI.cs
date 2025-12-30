@@ -1,32 +1,18 @@
 using System;
 using System.Collections;
 using System.Linq;
+using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain.Events;
 using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using VContainer;
-
-/// <summary>
-/// Unity event that broadcasts the current dialogue index.
-/// </summary>
-[Serializable]
-public class CurrentDialogIndex : UnityEvent<int>
-{
-}
-
-/// <summary>
-/// Unity event that broadcasts when a specific trigger has been executed.
-/// </summary>
-public class TriggerDoneEvent : UnityEvent<NextDialogueTrigger>
-{
-    
-}
 
 /// <summary>
 /// Represents the user interface for dialogues in the game.
 /// Phase 55: Uses ISceneLoaderService instead of SceneLoaderSystem static calls.
+/// Phase 123: Removed static UnityEvents - uses EventBus for DialogueTriggerCompletedEvent and DialogueIndexChangedEvent.
 /// </summary>
 public class DialogueUI : MonoBehaviour
 {
@@ -34,9 +20,7 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private TMP_Text textLabel;
     [SerializeField] private DialogueObject testDialogue;
 
-    public static readonly CurrentDialogIndex DialogIndex = new CurrentDialogIndex();
     private NextDialogueTrigger currentTrigger = NextDialogueTrigger.Undefined;
-    public static readonly TriggerDoneEvent TriggerDoneEvent = new TriggerDoneEvent();
 
     private ResponseHandler responseHandler;
     private TypewriterEffect typewriterEffect;
@@ -50,20 +34,27 @@ public class DialogueUI : MonoBehaviour
     // Phase 90: ITutorialStateService replaces DialogueTutoHandler singleton
     private ITutorialStateService _tutorialStateService;
 
+    // Phase 123: EventBus for dialogue events
+    private IEventBus _eventBus;
+    private IDisposable _triggerSubscription;
+
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
     /// Phase 90: Added ITutorialStateService to replace DialogueTutoHandler singleton.
+    /// Phase 123: Added IEventBus for dialogue events.
     /// </summary>
     [Inject]
-    public void Construct(ISceneLoaderService sceneLoaderService, ITutorialStateService tutorialStateService)
+    public void Construct(ISceneLoaderService sceneLoaderService, ITutorialStateService tutorialStateService, IEventBus eventBus)
     {
         _sceneLoaderService = sceneLoaderService;
         _tutorialStateService = tutorialStateService;
+        _eventBus = eventBus;
     }
 
     /// <summary>
     /// Initialization method.
+    /// Phase 123: Subscribe to DialogueTriggerCompletedEvent via EventBus.
     /// </summary>
     private void Start()
     {
@@ -73,16 +64,26 @@ public class DialogueUI : MonoBehaviour
         audioSource = FindFirstObjectByType<AudioSource>();
         CloseDialogueBox();
         ShowDialogue(testDialogue);
-        TriggerDoneEvent.AddListener(TriggerReceived);
+        // Phase 123: Subscribe via EventBus
+        _triggerSubscription = _eventBus?.Subscribe<DialogueTriggerCompletedEvent>(OnTriggerCompleted);
     }
 
     /// <summary>
     /// Cleanup when the object is destroyed.
-    /// Removes the static event listener to prevent memory leaks.
+    /// Phase 123: Dispose EventBus subscription.
     /// </summary>
     private void OnDestroy()
     {
-        TriggerDoneEvent.RemoveListener(TriggerReceived);
+        _triggerSubscription?.Dispose();
+    }
+
+    /// <summary>
+    /// Handles DialogueTriggerCompletedEvent from EventBus.
+    /// Phase 123: Replaces static TriggerDoneEvent listener.
+    /// </summary>
+    private void OnTriggerCompleted(DialogueTriggerCompletedEvent evt)
+    {
+        TriggerReceived((NextDialogueTrigger)evt.TriggerType);
     }
 
     /// <summary>
@@ -122,7 +123,8 @@ public class DialogueUI : MonoBehaviour
 
         for (int i = 0; i < dialogueObject.Dialogue.Length; i++)
         {
-            DialogIndex.Invoke(i);
+            // Phase 123: Publish via EventBus
+            _eventBus?.Publish(new DialogueIndexChangedEvent { DialogueIndex = i });
             // Phase 90: Also update tutorial state service
             _tutorialStateService?.SetDialogIndex(i);
             string dialogue = dialogueObject.Dialogue[i];

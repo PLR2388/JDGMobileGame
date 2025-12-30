@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
+using JDG.Application;
+using JDG.Domain.Events;
 using UnityEngine;
-using UnityEngine.Events;
+using VContainer;
 
 namespace OnePlayer
 {
@@ -13,33 +16,35 @@ namespace OnePlayer
     }
 
     /// <summary>
-    /// Custom UnityEvent for the highlight feature. It contains the highlight element and a boolean indicating its activation state.
-    /// </summary>
-    [System.Serializable]
-    public class HighlightEvent : UnityEvent<HighlightElement, bool>
-    {
-    }
-
-    /// <summary>
     /// Component responsible for handling the visual highlighting of certain game elements.
+    /// Phase 122: Removed static HighlightEvent - now uses EventBus.
     /// </summary>
     public class HighLightPlane : MonoBehaviour
     {
         [SerializeField] private HighlightElement element;
-        
+
         private const float PulseDuration = 0.5f;
         private static readonly Color PulseColor = Color.green;
 
         private bool isActivated;
         private bool waitEndTurn = true;
-        
+
         private MeshRenderer meshRenderer;
-        
+
+        // Phase 122: EventBus subscription
+        private IEventBus _eventBus;
+        private IDisposable _highlightSubscription;
+
         /// <summary>
-        /// Global event to notify listeners of highlight status changes.
+        /// VContainer method injection for dependencies.
+        /// Phase 122: Added EventBus for highlight events.
         /// </summary>
-        public static readonly HighlightEvent Highlight = new HighlightEvent();
-        
+        [Inject]
+        public void Construct(IEventBus eventBus)
+        {
+            _eventBus = eventBus;
+        }
+
         /// <summary>
         /// Initialize component references.
         /// </summary>
@@ -47,21 +52,32 @@ namespace OnePlayer
         {
             meshRenderer = GetComponent<MeshRenderer>();
         }
-        
+
         /// <summary>
         /// Set up event listeners when the component starts.
+        /// Phase 122: Subscribe to HighlightRequestedEvent via EventBus.
         /// </summary>
         private void Start()
         {
-            Highlight.AddListener(UpdateStatus);
+            _highlightSubscription = _eventBus?.Subscribe<HighlightRequestedEvent>(OnHighlightRequested);
         }
-        
+
         /// <summary>
         /// Ensure event listeners are cleaned up when the component is destroyed.
+        /// Phase 122: Dispose EventBus subscription.
         /// </summary>
         private void OnDestroy()
         {
-            Highlight.RemoveListener(UpdateStatus);
+            _highlightSubscription?.Dispose();
+        }
+
+        /// <summary>
+        /// Handles HighlightRequestedEvent from EventBus.
+        /// Phase 122: Replaces static UnityEvent listener.
+        /// </summary>
+        private void OnHighlightRequested(HighlightRequestedEvent evt)
+        {
+            UpdateStatus((HighlightElement)evt.Element, evt.IsActivated);
         }
 
         /// <summary>

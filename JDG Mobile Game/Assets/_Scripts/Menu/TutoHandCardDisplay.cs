@@ -1,14 +1,33 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using Cards;
+using JDG.Application;
+using JDG.Domain.Events;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
 /// Represents the display of cards in a tutorial scenario.
+/// Phase 123: Uses EventBus instead of static DialogueUI.DialogIndex.
 /// </summary>
 public class TutoHandCardDisplay : HandCardDisplay
 {
-
     private int currentDialogIndex = 0;
+
+    // Phase 123: EventBus for dialogue index changes
+    private IEventBus _tutoEventBus;
+    private IDisposable _dialogueIndexSubscription;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 123: Added IEventBus for DialogueIndexChangedEvent.
+    /// </summary>
+    [Inject]
+    public new void Construct(IEventBus eventBus, GameStateService gameStateService)
+    {
+        base.Construct(eventBus, gameStateService);
+        _tutoEventBus = eventBus;
+    }
 
     private const int StartHighlightMusiqueDeMegadriveIndex = 35;
 
@@ -43,21 +62,34 @@ public class TutoHandCardDisplay : HandCardDisplay
     /// <summary>
     /// Subscribes to necessary events for card display updates.
     /// Phase 23: Removed HandCardChange static event, using base class EventBus subscription.
+    /// Phase 123: Uses EventBus instead of static DialogueUI.DialogIndex.
     /// </summary>
     private new void SubscribeToEvents()
     {
         base.SubscribeToEvents(); // Subscribe to EventBus in base class
-        DialogueUI.DialogIndex.AddListener(UpdateCurrentDialogIndex);
+        // Phase 123: Subscribe to EventBus instead of static DialogIndex
+        _dialogueIndexSubscription = _tutoEventBus?.Subscribe<DialogueIndexChangedEvent>(OnDialogueIndexChanged);
     }
 
     /// <summary>
     /// Unsubscribes from hand card change events.
     /// Phase 23: Removed HandCardChange static event, using base class EventBus subscription.
+    /// Phase 123: Disposes EventBus subscription instead of static DialogIndex.
     /// </summary>
     private new void UnsubscribeFromEvents()
     {
         base.UnsubscribeFromEvents(); // Unsubscribe from EventBus in base class
-        DialogueUI.DialogIndex.RemoveListener(UpdateCurrentDialogIndex);
+        // Phase 123: Dispose EventBus subscription
+        _dialogueIndexSubscription?.Dispose();
+    }
+
+    /// <summary>
+    /// Handles DialogueIndexChangedEvent from EventBus.
+    /// Phase 123: Replaces static DialogueUI.DialogIndex listener.
+    /// </summary>
+    private void OnDialogueIndexChanged(DialogueIndexChangedEvent evt)
+    {
+        UpdateCurrentDialogIndex(evt.DialogueIndex);
     }
 
     /// <summary>

@@ -129,7 +129,8 @@ public class TutoInGameMenuScript : InGameMenuScript
 
         if (CurrentSelectedCard.Title == CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive])
         {
-            HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+            // Phase 122: Publish via EventBus
+            _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.InHandButton, IsActivated = true });
         }
 
         if (!detailCardPanel.activeSelf) return;
@@ -218,12 +219,14 @@ public class TutoInGameMenuScript : InGameMenuScript
         // Phase 90: Use injected service instead of singleton
         if (_tutorialStateService?.CurrentDialogIndex == PutCardIndex)
         {
-            DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
+            // Phase 123: Publish via EventBus instead of static TriggerDoneEvent
+            _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.PutEffectCard });
         }
         // Phase 17-18: Use ICardCollectionService from base class instead of CardManager.Instance
         if (_cardCollectionService.GetCurrentPlayerCards().InvocationCards.Count == 2)
         {
-            HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
+            // Phase 122: Publish via EventBus
+            _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = true });
         }
     }
 }

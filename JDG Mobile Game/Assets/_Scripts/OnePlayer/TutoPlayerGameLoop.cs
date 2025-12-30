@@ -4,6 +4,7 @@ using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application.Services;
+using JDG.Domain.Events;
 using OnePlayer.DialogueBox;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ namespace OnePlayer
 {
     /// <summary>
     /// Represents the game loop for the tutorial player.
+    /// Phase 122: Uses EventBus for HighlightRequestedEvent instead of static UnityEvent.
     /// </summary>
     public class TutoPlayerGameLoop : GameLoop
     {
@@ -61,6 +63,9 @@ namespace OnePlayer
 
         private const string EquipSymbol = ">";
 
+        // Phase 123: EventBus subscription for dialogue index changes
+        private IDisposable _dialogueIndexSubscription;
+
         /// <summary>
         /// Awake is called when the script instance is being loaded.
         /// </summary>
@@ -68,24 +73,38 @@ namespace OnePlayer
         {
             // The opponent is player1 (only the AI attacks the player directly)
             actionScenarios = GetComponent<ScenarioDecoder>().Scenario.ActionScenarios;
-            DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
             nextPhaseButton = nextPhaseButtonGameObject.GetComponent<Button>();
         }
 
         /// <summary>
         /// Start is called on the frame when a script is enabled just before any of the Update methods are called the first time.
+        /// Phase 123: Subscribe to DialogueIndexChangedEvent for tutorial scenario triggers.
         /// </summary>
         protected override void Start()
         {
             // Base class handles EventBus subscriptions and calls Draw()
             base.Start();
+            // Phase 123: Subscribe to DialogueIndexChangedEvent via EventBus
+            _dialogueIndexSubscription = _eventBus?.Subscribe<DialogueIndexChangedEvent>(OnDialogueIndexChanged);
+        }
+
+        /// <summary>
+        /// Handles DialogueIndexChangedEvent to trigger scenario actions.
+        /// Phase 123: Replaces DialogueUI.DialogIndex static event listener.
+        /// </summary>
+        private void OnDialogueIndexChanged(DialogueIndexChangedEvent evt)
+        {
+            TriggerScenarioAction(evt.DialogueIndex);
         }
 
         /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.
+        /// Phase 123: Dispose DialogueIndexChangedEvent subscription.
         /// </summary>
         protected override void OnDestroy()
         {
+            // Phase 123: Dispose subscription
+            _dialogueIndexSubscription?.Dispose();
             // Base class handles EventBus cleanup
             base.OnDestroy();
         }
@@ -166,7 +185,8 @@ namespace OnePlayer
 
             if (defender == CardNameMappings.CardNameMap[CardNames.Player])
             {
-                HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.InHandButton, IsActivated = true });
             }
         }
         
@@ -258,7 +278,8 @@ namespace OnePlayer
             UnsetHighlight();
             if (highlightMapping.TryGetValue(highlight, out var highlightElement))
             {
-                HighLightPlane.Highlight.Invoke(highlightElement, true);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)highlightElement, IsActivated = true });
             }
             else if (highlight != Highlight.unknown)
             {
@@ -271,12 +292,14 @@ namespace OnePlayer
         /// </summary>
         protected override void NextRound()
         {
-            HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
+            // Phase 122: Publish via EventBus
+            _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = false });
             // Phase 9: Use injected service instead of InvocationMenuManager.Instance
             _invocationMenuService.Hide();
             if (_gameStateService.CurrentPlayer != JDG.Domain.ValueObjects.PlayerId.Player1)
             {
-                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
+                // Phase 123: Publish via EventBus instead of static TriggerDoneEvent
+                _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.NextPhase });
             }
             if (_gameStateService.TurnNumber == 1 && _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
             {
@@ -334,9 +357,10 @@ namespace OnePlayer
                     // Phase 17-18: Use ICombatService instead of CardManager.Instance
                     _combatService.Opponent = invocationCard;
                     ComputeAttack();
-                    HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
+                    // Phase 122: Publish via EventBus
+                    _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.Tentacules, IsActivated = false });
                     miniCardMenu.SetActive(false);
-                    HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
+                    _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = true });
                 }
                 // Phase 19-20: Use injected InputManager from base class instead of .Instance
                 _inputManager.EnableDetectionTouch();
@@ -368,7 +392,8 @@ namespace OnePlayer
         {
             foreach (var element in highlightMapping.Values)
             {
-                HighLightPlane.Highlight.Invoke(element, false);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)element, IsActivated = false });
             }
         }
 
@@ -384,7 +409,8 @@ namespace OnePlayer
             // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
             if (_gameStateService.TurnNumber == 2 && _cardCollectionService.GetCurrentPlayerCards().InvocationCards.Count == 2)
             {
-                HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = true });
             }
         }
 

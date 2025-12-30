@@ -118,7 +118,8 @@ namespace Cards.InvocationCards
                         InGameInvocationCard card = playerCards.Deck.Find(card => card.Title == cardName) as InGameInvocationCard;
                         playerCards.Deck.Remove(card);
                         playerCards.InvocationCards.Add(card);
-                        HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+                        // Phase 122: Publish via EventBus
+                        _tutoEventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.InHandButton, IsActivated = true });
                     }
                 };
                 _dialogService.ShowMessageBox(canvas, options);

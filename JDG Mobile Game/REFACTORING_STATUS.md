@@ -1431,6 +1431,95 @@ Libraries remain functional during transition:
 
 ---
 
+---
+
+### Phase 121-123: Static UnityEvent Final Migration ✅ (Completed 2025-12-30)
+
+**Goal**: Migrate the final 3 static UnityEvents to EventBus pattern, completing the event-driven architecture migration.
+
+#### Phase 121: NumberedCardEvent → EventBus
+- ✅ Created `CardNumberedEvent` in GameEvents.cs
+- ✅ Updated `CardSelector.cs` to publish via EventBus
+- ✅ Updated `OnHover.cs` to subscribe via EventBus
+- ✅ Removed `NumberedCardEvent` class and static field
+
+#### Phase 122: HighlightEvent → EventBus (9 files)
+- ✅ Created `HighlightRequestedEvent` in GameEvents.cs
+- ✅ Updated `HighLightPlane.cs` - removed static Highlight field, subscribes via EventBus
+- ✅ Updated highlight subscribers:
+  - `HighLightCard.cs` - EventBus subscription
+  - `HighLightPhysicalCard.cs` - EventBus subscription
+  - `HighLightButton.cs` - EventBus subscription
+  - `HightLightText.cs` - EventBus subscription
+- ✅ Updated highlight publishers:
+  - `TutoPlayerGameLoop.cs` - 7 EventBus publishes
+  - `TutoInvocationFunctions.cs` - EventBus publish
+  - `TutoInGameMenuScript.cs` - 2 EventBus publishes
+- ✅ Changed `GameLoop._eventBus` from private to protected for subclass access
+
+#### Phase 123: TriggerDoneEvent/DialogIndex → EventBus (6 files)
+- ✅ Created `DialogueTriggerCompletedEvent` in GameEvents.cs
+- ✅ Created `DialogueIndexChangedEvent` in GameEvents.cs
+- ✅ Updated `DialogueUI.cs`:
+  - Removed `TriggerDoneEvent` and `DialogIndex` static fields
+  - Publishes `DialogueIndexChangedEvent` when dialogue progresses
+  - Subscribes to `DialogueTriggerCompletedEvent` for trigger handling
+- ✅ Updated publishers:
+  - `TutoPlayerGameLoop.cs` - subscribes to DialogueIndexChangedEvent, publishes DialogueTriggerCompletedEvent
+  - `TutoInGameMenuScript.cs` - publishes DialogueTriggerCompletedEvent
+  - `VideoPlayerObserver.cs` - publishes DialogueTriggerCompletedEvent
+- ✅ Updated `TutoHandCardDisplay.cs` - subscribes to DialogueIndexChangedEvent
+
+#### Files Created/Modified
+
+**GameEvents.cs** - 4 new event structs:
+```csharp
+public struct CardNumberedEvent { object Card; int Number; }
+public struct HighlightRequestedEvent { int Element; bool IsActivated; }
+public struct DialogueTriggerCompletedEvent { int TriggerType; }
+public struct DialogueIndexChangedEvent { int DialogueIndex; }
+```
+
+**Files Modified (14 total)**:
+- GameEvents.cs (4 new events)
+- CardSelector.cs (NumberedCardEvent → EventBus)
+- OnHover.cs (EventBus subscription)
+- HighLightPlane.cs (removed static, EventBus subscription)
+- HighLightCard.cs (EventBus subscription)
+- HighLightPhysicalCard.cs (EventBus subscription)
+- HighLightButton.cs (EventBus subscription)
+- HightLightText.cs (EventBus subscription)
+- TutoPlayerGameLoop.cs (highlight + dialogue EventBus)
+- TutoInvocationFunctions.cs (highlight EventBus)
+- TutoInGameMenuScript.cs (highlight + dialogue EventBus)
+- DialogueUI.cs (removed statics, EventBus)
+- VideoPlayerObserver.cs (dialogue EventBus)
+- TutoHandCardDisplay.cs (dialogue EventBus)
+
+#### Code Metrics
+- Static UnityEvents removed: 4 (NumberedCardEvent, Highlight, TriggerDoneEvent, DialogIndex)
+- EventBus events added: 4
+- Files migrated: 14
+- Zero static UnityEvents remaining in codebase
+
+---
+
+## Final Event Migration Status
+
+| Old Static UnityEvent | New EventBus Event | Phase |
+|-----------------------|-------------------|-------|
+| InGameMenuScript.EventClick | InGameCardClickedEvent | 109 |
+| InvocationCardEvent | InvocationCardPlayRequestedEvent | 109 |
+| FieldCardEvent | FieldCardPlayRequestedEvent | 109 |
+| EffectCardEvent | EffectCardPlayRequestedEvent | 109 |
+| EquipmentCardEvent | EquipmentCardPlayRequestedEvent | 109 |
+| CardSelector.NumberedCardEvent | CardNumberedEvent | 121 |
+| HighLightPlane.Highlight | HighlightRequestedEvent | 122 |
+| DialogueUI.TriggerDoneEvent | DialogueTriggerCompletedEvent | 123 |
+| DialogueUI.DialogIndex | DialogueIndexChangedEvent | 123 |
+
+---
+
 **Last Updated**: 2025-12-30
 **Current Branch**: refactor-v3
-**Status**: ✅ REFACTORING COMPLETE (119 Phases)
+**Status**: ✅ REFACTORING COMPLETE (123 Phases)
