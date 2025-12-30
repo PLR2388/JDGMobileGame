@@ -14,24 +14,28 @@ namespace JDG.TestUtilities
     {
         /// <summary>
         /// Creates a basic invocation card with specified stats.
+        /// Phase 124: Updated to match current Card.CreateInvocation signature.
         /// </summary>
         public static Card CreateInvocation(
             string name = "Test Invocation",
             int attack = 3,
             int defense = 3,
             CardFamily family = CardFamily.Human,
-            bool isShiny = false,
+            bool isCollector = false,
             CardId? id = null)
         {
             return Card.CreateInvocation(
                 id ?? CardId.New(),
                 name,
                 $"Description of {name}",
-                "TestMaterial",
+                $"Detailed description of {name}",
                 attack,
                 defense,
                 new[] { family },
-                isShiny
+                affectedByEffect: true,
+                conditions: null,
+                abilities: null,
+                isCollector: isCollector
             );
         }
 
@@ -69,6 +73,7 @@ namespace JDG.TestUtilities
 
         /// <summary>
         /// Creates an effect card for testing.
+        /// Phase 124: Updated to match current Card.CreateEffect signature.
         /// </summary>
         public static Card CreateEffect(
             string name = "Test Effect",
@@ -78,13 +83,15 @@ namespace JDG.TestUtilities
                 CardId.New(),
                 name,
                 $"Description of {name}",
-                "TestMaterial",
-                abilities ?? new EffectAbilityName[0]
+                $"Detailed description of {name}",
+                abilities ?? new EffectAbilityName[0],
+                isCollector: false
             );
         }
 
         /// <summary>
         /// Creates a field card for testing.
+        /// Phase 124: Updated to match current Card.CreateField signature.
         /// </summary>
         public static Card CreateField(
             string name = "Test Field",
@@ -94,9 +101,10 @@ namespace JDG.TestUtilities
                 CardId.New(),
                 name,
                 $"Description of {name}",
-                "TestMaterial",
+                $"Detailed description of {name}",
                 family,
-                new FieldAbilityName[0]
+                new FieldAbilityName[0],
+                isCollector: false
             );
         }
 

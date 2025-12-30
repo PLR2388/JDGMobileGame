@@ -379,19 +379,22 @@ namespace JDG.Infrastructure.Tests.Integration
             var player1 = _playerRepository.GetPlayer(PlayerId.Player1);
             var player2 = _playerRepository.GetPlayer(PlayerId.Player2);
 
-            player1.DrawCard();
-            player2.DrawCard();
-            player1.PlayCard(player1.Hand[0]);
-            player2.PlayCard(player2.Hand[0]);
+            var drawnCard1 = player1.DrawCard();
+            var drawnCard2 = player2.DrawCard();
+            player1.PlayCard(drawnCard1);
+            player2.PlayCard(drawnCard2);
             _playerRepository.SavePlayer(player1);
             _playerRepository.SavePlayer(player2);
 
             var attackUseCase = new AttackUseCase(_playerRepository, _cardRepository, _eventBus);
 
-            // Act: Card1 attacks Card2
+            // Act: Card1 attacks Card2 (Phase 124: Fixed to use field instance IDs)
             // Card1 has 5 ATK vs Card2's 3 DEF -> Card2 takes 5 damage, destroyed (3-5=-2)
             // Card2 has 3 ATK vs Card1's 2 DEF -> Card1 takes 3 damage, destroyed (2-3=-1)
-            var result = attackUseCase.Execute(PlayerId.Player1, card1.Id, card2.Id);
+            // Use actual field card IDs (instances), not definition IDs
+            var attackerCardId = player1.Field[0].Id;
+            var defenderCardId = player2.Field[0].Id;
+            var result = attackUseCase.Execute(PlayerId.Player1, attackerCardId, defenderCardId);
 
             // Assert
             Assert.IsTrue(result.IsSuccess, "Attack should succeed");

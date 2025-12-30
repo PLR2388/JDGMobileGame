@@ -11,6 +11,7 @@ namespace JDG.Infrastructure.Tests.Repositories
     /// <summary>
     /// Unit tests for DeckRepository.
     /// Tests deck saving, loading, and management operations.
+    /// Phase 124: Added test isolation via PlayerPrefs cleanup.
     /// </summary>
     [TestFixture]
     public class DeckRepositoryTests
@@ -21,8 +22,37 @@ namespace JDG.Infrastructure.Tests.Repositories
         [SetUp]
         public void SetUp()
         {
+            // Clear any persisted deck data from PlayerPrefs to ensure test isolation
+            ClearDeckPlayerPrefs();
+
             _cardRepository = new CardRepository();
             _repository = new DeckRepository(_cardRepository);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            // Clean up PlayerPrefs after each test to prevent state leakage
+            ClearDeckPlayerPrefs();
+        }
+
+        private void ClearDeckPlayerPrefs()
+        {
+            // Clear the deck list key
+            UnityEngine.PlayerPrefs.DeleteKey("JDG_DeckList");
+
+            // Clear any deck data keys that might exist from test runs
+            // Since we can't enumerate PlayerPrefs, clear known test deck names
+            var testDeckNames = new[]
+            {
+                "TestDeck", "MyDeck", "Deck1", "Deck2", "Deck3",
+                "ToDelete", "AttackerDeck", "EmptyDeck", "TinyDeck", "StrongDeck"
+            };
+            foreach (var deckName in testDeckNames)
+            {
+                UnityEngine.PlayerPrefs.DeleteKey("JDG_Deck_" + deckName);
+            }
+            UnityEngine.PlayerPrefs.Save();
         }
 
         #region GetDeck Tests
