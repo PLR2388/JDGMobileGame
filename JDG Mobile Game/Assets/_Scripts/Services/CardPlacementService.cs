@@ -9,6 +9,7 @@ using JDG.Application.Abilities;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Services;
 using UnityEngine;
 
 /// <summary>
@@ -20,6 +21,7 @@ using UnityEngine;
 /// Phase 114: Uses IAbilityExecutor for effect card abilities.
 /// Phase 116: Uses modern IAbility for field card abilities.
 /// Phase 118: Uses only ModernAbilities, removed legacy Ability references.
+/// Phase 135: Added GameStateService for phase validation.
 ///
 /// Note: This service is in the default assembly because it depends on legacy types.
 /// It will be moved to JDG.Infrastructure once legacy types are refactored.
@@ -30,22 +32,26 @@ public class CardPlacementService : ICardPlacementService
     private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly IAudioService _audioService;
     private readonly IAbilityExecutor _abilityExecutor;
+    private readonly GameStateService _gameStateService;
 
     public CardPlacementService(
         ICardCollectionService cardCollectionService,
         IPlayerStatusProvider playerStatusProvider,
         IAudioService audioService,
-        IAbilityExecutor abilityExecutor)
+        IAbilityExecutor abilityExecutor,
+        GameStateService gameStateService)
     {
         _cardCollectionService = cardCollectionService;
         _playerStatusProvider = playerStatusProvider;
         _audioService = audioService;
         _abilityExecutor = abilityExecutor;
+        _gameStateService = gameStateService;
     }
 
     /// <summary>
     /// Places an invocation card on the field.
     /// Phase 118: Uses ModernAbilities with OnSummon trigger instead of legacy Abilities.
+    /// Phase 135: Added phase validation.
     /// </summary>
     /// <param name="card">The invocation card to place.</param>
     /// <param name="canvas">Canvas for UI operations (no longer needed, kept for API compatibility).</param>
@@ -54,6 +60,21 @@ public class CardPlacementService : ICardPlacementService
     {
         if (card == null)
             return false;
+
+        // Phase 135: Validate game state before placing card
+        if (_gameStateService != null)
+        {
+            if (_gameStateService.IsGameOver)
+            {
+                Debug.Log("CardPlacementService: Cannot place invocation card - game is over");
+                return false;
+            }
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
+            {
+                Debug.Log($"CardPlacementService: Cannot place invocation card - current phase is {_gameStateService.CurrentPhase}");
+                return false;
+            }
+        }
 
         var currentPlayerCard = _cardCollectionService.GetCurrentPlayerCards();
 
@@ -90,6 +111,7 @@ public class CardPlacementService : ICardPlacementService
     /// <summary>
     /// Places an effect card on the field.
     /// Phase 114: Updated to use IAbilityExecutor for modern ability execution.
+    /// Phase 135: Added phase validation.
     /// </summary>
     /// <param name="card">The effect card to place.</param>
     /// <param name="canvas">Canvas for UI operations (no longer needed, kept for API compatibility).</param>
@@ -98,6 +120,21 @@ public class CardPlacementService : ICardPlacementService
     {
         if (card == null)
             return false;
+
+        // Phase 135: Validate game state before placing card
+        if (_gameStateService != null)
+        {
+            if (_gameStateService.IsGameOver)
+            {
+                Debug.Log("CardPlacementService: Cannot place effect card - game is over");
+                return false;
+            }
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
+            {
+                Debug.Log($"CardPlacementService: Cannot place effect card - current phase is {_gameStateService.CurrentPhase}");
+                return false;
+            }
+        }
 
         var currentPlayerCard = _cardCollectionService.GetCurrentPlayerCards();
         var opponentPlayerCard = _cardCollectionService.GetOpponentPlayerCards();
@@ -119,6 +156,7 @@ public class CardPlacementService : ICardPlacementService
     /// <summary>
     /// Places a field card on the field.
     /// Phase 116: Updated to use modern IAbility for field abilities.
+    /// Phase 135: Added phase validation.
     /// </summary>
     /// <param name="card">The field card to place.</param>
     /// <returns>True if placement was successful, false if field card slot is occupied or card is null.</returns>
@@ -126,6 +164,21 @@ public class CardPlacementService : ICardPlacementService
     {
         if (card == null)
             return false;
+
+        // Phase 135: Validate game state before placing card
+        if (_gameStateService != null)
+        {
+            if (_gameStateService.IsGameOver)
+            {
+                Debug.Log("CardPlacementService: Cannot place field card - game is over");
+                return false;
+            }
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
+            {
+                Debug.Log($"CardPlacementService: Cannot place field card - current phase is {_gameStateService.CurrentPhase}");
+                return false;
+            }
+        }
 
         var currentPlayerCard = _cardCollectionService.GetCurrentPlayerCards();
 
@@ -193,6 +246,7 @@ public class CardPlacementService : ICardPlacementService
     /// <summary>
     /// Places an equipment card on a target invocation.
     /// Phase 117: Uses IAbilityExecutor for modern equipment ability execution.
+    /// Phase 135: Added phase validation.
     /// </summary>
     /// <param name="equipment">The equipment card to place.</param>
     /// <param name="target">The target invocation card.</param>
@@ -202,6 +256,21 @@ public class CardPlacementService : ICardPlacementService
     {
         if (equipment == null || target == null)
             return false;
+
+        // Phase 135: Validate game state before placing card
+        if (_gameStateService != null)
+        {
+            if (_gameStateService.IsGameOver)
+            {
+                Debug.Log("CardPlacementService: Cannot place equipment card - game is over");
+                return false;
+            }
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
+            {
+                Debug.Log($"CardPlacementService: Cannot place equipment card - current phase is {_gameStateService.CurrentPhase}");
+                return false;
+            }
+        }
 
         var currentPlayerCards = _cardCollectionService.GetCurrentPlayerCards();
         var opponentPlayerCards = _cardCollectionService.GetOpponentPlayerCards();

@@ -1,6 +1,7 @@
 using Cards;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Services;
+using UnityEngine;
 
 /// <summary>
 /// Implementation of ICardCollectionService.
@@ -11,6 +12,7 @@ using JDG.Infrastructure.Services;
 /// these types are fully refactored.
 ///
 /// Part of Phase 4 migration - decomposes CardManager god class.
+/// Phase 135: Added null checks for defensive programming.
 /// </summary>
 public class CardCollectionService : ICardCollectionService
 {
@@ -31,12 +33,26 @@ public class CardCollectionService : ICardCollectionService
     public PlayerCards GetCurrentPlayerCards()
     {
         var isP1Turn = _gameStateService.CurrentPlayer == PlayerId.Player1;
-        return isP1Turn ? _player1CardManager.PlayerCards : _player2CardManager.PlayerCards;
+        var cardManager = isP1Turn ? _player1CardManager : _player2CardManager;
+        // Phase 135: Add null check for defensive programming
+        if (cardManager == null)
+        {
+            Debug.LogError($"CardCollectionService: PlayerCardManager for {(isP1Turn ? "Player1" : "Player2")} is null!");
+            return null;
+        }
+        return cardManager.PlayerCards;
     }
 
     public PlayerCards GetOpponentPlayerCards()
     {
         var isP1Turn = _gameStateService.CurrentPlayer == PlayerId.Player1;
-        return isP1Turn ? _player2CardManager.PlayerCards : _player1CardManager.PlayerCards;
+        var cardManager = isP1Turn ? _player2CardManager : _player1CardManager;
+        // Phase 135: Add null check for defensive programming
+        if (cardManager == null)
+        {
+            Debug.LogError($"CardCollectionService: Opponent PlayerCardManager for {(isP1Turn ? "Player2" : "Player1")} is null!");
+            return null;
+        }
+        return cardManager.PlayerCards;
     }
 }

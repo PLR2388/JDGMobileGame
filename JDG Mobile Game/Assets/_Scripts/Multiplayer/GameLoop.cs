@@ -332,12 +332,23 @@ public class GameLoop : MonoBehaviour
     }
 
     /// <summary>
-    /// Display all available opponent after pressing Attack button
+    /// Display all available opponent after pressing Attack button.
+    /// Phase 134: Added Turn 1 restriction for Player 1.
     /// </summary>
     protected void DisplayAvailableOpponent()
     {
+        // Phase 134: Block attack on Turn 1 for Player 1
+        if (_gameStateService.TurnNumber == 1 &&
+            _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
+        {
+            Debug.Log("GameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
+            return;
+        }
+
+        Debug.Log("GameLoop.DisplayAvailableOpponent: Called");
         // Phase 17-18: Use ICombatService instead of CardManager.Instance
         var notEmptyOpponent = _combatService.BuildValidTargets();
+        Debug.Log($"GameLoop.DisplayAvailableOpponent: Found {notEmptyOpponent?.Count ?? 0} valid targets");
         DisplayOpponentMessageBox(notEmptyOpponent);
         // Phase 19-20: Use injected InputManager instead of .Instance
         _inputManager.DisableDetectionTouch();

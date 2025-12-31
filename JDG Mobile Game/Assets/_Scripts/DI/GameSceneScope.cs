@@ -6,6 +6,8 @@ using Cards.EquipmentCards;
 using Cards.InvocationCards;
 using JDG.Application.Services;
 using JDG.Infrastructure.Services;
+using OnePlayer;
+using OnePlayer.DialogueBox;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -116,6 +118,7 @@ namespace JDG.DI
             // Phase 127: UIManager removed - GameLoop now uses presenters directly
 
             // Phase 94: MessageBox - required by DialogService
+            // Phase 135: Changed to LogError since DialogService will fail without MessageBox
             var messageBox = FindFirstObjectByType<MessageBox>();
             if (messageBox != null)
             {
@@ -124,10 +127,11 @@ namespace JDG.DI
             }
             else
             {
-                Debug.LogWarning("GameSceneScope: MessageBox NOT FOUND in scene!");
+                Debug.LogError("GameSceneScope: MessageBox NOT FOUND in scene! DialogService dialogs will not work.");
             }
 
             // Phase 94: CardSelector - required by DialogService
+            // Phase 135: Changed to LogError since DialogService will fail without CardSelector
             var cardSelector = FindFirstObjectByType<CardSelector>();
             if (cardSelector != null)
             {
@@ -136,7 +140,7 @@ namespace JDG.DI
             }
             else
             {
-                Debug.LogWarning("GameSceneScope: CardSelector NOT FOUND in scene!");
+                Debug.LogError("GameSceneScope: CardSelector NOT FOUND in scene! Card selection dialogs will not work.");
             }
 
             // ============================================
@@ -278,6 +282,7 @@ namespace JDG.DI
                 InjectAllOfType<CardPoolManager>(container);
                 InjectAllOfType<InputManager>(container);
                 // Phase 127: UIManager removed - no longer needed
+                InjectAllOfType<InvocationMenuManager>(container);
                 InjectAllOfType<InvocationFunctions>(container);
                 InjectAllOfType<FieldFunctions>(container);
                 InjectAllOfType<EffectFunctions>(container);
@@ -290,6 +295,17 @@ namespace JDG.DI
                 InjectAllOfType<DisplayCards>(container);
                 InjectAllOfType<CardDisplay>(container);
                 InjectAllOfType<TutoInvocationFunctions>(container);
+
+                // Phase 133: Tutorial UI components with [Inject]
+                InjectAllOfType<TutoHandCardDisplay>(container);
+                InjectAllOfType<DialogueUI>(container);
+                InjectAllOfType<VideoPlayerObserver>(container);
+                InjectAllOfType<HighLightCard>(container);
+                InjectAllOfType<HighLightButton>(container);
+                InjectAllOfType<HighLightPlane>(container);
+                InjectAllOfType<HighLightPhysicalCard>(container);
+                InjectAllOfType<HightLightText>(container);
+                InjectAllOfType<TutoInGameMenuScript>(container);
 
                 Debug.Log("GameSceneScope: Injection complete");
             });

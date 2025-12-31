@@ -333,11 +333,22 @@ namespace OnePlayer
 
         /// <summary>
         /// Displays available opponents for the current player.
+        /// Phase 134: Added Turn 1 restriction for Player 1.
         /// </summary>
         public new void DisplayAvailableOpponent()
         {
+            // Phase 134: Block attack on Turn 1 for Player 1
+            if (_gameStateService.TurnNumber == 1 &&
+                _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
+            {
+                Debug.Log("TutoPlayerGameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
+                return;
+            }
+
+            Debug.Log("TutoPlayerGameLoop.DisplayAvailableOpponent: Called");
             // Phase 17-18: Use ICombatService instead of CardManager.Instance
             var notEmptyOpponent = _combatService.BuildValidTargets();
+            Debug.Log($"TutoPlayerGameLoop.DisplayAvailableOpponent: Found {notEmptyOpponent?.Count ?? 0} valid targets");
             DisplayOpponentMessageBox(notEmptyOpponent);
             // Phase 19-20: Use injected InputManager from base class instead of .Instance
             _inputManager.DisableDetectionTouch();

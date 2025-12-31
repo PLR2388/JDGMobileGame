@@ -28,19 +28,24 @@ public class HandCardDisplay : MonoBehaviour
     private IEventBus _eventBus;
     private IDisposable _handCardsSubscription;
 
+    // Phase 132: VContainer resolver for injecting dynamically created components
+    protected VContainer.IObjectResolver _container;
+
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 23: Inject IEventBus for static UnityEvent migration.
     /// Phase 24-25: Inject GameStateService instead of ServiceLocator.
+    /// Phase 132: Inject IObjectResolver to inject dynamically created OnHover components.
     /// </summary>
     [Inject]
-    public void Construct(IEventBus eventBus, GameStateService gameStateService)
+    public void Construct(IEventBus eventBus, GameStateService gameStateService, VContainer.IObjectResolver container)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
+        _container = container;
         // Subscribe immediately after injection since Awake/OnEnable may have already run
         SubscribeToEvents();
-        Debug.Log($"HandCardDisplay.Construct: Injected, _eventBus={(_eventBus != null ? "OK" : "NULL")}");
+        Debug.Log($"HandCardDisplay.Construct: Injected, _eventBus={(_eventBus != null ? "OK" : "NULL")}, _container={(_container != null ? "OK" : "NULL")}");
     }
 
     /// <summary>
@@ -125,6 +130,8 @@ public class HandCardDisplay : MonoBehaviour
             if (onHover != null)
             {
                 onHover.bIsInGame = true;
+                // Phase 132: Inject IEventBus and ICardSelectionService into dynamically created OnHover
+                _container?.Inject(onHover);
             }
 
             CreatedCards.Add(newCard);

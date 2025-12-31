@@ -94,6 +94,13 @@ namespace JDG.DI
                 UnityEngine.Debug.Log("MainScreenScope: Injecting dependencies into scene MonoBehaviours...");
                 InjectAllOfType<MainMenuAction>(container);
                 InjectAllOfType<SceneLoader>(container);
+
+                // Phase 133: Deck builder and UI components with [Inject]
+                InjectAllOfType<InfiniteScroll>(container);
+                InjectAllOfType<UpdateDescription>(container);
+                InjectAllOfType<CardSelectionManager>(container);
+                InjectAllOfType<Menu.OptionMenu>(container);
+
                 UnityEngine.Debug.Log("MainScreenScope: Injection complete");
             });
 

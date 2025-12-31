@@ -37,10 +37,18 @@ public class ContreCardHandler : CardHandler
 
     /// <summary>
     /// Handles the card's behavior and updates the UI elements associated with a contre card.
+    /// Phase 135: Added game state validation.
     /// </summary>
     /// <param name="card">The in-game card to be handled.</param>
     public override void HandleCard(InGameCard card)
     {
+        // Phase 135: Validate game state before enabling button
+        if (!menuScript.CanInteractWithCards())
+        {
+            menuScript.putCardButton.interactable = false;
+            return;
+        }
+
         menuScript.putCardButtonText.SetText(localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_CONTRE));
         menuScript.putCardButton.interactable = true;
     }
@@ -48,11 +56,19 @@ public class ContreCardHandler : CardHandler
     /// <summary>
     /// Handles the card placement behavior for contre cards.
     /// Contre cards have immediate effect and are discarded after use.
+    /// Phase 135: Added game state validation.
     /// </summary>
     /// <param name="card">The in-game card that is being placed.</param>
     public override void HandleCardPut(InGameCard card)
     {
         if (card == null) return;
+
+        // Phase 135: Validate game state before placing card
+        if (!menuScript.CanPlaceCards())
+        {
+            UnityEngine.Debug.Log("ContreCardHandler: Cannot place contre card - wrong phase or game over");
+            return;
+        }
 
         // Get the owner of the card
         var playerCards = cardCollectionService.GetCurrentPlayerCards();

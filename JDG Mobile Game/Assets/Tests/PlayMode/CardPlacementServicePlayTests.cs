@@ -10,8 +10,11 @@ using Cards;
 using Cards.EffectCards;
 using Cards.EquipmentCards;
 using Cards.FieldCards;
+using JDG.Application;
 using JDG.Application.Abilities;
+using JDG.Application.Repositories;
 using JDG.Application.Services;
+using JDG.Infrastructure.Services;
 
 namespace JDG.PlayMode.Tests
 {
@@ -28,6 +31,7 @@ namespace JDG.PlayMode.Tests
         private IPlayerStatusProvider _mockPlayerStatusProvider;
         private IAudioService _mockAudioService;
         private IAbilityExecutor _mockAbilityExecutor;
+        private GameStateService _mockGameStateService;
         private PlayerCards _currentPlayerCards;
         private PlayerCards _opponentPlayerCards;
         private Transform _canvas;
@@ -44,12 +48,18 @@ namespace JDG.PlayMode.Tests
             _mockPlayerStatusProvider = Substitute.For<IPlayerStatusProvider>();
             _mockAudioService = Substitute.For<IAudioService>();
             _mockAbilityExecutor = Substitute.For<IAbilityExecutor>();
+            // Phase 135: GameStateService added to CardPlacementService
+            _mockGameStateService = new GameStateService(
+                Substitute.For<IGameStateRepository>(),
+                Substitute.For<IEventBus>());
+            _mockGameStateService.SetPhase(JDG.Domain.Phase.Choose); // Default to Choose phase for tests
 
             _cardPlacementService = new CardPlacementService(
                 _mockCardCollectionService,
                 _mockPlayerStatusProvider,
                 _mockAudioService,
-                _mockAbilityExecutor);
+                _mockAbilityExecutor,
+                _mockGameStateService);
         }
 
         [TearDown]
@@ -208,6 +218,10 @@ namespace JDG.PlayMode.Tests
             var playerStatusProvider = Substitute.For<IPlayerStatusProvider>();
             var audioService = Substitute.For<IAudioService>();
             var abilityExecutor = Substitute.For<IAbilityExecutor>();
+            // Phase 135: GameStateService added to CardPlacementService
+            var gameStateService = new GameStateService(
+                Substitute.For<IGameStateRepository>(),
+                Substitute.For<IEventBus>());
 
             yield return null;
 
@@ -216,7 +230,8 @@ namespace JDG.PlayMode.Tests
                 cardCollectionService,
                 playerStatusProvider,
                 audioService,
-                abilityExecutor);
+                abilityExecutor,
+                gameStateService);
 
             // Assert
             Assert.IsNotNull(service);

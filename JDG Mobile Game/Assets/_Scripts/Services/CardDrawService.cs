@@ -1,5 +1,6 @@
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Services;
+using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
@@ -11,6 +12,7 @@ using UnityEngine.Events;
 /// PlayerCardManager is fully refactored.
 ///
 /// Part of Phase 4 migration - decomposes CardManager god class.
+/// Phase 135: Added null checks for defensive programming.
 /// </summary>
 public class CardDrawService : ICardDrawService
 {
@@ -31,6 +33,13 @@ public class CardDrawService : ICardDrawService
     public void DrawCard(UnityAction onNoCard)
     {
         var currentCardManager = GetCurrentPlayerCardManager();
+        // Phase 135: Add null check for defensive programming
+        if (currentCardManager == null)
+        {
+            Debug.LogError("CardDrawService: CurrentPlayerCardManager is null! Cannot draw card.");
+            onNoCard?.Invoke();
+            return;
+        }
         currentCardManager.DrawCard(onNoCard);
     }
 

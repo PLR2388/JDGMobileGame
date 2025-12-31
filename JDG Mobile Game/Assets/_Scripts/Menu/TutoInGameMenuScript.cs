@@ -33,9 +33,10 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     /// <summary>
     /// Phase 90: VContainer injection for tutorial-specific dependencies.
+    /// Phase 133: Renamed from ConstructTutorial to Construct for VContainer compatibility.
     /// </summary>
     [Inject]
-    public void ConstructTutorial(ITutorialStateService tutorialStateService)
+    public void Construct(ITutorialStateService tutorialStateService)
     {
         _tutorialStateService = tutorialStateService;
     }

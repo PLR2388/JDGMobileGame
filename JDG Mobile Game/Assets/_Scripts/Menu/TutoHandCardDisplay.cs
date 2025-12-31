@@ -22,11 +22,12 @@ public class TutoHandCardDisplay : HandCardDisplay
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 123: Added IEventBus for DialogueIndexChangedEvent.
+    /// Phase 132: Added IObjectResolver for injecting dynamically created OnHover components.
     /// </summary>
     [Inject]
-    public new void Construct(IEventBus eventBus, GameStateService gameStateService)
+    public new void Construct(IEventBus eventBus, GameStateService gameStateService, VContainer.IObjectResolver container)
     {
-        base.Construct(eventBus, gameStateService);
+        base.Construct(eventBus, gameStateService, container);
         _tutoEventBus = eventBus;
     }
 
@@ -132,6 +133,7 @@ public class TutoHandCardDisplay : HandCardDisplay
 
     /// <summary>
     /// Creates visual representations for the provided cards.
+    /// Phase 132: Added injection for dynamically created OnHover components.
     /// </summary>
     /// <param name="handCards">Collection of in-game cards.</param>
     private void CreateCards(ObservableCollection<InGameCard> handCards)
@@ -141,7 +143,14 @@ public class TutoHandCardDisplay : HandCardDisplay
             var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
             newCard.transform.SetParent(transform, true);
             newCard.GetComponent<CardDisplay>().InGameCard = handCard;
-            newCard.GetComponent<OnHover>().bIsInGame = true;
+
+            var onHover = newCard.GetComponent<OnHover>();
+            if (onHover != null)
+            {
+                onHover.bIsInGame = true;
+                // Phase 132: Inject IEventBus and ICardSelectionService into dynamically created OnHover
+                _container?.Inject(onHover);
+            }
 
             if (ShouldHighlightCard(handCard))
             {

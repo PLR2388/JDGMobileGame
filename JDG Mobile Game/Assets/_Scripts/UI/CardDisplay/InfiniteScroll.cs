@@ -48,6 +48,9 @@ public class InfiniteScroll : MonoBehaviour
     // Phase 35: Injected dependencies
     private IDialogService _dialogService;
 
+    // Phase 133: VContainer resolver for injecting dynamically created components
+    private VContainer.IObjectResolver _container;
+
     private readonly string[] removeCardTitles =
     {
         CardNameMappings.CardNameMap[CardNames.AttaqueDeLaTourEiffel],
@@ -64,19 +67,22 @@ public class InfiniteScroll : MonoBehaviour
     /// Phase 35: Inject IDialogService instead of MessageBox.Instance.
     /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
     /// </summary>
+    /// Phase 133: Added IObjectResolver to inject dynamically created OnHover components.
     [Inject]
     public void Construct(
         ICardSelectionService cardSelectionService,
         IDeckManagementService deckManagementService,
         IEventBus eventBus,
         ILocalizationService localizationService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        VContainer.IObjectResolver container)
     {
         _cardSelectionService = cardSelectionService;
         _deckManagementService = deckManagementService;
         _eventBus = eventBus;
         _localizationService = localizationService;
         _dialogService = dialogService;
+        _container = container;
     }
 
     // Start is called before the first frame update
@@ -213,12 +219,19 @@ public class InfiniteScroll : MonoBehaviour
 
     /// <summary>
     /// Create a display for a card
+    /// Phase 133: Inject dependencies into dynamically created OnHover component.
     /// </summary>
     /// <param name="card"></param>
     private void CreateCardDisplay(Card card)
     {
         var newCard = Instantiate(prefabCard, Vector3.zero, Quaternion.identity);
-        newCard.GetComponent<OnHover>().bIsInGame = false;
+        var onHover = newCard.GetComponent<OnHover>();
+        if (onHover != null)
+        {
+            onHover.bIsInGame = false;
+            // Phase 133: Inject IEventBus and ICardSelectionService into dynamically created OnHover
+            _container?.Inject(onHover);
+        }
         newCard.transform.SetParent(transform, true);
         newCard.GetComponent<CardDisplay>().Card = card;
     }

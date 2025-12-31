@@ -104,6 +104,13 @@ namespace JDG.Infrastructure.Services
                     break;
             }
 
+            // Phase 135: Add null check for MessageBox
+            if (MessageBox == null)
+            {
+                Debug.LogError("DialogService: MessageBox is null! Cannot show message box. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return false;
+            }
             MessageBox.CreateMessageBox(_canvas, config);
 
             return await tcs.Task;
@@ -139,6 +146,13 @@ namespace JDG.Infrastructure.Services
                 numberCardSelection: config.MaxSelection
             );
 
+            // Phase 135: Add null check for CardSelector
+            if (CardSelector == null)
+            {
+                Debug.LogError("DialogService: CardSelector is null! Cannot show card selector. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return null;
+            }
             CardSelector.CreateCardSelection(_canvas, cardSelectorConfig);
 
             return await tcs.Task;
@@ -302,6 +316,13 @@ namespace JDG.Infrastructure.Services
                 showOrder: options.ShowOrder
             );
 
+            // Phase 134: Add null check for CardSelector
+            if (CardSelector == null)
+            {
+                Debug.LogError("DialogService: CardSelector is null! Cannot show card selector. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return;
+            }
             CardSelector.CreateCardSelection(canvasTransform, config);
         }
 
@@ -340,6 +361,13 @@ namespace JDG.Infrastructure.Services
 
             if (config is MessageBoxConfig messageBoxConfig)
             {
+                // Phase 135: Add null check for MessageBox
+                if (MessageBox == null)
+                {
+                    Debug.LogError("DialogService: MessageBox is null! Cannot show message box. " +
+                        "Ensure SetDialogComponents() was called from GameSceneScope.");
+                    return;
+                }
                 MessageBox.CreateMessageBox(canvasTransform, messageBoxConfig);
             }
             else
@@ -364,6 +392,13 @@ namespace JDG.Infrastructure.Services
 
             if (config is global::CardSelectorConfig cardSelectorConfig)
             {
+                // Phase 135: Add null check for CardSelector
+                if (CardSelector == null)
+                {
+                    Debug.LogError("DialogService: CardSelector is null! Cannot show card selector. " +
+                        "Ensure SetDialogComponents() was called from GameSceneScope.");
+                    return;
+                }
                 CardSelector.CreateCardSelection(canvasTransform, cardSelectorConfig);
             }
             else

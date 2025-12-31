@@ -4,6 +4,7 @@ using Cards;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Services;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,6 +31,9 @@ public class InGameMenuScript : MonoBehaviour
 
     // Phase 34: ILocalizationService instead of LocalizationSystem.Instance
     protected ILocalizationService _localizationService;
+
+    // Phase 135: GameStateService for phase/state validation
+    protected GameStateService _gameStateService;
 
     // Phase 109: EventBus subscription for card click events
     private IDisposable _cardClickedSubscription;
@@ -60,6 +64,29 @@ public class InGameMenuScript : MonoBehaviour
     // EffectCardEvent → EffectCardPlayRequestedEvent
     // EquipmentCardEvent → EquipmentCardPlayRequestedEvent
 
+    /// <summary>
+    /// Phase 135: Helper method for CardHandlers to check if card interaction is allowed.
+    /// </summary>
+    /// <returns>True if cards can be interacted with, false otherwise.</returns>
+    public bool CanInteractWithCards()
+    {
+        if (_gameStateService == null) return true; // Allow if no validation available
+        if (_gameStateService.IsGameOver) return false;
+        return true;
+    }
+
+    /// <summary>
+    /// Phase 135: Helper method for CardHandlers to check if card placement is allowed.
+    /// </summary>
+    /// <returns>True if cards can be placed, false otherwise.</returns>
+    public bool CanPlaceCards()
+    {
+        if (_gameStateService == null) return true; // Allow if no validation available
+        if (_gameStateService.IsGameOver) return false;
+        if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose) return false;
+        return true;
+    }
+
     private const float ButtonGroupPosX = 600f;
     private const float ButtonGroupPosY = 400f;
     private const float ButtonGroupPosZ = 0f;
@@ -82,18 +109,21 @@ public class InGameMenuScript : MonoBehaviour
     /// Phase 23: Inject IEventBus for hand card display events.
     /// Phase 28: Inject IPlayerStatusProvider for player status access.
     /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 135: Inject GameStateService for phase/state validation.
     /// </summary>
     [Inject]
     public void Construct(
         ICardCollectionService cardCollectionService,
         IEventBus eventBus,
         IPlayerStatusProvider playerStatusProvider,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        GameStateService gameStateService)
     {
         _cardCollectionService = cardCollectionService;
         _eventBus = eventBus;
         _playerStatusProvider = playerStatusProvider;
         _localizationService = localizationService;
+        _gameStateService = gameStateService;
     }
 
     /// <summary>
@@ -148,10 +178,18 @@ public class InGameMenuScript : MonoBehaviour
 
     /// <summary>
     /// Handles the event of clicking on a card.
+    /// Phase 135: Added game state validation.
     /// </summary>
     /// <param name="card">The card that was clicked on.</param>
     private void ClickOnCard(InGameCard card)
     {
+        // Phase 135: Validate game state before handling card click
+        if (_gameStateService != null && _gameStateService.IsGameOver)
+        {
+            Debug.Log("InGameMenuScript: Cannot interact with card - game is over");
+            return;
+        }
+
         CurrentSelectedCard = card;
         if (CardHandlerMap.TryGetValue(card.Type, out var handler))
         {
@@ -200,9 +238,25 @@ public class InGameMenuScript : MonoBehaviour
 
     /// <summary>
     /// Handles the "Put Card" action, triggering the appropriate event based on the card's type.
+    /// Phase 135: Added phase and game state validation.
     /// </summary>
     public void ClickPutCard()
     {
+        // Phase 135: Validate game state before placing card
+        if (_gameStateService != null)
+        {
+            if (_gameStateService.IsGameOver)
+            {
+                Debug.Log("InGameMenuScript: Cannot place card - game is over");
+                return;
+            }
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
+            {
+                Debug.Log($"InGameMenuScript: Cannot place card - current phase is {_gameStateService.CurrentPhase}, must be Choose phase");
+                return;
+            }
+        }
+
         if (CardHandlerMap.TryGetValue(CurrentSelectedCard.Type, out var handler))
         {
             handler.HandleCardPut(CurrentSelectedCard);
