@@ -17,6 +17,7 @@ using JDG.Domain.Events;
 /// Phase 52: Marked obsolete - use IDialogService via dependency injection instead.
 /// Phase 94: Removed StaticInstance inheritance - now a regular MonoBehaviour.
 /// Phase 121: Removed static NumberedCardEvent - now published via EventBus.
+/// Phase 138: Added IObjectResolver to inject dynamically instantiated DisplayCards.
 /// </summary>
 public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
 {
@@ -31,18 +32,23 @@ public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
     private IEventBus _eventBus;
     private IDisposable _selectionChangedSubscription;
 
+    // Phase 138: Container reference for injecting dynamically instantiated components
+    private VContainer.IObjectResolver _container;
+
     #endregion
 
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 9: Inject ICardSelectionService instead of using singleton.
     /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
+    /// Phase 138: Added IObjectResolver for injecting dynamically instantiated DisplayCards.
     /// </summary>
     [Inject]
-    public void Construct(ICardSelectionService cardSelectionService, IEventBus eventBus)
+    public void Construct(ICardSelectionService cardSelectionService, IEventBus eventBus, VContainer.IObjectResolver container)
     {
         _cardSelectionService = cardSelectionService;
         _eventBus = eventBus;
+        _container = container;
     }
 
     #region Unity Callbacks
@@ -256,12 +262,22 @@ public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
 
     /// <summary>
     /// Creates and initializes a new card selection instance on the provided canvas using the specified configuration.
+    /// Phase 138: Injects DisplayCards component after instantiation to fix DI for dynamically created prefabs.
     /// </summary>
     public void CreateCardSelection(Transform canvas, CardSelectorConfig config)
     {
         var message = Instantiate(prefab);
         message.SetActive(true);
         message.transform.SetParent(canvas);
+
+        // Phase 138: Inject DisplayCards component that was dynamically instantiated
+        // This fixes the issue where DisplayCards._cardPoolService was null because
+        // VContainer only injects scene objects at startup, not runtime instantiated prefabs.
+        var displayCardsScript = GetDisplayCards(message);
+        if (displayCardsScript != null && _container != null)
+        {
+            _container.Inject(displayCardsScript);
+        }
 
         SetNewValueGameObject(message, config);
     }
