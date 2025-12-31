@@ -24,7 +24,7 @@ namespace JDG.Infrastructure.Tests.Repositories
 
             // Assert
             Assert.AreEqual(JDG.Domain.Phase.Draw, _repository.CurrentPhase);
-            Assert.AreEqual(1, _repository.TurnNumber);
+            Assert.AreEqual(0, _repository.TurnNumber);
             Assert.AreEqual(PlayerId.Player1, _repository.CurrentPlayer);
             Assert.IsFalse(_repository.IsGameOver);
         }
@@ -48,8 +48,8 @@ namespace JDG.Infrastructure.Tests.Repositories
             // Act
             _repository.IncrementTurn();
 
-            // Assert
-            Assert.AreEqual(2, _repository.TurnNumber);
+            // Assert - After reset (0) + increment = 1
+            Assert.AreEqual(1, _repository.TurnNumber);
         }
 
         [Test]

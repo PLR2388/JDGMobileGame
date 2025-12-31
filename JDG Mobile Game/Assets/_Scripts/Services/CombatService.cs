@@ -102,13 +102,22 @@ public class CombatService : ICombatService
         {
             RemoveCantBeAttackedCards(validTargets);
 
-            if (ShouldAddPlayerToTarget(currentPlayerCards.EffectCards, validTargets))
+            // Phase 137: Add null check for Player entity
+            // Phase 139: Add diagnostic logging when player entity is missing
+            if (opponentCards.Player == null)
+            {
+                Debug.LogWarning("CombatService.BuildValidTargets() - Opponent Player entity is NULL! " +
+                    "Check that playerInvocationCard is assigned in Inspector for the opponent's PlayerCards. " +
+                    "The 'Joueur adverse' card cannot be shown as an attack target.");
+            }
+            else if (ShouldAddPlayerToTarget(currentPlayerCards.EffectCards, validTargets))
             {
                 validTargets.Add(opponentCards.Player);
             }
         }
 
-        if (AttackerCanDirectAttack() && !validTargets.Contains(opponentCards.Player))
+        // Phase 137: Add null check for Player entity
+        if (opponentCards.Player != null && AttackerCanDirectAttack() && !validTargets.Contains(opponentCards.Player))
         {
             validTargets.Add(opponentCards.Player);
         }

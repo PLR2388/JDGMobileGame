@@ -11,7 +11,7 @@ namespace JDG.Infrastructure.Repositories
     public class GameStateRepository : IGameStateRepository
     {
         private JDG.Domain.Phase _currentPhase = JDG.Domain.Phase.Draw;
-        private int _turnNumber = 1;
+        private int _turnNumber = 0;
         private PlayerId _currentPlayer = PlayerId.Player1;
         private bool _isGameOver = false;
 
@@ -46,7 +46,7 @@ namespace JDG.Infrastructure.Repositories
         public void ResetGameState()
         {
             _currentPhase = JDG.Domain.Phase.Draw;
-            _turnNumber = 1;
+            _turnNumber = 0;
             _currentPlayer = PlayerId.Player1;
             _isGameOver = false;
         }

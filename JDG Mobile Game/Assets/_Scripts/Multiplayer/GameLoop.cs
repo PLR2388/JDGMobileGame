@@ -27,7 +27,7 @@ public class GameLoop : MonoBehaviour
     // Phase 127: SerializeField references for presenter construction
     [SerializeField] private GameObject bigImageCard;
     [SerializeField] protected GameObject nextPhaseButton;
-    [SerializeField] protected Transform canvasTransform;
+    // Phase 136: Removed canvasTransform SerializeField - now uses ICanvasProvider
     // Phase 122: Changed to protected so TutoPlayerGameLoop can access for HighlightRequestedEvent
     protected IEventBus _eventBus;
     protected GameStateService _gameStateService;
@@ -68,6 +68,9 @@ public class GameLoop : MonoBehaviour
     // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
     protected ISceneLoaderService _sceneLoaderService;
 
+    // Phase 136: ICanvasProvider instead of SerializeField canvasTransform
+    protected ICanvasProvider _canvasProvider;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
@@ -77,6 +80,7 @@ public class GameLoop : MonoBehaviour
     /// Phase 8: Added IAudioService to replace AudioSystem.Instance.
     /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
     /// Phase 127: Removed UIManager, added ICardVisualService for presenters.
+    /// Phase 136: Added ICanvasProvider to replace SerializeField canvasTransform.
     /// </summary>
     [Inject]
     public void Construct(
@@ -95,7 +99,8 @@ public class GameLoop : MonoBehaviour
         IDialogService dialogService,
         IAudioService audioService,
         ISceneLoaderService sceneLoaderService,
-        ICardVisualService cardVisualService)
+        ICardVisualService cardVisualService,
+        ICanvasProvider canvasProvider)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -113,15 +118,18 @@ public class GameLoop : MonoBehaviour
         _audioService = audioService;
         _sceneLoaderService = sceneLoaderService;
         _cardVisualService = cardVisualService;
+        _canvasProvider = canvasProvider;
     }
 
     // Start is called before the first frame update
     protected virtual void Start()
     {
         // Phase 127: Initialize presenters (replacing UIManager)
+        // Phase 136: Get canvas from ICanvasProvider instead of SerializeField
+        var canvas = _canvasProvider.GetGameCanvas() as Transform;
         _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard, _cardVisualService);
-        _dialogPresenter = new DialogPresenter(canvasTransform, _localizationService, _dialogService);
-        _cardSelectorPresenter = new CardSelectorPresenter(canvasTransform, nextPhaseButton, _localizationService, _dialogService);
+        _dialogPresenter = new DialogPresenter(canvas, _localizationService, _dialogService);
+        _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton, _localizationService, _dialogService);
 
         // Subscribe to EventBus events instead of static UnityEvents
         _eventBus.Subscribe<LongTouchEvent>(OnLongTouch);

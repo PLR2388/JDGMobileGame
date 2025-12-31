@@ -85,8 +85,15 @@ public class DeckManagementService : IDeckManagementService
         Deck1AllCards.Clear();
         Deck2AllCards.Clear();
 
+        // Filter out special cards that shouldn't be in player decks (e.g., Player entity card)
+        const string PlayerCardTitle = "Player";
+
         foreach (var card in _allCards)
         {
+            // Skip the Player card - it's used for direct attack targeting, not playable
+            if (card.Title == PlayerCardTitle)
+                continue;
+
             Deck1AllCards.Add(Object.Instantiate(card));
             Deck2AllCards.Add(Object.Instantiate(card));
         }

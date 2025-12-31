@@ -21,7 +21,7 @@ namespace OnePlayer
         [SerializeField] private GameObject tutoVideo;
 
         [SerializeField] private GameObject miniCardMenu;
-        [SerializeField] private Transform canvas;
+        // Phase 136: Removed canvas SerializeField - now uses inherited _canvasProvider
         [SerializeField] private GameObject nextPhaseButtonGameObject;
         private Button nextPhaseButton;
 
@@ -389,7 +389,9 @@ namespace OnePlayer
                     nextPhaseButtonGameObject.SetActive(true);
                 }
             };
-            _dialogService.ShowCardSelector(canvas, options);
+            // Phase 136: Use inherited _canvasProvider instead of SerializeField
+            var canvasTransform = _canvasProvider.GetGameCanvas() as Transform;
+            _dialogService.ShowCardSelector(canvasTransform, options);
         }
 
         /// <summary>

@@ -294,6 +294,7 @@ namespace JDG.DI
                 InjectAllOfType<CardSelector>(container);
                 InjectAllOfType<DisplayCards>(container);
                 InjectAllOfType<CardDisplay>(container);
+                InjectAllOfType<UpdateDescription>(container);
                 InjectAllOfType<TutoInvocationFunctions>(container);
 
                 // Phase 133: Tutorial UI components with [Inject]

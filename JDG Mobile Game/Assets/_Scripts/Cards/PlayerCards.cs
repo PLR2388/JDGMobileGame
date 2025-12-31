@@ -138,23 +138,49 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
         _deckInitService.InitializePhysicalCards(Deck, deckLocation, IsPlayerOne);
 
         Debug.Log($"PlayerCards.Construct() - IsPlayerOne={IsPlayerOne}, Deck={Deck?.Count ?? 0} cards, Physical cards created");
+        // Note: BuildPlayer() is called in Start() to ensure SerializeFields are populated
     }
 
     /// <summary>
     /// Creates the player entity card.
     /// Phase 21-22: Delegates to SummonPlayerEntityUseCase.
     /// Phase 84: Updated to use JDG.Application.UseCases version.
+    /// Phase 139: Added proper error handling and logging.
     /// </summary>
     public void BuildPlayer()
     {
+        if (playerInvocationCard == null)
+        {
+            Debug.LogError($"PlayerCards.BuildPlayer() - playerInvocationCard SerializeField is NOT assigned in Inspector! IsPlayerOne={IsPlayerOne}. " +
+                "Please assign the Player invocation card in the Unity Inspector.");
+            return;
+        }
+
         var result = _summonPlayerEntityUseCase.Execute(playerInvocationCard, IsPlayerOne);
+
+        if (!result.IsSuccess)
+        {
+            Debug.LogError($"PlayerCards.BuildPlayer() - Failed to create player entity! IsPlayerOne={IsPlayerOne}, Message: {result.Message}");
+            return;
+        }
+
         Player = result.EntityCard as InGameCard;
+
+        if (Player == null)
+        {
+            Debug.LogError($"PlayerCards.BuildPlayer() - EntityCard cast to InGameCard returned null! IsPlayerOne={IsPlayerOne}");
+        }
     }
 
     // Start is called before the first frame update
     private void Start()
     {
         Debug.Log($"PlayerCards.Start() - IsPlayerOne={IsPlayerOne}, Deck.Count={Deck?.Count ?? 0}");
+
+        // Phase 137: Build player entity in Start() to ensure SerializeFields are populated
+        // (Construct() is called by VContainer before Unity populates SerializeFields)
+        BuildPlayer();
+        Debug.Log($"PlayerCards.Start() - Player entity created: {Player?.Title ?? "null"}");
 
         // Note: Deck and physical cards are initialized in Construct() to ensure
         // they're ready before any Start() methods run.
