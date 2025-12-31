@@ -44,6 +44,13 @@ namespace JDG.Infrastructure.Services
         public bool IsGameOver => _gameStateRepository.IsGameOver;
 
         /// <summary>
+        /// Checks if the attack phase should be skipped for the current player.
+        /// Rule: Player 1 cannot attack on Turn 1 (first turn advantage rule).
+        /// </summary>
+        public bool ShouldSkipAttackPhase =>
+            TurnNumber == 1 && CurrentPlayer == PlayerId.Player1;
+
+        /// <summary>
         /// Sets the current phase and publishes PhaseChangedEvent.
         /// </summary>
         public void SetPhase(JDG.Domain.Phase newPhase)
@@ -61,6 +68,7 @@ namespace JDG.Infrastructure.Services
 
         /// <summary>
         /// Advances to the next phase in sequence (Draw → Choose → Attack → End).
+        /// Automatically skips Attack phase for Player 1 on Turn 1.
         /// </summary>
         public void NextPhase()
         {
@@ -69,6 +77,13 @@ namespace JDG.Infrastructure.Services
 
             var oldPhase = _gameStateRepository.CurrentPhase;
             var newPhase = (JDG.Domain.Phase)(((int)oldPhase + 1) % 4);
+
+            // Skip Attack phase for Player 1 on Turn 1 (first turn advantage rule)
+            if (newPhase == JDG.Domain.Phase.Attack && ShouldSkipAttackPhase)
+            {
+                newPhase = JDG.Domain.Phase.End;
+            }
+
             SetPhase(newPhase);
         }
 

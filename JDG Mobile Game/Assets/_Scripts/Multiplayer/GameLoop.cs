@@ -242,21 +242,18 @@ public class GameLoop : MonoBehaviour
     }
 
     /// <summary>
-    /// Called when user presses the next phase button
+    /// Called when user presses the next phase button.
+    /// Note: Attack phase skip for Player 1 on Turn 1 is handled automatically by GameStateService.NextPhase().
     /// </summary>
     protected virtual void NextRound()
     {
         // Phase 9: Use injected service instead of InvocationMenuManager.Instance
         _invocationMenuService.Hide();
-        if (_gameStateService.TurnNumber == 1 && _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
-        {
-            _gameStateService.SetPhase(JDG.Domain.Phase.End);
-        }
-        else
-        {
-            _gameStateService.NextPhase();
-        }
 
+        // NextPhase() automatically skips Attack phase for Player 1 on Turn 1
+        _gameStateService.NextPhase();
+
+        // Check if attack is blocked by card effects
         var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
         if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
         {
@@ -333,13 +330,12 @@ public class GameLoop : MonoBehaviour
 
     /// <summary>
     /// Display all available opponent after pressing Attack button.
-    /// Phase 134: Added Turn 1 restriction for Player 1.
+    /// Defense-in-depth: Uses GameStateService.ShouldSkipAttackPhase for Turn 1 restriction.
     /// </summary>
     protected void DisplayAvailableOpponent()
     {
-        // Phase 134: Block attack on Turn 1 for Player 1
-        if (_gameStateService.TurnNumber == 1 &&
-            _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
+        // Defense-in-depth: Block attack if attack phase should be skipped
+        if (_gameStateService.ShouldSkipAttackPhase)
         {
             Debug.Log("GameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
             return;

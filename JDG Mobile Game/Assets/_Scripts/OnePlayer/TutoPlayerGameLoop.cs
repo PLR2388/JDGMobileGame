@@ -289,6 +289,7 @@ namespace OnePlayer
 
         /// <summary>
         /// Handles the transition to the next round of the game.
+        /// Note: Attack phase skip for Player 1 on Turn 1 is handled automatically by GameStateService.NextPhase().
         /// </summary>
         protected override void NextRound()
         {
@@ -301,15 +302,11 @@ namespace OnePlayer
                 // Phase 123: Publish via EventBus instead of static TriggerDoneEvent
                 _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.NextPhase });
             }
-            if (_gameStateService.TurnNumber == 1 && _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
-            {
-                _gameStateService.SetPhase(JDG.Domain.Phase.End);
-            }
-            else
-            {
-                _gameStateService.NextPhase();
-            }
 
+            // NextPhase() automatically skips Attack phase for Player 1 on Turn 1
+            _gameStateService.NextPhase();
+
+            // Check if attack is blocked by card effects
             var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
             if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
             {
@@ -333,13 +330,12 @@ namespace OnePlayer
 
         /// <summary>
         /// Displays available opponents for the current player.
-        /// Phase 134: Added Turn 1 restriction for Player 1.
+        /// Defense-in-depth: Uses GameStateService.ShouldSkipAttackPhase for Turn 1 restriction.
         /// </summary>
         public new void DisplayAvailableOpponent()
         {
-            // Phase 134: Block attack on Turn 1 for Player 1
-            if (_gameStateService.TurnNumber == 1 &&
-                _gameStateService.CurrentPlayer == JDG.Domain.ValueObjects.PlayerId.Player1)
+            // Defense-in-depth: Block attack if attack phase should be skipped
+            if (_gameStateService.ShouldSkipAttackPhase)
             {
                 Debug.Log("TutoPlayerGameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
                 return;
