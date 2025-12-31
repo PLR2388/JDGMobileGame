@@ -51,6 +51,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     // Phase 23: EventBus for static UnityEvent migration
     private IEventBus _eventBus;
 
+    // Phase 140: Card pool service for registering player entity
+    private ICardPoolService _cardPoolService;
+
     // Initialization guard to prevent double initialization
     private bool _isInitialized;
 
@@ -94,6 +97,7 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     /// Phase 8: Inject IDeckInitializationService instead of using singletons.
     /// Phase 21-22: Inject use cases for business logic extraction.
     /// Phase 23: Inject IEventBus for static UnityEvent migration.
+    /// Phase 140: Inject ICardPoolService for player entity registration.
     /// </summary>
     [Inject]
     public void Construct(
@@ -105,7 +109,8 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
         JDG.Application.UseCases.HandleCardRemovedFromFieldUseCase handleCardRemovedFromFieldUseCase,
         JDG.Application.UseCases.HandleHandCardsChangeUseCase handleHandCardsChangeUseCase,
         JDG.Application.UseCases.HandleFieldCardChangedUseCase handleFieldCardChangedUseCase,
-        IEventBus eventBus)
+        IEventBus eventBus,
+        ICardPoolService cardPoolService)
     {
         _deckInitService = deckInitService;
         _summonPlayerEntityUseCase = summonPlayerEntityUseCase;
@@ -116,6 +121,7 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
         _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase;
         _handleFieldCardChangedUseCase = handleFieldCardChangedUseCase;
         _eventBus = eventBus;
+        _cardPoolService = cardPoolService;
 
         // Guard against double initialization (can happen if VContainer injects twice)
         if (_isInitialized)
@@ -174,6 +180,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
         {
             // Phase 140: Add success logging for debugging target building
             Debug.Log($"PlayerCards.BuildPlayer() - SUCCESS! IsPlayerOne={IsPlayerOne}, Player.Title='{Player.Title}', Player.GetType()={Player.GetType().Name}");
+
+            // Phase 140: Register Player entity with card pool so it can be displayed in attack target selector
+            _cardPoolService?.AddCardToPool(Player);
         }
     }
 

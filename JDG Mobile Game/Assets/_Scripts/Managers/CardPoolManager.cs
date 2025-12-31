@@ -235,9 +235,35 @@ public class CardPoolManager : MonoBehaviour
     /// </summary>
     public GameObject GetPooledObject(InGameCard inGameCard)
     {
-        return inGameCard == null 
-            ? null 
+        return inGameCard == null
+            ? null
             : pooledCards.Find(cardGameObject => CardMatches(inGameCard, cardGameObject));
+    }
+
+    /// <summary>
+    /// Adds a card to the pool with a visual representation.
+    /// Phase 140: Added for player entity registration.
+    /// This method is called by PlayerCards.BuildPlayer() to ensure the Player entity
+    /// is available in the pool for attack target selection.
+    /// </summary>
+    /// <param name="inGameCard">The card to add to the pool</param>
+    public void AddCardToPool(InGameCard inGameCard)
+    {
+        if (inGameCard == null)
+        {
+            Debug.LogWarning("CardPoolManager.AddCardToPool: Cannot add null card to pool");
+            return;
+        }
+
+        // Check if card is already in the pool
+        if (GetPooledObject(inGameCard) != null)
+        {
+            Debug.Log($"CardPoolManager.AddCardToPool: Card '{inGameCard.Title}' already in pool, skipping");
+            return;
+        }
+
+        Debug.Log($"CardPoolManager.AddCardToPool: Adding card '{inGameCard.Title}' (Owner: {inGameCard.CardOwner})");
+        BuildNewCard(inGameCard);
     }
 
     /// <summary>

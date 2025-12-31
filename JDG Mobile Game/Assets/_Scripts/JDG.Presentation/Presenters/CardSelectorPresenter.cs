@@ -71,6 +71,12 @@ namespace JDG.Presentation.Presenters
             Action<IInGameInvocationCard> onCardSelected,
             Action onCancelled)
         {
+            Debug.Log($"CardSelectorPresenter.ShowCardSelection() - START, cards.Count: {cards?.Count ?? -1}");
+            foreach (var card in cards)
+            {
+                Debug.Log($"CardSelectorPresenter.ShowCardSelection() - Card: {card?.Title ?? "NULL"}, Type: {card?.GetType().FullName ?? "NULL"}");
+            }
+
             var options = new CardSelectorOptions
             {
                 Title = _localizationService.GetLocalizedValue(KEY_CHOOSE_OPPONENT),

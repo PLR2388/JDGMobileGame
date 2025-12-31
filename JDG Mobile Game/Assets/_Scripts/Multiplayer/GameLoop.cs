@@ -361,10 +361,19 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Display the MessageBox with the available opponents
     /// Phase 127: Uses CardSelectorPresenter directly with interface types.
+    /// Phase 140: Added tracing for debugging target display.
     /// </summary>
     /// <param name="invocationCards">Available opponents list</param>
     private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
     {
+        Debug.Log($"GameLoop.DisplayOpponentMessageBox() - START, count: {invocationCards?.Count ?? -1}");
+        if (invocationCards != null)
+        {
+            foreach (var card in invocationCards)
+            {
+                Debug.Log($"GameLoop.DisplayOpponentMessageBox() - Card: {card?.Title ?? "NULL"}, Type: {card?.GetType().FullName ?? "NULL"}");
+            }
+        }
         void OnCardSelected(IInGameInvocationCard selectedCard)
         {
             if (selectedCard != null)

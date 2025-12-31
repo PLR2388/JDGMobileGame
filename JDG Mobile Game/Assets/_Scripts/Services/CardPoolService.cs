@@ -40,4 +40,18 @@ public class CardPoolService : ICardPoolService
         }
         return _cardPoolManager.GetPooledObject(inGameCard);
     }
+
+    /// <summary>
+    /// Adds a card to the pool with a visual representation.
+    /// Phase 140: Added for player entity registration.
+    /// </summary>
+    public void AddCardToPool(InGameCard inGameCard)
+    {
+        if (_cardPoolManager == null)
+        {
+            Debug.LogError("CardPoolService: CardPoolManager is null! Cannot add card to pool.");
+            return;
+        }
+        _cardPoolManager.AddCardToPool(inGameCard);
+    }
 }

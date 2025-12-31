@@ -83,19 +83,31 @@ public class DisplayCards : MonoBehaviour
 
     /// <summary>
     /// Displays new cards from the given list.
+    /// Phase 140: Added tracing for debugging missing card display.
     /// </summary>
     /// <param name="newItems">List of new cards to be displayed.</param>
     private void DisplayNewCards(IList newItems)
     {
+        Debug.Log($"DisplayCards.DisplayNewCards() - START, count: {newItems?.Count ?? -1}");
         foreach (var card in newItems)
         {
+            var inGameCard = card as InGameCard;
+            Debug.Log($"DisplayCards.DisplayNewCards() - Card: {inGameCard?.Title ?? "NULL"}, Type: {card?.GetType().FullName ?? "NULL"}");
+
             // Phase 9: Use injected service instead of CardPoolManager.Instance
-            var newCardObject = _cardPoolService?.GetPooledObject(card as InGameCard);
+            var newCardObject = _cardPoolService?.GetPooledObject(inGameCard);
+            Debug.Log($"DisplayCards.DisplayNewCards() - GetPooledObject returned: {(newCardObject != null ? "FOUND" : "NULL")}");
+
             if (newCardObject != null)
             {
                 newCardObject.transform.SetParent(transform, true);
                 newCardObject.SetActive(true);
                 associatedGameObject.Add(newCardObject);
+                Debug.Log($"DisplayCards.DisplayNewCards() - Card displayed successfully: {inGameCard?.Title}");
+            }
+            else
+            {
+                Debug.LogWarning($"DisplayCards.DisplayNewCards() - Card NOT in pool! Cannot display: {inGameCard?.Title ?? "NULL"}");
             }
         }
         UpdateRectSize();
