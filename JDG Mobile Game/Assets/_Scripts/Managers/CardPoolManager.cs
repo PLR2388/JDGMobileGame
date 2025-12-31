@@ -8,6 +8,7 @@ using VContainer;
 /// Serves as a pool to store Image card GameObjects when they are not actively used in a card selector.
 /// Phase 17-18: Removed GameState singleton and FindObjectsOfType dependencies.
 /// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
+/// Phase 138: Added IObjectResolver to inject dynamically instantiated card components.
 /// </summary>
 public class CardPoolManager : MonoBehaviour
 {
@@ -93,15 +94,20 @@ public class CardPoolManager : MonoBehaviour
     // Phase 17-18: Injected dependencies
     private IDeckManagementService _deckManagementService;
 
+    // Phase 138: Container reference for injecting dynamically instantiated components
+    private IObjectResolver _container;
+
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
     /// Phase 46: Removed unused IDeckInitializationService to fix circular dependency.
+    /// Phase 138: Added IObjectResolver for injecting dynamically instantiated card components.
     /// </summary>
     [Inject]
-    public void Construct(IDeckManagementService deckManagementService)
+    public void Construct(IDeckManagementService deckManagementService, IObjectResolver container)
     {
         _deckManagementService = deckManagementService;
+        _container = container;
     }
 
     /// <summary>
@@ -164,6 +170,7 @@ public class CardPoolManager : MonoBehaviour
 
     /// <summary>
     /// Creates a new card GameObject from the provided InGameCard and adds it to the card pool.
+    /// Phase 138: Injects OnHover and CardDisplay components after instantiation to fix DI.
     /// </summary>
     private void BuildNewCard(InGameCard inGameCard)
     {
@@ -174,15 +181,40 @@ public class CardPoolManager : MonoBehaviour
         }
 
         var newCard = Instantiate(PrefabCard, Vector3.zero, Quaternion.identity, cardPoolHolder);
-        var cardDisplay = newCard.GetComponent<CardDisplay>();
-        if (cardDisplay != null)
+
+        // Phase 138: Inject dynamically instantiated components
+        // OnHover needs ICardSelectionService and IEventBus for card selection to work
+        // CardDisplay needs ICardVisualService for proper rendering
+        if (_container != null)
         {
-            cardDisplay.InGameCard = inGameCard;
+            var onHover = newCard.GetComponent<OnHover>();
+            if (onHover != null)
+            {
+                _container.Inject(onHover);
+            }
+
+            var cardDisplay = newCard.GetComponent<CardDisplay>();
+            if (cardDisplay != null)
+            {
+                _container.Inject(cardDisplay);
+                cardDisplay.InGameCard = inGameCard;
+            }
+            else
+            {
+                Debug.LogError($"CardPoolManager.BuildNewCard: CardDisplay component not found on prefab for card '{inGameCard?.Title ?? "Unknown"}'");
+            }
         }
         else
         {
-            Debug.LogError($"CardPoolManager.BuildNewCard: CardDisplay component not found on prefab for card '{inGameCard?.Title ?? "Unknown"}'");
+            // Fallback: just set InGameCard without injection (legacy behavior)
+            var cardDisplay = newCard.GetComponent<CardDisplay>();
+            if (cardDisplay != null)
+            {
+                cardDisplay.InGameCard = inGameCard;
+            }
+            Debug.LogWarning("CardPoolManager.BuildNewCard: Container is null, components not injected");
         }
+
         newCard.SetActive(false);
         pooledCards.Add(newCard);
     }
