@@ -170,6 +170,11 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
         {
             Debug.LogError($"PlayerCards.BuildPlayer() - EntityCard cast to InGameCard returned null! IsPlayerOne={IsPlayerOne}");
         }
+        else
+        {
+            // Phase 140: Add success logging for debugging target building
+            Debug.Log($"PlayerCards.BuildPlayer() - SUCCESS! IsPlayerOne={IsPlayerOne}, Player.Title='{Player.Title}', Player.GetType()={Player.GetType().Name}");
+        }
     }
 
     // Start is called before the first frame update

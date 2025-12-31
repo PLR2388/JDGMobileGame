@@ -86,21 +86,37 @@ public class CombatService : ICombatService
 
     public List<InGameCard> BuildValidTargets()
     {
+        // Phase 140: Comprehensive tracing to debug target building
+        Debug.Log($"CombatService.BuildValidTargets() - START");
+
         if (Attacker == null)
+        {
+            Debug.LogWarning("CombatService.BuildValidTargets() - Attacker is NULL, returning empty list");
             return new List<InGameCard>();
+        }
+
+        Debug.Log($"CombatService.BuildValidTargets() - Attacker: {Attacker.Title}");
 
         var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
         var currentPlayerCards = _cardCollectionService.GetCurrentPlayerCards();
 
+        Debug.Log($"CombatService.BuildValidTargets() - opponentCards is null: {opponentCards == null}");
+        Debug.Log($"CombatService.BuildValidTargets() - opponentCards.Player is null: {opponentCards?.Player == null}");
+        Debug.Log($"CombatService.BuildValidTargets() - opponentCards.Player?.Title: {opponentCards?.Player?.Title ?? "NULL"}");
+        Debug.Log($"CombatService.BuildValidTargets() - opponentCards.InvocationCards.Count: {opponentCards?.InvocationCards?.Count ?? -1}");
+
         var validTargets = FilterValidOpponentCards(opponentCards.InvocationCards);
+        Debug.Log($"CombatService.BuildValidTargets() - After FilterValidOpponentCards, validTargets.Count: {validTargets.Count}");
 
         if (HasAggroCard(validTargets))
         {
+            Debug.Log("CombatService.BuildValidTargets() - Has aggro card, filtering to aggro only");
             validTargets = GetOnlyAggroCards(validTargets);
         }
         else
         {
             RemoveCantBeAttackedCards(validTargets);
+            Debug.Log($"CombatService.BuildValidTargets() - After RemoveCantBeAttackedCards, validTargets.Count: {validTargets.Count}");
 
             // Phase 137: Add null check for Player entity
             // Phase 139: Add diagnostic logging when player entity is missing
@@ -110,16 +126,37 @@ public class CombatService : ICombatService
                     "Check that playerInvocationCard is assigned in Inspector for the opponent's PlayerCards. " +
                     "The 'Joueur adverse' card cannot be shown as an attack target.");
             }
-            else if (ShouldAddPlayerToTarget(currentPlayerCards.EffectCards, validTargets))
+            else
             {
-                validTargets.Add(opponentCards.Player);
+                bool shouldAddPlayer = ShouldAddPlayerToTarget(currentPlayerCards.EffectCards, validTargets);
+                Debug.Log($"CombatService.BuildValidTargets() - ShouldAddPlayerToTarget returned: {shouldAddPlayer}");
+
+                if (shouldAddPlayer)
+                {
+                    Debug.Log($"CombatService.BuildValidTargets() - Adding Player '{opponentCards.Player.Title}' to validTargets");
+                    validTargets.Add(opponentCards.Player);
+                }
+                else
+                {
+                    Debug.Log($"CombatService.BuildValidTargets() - NOT adding Player (ShouldAddPlayerToTarget=false)");
+                }
             }
         }
 
         // Phase 137: Add null check for Player entity
-        if (opponentCards.Player != null && AttackerCanDirectAttack() && !validTargets.Contains(opponentCards.Player))
+        bool canDirectAttack = AttackerCanDirectAttack();
+        Debug.Log($"CombatService.BuildValidTargets() - AttackerCanDirectAttack: {canDirectAttack}");
+
+        if (opponentCards.Player != null && canDirectAttack && !validTargets.Contains(opponentCards.Player))
         {
+            Debug.Log($"CombatService.BuildValidTargets() - Adding Player via DirectAttack ability");
             validTargets.Add(opponentCards.Player);
+        }
+
+        Debug.Log($"CombatService.BuildValidTargets() - FINAL validTargets.Count: {validTargets.Count}");
+        foreach (var target in validTargets)
+        {
+            Debug.Log($"  - Target: {target?.Title ?? "NULL"}");
         }
 
         return validTargets;
