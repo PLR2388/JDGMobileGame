@@ -25,8 +25,26 @@ namespace JDG.DI
     /// </summary>
     public class SharedServicesScope : LifetimeScope
     {
+        // Phase 148: Static instance tracking to prevent duplicate SharedServicesScope creation
+        private static SharedServicesScope _instance;
+
+        /// <summary>
+        /// Returns true if an instance of SharedServicesScope already exists.
+        /// Used by child scopes to check before dynamically creating one.
+        /// </summary>
+        public static bool InstanceExists => _instance != null;
+
         protected override void Awake()
         {
+            // Phase 148: Check for duplicate instances
+            if (_instance != null && _instance != this)
+            {
+                UnityEngine.Debug.LogWarning("SharedServicesScope: Duplicate instance detected! Destroying this instance.");
+                Destroy(gameObject);
+                return;
+            }
+            _instance = this;
+
             // Must be a root GameObject for DontDestroyOnLoad to work
             // Detach from parent if we're a child object
             if (transform.parent != null)
@@ -37,6 +55,16 @@ namespace JDG.DI
             // Persist across scene loads (scenes use LoadSceneMode.Single)
             DontDestroyOnLoad(gameObject);
             base.Awake();
+        }
+
+        protected override void OnDestroy()
+        {
+            // Phase 148: Clear static instance reference on destroy
+            if (_instance == this)
+            {
+                _instance = null;
+            }
+            base.OnDestroy();
         }
 
         protected override void Configure(IContainerBuilder builder)

@@ -145,6 +145,8 @@ public class GameLoop : MonoBehaviour
         if (canvas == null)
         {
             Debug.LogError("GameLoop: Canvas is null! UI presenters will not function correctly.");
+            // Phase 148: Early return to prevent presenter crashes when canvas is null
+            return;
         }
         _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard, _cardVisualService);
         _dialogPresenter = new DialogPresenter(canvas, _localizationService, _dialogService);
@@ -463,6 +465,14 @@ public class GameLoop : MonoBehaviour
         // Check if one player die
         var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
         var opponentPlayerStatus = _playerStatusProvider.GetOpponentPlayerStatus();
+
+        // Phase 148: Add null checks to prevent NullReferenceException
+        if (playerStatus == null || opponentPlayerStatus == null)
+        {
+            Debug.LogWarning("GameLoop.HandlePlayerDeath: PlayerStatus or OpponentPlayerStatus is null");
+            return;
+        }
+
         if (playerStatus.GetCurrentHealth() <= 0)
         {
             GameOver();

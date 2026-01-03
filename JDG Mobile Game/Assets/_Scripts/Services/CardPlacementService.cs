@@ -32,6 +32,13 @@ public class CardPlacementService : ICardPlacementService
     private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly IAudioService _audioService;
     private readonly IAbilityExecutor _abilityExecutor;
+
+    /// <summary>
+    /// Phase 148: GameStateService is intentionally optional for backward compatibility.
+    /// When null, phase validation is skipped. This allows the service to work in
+    /// test scenarios or legacy code paths where GameStateService isn't available.
+    /// In production, GameStateService is always injected via VContainer.
+    /// </summary>
     private readonly GameStateService _gameStateService;
 
     public CardPlacementService(
@@ -94,7 +101,8 @@ public class CardPlacementService : ICardPlacementService
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
         var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
-        foreach (var ability in card.ModernAbilities)
+        // Phase 148: Added null-coalescing to prevent NullReferenceException
+        foreach (var ability in card.ModernAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
         {
             if (ability.CanActivate(context))
             {
@@ -197,7 +205,8 @@ public class CardPlacementService : ICardPlacementService
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
         var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
-        foreach (var ability in card.ModernFieldAbilities)
+        // Phase 148: Added null-coalescing to prevent NullReferenceException
+        foreach (var ability in card.ModernFieldAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
         {
             if (ability.CanActivate(context))
             {

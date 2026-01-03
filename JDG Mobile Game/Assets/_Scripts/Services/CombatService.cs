@@ -31,6 +31,13 @@ public class CombatService : ICombatService
     private readonly ICardCollectionService _cardCollectionService;
     private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly IAbilityExecutor _abilityExecutor;
+
+    /// <summary>
+    /// Phase 148: EventBus is intentionally optional to support test scenarios
+    /// and legacy code paths where event publishing isn't needed. When null,
+    /// attack events are not published. In production, EventBus is always
+    /// injected via VContainer. Null-conditional access (?.) is used on publish.
+    /// </summary>
     private readonly IEventBus _eventBus;
     private readonly Transform _canvas;
 
@@ -155,7 +162,8 @@ public class CombatService : ICombatService
 
         // Phase 118: Execute modern abilities that are actions
         var context = CreateAbilityContext(Attacker, playerCards);
-        foreach (var ability in Attacker.ModernAbilities)
+        // Phase 148: Added null-coalescing to prevent NullReferenceException
+        foreach (var ability in Attacker.ModernAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
         {
             // Execute action-type abilities
             if (ability.CanActivate(context))
@@ -181,7 +189,8 @@ public class CombatService : ICombatService
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
         var context = CreateAbilityContext(Attacker, playerCards);
 
-        return Attacker.ModernAbilities.Any(ability => ability.CanActivate(context));
+        // Phase 148: Added null-safe check to prevent NullReferenceException
+        return Attacker.ModernAbilities?.Any(ability => ability.CanActivate(context)) ?? false;
     }
 
     // Private helper methods
@@ -360,7 +369,8 @@ public class CombatService : ICombatService
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
         var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
-        return equipmentCard.ModernEquipmentAbilities
+        // Phase 148: Added null-coalescing to prevent NullReferenceException
+        return (equipmentCard.ModernEquipmentAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
             .OfType<IEquipmentAbility>()
             .Any(ability => !ability.OnPreDestroy(context));
     }
@@ -390,7 +400,8 @@ public class CombatService : ICombatService
             var opponentId = PlayerId.FromCardOwner(opponentOwner);
             var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
-            foreach (var ability in equipmentCard.ModernEquipmentAbilities)
+            // Phase 148: Added null-coalescing to prevent NullReferenceException
+            foreach (var ability in equipmentCard.ModernEquipmentAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
             {
                 if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnUnequip)
                 {

@@ -32,9 +32,18 @@ namespace JDG.DI
             {
                 // SharedServicesScope not found - this happens when playing a scene directly
                 // from Unity Editor without going through _preload scene.
-                // Create SharedServicesScope dynamically to enable DI.
-                Debug.LogWarning("GameSceneScope: SharedServicesScope NOT FOUND! Creating dynamically for Editor playback...");
-                sharedScope = CreateSharedServicesScope();
+                // Phase 148: Check static instance tracker before creating dynamically
+                if (SharedServicesScope.InstanceExists)
+                {
+                    // Instance exists but not found - might be in a different Unity scene state
+                    sharedScope = FindFirstObjectByType<SharedServicesScope>();
+                }
+                if (sharedScope == null)
+                {
+                    // Create SharedServicesScope dynamically to enable DI.
+                    Debug.LogWarning("GameSceneScope: SharedServicesScope NOT FOUND! Creating dynamically for Editor playback...");
+                    sharedScope = CreateSharedServicesScope();
+                }
             }
 
             if (sharedScope != null)

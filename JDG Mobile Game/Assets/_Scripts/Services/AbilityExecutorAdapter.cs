@@ -125,7 +125,8 @@ namespace Services
             {
                 // 1. Trigger opponent's equipment abilities that react to new cards
                 // Phase 141: Use ICardSyncService to sync any changes to the added card
-                foreach (var opponentCard in concreteOpponent.InvocationCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var opponentCard in concreteOpponent.InvocationCards ?? System.Linq.Enumerable.Empty<InGameInvocationCard>())
                 {
                     var equipmentCard = opponentCard.EquipmentCard;
                     if (equipmentCard == null) continue;
@@ -143,7 +144,8 @@ namespace Services
                 }
 
                 // 2. Trigger existing invocation card abilities on same field
-                foreach (var existingCard in concreteOwner.InvocationCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var existingCard in concreteOwner.InvocationCards ?? System.Linq.Enumerable.Empty<InGameInvocationCard>())
                 {
                     // Phase 118: Use only ModernAbilities
                     var invocContext = CreateAbilityContext(existingCard, existingCard.CardOwner);
@@ -151,7 +153,8 @@ namespace Services
                 }
 
                 // 3. Trigger effect card abilities
-                foreach (var effectCard in concreteOwner.EffectCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var effectCard in concreteOwner.EffectCards ?? System.Linq.Enumerable.Empty<InGameEffectCard>())
                 {
                     if (effectCard is InGameEffectCard concreteEffect)
                     {
@@ -226,7 +229,8 @@ namespace Services
             if (currentPlayerCards is PlayerCards concretePlayer)
             {
                 // Execute invocation card turn start abilities
-                foreach (var invocation in concretePlayer.InvocationCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var invocation in concretePlayer.InvocationCards ?? System.Linq.Enumerable.Empty<InGameInvocationCard>())
                 {
                     if (invocation is InGameInvocationCard invocationCard)
                     {
@@ -244,7 +248,8 @@ namespace Services
                 }
 
                 // Effect abilities for turn start
-                foreach (var effectCard in concretePlayer.EffectCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var effectCard in concretePlayer.EffectCards ?? System.Linq.Enumerable.Empty<InGameEffectCard>())
                 {
                     if (effectCard is InGameEffectCard concreteEffect)
                     {
@@ -270,7 +275,8 @@ namespace Services
             if (currentPlayerCards is PlayerCards concretePlayer)
             {
                 // Invocation cards
-                foreach (var invocation in concretePlayer.InvocationCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var invocation in concretePlayer.InvocationCards ?? System.Linq.Enumerable.Empty<InGameInvocationCard>())
                 {
                     if (invocation is InGameInvocationCard invocationCard)
                     {
@@ -287,7 +293,8 @@ namespace Services
                 }
 
                 // Effect cards
-                foreach (var effectCard in concretePlayer.EffectCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var effectCard in concretePlayer.EffectCards ?? System.Linq.Enumerable.Empty<InGameEffectCard>())
                 {
                     if (effectCard is InGameEffectCard concreteEffect)
                     {
@@ -316,7 +323,8 @@ namespace Services
             {
                 // Phase 117: Uses only modern abilities with OnHandChange trigger
                 // Phase 141: Use ICardSyncService to sync domain Card changes back to InGameInvocationCard
-                foreach (var invocation in concretePlayer.InvocationCards)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var invocation in concretePlayer.InvocationCards ?? System.Linq.Enumerable.Empty<InGameInvocationCard>())
                 {
                     if (invocation is InGameInvocationCard invocationCard &&
                         invocationCard.EquipmentCard != null)

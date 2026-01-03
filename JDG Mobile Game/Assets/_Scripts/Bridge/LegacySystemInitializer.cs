@@ -34,6 +34,14 @@ namespace JDG.Bridge
         /// </summary>
         public static void Initialize(ILocalizationService localizationService)
         {
+            // Phase 148: Add null check to prevent setting null on static fields
+            if (localizationService == null)
+            {
+                Debug.LogError("LegacySystemInitializer: localizationService is null! " +
+                    "Extension classes will not have localization support.");
+                return;
+            }
+
             // Phase 118: Removed Ability class initialization (class deleted)
             // Initialize extension classes for localized names
             Cards.CardTypeExtensions.LocalizationService = localizationService;

@@ -110,7 +110,8 @@ public class TurnService : ITurnService
             var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
             // Phase 118: Use modern abilities with OnTurnStart trigger for invocations
-            foreach (var ability in invocationCard.ModernAbilities)
+            // Phase 148: Added null-coalescing to prevent NullReferenceException
+            foreach (var ability in invocationCard.ModernAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
             {
                 if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
                 {
@@ -126,7 +127,8 @@ public class TurnService : ITurnService
             {
                 var equipContext = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
-                foreach (var ability in invocationCard.EquipmentCard.ModernEquipmentAbilities)
+                // Phase 148: Added null-coalescing to prevent NullReferenceException
+                foreach (var ability in invocationCard.EquipmentCard.ModernEquipmentAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
                 {
                     if (ability is IPassiveAbility equipPassive && equipPassive.Trigger == AbilityTrigger.OnTurnStart)
                     {
@@ -160,7 +162,8 @@ public class TurnService : ITurnService
         {
             var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
-            foreach (var ability in effectCard.ModernEffectAbilities)
+            // Phase 148: Added null-coalescing to prevent NullReferenceException
+            foreach (var ability in effectCard.ModernEffectAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
             {
                 // Only execute passive abilities with OnTurnStart trigger
                 if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
@@ -189,7 +192,8 @@ public class TurnService : ITurnService
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
         var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
 
-        foreach (var ability in playerCards.FieldCard.ModernFieldAbilities)
+        // Phase 148: Added null-coalescing to prevent NullReferenceException
+        foreach (var ability in playerCards.FieldCard.ModernFieldAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
         {
             // Only execute passive abilities with OnTurnStart trigger
             if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == AbilityTrigger.OnTurnStart)
