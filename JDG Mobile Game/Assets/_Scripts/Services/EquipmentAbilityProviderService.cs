@@ -19,6 +19,7 @@ public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
     /// <summary>
     /// Initializes the equipment ability provider with modern abilities only.
     /// Phase 117: Removed legacy ability initialization.
+    /// Phase 153: Added warning log when playerRepository is null.
     /// </summary>
     public EquipmentAbilityProviderService(IPlayerRepository playerRepository = null)
     {
@@ -30,6 +31,9 @@ public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
         }
         else
         {
+            // Phase 153: Log warning to help debug ability issues
+            UnityEngine.Debug.LogWarning("[EquipmentAbilityProviderService] Created with null playerRepository - abilities will be empty. " +
+                "This is expected during deck building but may cause issues during gameplay.");
             _modernAbilityDictionary = new Dictionary<DomainEquipmentAbilityName, IAbility>();
         }
     }

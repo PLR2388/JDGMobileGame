@@ -10,6 +10,7 @@ using JDG.Application.Abilities.Implementations;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
+using DomainCard = JDG.Domain.Entities.Card;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
 
@@ -31,6 +32,7 @@ public class CombatService : ICombatService
     private readonly ICardCollectionService _cardCollectionService;
     private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly IAbilityExecutor _abilityExecutor;
+    private readonly ICardSyncService _cardSyncService;
 
     /// <summary>
     /// Phase 148: EventBus is intentionally optional to support test scenarios
@@ -47,11 +49,13 @@ public class CombatService : ICombatService
     /// <summary>
     /// Phase 144: Added IEventBus for publishing AttackExecutedEvent.
     /// Phase 144: Added null validation for required parameters.
+    /// Phase 151: Added ICardSyncService for SourceCard conversion in ability contexts.
     /// </summary>
     public CombatService(
         ICardCollectionService cardCollectionService,
         IPlayerStatusProvider playerStatusProvider,
         IAbilityExecutor abilityExecutor,
+        ICardSyncService cardSyncService,
         IEventBus eventBus,
         Transform canvas)
     {
@@ -59,6 +63,7 @@ public class CombatService : ICombatService
         _cardCollectionService = cardCollectionService ?? throw new System.ArgumentNullException(nameof(cardCollectionService));
         _playerStatusProvider = playerStatusProvider ?? throw new System.ArgumentNullException(nameof(playerStatusProvider));
         _abilityExecutor = abilityExecutor ?? throw new System.ArgumentNullException(nameof(abilityExecutor));
+        _cardSyncService = cardSyncService; // Optional - null check on use (for test compatibility)
         _eventBus = eventBus; // Optional - null check on use
         _canvas = canvas; // Optional - can be null in tests
     }
@@ -151,6 +156,7 @@ public class CombatService : ICombatService
     /// <summary>
     /// Executes special action abilities on the attacker card.
     /// Phase 118: Uses ModernAbilities with OnAction trigger.
+    /// Phase 151: Now uses linked domain Card for proper ability context.
     /// </summary>
     public void UseSpecialAction()
     {
@@ -161,7 +167,8 @@ public class CombatService : ICombatService
         var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
 
         // Phase 118: Execute modern abilities that are actions
-        var context = CreateAbilityContext(Attacker, playerCards);
+        // Phase 151: Create linked domain Card for proper ability context
+        var (context, domainCard) = CreateAbilityContext(Attacker, playerCards);
         // Phase 148: Added null-coalescing to prevent NullReferenceException
         foreach (var ability in Attacker.ModernAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
         {
@@ -171,11 +178,15 @@ public class CombatService : ICombatService
                 ability.Execute(context);
             }
         }
+
+        // Phase 151: Sync state changes back to InGameInvocationCard
+        SyncCardStateIfNeeded(domainCard);
     }
 
     /// <summary>
     /// Checks if the attacker has any actionable abilities.
     /// Phase 118: Uses ModernAbilities for action check.
+    /// Phase 151: Now uses linked domain Card for proper ability context.
     /// </summary>
     public bool IsSpecialActionPossible()
     {
@@ -186,8 +197,9 @@ public class CombatService : ICombatService
             return false;
 
         // Phase 118: Check if any modern ability can activate
+        // Phase 151: Create linked domain Card for proper ability context
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
-        var context = CreateAbilityContext(Attacker, playerCards);
+        var (context, _) = CreateAbilityContext(Attacker, playerCards);
 
         // Phase 148: Added null-safe check to prevent NullReferenceException
         return Attacker.ModernAbilities?.Any(ability => ability.CanActivate(context)) ?? false;
@@ -199,6 +211,7 @@ public class CombatService : ICombatService
     /// Handles combat between two invocation cards.
     /// Phase 118: Moved combat logic from legacy Ability class.
     /// Phase 144: Added AttackExecutedEvent publishing.
+    /// Phase 151: Now uses linked domain Cards for proper ability context.
     /// </summary>
     private void HandleAttackOverInvocation()
     {
@@ -208,12 +221,15 @@ public class CombatService : ICombatService
         var opponentStatus = _playerStatusProvider.GetOpponentPlayerStatus();
 
         // Phase 118: Execute modern abilities with OnDefend trigger for defender
-        var defenderContext = CreateAbilityContext(Opponent, opponentCards);
+        // Phase 151: Create linked domain Cards for proper ability context
+        var (defenderContext, defenderDomainCard) = CreateAbilityContext(Opponent, opponentCards);
         ExecuteModernAbilities(Opponent.ModernAbilities, AbilityTrigger.OnDefend, defenderContext);
+        SyncCardStateIfNeeded(defenderDomainCard);
 
         // Phase 118: Execute modern abilities with OnAttack trigger for attacker
-        var attackerContext = CreateAbilityContext(Attacker, playerCards);
+        var (attackerContext, attackerDomainCard) = CreateAbilityContext(Attacker, playerCards);
         ExecuteModernAbilities(Attacker.ModernAbilities, AbilityTrigger.OnAttack, attackerContext);
+        SyncCardStateIfNeeded(attackerDomainCard);
 
         // Phase 118: Calculate and apply combat damage (moved from Ability.OnCardAttacked)
         float resultAttack = Opponent.Defense - Attacker.Attack;
@@ -247,23 +263,46 @@ public class CombatService : ICombatService
     /// <summary>
     /// Creates an AbilityContext for modern ability execution.
     /// Phase 118: Added for modern ability migration.
+    /// Phase 151: Now creates linked domain Card via CardSyncService for proper ability execution.
     /// </summary>
-    private AbilityContext CreateAbilityContext(InGameInvocationCard card, PlayerCards playerCards)
+    private (AbilityContext context, DomainCard domainCard) CreateAbilityContext(InGameInvocationCard card, PlayerCards playerCards)
     {
         var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         var ownerId = PlayerId.FromCardOwner(owner);
         var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
-        return new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+
+        // Phase 151: Create linked domain Card for proper ability context
+        Card domainCard = null;
+        if (_cardSyncService != null && card != null)
+        {
+            domainCard = _cardSyncService.CreateLinkedCard(card);
+        }
+
+        return (new AbilityContext(ownerId, opponentId, domainCard, JDG.Domain.AbilityName.Default), domainCard);
+    }
+
+    /// <summary>
+    /// Syncs domain card state back to the InGame card after ability execution.
+    /// Phase 151: Added to ensure ability modifications are reflected in game state.
+    /// </summary>
+    private void SyncCardStateIfNeeded(DomainCard domainCard)
+    {
+        if (_cardSyncService != null && domainCard != null)
+        {
+            _cardSyncService.SyncCardState(domainCard);
+        }
     }
 
     /// <summary>
     /// Executes modern abilities with the specified trigger.
     /// Phase 118: Added for modern ability migration.
+    /// Phase 152: Added null-coalescing to prevent NullReferenceException.
     /// </summary>
     private void ExecuteModernAbilities(List<IAbility> abilities, AbilityTrigger trigger, AbilityContext context)
     {
-        foreach (var ability in abilities)
+        // Phase 152: Added null-coalescing to prevent NullReferenceException
+        foreach (var ability in abilities ?? System.Linq.Enumerable.Empty<IAbility>())
         {
             if (ability is IPassiveAbility passiveAbility && passiveAbility.Trigger == trigger)
             {
@@ -355,6 +394,7 @@ public class CombatService : ICombatService
     /// <summary>
     /// Checks if a card is protected from destruction by equipment.
     /// Phase 118: Moved from legacy Ability class.
+    /// Phase 151: Now uses linked domain Card for proper ability context.
     /// </summary>
     private bool IsEquipmentCardProtected(InGameInvocationCard card, PlayerCards playerCards)
     {
@@ -363,11 +403,8 @@ public class CombatService : ICombatService
             return false;
 
         // Check if any equipment ability prevents destruction
-        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
-        var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
-        var opponentId = PlayerId.FromCardOwner(opponentOwner);
-        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+        // Phase 151: Create linked domain Card for proper ability context
+        var (context, _) = CreateAbilityContext(card, playerCards);
 
         // Phase 148: Added null-coalescing to prevent NullReferenceException
         return (equipmentCard.ModernEquipmentAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
@@ -378,6 +415,7 @@ public class CombatService : ICombatService
     /// <summary>
     /// Handles card death logic including equipment removal and graveyard placement.
     /// Phase 118: Moved from legacy Ability class.
+    /// Phase 151: Now uses linked domain Card for proper ability context.
     /// </summary>
     /// <returns>True if the card actually died, false if it was protected.</returns>
     private bool HandleCardDeath(
@@ -394,11 +432,8 @@ public class CombatService : ICombatService
         if (equipmentCard != null)
         {
             // Execute OnUnequip abilities
-            var owner = ownerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
-            var ownerId = PlayerId.FromCardOwner(owner);
-            var opponentOwner = ownerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
-            var opponentId = PlayerId.FromCardOwner(opponentOwner);
-            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+            // Phase 151: Create linked domain Card for proper ability context
+            var (context, domainCard) = CreateAbilityContext(deadCard, ownerCards);
 
             // Phase 148: Added null-coalescing to prevent NullReferenceException
             foreach (var ability in equipmentCard.ModernEquipmentAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
@@ -411,6 +446,9 @@ public class CombatService : ICombatService
                     }
                 }
             }
+
+            // Phase 151: Sync state changes back to InGameInvocationCard
+            SyncCardStateIfNeeded(domainCard);
 
             ownerCards.YellowCards.Add(equipmentCard);
             deadCard.EquipmentCard = null;

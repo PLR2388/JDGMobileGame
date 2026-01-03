@@ -295,7 +295,8 @@ namespace JDG.DI
             var player1CardManager = playerCardManagers[0];
             var player2CardManager = playerCardManagers[1];
 
-            // ITurnService - depends on GameStateService, PlayerCardManagers, IPlayerStatusProvider, Transform
+            // ITurnService - depends on GameStateService, PlayerCardManagers, IPlayerStatusProvider, ICardSyncService, Transform
+            // Phase 151: Added ICardSyncService for SourceCard conversion in ability contexts
             builder.Register<ITurnService>(container =>
             {
                 return new TurnService(
@@ -303,6 +304,7 @@ namespace JDG.DI
                     player1CardManager,
                     player2CardManager,
                     container.Resolve<IPlayerStatusProvider>(),
+                    container.Resolve<ICardSyncService>(),
                     container.Resolve<Transform>()
                 );
             }, Lifetime.Scoped);

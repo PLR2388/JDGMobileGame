@@ -3,8 +3,11 @@ using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using JDG.Application.Abilities;
+using JDG.Application.Services;
 using JDG.Domain;
+using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
+using DomainCard = JDG.Domain.Entities.Card;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 
@@ -20,6 +23,7 @@ using UnityEngine;
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 115: Updated to use modern IAbility for effect cards.
 /// Phase 118: Uses only ModernAbilities for all card types.
+/// Phase 151: Added ICardSyncService for SourceCard conversion in ability contexts.
 /// </summary>
 public class TurnService : ITurnService
 {
@@ -27,6 +31,7 @@ public class TurnService : ITurnService
     private readonly PlayerCardManager _player1CardManager;
     private readonly PlayerCardManager _player2CardManager;
     private readonly IPlayerStatusProvider _playerStatusProvider;
+    private readonly ICardSyncService _cardSyncService;
     private readonly Transform _canvas;
 
     public TurnService(
@@ -34,12 +39,14 @@ public class TurnService : ITurnService
         PlayerCardManager player1CardManager,
         PlayerCardManager player2CardManager,
         IPlayerStatusProvider playerStatusProvider,
+        ICardSyncService cardSyncService,
         Transform canvas)
     {
         _gameStateService = gameStateService;
         _player1CardManager = player1CardManager;
         _player2CardManager = player2CardManager;
         _playerStatusProvider = playerStatusProvider;
+        _cardSyncService = cardSyncService; // Phase 151: For ability context card conversion
         _canvas = canvas;
     }
 
@@ -94,20 +101,17 @@ public class TurnService : ITurnService
 
     /// <summary>
     /// Phase 118: Uses only ModernAbilities for invocation cards.
+    /// Phase 151: Now uses linked domain Card for proper ability context.
     /// </summary>
     private void ApplyInvocationOnTurnStart(
         System.Collections.Generic.List<InGameInvocationCard> invocationCards,
         PlayerCards playerCards,
         PlayerCards opponentCards)
     {
-        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
-        var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
-        var opponentId = PlayerId.FromCardOwner(opponentOwner);
-
         foreach (var invocationCard in invocationCards)
         {
-            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+            // Phase 151: Create linked domain Card for proper ability context
+            var (context, domainCard) = CreateAbilityContext(invocationCard, playerCards);
 
             // Phase 118: Use modern abilities with OnTurnStart trigger for invocations
             // Phase 148: Added null-coalescing to prevent NullReferenceException
@@ -122,19 +126,20 @@ public class TurnService : ITurnService
                 }
             }
 
+            // Phase 151: Sync state changes back to InGameInvocationCard
+            SyncCardStateIfNeeded(domainCard);
+
             // Equipment abilities
             if (invocationCard.EquipmentCard != null)
             {
-                var equipContext = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
-
                 // Phase 148: Added null-coalescing to prevent NullReferenceException
                 foreach (var ability in invocationCard.EquipmentCard.ModernEquipmentAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
                 {
                     if (ability is IPassiveAbility equipPassive && equipPassive.Trigger == AbilityTrigger.OnTurnStart)
                     {
-                        if (ability.CanActivate(equipContext))
+                        if (ability.CanActivate(context))
                         {
-                            ability.Execute(equipContext);
+                            ability.Execute(context);
                         }
                     }
                 }
@@ -143,7 +148,41 @@ public class TurnService : ITurnService
     }
 
     /// <summary>
+    /// Creates an AbilityContext for modern ability execution.
+    /// Phase 151: Added to create linked domain Card for proper ability execution.
+    /// </summary>
+    private (AbilityContext context, DomainCard domainCard) CreateAbilityContext(InGameInvocationCard card, PlayerCards playerCards)
+    {
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+
+        // Phase 151: Create linked domain Card for proper ability context
+        Card domainCard = null;
+        if (_cardSyncService != null && card != null)
+        {
+            domainCard = _cardSyncService.CreateLinkedCard(card);
+        }
+
+        return (new AbilityContext(ownerId, opponentId, domainCard, JDG.Domain.AbilityName.Default), domainCard);
+    }
+
+    /// <summary>
+    /// Syncs domain card state back to the InGame card after ability execution.
+    /// Phase 151: Added to ensure ability modifications are reflected in game state.
+    /// </summary>
+    private void SyncCardStateIfNeeded(DomainCard domainCard)
+    {
+        if (_cardSyncService != null && domainCard != null)
+        {
+            _cardSyncService.SyncCardState(domainCard);
+        }
+    }
+
+    /// <summary>
     /// Phase 115: Updated to use modern IAbility with AbilityTrigger.OnTurnStart.
+    /// Phase 151: Effect abilities don't require SourceCard since they don't reference themselves.
     /// </summary>
     private void ApplyEffectOnTurnStart(
         System.Collections.Generic.List<InGameEffectCard> effectCards,
@@ -152,16 +191,12 @@ public class TurnService : ITurnService
         PlayerStatus opponentStatus,
         PlayerCards opponentCards)
     {
-        // Phase 115: Use modern abilities with IPassiveAbility.Trigger check
-        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
-        var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
-        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        // Phase 151: Create simple context for effect cards (no SourceCard needed)
+        // Effect abilities operate on game state, not on themselves
+        var context = CreateSimpleContext(playerCards);
 
         foreach (var effectCard in effectCards)
         {
-            var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
-
             // Phase 148: Added null-coalescing to prevent NullReferenceException
             foreach (var ability in effectCard.ModernEffectAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
             {
@@ -179,18 +214,16 @@ public class TurnService : ITurnService
 
     /// <summary>
     /// Phase 116: Updated to use modern IAbility with AbilityTrigger.OnTurnStart.
+    /// Phase 151: Field abilities don't require SourceCard since they don't reference themselves.
     /// </summary>
     private void ApplyFieldOnTurnStart(PlayerCards playerCards, PlayerStatus playerStatus)
     {
         if (playerCards.FieldCard == null)
             return;
 
-        // Phase 116: Use modern abilities with IPassiveAbility.Trigger check
-        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
-        var ownerId = PlayerId.FromCardOwner(owner);
-        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
-        var opponentId = PlayerId.FromCardOwner(opponentOwner);
-        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+        // Phase 151: Create simple context for field cards (no SourceCard needed)
+        // Field abilities provide passive boosts, don't need to reference themselves
+        var context = CreateSimpleContext(playerCards);
 
         // Phase 148: Added null-coalescing to prevent NullReferenceException
         foreach (var ability in playerCards.FieldCard.ModernFieldAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
@@ -204,5 +237,18 @@ public class TurnService : ITurnService
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Creates a simple AbilityContext without a linked card.
+    /// Phase 151: Used for effect/field abilities that don't need SourceCard.
+    /// </summary>
+    private AbilityContext CreateSimpleContext(PlayerCards playerCards)
+    {
+        var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        var ownerId = PlayerId.FromCardOwner(owner);
+        var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
+        var opponentId = PlayerId.FromCardOwner(opponentOwner);
+        return new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
     }
 }
