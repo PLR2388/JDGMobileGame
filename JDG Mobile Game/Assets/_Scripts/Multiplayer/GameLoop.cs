@@ -10,6 +10,7 @@ using Sound;
 using UnityEngine;
 using VContainer;
 using JDG.Application;
+using JDG.Application.Abilities;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Services;
@@ -71,6 +72,9 @@ public class GameLoop : MonoBehaviour
     // Phase 136: ICanvasProvider instead of SerializeField canvasTransform
     protected ICanvasProvider _canvasProvider;
 
+    // Phase 141: IAbilityExecutor for equipment ability execution with sync
+    protected IAbilityExecutor _abilityExecutor;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
@@ -81,6 +85,7 @@ public class GameLoop : MonoBehaviour
     /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
     /// Phase 127: Removed UIManager, added ICardVisualService for presenters.
     /// Phase 136: Added ICanvasProvider to replace SerializeField canvasTransform.
+    /// Phase 141: Added IAbilityExecutor for equipment ability execution with sync.
     /// </summary>
     [Inject]
     public void Construct(
@@ -100,7 +105,8 @@ public class GameLoop : MonoBehaviour
         IAudioService audioService,
         ISceneLoaderService sceneLoaderService,
         ICardVisualService cardVisualService,
-        ICanvasProvider canvasProvider)
+        ICanvasProvider canvasProvider,
+        IAbilityExecutor abilityExecutor)
     {
         _eventBus = eventBus;
         _gameStateService = gameStateService;
@@ -119,6 +125,7 @@ public class GameLoop : MonoBehaviour
         _sceneLoaderService = sceneLoaderService;
         _cardVisualService = cardVisualService;
         _canvasProvider = canvasProvider;
+        _abilityExecutor = abilityExecutor;
     }
 
     // Start is called before the first frame update

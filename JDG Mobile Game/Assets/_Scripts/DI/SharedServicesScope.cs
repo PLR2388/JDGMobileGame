@@ -149,6 +149,10 @@ namespace JDG.DI
 
             // Card State Services (Phase 71+)
             builder.Register<ICardStateService, CardStateService>(Lifetime.Singleton);
+
+            // Phase 141: Card sync service for syncing domain Card changes back to InGameInvocationCard
+            builder.Register<ICardSyncService, CardSyncService>(Lifetime.Singleton);
+
             builder.Register<IAbilityExecutor, AbilityExecutorAdapter>(Lifetime.Singleton);
 
             // ============================================

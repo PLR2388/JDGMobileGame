@@ -287,6 +287,7 @@ namespace OnePlayer
         
         /// <summary>
         /// Equips the specified invocation card with the given equipment.
+        /// Phase 141: Now uses IAbilityExecutor with ICardSyncService for proper stat sync.
         /// </summary>
         /// <param name="putCard">Card data for equipment and invocation card.</param>
         /// <param name="playerCards">Current player's card details.</param>
@@ -301,50 +302,14 @@ namespace OnePlayer
 
             if (equipmentCard == null || invocationCard == null) return;
 
+            // Phase 141: Execute equipment abilities via IAbilityExecutor
+            // This uses ICardSyncService internally to sync domain Card changes back to InGameInvocationCard
+            var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
+            _abilityExecutor.ExecuteOnEquipmentAttached(equipmentCard, invocationCard, playerCards, opponentCards);
+
+            // Attach equipment and remove from hand
             invocationCard.SetEquipmentCard(equipmentCard);
             playerCards.HandCards.Remove(equipmentCard);
-
-            // Phase 150: Apply equipment stat bonuses directly to InGameInvocationCard
-            // The modern ability system uses domain Card objects that don't sync back to InGameInvocationCard.
-            // Until that architecture is fixed, we apply stat bonuses directly here.
-            foreach (var ability in equipmentCard.ModernEquipmentAbilities)
-            {
-                if (ability is JDG.Application.Abilities.Implementations.BonusStatsEquipmentAbility bonusAbility)
-                {
-                    // Use reflection to get the bonus values, or we can check ability description
-                    // For now, apply based on known equipment abilities
-                    ApplyEquipmentAbilityToCard(ability, invocationCard);
-                }
-                else if (ability is JDG.Application.Abilities.Implementations.DirectAttackEquipmentAbility)
-                {
-                    invocationCard.CanDirectAttack = true;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Applies equipment ability effects directly to the invocation card.
-        /// Phase 150: Workaround for domain Card sync issue in ability system.
-        /// </summary>
-        private void ApplyEquipmentAbilityToCard(JDG.Application.Abilities.IAbility ability, InGameInvocationCard card)
-        {
-            // Parse the ability description to extract bonus values
-            // BonusStatsEquipmentAbility descriptions are formatted as "+X ATK / +Y DEF"
-            var description = ability.Description;
-            if (string.IsNullOrEmpty(description)) return;
-
-            // Match patterns like "+1 ATK / +1 DEF" or "+2 ATK / +0 DEF"
-            var match = System.Text.RegularExpressions.Regex.Match(description, @"([+-]?\d+)\s*ATK\s*/\s*([+-]?\d+)\s*DEF");
-            if (match.Success)
-            {
-                if (int.TryParse(match.Groups[1].Value, out int atkBonus) &&
-                    int.TryParse(match.Groups[2].Value, out int defBonus))
-                {
-                    card.Attack += atkBonus;
-                    card.Defense += defBonus;
-                    Debug.Log($"Applied equipment bonus to {card.Title}: +{atkBonus} ATK, +{defBonus} DEF. New stats: {card.Attack}/{card.Defense}");
-                }
-            }
         }
         
         /// <summary>

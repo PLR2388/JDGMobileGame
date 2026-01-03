@@ -16,6 +16,7 @@ namespace Services
     /// Phase 74: Created as part of UseCase migration.
     /// Phase 106: Updated to also execute modern IAbility implementations.
     /// Phase 118: Removed all legacy Ability references, uses only ModernAbilities.
+    /// Phase 141: Added ICardSyncService to sync domain Card changes to InGameInvocationCard.
     ///
     /// This adapter allows use cases to trigger abilities without coupling
     /// to concrete card types. It executes modern IAbility implementations
@@ -24,10 +25,12 @@ namespace Services
     public class AbilityExecutorAdapter : IAbilityExecutor
     {
         private readonly ICanvasProvider _canvasProvider;
+        private readonly ICardSyncService _cardSyncService;
 
-        public AbilityExecutorAdapter(ICanvasProvider canvasProvider)
+        public AbilityExecutorAdapter(ICanvasProvider canvasProvider, ICardSyncService cardSyncService)
         {
             _canvasProvider = canvasProvider;
+            _cardSyncService = cardSyncService;
         }
 
         #region Modern Ability Helpers
@@ -48,25 +51,9 @@ namespace Services
             return new AbilityContext(ownerId, opponentId, null, abilityName);
         }
 
-        /// <summary>
-        /// Converts an InGameCard to a domain Card for AbilityContext.
-        /// Phase 117: Added for equipment ability context setup.
-        /// Phase 118: Updated to use factory method and public properties only.
-        /// </summary>
-        private JDG.Domain.Entities.Card ConvertToCard(InGameCard sourceCard)
-        {
-            if (sourceCard == null) return null;
-
-            // Create a minimal Card entity for context purposes using factory method
-            // We use CreateEffect as it has minimal required parameters
-            return JDG.Domain.Entities.Card.CreateEffect(
-                JDG.Domain.ValueObjects.CardId.New(),
-                sourceCard.Title,
-                "", // Description not accessible
-                "", // DetailedDescription not accessible
-                null, // No abilities needed for context
-                sourceCard.Collector);
-        }
+        // Phase 141: Removed ConvertToCard - replaced by ICardSyncService.CreateLinkedCard
+        // The old method created a disconnected domain Card using CreateEffect (no stats),
+        // causing equipment ability stat modifications to be lost.
 
         /// <summary>
         /// Executes modern abilities that match the specified trigger.
@@ -122,6 +109,7 @@ namespace Services
         /// <summary>
         /// Executes abilities when a card is added to the field.
         /// Phase 118: Removed legacy ability calls, uses only ModernAbilities.
+        /// Phase 141: Added ICardSyncService for equipment ability state sync.
         /// </summary>
         public void ExecuteOnCardAddedToField(
             IInGameInvocationCard addedCard,
@@ -133,14 +121,20 @@ namespace Services
                 opponentCards is PlayerCards concreteOpponent)
             {
                 // 1. Trigger opponent's equipment abilities that react to new cards
+                // Phase 141: Use ICardSyncService to sync any changes to the added card
                 foreach (var opponentCard in concreteOpponent.InvocationCards)
                 {
                     var equipmentCard = opponentCard.EquipmentCard;
                     if (equipmentCard == null) continue;
 
                     var equipContext = CreateAbilityContext(equipmentCard, opponentCard.CardOwner);
-                    equipContext.TargetCard = ConvertToCard(concreteAdded);
+                    equipContext.TargetCard = _cardSyncService.CreateLinkedCard(addedCard);
+
                     ExecuteModernAbilities(equipmentCard.ModernEquipmentAbilities, AbilityTrigger.OnCardPlayed, equipContext);
+
+                    // Phase 141: Sync state changes back to the added InGameInvocationCard
+                    _cardSyncService.SyncCardState(equipContext.TargetCard);
+                    _cardSyncService.ClearMapping(equipContext.TargetCard);
                 }
 
                 // 2. Trigger existing invocation card abilities on same field
@@ -303,14 +297,20 @@ namespace Services
             if (playerCards is PlayerCards concretePlayer)
             {
                 // Phase 117: Uses only modern abilities with OnHandChange trigger
+                // Phase 141: Use ICardSyncService to sync domain Card changes back to InGameInvocationCard
                 foreach (var invocation in concretePlayer.InvocationCards)
                 {
                     if (invocation is InGameInvocationCard invocationCard &&
                         invocationCard.EquipmentCard != null)
                     {
                         var context = CreateAbilityContext(invocationCard.EquipmentCard, invocationCard.CardOwner);
-                        context.TargetCard = ConvertToCard(invocationCard);
+                        context.TargetCard = _cardSyncService.CreateLinkedCard(invocationCard);
+
                         ExecuteModernAbilities(invocationCard.EquipmentCard.ModernEquipmentAbilities, AbilityTrigger.OnHandChange, context);
+
+                        // Phase 141: Sync state changes back to InGameInvocationCard
+                        _cardSyncService.SyncCardState(context.TargetCard);
+                        _cardSyncService.ClearMapping(context.TargetCard);
                     }
                 }
             }
@@ -330,9 +330,15 @@ namespace Services
                 target is InGameInvocationCard concreteTarget)
             {
                 // Phase 117: Uses modern abilities with OnEquip trigger
+                // Phase 141: Use ICardSyncService to sync domain Card changes back to InGameInvocationCard
                 var context = CreateAbilityContext(concreteEquipment, concreteTarget.CardOwner);
-                context.TargetCard = ConvertToCard(concreteTarget);
+                context.TargetCard = _cardSyncService.CreateLinkedCard(target);
+
                 ExecuteModernAbilities(concreteEquipment.ModernEquipmentAbilities, AbilityTrigger.OnEquip, context);
+
+                // Phase 141: Sync state changes back to InGameInvocationCard
+                _cardSyncService.SyncCardState(context.TargetCard);
+                _cardSyncService.ClearMapping(context.TargetCard);
             }
         }
 
@@ -346,9 +352,15 @@ namespace Services
                 previousTarget is InGameInvocationCard concreteTarget)
             {
                 // Phase 117: Uses modern abilities with OnUnequip trigger
+                // Phase 141: Use ICardSyncService to sync domain Card changes back to InGameInvocationCard
                 var context = CreateAbilityContext(concreteEquipment, concreteTarget.CardOwner);
-                context.TargetCard = ConvertToCard(concreteTarget);
+                context.TargetCard = _cardSyncService.CreateLinkedCard(previousTarget);
+
                 ExecuteModernAbilities(concreteEquipment.ModernEquipmentAbilities, AbilityTrigger.OnUnequip, context);
+
+                // Phase 141: Sync state changes back to InGameInvocationCard
+                _cardSyncService.SyncCardState(context.TargetCard);
+                _cardSyncService.ClearMapping(context.TargetCard);
             }
         }
 
