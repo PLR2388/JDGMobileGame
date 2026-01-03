@@ -81,16 +81,17 @@ public class MainMenuAction : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the audio service, falling back to singleton wrapper if DI not available.
-    /// Phase 8: Temporary fallback during migration - allows use in scenes without VContainer.
+    /// Gets the audio service. Throws if DI not configured.
+    /// Phase 144: Removed fallback - DI must be properly configured.
     /// </summary>
     private IAudioService GetAudioService()
     {
-        if (_audioService != null)
-            return _audioService;
-
-        // Fallback for scenes without VContainer scope
-        // This allows gradual migration without breaking non-DI scenes
-        return new JDG.Infrastructure.Services.AudioService();
+        if (_audioService == null)
+        {
+            throw new System.InvalidOperationException(
+                "[MainMenuAction] IAudioService not injected. " +
+                "Ensure VContainer is configured and MainScreenScope calls InjectAllOfType<MainMenuAction>().");
+        }
+        return _audioService;
     }
 }

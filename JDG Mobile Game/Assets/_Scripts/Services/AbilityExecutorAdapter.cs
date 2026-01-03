@@ -27,10 +27,13 @@ namespace Services
         private readonly ICanvasProvider _canvasProvider;
         private readonly ICardSyncService _cardSyncService;
 
+        /// <summary>
+        /// Phase 144: Added null validation for required parameters.
+        /// </summary>
         public AbilityExecutorAdapter(ICanvasProvider canvasProvider, ICardSyncService cardSyncService)
         {
-            _canvasProvider = canvasProvider;
-            _cardSyncService = cardSyncService;
+            _canvasProvider = canvasProvider ?? throw new System.ArgumentNullException(nameof(canvasProvider));
+            _cardSyncService = cardSyncService ?? throw new System.ArgumentNullException(nameof(cardSyncService));
         }
 
         #region Modern Ability Helpers
@@ -129,6 +132,8 @@ namespace Services
 
                     var equipContext = CreateAbilityContext(equipmentCard, opponentCard.CardOwner);
                     equipContext.TargetCard = _cardSyncService.CreateLinkedCard(addedCard);
+                    // Phase 144: Skip if CreateLinkedCard returns null (card is not InGameInvocationCard)
+                    if (equipContext.TargetCard == null) continue;
 
                     ExecuteModernAbilities(equipmentCard.ModernEquipmentAbilities, AbilityTrigger.OnCardPlayed, equipContext);
 
@@ -318,6 +323,8 @@ namespace Services
                     {
                         var context = CreateAbilityContext(invocationCard.EquipmentCard, invocationCard.CardOwner);
                         context.TargetCard = _cardSyncService.CreateLinkedCard(invocationCard);
+                        // Phase 144: Skip if CreateLinkedCard returns null
+                        if (context.TargetCard == null) continue;
 
                         ExecuteModernAbilities(invocationCard.EquipmentCard.ModernEquipmentAbilities, AbilityTrigger.OnHandChange, context);
 
@@ -346,6 +353,8 @@ namespace Services
                 // Phase 141: Use ICardSyncService to sync domain Card changes back to InGameInvocationCard
                 var context = CreateAbilityContext(concreteEquipment, concreteTarget.CardOwner);
                 context.TargetCard = _cardSyncService.CreateLinkedCard(target);
+                // Phase 144: Return early if CreateLinkedCard returns null
+                if (context.TargetCard == null) return;
 
                 ExecuteModernAbilities(concreteEquipment.ModernEquipmentAbilities, AbilityTrigger.OnEquip, context);
 
@@ -368,6 +377,8 @@ namespace Services
                 // Phase 141: Use ICardSyncService to sync domain Card changes back to InGameInvocationCard
                 var context = CreateAbilityContext(concreteEquipment, concreteTarget.CardOwner);
                 context.TargetCard = _cardSyncService.CreateLinkedCard(previousTarget);
+                // Phase 144: Return early if CreateLinkedCard returns null
+                if (context.TargetCard == null) return;
 
                 ExecuteModernAbilities(concreteEquipment.ModernEquipmentAbilities, AbilityTrigger.OnUnequip, context);
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,7 +16,8 @@ using VContainer;
 /// </summary>
 public class CardSelectionManager : MonoBehaviour
 {
-    // Legacy UnityEvents - maintained for backward compatibility
+    // Legacy UnityEvents - intentionally maintained for backward compatibility with older UI code
+    // Phase 144: These will be removed once all subscribers migrate to EventBus
     public UnityEvent<InGameCard> CardSelected = new UnityEvent<InGameCard>();
     public UnityEvent<InGameCard> CardDeselected = new UnityEvent<InGameCard>();
     public UnityEvent SelectionChanged = new UnityEvent();
@@ -23,6 +25,11 @@ public class CardSelectionManager : MonoBehaviour
     // Phase 28: Delegate to service
     private ICardSelectionService _cardSelectionService;
     private IEventBus _eventBus;
+
+    // Phase 144: Store subscriptions for proper disposal
+    private IDisposable _cardAddedSubscription;
+    private IDisposable _cardRemovedSubscription;
+    private IDisposable _selectionChangedSubscription;
 
     /// <summary>
     /// VContainer method injection for dependencies.
@@ -35,9 +42,10 @@ public class CardSelectionManager : MonoBehaviour
         _eventBus = eventBus;
 
         // Subscribe to domain events and forward to UnityEvents for backward compatibility
-        _eventBus.Subscribe<CardAddedToSelectionEvent>(OnCardAddedToSelectionEvent);
-        _eventBus.Subscribe<CardRemovedFromSelectionEvent>(OnCardRemovedFromSelectionEvent);
-        _eventBus.Subscribe<CardSelectionChangedEvent>(OnCardSelectionChangedEvent);
+        // Phase 144: Store subscriptions for disposal in OnDestroy
+        _cardAddedSubscription = _eventBus.Subscribe<CardAddedToSelectionEvent>(OnCardAddedToSelectionEvent);
+        _cardRemovedSubscription = _eventBus.Subscribe<CardRemovedFromSelectionEvent>(OnCardRemovedFromSelectionEvent);
+        _selectionChangedSubscription = _eventBus.Subscribe<CardSelectionChangedEvent>(OnCardSelectionChangedEvent);
     }
 
     private void OnCardAddedToSelectionEvent(CardAddedToSelectionEvent evt)
@@ -124,8 +132,17 @@ public class CardSelectionManager : MonoBehaviour
         return _cardSelectionService.IsCardSelected(card);
     }
 
+    /// <summary>
+    /// Phase 144: Fixed - dispose EventBus subscriptions along with UnityEvents.
+    /// </summary>
     private void OnDestroy()
     {
+        // Phase 144: Dispose EventBus subscriptions
+        _cardAddedSubscription?.Dispose();
+        _cardRemovedSubscription?.Dispose();
+        _selectionChangedSubscription?.Dispose();
+
+        // Clean up legacy UnityEvents
         CardSelected.RemoveAllListeners();
         CardDeselected.RemoveAllListeners();
         SelectionChanged.RemoveAllListeners();

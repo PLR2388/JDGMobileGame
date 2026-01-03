@@ -4,6 +4,8 @@ using JDG.Domain.Events;
 using Sound;
 using UnityEngine;
 using VContainer;
+using DomainCardOwner = JDG.Domain.CardOwner;
+using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace Cards.FieldCards
 {
@@ -65,6 +67,7 @@ namespace Cards.FieldCards
         /// <summary>
         /// Places a field card onto the game field and applies its associated effects.
         /// Phase 6: Delegates to CardPlacementService.
+        /// Phase 144: Publishes CardPlayedEvent for ability triggers.
         /// </summary>
         /// <param name="fieldCard">The field card to be placed on the field.</param>
         private void PutFieldCard(InGameFieldCard fieldCard)
@@ -75,6 +78,15 @@ namespace Cards.FieldCards
             {
                 // Hide mini card menu on successful placement
                 miniCardMenu.SetActive(false);
+
+                // Phase 144: Publish CardPlayedEvent to trigger abilities
+                _eventBus.Publish(new CardPlayedEvent
+                {
+                    CardId = Guid.NewGuid(),
+                    Owner = (DomainCardOwner)(int)fieldCard.CardOwner,
+                    CardType = DomainCardType.Field,
+                    CardTitle = fieldCard.Title
+                });
             }
             // Note: No warning shown for field cards - original logic just returns silently
         }

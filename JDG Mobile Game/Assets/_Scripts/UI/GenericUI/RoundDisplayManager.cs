@@ -47,6 +47,19 @@ public class RoundDisplayManager : MonoBehaviour, IRoundDisplayView
 
     private void Start()
     {
+        // Phase 144: Null check for presenter in case Construct() wasn't called
+        if (_presenter == null)
+        {
+            Debug.LogError("[RoundDisplayManager] Presenter not initialized. Ensure Construct() was called via VContainer.");
+            return;
+        }
+
+        if (_gameStateService == null)
+        {
+            Debug.LogError("[RoundDisplayManager] GameStateService not injected.");
+            return;
+        }
+
         // Initialize presenter with current game state
         _presenter.Initialize(_gameStateService.CurrentPlayer, _gameStateService.CurrentPhase);
     }
@@ -102,6 +115,15 @@ public class RoundDisplayManager : MonoBehaviour, IRoundDisplayView
     }
 
     #endregion
+
+    /// <summary>
+    /// Cleanup method - disposes presenter to prevent memory leaks from EventBus subscriptions.
+    /// Phase 144: Added to fix memory leak identified in code audit.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _presenter?.Dispose();
+    }
 
     #region Legacy Public Methods (for backward compatibility)
 

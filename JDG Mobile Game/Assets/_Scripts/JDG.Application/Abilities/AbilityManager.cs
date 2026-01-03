@@ -9,12 +9,22 @@ namespace JDG.Application.Abilities
     /// <summary>
     /// Manages ability execution and passive ability triggers.
     /// Central orchestrator for the ability system.
+    /// Phase 144: Implements IDisposable for proper subscription cleanup.
     /// </summary>
-    public class AbilityManager
+    public class AbilityManager : IDisposable
     {
         private readonly AbilityRegistry _registry;
         private readonly IEventBus _eventBus;
         private readonly Dictionary<AbilityTrigger, List<IPassiveAbility>> _passiveAbilities;
+
+        // Phase 144: Store subscriptions for proper disposal
+        private IDisposable _cardPlayedSubscription;
+        private IDisposable _cardDestroyedSubscription;
+        private IDisposable _cardDrawnSubscription;
+        private IDisposable _phaseChangedSubscription;
+        private IDisposable _turnStartSubscription;
+        private IDisposable _turnEndSubscription;
+        private bool _disposed;
 
         public AbilityManager(AbilityRegistry registry, IEventBus eventBus)
         {
@@ -93,6 +103,7 @@ namespace JDG.Application.Abilities
 
         /// <summary>
         /// Triggers all passive abilities for a specific trigger.
+        /// Phase 144: Added try/catch to prevent one failed ability from stopping others.
         /// </summary>
         /// <param name="trigger">The trigger type</param>
         /// <param name="context">Context for ability execution</param>
@@ -102,29 +113,41 @@ namespace JDG.Application.Abilities
 
             foreach (var ability in abilities)
             {
-                if (ability.CanActivate(context))
+                // Phase 144: Wrap in try/catch so one failed ability doesn't stop others
+                try
                 {
-                    var result = ability.Execute(context);
-
-                    // Publish event for passive ability trigger
-                    _eventBus.Publish(new AbilityExecutedEvent
+                    if (ability.CanActivate(context))
                     {
-                        AbilityName = ability.Name,
-                        PlayerId = context.CurrentPlayerId.ToCardOwner(),
-                        IsSuccess = result.IsSuccess,
-                        Message = result.Message
-                    });
+                        var result = ability.Execute(context);
+
+                        // Publish event for passive ability trigger
+                        _eventBus.Publish(new AbilityExecutedEvent
+                        {
+                            AbilityName = ability.Name,
+                            PlayerId = context.CurrentPlayerId.ToCardOwner(),
+                            IsSuccess = result.IsSuccess,
+                            Message = result.Message
+                        });
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    // Log error but continue executing remaining abilities
+                    // Phase 144: Use Console.Error since JDG.Application is Unity-independent
+                    var abilityName = ability != null ? ability.Name.ToString() : "unknown";
+                    System.Console.Error.WriteLine($"[AbilityManager] Exception in ability '{abilityName}': {ex.Message}");
                 }
             }
         }
 
         /// <summary>
         /// Subscribes to game events to automatically trigger passive abilities.
+        /// Phase 144: Store subscriptions for disposal.
         /// </summary>
         private void SubscribeToGameEvents()
         {
             // OnCardPlayed -> OnSummon trigger
-            _eventBus.Subscribe<CardPlayedEvent>(evt =>
+            _cardPlayedSubscription = _eventBus.Subscribe<CardPlayedEvent>(evt =>
             {
                 // Create context from event (simplified - would need more info in practice)
                 var context = new AbilityContext(
@@ -138,7 +161,7 @@ namespace JDG.Application.Abilities
             });
 
             // OnCardDestroyed -> OnDeath trigger
-            _eventBus.Subscribe<CardDestroyedEvent>(evt =>
+            _cardDestroyedSubscription = _eventBus.Subscribe<CardDestroyedEvent>(evt =>
             {
                 var context = new AbilityContext(
                     PlayerId.FromCardOwner(evt.Owner),
@@ -151,7 +174,7 @@ namespace JDG.Application.Abilities
             });
 
             // OnCardDrawn -> OnCardDrawn trigger
-            _eventBus.Subscribe<CardDrawnEvent>(evt =>
+            _cardDrawnSubscription = _eventBus.Subscribe<CardDrawnEvent>(evt =>
             {
                 var context = new AbilityContext(
                     PlayerId.FromCardOwner(evt.Owner),
@@ -163,33 +186,45 @@ namespace JDG.Application.Abilities
                 TriggerPassiveAbilities(AbilityTrigger.OnCardDrawn, context);
             });
 
-            // PhaseChanged -> OnTurnStart/OnTurnEnd triggers
-            _eventBus.Subscribe<PhaseChangedEvent>(evt =>
+            // PhaseChanged -> Additional phase-based triggers (kept for backward compatibility)
+            _phaseChangedSubscription = _eventBus.Subscribe<PhaseChangedEvent>(evt =>
             {
-                if (evt.NewPhase == Phase.Draw)
-                {
-                    // Turn start
-                    var context = new AbilityContext(
-                        PlayerId.Player1, // Would need current player from event
-                        PlayerId.Player2,
-                        null,
-                        AbilityName.Default
-                    );
+                // Phase-specific logic if needed in the future
+                // Note: Turn start/end now handled by dedicated events below
+            });
 
-                    TriggerPassiveAbilities(AbilityTrigger.OnTurnStart, context);
-                }
-                else if (evt.NewPhase == Phase.End)
-                {
-                    // Turn end
-                    var context = new AbilityContext(
-                        PlayerId.Player1,
-                        PlayerId.Player2,
-                        null,
-                        AbilityName.Default
-                    );
+            // Phase 144: TurnStartEvent -> OnTurnStart trigger with proper player info
+            _turnStartSubscription = _eventBus.Subscribe<TurnStartEvent>(evt =>
+            {
+                var currentPlayerId = PlayerId.FromCardOwner(evt.CurrentPlayer);
+                var opponentId = PlayerId.FromCardOwner(
+                    evt.CurrentPlayer == CardOwner.Player1 ? CardOwner.Player2 : CardOwner.Player1);
 
-                    TriggerPassiveAbilities(AbilityTrigger.OnTurnEnd, context);
-                }
+                var context = new AbilityContext(
+                    currentPlayerId,
+                    opponentId,
+                    null,
+                    AbilityName.Default
+                );
+
+                TriggerPassiveAbilities(AbilityTrigger.OnTurnStart, context);
+            });
+
+            // Phase 144: TurnEndEvent -> OnTurnEnd trigger with proper player info
+            _turnEndSubscription = _eventBus.Subscribe<TurnEndEvent>(evt =>
+            {
+                var currentPlayerId = PlayerId.FromCardOwner(evt.CurrentPlayer);
+                var opponentId = PlayerId.FromCardOwner(
+                    evt.CurrentPlayer == CardOwner.Player1 ? CardOwner.Player2 : CardOwner.Player1);
+
+                var context = new AbilityContext(
+                    currentPlayerId,
+                    opponentId,
+                    null,
+                    AbilityName.Default
+                );
+
+                TriggerPassiveAbilities(AbilityTrigger.OnTurnEnd, context);
             });
         }
 
@@ -199,6 +234,23 @@ namespace JDG.Application.Abilities
         public IReadOnlyList<IPassiveAbility> GetPassiveAbilitiesForTrigger(AbilityTrigger trigger)
         {
             return _passiveAbilities[trigger].AsReadOnly();
+        }
+
+        /// <summary>
+        /// Phase 144: Disposes all EventBus subscriptions to prevent memory leaks.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed) return;
+
+            _cardPlayedSubscription?.Dispose();
+            _cardDestroyedSubscription?.Dispose();
+            _cardDrawnSubscription?.Dispose();
+            _phaseChangedSubscription?.Dispose();
+            _turnStartSubscription?.Dispose();
+            _turnEndSubscription?.Dispose();
+
+            _disposed = true;
         }
     }
 }

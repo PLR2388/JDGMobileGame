@@ -87,12 +87,21 @@ public class CardDisplay : MonoBehaviour
     /// Initializes the card. If the Card exists and InGameCard doesn't, a new InGameCard is created.
     /// If Card doesn't exist but InGameCard does, the base card of the InGameCard is set as the Card.
     /// Phase 62: Uses ICardFactory instead of static CardFactory.CreateInGameCard.
+    /// Phase 144: Added null check after cast.
     /// </summary>
     private void InitializeCard()
     {
         if (Card != null && InGameCard == null)
         {
-            InGameCard = _cardFactory?.CreateCard(Card, JDG.Domain.CardOwner.NotDefined) as InGameCard;
+            var createdCard = _cardFactory?.CreateCard(Card, JDG.Domain.CardOwner.NotDefined);
+            if (createdCard is InGameCard inGameCard)
+            {
+                InGameCard = inGameCard;
+            }
+            else if (_cardFactory != null)
+            {
+                Debug.LogWarning($"[CardDisplay] Failed to create InGameCard for {Card?.Title}. Factory returned: {createdCard?.GetType().Name ?? "null"}");
+            }
         }
         else if (Card == null && InGameCard != null)
         {

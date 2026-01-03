@@ -72,10 +72,12 @@ namespace JDG.PlayMode.Tests
             _mockPlayerStatusProvider.GetCurrentPlayerStatus().Returns(_currentPlayerStatus);
             _mockPlayerStatusProvider.GetOpponentPlayerStatus().Returns(_opponentPlayerStatus);
 
+            // Phase 144: Pass IEventBus to CombatService constructor
             _combatService = new CombatService(
                 _mockCardCollectionService,
                 _mockPlayerStatusProvider,
                 _mockAbilityExecutor,
+                mockEventBus,
                 _canvas);
         }
 

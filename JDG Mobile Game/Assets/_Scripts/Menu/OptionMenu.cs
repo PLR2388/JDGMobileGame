@@ -64,15 +64,18 @@ namespace Menu
         }
 
         /// <summary>
-        /// Gets the audio service, falling back to singleton wrapper if DI not available.
-        /// Phase 8: Temporary fallback during migration.
+        /// Gets the audio service. Throws if DI not configured.
+        /// Phase 144: Removed fallback - DI must be properly configured.
         /// </summary>
         private IAudioService GetAudioService()
         {
-            if (_audioService != null)
-                return _audioService;
-
-            return new JDG.Infrastructure.Services.AudioService();
+            if (_audioService == null)
+            {
+                throw new System.InvalidOperationException(
+                    "[OptionMenu] IAudioService not injected. " +
+                    "Ensure VContainer is configured and OptionMenu is injected via LifetimeScope.");
+            }
+            return _audioService;
         }
     }
 }

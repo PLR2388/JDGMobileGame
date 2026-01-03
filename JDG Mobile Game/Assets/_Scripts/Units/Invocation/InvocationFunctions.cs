@@ -6,6 +6,8 @@ using JDG.Domain.Events;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
+using DomainCardOwner = JDG.Domain.CardOwner;
+using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace _Scripts.Cards.InvocationCards
 {
@@ -110,13 +112,25 @@ namespace _Scripts.Cards.InvocationCards
         /// Places the invocation card on the field and applies its effect.
         /// Phase 6: Delegates to CardPlacementService.
         /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
+        /// Phase 144: Publishes CardPlayedEvent for OnSummon ability triggers.
         /// </summary>
         /// <param name="invocationCard">The invocation card to place on the field.</param>
         private void PutInvocationCard(InGameInvocationCard invocationCard)
         {
             bool success = _cardPlacementService.PlaceInvocationCard(invocationCard, canvas);
 
-            if (!success)
+            if (success)
+            {
+                // Phase 144: Publish CardPlayedEvent to trigger OnSummon abilities
+                _eventBus.Publish(new CardPlayedEvent
+                {
+                    CardId = Guid.NewGuid(), // Unique ID for this play event
+                    Owner = (DomainCardOwner)(int)invocationCard.CardOwner,
+                    CardType = DomainCardType.Invocation,
+                    CardTitle = invocationCard.Title
+                });
+            }
+            else
             {
                 // Show warning if field is full (4 invocations max)
                 // Phase 34: Use injected ILocalizationService

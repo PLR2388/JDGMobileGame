@@ -27,21 +27,24 @@ namespace JDG.Application.Services
         int MultipleSelectionLimit { get; set; }
 
         /// <summary>
-        /// Selects a card. Publishes CardSelectedEvent.
+        /// Selects a card. Publishes CardAddedToSelectionEvent and CardSelectionChangedEvent.
         /// In single selection mode, clears previous selection first.
+        /// Phase 144: Fixed documentation to match actual implementation.
         /// </summary>
         /// <param name="card">The card to select</param>
         void SelectCard(object card);
 
         /// <summary>
-        /// Unselects a card. Publishes CardDeselectedEvent if card was selected.
+        /// Unselects a card. Publishes CardRemovedFromSelectionEvent and CardSelectionChangedEvent if card was selected.
+        /// Phase 144: Fixed documentation to match actual implementation.
         /// </summary>
         /// <param name="card">The card to unselect</param>
         void UnselectCard(object card);
 
         /// <summary>
         /// Clears all selected cards.
-        /// Publishes CardDeselectedEvent for each card.
+        /// Publishes CardRemovedFromSelectionEvent and CardSelectionChangedEvent for each card.
+        /// Phase 144: Fixed documentation to match actual implementation.
         /// </summary>
         void ClearSelection();
 

@@ -2,16 +2,13 @@ using System;
 using Cards;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using VContainer;
 using JDG.Application;
 using JDG.Domain.Events;
 
-[System.Serializable]
-public class CardSelectedEvent : UnityEvent<InGameCard>
-{
-}
+// Phase 144: Removed dead CardSelectedEvent : UnityEvent<InGameCard> class
+// (was never instantiated, superseded by EventBus CardSelectedEvent struct)
 
 [RequireComponent(typeof(Image))]
 public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
@@ -142,11 +139,15 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     /// <summary>
     /// Update the number displayed on the card.
     /// Phase 121: Now called from OnCardNumbered EventBus handler.
+    /// Phase 144: Added null checks to prevent NullReferenceException.
     /// </summary>
     /// <param name="cardToModify">The card to modify.</param>
     /// <param name="numberToApply">The number to display on the card.</param>
     private void UpdateNumberOnCard(InGameCard cardToModify, int numberToApply)
     {
+        // Phase 144: Add null checks
+        if (card == null || cardToModify == null) return;
+
         if (card.Title == cardToModify.Title)
         {
             number = numberToApply;

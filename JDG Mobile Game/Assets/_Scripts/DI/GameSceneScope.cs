@@ -4,6 +4,8 @@ using Cards.FieldCards;
 using Cards.EffectCards;
 using Cards.EquipmentCards;
 using Cards.InvocationCards;
+using JDG.Application;
+using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Infrastructure.Services;
 using OnePlayer;
@@ -156,6 +158,21 @@ namespace JDG.DI
 
             // ICardCollectionService - requires PlayerCardManager from scene
             builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Scoped);
+
+            // Phase 144: Override ICardFactory from parent scope with scene-scoped version
+            // This allows CardFactory to access ICardCollectionService which is only available here
+            builder.Register<ICardFactory>(container =>
+            {
+                return new CardFactory(
+                    container.Resolve<IEventBus>(),
+                    container.Resolve<ICardCollectionService>(),
+                    container.Resolve<IAbilityProvider>(),
+                    container.Resolve<IFieldAbilityProvider>(),
+                    container.Resolve<IEquipmentAbilityProvider>(),
+                    container.Resolve<IEffectAbilityProvider>(),
+                    container.Resolve<IConditionProvider>()
+                );
+            }, Lifetime.Scoped);
 
             // IPlayerStatusProvider - requires PlayerManager from scene
             var playerManager = FindFirstObjectByType<PlayerManager>();
@@ -330,6 +347,27 @@ namespace JDG.DI
             }
             if (components.Length > 0)
                 Debug.Log($"GameSceneScope: Injected {components.Length} {typeof(T).Name}");
+        }
+
+        /// <summary>
+        /// Phase 144: Clear canvas reference on scene unload to prevent stale references.
+        /// </summary>
+        protected override void OnDestroy()
+        {
+            Debug.Log("GameSceneScope: OnDestroy called");
+
+            // Clear canvas reference from singleton service
+            try
+            {
+                var canvasProvider = Container?.Resolve<CanvasProviderService>();
+                canvasProvider?.ClearCanvas();
+            }
+            catch (System.Exception)
+            {
+                // Container might already be disposed, which is fine
+            }
+
+            base.OnDestroy();
         }
     }
 }

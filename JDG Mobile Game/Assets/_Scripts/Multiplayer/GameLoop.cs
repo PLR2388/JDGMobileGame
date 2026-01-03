@@ -75,6 +75,13 @@ public class GameLoop : MonoBehaviour
     // Phase 141: IAbilityExecutor for equipment ability execution with sync
     protected IAbilityExecutor _abilityExecutor;
 
+    // Phase 144: Store subscriptions for proper disposal
+    private IDisposable _longTouchSubscription;
+    private IDisposable _touchStartedSubscription;
+    private IDisposable _touchEndedSubscription;
+    private IDisposable _backPressedSubscription;
+    private IDisposable _gameOverSubscription;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
@@ -139,10 +146,13 @@ public class GameLoop : MonoBehaviour
         _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton, _localizationService, _dialogService);
 
         // Subscribe to EventBus events instead of static UnityEvents
-        _eventBus.Subscribe<LongTouchEvent>(OnLongTouch);
-        _eventBus.Subscribe<TouchStartedEvent>(OnTouch);
-        _eventBus.Subscribe<TouchEndedEvent>(OnReleaseTouch);
-        _eventBus.Subscribe<BackButtonPressedEvent>(OnBackPressed);
+        // Phase 144: Store subscriptions for disposal in OnDestroy
+        _longTouchSubscription = _eventBus.Subscribe<LongTouchEvent>(OnLongTouch);
+        _touchStartedSubscription = _eventBus.Subscribe<TouchStartedEvent>(OnTouch);
+        _touchEndedSubscription = _eventBus.Subscribe<TouchEndedEvent>(OnReleaseTouch);
+        _backPressedSubscription = _eventBus.Subscribe<BackButtonPressedEvent>(OnBackPressed);
+        // Phase 144: Subscribe to GameOverEvent to handle game ending
+        _gameOverSubscription = _eventBus.Subscribe<GameOverEvent>(OnGameOver);
 
         // Defer Draw() to next frame to ensure all Start() methods complete first.
         // This fixes the race condition where Draw() might run before PlayerCards.Start()
@@ -160,10 +170,16 @@ public class GameLoop : MonoBehaviour
         Draw();
     }
 
+    /// <summary>
+    /// Phase 144: Fixed - subscriptions must be manually disposed.
+    /// </summary>
     protected virtual void OnDestroy()
     {
-        // EventBus subscriptions are automatically managed
-        // No manual cleanup needed
+        _longTouchSubscription?.Dispose();
+        _touchStartedSubscription?.Dispose();
+        _touchEndedSubscription?.Dispose();
+        _backPressedSubscription?.Dispose();
+        _gameOverSubscription?.Dispose();
     }
 
     #region UI Interaction
@@ -334,6 +350,16 @@ public class GameLoop : MonoBehaviour
     }
 
     /// <summary>
+    /// Handler for GameOverEvent from EventBus.
+    /// Phase 144: Subscribes to GameOverEvent to trigger game over flow.
+    /// </summary>
+    private void OnGameOver(GameOverEvent evt)
+    {
+        Debug.Log($"GameLoop.OnGameOver: Winner = {evt.Winner}, Reason = {evt.Reason}");
+        GameOver();
+    }
+
+    /// <summary>
     /// Play the attack music
     /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// </summary>
@@ -386,7 +412,15 @@ public class GameLoop : MonoBehaviour
             if (selectedCard != null)
             {
                 // Phase 17-18: Use ICombatService instead of CardManager.Instance
-                _combatService.Opponent = selectedCard as InGameInvocationCard;
+                // Phase 144: Add null check for cast result
+                var concreteCard = selectedCard as InGameInvocationCard;
+                if (concreteCard == null)
+                {
+                    Debug.LogWarning($"GameLoop.OnCardSelected: Failed to cast {selectedCard.GetType().Name} to InGameInvocationCard");
+                    _inputManager.EnableDetectionTouch();
+                    return;
+                }
+                _combatService.Opponent = concreteCard;
                 ComputeAttack();
             }
             // Phase 19-20: Use injected InputManager instead of .Instance

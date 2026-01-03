@@ -45,9 +45,11 @@ public class TutoHandCardDisplay : HandCardDisplay
     /// <summary>
     /// Called when the behaviour becomes disabled.
     /// Unsubscribes from events and clears created cards.
+    /// Phase 144: Fixed - now unsubscribes to prevent memory leak and duplicate handlers.
     /// </summary>
     private void OnDisable()
     {
+        UnsubscribeFromEvents();
         ClearCreatedCards();
     }
 
@@ -65,10 +67,13 @@ public class TutoHandCardDisplay : HandCardDisplay
     /// Subscribes to necessary events for card display updates.
     /// Phase 23: Removed HandCardChange static event, using base class EventBus subscription.
     /// Phase 123: Uses EventBus instead of static DialogueUI.DialogIndex.
+    /// Phase 144: Added guard to prevent double subscription.
     /// </summary>
     private new void SubscribeToEvents()
     {
         base.SubscribeToEvents(); // Subscribe to EventBus in base class
+        // Phase 144: Guard to prevent double subscription
+        if (_dialogueIndexSubscription != null) return;
         // Phase 123: Subscribe to EventBus instead of static DialogIndex
         _dialogueIndexSubscription = _tutoEventBus?.Subscribe<DialogueIndexChangedEvent>(OnDialogueIndexChanged);
     }
@@ -77,12 +82,14 @@ public class TutoHandCardDisplay : HandCardDisplay
     /// Unsubscribes from hand card change events.
     /// Phase 23: Removed HandCardChange static event, using base class EventBus subscription.
     /// Phase 123: Disposes EventBus subscription instead of static DialogIndex.
+    /// Phase 144: Clears reference to allow re-subscription.
     /// </summary>
     private new void UnsubscribeFromEvents()
     {
         base.UnsubscribeFromEvents(); // Unsubscribe from EventBus in base class
         // Phase 123: Dispose EventBus subscription
         _dialogueIndexSubscription?.Dispose();
+        _dialogueIndexSubscription = null; // Phase 144: Clear reference for re-subscription
     }
 
     /// <summary>

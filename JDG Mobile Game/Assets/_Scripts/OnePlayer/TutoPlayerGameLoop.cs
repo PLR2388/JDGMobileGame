@@ -230,6 +230,13 @@ namespace OnePlayer
                 : opponentPlayerCards.InvocationCards
                     .First(card => card.Title == defender);
 
+            // Phase 144: Add null check for the cast result
+            if (opponentInvocationCard == null)
+            {
+                Debug.LogWarning($"TutoPlayerGameLoop: Failed to cast defender '{defender}' to InGameInvocationCard");
+                return;
+            }
+
             // Phase 17-18: Use ICombatService instead of CardManager.Instance
             _combatService.Attacker = attackerInvocationCard;
             _combatService.Opponent = opponentInvocationCard;

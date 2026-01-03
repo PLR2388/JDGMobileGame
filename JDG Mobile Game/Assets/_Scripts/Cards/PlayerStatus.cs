@@ -1,4 +1,5 @@
-﻿using JDG.Application;
+﻿using System;
+using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using UnityEngine;
@@ -22,6 +23,10 @@ public class PlayerStatus : MonoBehaviour
     private IPlayerService _playerService;
     private IEventBus _eventBus;
 
+    // Phase 144: Store subscriptions for proper disposal
+    private IDisposable _healthChangedSubscription;
+    private IDisposable _shieldChangedSubscription;
+
     private JDG.Domain.CardOwner PlayerId => isP1 ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
 
     /// <summary>
@@ -38,17 +43,22 @@ public class PlayerStatus : MonoBehaviour
     private void Start()
     {
         // Subscribe to EventBus events for this player
-        _eventBus.Subscribe<PlayerHealthChangedEvent>(OnPlayerHealthChanged);
-        _eventBus.Subscribe<PlayerShieldChangedEvent>(OnPlayerShieldChanged);
+        // Phase 144: Store subscriptions for disposal in OnDestroy
+        _healthChangedSubscription = _eventBus.Subscribe<PlayerHealthChangedEvent>(OnPlayerHealthChanged);
+        _shieldChangedSubscription = _eventBus.Subscribe<PlayerShieldChangedEvent>(OnPlayerShieldChanged);
 
         // Initialize local state from PlayerService
         var playerState = _playerService.GetPlayerState(PlayerId);
         currentHealth = playerState.CurrentHealth;
     }
 
+    /// <summary>
+    /// Phase 144: Fixed - subscriptions must be manually disposed.
+    /// </summary>
     private void OnDestroy()
     {
-        // EventBus subscriptions are automatically cleaned up
+        _healthChangedSubscription?.Dispose();
+        _shieldChangedSubscription?.Dispose();
     }
 
     /// <summary>

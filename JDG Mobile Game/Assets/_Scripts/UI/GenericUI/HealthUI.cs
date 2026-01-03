@@ -1,3 +1,4 @@
+using System;
 using JDG.Application;
 using JDG.Domain.Events;
 using TMPro;
@@ -15,6 +16,9 @@ public class HealthUI : MonoBehaviour
 
     // Phase 21-22: Injected dependency
     private IEventBus _eventBus;
+
+    // Phase 144: Store subscription for proper disposal
+    private IDisposable _healthChangedSubscription;
 
     /// <summary>
     /// VContainer method injection for dependencies.
@@ -45,7 +49,8 @@ public class HealthUI : MonoBehaviour
     private void Start()
     {
         // Phase 21-22: Subscribe to EventBus PlayerHealthChangedEvent
-        _eventBus.Subscribe<PlayerHealthChangedEvent>(OnPlayerHealthChanged);
+        // Phase 144: Store subscription for disposal in OnDestroy
+        _healthChangedSubscription = _eventBus.Subscribe<PlayerHealthChangedEvent>(OnPlayerHealthChanged);
     }
 
     /// <summary>
@@ -78,11 +83,10 @@ public class HealthUI : MonoBehaviour
 
     /// <summary>
     /// Unregisters the event listener when the object is destroyed.
-    /// Phase 21-22: EventBus subscriptions are automatically cleaned up.
+    /// Phase 144: Fixed - subscriptions must be manually disposed.
     /// </summary>
     private void OnDestroy()
     {
-        // EventBus subscriptions are automatically managed
-        // No manual cleanup needed
+        _healthChangedSubscription?.Dispose();
     }
 }

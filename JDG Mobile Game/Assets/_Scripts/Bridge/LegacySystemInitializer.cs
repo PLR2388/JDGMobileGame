@@ -48,6 +48,10 @@ namespace JDG.Bridge
 
         /// <summary>
         /// Loads legacy card data into the repository.
+        /// Phase 144: Uses pattern matching for safer type checking.
+        /// Note: Concrete CardRepository is required because Initialize() is an implementation
+        /// detail not exposed via ICardRepository interface. If a different implementation
+        /// is registered, this bridge code would need to be updated.
         /// </summary>
         public static void LoadCards(ICardRepository cardRepository)
         {
@@ -57,11 +61,11 @@ namespace JDG.Bridge
                 return;
             }
 
-            // Cast to concrete type to access Initialize method
-            var concreteRepository = cardRepository as CardRepository;
-            if (concreteRepository == null)
+            // Phase 144: Use pattern matching for safer type checking
+            if (cardRepository is not CardRepository concreteRepository)
             {
-                Debug.LogError("LegacySystemInitializer: CardRepository is not of type CardRepository!");
+                Debug.LogError($"LegacySystemInitializer: Expected CardRepository but got {cardRepository.GetType().Name}. " +
+                    "This bridge code requires the concrete CardRepository implementation.");
                 return;
             }
 

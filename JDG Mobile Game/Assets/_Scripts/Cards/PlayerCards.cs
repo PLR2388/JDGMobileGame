@@ -22,9 +22,10 @@ using VContainer;
 /// Phase 21-22: Extracted BuildPlayer and ResetInvocationCardNewTurn to use cases.
 /// Phase 23: Migrated static UnityEvents to EventBus (CardLocation.UpdateLocation).
 /// Phase 53: Implements IPlayerCardCollection for abstraction.
+/// Phase 144: Implements IPlayerCardCollectionMutable for mutation operations.
 /// Uses dependency injection for deck initialization.
 /// </summary>
-public class PlayerCards : MonoBehaviour, IPlayerCardCollection
+public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
 {
     #region Properties
 
@@ -321,6 +322,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     /// <summary>
     /// Gets the invocation cards as a read-only list of interface types.
     /// Phase 53: Explicit implementation for IPlayerCardCollection interface.
+    /// Phase 144: Note - Uses LINQ Cast which performs runtime type checking.
+    /// Safe because InvocationCards only contains InGameInvocationCard instances
+    /// which implement IInGameInvocationCard. Creates a new list each call.
     /// </summary>
     IReadOnlyList<IInGameInvocationCard> IPlayerCardCollection.InvocationCards =>
         InvocationCards.Cast<IInGameInvocationCard>().ToList().AsReadOnly();
@@ -328,6 +332,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     /// <summary>
     /// Gets the effect cards as a read-only list of interface types.
     /// Phase 53: Explicit implementation for IPlayerCardCollection interface.
+    /// Phase 144: Note - Uses LINQ Cast which performs runtime type checking.
+    /// Safe because EffectCards only contains InGameEffectCard instances
+    /// which implement IInGameEffectCard. Creates a new list each call.
     /// </summary>
     IReadOnlyList<IInGameEffectCard> IPlayerCardCollection.EffectCards =>
         EffectCards.Cast<IInGameEffectCard>().ToList().AsReadOnly();
@@ -350,6 +357,203 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollection
     /// Phase 53: Added for IPlayerCardCollection interface.
     /// </summary>
     int IPlayerCardCollection.HandCardCount => HandCards.Count;
+
+    #endregion
+
+    #region IPlayerCardCollectionMutable Implementation
+
+    /// <summary>
+    /// Adds a card to the player's hand.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    void IPlayerCardCollectionMutable.AddToHand(IInGameCard card)
+    {
+        if (card is InGameCard concreteCard)
+        {
+            HandCards.Add(concreteCard);
+        }
+        else
+        {
+            Debug.LogError($"[PlayerCards.AddToHand] Expected InGameCard but got {card?.GetType().Name ?? "null"}");
+        }
+    }
+
+    /// <summary>
+    /// Removes a card from the player's hand.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    bool IPlayerCardCollectionMutable.RemoveFromHand(IInGameCard card)
+    {
+        if (card is InGameCard concreteCard)
+        {
+            return HandCards.Remove(concreteCard);
+        }
+        Debug.LogError($"[PlayerCards.RemoveFromHand] Expected InGameCard but got {card?.GetType().Name ?? "null"}");
+        return false;
+    }
+
+    /// <summary>
+    /// Adds an invocation card to the field.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    void IPlayerCardCollectionMutable.AddToField(IInGameInvocationCard card)
+    {
+        if (card is InGameInvocationCard concreteCard)
+        {
+            InvocationCards.Add(concreteCard);
+        }
+        else
+        {
+            Debug.LogError($"[PlayerCards.AddToField] Expected InGameInvocationCard but got {card?.GetType().Name ?? "null"}");
+        }
+    }
+
+    /// <summary>
+    /// Removes an invocation card from the field.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    bool IPlayerCardCollectionMutable.RemoveFromField(IInGameInvocationCard card)
+    {
+        if (card is InGameInvocationCard concreteCard)
+        {
+            return InvocationCards.Remove(concreteCard);
+        }
+        Debug.LogError($"[PlayerCards.RemoveFromField] Expected InGameInvocationCard but got {card?.GetType().Name ?? "null"}");
+        return false;
+    }
+
+    /// <summary>
+    /// Adds an effect card to the field.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    void IPlayerCardCollectionMutable.AddEffectToField(IInGameEffectCard card)
+    {
+        if (card is InGameEffectCard concreteCard)
+        {
+            EffectCards.Add(concreteCard);
+        }
+        else
+        {
+            Debug.LogError($"[PlayerCards.AddEffectToField] Expected InGameEffectCard but got {card?.GetType().Name ?? "null"}");
+        }
+    }
+
+    /// <summary>
+    /// Removes an effect card from the field.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    bool IPlayerCardCollectionMutable.RemoveEffectFromField(IInGameEffectCard card)
+    {
+        if (card is InGameEffectCard concreteCard)
+        {
+            return EffectCards.Remove(concreteCard);
+        }
+        Debug.LogError($"[PlayerCards.RemoveEffectFromField] Expected InGameEffectCard but got {card?.GetType().Name ?? "null"}");
+        return false;
+    }
+
+    /// <summary>
+    /// Sets the field card (replaces any existing field card).
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    void IPlayerCardCollectionMutable.SetFieldCard(IInGameFieldCard card)
+    {
+        if (card == null)
+        {
+            FieldCard = null;
+        }
+        else if (card is InGameFieldCard concreteCard)
+        {
+            FieldCard = concreteCard;
+        }
+        else
+        {
+            Debug.LogError($"[PlayerCards.SetFieldCard] Expected InGameFieldCard but got {card.GetType().Name}");
+        }
+    }
+
+    /// <summary>
+    /// Adds a card to the graveyard.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    void IPlayerCardCollectionMutable.AddToGraveyard(IInGameCard card)
+    {
+        if (card is InGameCard concreteCard)
+        {
+            YellowCards.Add(concreteCard);
+        }
+        else
+        {
+            Debug.LogError($"[PlayerCards.AddToGraveyard] Expected InGameCard but got {card?.GetType().Name ?? "null"}");
+        }
+    }
+
+    /// <summary>
+    /// Removes a card from the graveyard (e.g., for resurrection abilities).
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    bool IPlayerCardCollectionMutable.RemoveFromGraveyard(IInGameCard card)
+    {
+        if (card is InGameCard concreteCard)
+        {
+            return YellowCards.Remove(concreteCard);
+        }
+        Debug.LogError($"[PlayerCards.RemoveFromGraveyard] Expected InGameCard but got {card?.GetType().Name ?? "null"}");
+        return false;
+    }
+
+    /// <summary>
+    /// Draws the top card from the deck.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    IInGameCard IPlayerCardCollectionMutable.DrawFromDeck()
+    {
+        if (Deck.Count == 0)
+        {
+            return null;
+        }
+
+        // Draw from end (last card is top of deck)
+        var card = Deck[Deck.Count - 1];
+        Deck.RemoveAt(Deck.Count - 1);
+        return card;
+    }
+
+    /// <summary>
+    /// Adds a card to the top of the deck.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    void IPlayerCardCollectionMutable.AddToDeck(IInGameCard card)
+    {
+        if (card is InGameCard concreteCard)
+        {
+            Deck.Add(concreteCard); // Add to end (top of deck)
+        }
+        else
+        {
+            Debug.LogError($"[PlayerCards.AddToDeck] Expected InGameCard but got {card?.GetType().Name ?? "null"}");
+        }
+    }
+
+    /// <summary>
+    /// Removes a specific card from the deck.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    bool IPlayerCardCollectionMutable.RemoveFromDeck(IInGameCard card)
+    {
+        if (card is InGameCard concreteCard)
+        {
+            return Deck.Remove(concreteCard);
+        }
+        Debug.LogError($"[PlayerCards.RemoveFromDeck] Expected InGameCard but got {card?.GetType().Name ?? "null"}");
+        return false;
+    }
+
+    /// <summary>
+    /// Gets the number of cards remaining in the deck.
+    /// Phase 144: Explicit implementation for IPlayerCardCollectionMutable interface.
+    /// </summary>
+    int IPlayerCardCollectionMutable.DeckCount => Deck.Count;
 
     #endregion
 

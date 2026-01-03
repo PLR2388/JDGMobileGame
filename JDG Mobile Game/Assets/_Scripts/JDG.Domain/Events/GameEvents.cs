@@ -117,17 +117,8 @@ namespace JDG.Domain.Events
         public int Delta; // +1 for add, -1 for remove
     }
 
-    /// <summary>
-    /// Published when a card's stats change.
-    /// </summary>
-    public struct CardStatsChangedEvent
-    {
-        public Guid CardId;
-        public int OldAttack;
-        public int OldDefense;
-        public int NewAttack;
-        public int NewDefense;
-    }
+    // Phase 144: Removed dead CardStatsChangedEvent
+    // (superseded by CardStatsModifiedEvent which is actually used)
 
     /// <summary>
     /// Published when a card is added to the field.
@@ -275,13 +266,8 @@ namespace JDG.Domain.Events
     // UI EVENTS
     // ============================================
 
-    /// <summary>
-    /// Published when a UI button is clicked.
-    /// </summary>
-    public struct ButtonClickedEvent
-    {
-        public string ButtonId;
-    }
+    // Phase 144: Removed dead ButtonClickedEvent
+    // (superseded by specific button events: NextPhaseButtonClickedEvent, AttackButtonClickedEvent, etc.)
 
     /// <summary>
     /// Published when next phase button is clicked.

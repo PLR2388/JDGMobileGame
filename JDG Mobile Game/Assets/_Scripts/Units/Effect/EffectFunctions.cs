@@ -4,6 +4,8 @@ using JDG.Application.Services;
 using JDG.Domain.Events;
 using UnityEngine;
 using VContainer;
+using DomainCardOwner = JDG.Domain.CardOwner;
+using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace Cards.EffectCards
 {
@@ -82,6 +84,7 @@ namespace Cards.EffectCards
         /// Otherwise, a warning is shown to the player.
         /// Phase 6: Delegates to CardPlacementService.
         /// Phase 35: Uses IDialogService instead of MessageBox.Instance.
+        /// Phase 144: Publishes CardPlayedEvent for ability triggers.
         /// </summary>
         /// <param name="effectCard">The effect card the user put on the field.</param>
         private void PutEffectCard(InGameEffectCard effectCard)
@@ -92,6 +95,15 @@ namespace Cards.EffectCards
             {
                 // Hide mini card menu on successful placement
                 miniCardMenu.SetActive(false);
+
+                // Phase 144: Publish CardPlayedEvent to trigger abilities
+                _eventBus.Publish(new CardPlayedEvent
+                {
+                    CardId = Guid.NewGuid(),
+                    Owner = (DomainCardOwner)(int)effectCard.CardOwner,
+                    CardType = DomainCardType.Effect,
+                    CardTitle = effectCard.Title
+                });
             }
             else
             {

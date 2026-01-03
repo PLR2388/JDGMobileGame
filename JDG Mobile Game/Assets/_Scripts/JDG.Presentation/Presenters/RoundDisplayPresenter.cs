@@ -1,3 +1,4 @@
+using System;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Core;
@@ -5,7 +6,6 @@ using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using JDG.Presentation.Views;
-using VContainer;
 
 namespace JDG.Presentation.Presenters
 {
@@ -13,9 +13,10 @@ namespace JDG.Presentation.Presenters
     /// Presenter for round/turn display logic.
     /// Part of Phase 28 - MonoBehaviour Wave 1 migration to MVP pattern.
     /// Phase 42: Moved to JDG.Presentation assembly.
+    /// Phase 144: Implements IDisposable for proper subscription cleanup.
     /// Handles business logic for what to display based on game state.
     /// </summary>
-    public class RoundDisplayPresenter
+    public class RoundDisplayPresenter : IDisposable
     {
         private readonly IRoundDisplayView _view;
         private readonly IEventBus _eventBus;
@@ -23,7 +24,16 @@ namespace JDG.Presentation.Presenters
         private PlayerId _currentPlayer;
         private Phase _currentPhase;
 
-        [Inject]
+        // Phase 144: Store subscriptions for proper disposal
+        private readonly IDisposable _phaseChangedSubscription;
+        private readonly IDisposable _playerTurnChangedSubscription;
+        private bool _disposed;
+
+        /// <summary>
+        /// Constructor for RoundDisplayPresenter.
+        /// Phase 144: Removed misleading [Inject] attribute - this class is manually
+        /// constructed with `new RoundDisplayPresenter(...)` in RoundDisplayManager.
+        /// </summary>
         public RoundDisplayPresenter(
             IRoundDisplayView view,
             IEventBus eventBus,
@@ -34,8 +44,9 @@ namespace JDG.Presentation.Presenters
             _localizationService = localizationService;
 
             // Subscribe to game events
-            _eventBus.Subscribe<PhaseChangedEvent>(OnPhaseChanged);
-            _eventBus.Subscribe<PlayerTurnChangedEvent>(OnPlayerTurnChanged);
+            // Phase 144: Store subscriptions for disposal
+            _phaseChangedSubscription = _eventBus.Subscribe<PhaseChangedEvent>(OnPhaseChanged);
+            _playerTurnChangedSubscription = _eventBus.Subscribe<PlayerTurnChangedEvent>(OnPlayerTurnChanged);
         }
 
         /// <summary>
@@ -119,6 +130,19 @@ namespace JDG.Presentation.Presenters
                 : _localizationService.GetLocalizedValue(LocalizationKeys.PLAYER_ONE.ToString());
 
             _view.SetPlayerTurnText(playerName);
+        }
+
+        /// <summary>
+        /// Phase 144: Disposes all EventBus subscriptions to prevent memory leaks.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed) return;
+
+            _phaseChangedSubscription?.Dispose();
+            _playerTurnChangedSubscription?.Dispose();
+
+            _disposed = true;
         }
     }
 }

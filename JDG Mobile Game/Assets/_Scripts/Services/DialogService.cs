@@ -196,6 +196,13 @@ namespace JDG.Infrastructure.Services
                 negativeAction: options.OnNegative != null ? new UnityEngine.Events.UnityAction(options.OnNegative) : null
             );
 
+            // Phase 144: Add null check for MessageBox
+            if (MessageBox == null)
+            {
+                Debug.LogError("DialogService: MessageBox is null! Cannot show message box. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return;
+            }
             MessageBox.CreateMessageBox(canvasTransform, config);
         }
 
@@ -245,14 +252,9 @@ namespace JDG.Infrastructure.Services
         /// <summary>
         /// Shows a card selector dialog with callback actions.
         /// Phase 35: Synchronous version for legacy code migration.
-        /// Phase 140: Added comprehensive tracing for debugging target building.
         /// </summary>
         public void ShowCardSelector(object canvas, CardSelectorOptions options)
         {
-            Debug.Log($"DialogService.ShowCardSelector() - START");
-            Debug.Log($"DialogService.ShowCardSelector() - options.Cards is null: {options.Cards == null}");
-            Debug.Log($"DialogService.ShowCardSelector() - options.Cards?.Count: {options.Cards?.Count ?? -1}");
-
             var canvasTransform = canvas as Transform;
             if (canvasTransform == null)
             {
@@ -264,22 +266,14 @@ namespace JDG.Infrastructure.Services
             var cards = new List<Cards.InGameCard>();
             if (options.Cards != null)
             {
-                Debug.Log($"DialogService.ShowCardSelector() - Processing {options.Cards.Count} cards from options");
                 foreach (var card in options.Cards)
                 {
-                    Debug.Log($"DialogService.ShowCardSelector() - Card: {card?.GetType().FullName ?? "NULL"}, is InGameCard: {card is Cards.InGameCard}");
                     if (card is Cards.InGameCard inGameCard)
                     {
-                        Debug.Log($"DialogService.ShowCardSelector() - Adding card: {inGameCard.Title}");
                         cards.Add(inGameCard);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"DialogService.ShowCardSelector() - Card FAILED type check: {card?.GetType().FullName ?? "NULL"}");
                     }
                 }
             }
-            Debug.Log($"DialogService.ShowCardSelector() - Final cards list count: {cards.Count}");
 
             // Create callbacks that convert InGameCard back to object
             UnityEngine.Events.UnityAction<Cards.InGameCard> okSingle = null;

@@ -72,8 +72,9 @@ namespace JDG.DI
             // MAINSCREEN SCENE MONOBEHAVIOURS
             // ============================================
 
-            // Note: InputManager and CardSelectionManager are NOT in MainScreen scene
+            // Note: InputManager is NOT in MainScreen scene (only in Game scene)
             // ICardSelectionService is registered in SharedServicesScope (pure C#, no MonoBehaviour needed)
+            // CardSelectionManager IS in MainScreen for deck builder card selection functionality
 
             // Card Choice UI - deck selection screen
             builder.RegisterComponentInHierarchy<Menu.CardChoiceUIManager>();
@@ -100,6 +101,10 @@ namespace JDG.DI
                 InjectAllOfType<UpdateDescription>(container);
                 InjectAllOfType<CardSelectionManager>(container);
                 InjectAllOfType<Menu.OptionMenu>(container);
+
+                // Phase 144: Card choice components - explicit injection for consistency with GameSceneScope pattern
+                InjectAllOfType<Menu.CardChoice>(container);
+                InjectAllOfType<Menu.CardChoiceUIManager>(container);
 
                 UnityEngine.Debug.Log("MainScreenScope: Injection complete");
             });

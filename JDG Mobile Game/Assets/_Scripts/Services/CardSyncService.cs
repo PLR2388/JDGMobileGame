@@ -118,7 +118,8 @@ namespace Services
             inGameCard.CantBeAttack = domainCard.CantBeAttacked;
 
             // Sync families if they were changed
-            if (domainCard.Families.Count > 0)
+            // Phase 144: Add null check before accessing Count to prevent NullReferenceException
+            if (domainCard.Families != null && domainCard.Families.Count > 0)
             {
                 inGameCard.Families = ConvertFamiliesToLegacy(domainCard.Families);
             }
@@ -156,15 +157,27 @@ namespace Services
         /// <summary>
         /// Syncs all field cards from the player repository back to InGameInvocationCards.
         /// Phase 143: Matches cards by Title since CardId differs between domain and presentation.
+        /// Phase 144: Added logging for debugging sync failures.
         /// </summary>
         public void SyncAllFieldCards(PlayerId playerId, IPlayerCardCollection playerCards)
         {
-            if (playerCards == null || _playerRepository == null)
+            if (playerCards == null)
+            {
+                UnityEngine.Debug.LogWarning("[CardSyncService] SyncAllFieldCards skipped: playerCards is null");
                 return;
+            }
+            if (_playerRepository == null)
+            {
+                UnityEngine.Debug.LogWarning("[CardSyncService] SyncAllFieldCards skipped: _playerRepository is null");
+                return;
+            }
 
             var player = _playerRepository.GetPlayer(playerId);
             if (player == null)
+            {
+                UnityEngine.Debug.LogWarning($"[CardSyncService] SyncAllFieldCards skipped: player not found for {playerId}");
                 return;
+            }
 
             foreach (var inGameCard in playerCards.InvocationCards)
             {
@@ -193,7 +206,8 @@ namespace Services
                 concreteCard.CantBeAttack = domainCard.CantBeAttacked;
 
                 // Sync families if they were changed
-                if (domainCard.Families.Count > 0)
+                // Phase 144: Add null check before accessing Count to prevent NullReferenceException
+                if (domainCard.Families != null && domainCard.Families.Count > 0)
                 {
                     concreteCard.Families = ConvertFamiliesToLegacy(domainCard.Families);
                 }

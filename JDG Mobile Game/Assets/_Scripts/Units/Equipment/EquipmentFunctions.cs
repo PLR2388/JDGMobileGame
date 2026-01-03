@@ -7,6 +7,8 @@ using JDG.Application.Services;
 using JDG.Domain.Events;
 using UnityEngine;
 using VContainer;
+using DomainCardOwner = JDG.Domain.CardOwner;
+using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace Cards.EquipmentCards
 {
@@ -110,6 +112,15 @@ namespace Cards.EquipmentCards
                     {
                         // Delegate to service for business logic
                         _cardPlacementService.PlaceEquipmentCard(equipmentCard, selectedInvocationCard, canvas);
+
+                        // Phase 144: Publish CardPlayedEvent to trigger abilities
+                        _eventBus.Publish(new CardPlayedEvent
+                        {
+                            CardId = Guid.NewGuid(),
+                            Owner = (DomainCardOwner)(int)equipmentCard.CardOwner,
+                            CardType = DomainCardType.Equipment,
+                            CardTitle = equipmentCard.Title
+                        });
 
                         // Hide UI after placement
                         miniCardMenu.SetActive(false);

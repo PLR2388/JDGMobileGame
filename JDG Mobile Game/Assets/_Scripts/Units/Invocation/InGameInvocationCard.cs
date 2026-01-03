@@ -370,10 +370,24 @@ namespace _Scripts.Units.Invocation
         /// <summary>
         /// Sets the equipment card via interface type.
         /// Phase 72: Added for IInGameInvocationCard interface extension.
+        /// Phase 144: Fixed unsafe cast - now logs error instead of silently failing.
         /// </summary>
         void IInGameInvocationCard.SetEquipmentCard(IInGameEquipmentCard card)
         {
-            EquipmentCard = card as InGameEquipmentCard;
+            if (card == null)
+            {
+                EquipmentCard = null;
+                return;
+            }
+
+            if (card is InGameEquipmentCard equipmentCard)
+            {
+                EquipmentCard = equipmentCard;
+            }
+            else
+            {
+                UnityEngine.Debug.LogError($"[InGameInvocationCard.SetEquipmentCard] Expected InGameEquipmentCard but got {card.GetType().Name}. Equipment not assigned.");
+            }
         }
 
         /// <summary>

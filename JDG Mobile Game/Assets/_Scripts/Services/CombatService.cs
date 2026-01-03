@@ -1,12 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
+using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Abilities.Implementations;
 using JDG.Application.Services;
 using JDG.Domain;
+using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
 
@@ -28,21 +31,29 @@ public class CombatService : ICombatService
     private readonly ICardCollectionService _cardCollectionService;
     private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly IAbilityExecutor _abilityExecutor;
+    private readonly IEventBus _eventBus;
     private readonly Transform _canvas;
 
     public InGameInvocationCard Attacker { get; set; }
     public InGameInvocationCard Opponent { get; set; }
 
+    /// <summary>
+    /// Phase 144: Added IEventBus for publishing AttackExecutedEvent.
+    /// Phase 144: Added null validation for required parameters.
+    /// </summary>
     public CombatService(
         ICardCollectionService cardCollectionService,
         IPlayerStatusProvider playerStatusProvider,
         IAbilityExecutor abilityExecutor,
+        IEventBus eventBus,
         Transform canvas)
     {
-        _cardCollectionService = cardCollectionService;
-        _playerStatusProvider = playerStatusProvider;
-        _abilityExecutor = abilityExecutor;
-        _canvas = canvas;
+        // Phase 144: Validate required parameters
+        _cardCollectionService = cardCollectionService ?? throw new System.ArgumentNullException(nameof(cardCollectionService));
+        _playerStatusProvider = playerStatusProvider ?? throw new System.ArgumentNullException(nameof(playerStatusProvider));
+        _abilityExecutor = abilityExecutor ?? throw new System.ArgumentNullException(nameof(abilityExecutor));
+        _eventBus = eventBus; // Optional - null check on use
+        _canvas = canvas; // Optional - can be null in tests
     }
 
     public bool CanAttackerAttack()
@@ -86,77 +97,45 @@ public class CombatService : ICombatService
 
     public List<InGameCard> BuildValidTargets()
     {
-        // Phase 140: Comprehensive tracing to debug target building
-        Debug.Log($"CombatService.BuildValidTargets() - START");
-
         if (Attacker == null)
         {
-            Debug.LogWarning("CombatService.BuildValidTargets() - Attacker is NULL, returning empty list");
             return new List<InGameCard>();
         }
-
-        Debug.Log($"CombatService.BuildValidTargets() - Attacker: {Attacker.Title}");
 
         var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
         var currentPlayerCards = _cardCollectionService.GetCurrentPlayerCards();
 
-        Debug.Log($"CombatService.BuildValidTargets() - opponentCards is null: {opponentCards == null}");
-        Debug.Log($"CombatService.BuildValidTargets() - opponentCards.Player is null: {opponentCards?.Player == null}");
-        Debug.Log($"CombatService.BuildValidTargets() - opponentCards.Player?.Title: {opponentCards?.Player?.Title ?? "NULL"}");
-        Debug.Log($"CombatService.BuildValidTargets() - opponentCards.InvocationCards.Count: {opponentCards?.InvocationCards?.Count ?? -1}");
-
         var validTargets = FilterValidOpponentCards(opponentCards.InvocationCards);
-        Debug.Log($"CombatService.BuildValidTargets() - After FilterValidOpponentCards, validTargets.Count: {validTargets.Count}");
 
         if (HasAggroCard(validTargets))
         {
-            Debug.Log("CombatService.BuildValidTargets() - Has aggro card, filtering to aggro only");
             validTargets = GetOnlyAggroCards(validTargets);
         }
         else
         {
             RemoveCantBeAttackedCards(validTargets);
-            Debug.Log($"CombatService.BuildValidTargets() - After RemoveCantBeAttackedCards, validTargets.Count: {validTargets.Count}");
 
             // Phase 137: Add null check for Player entity
-            // Phase 139: Add diagnostic logging when player entity is missing
             if (opponentCards.Player == null)
             {
                 Debug.LogWarning("CombatService.BuildValidTargets() - Opponent Player entity is NULL! " +
-                    "Check that playerInvocationCard is assigned in Inspector for the opponent's PlayerCards. " +
-                    "The 'Joueur adverse' card cannot be shown as an attack target.");
+                    "Check that playerInvocationCard is assigned in Inspector for the opponent's PlayerCards.");
             }
             else
             {
                 bool shouldAddPlayer = ShouldAddPlayerToTarget(currentPlayerCards.EffectCards, validTargets);
-                Debug.Log($"CombatService.BuildValidTargets() - ShouldAddPlayerToTarget returned: {shouldAddPlayer}");
-
                 if (shouldAddPlayer)
                 {
-                    Debug.Log($"CombatService.BuildValidTargets() - Adding Player '{opponentCards.Player.Title}' to validTargets");
                     validTargets.Add(opponentCards.Player);
-                }
-                else
-                {
-                    Debug.Log($"CombatService.BuildValidTargets() - NOT adding Player (ShouldAddPlayerToTarget=false)");
                 }
             }
         }
 
         // Phase 137: Add null check for Player entity
         bool canDirectAttack = AttackerCanDirectAttack();
-        Debug.Log($"CombatService.BuildValidTargets() - AttackerCanDirectAttack: {canDirectAttack}");
-
         if (opponentCards.Player != null && canDirectAttack && !validTargets.Contains(opponentCards.Player))
         {
-            Debug.Log($"CombatService.BuildValidTargets() - Adding Player via DirectAttack ability");
             validTargets.Add(opponentCards.Player);
-        }
-
-        Debug.Log($"CombatService.BuildValidTargets() - FINAL validTargets.Count: {validTargets.Count}");
-        foreach (var target in validTargets)
-        {
-            Debug.Log($"  - Target: {target?.Title ?? "NULL"}");
         }
 
         return validTargets;
@@ -210,6 +189,7 @@ public class CombatService : ICombatService
     /// <summary>
     /// Handles combat between two invocation cards.
     /// Phase 118: Moved combat logic from legacy Ability class.
+    /// Phase 144: Added AttackExecutedEvent publishing.
     /// </summary>
     private void HandleAttackOverInvocation()
     {
@@ -228,18 +208,31 @@ public class CombatService : ICombatService
 
         // Phase 118: Calculate and apply combat damage (moved from Ability.OnCardAttacked)
         float resultAttack = Opponent.Defense - Attacker.Attack;
+        bool attackerDestroyed = false;
+        bool defenderDestroyed = false;
+
         if (resultAttack > 0)
         {
-            HandlePositiveAttackResult(Attacker, playerCards, opponentCards, playerStatus, resultAttack);
+            attackerDestroyed = HandlePositiveAttackResult(Attacker, playerCards, opponentCards, playerStatus, resultAttack);
         }
         else if (resultAttack == 0)
         {
-            HandleNeutralAttackResult(Opponent, Attacker, playerCards, opponentCards);
+            (attackerDestroyed, defenderDestroyed) = HandleNeutralAttackResult(Opponent, Attacker, playerCards, opponentCards);
         }
         else
         {
-            HandleNegativeAttackResult(Opponent, playerCards, opponentCards, opponentStatus, resultAttack);
+            defenderDestroyed = HandleNegativeAttackResult(Opponent, playerCards, opponentCards, opponentStatus, resultAttack);
         }
+
+        // Phase 144: Publish AttackExecutedEvent for attack animations/UI feedback
+        _eventBus?.Publish(new AttackExecutedEvent
+        {
+            AttackerId = Guid.NewGuid(), // Note: InGameInvocationCard doesn't have domain Id yet
+            DefenderId = Guid.NewGuid(),
+            Damage = (int)Mathf.Abs(resultAttack),
+            DefenderDestroyed = defenderDestroyed,
+            AttackerDestroyed = attackerDestroyed
+        });
     }
 
     /// <summary>
@@ -276,8 +269,9 @@ public class CombatService : ICombatService
     /// <summary>
     /// Handles positive attack result (defender's DEF > attacker's ATK).
     /// Phase 118: Moved from legacy Ability class.
+    /// Phase 144: Returns true if attacker was destroyed.
     /// </summary>
-    private void HandlePositiveAttackResult(
+    private bool HandlePositiveAttackResult(
         InGameInvocationCard attacker,
         PlayerCards playerCards,
         PlayerCards opponentCards,
@@ -290,15 +284,18 @@ public class CombatService : ICombatService
             if (cardDied)
             {
                 currentPlayerStatus.ChangePv(-resultAttack);
+                return true;
             }
         }
+        return false;
     }
 
     /// <summary>
     /// Handles neutral attack result (defender's DEF == attacker's ATK).
     /// Phase 118: Moved from legacy Ability class.
+    /// Phase 144: Returns tuple (attackerDestroyed, defenderDestroyed).
     /// </summary>
-    private void HandleNeutralAttackResult(
+    private (bool attackerDestroyed, bool defenderDestroyed) HandleNeutralAttackResult(
         InGameInvocationCard attackedCard,
         InGameInvocationCard attacker,
         PlayerCards playerCards,
@@ -306,23 +303,28 @@ public class CombatService : ICombatService
     {
         bool isProtectedAttacker = IsEquipmentCardProtected(attacker, playerCards);
         bool isProtectedAttacked = IsEquipmentCardProtected(attackedCard, opponentCards);
+        bool defenderDestroyed = false;
+        bool attackerDestroyed = false;
 
         if (!isProtectedAttacked)
         {
-            HandleCardDeath(attackedCard, opponentCards, playerCards);
+            defenderDestroyed = HandleCardDeath(attackedCard, opponentCards, playerCards);
         }
 
         if (!isProtectedAttacker)
         {
-            HandleCardDeath(attacker, playerCards, opponentCards);
+            attackerDestroyed = HandleCardDeath(attacker, playerCards, opponentCards);
         }
+
+        return (attackerDestroyed, defenderDestroyed);
     }
 
     /// <summary>
     /// Handles negative attack result (defender's DEF < attacker's ATK).
     /// Phase 118: Moved from legacy Ability class.
+    /// Phase 144: Returns true if defender was destroyed.
     /// </summary>
-    private void HandleNegativeAttackResult(
+    private bool HandleNegativeAttackResult(
         InGameInvocationCard attackedCard,
         PlayerCards playerCards,
         PlayerCards opponentCards,
@@ -335,8 +337,10 @@ public class CombatService : ICombatService
             if (cardDied)
             {
                 opponentPlayerStatus.ChangePv(resultAttack);
+                return true;
             }
         }
+        return false;
     }
 
     /// <summary>
