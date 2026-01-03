@@ -304,9 +304,10 @@ namespace JDG.Application.Tests.Cards
         public bool HasAction() => false;
 
         // Equipment methods
-        public void SetEquipmentCard(IInGameEquipmentCard card)
+        public bool SetEquipmentCard(IInGameEquipmentCard card)
         {
             EquipmentCard = card;
+            return true;
         }
 
         // Control methods

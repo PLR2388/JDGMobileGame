@@ -193,6 +193,36 @@ namespace Cards
             };
         }
 
+        /// <summary>
+        /// Safely converts legacy CardOwner to domain CardOwner using int cast.
+        /// Phase 146: Added validation to catch enum definition mismatches.
+        /// </summary>
+        public static DomainCardOwner SafeConvertOwner(CardOwner owner)
+        {
+            var intValue = (int)owner;
+            if (!System.Enum.IsDefined(typeof(DomainCardOwner), intValue))
+            {
+                UnityEngine.Debug.LogWarning($"[InGameCard] CardOwner value {intValue} is not defined in DomainCardOwner. Using NotDefined.");
+                return DomainCardOwner.NotDefined;
+            }
+            return (DomainCardOwner)intValue;
+        }
+
+        /// <summary>
+        /// Safely converts legacy CardFamily to domain CardFamily using int cast.
+        /// Phase 146: Added validation to catch enum definition mismatches.
+        /// </summary>
+        public static JDG.Domain.Enums.CardFamily SafeConvertFamily(CardFamily family)
+        {
+            var intValue = (int)family;
+            if (!System.Enum.IsDefined(typeof(JDG.Domain.Enums.CardFamily), intValue))
+            {
+                UnityEngine.Debug.LogWarning($"[InGameCard] CardFamily value {intValue} is not defined in domain CardFamily. Using default.");
+                return JDG.Domain.Enums.CardFamily.None;
+            }
+            return (JDG.Domain.Enums.CardFamily)intValue;
+        }
+
         #endregion
     }
 }

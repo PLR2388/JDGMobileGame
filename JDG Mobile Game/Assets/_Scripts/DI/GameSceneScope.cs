@@ -167,8 +167,12 @@ namespace JDG.DI
             // ICardCollectionService - requires PlayerCardManager from scene
             builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Scoped);
 
-            // Phase 144: Override ICardFactory from parent scope with scene-scoped version
-            // This allows CardFactory to access ICardCollectionService which is only available here
+            // Phase 144: Override ICardFactory from parent (SharedServicesScope) with scene-scoped version.
+            // IMPORTANT: SharedServicesScope also registers ICardFactory but with null ICardCollectionService.
+            // This scene-scoped registration OVERRIDES the parent scope registration, providing access to
+            // ICardCollectionService (which requires PlayerCardManager from the scene).
+            // VContainer scope resolution: child scope registrations take precedence over parent scope.
+            // Phase 146: Added documentation explaining the intentional override pattern.
             builder.Register<ICardFactory>(container =>
             {
                 return new CardFactory(

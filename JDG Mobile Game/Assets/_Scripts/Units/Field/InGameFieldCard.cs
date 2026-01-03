@@ -57,8 +57,14 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
 
         // Phase 116: Only populate modern abilities (legacy removed)
         // Phase 118: ScriptableObjects now use domain enums directly, no conversion needed
+        // Phase 146: Added warning for missing abilities
         ModernFieldAbilities = baseFieldCard.FieldAbilities
-            .Select(name => _abilityProvider.GetModernAbility(name))
+            .Select(name => {
+                var ability = _abilityProvider.GetModernAbility(name);
+                if (ability == null)
+                    UnityEngine.Debug.LogWarning($"[InGameFieldCard] Ability '{name}' not found for card '{title}'");
+                return ability;
+            })
             .Where(ability => ability != null)
             .ToList();
     }

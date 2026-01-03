@@ -13,11 +13,13 @@ namespace JDG.Infrastructure.Services
     /// Wraps the existing InputManager and provides events through EventBus.
     /// Phase 19-20: Now injects InputManager instead of using .Instance.
     /// Phase 23: Updated to subscribe to EventBus instead of static UnityEvents.
+    /// Phase 146: Implemented IDisposable to properly cleanup EventBus subscriptions.
     /// Note: This is a regular class, not a MonoBehaviour. InputManager MonoBehaviour
     /// handles the Update loop. This service just provides a clean interface.
     /// </summary>
-    public class InputService : IInputService
+    public class InputService : IInputService, IDisposable
     {
+        private bool _disposed;
         private readonly IEventBus _eventBus;
         private readonly InputManager _inputManager;
 
@@ -184,6 +186,23 @@ namespace JDG.Infrastructure.Services
                     _disposed = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// Disposes the service and unsubscribes from all EventBus events.
+        /// Phase 146: Added to prevent memory leaks when service is disposed.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            _touchStartedSubscription?.Dispose();
+            _longTouchSubscription?.Dispose();
+            _touchEndedSubscription?.Dispose();
+            _backButtonSubscription?.Dispose();
+
+            _disposed = true;
         }
     }
 }

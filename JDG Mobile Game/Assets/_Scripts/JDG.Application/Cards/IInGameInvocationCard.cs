@@ -110,12 +110,13 @@ namespace JDG.Application.Cards
         /// Gets the equipment card attached to this invocation, if any.
         /// Returns null if no equipment is attached.
         /// </summary>
-        IInGameEquipmentCard EquipmentCard { get; }
+        IInGameEquipmentCard? EquipmentCard { get; }
 
         /// <summary>
         /// Sets the equipment card attached to this invocation.
+        /// Phase 146: Returns true if equipment was successfully set, false if type mismatch.
         /// </summary>
-        void SetEquipmentCard(IInGameEquipmentCard card);
+        bool SetEquipmentCard(IInGameEquipmentCard card);
 
         #endregion
 

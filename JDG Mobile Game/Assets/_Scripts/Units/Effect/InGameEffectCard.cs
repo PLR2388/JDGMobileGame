@@ -54,8 +54,14 @@ namespace Cards.EffectCards
 
             // Phase 114: Only populate modern abilities (legacy removed)
             // Phase 118: ScriptableObjects now use domain enums directly, no conversion needed
+            // Phase 146: Added warning for missing abilities
             ModernEffectAbilities = baseEffectCard.EffectAbilities
-                .Select(name => _abilityProvider.GetModernAbility(name))
+                .Select(name => {
+                    var ability = _abilityProvider.GetModernAbility(name);
+                    if (ability == null)
+                        UnityEngine.Debug.LogWarning($"[InGameEffectCard] Ability '{name}' not found for card '{title}'");
+                    return ability;
+                })
                 .Where(ability => ability != null)
                 .ToList();
         }

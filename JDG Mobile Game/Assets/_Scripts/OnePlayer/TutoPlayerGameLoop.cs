@@ -295,6 +295,7 @@ namespace OnePlayer
         /// <summary>
         /// Equips the specified invocation card with the given equipment.
         /// Phase 141: Now uses IAbilityExecutor with ICardSyncService for proper stat sync.
+        /// Phase 146: Added validation for card type to catch tutorial data issues.
         /// </summary>
         /// <param name="putCard">Card data for equipment and invocation card.</param>
         /// <param name="playerCards">Current player's card details.</param>
@@ -302,8 +303,16 @@ namespace OnePlayer
         {
             var cardNames = putCard.Split('>');
 
-            InGameEquipmentCard equipmentCard =
-                playerCards.HandCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipmentCard;
+            // Phase 146: Search for card by title first, then validate type
+            var handCardByTitle = playerCards.HandCards.FirstOrDefault(elt => elt.Title == cardNames[0]);
+            InGameEquipmentCard equipmentCard = handCardByTitle as InGameEquipmentCard;
+
+            // Phase 146: Log warning if card found by title but wrong type
+            if (handCardByTitle != null && equipmentCard == null)
+            {
+                Debug.LogWarning($"[TutoPlayerGameLoop] Card '{cardNames[0]}' found in hand but is {handCardByTitle.GetType().Name}, not InGameEquipmentCard. Check tutorial data.");
+            }
+
             InGameInvocationCard invocationCard =
                 playerCards.InvocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
 

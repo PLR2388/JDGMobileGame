@@ -54,10 +54,23 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
 
         // Phase 117: Populate only modern abilities
         // Phase 118: ScriptableObjects now use domain enums directly, no conversion needed
+        // Phase 146: Added warning for missing abilities
         ModernEquipmentAbilities = baseEquipmentCard.EquipmentAbilities
-            .Select(name => _abilityProvider.GetModernAbility(name))
+            .Select(name => {
+                var ability = _abilityProvider.GetModernAbility(name);
+                if (ability == null)
+                    UnityEngine.Debug.LogWarning($"[InGameEquipmentCard] Ability '{name}' not found for card '{title}'");
+                return ability;
+            })
             .Where(ability => ability != null)
             .ToList();
+
+        // Phase 146: Warn if any abilities are not IEquipmentAbility (would be silently filtered in CanAlwaysBePlaced)
+        var nonEquipmentAbilities = ModernEquipmentAbilities.Where(a => !(a is IEquipmentAbility)).ToList();
+        if (nonEquipmentAbilities.Count > 0)
+        {
+            UnityEngine.Debug.LogWarning($"[InGameEquipmentCard] Card '{title}' has {nonEquipmentAbilities.Count} abilities that are not IEquipmentAbility. These will be ignored by CanAlwaysBePlaced check.");
+        }
     }
 
     #region IInGameEquipmentCard Implementation

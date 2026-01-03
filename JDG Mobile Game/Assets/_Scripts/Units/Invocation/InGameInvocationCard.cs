@@ -175,14 +175,26 @@ namespace _Scripts.Units.Invocation
             IsAffectedByEffectCard = BaseInvocationCard.BaseInvocationCardStats.AffectedByEffect;
 
             // Phase 61: Use injected provider (fallback removed)
+            // Phase 146: Added warning for missing conditions
             conditions = BaseInvocationCard.Conditions
-                .Select(conditionName => _conditionProvider.GetCondition(conditionName) as global::Condition)
+                .Select(conditionName => {
+                    var condition = _conditionProvider.GetCondition(conditionName) as global::Condition;
+                    if (condition == null)
+                        UnityEngine.Debug.LogWarning($"[InGameInvocationCard] Condition '{conditionName}' not found for card '{title}'");
+                    return condition;
+                })
                 .Where(condition => condition != null)
                 .ToList();
 
             // Phase 118: Populate modern abilities only (legacy Abilities removed)
+            // Phase 146: Added warning for missing abilities
             ModernAbilities = BaseInvocationCard.Abilities
-                .Select(abilityName => _abilityProvider.GetModernAbility(abilityName))
+                .Select(abilityName => {
+                    var ability = _abilityProvider.GetModernAbility(abilityName);
+                    if (ability == null)
+                        UnityEngine.Debug.LogWarning($"[InGameInvocationCard] Ability '{abilityName}' not found for card '{title}'");
+                    return ability;
+                })
                 .Where(ability => ability != null)
                 .ToList();
 
@@ -381,23 +393,24 @@ namespace _Scripts.Units.Invocation
         /// Sets the equipment card via interface type.
         /// Phase 72: Added for IInGameInvocationCard interface extension.
         /// Phase 144: Fixed unsafe cast - now logs error instead of silently failing.
+        /// Phase 146: Changed to return bool indicating success/failure.
         /// </summary>
-        void IInGameInvocationCard.SetEquipmentCard(IInGameEquipmentCard card)
+        bool IInGameInvocationCard.SetEquipmentCard(IInGameEquipmentCard card)
         {
             if (card == null)
             {
                 EquipmentCard = null;
-                return;
+                return true;
             }
 
             if (card is InGameEquipmentCard equipmentCard)
             {
                 EquipmentCard = equipmentCard;
+                return true;
             }
-            else
-            {
-                UnityEngine.Debug.LogError($"[InGameInvocationCard.SetEquipmentCard] Expected InGameEquipmentCard but got {card.GetType().Name}. Equipment not assigned.");
-            }
+
+            UnityEngine.Debug.LogError($"[InGameInvocationCard.SetEquipmentCard] Expected InGameEquipmentCard but got {card.GetType().Name}. Equipment not assigned.");
+            return false;
         }
 
         /// <summary>
