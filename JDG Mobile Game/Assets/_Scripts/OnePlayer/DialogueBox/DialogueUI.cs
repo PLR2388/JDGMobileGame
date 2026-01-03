@@ -20,6 +20,9 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private TMP_Text textLabel;
     [SerializeField] private DialogueObject testDialogue;
 
+    // Phase 148: CanvasGroup for hiding dialogue without disabling GameObject (keeps coroutines running)
+    [SerializeField] private CanvasGroup dialogueCanvasGroup;
+
     private NextDialogueTrigger currentTrigger = NextDialogueTrigger.Undefined;
 
     private ResponseHandler responseHandler;
@@ -101,7 +104,7 @@ public class DialogueUI : MonoBehaviour
     /// <param name="dialogueObject">The dialogue data to be displayed.</param>
     public void ShowDialogue(DialogueObject dialogueObject)
     {
-        dialogueBox.SetActive(true);
+        SetDialogueVisible(true);
         StartCoroutine(StepThroughDialogue(dialogueObject));
     }
 
@@ -160,11 +163,8 @@ public class DialogueUI : MonoBehaviour
             var triggers = dialogueObject.NextDialogueTriggers;
             if (triggers != null && i < triggers.Length)
             {
-                yield return new WaitUntil(() =>
-                {
-                    NextDialogueTrigger nextDialogueTrigger = triggers[i];
-                    return IsNextDialogueReady(nextDialogueTrigger);
-                });
+                NextDialogueTrigger nextDialogueTrigger = triggers[i];
+                yield return new WaitUntil(() => IsNextDialogueReady(nextDialogueTrigger));
             }
         }
 
@@ -180,6 +180,7 @@ public class DialogueUI : MonoBehaviour
     
     /// <summary>
     /// Determines if the conditions for the next dialogue are met.
+    /// Phase 148: Uses SetDialogueVisible instead of SetActive to keep coroutines running.
     /// </summary>
     /// <param name="nextDialogueTrigger">The type of trigger for the next dialogue.</param>
     /// <returns>True if conditions are met; otherwise, false.</returns>
@@ -192,27 +193,28 @@ public class DialogueUI : MonoBehaviour
             case NextDialogueTrigger.Automatic:
                 return true;
             case NextDialogueTrigger.PutCard:
-                dialogueBox.SetActive(false);
-                if (currentTrigger == NextDialogueTrigger.NextPhase)
+                SetDialogueVisible(false);
+                if (currentTrigger == NextDialogueTrigger.PutCard)
                 {
-                    dialogueBox.SetActive(true);
+                    SetDialogueVisible(true);
                     currentTrigger = NextDialogueTrigger.Undefined;
                     return true;
                 }
                 break;
             case NextDialogueTrigger.NextPhase:
+                SetDialogueVisible(false);
                 if (currentTrigger == NextDialogueTrigger.NextPhase)
                 {
-                    dialogueBox.SetActive(true);
+                    SetDialogueVisible(true);
                     currentTrigger = NextDialogueTrigger.Undefined;
                     return true;
                 }
                 break;
             case NextDialogueTrigger.PutEffectCard:
-                dialogueBox.SetActive(false);
+                SetDialogueVisible(false);
                 if (currentTrigger == NextDialogueTrigger.PutEffectCard)
                 {
-                    dialogueBox.SetActive(true);
+                    SetDialogueVisible(true);
                     currentTrigger = NextDialogueTrigger.Undefined;
                     return true;
                 }
@@ -220,19 +222,20 @@ public class DialogueUI : MonoBehaviour
             case NextDialogueTrigger.Undefined:
                 break;
             case NextDialogueTrigger.Attack:
-                dialogueBox.SetActive(false);
-                if (currentTrigger == NextDialogueTrigger.NextPhase)
+                SetDialogueVisible(false);
+                // Phase 148: Fixed bug - was checking NextPhase instead of Attack
+                if (currentTrigger == NextDialogueTrigger.Attack)
                 {
-                    dialogueBox.SetActive(true);
+                    SetDialogueVisible(true);
                     currentTrigger = NextDialogueTrigger.Undefined;
                     return true;
                 }
                 break;
             case NextDialogueTrigger.EndVideo:
-                dialogueBox.SetActive(false);
+                SetDialogueVisible(false);
                 if (currentTrigger == NextDialogueTrigger.EndVideo)
                 {
-                    dialogueBox.SetActive(true);
+                    SetDialogueVisible(true);
                     currentTrigger = NextDialogueTrigger.Undefined;
                     return true;
                 }
@@ -296,11 +299,33 @@ public class DialogueUI : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the visibility of the dialogue box without disabling the GameObject.
+    /// Phase 148: Uses CanvasGroup to hide/show dialogue while keeping coroutines running.
+    /// When dialogueBox.SetActive(false) was called, it stopped all coroutines because
+    /// DialogueUI is on the same GameObject as dialogueBox.
+    /// </summary>
+    /// <param name="visible">Whether the dialogue should be visible.</param>
+    private void SetDialogueVisible(bool visible)
+    {
+        if (dialogueCanvasGroup != null)
+        {
+            dialogueCanvasGroup.alpha = visible ? 1f : 0f;
+            dialogueCanvasGroup.interactable = visible;
+            dialogueCanvasGroup.blocksRaycasts = visible;
+        }
+        else
+        {
+            // Fallback for backwards compatibility (will stop coroutines if dialogueBox == this.gameObject)
+            dialogueBox.SetActive(visible);
+        }
+    }
+
+    /// <summary>
     /// Closes the dialogue box UI.
     /// </summary>
     private void CloseDialogueBox()
     {
-        dialogueBox.SetActive(false);
+        SetDialogueVisible(false);
         textLabel.text = String.Empty;
     }
 }

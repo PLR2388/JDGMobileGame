@@ -1,7 +1,9 @@
 ﻿using System;
 using Cards;
+using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Services;
 using OnePlayer;
 using OnePlayer.DialogueBox;
 using TMPro;
@@ -34,11 +36,25 @@ public class TutoInGameMenuScript : InGameMenuScript
     /// <summary>
     /// Phase 90: VContainer injection for tutorial-specific dependencies.
     /// Phase 133: Renamed from ConstructTutorial to Construct for VContainer compatibility.
+    /// Phase 144: Fixed to inject ALL base class dependencies including _eventBus.
+    /// Previously only injected ITutorialStateService, leaving _eventBus null.
+    /// This caused DialogueTriggerCompletedEvent to never publish in ClickPutCard().
     /// </summary>
     [Inject]
-    public void Construct(ITutorialStateService tutorialStateService)
+    public void Construct(
+        ITutorialStateService tutorialStateService,
+        ICardCollectionService cardCollectionService,
+        IEventBus eventBus,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService,
+        GameStateService gameStateService)
     {
         _tutorialStateService = tutorialStateService;
+        _cardCollectionService = cardCollectionService;
+        _eventBus = eventBus;
+        _playerStatusProvider = playerStatusProvider;
+        _localizationService = localizationService;
+        _gameStateService = gameStateService;
     }
 
     /// <summary>
@@ -114,8 +130,10 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     /// <summary>
     /// Handles the "Put Card" action, triggering the appropriate event based on the card's type.
+    /// Phase 146: Changed from 'new' to 'override' to fix method hiding bug.
+    /// Phase 148: Moved DialogueTriggerCompletedEvent to HideHand (triggered when closing highlighted hand).
     /// </summary>
-    public new void ClickPutCard()
+    public override void ClickPutCard()
     {
         if (CardHandlerMap.TryGetValue(CurrentSelectedCard.Type, out var handler))
         {
@@ -210,6 +228,12 @@ public class TutoInGameMenuScript : InGameMenuScript
     /// </summary>
     private void HideHand()
     {
+        // Phase 148: Publish PutCard trigger when InHandButton was highlighted (player followed tutorial guidance)
+        if (highLightButton.isActivated)
+        {
+            _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.PutCard });
+        }
+
         SetHandVisibility(false);
         UpdateButtonText(LocalizationKeys.BUTTON_HAND);
         UnselectButton();

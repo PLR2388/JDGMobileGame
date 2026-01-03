@@ -280,8 +280,9 @@ namespace JDG.PlayMode.Tests
         [UnityTest]
         public IEnumerator GameStateService_FullTurnCycle_CompletesAllPhases()
         {
-            // Arrange
-            _gameStateService.StartNewTurn();
+            // Arrange - Use Turn 2 to avoid "Player 1 can't attack on Turn 1" rule
+            _gameStateService.StartNewTurn(); // Turn 1
+            _gameStateRepository.IncrementTurn(); // Turn 2 - Player 1 can now attack
             Assert.AreEqual(Phase.Draw, _gameStateService.CurrentPhase);
 
             // Act - Complete full turn

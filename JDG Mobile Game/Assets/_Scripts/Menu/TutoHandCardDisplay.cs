@@ -132,11 +132,12 @@ public class TutoHandCardDisplay : HandCardDisplay
     }
 
     /// <summary>
-    /// Creates visual representations for the provided cards.
+    /// Creates visual representations for the provided cards with tutorial-specific highlighting.
     /// Phase 132: Added injection for dynamically created OnHover components.
+    /// Phase 141: Changed to protected override to properly override base class method.
     /// </summary>
     /// <param name="handCards">Collection of in-game cards.</param>
-    private void CreateCards(ObservableCollection<InGameCard> handCards)
+    protected override void CreateCards(ObservableCollection<InGameCard> handCards)
     {
         foreach (var handCard in handCards)
         {
@@ -152,9 +153,12 @@ public class TutoHandCardDisplay : HandCardDisplay
                 _container?.Inject(onHover);
             }
 
+            // Tutorial-specific: Add highlighting for specific cards
             if (ShouldHighlightCard(handCard))
             {
-                newCard.AddComponent<HighLightCard>();
+                var highlightCard = newCard.AddComponent<HighLightCard>();
+                // Phase 141: Inject the dynamically created HighLightCard component
+                _container?.Inject(highlightCard);
             }
 
             CreatedCards.Add(newCard);
@@ -163,35 +167,6 @@ public class TutoHandCardDisplay : HandCardDisplay
         AdjustRectTransformSize(handCards.Count);
     }
 
-    /// <summary>
-    /// Clears any existing card representations and then recreates them for the provided cards.
-    /// </summary>
-    /// <param name="handCards">Collection of in-game cards.</param>
-    private void RebuildHandDisplay(ObservableCollection<InGameCard> handCards)
-    {
-        ClearCreatedCards();
-        CreateCards(handCards);
-    }
-
-    /// <summary>
-    /// Determines if the hand cards should be displayed.
-    /// </summary>
-    /// <param name="handCards">Collection of in-game cards.</param>
-    /// <returns>True if the cards should be displayed, false otherwise.</returns>
-    private bool ShouldDisplayHandCard(ObservableCollection<InGameCard> handCards)
-    {
-        return handCards.Count == 0 || IsCurrentPlayerTurn(handCards[0]);
-    }
-
-    /// <summary>
-    /// Displays the hand cards based on certain conditions.
-    /// </summary>
-    /// <param name="handCards">Collection of in-game cards.</param>
-    private void DisplayHandCard(ObservableCollection<InGameCard> handCards)
-    {
-        if (ShouldDisplayHandCard(handCards))
-        {
-            RebuildHandDisplay(handCards);
-        }
-    }
+    // Phase 141: Removed shadowing methods (RebuildHandDisplay, ShouldDisplayHandCard, DisplayHandCard)
+    // The base class now calls our overridden CreateCards() method for proper polymorphism.
 }

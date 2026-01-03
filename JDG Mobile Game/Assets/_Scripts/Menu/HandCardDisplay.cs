@@ -101,9 +101,10 @@ public class HandCardDisplay : MonoBehaviour
     
     /// <summary>
     /// Creates visual representations for the provided cards.
+    /// Protected virtual to allow tutorial-specific overrides for card highlighting.
     /// </summary>
     /// <param name="handCards">Collection of in-game cards.</param>
-    private void CreateCards(ObservableCollection<InGameCard> handCards)
+    protected virtual void CreateCards(ObservableCollection<InGameCard> handCards)
     {
         if (prefabCard == null)
         {

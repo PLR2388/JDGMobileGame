@@ -452,6 +452,7 @@ GameObject:
   - component: {fileID: 83409354}
   - component: {fileID: 83409353}
   - component: {fileID: 83409352}
+  - component: {fileID: 83409355}
   m_Layer: 5
   m_Name: DialogueBox
   m_TagString: Untagged
@@ -496,6 +497,7 @@ MonoBehaviour:
   dialogueBox: {fileID: 83409349}
   textLabel: {fileID: 1764321174}
   testDialogue: {fileID: 11400000, guid: 3bd361463c111544b80baf3eec81bc05, type: 2}
+  dialogueCanvasGroup: {fileID: 83409355}
 --- !u!114 &83409353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -524,6 +526,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultTypewriterSpeed: 25
+--- !u!225 &83409355
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83409349}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &123132198
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,10 +1797,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd01c2927ee9e4a4597b29d586f4e45f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bigImageCard: {fileID: 0}
+  nextPhaseButton: {fileID: 0}
   tutoImage: {fileID: 2095843835}
   tutoVideo: {fileID: 1045100655}
   miniCardMenu: {fileID: 1982540492}
-  canvas: {fileID: 244790280}
   nextPhaseButtonGameObject: {fileID: 1957640249}
 --- !u!114 &397230410
 MonoBehaviour:
@@ -6020,11 +6035,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f444e1f48da93ed4787062699ec77834, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  element: 8
+  element: 10
   pulseColor: {r: 0, g: 1, b: 0, a: 1}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   pulseDuration: 0.5
-  isActivated: 1
+  isActivated: 0
 --- !u!1 &1664943299
 GameObject:
   m_ObjectHideFlags: 0

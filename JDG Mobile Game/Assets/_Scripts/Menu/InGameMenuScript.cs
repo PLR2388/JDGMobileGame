@@ -239,8 +239,9 @@ public class InGameMenuScript : MonoBehaviour
     /// <summary>
     /// Handles the "Put Card" action, triggering the appropriate event based on the card's type.
     /// Phase 135: Added phase and game state validation.
+    /// Phase 146: Made virtual to allow TutoInGameMenuScript to override and publish dialogue events.
     /// </summary>
-    public void ClickPutCard()
+    public virtual void ClickPutCard()
     {
         // Phase 135: Validate game state before placing card
         if (_gameStateService != null)

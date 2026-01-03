@@ -54,6 +54,7 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     /// <summary>
     /// Initialize component references and set up event listeners.
     /// Phase 121: Subscribe to CardNumberedEvent via EventBus.
+    /// Phase 143: Check for CardToHighlight and apply pulsing effect.
     /// </summary>
     private void Start()
     {
@@ -68,6 +69,26 @@ public class OnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
         // Initialize default state
         SetState(new DefaultCardState(this, card, _cardSelectionService));
+
+        // Phase 143: Check if this card should be highlighted for tutorial
+        if (!string.IsNullOrEmpty(DisplayCards.CardToHighlight) && card?.Title == DisplayCards.CardToHighlight)
+        {
+            StartCoroutine(PulseHighlight());
+        }
+    }
+
+    /// <summary>
+    /// Phase 143: Coroutine to pulse the card with green color for tutorial highlighting.
+    /// </summary>
+    private System.Collections.IEnumerator PulseHighlight()
+    {
+        while (!string.IsNullOrEmpty(DisplayCards.CardToHighlight) && card?.Title == DisplayCards.CardToHighlight)
+        {
+            SetImageColor(Color.green);
+            yield return new WaitForSeconds(0.5f);
+            SetImageColor(Color.white);
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     /// <summary>

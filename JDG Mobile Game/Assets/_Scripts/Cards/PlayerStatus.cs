@@ -90,11 +90,12 @@ public class PlayerStatus : MonoBehaviour
     /// <summary>
     /// Changes the player's health by the given amount.
     /// Phase 21-22: Delegates to PlayerService, which publishes PlayerHealthChangedEvent.
+    /// Phase 151: Removed int cast to support half-star damage values (e.g., 2.5 damage).
     /// </summary>
     /// <param name="pv">Amount to change the health by (can be positive or negative).</param>
     public void ChangePv(float pv)
     {
-        _playerService.ChangeHealth(PlayerId, (int)pv);
+        _playerService.ChangeHealth(PlayerId, pv);
         // currentHealth will be updated by OnPlayerHealthChanged event handler
     }
 
@@ -111,11 +112,12 @@ public class PlayerStatus : MonoBehaviour
     /// <summary>
     /// Sets the health directly.
     /// Phase 21-22: Delegates to PlayerService.SetHealth().
+    /// Phase 151: Removed int cast to support half-star health values.
     /// </summary>
     /// <param name="health">The health value to set.</param>
     public void SetHealthDirect(float health)
     {
-        _playerService.SetHealth(PlayerId, (int)health);
+        _playerService.SetHealth(PlayerId, health);
         // currentHealth will be updated by OnPlayerHealthChanged event handler
     }
 

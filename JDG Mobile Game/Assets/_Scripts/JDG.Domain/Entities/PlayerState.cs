@@ -3,14 +3,15 @@ namespace JDG.Domain.Entities
     /// <summary>
     /// Immutable domain entity representing a player's state in the game.
     /// Pure C# with no Unity dependencies.
+    /// Phase 151: Changed health from int to float to support half-star damage values.
     /// </summary>
     public class PlayerState
     {
-        public const int MaxHealth = 30;
-        public const int MinHealth = 0;
+        public const float MaxHealth = 30f;
+        public const float MinHealth = 0f;
 
         public CardOwner PlayerId { get; }
-        public int CurrentHealth { get; }
+        public float CurrentHealth { get; }
         public int ShieldCount { get; }
         public bool CanBlockAttack { get; }
 
@@ -19,7 +20,7 @@ namespace JDG.Domain.Entities
         /// </summary>
         public PlayerState(
             CardOwner playerId,
-            int currentHealth,
+            float currentHealth,
             int shieldCount,
             bool canBlockAttack)
         {
@@ -44,8 +45,9 @@ namespace JDG.Domain.Entities
         /// <summary>
         /// Returns a new PlayerState with updated health.
         /// Health is clamped between MinHealth and MaxHealth.
+        /// Phase 151: Changed to use float for half-star damage support.
         /// </summary>
-        public PlayerState WithHealth(int newHealth)
+        public PlayerState WithHealth(float newHealth)
         {
             var clampedHealth = System.Math.Max(MinHealth, System.Math.Min(MaxHealth, newHealth));
             return new PlayerState(PlayerId, clampedHealth, ShieldCount, CanBlockAttack);
@@ -53,8 +55,9 @@ namespace JDG.Domain.Entities
 
         /// <summary>
         /// Returns a new PlayerState with health changed by the specified amount.
+        /// Phase 151: Changed delta to float for half-star damage support.
         /// </summary>
-        public PlayerState ChangeHealth(int delta)
+        public PlayerState ChangeHealth(float delta)
         {
             return WithHealth(CurrentHealth + delta);
         }

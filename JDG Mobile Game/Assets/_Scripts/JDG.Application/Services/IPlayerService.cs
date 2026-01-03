@@ -17,16 +17,18 @@ namespace JDG.Application.Services
         /// <summary>
         /// Changes the player's health by the specified amount.
         /// Publishes PlayerHealthChangedEvent via EventBus.
+        /// Phase 151: Changed delta to float for half-star damage support.
         /// </summary>
         /// <param name="playerId">The player to affect.</param>
         /// <param name="delta">Amount to change health by (can be positive or negative).</param>
-        void ChangeHealth(CardOwner playerId, int delta);
+        void ChangeHealth(CardOwner playerId, float delta);
 
         /// <summary>
         /// Sets the player's health to a specific value.
         /// Publishes PlayerHealthChangedEvent via EventBus.
+        /// Phase 151: Changed health to float for half-star damage support.
         /// </summary>
-        void SetHealth(CardOwner playerId, int health);
+        void SetHealth(CardOwner playerId, float health);
 
         /// <summary>
         /// Sets the player's shield count.

@@ -107,8 +107,9 @@ public class DeckManagementService : IDeckManagementService
     }
 
     /// <summary>
-    /// Builds the tutorial deck for Player 1.
+    /// Builds the tutorial deck for Player 1 (AI/Opponent).
     /// Uses specific cards: Fisti, JeanMichelBruitages, LePyroBarbare, Fistiland, MerdeMagiqueEnPlastiqueRose
+    /// JeanMichelBruitages is the attack target for the tutorial attack flow.
     /// Plus 25 random cards.
     /// </summary>
     private void BuildPlayer1TutorialDeck()
@@ -117,7 +118,7 @@ public class DeckManagementService : IDeckManagementService
             new List<CardNames>
             {
                 CardNames.Fisti,
-                CardNames.JeanMichelBruitages,
+                CardNames.JeanMichelBruitages,  // Tutorial attack target
                 CardNames.LePyroBarbare,
                 CardNames.Fistiland,
                 CardNames.MerdeMagiqueEnPlastiqueRose
@@ -135,9 +136,11 @@ public class DeckManagementService : IDeckManagementService
     }
 
     /// <summary>
-    /// Builds the tutorial deck for Player 2.
-    /// Uses specific cards: ClichéRaciste, MusiqueDeMegaDrive, LElfette, Tentacules
-    /// Plus 24 random cards, ensuring Tentacules is included.
+    /// Builds the tutorial deck for Player 2 (Human).
+    /// Phase 143: Tentacules must stay in deck for Cliché Raciste ability to invoke it.
+    /// Uses specific cards in hand: ClichéRaciste, MusiqueDeMegaDrive, LElfette
+    /// Tentacules is added at deck position 0 (drawn last) so it stays in deck.
+    /// Plus 26 random cards.
     /// </summary>
     private void BuildPlayer2TutorialDeck()
     {
@@ -147,18 +150,16 @@ public class DeckManagementService : IDeckManagementService
                 CardNames.ClichéRaciste,
                 CardNames.MusiqueDeMegaDrive,
                 CardNames.LElfette
+                // Tentacules NOT here - needs to stay in deck for ability to invoke it
             },
             Deck2AllCards
         );
 
-        CardChoice.GetRandomDeck(DeckConfiguration.MaxDeckCards - player2Deck.Count - 1, ref player2Deck, Deck2AllCards);
-
-        // Ensure Tentacules card is in the deck
+        // Get Tentacules separately - it will be added at deck beginning to stay in deck
         var tentaculesCard = CardChoice.GetSpecificCard(CardNames.Tentacules, Deck2AllCards);
-        if (tentaculesCard != null && !player2Deck.Contains(tentaculesCard))
-        {
-            player2Deck.Add(tentaculesCard);
-        }
+
+        // Get random cards (minus 1 to leave room for Tentacules)
+        CardChoice.GetRandomDeck(DeckConfiguration.MaxDeckCards - player2Deck.Count - 1, ref player2Deck, Deck2AllCards);
 
         player2Deck.Reverse();
         // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
@@ -166,6 +167,18 @@ public class DeckManagementService : IDeckManagementService
             .Select(card => _cardFactory.CreateCard(card, JDG.Domain.CardOwner.Player2) as InGameCard)
             .Where(card => card != null)
             .ToList();
+
+        // Phase 143: Add Tentacules at position 0 (beginning of deck)
+        // Since DrawFromDeck draws from the END, position 0 is drawn last
+        // This ensures Tentacules stays in the deck for Cliché Raciste's ability to invoke it
+        if (tentaculesCard != null)
+        {
+            var tentaculesInGame = _cardFactory.CreateCard(tentaculesCard, JDG.Domain.CardOwner.Player2) as InGameCard;
+            if (tentaculesInGame != null)
+            {
+                Player2DeckCards.Insert(0, tentaculesInGame);
+            }
+        }
     }
 
     /// <summary>

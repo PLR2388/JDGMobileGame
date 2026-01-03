@@ -35,7 +35,10 @@ public class PlayerService : IPlayerService
         return _playerStates[playerId];
     }
 
-    public void ChangeHealth(JDG.Domain.CardOwner playerId, int delta)
+    /// <summary>
+    /// Phase 151: Changed delta to float for half-star damage support.
+    /// </summary>
+    public void ChangeHealth(JDG.Domain.CardOwner playerId, float delta)
     {
         var currentState = _playerStates[playerId];
         var oldHealth = currentState.CurrentHealth;
@@ -52,7 +55,10 @@ public class PlayerService : IPlayerService
         });
     }
 
-    public void SetHealth(JDG.Domain.CardOwner playerId, int health)
+    /// <summary>
+    /// Phase 151: Changed health to float for half-star damage support.
+    /// </summary>
+    public void SetHealth(JDG.Domain.CardOwner playerId, float health)
     {
         var currentState = _playerStates[playerId];
         var oldHealth = currentState.CurrentHealth;

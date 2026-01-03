@@ -19,6 +19,7 @@ namespace OnePlayer
         [SerializeField] private float pulseDuration = 0.5f;
 
 
+        // Phase 143: Highlight the player's "Tentacules" card as the attacker
         private static readonly string TargetCardName = CardNameMappings.CardNameMap[CardNames.Tentacules];
 
         private bool isActivated = false;

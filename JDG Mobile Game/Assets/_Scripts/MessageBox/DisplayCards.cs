@@ -13,6 +13,7 @@ using JDG.Application.Services;
 /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
 /// Phase 91: Converted from StaticInstance<T> to regular MonoBehaviour.
 /// All dependencies are injected via VContainer.
+/// Phase 143: Added CardToHighlight for tutorial attack flow.
 /// </summary>
 public class DisplayCards : MonoBehaviour
 {
@@ -22,6 +23,12 @@ public class DisplayCards : MonoBehaviour
     // Phase 9 & 41: Injected dependencies
     private ICardPoolService _cardPoolService;
     private ICardSelectionService _cardSelectionService;
+
+    /// <summary>
+    /// Phase 143: Card name to highlight in the selector for tutorial.
+    /// Set before showing the selector, cleared after selection.
+    /// </summary>
+    public static string CardToHighlight { get; set; }
 
     /// <summary>
     /// Sets the list of cards to be displayed and triggers the card display.

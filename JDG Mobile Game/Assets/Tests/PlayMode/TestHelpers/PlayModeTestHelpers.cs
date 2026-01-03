@@ -1,24 +1,149 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using JDG.Application;
+using UnityEngine;
 
 namespace JDG.PlayMode.Tests.TestHelpers
 {
+    #region Timestamped Events
+
+    /// <summary>
+    /// Represents an event with timestamp and stack trace for debugging.
+    /// </summary>
+    public class TimestampedEvent
+    {
+        public DateTime Timestamp { get; set; }
+        public string EventType { get; set; }
+        public object EventData { get; set; }
+        public string StackTrace { get; set; }
+
+        public override string ToString()
+        {
+            return $"[{Timestamp:HH:mm:ss.fff}] {EventType}";
+        }
+    }
+
+    #endregion
+
+    #region Test Awaiters
+
+    /// <summary>
+    /// Coroutine utilities for waiting in PlayMode tests.
+    /// </summary>
+    public static class TestAwaiters
+    {
+        /// <summary>
+        /// Waits until a condition is true or timeout is reached.
+        /// </summary>
+        /// <param name="condition">The condition to wait for.</param>
+        /// <param name="timeout">Maximum time to wait in seconds.</param>
+        /// <param name="timeoutMessage">Message to include in timeout exception.</param>
+        /// <returns>IEnumerator for coroutine.</returns>
+        public static IEnumerator WaitForCondition(
+            Func<bool> condition,
+            float timeout = 5f,
+            string timeoutMessage = null)
+        {
+            float elapsed = 0f;
+            while (!condition() && elapsed < timeout)
+            {
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+
+            if (elapsed >= timeout)
+            {
+                throw new TimeoutException(
+                    timeoutMessage ?? $"Condition not met within {timeout}s");
+            }
+        }
+
+        /// <summary>
+        /// Waits for an event of type T to be published to the TestEventBus.
+        /// </summary>
+        /// <typeparam name="T">The event type to wait for.</typeparam>
+        /// <param name="eventBus">The test event bus to monitor.</param>
+        /// <param name="timeout">Maximum time to wait in seconds.</param>
+        /// <returns>IEnumerator for coroutine.</returns>
+        public static IEnumerator WaitForEvent<T>(TestEventBus eventBus, float timeout = 5f) where T : struct
+        {
+            int initialCount = eventBus.CountEvents<T>();
+            yield return WaitForCondition(
+                () => eventBus.CountEvents<T>() > initialCount,
+                timeout,
+                $"Event {typeof(T).Name} not published within {timeout}s"
+            );
+        }
+
+        /// <summary>
+        /// Waits for a specific number of frames.
+        /// </summary>
+        /// <param name="frames">Number of frames to wait.</param>
+        /// <returns>IEnumerator for coroutine.</returns>
+        public static IEnumerator WaitFrames(int frames)
+        {
+            for (int i = 0; i < frames; i++)
+            {
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Waits for a specific amount of real time (unscaled).
+        /// </summary>
+        /// <param name="seconds">Seconds to wait.</param>
+        /// <returns>IEnumerator for coroutine.</returns>
+        public static IEnumerator WaitRealTime(float seconds)
+        {
+            float elapsed = 0f;
+            while (elapsed < seconds)
+            {
+                yield return null;
+                elapsed += Time.unscaledDeltaTime;
+            }
+        }
+    }
+
+    #endregion
+
     /// <summary>
     /// Test double for IEventBus that captures published events.
     /// Use this in PlayMode tests to verify event publishing behavior.
+    /// Enhanced with event history tracking for detailed debugging.
     /// </summary>
     public class TestEventBus : IEventBus
     {
         public List<object> PublishedEvents { get; } = new List<object>();
 
+        /// <summary>
+        /// Detailed event history with timestamps and stack traces.
+        /// Use GetEventHistoryReport() for formatted output.
+        /// </summary>
+        public List<TimestampedEvent> EventHistory { get; } = new List<TimestampedEvent>();
+
+        /// <summary>
+        /// Whether to capture stack traces for debugging. Default is false for performance.
+        /// </summary>
+        public bool CaptureStackTraces { get; set; } = false;
+
         public void Publish<T>(T eventData) where T : struct
         {
             PublishedEvents.Add(eventData);
+
+            // Also capture to timestamped history
+            EventHistory.Add(new TimestampedEvent
+            {
+                Timestamp = DateTime.Now,
+                EventType = typeof(T).Name,
+                EventData = eventData,
+                StackTrace = CaptureStackTraces ? Environment.StackTrace : null
+            });
         }
 
         public IDisposable Subscribe<T>(Action<T> handler) where T : struct
@@ -31,6 +156,58 @@ namespace JDG.PlayMode.Tests.TestHelpers
         public void ClearAllSubscriptions()
         {
             PublishedEvents.Clear();
+            EventHistory.Clear();
+        }
+
+        /// <summary>
+        /// Gets a formatted report of all published events with timestamps.
+        /// Useful for debugging test failures.
+        /// </summary>
+        /// <returns>Formatted string with event timeline.</returns>
+        public string GetEventHistoryReport()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("=== Event History ===");
+            sb.AppendLine($"Total events: {EventHistory.Count}");
+            sb.AppendLine();
+
+            foreach (var evt in EventHistory)
+            {
+                sb.AppendLine($"[{evt.Timestamp:HH:mm:ss.fff}] {evt.EventType}");
+                if (CaptureStackTraces && !string.IsNullOrEmpty(evt.StackTrace))
+                {
+                    sb.AppendLine($"  Stack: {evt.StackTrace.Substring(0, Math.Min(200, evt.StackTrace.Length))}...");
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets all events of a specific type from history.
+        /// </summary>
+        /// <typeparam name="T">The event type to retrieve.</typeparam>
+        /// <returns>List of events of the specified type.</returns>
+        public List<T> GetAllEvents<T>() where T : struct
+        {
+            var result = new List<T>();
+            foreach (var evt in PublishedEvents)
+            {
+                if (evt is T typedEvent)
+                {
+                    result.Add(typedEvent);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Clears all captured events but keeps subscriptions.
+        /// </summary>
+        public void ClearEvents()
+        {
+            PublishedEvents.Clear();
+            EventHistory.Clear();
         }
 
         public T GetLastEvent<T>() where T : struct

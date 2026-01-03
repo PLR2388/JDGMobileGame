@@ -9,10 +9,13 @@ namespace OnePlayer
 {
     /// <summary>
     /// Enum representing different highlight elements.
+    /// Phase 143: Added AttackButton and OpponentSelector for multi-step attack flow.
     /// </summary>
     public enum HighlightElement
     {
-        Invocations, Space, Deck, YellowTrash, Effect, Field, InHandButton, NextPhaseButton, Tentacules, LifePoints
+        Invocations, Space, Deck, YellowTrash, Effect, Field, InHandButton, NextPhaseButton, Tentacules, LifePoints,
+        AttackButton,       // Phase 143: For highlighting attack button
+        OpponentSelector    // Phase 143: For highlighting card in opponent selector
     }
 
     /// <summary>

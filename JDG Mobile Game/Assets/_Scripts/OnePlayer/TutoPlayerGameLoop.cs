@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
@@ -66,6 +67,9 @@ namespace OnePlayer
         // Phase 123: EventBus subscription for dialogue index changes
         private IDisposable _dialogueIndexSubscription;
 
+        // Phase 143: EventBus subscription for tutorial-specific touch handling
+        private IDisposable _touchSubscription;
+
         /// <summary>
         /// Awake is called when the script instance is being loaded.
         /// </summary>
@@ -79,6 +83,7 @@ namespace OnePlayer
         /// <summary>
         /// Start is called on the frame when a script is enabled just before any of the Update methods are called the first time.
         /// Phase 123: Subscribe to DialogueIndexChangedEvent for tutorial scenario triggers.
+        /// Phase 143: Subscribe to TouchStartedEvent for tutorial attack phase handling.
         /// </summary>
         protected override void Start()
         {
@@ -86,6 +91,8 @@ namespace OnePlayer
             base.Start();
             // Phase 123: Subscribe to DialogueIndexChangedEvent via EventBus
             _dialogueIndexSubscription = _eventBus?.Subscribe<DialogueIndexChangedEvent>(OnDialogueIndexChanged);
+            // Phase 143: Subscribe to TouchStartedEvent for tutorial attack phase
+            _touchSubscription = _eventBus?.Subscribe<TouchStartedEvent>(OnTutoTouch);
         }
 
         /// <summary>
@@ -98,13 +105,58 @@ namespace OnePlayer
         }
 
         /// <summary>
+        /// Tutorial-specific touch handling for Attack phase.
+        /// Phase 143: Multi-step attack flow - highlight Tentacules, then attack button.
+        /// Note: Human is Player2 in the tutorial.
+        /// </summary>
+        private void OnTutoTouch(TouchStartedEvent evt)
+        {
+            // Only handle during Attack phase
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Attack) return;
+
+            var cardTouch = _raycastService.GetTouchedCard();
+            if (cardTouch == null) return;
+
+            // Step 2: User (Player2) clicked on Tentacules (their attacking card)
+            if (cardTouch.Title == CardNameMappings.CardNameMap[CardNames.Tentacules]
+                && cardTouch.CardOwner == CardOwner.Player2)
+            {
+                // Deactivate Tentacules highlight
+                _eventBus?.Publish(new HighlightRequestedEvent
+                {
+                    Element = (int)HighlightElement.Tentacules,
+                    IsActivated = false
+                });
+                // Base class will show the attack menu - highlight attack button after a frame
+                StartCoroutine(HighlightAttackButtonAfterDelay());
+            }
+        }
+
+        /// <summary>
+        /// Highlights the attack button after the menu appears.
+        /// Phase 143: Waits one frame for the attack menu to be displayed.
+        /// </summary>
+        private IEnumerator HighlightAttackButtonAfterDelay()
+        {
+            yield return null; // Wait for attack menu to appear
+            _eventBus?.Publish(new HighlightRequestedEvent
+            {
+                Element = (int)HighlightElement.AttackButton,
+                IsActivated = true
+            });
+        }
+
+        /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.
         /// Phase 123: Dispose DialogueIndexChangedEvent subscription.
+        /// Phase 143: Dispose TouchStartedEvent subscription.
         /// </summary>
         protected override void OnDestroy()
         {
             // Phase 123: Dispose subscription
             _dialogueIndexSubscription?.Dispose();
+            // Phase 143: Dispose touch subscription
+            _touchSubscription?.Dispose();
             // Base class handles EventBus cleanup
             base.OnDestroy();
         }
@@ -240,7 +292,6 @@ namespace OnePlayer
         /// <param name="playerCards">Current player's card details.</param>
         private void EquipInvocationCard(string putCard, PlayerCards playerCards)
         {
-
             var cardNames = putCard.Split('>');
 
             InGameEquipmentCard equipmentCard =
@@ -248,23 +299,50 @@ namespace OnePlayer
             InGameInvocationCard invocationCard =
                 playerCards.InvocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
 
-            if (equipmentCard == null) return;
+            if (equipmentCard == null || invocationCard == null) return;
 
-            invocationCard?.SetEquipmentCard(equipmentCard);
+            invocationCard.SetEquipmentCard(equipmentCard);
             playerCards.HandCards.Remove(equipmentCard);
 
-            // Phase 117: Use modern abilities with OnEquip trigger
-            var owner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
-            var ownerId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(owner);
-            var opponentOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
-            var opponentId = JDG.Domain.ValueObjects.PlayerId.FromCardOwner(opponentOwner);
-            var context = new JDG.Application.Abilities.AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
-
+            // Phase 150: Apply equipment stat bonuses directly to InGameInvocationCard
+            // The modern ability system uses domain Card objects that don't sync back to InGameInvocationCard.
+            // Until that architecture is fixed, we apply stat bonuses directly here.
             foreach (var ability in equipmentCard.ModernEquipmentAbilities)
             {
-                if (ability.CanActivate(context))
+                if (ability is JDG.Application.Abilities.Implementations.BonusStatsEquipmentAbility bonusAbility)
                 {
-                    ability.Execute(context);
+                    // Use reflection to get the bonus values, or we can check ability description
+                    // For now, apply based on known equipment abilities
+                    ApplyEquipmentAbilityToCard(ability, invocationCard);
+                }
+                else if (ability is JDG.Application.Abilities.Implementations.DirectAttackEquipmentAbility)
+                {
+                    invocationCard.CanDirectAttack = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies equipment ability effects directly to the invocation card.
+        /// Phase 150: Workaround for domain Card sync issue in ability system.
+        /// </summary>
+        private void ApplyEquipmentAbilityToCard(JDG.Application.Abilities.IAbility ability, InGameInvocationCard card)
+        {
+            // Parse the ability description to extract bonus values
+            // BonusStatsEquipmentAbility descriptions are formatted as "+X ATK / +Y DEF"
+            var description = ability.Description;
+            if (string.IsNullOrEmpty(description)) return;
+
+            // Match patterns like "+1 ATK / +1 DEF" or "+2 ATK / +0 DEF"
+            var match = System.Text.RegularExpressions.Regex.Match(description, @"([+-]?\d+)\s*ATK\s*/\s*([+-]?\d+)\s*DEF");
+            if (match.Success)
+            {
+                if (int.TryParse(match.Groups[1].Value, out int atkBonus) &&
+                    int.TryParse(match.Groups[2].Value, out int defBonus))
+                {
+                    card.Attack += atkBonus;
+                    card.Defense += defBonus;
+                    Debug.Log($"Applied equipment bonus to {card.Title}: +{atkBonus} ATK, +{defBonus} DEF. New stats: {card.Attack}/{card.Defense}");
                 }
             }
         }
@@ -353,21 +431,36 @@ namespace OnePlayer
         /// <summary>
         /// Display the MessageBox with the available opponents
         /// Phase 35: Uses inherited _dialogService instead of CardSelector.Instance.
+        /// Phase 143: Multi-step highlight flow - deactivate attack button, highlight JMB.
         /// </summary>
         /// <param name="invocationCards">Available opponents list</param>
         private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
         {
+            // Phase 143: Deactivate attack button highlight when selector opens
+            _eventBus?.Publish(new HighlightRequestedEvent
+            {
+                Element = (int)HighlightElement.AttackButton,
+                IsActivated = false
+            });
+
+            // Phase 143: Set card to highlight in selector
+            DisplayCards.CardToHighlight = CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages];
+
             void PositiveAction(InGameInvocationCard invocationCard)
             {
+                // Phase 143: Clear the card to highlight
+                DisplayCards.CardToHighlight = null;
+
                 if (invocationCard?.Title == CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages])
                 {
                     // Phase 17-18: Use ICombatService instead of CardManager.Instance
                     _combatService.Opponent = invocationCard;
                     ComputeAttack();
-                    // Phase 122: Publish via EventBus
-                    _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.Tentacules, IsActivated = false });
                     miniCardMenu.SetActive(false);
+                    // Phase 143: Highlight next phase button after attack
                     _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = true });
+                    // Phase 142: Publish NextPhase trigger to advance dialogue from index 19 (Attack trigger)
+                    _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.Attack });
                 }
                 // Phase 19-20: Use injected InputManager from base class instead of .Instance
                 _inputManager.EnableDetectionTouch();
@@ -423,17 +516,5 @@ namespace OnePlayer
             }
         }
 
-        /// <summary>
-        /// Handles the touch input by the player during the game.
-        /// This method is never called directly - kept for potential future use.
-        /// Touch events are handled by the base class OnTouch(TouchStartedEvent) method.
-        /// </summary>
-        [System.Obsolete("This method is shadowed by base class OnTouch(TouchStartedEvent). Consider removing or renaming.")]
-        private void OnTouch()
-        {
-            var cardTouch = _raycastService.GetTouchedCard();
-            if (cardTouch?.Title != CardNameMappings.CardNameMap[CardNames.Tentacules] || _gameStateService.CurrentPhase != JDG.Domain.Phase.Attack) return;
-            HandleSingleTouch(cardTouch, CardOwner.Player2, true);
-        }
     }
 }

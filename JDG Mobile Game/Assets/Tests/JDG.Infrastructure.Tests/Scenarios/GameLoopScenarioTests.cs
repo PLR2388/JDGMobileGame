@@ -45,8 +45,9 @@ namespace JDG.Infrastructure.Tests.Scenarios
         [Test]
         public void TurnCycle_ProgressesThroughAllPhases()
         {
-            // Arrange
+            // Arrange - Use Turn 2 to avoid "Player 1 can't attack on Turn 1" rule
             _repository.SetPhase(Phase.Draw);
+            _repository.IncrementTurn(); // Turn 2
 
             // Act & Assert - Progress through all phases
             _gameStateService.NextPhase();
@@ -254,7 +255,9 @@ namespace JDG.Infrastructure.Tests.Scenarios
             var phaseHistory = new List<Phase>();
 
             // Simulate full turn with phase transitions
+            // Use Turn 2 to avoid "Player 1 can't attack on Turn 1" rule
             _repository.SetPhase(Phase.Draw);
+            _repository.IncrementTurn(); // Turn 2
             phaseHistory.Add(_gameStateService.CurrentPhase);
 
             _gameStateService.NextPhase(); // Draw -> Choose
@@ -393,8 +396,9 @@ namespace JDG.Infrastructure.Tests.Scenarios
 
             // Assert - No overflow, alternates correctly
             Assert.AreEqual(101, _gameStateService.TurnNumber);
-            // 100 turns later from Player1, should be Player2 (even number of switches)
-            Assert.AreEqual(PlayerId.Player2, _gameStateService.CurrentPlayer);
+            // 100 switches from Player1: even number of switches returns to Player1
+            // (P1 -> P2 -> P1 -> P2 -> ... -> P1 after 100 switches)
+            Assert.AreEqual(PlayerId.Player1, _gameStateService.CurrentPlayer);
         }
 
         [Test]
