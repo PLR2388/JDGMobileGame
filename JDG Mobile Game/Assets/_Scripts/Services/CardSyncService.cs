@@ -63,6 +63,15 @@ namespace Services
             if (concreteCard.CantBeAttack)
                 domainCard.SetCantBeAttacked(true);
 
+            // Phase 142: Sync additional runtime state
+            // Copy TimesRevived for resurrection ability tracking
+            for (int i = 0; i < concreteCard.TimesRevived; i++)
+                domainCard.IncrementTimesRevived();
+
+            // Copy BonusAttacks for multi-attack abilities
+            if (concreteCard.BonusAttacks > 0)
+                domainCard.SetBonusAttacks(concreteCard.BonusAttacks);
+
             // Store mapping for later sync
             _cardMappings[domainCard.Id] = concreteCard;
 
@@ -103,6 +112,24 @@ namespace Services
             if (domainCard.Families.Count > 0)
             {
                 inGameCard.Families = ConvertFamiliesToLegacy(domainCard.Families);
+            }
+
+            // Phase 142: Sync additional runtime state
+            // Sync TimesRevived for resurrection ability tracking
+            inGameCard.TimesRevived = domainCard.TimesRevived;
+
+            // Sync BonusAttacks for multi-attack abilities
+            // Domain Card uses BonusAttacks as extra attacks, InGameCard tracks total remaining
+            inGameCard.BonusAttacks = domainCard.BonusAttacks;
+
+            // Sync AttackBlocked
+            if (domainCard.AttackBlocked)
+            {
+                inGameCard.BlockAttack();
+            }
+            else
+            {
+                inGameCard.UnblockAttack();
             }
         }
 

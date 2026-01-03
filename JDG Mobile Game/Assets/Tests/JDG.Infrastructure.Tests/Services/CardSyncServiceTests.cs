@@ -203,6 +203,73 @@ namespace JDG.Infrastructure.Tests.Services
             Assert.IsTrue(domainCard.CantBeAttacked);
         }
 
+        [Test]
+        public void DomainCard_IncrementTimesRevived_UpdatesCounter()
+        {
+            // Arrange
+            var domainCard = Card.CreateInvocation(
+                id: CardId.New(),
+                title: "Test Card",
+                description: "",
+                detailedDescription: "",
+                attack: 100,
+                defense: 50,
+                families: new[] { DomainCardFamily.Developer },
+                affectedByEffect: true
+            );
+
+            // Act
+            domainCard.IncrementTimesRevived();
+            domainCard.IncrementTimesRevived();
+
+            // Assert
+            Assert.AreEqual(2, domainCard.TimesRevived);
+        }
+
+        [Test]
+        public void DomainCard_SetBonusAttacks_UpdatesValue()
+        {
+            // Arrange
+            var domainCard = Card.CreateInvocation(
+                id: CardId.New(),
+                title: "Test Card",
+                description: "",
+                detailedDescription: "",
+                attack: 100,
+                defense: 50,
+                families: new[] { DomainCardFamily.Developer },
+                affectedByEffect: true
+            );
+
+            // Act
+            domainCard.SetBonusAttacks(2);
+
+            // Assert
+            Assert.AreEqual(2, domainCard.BonusAttacks);
+        }
+
+        [Test]
+        public void DomainCard_BlockAttack_UpdatesFlag()
+        {
+            // Arrange
+            var domainCard = Card.CreateInvocation(
+                id: CardId.New(),
+                title: "Test Card",
+                description: "",
+                detailedDescription: "",
+                attack: 100,
+                defense: 50,
+                families: new[] { DomainCardFamily.Developer },
+                affectedByEffect: true
+            );
+
+            // Act
+            domainCard.BlockAttack();
+
+            // Assert
+            Assert.IsTrue(domainCard.AttackBlocked);
+        }
+
         #endregion
 
         #region Helper Methods

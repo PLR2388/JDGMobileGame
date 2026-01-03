@@ -161,6 +161,20 @@ namespace JDG.Application.Cards
         void IncrementNumberDeaths();
 
         /// <summary>
+        /// Gets or sets the number of times this card has been revived.
+        /// Used by resurrection abilities with limited revive counts.
+        /// Phase 142: Added for domain Card sync.
+        /// </summary>
+        int TimesRevived { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bonus attacks granted for this turn.
+        /// Added on top of base attack count when syncing from domain.
+        /// Phase 142: Added for domain Card sync.
+        /// </summary>
+        int BonusAttacks { get; set; }
+
+        /// <summary>
         /// Resets the card state for a new turn.
         /// Resets attack counts and turn-based state.
         /// </summary>

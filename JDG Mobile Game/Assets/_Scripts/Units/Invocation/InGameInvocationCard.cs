@@ -83,6 +83,19 @@ namespace _Scripts.Units.Invocation
 
         public int NumberOfDeaths { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the number of times this card has been revived.
+        /// Used by resurrection abilities with limited revive counts.
+        /// Phase 142: Added for domain Card sync.
+        /// </summary>
+        public int TimesRevived { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bonus attacks granted for this turn.
+        /// Phase 142: Added for domain Card sync.
+        /// </summary>
+        public int BonusAttacks { get; set; }
+
         public InGameEquipmentCard EquipmentCard { get; set; }
 
         /// <summary>
@@ -143,6 +156,8 @@ namespace _Scripts.Units.Invocation
             collector = BaseInvocationCard.Collector;
             NumberOfTurnOnField = 0;
             NumberOfDeaths = 0;
+            TimesRevived = 0;
+            BonusAttacks = 0;
             remainedAttackThisTurn = DefaultNumberAttacksPerTurn;
 
             IsControlled = false;

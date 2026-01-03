@@ -170,6 +170,8 @@ namespace JDG.Application.Tests.UseCases
             public bool IsControlled { get; private set; }
             public int NumberOfTurnOnField { get; private set; }
             public int NumberOfDeaths { get; private set; }
+            public int TimesRevived { get; set; }
+            public int BonusAttacks { get; set; }
             public IReadOnlyList<object> Abilities => new List<object>();
             public IInGameEquipmentCard EquipmentCard { get; private set; }
             public CardFamily[] Families { get; set; } = System.Array.Empty<CardFamily>();

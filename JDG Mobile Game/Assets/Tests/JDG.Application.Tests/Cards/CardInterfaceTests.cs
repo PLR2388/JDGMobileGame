@@ -255,6 +255,10 @@ namespace JDG.Application.Tests.Cards
         public int NumberOfTurnOnField { get; private set; }
         public int NumberOfDeaths { get; private set; }
 
+        // Phase 142: Additional sync properties
+        public int TimesRevived { get; set; }
+        public int BonusAttacks { get; set; }
+
         // Tracking properties for tests
         public bool ResetNewTurnCalled { get; private set; }
         public bool UnblockAttackCalled { get; private set; }
