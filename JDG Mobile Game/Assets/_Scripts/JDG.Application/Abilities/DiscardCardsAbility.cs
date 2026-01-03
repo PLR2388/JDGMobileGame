@@ -65,10 +65,15 @@ namespace JDG.Application.Abilities
             }
 
             // Discard cards (take from hand, add to graveyard)
+            // Phase 147: Use FirstOrDefault for safety against concurrent modification
             int cardsDiscarded = 0;
             for (int i = 0; i < _numberOfCards && player.Hand.Count > 0; i++)
             {
-                var card = player.Hand.First(); // Take first card
+                var card = player.Hand.FirstOrDefault();
+                if (card == null)
+                {
+                    break; // Hand was modified during iteration
+                }
                 player.DiscardCard(card);
                 cardsDiscarded++;
 

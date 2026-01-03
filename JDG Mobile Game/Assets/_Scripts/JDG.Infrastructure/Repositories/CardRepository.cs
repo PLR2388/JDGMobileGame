@@ -70,7 +70,13 @@ namespace JDG.Infrastructure.Repositories
 
         public Card GetCardByTitle(string title)
         {
-            return _cardDefinitions.Values.FirstOrDefault(c => c.Title == title);
+            var card = _cardDefinitions.Values.FirstOrDefault(c => c.Title == title);
+            // Phase 147: Log warning when card not found to help diagnose issues
+            if (card == null)
+            {
+                UnityEngine.Debug.LogWarning($"CardRepository: Card with title '{title}' not found");
+            }
+            return card;
         }
 
 

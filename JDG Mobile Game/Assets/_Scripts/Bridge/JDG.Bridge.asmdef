@@ -1,24 +1,17 @@
 {
-    "name": "JDG.Legacy",
-    "rootNamespace": "",
+    "name": "JDG.Bridge",
+    "rootNamespace": "JDG.Bridge",
     "references": [
-        "Unity.TextMeshPro",
-        "Newtonsoft.Json",
-        "VContainer",
         "JDG.Domain",
         "JDG.Application",
-        "JDG.Infrastructure",
-        "JDG.Presentation",
-        "JDG.UI",
-        "JDG.Cards",
-        "JDG.Bridge"
+        "JDG.Infrastructure"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

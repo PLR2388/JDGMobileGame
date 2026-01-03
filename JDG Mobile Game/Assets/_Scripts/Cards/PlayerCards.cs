@@ -259,7 +259,12 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
                 _handleCardAddedToFieldUseCase.Execute(InvocationCards.Last(), this, opponentPlayerCards);
                 break;
             case NotifyCollectionChangedAction.Remove:
-                var removedCard = oldInvocations.Except(InvocationCards).First();
+                var removedCard = oldInvocations.Except(InvocationCards).FirstOrDefault();
+                if (removedCard == null)
+                {
+                    Debug.LogWarning("PlayerCards: No removed card found in collection difference");
+                    break;
+                }
                 _handleCardRemovedFromFieldUseCase.Execute(removedCard, this);
                 break;
         }

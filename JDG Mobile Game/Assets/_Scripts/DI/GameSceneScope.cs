@@ -224,13 +224,18 @@ namespace JDG.DI
                 }
 
                 // Phase 94: Set MessageBox and CardSelector on DialogService from parent scope
+                // Phase 147: Added null check for DialogService cast failure
                 var dialogService = container.Resolve<IDialogService>() as DialogService;
-                if (dialogService != null && messageBox != null && cardSelector != null)
+                if (dialogService == null)
+                {
+                    Debug.LogError("GameSceneScope: Failed to resolve IDialogService as DialogService");
+                }
+                else if (messageBox != null && cardSelector != null)
                 {
                     dialogService.SetDialogComponents(messageBox, cardSelector);
                     Debug.Log("GameSceneScope: Set dialog components on DialogService from parent scope");
                 }
-                else if (dialogService != null)
+                else
                 {
                     // Phase 145: Log which component is missing for easier debugging
                     if (messageBox == null)
