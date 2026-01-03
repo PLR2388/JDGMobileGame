@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using _Scripts.Units.Invocation;
 using JDG.Application.Cards;
+using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
@@ -15,17 +16,25 @@ namespace Services
     ///
     /// Phase 141: Fixes the equipment ability sync issue where domain Card modifications
     /// were lost because ConvertToCard() created a disconnected temporary Card.
+    /// Phase 143: Added bulk sync for modern abilities that modify cards via IPlayerRepository.
     ///
     /// This service maintains a mapping between domain Cards and their originating
     /// InGameInvocationCards, enabling state to be synced back after ability execution.
     /// </summary>
     public class CardSyncService : ICardSyncService
     {
+        private readonly IPlayerRepository _playerRepository;
+
         /// <summary>
         /// Maps domain Card.Id to the originating InGameInvocationCard.
         /// </summary>
         private readonly Dictionary<CardId, InGameInvocationCard> _cardMappings =
             new Dictionary<CardId, InGameInvocationCard>();
+
+        public CardSyncService(IPlayerRepository playerRepository)
+        {
+            _playerRepository = playerRepository;
+        }
 
         /// <summary>
         /// Creates a domain Card linked to an InGameInvocationCard for ability execution.
@@ -141,6 +150,67 @@ namespace Services
             if (domainCard != null)
             {
                 _cardMappings.Remove(domainCard.Id);
+            }
+        }
+
+        /// <summary>
+        /// Syncs all field cards from the player repository back to InGameInvocationCards.
+        /// Phase 143: Matches cards by Title since CardId differs between domain and presentation.
+        /// </summary>
+        public void SyncAllFieldCards(PlayerId playerId, IPlayerCardCollection playerCards)
+        {
+            if (playerCards == null || _playerRepository == null)
+                return;
+
+            var player = _playerRepository.GetPlayer(playerId);
+            if (player == null)
+                return;
+
+            foreach (var inGameCard in playerCards.InvocationCards)
+            {
+                if (inGameCard is not InGameInvocationCard concreteCard)
+                    continue;
+
+                // Match by Title (CardId differs between domain and presentation systems)
+                var domainCard = player.Field.FirstOrDefault(c => c.Title == concreteCard.Title);
+                if (domainCard == null)
+                    continue;
+
+                // Sync stats (domain Card uses int, InGameInvocationCard uses float)
+                if (domainCard.Stats.HasValue)
+                {
+                    concreteCard.Attack = domainCard.Stats.Value.Attack;
+                    concreteCard.Defense = domainCard.Stats.Value.Defense;
+                }
+
+                // Sync boolean state flags
+                if (concreteCard.CancelEffect != domainCard.CancelEffect)
+                {
+                    concreteCard.CancelEffect = domainCard.CancelEffect;
+                }
+
+                concreteCard.CanDirectAttack = domainCard.CanDirectAttack;
+                concreteCard.CantBeAttack = domainCard.CantBeAttacked;
+
+                // Sync families if they were changed
+                if (domainCard.Families.Count > 0)
+                {
+                    concreteCard.Families = ConvertFamiliesToLegacy(domainCard.Families);
+                }
+
+                // Sync runtime state counters
+                concreteCard.TimesRevived = domainCard.TimesRevived;
+                concreteCard.BonusAttacks = domainCard.BonusAttacks;
+
+                // Sync AttackBlocked state
+                if (domainCard.AttackBlocked)
+                {
+                    concreteCard.BlockAttack();
+                }
+                else
+                {
+                    concreteCard.UnblockAttack();
+                }
             }
         }
 

@@ -165,6 +165,11 @@ namespace Services
                 // 5. Trigger OnSummon for the added card's modern abilities
                 var summonContext = CreateAbilityContext(concreteAdded, concreteAdded.CardOwner);
                 ExecuteModernAbilities(concreteAdded.ModernAbilities, AbilityTrigger.OnSummon, summonContext);
+
+                // Phase 143: Sync all field cards after ability executions
+                // Modern abilities may have modified cards via IPlayerRepository
+                var ownerPlayerId = PlayerId.FromCardOwner((JDG.Domain.CardOwner)(int)concreteAdded.CardOwner);
+                _cardSyncService.SyncAllFieldCards(ownerPlayerId, concreteOwner);
             }
         }
 
@@ -242,6 +247,10 @@ namespace Services
                         ExecuteModernAbilities(concreteEffect.ModernEffectAbilities, AbilityTrigger.OnTurnStart, effectContext);
                     }
                 }
+
+                // Phase 143: Sync all field cards after turn start abilities
+                var playerId = concretePlayer.IsPlayerOne ? PlayerId.Player1 : PlayerId.Player2;
+                _cardSyncService.SyncAllFieldCards(playerId, concretePlayer);
             }
         }
 
@@ -281,6 +290,10 @@ namespace Services
                         ExecuteModernAbilities(concreteEffect.ModernEffectAbilities, AbilityTrigger.OnTurnEnd, effectContext);
                     }
                 }
+
+                // Phase 143: Sync all field cards after turn end abilities
+                var playerId = concretePlayer.IsPlayerOne ? PlayerId.Player1 : PlayerId.Player2;
+                _cardSyncService.SyncAllFieldCards(playerId, concretePlayer);
             }
         }
 
@@ -395,6 +408,10 @@ namespace Services
                         }
                     }
                 }
+
+                // Phase 143: Sync all field cards after effect card abilities
+                var playerId = PlayerId.FromCardOwner((JDG.Domain.CardOwner)(int)concreteEffect.CardOwner);
+                _cardSyncService.SyncAllFieldCards(playerId, concreteOwner);
             }
         }
 

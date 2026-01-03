@@ -1,5 +1,9 @@
+using System.Collections.Generic;
 using NUnit.Framework;
+using JDG.Application.Cards;
+using JDG.Application.Repositories;
 using JDG.Application.Services;
+using JDG.Domain;
 using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
@@ -14,6 +18,7 @@ namespace JDG.Infrastructure.Tests.Services
     /// <summary>
     /// Unit tests for CardSyncService.
     /// Phase 141: Tests the domain Card → InGameInvocationCard synchronization.
+    /// Phase 143: Added tests for SyncAllFieldCards bulk sync.
     ///
     /// Note: Full integration tests require PlayMode because CardSyncService
     /// depends on concrete InGameInvocationCard (MonoBehaviour). These tests
@@ -23,11 +28,13 @@ namespace JDG.Infrastructure.Tests.Services
     public class CardSyncServiceTests
     {
         private CardSyncService _service;
+        private MockPlayerRepository _mockRepository;
 
         [SetUp]
         public void SetUp()
         {
-            _service = new CardSyncService();
+            _mockRepository = new MockPlayerRepository();
+            _service = new CardSyncService(_mockRepository);
         }
 
         #region CreateLinkedCard Tests
@@ -272,6 +279,65 @@ namespace JDG.Infrastructure.Tests.Services
 
         #endregion
 
+        #region SyncAllFieldCards Tests
+
+        [Test]
+        public void SyncAllFieldCards_WithNullPlayerCards_DoesNotThrow()
+        {
+            // Arrange
+            var playerId = PlayerId.Player1;
+
+            // Act & Assert - should not throw
+            Assert.DoesNotThrow(() => _service.SyncAllFieldCards(playerId, null));
+        }
+
+        [Test]
+        public void SyncAllFieldCards_WhenPlayerNotFound_DoesNotThrow()
+        {
+            // Arrange
+            var playerId = PlayerId.Player1;
+            var mockPlayerCards = new MockPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+            _mockRepository.PlayerToReturn = null; // Simulate player not found
+
+            // Act & Assert - should not throw
+            Assert.DoesNotThrow(() => _service.SyncAllFieldCards(playerId, mockPlayerCards));
+        }
+
+        [Test]
+        public void SyncAllFieldCards_WithEmptyField_DoesNotThrow()
+        {
+            // Arrange
+            var playerId = PlayerId.Player1;
+            var mockPlayerCards = new MockPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+
+            // Create player with empty field
+            var player = new Player(playerId, new List<Card>());
+            _mockRepository.PlayerToReturn = player;
+
+            // Act & Assert - should not throw
+            Assert.DoesNotThrow(() => _service.SyncAllFieldCards(playerId, mockPlayerCards));
+        }
+
+        [Test]
+        public void SyncAllFieldCards_WhenNoMatchingCards_DoesNotThrow()
+        {
+            // Arrange
+            var playerId = PlayerId.Player1;
+            var mockPlayerCards = new MockPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+
+            // Create player with field card that doesn't match any InGameInvocationCards
+            var deckCard = CreateTestDomainCard();
+            var player = new Player(playerId, new[] { deckCard });
+            player.DrawCard(); // Move to hand
+            player.PlayCard(player.Hand[0]); // Move to field
+            _mockRepository.PlayerToReturn = player;
+
+            // Act & Assert - should not throw
+            Assert.DoesNotThrow(() => _service.SyncAllFieldCards(playerId, mockPlayerCards));
+        }
+
+        #endregion
+
         #region Helper Methods
 
         private static Card CreateTestDomainCard(int attack = 100, int defense = 50)
@@ -286,6 +352,42 @@ namespace JDG.Infrastructure.Tests.Services
                 families: new[] { DomainCardFamily.Developer },
                 affectedByEffect: true
             );
+        }
+
+        #endregion
+
+        #region Mock Classes
+
+        private class MockPlayerRepository : IPlayerRepository
+        {
+            public Player PlayerToReturn { get; set; }
+
+            public Player GetPlayer(PlayerId playerId) => PlayerToReturn;
+
+            public void SavePlayer(Player player) { }
+
+            public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
+            {
+                return PlayerToReturn;
+            }
+
+            public void ResetPlayer(PlayerId playerId) { }
+        }
+
+        private class MockPlayerCardCollection : IPlayerCardCollection
+        {
+            public JDG.Domain.CardOwner Owner { get; }
+            public bool IsPlayerOne => Owner == JDG.Domain.CardOwner.Player1;
+            public IReadOnlyList<IInGameInvocationCard> InvocationCards { get; set; } = new List<IInGameInvocationCard>();
+            public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
+            public IInGameFieldCard FieldCard => null;
+            public IReadOnlyList<IInGameCard> HandCards => new List<IInGameCard>();
+            public int HandCardCount => 0;
+
+            public MockPlayerCardCollection(JDG.Domain.CardOwner owner)
+            {
+                Owner = owner;
+            }
         }
 
         #endregion
