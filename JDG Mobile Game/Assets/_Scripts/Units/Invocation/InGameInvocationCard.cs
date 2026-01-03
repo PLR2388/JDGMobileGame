@@ -78,6 +78,12 @@ namespace _Scripts.Units.Invocation
         /// </summary>
         public List<IAbility> ModernAbilities { get; private set; } = new List<IAbility>();
 
+        /// <summary>
+        /// Cached abilities as IReadOnlyList<object> for interface implementation.
+        /// Phase 145: Added to prevent list allocation on every access.
+        /// </summary>
+        private IReadOnlyList<object> _abilitiesCache;
+
 
         public int NumberOfTurnOnField { get; private set; }
 
@@ -179,6 +185,9 @@ namespace _Scripts.Units.Invocation
                 .Select(abilityName => _abilityProvider.GetModernAbility(abilityName))
                 .Where(ability => ability != null)
                 .ToList();
+
+            // Phase 145: Cache abilities as objects to prevent allocation on every interface access
+            _abilitiesCache = ModernAbilities.Cast<object>().ToList().AsReadOnly();
         }
         
         // Phase 118: Removed UpdateInvocationCardForAbilities - no longer needed
@@ -358,8 +367,9 @@ namespace _Scripts.Units.Invocation
         /// Gets the abilities as a read-only list of objects.
         /// Phase 49: Explicit implementation for IInGameInvocationCard interface.
         /// Phase 118: Now returns ModernAbilities (legacy Abilities removed).
+        /// Phase 145: Now returns cached value to prevent allocation on every access.
         /// </summary>
-        IReadOnlyList<object> IInGameInvocationCard.Abilities => ModernAbilities.Cast<object>().ToList().AsReadOnly();
+        IReadOnlyList<object> IInGameInvocationCard.Abilities => _abilitiesCache;
 
         /// <summary>
         /// Gets the equipment card as an interface type.

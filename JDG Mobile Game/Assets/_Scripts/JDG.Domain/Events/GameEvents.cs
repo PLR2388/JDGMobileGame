@@ -6,6 +6,32 @@ using JDG.Domain.ValueObjects;
 namespace JDG.Domain.Events
 {
     // ============================================
+    // GAME EVENTS OVERVIEW
+    // ============================================
+    //
+    // Phase 145: Documentation of event usage patterns
+    //
+    // EXTENSIBILITY EVENTS (published but no default subscribers):
+    // These events are published for future features and custom extensions:
+    // - AttackExecutedEvent: For attack animations, sound effects, analytics
+    // - CardDiedEvent: For death animations, sound effects, graveyward UI updates
+    // - CardAddedToFieldEvent: For summon animations, ability triggers
+    // - CardRemovedFromFieldEvent: For removal animations
+    // - CardDiscardedEvent: For discard animations
+    // - CardStatsModifiedEvent: For stat change animations
+    // - CardsResetForNewTurnEvent: For turn transition effects
+    // - HandCardsChangedEvent: For hand count UI updates
+    // - FieldCardReplacedEvent: For field card transition effects
+    // - PlayerDamagedEvent: For damage animations, screen shake
+    // - PlayerHealedEvent: For heal animations
+    // - ShieldsAddedEvent: For shield animations
+    // - AbilityExecutedEvent: For ability activation feedback
+    // - ContreCardPlayRequestedEvent: For counter card UI handling
+    //
+    // These events are NOT dead code - they enable UI/sound/analytics without
+    // modifying core game logic. Subscribe to them in MonoBehaviours as needed.
+    //
+    // ============================================
     // PHASE & TURN EVENTS
     // ============================================
 
@@ -102,7 +128,11 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct CardDiedEvent
     {
-        public object DeadCard; // Using object to avoid dependency on InGameCard (legacy type)
+        /// <summary>
+        /// The card that died. Runtime type: IInGameInvocationCard.
+        /// Cast with: (IInGameInvocationCard)DeadCard or use pattern matching.
+        /// </summary>
+        public object DeadCard;
         public CardOwner Owner;
     }
 
@@ -127,7 +157,11 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct CardAddedToFieldEvent
     {
-        public object AddedCard; // Using object to avoid dependency on InGameCard (legacy type)
+        /// <summary>
+        /// The card added to the field. Runtime type: IInGameInvocationCard.
+        /// Cast with: (IInGameInvocationCard)AddedCard or use pattern matching.
+        /// </summary>
+        public object AddedCard;
         public CardOwner Owner;
     }
 
@@ -318,7 +352,10 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct InvocationCancelledEvent
     {
-        public object CancelledCard; // Using object to avoid dependency on InGameInvocationCard
+        /// <summary>
+        /// The cancelled card. Runtime type: IInGameInvocationCard.
+        /// </summary>
+        public object CancelledCard;
         public CardOwner Owner;
     }
 
@@ -476,7 +513,11 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct InGameCardClickedEvent
     {
-        public object Card; // Using object to avoid dependency on InGameCard
+        /// <summary>
+        /// The clicked card. Runtime type: IInGameCard (base interface for all card types).
+        /// Use pattern matching to determine specific card type (IInGameInvocationCard, etc.).
+        /// </summary>
+        public object Card;
     }
 
     // ============================================
@@ -490,7 +531,10 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct InvocationCardPlayRequestedEvent
     {
-        public object InvocationCard; // Using object to avoid dependency on InGameInvocationCard
+        /// <summary>
+        /// The invocation card to play. Runtime type: IInGameInvocationCard.
+        /// </summary>
+        public object InvocationCard;
         public CardOwner Owner;
     }
 
@@ -500,7 +544,10 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct FieldCardPlayRequestedEvent
     {
-        public object FieldCard; // Using object to avoid dependency on InGameFieldCard
+        /// <summary>
+        /// The field card to play. Runtime type: IInGameFieldCard.
+        /// </summary>
+        public object FieldCard;
         public CardOwner Owner;
     }
 
@@ -510,7 +557,10 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct EffectCardPlayRequestedEvent
     {
-        public object EffectCard; // Using object to avoid dependency on InGameEffectCard
+        /// <summary>
+        /// The effect card to play. Runtime type: IInGameEffectCard.
+        /// </summary>
+        public object EffectCard;
         public CardOwner Owner;
     }
 
@@ -520,7 +570,10 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct EquipmentCardPlayRequestedEvent
     {
-        public object EquipmentCard; // Using object to avoid dependency on InGameEquipmentCard
+        /// <summary>
+        /// The equipment card to play. Runtime type: IInGameEquipmentCard.
+        /// </summary>
+        public object EquipmentCard;
         public CardOwner Owner;
     }
 
@@ -530,7 +583,11 @@ namespace JDG.Domain.Events
     /// </summary>
     public struct ContreCardPlayRequestedEvent
     {
-        public object ContreCard; // Using object to avoid dependency on InGameCard
+        /// <summary>
+        /// The contre card to play. Runtime type: IInGameCard.
+        /// Note: No default subscriber - implement a ContreFunctions handler if needed.
+        /// </summary>
+        public object ContreCard;
         public CardOwner Owner;
     }
 

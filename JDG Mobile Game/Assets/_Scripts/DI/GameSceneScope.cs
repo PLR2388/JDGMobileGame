@@ -96,6 +96,10 @@ namespace JDG.DI
                 builder.RegisterInstance(invocationMenuManager);
                 Debug.Log("GameSceneScope: Registered InvocationMenuManager instance");
             }
+            else
+            {
+                Debug.LogError("GameSceneScope: InvocationMenuManager NOT FOUND in scene! IInvocationMenuService will not work.");
+            }
 
             // RoundDisplayManager - required by RoundDisplayService
             var roundDisplayManager = FindFirstObjectByType<RoundDisplayManager>();
@@ -103,6 +107,10 @@ namespace JDG.DI
             {
                 builder.RegisterInstance(roundDisplayManager);
                 Debug.Log("GameSceneScope: Registered RoundDisplayManager instance");
+            }
+            else
+            {
+                Debug.LogError("GameSceneScope: RoundDisplayManager NOT FOUND in scene! IRoundDisplayService will not work.");
             }
 
             // InputManager - required by InputService
@@ -181,6 +189,11 @@ namespace JDG.DI
                 builder.RegisterInstance<IPlayerStatusProvider>(playerManager);
                 Debug.Log("GameSceneScope: Registered PlayerManager as IPlayerStatusProvider");
             }
+            else
+            {
+                Debug.LogError("GameSceneScope: PlayerManager NOT FOUND in scene! " +
+                    "ICardPlacementService, CombatService, and ITurnService will fail to resolve.");
+            }
 
             // Canvas Transform for CombatService
             var canvas = FindFirstObjectByType<Canvas>();
@@ -188,6 +201,11 @@ namespace JDG.DI
             {
                 builder.RegisterInstance(canvas.transform).As<Transform>();
                 Debug.Log("GameSceneScope: Registered Canvas Transform");
+            }
+            else
+            {
+                Debug.LogError("GameSceneScope: Canvas NOT FOUND in scene! " +
+                    "CombatService and CanvasProviderService will not work correctly.");
             }
 
             // Phase 84 Fix: Set canvas on the singleton CanvasProviderService from parent scope
@@ -207,6 +225,14 @@ namespace JDG.DI
                 {
                     dialogService.SetDialogComponents(messageBox, cardSelector);
                     Debug.Log("GameSceneScope: Set dialog components on DialogService from parent scope");
+                }
+                else if (dialogService != null)
+                {
+                    // Phase 145: Log which component is missing for easier debugging
+                    if (messageBox == null)
+                        Debug.LogError("GameSceneScope: Cannot set DialogService components - MessageBox is null");
+                    if (cardSelector == null)
+                        Debug.LogError("GameSceneScope: Cannot set DialogService components - CardSelector is null");
                 }
             });
 
