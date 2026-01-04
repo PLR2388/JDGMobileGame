@@ -141,12 +141,13 @@ public class GameLoop : MonoBehaviour
         // Phase 127: Initialize presenters (replacing UIManager)
         // Phase 136: Get canvas from ICanvasProvider instead of SerializeField
         // Phase 147: Added null check for canvas to prevent presenter crashes
+        // Phase 156: Throw exception instead of silent return - game cannot function without UI
         var canvas = _canvasProvider.GetGameCanvas() as Transform;
         if (canvas == null)
         {
-            Debug.LogError("GameLoop: Canvas is null! UI presenters will not function correctly.");
-            // Phase 148: Early return to prevent presenter crashes when canvas is null
-            return;
+            throw new System.InvalidOperationException(
+                "GameLoop: Canvas is null! Game cannot function without UI. " +
+                "Ensure ICanvasProvider is properly configured in GameSceneScope and a Canvas exists in the scene.");
         }
         _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard, _cardVisualService);
         _dialogPresenter = new DialogPresenter(canvas, _localizationService, _dialogService);

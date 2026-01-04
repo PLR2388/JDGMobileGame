@@ -23,11 +23,13 @@ public class HealthUI : MonoBehaviour
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 21-22: Inject IEventBus to subscribe to PlayerHealthChangedEvent.
+    /// Phase 156: Added null check to fail early if DI is not properly configured.
     /// </summary>
     [Inject]
     public void Construct(IEventBus eventBus)
     {
-        _eventBus = eventBus;
+        _eventBus = eventBus ?? throw new ArgumentNullException(
+            nameof(eventBus), "HealthUI requires IEventBus for event subscriptions");
     }
 
     /// <summary>

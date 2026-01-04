@@ -85,7 +85,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
 
             _fieldCard = value;
             // Phase 23: Publish to EventBus instead of static UnityEvent
-            _eventBus.Publish(new CardLocationChangedEvent { Player = null });
+            // Phase 156: Fixed - was publishing null Player, now uses proper owner
+            var domainOwner = IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+            _eventBus.Publish(new CardLocationChangedEvent { Player = domainOwner });
         }
     }
 
@@ -100,6 +102,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
     /// Phase 23: Inject IEventBus for static UnityEvent migration.
     /// Phase 140: Inject ICardPoolService for player entity registration.
     /// </summary>
+    /// <summary>
+    /// Phase 156: Added null checks for critical dependencies.
+    /// </summary>
     [Inject]
     public void Construct(
         IDeckInitializationService deckInitService,
@@ -113,16 +118,29 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
         IEventBus eventBus,
         ICardPoolService cardPoolService)
     {
-        _deckInitService = deckInitService;
-        _summonPlayerEntityUseCase = summonPlayerEntityUseCase;
-        _resetCardsForNewTurnUseCase = resetCardsForNewTurnUseCase;
-        _handleCardDeathUseCase = handleCardDeathUseCase;
-        _handleCardAddedToFieldUseCase = handleCardAddedToFieldUseCase;
-        _handleCardRemovedFromFieldUseCase = handleCardRemovedFromFieldUseCase;
-        _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase;
-        _handleFieldCardChangedUseCase = handleFieldCardChangedUseCase;
-        _eventBus = eventBus;
-        _cardPoolService = cardPoolService;
+        // Phase 156: Validate critical dependencies
+        _deckInitService = deckInitService ?? throw new System.ArgumentNullException(
+            nameof(deckInitService), "PlayerCards requires IDeckInitializationService");
+        _eventBus = eventBus ?? throw new System.ArgumentNullException(
+            nameof(eventBus), "PlayerCards requires IEventBus for event publishing");
+        _cardPoolService = cardPoolService ?? throw new System.ArgumentNullException(
+            nameof(cardPoolService), "PlayerCards requires ICardPoolService for card pooling");
+
+        // Use cases - store with null checks
+        _summonPlayerEntityUseCase = summonPlayerEntityUseCase ?? throw new System.ArgumentNullException(
+            nameof(summonPlayerEntityUseCase), "PlayerCards requires SummonPlayerEntityUseCase");
+        _resetCardsForNewTurnUseCase = resetCardsForNewTurnUseCase ?? throw new System.ArgumentNullException(
+            nameof(resetCardsForNewTurnUseCase), "PlayerCards requires ResetCardsForNewTurnUseCase");
+        _handleCardDeathUseCase = handleCardDeathUseCase ?? throw new System.ArgumentNullException(
+            nameof(handleCardDeathUseCase), "PlayerCards requires HandleCardDeathUseCase");
+        _handleCardAddedToFieldUseCase = handleCardAddedToFieldUseCase ?? throw new System.ArgumentNullException(
+            nameof(handleCardAddedToFieldUseCase), "PlayerCards requires HandleCardAddedToFieldUseCase");
+        _handleCardRemovedFromFieldUseCase = handleCardRemovedFromFieldUseCase ?? throw new System.ArgumentNullException(
+            nameof(handleCardRemovedFromFieldUseCase), "PlayerCards requires HandleCardRemovedFromFieldUseCase");
+        _handleHandCardsChangeUseCase = handleHandCardsChangeUseCase ?? throw new System.ArgumentNullException(
+            nameof(handleHandCardsChangeUseCase), "PlayerCards requires HandleHandCardsChangeUseCase");
+        _handleFieldCardChangedUseCase = handleFieldCardChangedUseCase ?? throw new System.ArgumentNullException(
+            nameof(handleFieldCardChangedUseCase), "PlayerCards requires HandleFieldCardChangedUseCase");
 
         // Guard against double initialization (can happen if VContainer injects twice)
         if (_isInitialized)

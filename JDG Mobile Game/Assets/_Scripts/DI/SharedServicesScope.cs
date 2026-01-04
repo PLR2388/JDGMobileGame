@@ -194,7 +194,9 @@ namespace JDG.DI
             // Ability Provider (bridges modern and legacy)
             builder.Register<IAbilityProvider, AbilityProviderService>(Lifetime.Singleton);
 
-            // Ability Factories
+            // Ability Factories (for invocation abilities registered in AbilityRegistry)
+            // Phase 156: Removed EffectAbilityFactory, EquipmentAbilityFactory, FieldAbilityFactory
+            // as they are created directly in their provider services (EffectAbilityProviderService, etc.)
             builder.Register<DrawCardsAbilityFactory>(Lifetime.Singleton);
             builder.Register<DestroyCardAbilityFactory>(Lifetime.Singleton);
             builder.Register<DeckSearchAbilityFactory>(Lifetime.Singleton);
@@ -202,9 +204,6 @@ namespace JDG.DI
             builder.Register<StatModifierAbilityFactory>(Lifetime.Singleton);
             builder.Register<ProtectionAbilityFactory>(Lifetime.Singleton);
             builder.Register<CombatAbilityFactory>(Lifetime.Singleton);
-            builder.Register<EffectAbilityFactory>(Lifetime.Singleton);
-            builder.Register<EquipmentAbilityFactory>(Lifetime.Singleton);
-            builder.Register<FieldAbilityFactory>(Lifetime.Singleton);
             builder.Register<SpecialAbilityFactory>(Lifetime.Singleton);
 
             // Initialize legacy systems and register abilities after container is built

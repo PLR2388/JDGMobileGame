@@ -36,16 +36,24 @@ public class HandCardDisplay : MonoBehaviour
     /// Phase 23: Inject IEventBus for static UnityEvent migration.
     /// Phase 24-25: Inject GameStateService instead of ServiceLocator.
     /// Phase 132: Inject IObjectResolver to inject dynamically created OnHover components.
+    /// Phase 156: Added null checks to fail early if DI is not properly configured.
     /// </summary>
     [Inject]
     public void Construct(IEventBus eventBus, GameStateService gameStateService, VContainer.IObjectResolver container)
     {
-        _eventBus = eventBus;
-        _gameStateService = gameStateService;
-        _container = container;
+        _eventBus = eventBus ?? throw new System.ArgumentNullException(
+            nameof(eventBus),
+            "HandCardDisplay requires IEventBus for event subscriptions.");
+        _gameStateService = gameStateService ?? throw new System.ArgumentNullException(
+            nameof(gameStateService),
+            "HandCardDisplay requires GameStateService for turn state.");
+        _container = container ?? throw new System.ArgumentNullException(
+            nameof(container),
+            "HandCardDisplay requires IObjectResolver for injecting dynamically created components.");
+
         // Subscribe immediately after injection since Awake/OnEnable may have already run
         SubscribeToEvents();
-        Debug.Log($"HandCardDisplay.Construct: Injected, _eventBus={(_eventBus != null ? "OK" : "NULL")}, _container={(_container != null ? "OK" : "NULL")}");
+        Debug.Log("HandCardDisplay.Construct: Dependencies injected and subscribed");
     }
 
     /// <summary>
@@ -171,11 +179,17 @@ public class HandCardDisplay : MonoBehaviour
 
     /// <summary>
     /// Called when the object becomes enabled and active.
-    /// Subscribes to relevant events.
+    /// Phase 156: Only resubscribes if previously injected (handles re-enable after OnDisable).
+    /// Initial subscription happens in Construct() after DI injection.
     /// </summary>
     private void OnEnable()
     {
-        SubscribeToEvents();
+        // Only resubscribe if _eventBus was already injected (re-enable scenario)
+        // Initial subscription is handled in Construct() after injection
+        if (_eventBus != null)
+        {
+            SubscribeToEvents();
+        }
     }
 
     /// <summary>

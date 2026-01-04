@@ -50,13 +50,24 @@ public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
     /// <summary>
     /// Gets a modern IAbility implementation by equipment ability name.
     /// Phase 117: Now the primary (and only) lookup method.
+    /// Phase 156: Returns DefaultAbility instead of null for consistency with AbilityProviderService.
     /// </summary>
     /// <param name="abilityName">The domain ability name to look up.</param>
-    /// <returns>The modern ability, or null if not found.</returns>
+    /// <returns>The modern ability, or DefaultAbility if not found.</returns>
     public IAbility GetModernAbility(DomainEquipmentAbilityName abilityName)
     {
-        _modernAbilityDictionary.TryGetValue(abilityName, out var ability);
-        return ability;
+        if (_modernAbilityDictionary.TryGetValue(abilityName, out var ability))
+        {
+            return ability;
+        }
+
+        // Phase 156: Return DefaultAbility instead of null for consistent behavior
+        if (abilityName != DomainEquipmentAbilityName.None)
+        {
+            UnityEngine.Debug.LogWarning($"[EquipmentAbilityProviderService] Ability '{abilityName}' not found in registry. " +
+                "Returning DefaultAbility. This may indicate a missing ability registration.");
+        }
+        return new DefaultAbility();
     }
 
     /// <summary>

@@ -46,6 +46,7 @@ namespace _Scripts.Cards.InvocationCards
         /// Phase 24-25: Inject ICardPlacementService instead of ServiceLocator.
         /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
         /// Phase 35: Inject IDialogService instead of MessageBox.Instance.
+        /// Phase 156: Added null checks for injected dependencies.
         /// </summary>
         [Inject]
         public void Construct(
@@ -54,10 +55,14 @@ namespace _Scripts.Cards.InvocationCards
             ILocalizationService localizationService,
             IDialogService dialogService)
         {
-            _cardPlacementService = cardPlacementService;
-            _eventBus = eventBus;
-            _localizationService = localizationService;
-            _dialogService = dialogService;
+            _cardPlacementService = cardPlacementService ?? throw new System.ArgumentNullException(
+                nameof(cardPlacementService), "InvocationFunctions requires ICardPlacementService");
+            _eventBus = eventBus ?? throw new System.ArgumentNullException(
+                nameof(eventBus), "InvocationFunctions requires IEventBus for event subscriptions");
+            _localizationService = localizationService ?? throw new System.ArgumentNullException(
+                nameof(localizationService), "InvocationFunctions requires ILocalizationService");
+            _dialogService = dialogService ?? throw new System.ArgumentNullException(
+                nameof(dialogService), "InvocationFunctions requires IDialogService for warnings");
         }
 
 

@@ -102,12 +102,17 @@ public class CardPoolManager : MonoBehaviour
     /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
     /// Phase 46: Removed unused IDeckInitializationService to fix circular dependency.
     /// Phase 138: Added IObjectResolver for injecting dynamically instantiated card components.
+    /// Phase 156: Added null checks to fail early if DI is not properly configured.
     /// </summary>
     [Inject]
     public void Construct(IDeckManagementService deckManagementService, IObjectResolver container)
     {
-        _deckManagementService = deckManagementService;
-        _container = container;
+        _deckManagementService = deckManagementService ?? throw new System.ArgumentNullException(
+            nameof(deckManagementService),
+            "CardPoolManager requires IDeckManagementService. Ensure it is registered in the DI container.");
+        _container = container ?? throw new System.ArgumentNullException(
+            nameof(container),
+            "CardPoolManager requires IObjectResolver for injecting dynamically instantiated card components.");
     }
 
     /// <summary>

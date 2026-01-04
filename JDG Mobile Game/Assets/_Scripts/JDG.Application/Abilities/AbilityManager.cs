@@ -143,17 +143,25 @@ namespace JDG.Application.Abilities
         /// <summary>
         /// Subscribes to game events to automatically trigger passive abilities.
         /// Phase 144: Store subscriptions for disposal.
+        ///
+        /// Phase 156 Note: These event-triggered contexts have null SourceCard by design.
+        /// AbilityManager handles GLOBAL passive abilities (registered game-wide effects),
+        /// not card-specific abilities. Card-specific abilities with proper SourceCard are
+        /// handled by AbilityExecutorAdapter in the infrastructure layer.
+        ///
+        /// Global abilities that need card info should use event data (CardId, CardTitle)
+        /// or be redesigned as card-specific abilities in AbilityExecutorAdapter.
         /// </summary>
         private void SubscribeToGameEvents()
         {
             // OnCardPlayed -> OnSummon trigger
+            // Phase 156: SourceCard is null - this is for global abilities that respond to ANY card being played
             _cardPlayedSubscription = _eventBus.Subscribe<CardPlayedEvent>(evt =>
             {
-                // Create context from event (simplified - would need more info in practice)
                 var context = new AbilityContext(
                     PlayerId.FromCardOwner(evt.Owner),
                     PlayerId.FromCardOwner(evt.Owner == CardOwner.Player1 ? CardOwner.Player2 : CardOwner.Player1),
-                    null, // Would need the actual card
+                    null, // Global abilities don't have a specific source card
                     AbilityName.Default
                 );
 

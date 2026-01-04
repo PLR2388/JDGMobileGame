@@ -6,8 +6,10 @@ using JDG.Application.Abilities;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Domain;
+using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
+using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 namespace Services
 {
@@ -41,6 +43,7 @@ namespace Services
         /// <summary>
         /// Creates an AbilityContext for modern ability execution.
         /// Phase 106: Bridge between legacy types and modern domain types.
+        /// Phase 156: Fixed - now properly converts sourceCard to domain Card instead of passing null.
         /// </summary>
         private AbilityContext CreateAbilityContext(
             InGameCard sourceCard,
@@ -51,12 +54,88 @@ namespace Services
             var opponentOwner = owner == CardOwner.Player1 ? CardOwner.Player2 : CardOwner.Player1;
             var opponentId = PlayerId.FromCardOwner((JDG.Domain.CardOwner)(int)opponentOwner);
 
-            return new AbilityContext(ownerId, opponentId, null, abilityName);
+            // Phase 156: Convert sourceCard to domain Card for ability context
+            var domainSourceCard = ConvertToDomainCard(sourceCard);
+
+            return new AbilityContext(ownerId, opponentId, domainSourceCard, abilityName);
+        }
+
+        /// <summary>
+        /// Converts an InGameCard to a domain Card for use in AbilityContext.SourceCard.
+        /// Phase 156: Created to fix null SourceCard issue in CreateAbilityContext.
+        ///
+        /// This creates a read-only domain Card without linking (no sync needed for SourceCard).
+        /// For TargetCard that needs modification syncing, use ICardSyncService.CreateLinkedCard instead.
+        /// </summary>
+        /// <param name="sourceCard">The InGameCard to convert.</param>
+        /// <returns>A domain Card, or null if sourceCard is null.</returns>
+        private Card ConvertToDomainCard(InGameCard sourceCard)
+        {
+            if (sourceCard == null) return null;
+
+            if (sourceCard is InGameInvocationCard invocation)
+            {
+                // Convert legacy CardFamily[] to domain CardFamily[]
+                var domainFamilies = invocation.Families?
+                    .Select(f => (DomainCardFamily)(int)f)
+                    .ToList() ?? new System.Collections.Generic.List<DomainCardFamily>();
+
+                return Card.CreateInvocation(
+                    CardId.Create(),
+                    invocation.Title ?? "Unknown",
+                    invocation.Description ?? "",
+                    invocation.DetailedDescription ?? "",
+                    invocation.Attack,
+                    invocation.Defense,
+                    domainFamilies,
+                    invocation.IsAffectedByEffectCard
+                );
+            }
+            else if (sourceCard is InGameEquipmentCard equipment)
+            {
+                // Convert to equipment card (no stats needed for equipment context)
+                return Card.CreateEquipment(
+                    CardId.Create(),
+                    equipment.Title ?? "Unknown",
+                    equipment.Description ?? "",
+                    equipment.DetailedDescription ?? "",
+                    System.Linq.Enumerable.Empty<JDG.Domain.Enums.EquipmentAbilityName>()
+                );
+            }
+            else if (sourceCard is InGameFieldCard fieldCard)
+            {
+                // Convert to field card
+                var domainFamily = (DomainCardFamily)(int)fieldCard.Family;
+                return Card.CreateField(
+                    CardId.Create(),
+                    fieldCard.Title ?? "Unknown",
+                    fieldCard.Description ?? "",
+                    fieldCard.DetailedDescription ?? "",
+                    domainFamily,
+                    System.Linq.Enumerable.Empty<JDG.Domain.Enums.FieldAbilityName>()
+                );
+            }
+            else if (sourceCard is InGameEffectCard effectCard)
+            {
+                // Convert to effect card
+                return Card.CreateEffect(
+                    CardId.Create(),
+                    effectCard.Title ?? "Unknown",
+                    effectCard.Description ?? "",
+                    effectCard.DetailedDescription ?? "",
+                    System.Linq.Enumerable.Empty<JDG.Domain.Enums.EffectAbilityName>()
+                );
+            }
+
+            // Fallback: log warning and return null for unknown types
+            Debug.LogWarning($"[AbilityExecutorAdapter] ConvertToDomainCard: Unknown card type {sourceCard.GetType().Name}");
+            return null;
         }
 
         // Phase 141: Removed ConvertToCard - replaced by ICardSyncService.CreateLinkedCard
         // The old method created a disconnected domain Card using CreateEffect (no stats),
         // causing equipment ability stat modifications to be lost.
+        // Phase 156: Added ConvertToDomainCard for SourceCard conversion (read-only context).
 
         /// <summary>
         /// Executes modern abilities that match the specified trigger.

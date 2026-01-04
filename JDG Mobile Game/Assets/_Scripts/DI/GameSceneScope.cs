@@ -140,30 +140,30 @@ namespace JDG.DI
             // Phase 127: UIManager removed - GameLoop now uses presenters directly
 
             // Phase 94: MessageBox - required by DialogService
-            // Phase 135: Changed to LogError since DialogService will fail without MessageBox
+            // Phase 156: Throw exception if MessageBox is missing (required for dialogs)
             var messageBox = FindFirstObjectByType<MessageBox>();
-            if (messageBox != null)
+            if (messageBox == null)
             {
-                builder.RegisterInstance(messageBox);
-                Debug.Log("GameSceneScope: Registered MessageBox instance");
+                throw new System.InvalidOperationException(
+                    "GameSceneScope: MessageBox NOT FOUND in scene! " +
+                    "This component is required for DialogService to show dialogs. " +
+                    "Ensure MessageBox exists in the Game scene.");
             }
-            else
-            {
-                Debug.LogError("GameSceneScope: MessageBox NOT FOUND in scene! DialogService dialogs will not work.");
-            }
+            builder.RegisterInstance(messageBox);
+            Debug.Log("GameSceneScope: Registered MessageBox instance");
 
             // Phase 94: CardSelector - required by DialogService
-            // Phase 135: Changed to LogError since DialogService will fail without CardSelector
+            // Phase 156: Throw exception if CardSelector is missing (required for card selection)
             var cardSelector = FindFirstObjectByType<CardSelector>();
-            if (cardSelector != null)
+            if (cardSelector == null)
             {
-                builder.RegisterInstance(cardSelector);
-                Debug.Log("GameSceneScope: Registered CardSelector instance");
+                throw new System.InvalidOperationException(
+                    "GameSceneScope: CardSelector NOT FOUND in scene! " +
+                    "This component is required for DialogService to show card selections. " +
+                    "Ensure CardSelector exists in the Game scene.");
             }
-            else
-            {
-                Debug.LogError("GameSceneScope: CardSelector NOT FOUND in scene! Card selection dialogs will not work.");
-            }
+            builder.RegisterInstance(cardSelector);
+            Debug.Log("GameSceneScope: Registered CardSelector instance");
 
             // ============================================
             // SCENE-SPECIFIC SERVICES
@@ -199,62 +199,51 @@ namespace JDG.DI
             }, Lifetime.Scoped);
 
             // IPlayerStatusProvider - requires PlayerManager from scene
+            // Phase 156: Throw exception if PlayerManager is missing (required for gameplay)
             var playerManager = FindFirstObjectByType<PlayerManager>();
-            if (playerManager != null)
+            if (playerManager == null)
             {
-                builder.RegisterInstance<IPlayerStatusProvider>(playerManager);
-                Debug.Log("GameSceneScope: Registered PlayerManager as IPlayerStatusProvider");
+                throw new System.InvalidOperationException(
+                    "GameSceneScope: PlayerManager NOT FOUND in scene! " +
+                    "This component is required for ICardPlacementService, CombatService, and ITurnService. " +
+                    "Ensure PlayerManager exists in the Game scene.");
             }
-            else
-            {
-                Debug.LogError("GameSceneScope: PlayerManager NOT FOUND in scene! " +
-                    "ICardPlacementService, CombatService, and ITurnService will fail to resolve.");
-            }
+            builder.RegisterInstance<IPlayerStatusProvider>(playerManager);
+            Debug.Log("GameSceneScope: Registered PlayerManager as IPlayerStatusProvider");
 
             // Canvas Transform for CombatService
+            // Phase 156: Throw exception if Canvas is missing (required for UI)
             var canvas = FindFirstObjectByType<Canvas>();
-            if (canvas != null)
+            if (canvas == null)
             {
-                builder.RegisterInstance(canvas.transform).As<Transform>();
-                Debug.Log("GameSceneScope: Registered Canvas Transform");
+                throw new System.InvalidOperationException(
+                    "GameSceneScope: Canvas NOT FOUND in scene! " +
+                    "This component is required for CombatService and CanvasProviderService. " +
+                    "Ensure a Canvas exists in the Game scene.");
             }
-            else
-            {
-                Debug.LogError("GameSceneScope: Canvas NOT FOUND in scene! " +
-                    "CombatService and CanvasProviderService will not work correctly.");
-            }
+            builder.RegisterInstance(canvas.transform).As<Transform>();
+            Debug.Log("GameSceneScope: Registered Canvas Transform");
 
             // Phase 84 Fix: Set canvas on the singleton CanvasProviderService from parent scope
             // (ICanvasProvider is now registered in SharedServicesScope, we just set the canvas here)
+            // Phase 156: Removed null checks - canvas, messageBox, cardSelector now guaranteed non-null
             builder.RegisterBuildCallback(container =>
             {
-                if (canvas != null)
-                {
-                    var canvasProvider = container.Resolve<CanvasProviderService>();
-                    canvasProvider.SetCanvas(canvas.transform);
-                    Debug.Log("GameSceneScope: Set canvas on CanvasProviderService from parent scope");
-                }
+                var canvasProvider = container.Resolve<CanvasProviderService>();
+                canvasProvider.SetCanvas(canvas.transform);
+                Debug.Log("GameSceneScope: Set canvas on CanvasProviderService from parent scope");
 
                 // Phase 94: Set MessageBox and CardSelector on DialogService from parent scope
-                // Phase 147: Added null check for DialogService cast failure
+                // Phase 156: Simplified since messageBox/cardSelector guaranteed non-null
                 var dialogService = container.Resolve<IDialogService>() as DialogService;
                 if (dialogService == null)
                 {
-                    Debug.LogError("GameSceneScope: Failed to resolve IDialogService as DialogService");
+                    throw new System.InvalidOperationException(
+                        "GameSceneScope: Failed to resolve IDialogService as DialogService. " +
+                        "Ensure DialogService is properly registered in SharedServicesScope.");
                 }
-                else if (messageBox != null && cardSelector != null)
-                {
-                    dialogService.SetDialogComponents(messageBox, cardSelector);
-                    Debug.Log("GameSceneScope: Set dialog components on DialogService from parent scope");
-                }
-                else
-                {
-                    // Phase 145: Log which component is missing for easier debugging
-                    if (messageBox == null)
-                        Debug.LogError("GameSceneScope: Cannot set DialogService components - MessageBox is null");
-                    if (cardSelector == null)
-                        Debug.LogError("GameSceneScope: Cannot set DialogService components - CardSelector is null");
-                }
+                dialogService.SetDialogComponents(messageBox, cardSelector);
+                Debug.Log("GameSceneScope: Set dialog components on DialogService from parent scope");
             });
 
             // ICardPlacementService - depends on ICardCollectionService, IPlayerStatusProvider
@@ -300,6 +289,10 @@ namespace JDG.DI
 
             // ITurnService - depends on GameStateService, PlayerCardManagers, IPlayerStatusProvider, ICardSyncService, Transform
             // Phase 151: Added ICardSyncService for SourceCard conversion in ability contexts
+            // Phase 156: Note - lambdas capture MonoBehaviour references. This is safe because:
+            // 1. GameSceneScope (LifetimeScope) is destroyed on scene unload
+            // 2. VContainer disposes the container, releasing these lambdas
+            // 3. Services are Scoped lifetime, destroyed with the container
             builder.Register<ITurnService>(container =>
             {
                 return new TurnService(
@@ -313,6 +306,7 @@ namespace JDG.DI
             }, Lifetime.Scoped);
 
             // ICardDrawService - depends on GameStateService, PlayerCardManagers
+            // Phase 156: Same safety note as ITurnService above
             builder.Register<ICardDrawService>(container =>
             {
                 return new CardDrawService(
@@ -333,11 +327,22 @@ namespace JDG.DI
             {
                 Debug.Log("GameSceneScope: Injecting dependencies into scene MonoBehaviours...");
 
-                // IMPORTANT: TutoSceneInitializer must be injected FIRST (before PlayerCards)
+                // ============================================
+                // CRITICAL ORDER DEPENDENCY - DO NOT REORDER
+                // ============================================
+                // TutoSceneInitializer MUST be injected FIRST (before PlayerCards)
                 // to ensure tutorial decks are built when loading TutoPlayerGame directly from Editor.
                 // Without this, PlayerCards.Construct() gets empty decks and GameOver() triggers.
-                InjectAllOfType<TutoSceneInitializer>(container);
+                //
+                // Phase 156: Added explicit check for tutorial scene
+                var tutoInitializers = FindObjectsByType<TutoSceneInitializer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+                if (tutoInitializers.Length > 0)
+                {
+                    Debug.Log($"GameSceneScope: Tutorial scene detected ({tutoInitializers.Length} TutoSceneInitializer) - injecting first");
+                    InjectAllOfType<TutoSceneInitializer>(container);
+                }
 
+                // Inject PlayerCards AFTER TutoSceneInitializer (order is critical for tutorials)
                 InjectAllOfType<PlayerCards>(container);
                 InjectAllOfType<PlayerStatus>(container);
                 InjectAllOfType<CardLocation>(container);
@@ -456,9 +461,11 @@ namespace JDG.DI
                 missingComponents.Add("PlayerManager (required by IPlayerStatusProvider)");
 
             // Check for PlayerCardManagers (need exactly 2)
-            var playerCardManagers = FindObjectsByType<PlayerCards>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            // Phase 156: Fixed - was checking PlayerCards instead of PlayerCardManager
+            // PlayerCardManager is what ITurnService and ICardDrawService depend on (see line 288)
+            var playerCardManagers = FindObjectsByType<PlayerCardManager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             if (playerCardManagers.Length < 2)
-                missingComponents.Add($"PlayerCards (found {playerCardManagers.Length}, need 2 for ICardCollectionService)");
+                missingComponents.Add($"PlayerCardManager (found {playerCardManagers.Length}, need 2 for ITurnService/ICardDrawService)");
 
             if (missingComponents.Count > 0)
             {

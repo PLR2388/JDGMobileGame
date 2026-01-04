@@ -26,11 +26,16 @@ namespace Cards.FieldCards
         private IEventBus _eventBus;
         private IDisposable _fieldPlayRequestedSubscription;
 
+        /// <summary>
+        /// Phase 156: Added null checks for injected dependencies.
+        /// </summary>
         [Inject]
         public void Construct(ICardPlacementService cardPlacementService, IEventBus eventBus)
         {
-            _cardPlacementService = cardPlacementService;
-            _eventBus = eventBus;
+            _cardPlacementService = cardPlacementService ?? throw new System.ArgumentNullException(
+                nameof(cardPlacementService), "FieldFunctions requires ICardPlacementService");
+            _eventBus = eventBus ?? throw new System.ArgumentNullException(
+                nameof(eventBus), "FieldFunctions requires IEventBus for event subscriptions");
         }
 
         /// <summary>

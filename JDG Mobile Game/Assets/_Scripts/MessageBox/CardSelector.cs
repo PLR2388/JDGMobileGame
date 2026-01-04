@@ -43,17 +43,21 @@ public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
     /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
     /// Phase 138: Added IObjectResolver for injecting dynamically instantiated DisplayCards.
     /// Phase 146: Moved EventBus subscription here from Start() to avoid race conditions.
+    /// Phase 156: Added null checks to fail early if DI is not properly configured.
     /// </summary>
     [Inject]
     public void Construct(ICardSelectionService cardSelectionService, IEventBus eventBus, VContainer.IObjectResolver container)
     {
-        _cardSelectionService = cardSelectionService;
-        _eventBus = eventBus;
-        _container = container;
+        _cardSelectionService = cardSelectionService ?? throw new ArgumentNullException(
+            nameof(cardSelectionService), "CardSelector requires ICardSelectionService");
+        _eventBus = eventBus ?? throw new ArgumentNullException(
+            nameof(eventBus), "CardSelector requires IEventBus for event subscriptions");
+        _container = container ?? throw new ArgumentNullException(
+            nameof(container), "CardSelector requires IObjectResolver for injecting dynamically created components");
 
         // Phase 146: Subscribe immediately in Construct() to avoid missing events between
         // VContainer injection and Unity's Start() callback.
-        _selectionChangedSubscription = _eventBus?.Subscribe<CardSelectionChangedEvent>(OnSelectionChangedEvent);
+        _selectionChangedSubscription = _eventBus.Subscribe<CardSelectionChangedEvent>(OnSelectionChangedEvent);
     }
 
     #region Unity Callbacks

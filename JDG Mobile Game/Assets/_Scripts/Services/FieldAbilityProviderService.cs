@@ -51,13 +51,24 @@ public class FieldAbilityProviderService : IFieldAbilityProvider
     /// <summary>
     /// Gets a modern IAbility implementation by field ability name.
     /// Phase 116: Now the primary (and only) lookup method.
+    /// Phase 156: Returns DefaultAbility instead of null for consistency with AbilityProviderService.
     /// </summary>
     /// <param name="abilityName">The domain ability name to look up.</param>
-    /// <returns>The modern ability, or null if not found.</returns>
+    /// <returns>The modern ability, or DefaultAbility if not found.</returns>
     public IAbility GetModernAbility(DomainFieldAbilityName abilityName)
     {
-        _modernAbilityDictionary.TryGetValue(abilityName, out var ability);
-        return ability;
+        if (_modernAbilityDictionary.TryGetValue(abilityName, out var ability))
+        {
+            return ability;
+        }
+
+        // Phase 156: Return DefaultAbility instead of null for consistent behavior
+        if (abilityName != DomainFieldAbilityName.None)
+        {
+            UnityEngine.Debug.LogWarning($"[FieldAbilityProviderService] Ability '{abilityName}' not found in registry. " +
+                "Returning DefaultAbility. This may indicate a missing ability registration.");
+        }
+        return new DefaultAbility();
     }
 
     /// <summary>

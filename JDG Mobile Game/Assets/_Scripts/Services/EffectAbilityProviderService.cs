@@ -18,7 +18,7 @@ using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 /// This design is intentional:
 /// - During deck building (MainScreen), abilities are not needed
 /// - During gameplay (Game scene), abilities are fully functional
-/// - GetModernAbility() returns null for missing abilities - callers must handle this
+/// - GetModernAbility() returns DefaultAbility for missing abilities for consistent behavior
 /// </summary>
 public class EffectAbilityProviderService : IEffectAbilityProvider
 {
@@ -51,13 +51,24 @@ public class EffectAbilityProviderService : IEffectAbilityProvider
     /// Gets a modern IAbility implementation by effect ability name.
     /// Phase 102: Primary method for ability lookup.
     /// Phase 115: Now the only lookup method (legacy GetAbility removed).
+    /// Phase 156: Returns DefaultAbility instead of null for consistency with AbilityProviderService.
     /// </summary>
     /// <param name="abilityName">The domain ability name to look up.</param>
-    /// <returns>The modern ability, or null if not found.</returns>
+    /// <returns>The modern ability, or DefaultAbility if not found.</returns>
     public IAbility GetModernAbility(DomainEffectAbilityName abilityName)
     {
-        _modernAbilityDictionary.TryGetValue(abilityName, out var ability);
-        return ability;
+        if (_modernAbilityDictionary.TryGetValue(abilityName, out var ability))
+        {
+            return ability;
+        }
+
+        // Phase 156: Return DefaultAbility instead of null for consistent behavior
+        if (abilityName != DomainEffectAbilityName.None)
+        {
+            UnityEngine.Debug.LogWarning($"[EffectAbilityProviderService] Ability '{abilityName}' not found in registry. " +
+                "Returning DefaultAbility. This may indicate a missing ability registration.");
+        }
+        return new DefaultAbility();
     }
 
     /// <summary>
