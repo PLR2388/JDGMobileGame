@@ -470,16 +470,16 @@ namespace JDG.DI
             if (missingComponents.Count > 0)
             {
                 var errorMessage = "GameSceneScope: CRITICAL - Missing required scene components!\n" +
-                                   "The following components must exist in the game scene:\n" +
+                                   "The following components must exist in the game scene:\n  - " +
                                    string.Join("\n  - ", missingComponents) +
                                    "\n\nPlease verify that the scene is properly configured with all required prefabs.";
 
                 Debug.LogError(errorMessage);
 
-                // In Editor, throw exception to fail fast. In builds, log error but try to continue.
-#if UNITY_EDITOR
+                // Phase 157: Always throw exception for missing critical components.
+                // Previously only threw in Editor, which allowed builds to start with missing
+                // components and crash later with confusing null reference errors.
                 throw new System.InvalidOperationException(errorMessage);
-#endif
             }
         }
 

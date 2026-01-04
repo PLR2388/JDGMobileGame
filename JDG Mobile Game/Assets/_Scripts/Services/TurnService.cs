@@ -34,6 +34,9 @@ public class TurnService : ITurnService
     private readonly ICardSyncService _cardSyncService;
     private readonly Transform _canvas;
 
+    /// <summary>
+    /// Phase 157: Added null validation for critical dependencies to prevent runtime crashes.
+    /// </summary>
     public TurnService(
         GameStateService gameStateService,
         PlayerCardManager player1CardManager,
@@ -42,12 +45,19 @@ public class TurnService : ITurnService
         ICardSyncService cardSyncService,
         Transform canvas)
     {
-        _gameStateService = gameStateService;
-        _player1CardManager = player1CardManager;
-        _player2CardManager = player2CardManager;
-        _playerStatusProvider = playerStatusProvider;
+        // Phase 157: Validate critical dependencies that would cause NullReferenceException if null
+        _gameStateService = gameStateService ?? throw new System.ArgumentNullException(
+            nameof(gameStateService), "TurnService requires GameStateService for turn management");
+        _player1CardManager = player1CardManager ?? throw new System.ArgumentNullException(
+            nameof(player1CardManager), "TurnService requires Player1 CardManager");
+        _player2CardManager = player2CardManager ?? throw new System.ArgumentNullException(
+            nameof(player2CardManager), "TurnService requires Player2 CardManager");
+        _playerStatusProvider = playerStatusProvider ?? throw new System.ArgumentNullException(
+            nameof(playerStatusProvider), "TurnService requires IPlayerStatusProvider");
+
+        // Optional dependencies (used with null-conditional operators)
         _cardSyncService = cardSyncService; // Phase 151: For ability context card conversion
-        _canvas = canvas;
+        _canvas = canvas; // Can be null in test scenarios
     }
 
     public void OnTurnStart()

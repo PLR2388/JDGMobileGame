@@ -18,11 +18,18 @@ namespace JDG.Presentation.Presenters
         private readonly ILocalizationService _localizationService;
         private readonly IDialogService _dialogService;
 
+        /// <summary>
+        /// Phase 157: Added null validation for critical dependencies.
+        /// </summary>
         public DialogPresenter(Transform canvas, ILocalizationService localizationService, IDialogService dialogService)
         {
-            _canvas = canvas;
-            _localizationService = localizationService;
-            _dialogService = dialogService;
+            // Phase 157: Validate required dependencies to prevent NullReferenceException at runtime
+            _canvas = canvas ?? throw new ArgumentNullException(nameof(canvas),
+                "DialogPresenter requires a canvas for displaying dialogs");
+            _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService),
+                "DialogPresenter requires ILocalizationService for localized text");
+            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService),
+                "DialogPresenter requires IDialogService for showing dialogs");
         }
 
         /// <summary>
