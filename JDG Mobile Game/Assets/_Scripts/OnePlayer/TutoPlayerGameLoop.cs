@@ -206,7 +206,8 @@ namespace OnePlayer
             catch (Exception e)
             {
                 UnsetHighlight();
-                Console.WriteLine(e);
+                // Phase 158: Use Debug.LogError instead of Console.WriteLine for Unity visibility
+                Debug.LogError($"TutoPlayerGameLoop.TriggerScenarioAction: Exception at index {index}: {e}");
             }
         }
         
@@ -220,15 +221,23 @@ namespace OnePlayer
             string defender = attack.Length > 1 && !string.IsNullOrEmpty(attack[1]) ? attack[1] : CardNameMappings.CardNameMap[CardNames.Player];
 
             // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            // Phase 158: Use FirstOrDefault + null check to prevent InvalidOperationException
             InGameInvocationCard attackerInvocationCard =
-                _cardCollectionService.GetCurrentPlayerCards().InvocationCards.First(card => card.Title == attacker);
+                _cardCollectionService.GetCurrentPlayerCards().InvocationCards.FirstOrDefault(card => card.Title == attacker);
+
+            if (attackerInvocationCard == null)
+            {
+                Debug.LogError($"TutoPlayerGameLoop.HandleAttack: Attacker '{attacker}' not found in current player's invocation cards");
+                return;
+            }
 
             PlayerCards opponentPlayerCards = _cardCollectionService.GetOpponentPlayerCards();
 
+            // Phase 158: Use FirstOrDefault + null check to prevent InvalidOperationException
             InGameInvocationCard opponentInvocationCard = defender == CardNameMappings.CardNameMap[CardNames.Player]
                 ? opponentPlayerCards.Player as InGameInvocationCard
                 : opponentPlayerCards.InvocationCards
-                    .First(card => card.Title == defender);
+                    .FirstOrDefault(card => card.Title == defender);
 
             // Phase 144: Add null check for the cast result
             if (opponentInvocationCard == null)

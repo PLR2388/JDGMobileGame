@@ -58,6 +58,7 @@ public class DialogueUI : MonoBehaviour
     /// <summary>
     /// Initialization method.
     /// Phase 123: Subscribe to DialogueTriggerCompletedEvent via EventBus.
+    /// Phase 158: Added null checks for GetComponent results to prevent NullReferenceException.
     /// </summary>
     private void Start()
     {
@@ -65,6 +66,21 @@ public class DialogueUI : MonoBehaviour
         typewriterEffect = GetComponent<TypewriterEffect>();
         responseHandler = GetComponent<ResponseHandler>();
         audioSource = FindFirstObjectByType<AudioSource>();
+
+        // Phase 158: Log warnings for missing components to aid debugging
+        if (typewriterEffect == null)
+        {
+            Debug.LogWarning("DialogueUI: TypewriterEffect component not found on GameObject");
+        }
+        if (responseHandler == null)
+        {
+            Debug.LogWarning("DialogueUI: ResponseHandler component not found on GameObject");
+        }
+        if (audioSource == null)
+        {
+            Debug.LogWarning("DialogueUI: AudioSource not found in scene - dialogue sounds will be silent");
+        }
+
         CloseDialogueBox();
         ShowDialogue(testDialogue);
         // Phase 123: Subscribe via EventBus
@@ -170,7 +186,15 @@ public class DialogueUI : MonoBehaviour
 
         if (dialogueObject.HasResponses)
         {
-            responseHandler.ShowResponses(dialogueObject.Responses);
+            // Phase 158: Add null check for responseHandler
+            if (responseHandler != null)
+            {
+                responseHandler.ShowResponses(dialogueObject.Responses);
+            }
+            else
+            {
+                Debug.LogError("DialogueUI: Cannot show responses - ResponseHandler is null");
+            }
         }
         else
         {
@@ -253,10 +277,17 @@ public class DialogueUI : MonoBehaviour
 
     /// <summary>
     /// Plays the given sound.
+    /// Phase 158: Added null check for audioSource.
     /// </summary>
     /// <param name="audioClip">The audio clip to be played.</param>
     private void PlaySound(AudioClip audioClip)
     {
+        // Phase 158: Add null check for audioSource
+        if (audioSource == null)
+        {
+            currentSoundIndex++;
+            return;
+        }
         audioSource.Stop();
         audioSource.PlayOneShot(audioClip);
         currentSoundIndex++;

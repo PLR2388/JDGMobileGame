@@ -63,7 +63,8 @@ public class EffectAbilityProviderService : IEffectAbilityProvider
         }
 
         // Phase 156: Return DefaultAbility instead of null for consistent behavior
-        if (abilityName != DomainEffectAbilityName.None)
+        // Phase 158: Changed from .None to .Default
+        if (abilityName != DomainEffectAbilityName.Default)
         {
             UnityEngine.Debug.LogWarning($"[EffectAbilityProviderService] Ability '{abilityName}' not found in registry. " +
                 "Returning DefaultAbility. This may indicate a missing ability registration.");

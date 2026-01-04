@@ -28,8 +28,27 @@ namespace JDG.Infrastructure.Services
 
             if (_cards != null && _cards.Count > 0)
             {
-                _cardsDict = _cards.ToDictionary(card => card.Title, card => card);
-                Debug.Log($"CardDataProvider: Loaded {_cards.Count} cards from Resources/Cards");
+                // Phase 158: Handle duplicate card titles gracefully instead of crashing
+                // ToDictionary throws ArgumentException if duplicate keys exist
+                _cardsDict = new Dictionary<string, Card>();
+                foreach (var card in _cards)
+                {
+                    if (string.IsNullOrEmpty(card.Title))
+                    {
+                        Debug.LogWarning($"CardDataProvider: Card has null or empty Title, skipping dictionary entry");
+                        continue;
+                    }
+
+                    if (_cardsDict.ContainsKey(card.Title))
+                    {
+                        Debug.LogWarning($"CardDataProvider: Duplicate card title '{card.Title}' found. Keeping first instance.");
+                    }
+                    else
+                    {
+                        _cardsDict[card.Title] = card;
+                    }
+                }
+                Debug.Log($"CardDataProvider: Loaded {_cards.Count} cards from Resources/Cards ({_cardsDict.Count} unique titles)");
             }
             else
             {

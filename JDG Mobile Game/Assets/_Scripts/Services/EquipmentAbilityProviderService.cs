@@ -62,7 +62,8 @@ public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
         }
 
         // Phase 156: Return DefaultAbility instead of null for consistent behavior
-        if (abilityName != DomainEquipmentAbilityName.None)
+        // Phase 158: Changed from .None to .Default
+        if (abilityName != DomainEquipmentAbilityName.Default)
         {
             UnityEngine.Debug.LogWarning($"[EquipmentAbilityProviderService] Ability '{abilityName}' not found in registry. " +
                 "Returning DefaultAbility. This may indicate a missing ability registration.");

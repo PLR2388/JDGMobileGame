@@ -82,6 +82,9 @@ public class GameLoop : MonoBehaviour
     private IDisposable _backPressedSubscription;
     private IDisposable _gameOverSubscription;
 
+    // Phase 158: Guard to prevent multiple GameOver() calls causing duplicate scene loads
+    private bool _isGameOverTriggered;
+
     /// <summary>
     /// VContainer injection point. Called before Start().
     /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
@@ -350,9 +353,19 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Redirect player after a Gameover
     /// Phase 55: Uses ISceneLoaderService instead of SceneLoaderSystem.
+    /// Phase 158: Added guard to prevent duplicate calls from multiple sources.
     /// </summary>
     private void GameOver()
     {
+        // Phase 158: Guard against duplicate GameOver calls (can come from multiple sources:
+        // HandlePlayerDeath(), OnNoCards() callback, GameOverEvent, etc.)
+        if (_isGameOverTriggered)
+        {
+            Debug.Log("GameLoop.GameOver: Already triggered, ignoring duplicate call");
+            return;
+        }
+        _isGameOverTriggered = true;
+
         _gameStateService.SetPhase(JDG.Domain.Phase.GameOver);
         _sceneLoaderService.LoadMainScreen();
     }

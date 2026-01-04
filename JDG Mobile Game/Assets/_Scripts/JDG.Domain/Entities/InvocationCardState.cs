@@ -234,11 +234,17 @@ namespace JDG.Domain.Entities
 
         /// <summary>
         /// Modifies current stats by delta values.
+        /// Phase 158: Added minimum value clamping to 0 to prevent negative stats.
         /// </summary>
         public void ModifyStats(float attackDelta, float defenseDelta)
         {
             CurrentAttack += attackDelta;
             CurrentDefense += defenseDelta;
+
+            // Phase 158: Clamp to minimum 0 to prevent negative stats
+            // Negative stats would break damage calculations
+            if (CurrentAttack < 0) CurrentAttack = 0;
+            if (CurrentDefense < 0) CurrentDefense = 0;
         }
 
         /// <summary>

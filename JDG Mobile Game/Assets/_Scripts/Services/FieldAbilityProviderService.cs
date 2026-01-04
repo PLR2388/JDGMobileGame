@@ -63,7 +63,8 @@ public class FieldAbilityProviderService : IFieldAbilityProvider
         }
 
         // Phase 156: Return DefaultAbility instead of null for consistent behavior
-        if (abilityName != DomainFieldAbilityName.None)
+        // Phase 158: Changed from .None to .Default
+        if (abilityName != DomainFieldAbilityName.Default)
         {
             UnityEngine.Debug.LogWarning($"[FieldAbilityProviderService] Ability '{abilityName}' not found in registry. " +
                 "Returning DefaultAbility. This may indicate a missing ability registration.");

@@ -125,10 +125,27 @@ namespace JDG.Infrastructure.Repositories
                             var deckData = JsonUtility.FromJson<DeckData>(deckJson);
                             if (deckData?.CardGuids != null)
                             {
-                                var cardIds = deckData.CardGuids
-                                    .Select(guid => CardId.FromGuid(System.Guid.Parse(guid)))
-                                    .ToArray();
-                                _decks[deckName] = cardIds;
+                                // Phase 158: Parse each GUID individually to prevent one corrupted GUID
+                                // from losing the entire deck (was: Select + ToArray with no per-card try-catch)
+                                var cardIdsList = new List<CardId>();
+                                foreach (var guidString in deckData.CardGuids)
+                                {
+                                    try
+                                    {
+                                        var cardId = CardId.FromGuid(System.Guid.Parse(guidString));
+                                        cardIdsList.Add(cardId);
+                                    }
+                                    catch (Exception cardEx)
+                                    {
+                                        Debug.LogWarning($"DeckRepository: Skipping invalid card GUID '{guidString}' in deck '{deckName}': {cardEx.Message}");
+                                        // Continue loading other cards instead of failing entire deck
+                                    }
+                                }
+                                _decks[deckName] = cardIdsList.ToArray();
+                                if (cardIdsList.Count < deckData.CardGuids.Length)
+                                {
+                                    Debug.LogWarning($"DeckRepository: Deck '{deckName}' loaded with {cardIdsList.Count}/{deckData.CardGuids.Length} cards (some GUIDs were invalid)");
+                                }
                             }
                         }
                         catch (Exception ex)

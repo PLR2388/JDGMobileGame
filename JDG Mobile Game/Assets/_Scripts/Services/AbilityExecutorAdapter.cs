@@ -10,6 +10,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 using UnityEngine;
 using DomainCardFamily = JDG.Domain.Enums.CardFamily;
+using DomainCard = JDG.Domain.Entities.Card;
 
 namespace Services
 {
@@ -69,7 +70,7 @@ namespace Services
         /// </summary>
         /// <param name="sourceCard">The InGameCard to convert.</param>
         /// <returns>A domain Card, or null if sourceCard is null.</returns>
-        private Card ConvertToDomainCard(InGameCard sourceCard)
+        private DomainCard ConvertToDomainCard(InGameCard sourceCard)
         {
             if (sourceCard == null) return null;
 
@@ -80,13 +81,13 @@ namespace Services
                     .Select(f => (DomainCardFamily)(int)f)
                     .ToList() ?? new System.Collections.Generic.List<DomainCardFamily>();
 
-                return Card.CreateInvocation(
-                    CardId.Create(),
+                return DomainCard.CreateInvocation(
+                    CardId.New(),
                     invocation.Title ?? "Unknown",
-                    invocation.Description ?? "",
-                    invocation.DetailedDescription ?? "",
-                    invocation.Attack,
-                    invocation.Defense,
+                    invocation.GetDescription() ?? "",
+                    invocation.GetDetailedDescription() ?? "",
+                    (int)invocation.Attack,
+                    (int)invocation.Defense,
                     domainFamilies,
                     invocation.IsAffectedByEffectCard
                 );
@@ -94,11 +95,11 @@ namespace Services
             else if (sourceCard is InGameEquipmentCard equipment)
             {
                 // Convert to equipment card (no stats needed for equipment context)
-                return Card.CreateEquipment(
-                    CardId.Create(),
+                return DomainCard.CreateEquipment(
+                    CardId.New(),
                     equipment.Title ?? "Unknown",
-                    equipment.Description ?? "",
-                    equipment.DetailedDescription ?? "",
+                    equipment.GetDescription() ?? "",
+                    equipment.GetDetailedDescription() ?? "",
                     System.Linq.Enumerable.Empty<JDG.Domain.Enums.EquipmentAbilityName>()
                 );
             }
@@ -106,11 +107,11 @@ namespace Services
             {
                 // Convert to field card
                 var domainFamily = (DomainCardFamily)(int)fieldCard.Family;
-                return Card.CreateField(
-                    CardId.Create(),
+                return DomainCard.CreateField(
+                    CardId.New(),
                     fieldCard.Title ?? "Unknown",
-                    fieldCard.Description ?? "",
-                    fieldCard.DetailedDescription ?? "",
+                    fieldCard.GetDescription() ?? "",
+                    fieldCard.GetDetailedDescription() ?? "",
                     domainFamily,
                     System.Linq.Enumerable.Empty<JDG.Domain.Enums.FieldAbilityName>()
                 );
@@ -118,11 +119,11 @@ namespace Services
             else if (sourceCard is InGameEffectCard effectCard)
             {
                 // Convert to effect card
-                return Card.CreateEffect(
-                    CardId.Create(),
+                return DomainCard.CreateEffect(
+                    CardId.New(),
                     effectCard.Title ?? "Unknown",
-                    effectCard.Description ?? "",
-                    effectCard.DetailedDescription ?? "",
+                    effectCard.GetDescription() ?? "",
+                    effectCard.GetDetailedDescription() ?? "",
                     System.Linq.Enumerable.Empty<JDG.Domain.Enums.EffectAbilityName>()
                 );
             }

@@ -6,6 +6,8 @@ namespace JDG.Domain.Enums
     /// </summary>
     public enum FieldAbilityName
     {
+        /// <summary>Default/none value - no ability assigned.</summary>
+        Default = 0,
         Earn1DEFForSpatialFamily,
         Earn1HalfDEFAndMinusHalfATKForDevFamily,
         ChangePatronInfogramFamilyToDev,

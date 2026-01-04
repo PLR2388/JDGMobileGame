@@ -6,6 +6,8 @@ namespace JDG.Domain.Enums
     /// </summary>
     public enum EquipmentAbilityName
     {
+        /// <summary>Default/none value - no ability assigned.</summary>
+        Default = 0,
         MultiplyDefBy2ButPreventAttack,
         Earn1ATKAndMinus1DEF,
         DirectAttack,

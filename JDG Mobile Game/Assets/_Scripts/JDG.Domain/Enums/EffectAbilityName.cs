@@ -6,6 +6,8 @@ namespace JDG.Domain.Enums
     /// </summary>
     public enum EffectAbilityName
     {
+        /// <summary>Default/none value - no ability assigned.</summary>
+        Default = 0,
         LimitHandCardTo5,
         Lose2Point5StarsByInvocations,
         ApplyFamilyFieldToInvocations,
