@@ -145,6 +145,15 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
         _deckInitService.InitializePhysicalCards(Deck, deckLocation, IsPlayerOne);
 
         Debug.Log($"PlayerCards.Construct() - IsPlayerOne={IsPlayerOne}, Deck={Deck?.Count ?? 0} cards, Physical cards created");
+
+        // Phase 155: Warn if deck is empty - may indicate TutoSceneInitializer order issue in tutorial scenes
+        if (Deck == null || Deck.Count == 0)
+        {
+            Debug.LogWarning($"PlayerCards.Construct() - Deck is empty for IsPlayerOne={IsPlayerOne}. " +
+                "In tutorial scenes, ensure TutoSceneInitializer is injected BEFORE PlayerCards (order matters in GameSceneScope). " +
+                "In normal gameplay, verify DeckInitializationService and deck data.");
+        }
+
         // Note: BuildPlayer() is called in Start() to ensure SerializeFields are populated
     }
 

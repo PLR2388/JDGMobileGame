@@ -5,11 +5,20 @@ using JDG.Application.Repositories;
 using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 
 /// <summary>
-/// Provides effect abilities.
+/// Provides effect abilities for effect card effects during gameplay.
 /// Phase 48: Originally wrapped legacy singleton for DI-compatible access.
 /// Phase 84: Owned the legacy ability dictionary directly.
 /// Phase 102: Added modern IAbility support via GetModernAbility.
 /// Phase 115: Removed legacy ability dictionary - now uses only modern IAbility.
+///
+/// IMPORTANT: Scope Registration Behavior
+/// - SharedServicesScope: Created with null IPlayerRepository (abilities empty)
+/// - GameSceneScope: Created with IPlayerRepository (abilities available)
+///
+/// This design is intentional:
+/// - During deck building (MainScreen), abilities are not needed
+/// - During gameplay (Game scene), abilities are fully functional
+/// - GetModernAbility() returns null for missing abilities - callers must handle this
 /// </summary>
 public class EffectAbilityProviderService : IEffectAbilityProvider
 {

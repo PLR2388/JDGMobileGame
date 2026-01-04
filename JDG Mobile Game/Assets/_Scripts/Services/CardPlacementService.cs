@@ -22,6 +22,7 @@ using UnityEngine;
 /// Phase 116: Uses modern IAbility for field card abilities.
 /// Phase 118: Uses only ModernAbilities, removed legacy Ability references.
 /// Phase 135: Added GameStateService for phase validation.
+/// Phase 155: Added ICardSyncService for proper SourceCard in AbilityContext.
 ///
 /// Note: This service is in the default assembly because it depends on legacy types.
 /// It will be moved to JDG.Infrastructure once legacy types are refactored.
@@ -32,6 +33,7 @@ public class CardPlacementService : ICardPlacementService
     private readonly IPlayerStatusProvider _playerStatusProvider;
     private readonly IAudioService _audioService;
     private readonly IAbilityExecutor _abilityExecutor;
+    private readonly ICardSyncService _cardSyncService;
 
     /// <summary>
     /// Phase 148: GameStateService is intentionally optional for backward compatibility.
@@ -46,13 +48,15 @@ public class CardPlacementService : ICardPlacementService
         IPlayerStatusProvider playerStatusProvider,
         IAudioService audioService,
         IAbilityExecutor abilityExecutor,
-        GameStateService gameStateService)
+        GameStateService gameStateService,
+        ICardSyncService cardSyncService = null)
     {
         _cardCollectionService = cardCollectionService;
         _playerStatusProvider = playerStatusProvider;
         _audioService = audioService;
         _abilityExecutor = abilityExecutor;
         _gameStateService = gameStateService;
+        _cardSyncService = cardSyncService;
     }
 
     /// <summary>
@@ -94,12 +98,20 @@ public class CardPlacementService : ICardPlacementService
         currentPlayerCard.HandCards.Remove(card);
 
         // Phase 118: Apply card abilities using ModernAbilities
+        // Phase 155: Create linked domain card for proper SourceCard in AbilityContext
         var opponentPlayerCards = _cardCollectionService.GetOpponentPlayerCards();
         var owner = currentPlayerCard.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         var ownerId = PlayerId.FromCardOwner(owner);
         var opponentOwner = currentPlayerCard.IsPlayerOne ? JDG.Domain.CardOwner.Player2 : JDG.Domain.CardOwner.Player1;
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
-        var context = new AbilityContext(ownerId, opponentId, null, JDG.Domain.AbilityName.Default);
+
+        // Phase 155: Create linked domain card so abilities have proper SourceCard
+        JDG.Domain.Entities.Card domainCard = null;
+        if (_cardSyncService != null)
+        {
+            domainCard = _cardSyncService.CreateLinkedCard(card);
+        }
+        var context = new AbilityContext(ownerId, opponentId, domainCard, JDG.Domain.AbilityName.Default);
 
         // Phase 148: Added null-coalescing to prevent NullReferenceException
         foreach (var ability in card.ModernAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
@@ -108,6 +120,12 @@ public class CardPlacementService : ICardPlacementService
             {
                 ability.Execute(context);
             }
+        }
+
+        // Phase 155: Sync state changes back to InGameInvocationCard
+        if (_cardSyncService != null && domainCard != null)
+        {
+            _cardSyncService.SyncCardState(domainCard);
         }
 
         // Notify ability executor for OnCardAddedToField triggers on other cards

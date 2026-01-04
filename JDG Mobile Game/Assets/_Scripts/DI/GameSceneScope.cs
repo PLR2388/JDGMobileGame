@@ -82,6 +82,9 @@ namespace JDG.DI
         {
             Debug.Log("GameSceneScope: Configure called");
 
+            // Phase 155: Validate all required scene components before registration
+            ValidateRequiredSceneComponents();
+
             // ============================================
             // SCENE MONOBEHAVIOURS (must be registered first for services that depend on them)
             // ============================================
@@ -371,9 +374,16 @@ namespace JDG.DI
                 InjectAllOfType<HightLightText>(container);
                 InjectAllOfType<TutoInGameMenuScript>(container);
 
+                // Phase 155: Log summary of any injection failures
+                LogInjectionSummary();
+
                 Debug.Log("GameSceneScope: Injection complete");
             });
         }
+
+        // Phase 155: Track injection failures for summary logging
+        private int _injectionFailureCount = 0;
+        private readonly System.Collections.Generic.List<string> _failedInjections = new System.Collections.Generic.List<string>();
 
         private void InjectAllOfType<T>(IObjectResolver container) where T : Component
         {
@@ -388,11 +398,82 @@ namespace JDG.DI
                 }
                 catch (System.Exception ex)
                 {
+                    _injectionFailureCount++;
+                    _failedInjections.Add($"{typeof(T).Name}: {ex.Message}");
                     Debug.LogError($"GameSceneScope: Failed to inject {typeof(T).Name}: {ex.Message}");
                 }
             }
             if (components.Length > 0)
                 Debug.Log($"GameSceneScope: Injected {components.Length} {typeof(T).Name}");
+        }
+
+        /// <summary>
+        /// Phase 155: Logs a summary of any injection failures.
+        /// Call at the end of RegisterBuildCallback.
+        /// </summary>
+        private void LogInjectionSummary()
+        {
+            if (_injectionFailureCount > 0)
+            {
+                Debug.LogError($"GameSceneScope: INJECTION FAILURES - {_injectionFailureCount} components failed to inject!\n" +
+                    "Failed components:\n  - " + string.Join("\n  - ", _failedInjections) +
+                    "\n\nSome game features may not work correctly.");
+            }
+            else
+            {
+                Debug.Log("GameSceneScope: All component injections successful");
+            }
+        }
+
+        /// <summary>
+        /// Phase 155: Validates that all required scene components exist before DI registration.
+        /// Fails fast with a clear error message if any critical components are missing.
+        /// </summary>
+        private void ValidateRequiredSceneComponents()
+        {
+            var missingComponents = new System.Collections.Generic.List<string>();
+
+            // Critical MonoBehaviours that services depend on
+            if (FindFirstObjectByType<CardPoolManager>() == null)
+                missingComponents.Add("CardPoolManager (required by ICardPoolService)");
+
+            if (FindFirstObjectByType<InvocationMenuManager>() == null)
+                missingComponents.Add("InvocationMenuManager (required by IInvocationMenuService)");
+
+            if (FindFirstObjectByType<RoundDisplayManager>() == null)
+                missingComponents.Add("RoundDisplayManager (required by IRoundDisplayService)");
+
+            if (FindFirstObjectByType<InputManager>() == null)
+                missingComponents.Add("InputManager (required by IInputService)");
+
+            if (FindFirstObjectByType<MessageBox>() == null)
+                missingComponents.Add("MessageBox (required by IDialogService)");
+
+            if (FindFirstObjectByType<CardSelector>() == null)
+                missingComponents.Add("CardSelector (required by IDialogService)");
+
+            if (FindFirstObjectByType<PlayerManager>() == null)
+                missingComponents.Add("PlayerManager (required by IPlayerStatusProvider)");
+
+            // Check for PlayerCardManagers (need exactly 2)
+            var playerCardManagers = FindObjectsByType<PlayerCards>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            if (playerCardManagers.Length < 2)
+                missingComponents.Add($"PlayerCards (found {playerCardManagers.Length}, need 2 for ICardCollectionService)");
+
+            if (missingComponents.Count > 0)
+            {
+                var errorMessage = "GameSceneScope: CRITICAL - Missing required scene components!\n" +
+                                   "The following components must exist in the game scene:\n" +
+                                   string.Join("\n  - ", missingComponents) +
+                                   "\n\nPlease verify that the scene is properly configured with all required prefabs.";
+
+                Debug.LogError(errorMessage);
+
+                // In Editor, throw exception to fail fast. In builds, log error but try to continue.
+#if UNITY_EDITOR
+                throw new System.InvalidOperationException(errorMessage);
+#endif
+            }
         }
 
         /// <summary>

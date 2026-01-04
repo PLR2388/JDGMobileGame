@@ -13,6 +13,11 @@ using UnityEngine;
 /// This adapter allows CardPlacementService to be dependency-injected while
 /// finding scene dependencies. Once PlayerCardManager is fully migrated to services,
 /// this adapter can be replaced with direct CardCollectionService registration in DI.
+///
+/// Requirements:
+/// - Scene must have exactly 2 GameObjects with PlayerCardManager components
+/// - Player1's PlayerCardManager should have a lower InstanceID (be first in hierarchy)
+/// - Typically these are on "Player1Cards" and "Player2Cards" GameObjects
 /// </summary>
 public class CardCollectionServiceAdapter : ICardCollectionService
 {
@@ -28,8 +33,12 @@ public class CardCollectionServiceAdapter : ICardCollectionService
 
         if (playerCardManagers.Length < 2)
         {
-            var errorMessage = $"CardCollectionServiceAdapter: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}. " +
-                "Ensure both Player1 and Player2 GameObjects have PlayerCardManager components in the Game scene.";
+            var errorMessage = $"CardCollectionServiceAdapter: Expected 2 PlayerCardManagers, found {playerCardManagers.Length}.\n" +
+                "HOW TO FIX:\n" +
+                "1. Ensure the Game scene has two PlayerCardManager components (for Player1 and Player2)\n" +
+                "2. These are typically on 'Player1Cards' and 'Player2Cards' GameObjects\n" +
+                "3. Verify the scene is properly loaded before GameSceneScope.Configure() runs\n" +
+                "4. Check that these GameObjects are active in the scene hierarchy";
             Debug.LogError(errorMessage);
             throw new System.InvalidOperationException(errorMessage);
         }

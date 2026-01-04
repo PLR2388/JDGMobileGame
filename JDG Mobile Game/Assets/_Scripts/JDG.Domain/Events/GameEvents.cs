@@ -580,12 +580,16 @@ namespace JDG.Domain.Events
     /// <summary>
     /// Published when user requests to play a contre (counter) card.
     /// Contre cards are played in response to opponent actions and are discarded immediately.
+    ///
+    /// WARNING (Phase 155): This event is published by ContreCardHandler but HAS NO SUBSCRIBERS.
+    /// The contre card feature is incomplete - playing a contre card currently does nothing.
+    /// To complete this feature, create a ContreFunctions class that subscribes to this event
+    /// and handles: executing the contre effect, discarding the card, and updating game state.
     /// </summary>
     public struct ContreCardPlayRequestedEvent
     {
         /// <summary>
         /// The contre card to play. Runtime type: IInGameCard.
-        /// Note: No default subscriber - implement a ContreFunctions handler if needed.
         /// </summary>
         public object ContreCard;
         public CardOwner Owner;

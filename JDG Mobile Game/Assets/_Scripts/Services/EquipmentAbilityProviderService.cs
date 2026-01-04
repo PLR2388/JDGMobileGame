@@ -5,11 +5,20 @@ using JDG.Application.Repositories;
 using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
 
 /// <summary>
-/// Provides equipment abilities.
+/// Provides equipment abilities for equipment card effects during gameplay.
 /// Phase 48: Originally wrapped legacy singleton for DI-compatible access.
 /// Phase 84: Owned the legacy ability dictionary directly.
 /// Phase 103: Added modern IAbility support via GetModernAbility.
 /// Phase 117: Removed legacy ability dictionary - now uses only modern IAbility.
+///
+/// IMPORTANT: Scope Registration Behavior
+/// - SharedServicesScope: Created with null IPlayerRepository (abilities empty)
+/// - GameSceneScope: Created with IPlayerRepository (abilities available)
+///
+/// This design is intentional:
+/// - During deck building (MainScreen), abilities are not needed
+/// - During gameplay (Game scene), abilities are fully functional
+/// - GetModernAbility() returns null for missing abilities - callers must handle this
 /// </summary>
 public class EquipmentAbilityProviderService : IEquipmentAbilityProvider
 {
