@@ -93,7 +93,8 @@ namespace JDG.Application.Abilities.Implementations
             {
                 if (card.Stats.HasValue)
                 {
-                    int newDef = card.Stats.Value.Defense / _divisor;
+                    // Phase 159: Changed to float for half-star support
+                    float newDef = card.Stats.Value.Defense / _divisor;
                     card.SetStats(card.Stats.Value.Attack, newDef);
                 }
             }

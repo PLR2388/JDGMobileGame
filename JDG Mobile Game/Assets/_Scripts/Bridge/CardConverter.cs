@@ -91,13 +91,14 @@ namespace JDG.Bridge
                 ?.Select(ConvertConditionName)
                 .ToArray() ?? new DomainConditionName[0];
 
+            // Phase 159: Pass float stats directly for half-star support
             return DomainCard.CreateInvocation(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
                 scriptableCard.DetailedDescription,
-                (int)scriptableCard.BaseInvocationCardStats.Attack,
-                (int)scriptableCard.BaseInvocationCardStats.Defense,
+                scriptableCard.BaseInvocationCardStats.Attack,
+                scriptableCard.BaseInvocationCardStats.Defense,
                 families,
                 scriptableCard.BaseInvocationCardStats.AffectedByEffect,
                 conditions,

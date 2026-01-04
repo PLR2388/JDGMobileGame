@@ -169,7 +169,8 @@ namespace OnePlayer
         {
             try
             {
-                var actionScenario = actionScenarios.First(elt => elt.Index == index);
+                var actionScenario = actionScenarios.FirstOrDefault(elt => elt.Index == index);
+                if (actionScenario == null) return; // No scenario action defined for this dialogue index
                 var highlight = actionScenario.Highlight;
                 var putCard = actionScenario.PutCard;
                 var image = actionScenario.Image;

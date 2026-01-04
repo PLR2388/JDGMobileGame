@@ -186,8 +186,8 @@ namespace JDG.Application.Tests.Abilities
         {
             var ability = new BonusStatsEquipmentAbility(500, 300);
             var context = CreateContext(targetCard: _targetCard);
-            int originalAtk = _targetCard.Stats.Value.Attack;
-            int originalDef = _targetCard.Stats.Value.Defense;
+            float originalAtk = _targetCard.Stats.Value.Attack;
+            float originalDef = _targetCard.Stats.Value.Defense;
 
             var result = ability.Execute(context);
 
@@ -214,8 +214,8 @@ namespace JDG.Application.Tests.Abilities
         {
             var ability = new BonusStatsEquipmentAbility(-200, -100);
             var context = CreateContext(targetCard: _targetCard);
-            int originalAtk = _targetCard.Stats.Value.Attack;
-            int originalDef = _targetCard.Stats.Value.Defense;
+            float originalAtk = _targetCard.Stats.Value.Attack;
+            float originalDef = _targetCard.Stats.Value.Defense;
 
             var result = ability.Execute(context);
 

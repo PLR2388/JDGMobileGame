@@ -28,16 +28,17 @@ namespace JDG.Application.Abilities.Implementations
     /// Equipment ability that sets specific ATK/DEF values.
     /// Migrated from SetAtkDefAbility.
     /// Phase 117: Updated to extend BaseEquipmentAbility.
+    /// Phase 159: Changed from int to float for half-star support.
     /// </summary>
     public class SetStatsEquipmentAbility : BaseEquipmentAbility
     {
-        private readonly int _attack;
-        private readonly int _defense;
+        private readonly float _attack;
+        private readonly float _defense;
 
         public override AbilityName Name { get; }
         public override string Description { get; }
 
-        public SetStatsEquipmentAbility(int attack, int defense)
+        public SetStatsEquipmentAbility(float attack, float defense)
         {
             Name = AbilityName.Default;
             _attack = attack;
@@ -64,16 +65,17 @@ namespace JDG.Application.Abilities.Implementations
     /// Equipment ability that adds ATK/DEF bonuses.
     /// Migrated from EarnAtkDefAbility.
     /// Phase 117: Updated to extend BaseEquipmentAbility.
+    /// Phase 159: Changed from int to float for half-star support.
     /// </summary>
     public class BonusStatsEquipmentAbility : BaseEquipmentAbility
     {
-        private readonly int _attackBonus;
-        private readonly int _defenseBonus;
+        private readonly float _attackBonus;
+        private readonly float _defenseBonus;
 
         public override AbilityName Name { get; }
         public override string Description { get; }
 
-        public BonusStatsEquipmentAbility(int attackBonus, int defenseBonus)
+        public BonusStatsEquipmentAbility(float attackBonus, float defenseBonus)
         {
             Name = AbilityName.Default;
             _attackBonus = attackBonus;
@@ -127,8 +129,9 @@ namespace JDG.Application.Abilities.Implementations
             if (context.TargetCard == null || !context.TargetCard.Stats.HasValue)
                 return AbilityResult.Failure("No target card or invalid stats");
 
-            int newAtk = (int)(context.TargetCard.Stats.Value.Attack * _attackMultiplier);
-            int newDef = (int)(context.TargetCard.Stats.Value.Defense * _defenseMultiplier);
+            // Phase 159: Use float for half-star support
+            float newAtk = context.TargetCard.Stats.Value.Attack * _attackMultiplier;
+            float newDef = context.TargetCard.Stats.Value.Defense * _defenseMultiplier;
             context.TargetCard.SetStats(newAtk, newDef);
 
             return AbilityResult.Success($"Stats multiplied to {newAtk}/{newDef}");
@@ -338,8 +341,9 @@ namespace JDG.Application.Abilities.Implementations
                 return AbilityResult.Failure("Player not found");
 
             int handCount = player.HandCount;
-            int atkBonus = (int)(handCount * _attackPerCard);
-            int defBonus = (int)(handCount * _defensePerCard);
+            // Phase 159: Use float for half-star support
+            float atkBonus = handCount * _attackPerCard;
+            float defBonus = handCount * _defensePerCard;
 
             context.TargetCard.ModifyStats(atkBonus, defBonus);
             return AbilityResult.Success($"Added +{atkBonus}/+{defBonus} based on {handCount} hand cards");
@@ -395,12 +399,12 @@ namespace JDG.Application.Abilities.Implementations
             _playerRepository = playerRepository;
         }
 
-        public SetStatsEquipmentAbility CreateSetStats(int atk, int def)
+        public SetStatsEquipmentAbility CreateSetStats(float atk, float def)
         {
             return new SetStatsEquipmentAbility(atk, def);
         }
 
-        public BonusStatsEquipmentAbility CreateBonusStats(int atk, int def)
+        public BonusStatsEquipmentAbility CreateBonusStats(float atk, float def)
         {
             return new BonusStatsEquipmentAbility(atk, def);
         }

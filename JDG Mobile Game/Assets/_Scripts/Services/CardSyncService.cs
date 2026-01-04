@@ -49,14 +49,14 @@ namespace Services
             var domainFamilies = ConvertFamiliesToDomain(concreteCard.Families);
 
             // Create domain Card using CreateInvocation with CURRENT stats (not base stats)
-            // This is the key fix - old code used CreateEffect which has no stats
+            // Phase 159: Pass float stats directly - no more int truncation
             var domainCard = Card.CreateInvocation(
                 id: CardId.New(),
                 title: concreteCard.Title,
                 description: concreteCard.GetDescription() ?? "",
                 detailedDescription: concreteCard.GetDetailedDescription() ?? "",
-                attack: (int)concreteCard.Attack,
-                defense: (int)concreteCard.Defense,
+                attack: concreteCard.Attack,
+                defense: concreteCard.Defense,
                 families: domainFamilies,
                 affectedByEffect: concreteCard.IsAffectedByEffectCard,
                 conditions: null, // Not needed for ability context

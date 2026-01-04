@@ -96,14 +96,15 @@ namespace JDG.Domain.Entities
 
         /// <summary>
         /// Creates an Invocation card.
+        /// Phase 159: Changed attack/defense from int to float for half-star support.
         /// </summary>
         public static Card CreateInvocation(
             CardId id,
             string title,
             string description,
             string detailedDescription,
-            int attack,
-            int defense,
+            float attack,
+            float defense,
             IEnumerable<CardFamily> families,
             bool affectedByEffect,
             IEnumerable<ConditionName> conditions = null,
@@ -223,8 +224,9 @@ namespace JDG.Domain.Entities
         /// <summary>
         /// Modifies the stats of an invocation card.
         /// Returns true if successful, false if not an invocation card.
+        /// Phase 159: Changed from int to float for half-star support.
         /// </summary>
-        public bool ModifyStats(int attackDelta, int defenseDelta)
+        public bool ModifyStats(float attackDelta, float defenseDelta)
         {
             if (!Stats.HasValue || Type != CardType.Invocation)
                 return false;
@@ -236,8 +238,9 @@ namespace JDG.Domain.Entities
         /// <summary>
         /// Sets the stats of an invocation card.
         /// Returns true if successful, false if not an invocation card.
+        /// Phase 159: Changed from int to float for half-star support.
         /// </summary>
-        public bool SetStats(int attack, int defense)
+        public bool SetStats(float attack, float defense)
         {
             if (!Stats.HasValue || Type != CardType.Invocation)
                 return false;
@@ -454,6 +457,7 @@ namespace JDG.Domain.Entities
     /// <summary>
     /// Read-only snapshot of card state.
     /// Can be used for UI, serialization, or ECS conversion.
+    /// Phase 159: Changed Attack/Defense from int to float for half-star support.
     /// </summary>
     public struct CardSnapshot
     {
@@ -461,8 +465,8 @@ namespace JDG.Domain.Entities
         public string Title;
         public CardType Type;
         public CardOwner Owner;
-        public int Attack;
-        public int Defense;
+        public float Attack;
+        public float Defense;
         public int FamilyCount;
         public int AbilityCount;
         public bool IsDestroyed;

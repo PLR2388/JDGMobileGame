@@ -233,6 +233,7 @@ public class CombatService : ICombatService
 
         // Phase 118: Calculate and apply combat damage (moved from Ability.OnCardAttacked)
         float resultAttack = Opponent.Defense - Attacker.Attack;
+
         bool attackerDestroyed = false;
         bool defenderDestroyed = false;
 

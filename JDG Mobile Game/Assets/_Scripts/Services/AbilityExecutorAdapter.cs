@@ -81,13 +81,14 @@ namespace Services
                     .Select(f => (DomainCardFamily)(int)f)
                     .ToList() ?? new System.Collections.Generic.List<DomainCardFamily>();
 
+                // Phase 159: Pass float stats directly for half-star support
                 return DomainCard.CreateInvocation(
                     CardId.New(),
                     invocation.Title ?? "Unknown",
                     invocation.GetDescription() ?? "",
                     invocation.GetDetailedDescription() ?? "",
-                    (int)invocation.Attack,
-                    (int)invocation.Defense,
+                    invocation.Attack,
+                    invocation.Defense,
                     domainFamilies,
                     invocation.IsAffectedByEffectCard
                 );

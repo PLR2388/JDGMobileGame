@@ -20,8 +20,9 @@ namespace JDG.Application.DTOs
         public bool IsCollector { get; set; }
 
         // Invocation card properties
-        public int Attack { get; set; }
-        public int Defense { get; set; }
+        // Phase 159: Changed from int to float for half-star support
+        public float Attack { get; set; }
+        public float Defense { get; set; }
         public CardFamily[] Families { get; set; }
         public bool AffectedByEffect { get; set; }
         public ConditionName[] Conditions { get; set; }

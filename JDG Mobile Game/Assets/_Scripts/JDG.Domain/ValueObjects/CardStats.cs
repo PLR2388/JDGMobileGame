@@ -5,13 +5,14 @@ namespace JDG.Domain.ValueObjects
     /// <summary>
     /// Immutable value object representing card attack and defense statistics.
     /// ECS-ready: Structured to convert easily to IComponentData.
+    /// Phase 159: Changed from int to float to support half-star values (e.g., 2.5 ATK).
     /// </summary>
     public readonly struct CardStats : IEquatable<CardStats>
     {
-        public int Attack { get; }
-        public int Defense { get; }
+        public float Attack { get; }
+        public float Defense { get; }
 
-        public CardStats(int attack, int defense)
+        public CardStats(float attack, float defense)
         {
             Attack = attack;
             Defense = defense;
@@ -21,7 +22,7 @@ namespace JDG.Domain.ValueObjects
         /// Creates new stats with modified values.
         /// Immutable - returns a new instance.
         /// </summary>
-        public CardStats Modify(int attackDelta, int defenseDelta)
+        public CardStats Modify(float attackDelta, float defenseDelta)
         {
             return new CardStats(Attack + attackDelta, Defense + defenseDelta);
         }
@@ -29,7 +30,7 @@ namespace JDG.Domain.ValueObjects
         /// <summary>
         /// Creates new stats with set values (replaces current).
         /// </summary>
-        public CardStats WithAttack(int newAttack)
+        public CardStats WithAttack(float newAttack)
         {
             return new CardStats(newAttack, Defense);
         }
@@ -37,7 +38,7 @@ namespace JDG.Domain.ValueObjects
         /// <summary>
         /// Creates new stats with set values (replaces current).
         /// </summary>
-        public CardStats WithDefense(int newDefense)
+        public CardStats WithDefense(float newDefense)
         {
             return new CardStats(Attack, newDefense);
         }
@@ -60,7 +61,10 @@ namespace JDG.Domain.ValueObjects
 
         public bool Equals(CardStats other)
         {
-            return Attack == other.Attack && Defense == other.Defense;
+            // Use approximate equality for floats
+            const float epsilon = 0.0001f;
+            return Math.Abs(Attack - other.Attack) < epsilon &&
+                   Math.Abs(Defense - other.Defense) < epsilon;
         }
 
         public override bool Equals(object obj)
@@ -72,7 +76,7 @@ namespace JDG.Domain.ValueObjects
         {
             unchecked
             {
-                return (Attack * 397) ^ Defense;
+                return (Attack.GetHashCode() * 397) ^ Defense.GetHashCode();
             }
         }
 

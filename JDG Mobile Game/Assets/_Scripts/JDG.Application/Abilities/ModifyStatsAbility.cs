@@ -9,13 +9,14 @@ namespace JDG.Application.Abilities
     /// <summary>
     /// Ability that modifies ATK/DEF stats of cards.
     /// Can buff friendly cards or debuff opponent cards.
+    /// Phase 159: Changed from int to float for half-star support.
     /// </summary>
     public class ModifyStatsAbility : IAbility
     {
         private readonly IPlayerRepository _playerRepository;
         private readonly IEventBus _eventBus;
-        private readonly int _atkModifier;
-        private readonly int _defModifier;
+        private readonly float _atkModifier;
+        private readonly float _defModifier;
         private readonly bool _targetOpponent;
         private readonly CardType _targetCardType;
 
@@ -24,6 +25,7 @@ namespace JDG.Application.Abilities
 
         /// <summary>
         /// Creates a modify stats ability.
+        /// Phase 159: Changed from int to float for half-star support.
         /// </summary>
         /// <param name="abilityName">The specific ability name</param>
         /// <param name="atkModifier">ATK change (positive = buff, negative = debuff)</param>
@@ -34,8 +36,8 @@ namespace JDG.Application.Abilities
         /// <param name="eventBus">Event bus for publishing events</param>
         public ModifyStatsAbility(
             AbilityName abilityName,
-            int atkModifier,
-            int defModifier,
+            float atkModifier,
+            float defModifier,
             bool targetOpponent,
             CardType targetCardType,
             IPlayerRepository playerRepository,
@@ -119,7 +121,7 @@ namespace JDG.Application.Abilities
             _eventBus = eventBus;
         }
 
-        public ModifyStatsAbility CreateBuff(int atk, int def, CardType targetType)
+        public ModifyStatsAbility CreateBuff(float atk, float def, CardType targetType)
         {
             return new ModifyStatsAbility(
                 AbilityName.Default,
@@ -132,7 +134,7 @@ namespace JDG.Application.Abilities
             );
         }
 
-        public ModifyStatsAbility CreateDebuff(int atk, int def, CardType targetType)
+        public ModifyStatsAbility CreateDebuff(float atk, float def, CardType targetType)
         {
             return new ModifyStatsAbility(
                 AbilityName.Default,

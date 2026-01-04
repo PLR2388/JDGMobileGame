@@ -100,8 +100,11 @@ public class PlayerManager : MonoBehaviour, IPlayerStatusProvider
         else
         {
             // Phase 17-18: Use ICombatService instead of CardManager.Instance
+            // ComputeDamageAttack returns DEF - ATK (negative when attacker wins)
+            // ChangeHealth adds delta, so negative value = damage dealt
+            // Important: Do NOT cast to int - HP values can be decimals (e.g., 27.5)
             var diff = _combatService.ComputeDamageAttack();
-            _playerService.ChangeHealth(opponentId, (int)diff);
+            _playerService.ChangeHealth(opponentId, diff);
         }
 
         // Sync legacy PlayerStatus MonoBehaviours with service state

@@ -52,7 +52,8 @@ namespace JDG.Application.Abilities.Implementations
 
             foreach (var card in familyCards)
             {
-                card.ModifyStats((int)_attackBonus, (int)_defenseBonus);
+                // Phase 159: Use float directly for half-star support
+                card.ModifyStats(_attackBonus, _defenseBonus);
             }
 
             _playerRepository.SavePlayer(player);

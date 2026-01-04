@@ -42,6 +42,7 @@ public class PlayerService : IPlayerService
     {
         var currentState = _playerStates[playerId];
         var oldHealth = currentState.CurrentHealth;
+
         var newState = currentState.ChangeHealth(delta);
         _playerStates[playerId] = newState;
 

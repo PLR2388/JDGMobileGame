@@ -428,15 +428,16 @@ namespace JDG.Domain.Events
 
     /// <summary>
     /// Published when a card's ATK/DEF stats are modified.
+    /// Phase 159: Changed from int to float for half-star support.
     /// </summary>
     public struct CardStatsModifiedEvent
     {
         public Guid CardId;
         public CardOwner Owner;
-        public int AtkChange;
-        public int DefChange;
-        public int NewAtk;
-        public int NewDef;
+        public float AtkChange;
+        public float DefChange;
+        public float NewAtk;
+        public float NewDef;
     }
 
     /// <summary>
