@@ -273,7 +273,7 @@ public class CombatService : ICombatService
         var opponentId = PlayerId.FromCardOwner(opponentOwner);
 
         // Phase 151: Create linked domain Card for proper ability context
-        Card domainCard = null;
+        DomainCard domainCard = null;
         if (_cardSyncService != null && card != null)
         {
             domainCard = _cardSyncService.CreateLinkedCard(card);

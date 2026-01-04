@@ -190,7 +190,7 @@ namespace JDG.Application.Tests.UseCases
             public void AttackTurnDone() { }
             public void SetRemainedAttackThisTurn(int count) { }
             public bool HasAction() => false;
-            public void SetEquipmentCard(IInGameEquipmentCard equipment) { EquipmentCard = equipment; }
+            public bool SetEquipmentCard(IInGameEquipmentCard equipment) { EquipmentCard = equipment; return true; }
             public void ControlCard() { IsControlled = true; }
             public void IncrementNumberTurnOnField() { NumberOfTurnOnField++; }
             public void IncrementNumberDeaths() { NumberOfDeaths++; }

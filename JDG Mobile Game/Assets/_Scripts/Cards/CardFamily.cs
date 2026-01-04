@@ -14,6 +14,7 @@ namespace Cards
     [Obsolete("Use JDG.Domain.Enums.CardFamily for new code. This enum is kept for Unity serialization compatibility.")]
     public enum CardFamily
     {
+        None,
         Comics,
         Developer,
         Fistiland,

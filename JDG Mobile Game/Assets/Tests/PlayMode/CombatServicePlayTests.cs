@@ -24,6 +24,7 @@ namespace JDG.PlayMode.Tests
         private ICardCollectionService _mockCardCollectionService;
         private IPlayerStatusProvider _mockPlayerStatusProvider;
         private IAbilityExecutor _mockAbilityExecutor;
+        private ICardSyncService _mockCardSyncService;
         private PlayerCards _currentPlayerCards;
         private PlayerCards _opponentPlayerCards;
         private PlayerStatus _currentPlayerStatus;
@@ -46,6 +47,7 @@ namespace JDG.PlayMode.Tests
             _mockCardCollectionService = Substitute.For<ICardCollectionService>();
             _mockPlayerStatusProvider = Substitute.For<IPlayerStatusProvider>();
             _mockAbilityExecutor = Substitute.For<IAbilityExecutor>();
+            _mockCardSyncService = Substitute.For<ICardSyncService>();
 
             // Create mock services for PlayerStatus injection
             var mockPlayerService = Substitute.For<IPlayerService>();
@@ -73,10 +75,12 @@ namespace JDG.PlayMode.Tests
             _mockPlayerStatusProvider.GetOpponentPlayerStatus().Returns(_opponentPlayerStatus);
 
             // Phase 144: Pass IEventBus to CombatService constructor
+            // Phase 151: Added ICardSyncService parameter
             _combatService = new CombatService(
                 _mockCardCollectionService,
                 _mockPlayerStatusProvider,
                 _mockAbilityExecutor,
+                _mockCardSyncService,
                 mockEventBus,
                 _canvas);
         }

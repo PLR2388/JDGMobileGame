@@ -6,6 +6,7 @@ namespace JDG.Domain.Enums
     /// </summary>
     public enum CardFamily
     {
+        None,
         Comics,
         Developer,
         Fistiland,
