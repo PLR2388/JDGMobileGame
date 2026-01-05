@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using Cards;
 using JDG.Application;
+using JDG.Application.Services;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Services;
 using UnityEngine;
@@ -10,6 +11,7 @@ using VContainer;
 /// <summary>
 /// Represents the display of cards in a tutorial scenario.
 /// Phase 123: Uses EventBus instead of static DialogueUI.DialogIndex.
+/// Phase 159: Fixed stale currentDialogIndex by using ITutorialStateService.
 /// </summary>
 public class TutoHandCardDisplay : HandCardDisplay
 {
@@ -19,16 +21,25 @@ public class TutoHandCardDisplay : HandCardDisplay
     private IEventBus _tutoEventBus;
     private IDisposable _dialogueIndexSubscription;
 
+    // Phase 159: Tutorial state service for current dialog index
+    private ITutorialStateService _tutorialStateService;
+
     /// <summary>
     /// VContainer method injection for dependencies.
     /// Phase 123: Added IEventBus for DialogueIndexChangedEvent.
     /// Phase 132: Added IObjectResolver for injecting dynamically created OnHover components.
+    /// Phase 159: Added ITutorialStateService to fix stale dialog index when hand reopens.
     /// </summary>
     [Inject]
-    public new void Construct(IEventBus eventBus, GameStateService gameStateService, VContainer.IObjectResolver container)
+    public new void Construct(
+        IEventBus eventBus,
+        GameStateService gameStateService,
+        VContainer.IObjectResolver container,
+        ITutorialStateService tutorialStateService)
     {
         base.Construct(eventBus, gameStateService, container);
         _tutoEventBus = eventBus;
+        _tutorialStateService = tutorialStateService;
     }
 
     private const int StartHighlightMusiqueDeMegadriveIndex = 35;
@@ -129,13 +140,18 @@ public class TutoHandCardDisplay : HandCardDisplay
 
     /// <summary>
     /// Determines if a specific in-game card should be highlighted.
+    /// Phase 159: Uses ITutorialStateService.CurrentDialogIndex instead of cached currentDialogIndex.
+    /// This fixes the bug where Musique de Mega Drive wasn't highlighted when hand reopened
+    /// after dialogue had advanced past index 35 while hand was closed.
     /// </summary>
     /// <param name="handCard">The in-game card to check.</param>
     /// <returns>True if the card should be highlighted, false otherwise.</returns>
     private bool ShouldHighlightCard(InGameCard handCard)
     {
+        // Phase 159: Use service to get current dialog index (avoids stale cached value)
+        var dialogIndex = _tutorialStateService?.CurrentDialogIndex ?? currentDialogIndex;
         return handCard.Title == CardNameMappings.CardNameMap[CardNames.ClichéRaciste] ||
-               (handCard.Title == CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive] && currentDialogIndex > StartHighlightMusiqueDeMegadriveIndex);
+               (handCard.Title == CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive] && dialogIndex > StartHighlightMusiqueDeMegadriveIndex);
     }
 
     /// <summary>
