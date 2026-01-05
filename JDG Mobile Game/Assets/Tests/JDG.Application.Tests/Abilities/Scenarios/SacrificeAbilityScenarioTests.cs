@@ -2,7 +2,9 @@ using NUnit.Framework;
 using JDG.Application.Abilities;
 using JDG.Application.Abilities.Implementations;
 using JDG.Domain;
+using JDG.Domain.Entities;
 using JDG.Domain.Enums;
+using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
 using System.Linq;
 
