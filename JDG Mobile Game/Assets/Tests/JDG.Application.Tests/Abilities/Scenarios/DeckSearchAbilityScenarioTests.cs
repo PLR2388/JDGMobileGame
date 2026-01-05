@@ -466,7 +466,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Generic family search for Fistiland
             _deckSearchFactory = new DeckSearchAbilityFactory(PlayerRepository);
-            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.None, CardFamily.Fistiland);
+            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Fistiland);
 
             var searcher = CreateCard("Family Searcher", 2, 2, CardFamily.Human);
             var fistilandCard = CardFactory.CreateInvocation("Random Fistiland", 2, 2, CardFamily.Fistiland);
@@ -483,7 +483,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(searcher, AbilityName.None);
+            var context = CreateContext(searcher, AbilityName.Default);
 
             // Act
             var result = ability.Execute(context);
@@ -497,7 +497,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         public void GetFamilyCard_WhenNoFamilyMemberInDeck_Fails()
         {
             // Arrange - Search for family that doesn't exist in deck
-            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.None, CardFamily.Spatial);
+            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Spatial);
 
             var searcher = CreateCard("Searcher", 2, 2, CardFamily.Human);
             var deck = CardFactory.CreateDeck(29);
@@ -511,7 +511,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(searcher, AbilityName.None);
+            var context = CreateContext(searcher, AbilityName.Default);
 
             // Act
             var result = ability.Execute(context);
@@ -524,7 +524,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         public void GetFamilyCard_CanActivate_WhenFamilyExists_ReturnsTrue()
         {
             // Arrange
-            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.None, CardFamily.Wizard);
+            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Wizard);
 
             var searcher = CreateCard("Searcher", 2, 2, CardFamily.Human);
             var wizardCard = CardFactory.CreateInvocation("Wizard Card", 2, 2, CardFamily.Wizard);
@@ -541,7 +541,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(searcher, AbilityName.None);
+            var context = CreateContext(searcher, AbilityName.Default);
 
             // Act & Assert
             Assert.IsTrue(ability.CanActivate(context),
@@ -552,7 +552,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         public void GetFamilyCard_CanActivate_WhenFamilyNotInDeck_ReturnsFalse()
         {
             // Arrange
-            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.None, CardFamily.Police);
+            var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Police);
 
             var searcher = CreateCard("Searcher", 2, 2, CardFamily.Human);
             var deck = CardFactory.CreateDeck(29);
@@ -566,7 +566,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(searcher, AbilityName.None);
+            var context = CreateContext(searcher, AbilityName.Default);
 
             // Act & Assert
             Assert.IsFalse(ability.CanActivate(context),

@@ -55,12 +55,12 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 () => _protectionFactory.CreateCanOnlyAttackItself());
 
             // Dependency abilities
-            AbilityRegistry.Register(AbilityName.CantLiveWithoutBenzaie,
-                () => _protectionFactory.CreateDependency(AbilityName.CantLiveWithoutBenzaie, "Benzaie"));
-            AbilityRegistry.Register(AbilityName.CantLiveWithoutJoueurDuGrenier,
-                () => _protectionFactory.CreateDependency(AbilityName.CantLiveWithoutJoueurDuGrenier, "Joueur du Grenier"));
-            AbilityRegistry.Register(AbilityName.CantLiveWithoutGranolax,
-                () => _protectionFactory.CreateDependency(AbilityName.CantLiveWithoutGranolax, "Granolax"));
+            AbilityRegistry.Register(AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune,
+                () => _protectionFactory.CreateDependency(AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune, "Benzaie"));
+            AbilityRegistry.Register(AbilityName.CantLiveWithoutJDG,
+                () => _protectionFactory.CreateDependency(AbilityName.CantLiveWithoutJDG, "Joueur du Grenier"));
+            AbilityRegistry.Register(AbilityName.CantLiveWithoutGranolaxOrMechaGranolax,
+                () => _protectionFactory.CreateDependency(AbilityName.CantLiveWithoutGranolaxOrMechaGranolax, "Granolax"));
         }
 
         #region CantBeAttacked Tests
@@ -384,8 +384,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaie);
-            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaie);
+            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
+            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
 
             // Act & Assert
             Assert.IsTrue(CanActivateAbility(ability, context),
@@ -401,8 +401,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaie);
-            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaie);
+            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
+            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
 
             // Act
             var result = ability.Execute(context);
@@ -433,8 +433,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaie);
-            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaie);
+            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
+            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
 
             // Act
             var result = ability.Execute(context);
@@ -461,8 +461,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 PlayerRepository.SavePlayer(player1);
             }
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaie);
-            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaie);
+            var ability = GetAbility(AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
+            var context = CreateContext(alphaMan, AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
 
             // Act - Check dependency after removal
             var result = ability.Execute(context);
@@ -484,8 +484,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutGranolax);
-            var context = CreateContext(starlightUnicorn, AbilityName.CantLiveWithoutGranolax);
+            var ability = GetAbility(AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
+            var context = CreateContext(starlightUnicorn, AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
 
             // Act
             var result = ability.Execute(context);
@@ -512,8 +512,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 PlayerRepository.SavePlayer(player1);
             }
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutGranolax);
-            var context = CreateContext(starlightUnicorn, AbilityName.CantLiveWithoutGranolax);
+            var ability = GetAbility(AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
+            var context = CreateContext(starlightUnicorn, AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
 
             // Act
             var result = ability.Execute(context);
@@ -547,8 +547,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutJoueurDuGrenier);
-            var context = CreateContext(dependentCard, AbilityName.CantLiveWithoutJoueurDuGrenier);
+            var ability = GetAbility(AbilityName.CantLiveWithoutJDG);
+            var context = CreateContext(dependentCard, AbilityName.CantLiveWithoutJDG);
 
             // Act
             var result = ability.Execute(context);
@@ -579,8 +579,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.CantLiveWithoutJoueurDuGrenier);
-            var context = CreateContext(dependentCard, AbilityName.CantLiveWithoutJoueurDuGrenier);
+            var ability = GetAbility(AbilityName.CantLiveWithoutJDG);
+            var context = CreateContext(dependentCard, AbilityName.CantLiveWithoutJDG);
 
             // Act
             var result = ability.Execute(context);
@@ -599,7 +599,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Custom dependency that accepts multiple card names
             var customDependency = _protectionFactory.CreateDependency(
-                AbilityName.None,
+                AbilityName.Default,
                 "Card A", "Card B", "Card C");
 
             var dependentCard = CreateCard("Multi-Dependent", 2, 2, CardFamily.Human);
@@ -619,7 +619,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(dependentCard, AbilityName.None);
+            var context = CreateContext(dependentCard, AbilityName.Default);
 
             // Act
             var result = customDependency.Execute(context);

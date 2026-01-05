@@ -216,7 +216,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Card with enough ATK/DEF meets condition
             var conditionalAbility = _statFactory.CreateConditionalStats(
-                AbilityName.None,
+                AbilityName.Default,
                 CardFamily.Japan,
                 minAtk: 2,
                 minDef: 2,
@@ -236,7 +236,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(japanCard, AbilityName.None);
+            var context = CreateContext(japanCard, AbilityName.Default);
 
             // Act
             var result = conditionalAbility.Execute(context);
@@ -250,7 +250,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Card with insufficient stats
             var conditionalAbility = _statFactory.CreateConditionalStats(
-                AbilityName.None,
+                AbilityName.Default,
                 CardFamily.Japan,
                 minAtk: 5,
                 minDef: 5,
@@ -270,7 +270,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(weakCard, AbilityName.None);
+            var context = CreateContext(weakCard, AbilityName.Default);
 
             // Act
             var result = conditionalAbility.Execute(context);
@@ -284,7 +284,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Card has right stats but wrong family
             var conditionalAbility = _statFactory.CreateConditionalStats(
-                AbilityName.None,
+                AbilityName.Default,
                 CardFamily.Japan,
                 minAtk: 2,
                 minDef: 2,
@@ -304,7 +304,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(humanCard, AbilityName.None);
+            var context = CreateContext(humanCard, AbilityName.Default);
 
             // Act
             var result = conditionalAbility.Execute(context);
@@ -321,7 +321,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         public void CopyStats_WhenTargetOnField_CopiesStats()
         {
             // Arrange - Copy stats from Benzaie jeune
-            var copyAbility = _statFactory.CreateCopyStats(AbilityName.None, "Benzaie jeune");
+            var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Benzaie jeune");
 
             var copyCard = CardFactory.CreateInvocation("Copy Cat", 1, 1, CardFamily.Human);
             var benzaieJeune = CardFactory.CreateInvocation("Benzaie jeune", 5, 5, CardFamily.Fistiland);
@@ -340,7 +340,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(copyCard, AbilityName.None);
+            var context = CreateContext(copyCard, AbilityName.Default);
 
             // Act
             var result = copyAbility.Execute(context);
@@ -353,7 +353,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         public void CopyStats_WhenTargetNotOnField_Fails()
         {
             // Arrange - Target card not present
-            var copyAbility = _statFactory.CreateCopyStats(AbilityName.None, "Missing Card");
+            var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Missing Card");
 
             var copyCard = CardFactory.CreateInvocation("Copy Cat", 1, 1, CardFamily.Human);
 
@@ -368,7 +368,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(copyCard, AbilityName.None);
+            var context = CreateContext(copyCard, AbilityName.Default);
 
             // Act
             var result = copyAbility.Execute(context);
@@ -381,7 +381,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         public void CopyStats_CanActivate_WhenTargetExists_ReturnsTrue()
         {
             // Arrange
-            var copyAbility = _statFactory.CreateCopyStats(AbilityName.None, "Target Card");
+            var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Target Card");
 
             var copyCard = CardFactory.CreateInvocation("Copier", 1, 1, CardFamily.Human);
             var targetCard = CardFactory.CreateInvocation("Target Card", 4, 4, CardFamily.Human);
@@ -400,7 +400,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(copyCard, AbilityName.None);
+            var context = CreateContext(copyCard, AbilityName.Default);
 
             // Act & Assert
             Assert.IsTrue(copyAbility.CanActivate(context),
@@ -411,7 +411,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         public void CopyStats_CanActivate_WhenTargetNotExists_ReturnsFalse()
         {
             // Arrange
-            var copyAbility = _statFactory.CreateCopyStats(AbilityName.None, "Missing Target");
+            var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Missing Target");
 
             var copyCard = CardFactory.CreateInvocation("Copier", 1, 1, CardFamily.Human);
 
@@ -426,7 +426,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var context = CreateContext(copyCard, AbilityName.None);
+            var context = CreateContext(copyCard, AbilityName.Default);
 
             // Act & Assert
             Assert.IsFalse(copyAbility.CanActivate(context),

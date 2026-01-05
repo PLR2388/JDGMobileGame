@@ -33,10 +33,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             _combatFactory = new CombatAbilityFactory(PlayerRepository);
 
             // Register combat abilities
-            AbilityRegistry.Register(AbilityName.KillBothOnAttack,
-                () => _combatFactory.CreateMutualDestruction(AbilityName.KillBothOnAttack));
-            AbilityRegistry.Register(AbilityName.SkipOpponentAttackAbility,
-                () => _combatFactory.CreateSkipAttack(AbilityName.SkipOpponentAttackAbility));
+            AbilityRegistry.Register(AbilityName.KillEnemyIfDestroy,
+                () => _combatFactory.CreateMutualDestruction(AbilityName.KillEnemyIfDestroy));
+            AbilityRegistry.Register(AbilityName.SkipOpponentAttackEveryTurn,
+                () => _combatFactory.CreateSkipAttack(AbilityName.SkipOpponentAttackEveryTurn));
             AbilityRegistry.Register(AbilityName.SkipOpponentAttackEveryTurn,
                 () => _combatFactory.CreateSkipAttack(AbilityName.SkipOpponentAttackEveryTurn, everyTurn: true));
             AbilityRegistry.Register(AbilityName.ComesBackFromDeath,
@@ -45,8 +45,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 () => _combatFactory.CreateResurrection(AbilityName.ComesBackFromDeath5Times, maxRevives: 5));
             AbilityRegistry.Register(AbilityName.GiveDeathWhenDie,
                 () => _combatFactory.CreateDeathTrigger());
-            AbilityRegistry.Register(AbilityName.KillOpponentInvocationCard,
-                () => _combatFactory.CreateDestroyOpponentCard(AbilityName.KillOpponentInvocationCard, CardType.Invocation));
+            AbilityRegistry.Register(AbilityName.KillOpponentInvocation,
+                () => _combatFactory.CreateDestroyOpponentCard(AbilityName.KillOpponentInvocation, CardType.Invocation));
         }
 
         #region MutualDestruction Tests
@@ -75,8 +75,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.KillBothOnAttack);
-            var context = CreateContext(attackerCard, AbilityName.KillBothOnAttack);
+            var ability = GetAbility(AbilityName.KillEnemyIfDestroy);
+            var context = CreateContext(attackerCard, AbilityName.KillEnemyIfDestroy);
             context.TargetCard = defenderCard;
 
             // Act
@@ -110,8 +110,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.KillBothOnAttack);
-            var context = CreateContext(attackerCard, AbilityName.KillBothOnAttack);
+            var ability = GetAbility(AbilityName.KillEnemyIfDestroy);
+            var context = CreateContext(attackerCard, AbilityName.KillEnemyIfDestroy);
             context.TargetCard = defenderCard;
 
             // Act & Assert
@@ -134,8 +134,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.KillBothOnAttack);
-            var context = CreateContext(attackerCard, AbilityName.KillBothOnAttack);
+            var ability = GetAbility(AbilityName.KillEnemyIfDestroy);
+            var context = CreateContext(attackerCard, AbilityName.KillEnemyIfDestroy);
             // No target card set
 
             // Act & Assert
@@ -162,8 +162,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.SkipOpponentAttackAbility);
-            var context = CreateContext(sourceCard, AbilityName.SkipOpponentAttackAbility);
+            var ability = GetAbility(AbilityName.SkipOpponentAttackEveryTurn);
+            var context = CreateContext(sourceCard, AbilityName.SkipOpponentAttackEveryTurn);
 
             // Act
             var result = ability.Execute(context);
@@ -214,8 +214,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.SkipOpponentAttackAbility);
-            var context = CreateContext(sourceCard, AbilityName.SkipOpponentAttackAbility);
+            var ability = GetAbility(AbilityName.SkipOpponentAttackEveryTurn);
+            var context = CreateContext(sourceCard, AbilityName.SkipOpponentAttackEveryTurn);
 
             // Act & Assert
             Assert.IsTrue(CanActivateAbility(ability, context));
@@ -447,8 +447,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.KillOpponentInvocationCard);
-            var context = CreateContext(destroyerCard, AbilityName.KillOpponentInvocationCard);
+            var ability = GetAbility(AbilityName.KillOpponentInvocation);
+            var context = CreateContext(destroyerCard, AbilityName.KillOpponentInvocation);
 
             // Act
             var result = ability.Execute(context);
@@ -484,8 +484,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.KillOpponentInvocationCard);
-            var context = CreateContext(destroyerCard, AbilityName.KillOpponentInvocationCard);
+            var ability = GetAbility(AbilityName.KillOpponentInvocation);
+            var context = CreateContext(destroyerCard, AbilityName.KillOpponentInvocation);
 
             // Act
             var result = ability.Execute(context);
@@ -512,8 +512,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.KillOpponentInvocationCard);
-            var context = CreateContext(destroyerCard, AbilityName.KillOpponentInvocationCard);
+            var ability = GetAbility(AbilityName.KillOpponentInvocation);
+            var context = CreateContext(destroyerCard, AbilityName.KillOpponentInvocation);
 
             // Act
             var result = ability.Execute(context);
@@ -552,8 +552,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.KillBothOnAttack);
-            var context = CreateContext(attackerCard, AbilityName.KillBothOnAttack);
+            var ability = GetAbility(AbilityName.KillEnemyIfDestroy);
+            var context = CreateContext(attackerCard, AbilityName.KillEnemyIfDestroy);
             context.TargetCard = defenderCard;
 
             // Act
@@ -588,8 +588,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             float player1HealthBefore = player1.Health;
             float player2HealthBefore = player2.Health;
 
-            var ability = GetAbility(AbilityName.KillBothOnAttack);
-            var context = CreateContext(attackerCard, AbilityName.KillBothOnAttack);
+            var ability = GetAbility(AbilityName.KillEnemyIfDestroy);
+            var context = CreateContext(attackerCard, AbilityName.KillEnemyIfDestroy);
             context.TargetCard = defenderCard;
 
             // Act
