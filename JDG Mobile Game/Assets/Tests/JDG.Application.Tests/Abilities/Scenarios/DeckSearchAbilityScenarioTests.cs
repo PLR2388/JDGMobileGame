@@ -6,6 +6,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using System.Linq;
 
 namespace JDG.Application.Tests.Abilities.Scenarios
@@ -101,7 +102,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Create scenario where Nounours is NOT in deck
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
-            var deck = CardFactory.CreateDeck(30); // No Nounours
+            var deck = TestCardFactory.CreateDeck(30); // No Nounours
             deck.Add(benzaieJeune);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -127,7 +128,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
-            var deck = CardFactory.CreateDeck(30);
+            var deck = TestCardFactory.CreateDeck(30);
             deck.Add(benzaieJeune);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -157,7 +158,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var searcher = CreateCard("Maman", 2, 3, CardFamily.Fistiland);
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(10, benzaieJeune); // Target in middle
             deck.Insert(0, searcher);
 
@@ -217,7 +218,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var searcher = CreateCard("Frangipanus", 1, 1, CardFamily.Japan);
             var zozanKebab = CreateCard("Zozan Kebab", 3, 3, CardFamily.HardCorner);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(15, zozanKebab);
             deck.Insert(0, searcher);
 
@@ -251,7 +252,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var yellowTrash = CreateCard("Yellow Trash", 2, 2, CardFamily.Developer);
             var patron = CreateCard("Patron Infogrames", 4, 3, CardFamily.Developer);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(5, patron);
             deck.Insert(0, yellowTrash);
 
@@ -285,7 +286,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var searcher = CreateCard("Professeur", 2, 2, CardFamily.Wizard);
             var convocation = CreateCard("Convocation au Lycée", 0, 0, CardFamily.None);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(8, convocation);
             deck.Insert(0, searcher);
 
@@ -317,10 +318,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Two copies of Nounours in deck
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
-            var nounours1 = CardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
-            var nounours2 = CardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
+            var nounours1 = TestCardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
+            var nounours2 = TestCardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Insert(5, nounours1);
             deck.Insert(15, nounours2);
             deck.Insert(0, benzaieJeune);
@@ -402,9 +403,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Target at the very bottom
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
-            var nounours = CardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
+            var nounours = TestCardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, benzaieJeune);
             deck.Add(nounours); // At the bottom
 
@@ -432,9 +433,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Target at the very top (next to be drawn normally)
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
-            var nounours = CardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
+            var nounours = TestCardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, nounours); // At the top
             deck.Insert(0, benzaieJeune);
 
@@ -469,9 +470,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Fistiland);
 
             var searcher = CreateCard("Family Searcher", 2, 2, CardFamily.Human);
-            var fistilandCard = CardFactory.CreateInvocation("Random Fistiland", 2, 2, CardFamily.Fistiland);
+            var fistilandCard = TestCardFactory.CreateInvocation("Random Fistiland", 2, 2, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(10, fistilandCard);
             deck.Insert(0, searcher);
 
@@ -500,7 +501,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Spatial);
 
             var searcher = CreateCard("Searcher", 2, 2, CardFamily.Human);
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, searcher);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -527,9 +528,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Wizard);
 
             var searcher = CreateCard("Searcher", 2, 2, CardFamily.Human);
-            var wizardCard = CardFactory.CreateInvocation("Wizard Card", 2, 2, CardFamily.Wizard);
+            var wizardCard = TestCardFactory.CreateInvocation("Wizard Card", 2, 2, CardFamily.Wizard);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(10, wizardCard);
             deck.Insert(0, searcher);
 
@@ -555,7 +556,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _deckSearchFactory.CreateGetFamilyCard(AbilityName.Default, CardFamily.Police);
 
             var searcher = CreateCard("Searcher", 2, 2, CardFamily.Human);
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, searcher);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -582,10 +583,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - First search finds first target, second search finds second target
             var searcher1 = CreateCard("First Searcher", 2, 2, CardFamily.Fistiland);
-            var nounours = CardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
-            var benzaieJeune = CardFactory.CreateInvocation("Benzaie jeune", 2, 2, CardFamily.Fistiland);
+            var nounours = TestCardFactory.CreateInvocation("Nounours", 3, 3, CardFamily.Fistiland);
+            var benzaieJeune = TestCardFactory.CreateInvocation("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Insert(5, nounours);
             deck.Insert(10, benzaieJeune);
             deck.Insert(0, searcher1);

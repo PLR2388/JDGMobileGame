@@ -5,7 +5,6 @@ using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 using JDG.Application.UseCases;
-using JDG.Domain;
 using JDG.Domain.Enums;
 using JDG.Domain.Events;
 
@@ -34,8 +33,8 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_WithValidCard_ReturnsSuccess()
         {
             // Arrange
-            var card = new TestInvocationCard("Test Card", CardOwner.Player1);
-            var owner = new TestPlayerCardCollection(CardOwner.Player1);
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
 
             // Act
             var result = _useCase.Execute(card, owner, null);
@@ -48,7 +47,7 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_WithNullCard_ReturnsFailure()
         {
             // Arrange
-            var owner = new TestPlayerCardCollection(CardOwner.Player1);
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
 
             // Act
             var result = _useCase.Execute(null, owner, null);
@@ -62,7 +61,7 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_WithNullOwnerCards_ReturnsFailure()
         {
             // Arrange
-            var card = new TestInvocationCard("Test Card", CardOwner.Player1);
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
 
             // Act
             var result = _useCase.Execute(card, null, null);
@@ -76,8 +75,8 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_PublishesCardRemovedFromFieldEvent()
         {
             // Arrange
-            var card = new TestInvocationCard("Test Card", CardOwner.Player1);
-            var owner = new TestPlayerCardCollection(CardOwner.Player1);
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
 
             // Act
             _useCase.Execute(card, owner, null);
@@ -86,16 +85,16 @@ namespace JDG.Application.Tests.UseCases
             var removedEvents = _eventBus.PublishedEvents.FindAll(e => e is CardRemovedFromFieldEvent);
             Assert.AreEqual(1, removedEvents.Count);
             var evt = (CardRemovedFromFieldEvent)removedEvents[0];
-            Assert.AreEqual(CardOwner.Player1, evt.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, evt.Owner);
         }
 
         [Test]
         public void Execute_DelegatesToAbilityExecutor()
         {
             // Arrange
-            var card = new TestInvocationCard("Test Card", CardOwner.Player1);
-            var owner = new TestPlayerCardCollection(CardOwner.Player1);
-            var opponent = new TestPlayerCardCollection(CardOwner.Player2);
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+            var opponent = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player2);
 
             // Act
             _useCase.Execute(card, owner, opponent);
@@ -152,7 +151,7 @@ namespace JDG.Application.Tests.UseCases
         {
             public string CardId => Title.ToLowerInvariant().Replace(" ", "-");
             public string Title { get; }
-            public CardOwner CardOwner { get; }
+            public JDG.Domain.CardOwner CardOwner { get; }
             public CardType Type => CardType.Invocation;
             public bool Collector => false;
             public string Description => "";
@@ -176,7 +175,7 @@ namespace JDG.Application.Tests.UseCases
             public IInGameEquipmentCard EquipmentCard { get; private set; }
             public CardFamily[] Families { get; set; } = System.Array.Empty<CardFamily>();
 
-            public TestInvocationCard(string title, CardOwner owner)
+            public TestInvocationCard(string title, JDG.Domain.CardOwner owner)
             {
                 Title = title;
                 CardOwner = owner;
@@ -198,15 +197,15 @@ namespace JDG.Application.Tests.UseCases
 
         private class TestPlayerCardCollection : IPlayerCardCollection
         {
-            public CardOwner Owner { get; }
-            public bool IsPlayerOne => Owner == CardOwner.Player1;
+            public JDG.Domain.CardOwner Owner { get; }
+            public bool IsPlayerOne => Owner == JDG.Domain.CardOwner.Player1;
             public IReadOnlyList<IInGameInvocationCard> InvocationCards => new List<IInGameInvocationCard>();
             public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
             public IInGameFieldCard FieldCard => null;
             public IReadOnlyList<IInGameCard> HandCards => new List<IInGameCard>();
             public int HandCardCount => 0;
 
-            public TestPlayerCardCollection(CardOwner owner)
+            public TestPlayerCardCollection(JDG.Domain.CardOwner owner)
             {
                 Owner = owner;
             }

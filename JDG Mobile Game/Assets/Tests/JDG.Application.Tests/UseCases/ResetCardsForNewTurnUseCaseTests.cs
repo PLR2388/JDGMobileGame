@@ -4,7 +4,6 @@ using NUnit.Framework;
 using JDG.Application;
 using JDG.Application.Cards;
 using JDG.Application.UseCases;
-using JDG.Domain;
 using JDG.Domain.Enums;
 using JDG.Domain.Events;
 
@@ -38,7 +37,7 @@ namespace JDG.Application.Tests.UseCases
             };
 
             // Act
-            var result = _useCase.Execute(cards, CardOwner.Player1);
+            var result = _useCase.Execute(cards, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
@@ -49,7 +48,7 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_WithNullCollection_ReturnsFailure()
         {
             // Act
-            var result = _useCase.Execute(null, CardOwner.Player1);
+            var result = _useCase.Execute(null, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsFalse(result.IsSuccess);
@@ -63,7 +62,7 @@ namespace JDG.Application.Tests.UseCases
             var cards = new List<IInGameInvocationCard>();
 
             // Act
-            var result = _useCase.Execute(cards, CardOwner.Player1);
+            var result = _useCase.Execute(cards, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
@@ -79,7 +78,7 @@ namespace JDG.Application.Tests.UseCases
             var cards = new List<IInGameInvocationCard> { card1, card2 };
 
             // Act
-            _useCase.Execute(cards, CardOwner.Player1);
+            _useCase.Execute(cards, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsTrue(card1.ResetNewTurnWasCalled);
@@ -96,7 +95,7 @@ namespace JDG.Application.Tests.UseCases
             };
 
             // Act
-            _useCase.Execute(cards, CardOwner.Player1);
+            _useCase.Execute(cards, JDG.Domain.CardOwner.Player1);
 
             // Assert
             var events = _eventBus.PublishedEvents.FindAll(e => e is CardsResetForNewTurnEvent);
@@ -115,7 +114,7 @@ namespace JDG.Application.Tests.UseCases
             };
 
             // Act
-            var result = _useCase.Execute(cards, CardOwner.Player1);
+            var result = _useCase.Execute(cards, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
@@ -165,7 +164,7 @@ namespace JDG.Application.Tests.UseCases
         {
             public string CardId => Title.ToLowerInvariant().Replace(" ", "-");
             public string Title { get; }
-            public CardOwner CardOwner => CardOwner.Player1;
+            public JDG.Domain.CardOwner CardOwner => JDG.Domain.CardOwner.Player1;
             public CardType Type => CardType.Invocation;
             public bool Collector => false;
             public string Description => "";

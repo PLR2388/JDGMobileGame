@@ -6,6 +6,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using System.Linq;
 
 namespace JDG.Application.Tests.Abilities.Scenarios
@@ -90,7 +91,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
             // Setup deck with these cards
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(benzaie);
             deck.Add(benzaieJeune);
 
@@ -123,7 +124,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Only Benzaie on field, no Benzaie jeune
             var benzaie = CreateCard("Benzaie", 5, 4, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Add(benzaie);
 
             var player = new Player(PlayerId.Player1, deck);
@@ -155,7 +156,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var mechaGranolax = CreateCard("Mecha-Granolax", 5, 4, CardFamily.Rpg);
             var granolax = CreateCard("Granolax", 2, 2, CardFamily.Rpg);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(mechaGranolax);
             deck.Add(granolax);
 
@@ -188,7 +189,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var mechaGranolax = CreateCard("Mecha-Granolax", 5, 4, CardFamily.Rpg);
             var granolax = CreateCard("Granolax", 2, 2, CardFamily.Rpg);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(mechaGranolax);
             deck.Add(granolax);
 
@@ -223,7 +224,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var strongCard = CreateCard("Strong Card", 4, 4, CardFamily.Human);
             var sourceCard = CreateCard("Source Card", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(strongCard);
             deck.Add(sourceCard);
 
@@ -255,7 +256,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var weakCard1 = CreateCard("Weak Card 1", 2, 2, CardFamily.Human);
             var weakCard2 = CreateCard("Weak Card 2", 1, 5, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(weakCard1);
             deck.Add(weakCard2);
 
@@ -290,7 +291,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var wizard = CreateCard("Test Wizard", 3, 3, CardFamily.Wizard);
             var sourceCard = CreateCard("Source Card", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(wizard);
             deck.Add(sourceCard);
 
@@ -321,7 +322,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var humanCard = CreateCard("Human Card", 3, 3, CardFamily.Human);
             var fistilandCard = CreateCard("Fistiland Card", 3, 3, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(humanCard);
             deck.Add(fistilandCard);
 
@@ -357,7 +358,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var japan2 = CreateCard("Japan Card 2", 2, 2, CardFamily.Japan);
             var sourceCard = CreateCard("Source Card", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Add(japan1);
             deck.Add(japan2);
             deck.Add(sourceCard);
@@ -391,7 +392,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var humanCard = CreateCard("Human Card", 2, 2, CardFamily.Human);
             var sourceCard = CreateCard("Source Card", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Add(japan1);
             deck.Add(humanCard);
             deck.Add(sourceCard);
@@ -428,7 +429,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var sacrificeTarget = CreateCard("Sacrifice Target", 2, 2, CardFamily.Human);
             var sourceCard = CreateCard("Source Card", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(sacrificeTarget);
             deck.Add(sourceCard);
 
@@ -463,7 +464,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var benzaie = CreateCard("Benzaie", 5, 4, CardFamily.Fistiland);
             var benzaieJeune = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Add(benzaie);
             deck.Add(benzaieJeune);
 
@@ -493,7 +494,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - No Benzaie jeune on field
             var benzaie = CreateCard("Benzaie", 5, 4, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Add(benzaie);
 
             var player = new Player(PlayerId.Player1, deck);

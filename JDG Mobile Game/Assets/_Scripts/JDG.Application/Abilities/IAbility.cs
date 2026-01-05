@@ -19,6 +19,9 @@ namespace JDG.Application.Abilities
         public Card TargetCard { get; set; }
         public PlayerId TargetPlayerId { get; set; }
 
+        // Optional equipment card for equipment abilities
+        public Card EquipmentCard { get; set; }
+
         public AbilityContext(
             PlayerId currentPlayerId,
             PlayerId opponentPlayerId,

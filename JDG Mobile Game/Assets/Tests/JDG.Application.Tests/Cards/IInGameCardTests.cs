@@ -1,5 +1,4 @@
 using JDG.Application.Cards;
-using JDG.Domain;
 using JDG.Domain.Enums;
 using NUnit.Framework;
 
@@ -28,10 +27,10 @@ namespace JDG.Application.Tests.Cards
         public void IInGameCard_HasCardOwner_Property()
         {
             // Arrange
-            IInGameCard card = new TestCard(CardOwner.Player1);
+            IInGameCard card = new TestCard(JDG.Domain.CardOwner.Player1);
 
             // Assert
-            Assert.AreEqual(CardOwner.Player1, card.CardOwner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, card.CardOwner);
         }
 
         [Test]
@@ -106,10 +105,10 @@ namespace JDG.Application.Tests.Cards
 
         #region CardOwner Coverage Tests
 
-        [TestCase(CardOwner.NotDefined)]
-        [TestCase(CardOwner.Player1)]
-        [TestCase(CardOwner.Player2)]
-        public void IInGameCard_SupportsAllCardOwners(CardOwner owner)
+        [TestCase(JDG.Domain.CardOwner.NotDefined)]
+        [TestCase(JDG.Domain.CardOwner.Player1)]
+        [TestCase(JDG.Domain.CardOwner.Player2)]
+        public void IInGameCard_SupportsAllCardOwners(JDG.Domain.CardOwner owner)
         {
             // Arrange
             IInGameCard card = new TestCard(owner);
@@ -129,7 +128,7 @@ namespace JDG.Application.Tests.Cards
         {
             public string CardId { get; }
             public string Title { get; }
-            public CardOwner CardOwner { get; }
+            public JDG.Domain.CardOwner CardOwner { get; }
             public CardType Type { get; }
             public bool Collector { get; }
             public string Description { get; }
@@ -138,7 +137,7 @@ namespace JDG.Application.Tests.Cards
 
             public TestCard(
                 string title = "Default",
-                CardOwner owner = CardOwner.NotDefined,
+                JDG.Domain.CardOwner owner = JDG.Domain.CardOwner.NotDefined,
                 CardType type = CardType.Invocation,
                 bool collector = false,
                 string description = "",
@@ -153,11 +152,11 @@ namespace JDG.Application.Tests.Cards
                 DetailedDescription = detailedDescription;
             }
 
-            public TestCard(CardOwner owner) : this("Default", owner)
+            public TestCard(JDG.Domain.CardOwner owner) : this("Default", owner)
             {
             }
 
-            public TestCard(CardType type) : this("Default", CardOwner.NotDefined, type)
+            public TestCard(CardType type) : this("Default", JDG.Domain.CardOwner.NotDefined, type)
             {
             }
         }

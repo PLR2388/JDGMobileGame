@@ -6,6 +6,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using System.Linq;
 
 namespace JDG.Application.Tests.Abilities.Scenarios
@@ -49,7 +50,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var comicsCard1 = CreateCard("Superman", 4, 4, CardFamily.Comics);
             var comicsCard2 = CreateCard("Batman", 3, 3, CardFamily.Comics);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Insert(0, boosterCard);
             deck.Insert(1, comicsCard1);
             deck.Insert(2, comicsCard2);
@@ -86,7 +87,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - No Comics cards on field
             var boosterCard = CreateCard("Human Booster", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, boosterCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -113,7 +114,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var boosterCard = CreateCard("Booster", 3, 3, CardFamily.Comics);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, boosterCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -143,7 +144,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var boosterCard = CreateCard("RPG Leader", 4, 4, CardFamily.Rpg);
             var rpgCard = CreateCard("Granolax", 2, 2, CardFamily.Rpg);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, boosterCard);
             deck.Insert(1, rpgCard);
 
@@ -179,7 +180,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var fistilandCard1 = CreateCard("Benzaie", 5, 4, CardFamily.Fistiland);
             var fistilandCard2 = CreateCard("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Insert(0, boosterCard);
             deck.Insert(1, fistilandCard1);
             deck.Insert(2, fistilandCard2);
@@ -223,9 +224,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 bonusAtk: 1,
                 bonusDef: 1);
 
-            var japanCard = CardFactory.CreateInvocation("Strong Japan Card", 3, 3, CardFamily.Japan);
+            var japanCard = TestCardFactory.CreateInvocation("Strong Japan Card", 3, 3, CardFamily.Japan);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, japanCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -257,9 +258,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 bonusAtk: 1,
                 bonusDef: 1);
 
-            var weakCard = CardFactory.CreateInvocation("Weak Japan Card", 2, 2, CardFamily.Japan);
+            var weakCard = TestCardFactory.CreateInvocation("Weak Japan Card", 2, 2, CardFamily.Japan);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, weakCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -291,9 +292,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 bonusAtk: 1,
                 bonusDef: 1);
 
-            var humanCard = CardFactory.CreateInvocation("Strong Human", 5, 5, CardFamily.Human);
+            var humanCard = TestCardFactory.CreateInvocation("Strong Human", 5, 5, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, humanCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -323,10 +324,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Copy stats from Benzaie jeune
             var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Benzaie jeune");
 
-            var copyCard = CardFactory.CreateInvocation("Copy Cat", 1, 1, CardFamily.Human);
-            var benzaieJeune = CardFactory.CreateInvocation("Benzaie jeune", 5, 5, CardFamily.Fistiland);
+            var copyCard = TestCardFactory.CreateInvocation("Copy Cat", 1, 1, CardFamily.Human);
+            var benzaieJeune = TestCardFactory.CreateInvocation("Benzaie jeune", 5, 5, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, copyCard);
             deck.Insert(1, benzaieJeune);
 
@@ -355,9 +356,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Target card not present
             var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Missing Card");
 
-            var copyCard = CardFactory.CreateInvocation("Copy Cat", 1, 1, CardFamily.Human);
+            var copyCard = TestCardFactory.CreateInvocation("Copy Cat", 1, 1, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, copyCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -383,10 +384,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Target Card");
 
-            var copyCard = CardFactory.CreateInvocation("Copier", 1, 1, CardFamily.Human);
-            var targetCard = CardFactory.CreateInvocation("Target Card", 4, 4, CardFamily.Human);
+            var copyCard = TestCardFactory.CreateInvocation("Copier", 1, 1, CardFamily.Human);
+            var targetCard = TestCardFactory.CreateInvocation("Target Card", 4, 4, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, copyCard);
             deck.Insert(1, targetCard);
 
@@ -413,9 +414,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var copyAbility = _statFactory.CreateCopyStats(AbilityName.Default, "Missing Target");
 
-            var copyCard = CardFactory.CreateInvocation("Copier", 1, 1, CardFamily.Human);
+            var copyCard = TestCardFactory.CreateInvocation("Copier", 1, 1, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, copyCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -445,7 +446,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var comicsCard = CreateCard("Superman", 4, 4, CardFamily.Comics);
             var humanCard = CreateCard("Regular Human", 2, 2, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Insert(0, boosterCard);
             deck.Insert(1, comicsCard);
             deck.Insert(2, humanCard);
@@ -479,14 +480,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var boosterCard = CreateCard("Comics Booster", 3, 3, CardFamily.Comics);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, boosterCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var opponentComics = CardFactory.CreateInvocation("Enemy Comics", 4, 4, CardFamily.Comics);
-            var deck2 = CardFactory.CreateDeck(29);
+            var opponentComics = TestCardFactory.CreateInvocation("Enemy Comics", 4, 4, CardFamily.Comics);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, opponentComics);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -519,7 +520,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var boosterCard = CreateCard("Stackable Booster", 3, 3, CardFamily.Comics);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, boosterCard);
 
             var player1 = new Player(PlayerId.Player1, deck);

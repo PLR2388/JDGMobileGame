@@ -6,6 +6,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using System.Linq;
 
 namespace JDG.Application.Tests.Abilities.Scenarios
@@ -44,8 +45,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Spatial, 0, 1);
 
-            var spatialCard = CardFactory.CreateInvocation("Space Ship", 3, 3, CardFamily.Spatial);
-            var deck = CardFactory.CreateDeck(29);
+            var spatialCard = TestCardFactory.CreateInvocation("Space Ship", 3, 3, CardFamily.Spatial);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, spatialCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -71,10 +72,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Japan, 1, 0);
 
-            var japanCard1 = CardFactory.CreateInvocation("Samurai", 2, 2, CardFamily.Japan);
-            var japanCard2 = CardFactory.CreateInvocation("Ninja", 3, 3, CardFamily.Japan);
+            var japanCard1 = TestCardFactory.CreateInvocation("Samurai", 2, 2, CardFamily.Japan);
+            var japanCard2 = TestCardFactory.CreateInvocation("Ninja", 3, 3, CardFamily.Japan);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, japanCard1);
             deck.Insert(1, japanCard2);
 
@@ -103,8 +104,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - +1 ATK and +1 DEF for Fistiland
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 1);
 
-            var fistilandCard = CardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
-            var deck = CardFactory.CreateDeck(29);
+            var fistilandCard = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, fistilandCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -130,8 +131,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Wizard boost but no Wizard on field
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Wizard, 1, 0);
 
-            var humanCard = CardFactory.CreateInvocation("Regular Human", 2, 2, CardFamily.Human);
-            var deck = CardFactory.CreateDeck(29);
+            var humanCard = TestCardFactory.CreateInvocation("Regular Human", 2, 2, CardFamily.Human);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, humanCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -157,8 +158,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.HardCorner, 1, 0);
 
-            var hardCornerCard = CardFactory.CreateInvocation("HC Card", 3, 3, CardFamily.HardCorner);
-            var deck = CardFactory.CreateDeck(29);
+            var hardCornerCard = TestCardFactory.CreateInvocation("HC Card", 3, 3, CardFamily.HardCorner);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, hardCornerCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -196,10 +197,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - 0.5 HP per Wizard card (using half-star system)
             var ability = _fieldFactory.CreateHealPerFamily(CardFamily.Wizard, 0.5f);
 
-            var wizard1 = CardFactory.CreateInvocation("Mage", 2, 2, CardFamily.Wizard);
-            var wizard2 = CardFactory.CreateInvocation("Sorcerer", 3, 3, CardFamily.Wizard);
+            var wizard1 = TestCardFactory.CreateInvocation("Mage", 2, 2, CardFamily.Wizard);
+            var wizard2 = TestCardFactory.CreateInvocation("Sorcerer", 3, 3, CardFamily.Wizard);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, wizard1);
             deck.Insert(1, wizard2);
 
@@ -228,8 +229,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var ability = _fieldFactory.CreateHealPerFamily(CardFamily.Wizard, 0.5f);
 
-            var humanCard = CardFactory.CreateInvocation("Human", 2, 2, CardFamily.Human);
-            var deck = CardFactory.CreateDeck(29);
+            var humanCard = TestCardFactory.CreateInvocation("Human", 2, 2, CardFamily.Human);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, humanCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -270,10 +271,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Change all to Developer family
             var ability = _fieldFactory.CreateChangeFamily(CardFamily.Developer);
 
-            var card1 = CardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human);
-            var card2 = CardFactory.CreateInvocation("Card 2", 3, 3, CardFamily.Monster);
+            var card1 = TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human);
+            var card2 = TestCardFactory.CreateInvocation("Card 2", 3, 3, CardFamily.Monster);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, card1);
             deck.Insert(1, card2);
 
@@ -327,8 +328,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Change "Patron Infogrames" to add Developer family
             var ability = _fieldFactory.CreateChangeByName("Patron Infogrames", CardFamily.Developer);
 
-            var patronCard = CardFactory.CreateInvocation("Patron Infogrames", 4, 3, CardFamily.HardCorner);
-            var deck = CardFactory.CreateDeck(29);
+            var patronCard = TestCardFactory.CreateInvocation("Patron Infogrames", 4, 3, CardFamily.HardCorner);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, patronCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -354,8 +355,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Target card not present
             var ability = _fieldFactory.CreateChangeByName("Missing Card", CardFamily.Developer);
 
-            var otherCard = CardFactory.CreateInvocation("Other Card", 2, 2, CardFamily.Human);
-            var deck = CardFactory.CreateDeck(29);
+            var otherCard = TestCardFactory.CreateInvocation("Other Card", 2, 2, CardFamily.Human);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, otherCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -448,8 +449,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Skip draw to get Fistiland card
             var ability = _fieldFactory.CreateSkipDrawForFamily(CardFamily.Fistiland);
 
-            var fistilandCard = CardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
-            var deck = CardFactory.CreateDeck(29);
+            var fistilandCard = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(10, fistilandCard); // In middle of deck
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -474,7 +475,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - No Fistiland cards in deck
             var ability = _fieldFactory.CreateSkipDrawForFamily(CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(30); // No Fistiland cards
+            var deck = TestCardFactory.CreateDeck(30); // No Fistiland cards
 
             var player1 = new Player(PlayerId.Player1, deck);
 
@@ -497,8 +498,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var ability = _fieldFactory.CreateSkipDrawForFamily(CardFamily.Fistiland);
 
-            var fistilandCard = CardFactory.CreateInvocation("Fistiland Card", 2, 2, CardFamily.Fistiland);
-            var deck = CardFactory.CreateDeck(29);
+            var fistilandCard = TestCardFactory.CreateInvocation("Fistiland Card", 2, 2, CardFamily.Fistiland);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(5, fistilandCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -519,7 +520,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var ability = _fieldFactory.CreateSkipDrawForFamily(CardFamily.Police);
 
-            var deck = CardFactory.CreateDeck(30); // No Police cards
+            var deck = TestCardFactory.CreateDeck(30); // No Police cards
 
             var player1 = new Player(PlayerId.Player1, deck);
 
@@ -544,16 +545,16 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 2, 2);
 
             // Player 1's Fistiland card
-            var myCard = CardFactory.CreateInvocation("My Fistiland", 3, 3, CardFamily.Fistiland);
-            var deck1 = CardFactory.CreateDeck(29);
+            var myCard = TestCardFactory.CreateInvocation("My Fistiland", 3, 3, CardFamily.Fistiland);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, myCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
             // Player 2's Fistiland card
-            var opponentCard = CardFactory.CreateInvocation("Enemy Fistiland", 3, 3, CardFamily.Fistiland);
-            var deck2 = CardFactory.CreateDeck(29);
+            var opponentCard = TestCardFactory.CreateInvocation("Enemy Fistiland", 3, 3, CardFamily.Fistiland);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, opponentCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -585,10 +586,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 1);
 
-            var fistilandCard = CardFactory.CreateInvocation("Fistiland Card", 2, 2, CardFamily.Fistiland);
-            var humanCard = CardFactory.CreateInvocation("Human Card", 3, 3, CardFamily.Human);
+            var fistilandCard = TestCardFactory.CreateInvocation("Fistiland Card", 2, 2, CardFamily.Fistiland);
+            var humanCard = TestCardFactory.CreateInvocation("Human Card", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, fistilandCard);
             deck.Insert(1, humanCard);
 

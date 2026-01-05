@@ -4,6 +4,7 @@
     "references": [
         "JDG.Domain",
         "JDG.Application",
+        "JDG.Legacy",
         "JDG.TestUtilities",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"

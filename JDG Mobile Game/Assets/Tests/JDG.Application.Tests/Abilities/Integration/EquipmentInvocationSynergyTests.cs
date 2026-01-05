@@ -51,12 +51,12 @@ namespace JDG.Application.Tests.Abilities.Integration
             var benzaie = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
             var parachute = Card.CreateEquipment(
                 CardId.New(), "Parachute dore", "Desc", "LongDesc",
-                new[] { EquipmentAbilityName.Earn2DEF }, false
+                new[] { EquipmentAbilityName.Earn1ATKAnd1DEF }, false // Using existing enum, ability tested via factory
             );
 
             PlaceOnField(_player1, benzaie);
 
-            var ability = _equipmentFactory.CreateBonusStatsEquipment(0, 2);
+            var ability = _equipmentFactory.CreateBonusStats(0, 2);
             var context = CreateContext(_player1, benzaie, AbilityName.Default);
             context.EquipmentCard = parachute;
 
@@ -105,7 +105,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, jdg);
 
-            var ability = _equipmentFactory.CreateDirectAttackEquipment();
+            var ability = _equipmentFactory.CreateDirectAttack();
             var context = CreateContext(_player1, jdg, AbilityName.Default);
             context.EquipmentCard = canarang;
 
@@ -153,7 +153,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, canardman);
 
-            var ability = _equipmentFactory.CreateMultiplyStatsEquipment(3, 1);
+            var ability = _equipmentFactory.CreateMultiplyStats(3, 1);
             var context = CreateContext(_player1, canardman, AbilityName.Default);
             context.EquipmentCard = salami;
 
@@ -197,7 +197,7 @@ namespace JDG.Application.Tests.Abilities.Integration
             var invocation = TestCardFactory.CreateInvocation("Test Card", 3, 4);
             PlaceOnField(_player1, invocation);
 
-            var ability = _equipmentFactory.CreateMultiplyStatsEquipment(1, 2); // x2 DEF
+            var ability = _equipmentFactory.CreateMultiplyStats(1, 2); // x2 DEF
             var context = CreateContext(_player1, invocation, AbilityName.Default);
 
             // Act
@@ -219,7 +219,7 @@ namespace JDG.Application.Tests.Abilities.Integration
             var invocation = TestCardFactory.CreateInvocation("Protected Card", 3, 3);
             PlaceOnField(_player1, invocation);
 
-            var ability = _equipmentFactory.CreateProtectFromDestructionEquipment();
+            var ability = _equipmentFactory.CreateProtectFromDestruction();
             var context = CreateContext(_player1, invocation, AbilityName.Default);
 
             // Act
@@ -264,7 +264,7 @@ namespace JDG.Application.Tests.Abilities.Integration
             var invocation = TestCardFactory.CreateInvocation("Card with Ability", 4, 4);
             PlaceOnField(_player1, invocation);
 
-            var ability = _equipmentFactory.CreateCancelAbilitiesEquipment();
+            var ability = _equipmentFactory.CreateCancelAbilities();
             var context = CreateContext(_player1, invocation, AbilityName.Default);
 
             // Act

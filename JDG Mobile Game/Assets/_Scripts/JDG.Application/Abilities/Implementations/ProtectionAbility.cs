@@ -204,6 +204,63 @@ namespace JDG.Application.Abilities.Implementations
     }
 
     /// <summary>
+    /// Ability where card cannot exist without a specific card family on field.
+    /// </summary>
+    public class FamilyDependencyAbility : IAbility
+    {
+        private readonly IPlayerRepository _playerRepository;
+        private readonly CardFamily _requiredFamily;
+
+        public AbilityName Name { get; }
+        public string Description { get; }
+
+        public FamilyDependencyAbility(
+            CardFamily requiredFamily,
+            IPlayerRepository playerRepository)
+        {
+            Name = AbilityName.Default;
+            _playerRepository = playerRepository;
+            _requiredFamily = requiredFamily;
+            Description = $"Cannot exist without {requiredFamily} card on field";
+        }
+
+        public bool CanActivate(AbilityContext context)
+        {
+            var player = _playerRepository.GetPlayer(context.CurrentPlayerId);
+            if (player == null) return false;
+
+            // Check if at least one card of required family is on field (excluding self)
+            return player.Field.Any(c =>
+                c != context.SourceCard &&
+                c.Families != null &&
+                c.Families.Contains(_requiredFamily));
+        }
+
+        public AbilityResult Execute(AbilityContext context)
+        {
+            var player = _playerRepository.GetPlayer(context.CurrentPlayerId);
+            if (player == null || context.SourceCard == null)
+                return AbilityResult.Failure("Invalid context");
+
+            // Check if dependency is satisfied (excluding self)
+            bool hasDependency = player.Field.Any(c =>
+                c != context.SourceCard &&
+                c.Families != null &&
+                c.Families.Contains(_requiredFamily));
+
+            if (!hasDependency)
+            {
+                // Card must be destroyed
+                player.DestroyCardFromField(context.SourceCard);
+                _playerRepository.SavePlayer(player);
+                return AbilityResult.Failure("Card destroyed due to missing family dependency");
+            }
+
+            return AbilityResult.Success($"Dependency satisfied: {_requiredFamily} present on field");
+        }
+    }
+
+    /// <summary>
     /// Factory for creating protection and dependency abilities.
     /// </summary>
     public class ProtectionAbilityFactory
@@ -238,6 +295,22 @@ namespace JDG.Application.Abilities.Implementations
         public DependencyAbility CreateDependency(AbilityName name, params string[] requiredCards)
         {
             return new DependencyAbility(name, _playerRepository, requiredCards);
+        }
+
+        /// <summary>
+        /// Creates a dependency ability that requires any card from a specific family to be on field.
+        /// </summary>
+        public DependencyAbility CreateDependencyAbility(string[] requiredCardNames)
+        {
+            return new DependencyAbility(AbilityName.Default, _playerRepository, requiredCardNames);
+        }
+
+        /// <summary>
+        /// Creates a family dependency ability where card needs at least one card from a specific family on field.
+        /// </summary>
+        public FamilyDependencyAbility CreateFamilyDependencyAbility(CardFamily requiredFamily)
+        {
+            return new FamilyDependencyAbility(requiredFamily, _playerRepository);
         }
     }
 }

@@ -5,7 +5,6 @@ using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 using JDG.Application.UseCases;
-using JDG.Domain;
 using JDG.Domain.Enums;
 using JDG.Domain.Events;
 
@@ -34,8 +33,8 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_WithValidInputs_ReturnsSuccess()
         {
             // Arrange
-            var player = new TestPlayerCardCollection(CardOwner.Player1, 5);
-            var opponent = new TestPlayerCardCollection(CardOwner.Player2);
+            var player = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1, 5);
+            var opponent = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player2);
 
             // Act
             var result = _useCase.Execute(player, opponent, 4, 5);
@@ -59,8 +58,8 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_PublishesHandCardsChangedEvent()
         {
             // Arrange
-            var player = new TestPlayerCardCollection(CardOwner.Player1, 5);
-            var opponent = new TestPlayerCardCollection(CardOwner.Player2);
+            var player = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1, 5);
+            var opponent = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player2);
 
             // Act
             _useCase.Execute(player, opponent, 4, 5);
@@ -69,7 +68,7 @@ namespace JDG.Application.Tests.UseCases
             var events = _eventBus.PublishedEvents.FindAll(e => e is HandCardsChangedEvent);
             Assert.AreEqual(1, events.Count);
             var evt = (HandCardsChangedEvent)events[0];
-            Assert.AreEqual(CardOwner.Player1, evt.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, evt.Owner);
             Assert.AreEqual(5, evt.NewHandCount);
             Assert.AreEqual(1, evt.Delta);
         }
@@ -78,8 +77,8 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_DelegatesToAbilityExecutor()
         {
             // Arrange
-            var player = new TestPlayerCardCollection(CardOwner.Player1, 5);
-            var opponent = new TestPlayerCardCollection(CardOwner.Player2);
+            var player = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1, 5);
+            var opponent = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player2);
 
             // Act
             _useCase.Execute(player, opponent, 4, 5);
@@ -92,8 +91,8 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_LegacyOverload_CalculatesCorrectCounts()
         {
             // Arrange
-            var player = new TestPlayerCardCollection(CardOwner.Player1, 5);
-            var opponent = new TestPlayerCardCollection(CardOwner.Player2);
+            var player = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1, 5);
+            var opponent = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player2);
 
             // Act - delta of +1 means went from 4 to 5
             _useCase.Execute(player, opponent, 1);
@@ -149,15 +148,15 @@ namespace JDG.Application.Tests.UseCases
 
         private class TestPlayerCardCollection : IPlayerCardCollection
         {
-            public CardOwner Owner { get; }
-            public bool IsPlayerOne => Owner == CardOwner.Player1;
+            public JDG.Domain.CardOwner Owner { get; }
+            public bool IsPlayerOne => Owner == JDG.Domain.CardOwner.Player1;
             public IReadOnlyList<IInGameInvocationCard> InvocationCards => new List<IInGameInvocationCard>();
             public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
             public IInGameFieldCard FieldCard => null;
             public IReadOnlyList<IInGameCard> HandCards => new List<IInGameCard>();
             public int HandCardCount { get; }
 
-            public TestPlayerCardCollection(CardOwner owner, int handCount = 0)
+            public TestPlayerCardCollection(JDG.Domain.CardOwner owner, int handCount = 0)
             {
                 Owner = owner;
                 HandCardCount = handCount;

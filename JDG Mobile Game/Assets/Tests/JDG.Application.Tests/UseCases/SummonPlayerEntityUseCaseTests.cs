@@ -4,7 +4,6 @@ using NUnit.Framework;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Application.UseCases;
-using JDG.Domain;
 using JDG.Domain.Enums;
 
 namespace JDG.Application.Tests.UseCases
@@ -33,19 +32,19 @@ namespace JDG.Application.Tests.UseCases
             object playerCard = new object(); // Simulates InvocationCard ScriptableObject
 
             // Act
-            var result = _useCase.Execute(playerCard, CardOwner.Player1);
+            var result = _useCase.Execute(playerCard, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.IsNotNull(result.EntityCard);
-            Assert.AreEqual(CardOwner.Player1, result.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, result.Owner);
         }
 
         [Test]
         public void Execute_WithNullCard_ReturnsFailure()
         {
             // Act
-            var result = _useCase.Execute(null, CardOwner.Player1);
+            var result = _useCase.Execute(null, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsFalse(result.IsSuccess);
@@ -60,7 +59,7 @@ namespace JDG.Application.Tests.UseCases
             object playerCard = new object();
 
             // Act
-            var result = _useCase.Execute(playerCard, CardOwner.Player1);
+            var result = _useCase.Execute(playerCard, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsFalse(result.IsSuccess);
@@ -74,11 +73,11 @@ namespace JDG.Application.Tests.UseCases
             object playerCard = new object();
 
             // Act
-            var result = _useCase.Execute(playerCard, CardOwner.Player1);
+            var result = _useCase.Execute(playerCard, JDG.Domain.CardOwner.Player1);
 
             // Assert
-            Assert.AreEqual(CardOwner.Player1, result.Owner);
-            Assert.AreEqual(CardOwner.Player1, result.EntityCard.CardOwner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, result.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, result.EntityCard.CardOwner);
         }
 
         [Test]
@@ -88,10 +87,10 @@ namespace JDG.Application.Tests.UseCases
             object playerCard = new object();
 
             // Act
-            var result = _useCase.Execute(playerCard, CardOwner.Player2);
+            var result = _useCase.Execute(playerCard, JDG.Domain.CardOwner.Player2);
 
             // Assert
-            Assert.AreEqual(CardOwner.Player2, result.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player2, result.Owner);
         }
 
         [Test]
@@ -105,8 +104,8 @@ namespace JDG.Application.Tests.UseCases
             var resultP2 = _useCase.Execute(playerCard, isPlayerOne: false);
 
             // Assert
-            Assert.AreEqual(CardOwner.Player1, resultP1.Owner);
-            Assert.AreEqual(CardOwner.Player2, resultP2.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, resultP1.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player2, resultP2.Owner);
         }
 
         [Test]
@@ -116,7 +115,7 @@ namespace JDG.Application.Tests.UseCases
             object playerCard = new object();
 
             // Act
-            var card = _useCase.CreatePlayerEntity(playerCard, CardOwner.Player1);
+            var card = _useCase.CreatePlayerEntity(playerCard, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsNotNull(card);
@@ -126,7 +125,7 @@ namespace JDG.Application.Tests.UseCases
         public void CreatePlayerEntity_WithNullCard_ReturnsNull()
         {
             // Act
-            var card = _useCase.CreatePlayerEntity(null, CardOwner.Player1);
+            var card = _useCase.CreatePlayerEntity(null, JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsNull(card);
@@ -137,33 +136,33 @@ namespace JDG.Application.Tests.UseCases
         private class TestCardFactory : ICardFactory
         {
             public bool ShouldReturnNull { get; set; }
-            private CardOwner _lastOwner;
+            private JDG.Domain.CardOwner _lastOwner;
 
-            public IInGameCard CreateCard(object baseCard, CardOwner owner)
+            public IInGameCard CreateCard(object baseCard, JDG.Domain.CardOwner owner)
             {
                 _lastOwner = owner;
                 if (ShouldReturnNull) return null;
                 return new TestInvocationCard("Player Entity", owner);
             }
 
-            public IInGameInvocationCard CreateInvocationCard(object baseInvocationCard, CardOwner owner)
+            public IInGameInvocationCard CreateInvocationCard(object baseInvocationCard, JDG.Domain.CardOwner owner)
             {
                 _lastOwner = owner;
                 if (ShouldReturnNull) return null;
                 return new TestInvocationCard("Player Entity", owner);
             }
 
-            public IInGameEffectCard CreateEffectCard(object baseEffectCard, CardOwner owner)
+            public IInGameEffectCard CreateEffectCard(object baseEffectCard, JDG.Domain.CardOwner owner)
             {
                 throw new NotImplementedException();
             }
 
-            public IInGameFieldCard CreateFieldCard(object baseFieldCard, CardOwner owner)
+            public IInGameFieldCard CreateFieldCard(object baseFieldCard, JDG.Domain.CardOwner owner)
             {
                 throw new NotImplementedException();
             }
 
-            public IInGameEquipmentCard CreateEquipmentCard(object baseEquipmentCard, CardOwner owner)
+            public IInGameEquipmentCard CreateEquipmentCard(object baseEquipmentCard, JDG.Domain.CardOwner owner)
             {
                 throw new NotImplementedException();
             }
@@ -173,7 +172,7 @@ namespace JDG.Application.Tests.UseCases
         {
             public string CardId => Title.ToLowerInvariant().Replace(" ", "-");
             public string Title { get; }
-            public CardOwner CardOwner { get; }
+            public JDG.Domain.CardOwner CardOwner { get; }
             public CardType Type => CardType.Invocation;
             public bool Collector => false;
             public string Description => "";
@@ -197,7 +196,7 @@ namespace JDG.Application.Tests.UseCases
             public IInGameEquipmentCard EquipmentCard { get; private set; }
             public CardFamily[] Families { get; set; } = System.Array.Empty<CardFamily>();
 
-            public TestInvocationCard(string title, CardOwner owner)
+            public TestInvocationCard(string title, JDG.Domain.CardOwner owner)
             {
                 Title = title;
                 CardOwner = owner;

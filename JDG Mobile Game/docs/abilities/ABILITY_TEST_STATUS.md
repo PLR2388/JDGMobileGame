@@ -6,15 +6,15 @@ Last Updated: 2026-01-05
 
 | Category | Total | Scenario Tests | Integration | E2E | Status |
 |----------|-------|----------------|-------------|-----|--------|
-| Invocation | 61 | 101 | - | - | Complete |
+| Invocation | 61 | 159 | - | - | Complete |
 | Equipment | 19 | 26 | 10 | - | Complete |
 | Field | 12 | 23 | 14 | - | Complete |
-| Effect | 25 | 35 | - | - | Complete |
+| Effect | 25 | 53 | - | - | Complete |
 | Conditions | 23 | 28 | - | - | Complete |
 | Combinations | 16 | - | 15 | 16 | Complete |
-| **Total** | **156** | **213** | **39** | **16** | **100%** |
+| **Total** | **156** | **289** | **39** | **16** | **100%** |
 
-**Total Tests: 268**
+**Total Tests: 344**
 
 ---
 
@@ -28,12 +28,16 @@ Last Updated: 2026-01-05
 | SacrificeAbilityScenarioTests.cs | 13 | 16 sacrifice abilities | Complete |
 | DeckSearchAbilityScenarioTests.cs | 19 | 12 deck search abilities | Complete |
 | ProtectionAbilityScenarioTests.cs | 20 | 5 protection + 6 dependency abilities | Complete |
-| CombatAbilityScenarioTests.cs | 18 | Combat, resurrection, control abilities | Complete |
+| CombatAbilityScenarioTests.cs | 18 | Combat abilities (attack, direct attack) | Complete |
 | StatBoostAbilityScenarioTests.cs | 15 | 9 stat modification abilities | Complete |
 | EquipmentAbilityScenarioTests.cs | 26 | 19 equipment abilities | Complete |
 | FieldAbilityScenarioTests.cs | 23 | 12 field abilities | Complete |
-| EffectAbilityScenarioTests.cs | 35 | 25 effect abilities | Complete |
+| EffectAbilityScenarioTests.cs | 53 | 25+ effect abilities (full catalog) | Complete |
 | ConditionScenarioTests.cs | 28 | 23 summon conditions | Complete |
+| InvokeAbilityScenarioTests.cs | 11 | 4 invoke abilities (InvokeTentacules, InvokeDresseurBidulmon, InvokeSebOrJDG, SacrificeToInvoke) | Complete |
+| DestructionAbilityScenarioTests.cs | 14 | 5 destruction abilities (DestroyFieldATK/DEF, CanOnlyAttackItself, KillOpponent/Enemy) | Complete |
+| ResurrectionAbilityScenarioTests.cs | 16 | 4 resurrection abilities (ComesBackFromDeath, ComesBackFromDeath5Times, GiveDeathWhenDie, CopyBenzaieJeune) | Complete |
+| ControlAbilityScenarioTests.cs | 17 | 4 control abilities (SendAllCardToHands, SkipOpponentAttackEveryTurn, Control1Opponent, Win1ATK1DefJapon) | Complete |
 
 ### Integration Tests (JDG.Application.Tests/Abilities/Integration/)
 
@@ -316,6 +320,14 @@ Last Updated: 2026-01-05
 | 2026-01-05 | Phase 7 | Implemented Integration tests (Equipment+Invocation, Field+Family, Dependency) - 39 tests |
 | 2026-01-05 | Phase 8 | Implemented E2E PlayMode tests (Key Combinations) - 16 tests |
 | 2026-01-05 | Final | Updated status document with complete test coverage - 268 total tests |
+| 2026-01-05 | Gap Analysis | Compared tests to CARD_POWER_CATALOG.md checklist, identified ~28 missing abilities |
+| 2026-01-05 | Gap Closure | Created 4 new test files + updated EffectAbilityScenarioTests.cs - 76 new tests added |
+| 2026-01-05 | | - InvokeAbilityScenarioTests.cs (11 tests): InvokeTentacules, InvokeDresseurBidulmon, InvokeSebOrJDG, SacrificeToInvoke |
+| 2026-01-05 | | - DestructionAbilityScenarioTests.cs (14 tests): DestroyFieldATK, DestroyFieldDEF, CanOnlyAttackItself, KillOpponentInvocation, KillEnemyIfDestroy |
+| 2026-01-05 | | - ResurrectionAbilityScenarioTests.cs (16 tests): ComesBackFromDeath, ComesBackFromDeath5Times, GiveDeathWhenDie, CopyBenzaieJeune |
+| 2026-01-05 | | - ControlAbilityScenarioTests.cs (17 tests): SendAllCardToHands, SkipOpponentAttackEveryTurn, Control1OpponentInvocationCard, Win1ATK1DefJapon |
+| 2026-01-05 | | - EffectAbilityScenarioTests.cs (+18 tests): Full catalog coverage including Convocation au lycee, Fatalite, Kebab magique, etc. |
+| 2026-01-05 | Complete | All abilities from CARD_POWER_CATALOG.md now have test coverage - 344 total tests |
 
 ---
 

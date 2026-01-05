@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using JDG.Application.Cards;
-using JDG.Domain;
 using JDG.Domain.Enums;
 using NUnit.Framework;
 
@@ -19,32 +18,32 @@ namespace JDG.Application.Tests.Cards
         public void TestInGameCard_ImplementsIInGameCard()
         {
             // Arrange & Act
-            IInGameCard card = new TestInGameCard("Test Card", CardOwner.Player1);
+            IInGameCard card = new TestInGameCard("Test Card", JDG.Domain.CardOwner.Player1);
 
             // Assert
             Assert.IsNotNull(card);
             Assert.AreEqual("Test Card", card.Title);
-            Assert.AreEqual(CardOwner.Player1, card.CardOwner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, card.CardOwner);
         }
 
         [Test]
         public void TestInGameCard_SupportsPlayer2()
         {
             // Arrange & Act
-            IInGameCard card = new TestInGameCard("Player2 Card", CardOwner.Player2);
+            IInGameCard card = new TestInGameCard("Player2 Card", JDG.Domain.CardOwner.Player2);
 
             // Assert
-            Assert.AreEqual(CardOwner.Player2, card.CardOwner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player2, card.CardOwner);
         }
 
         [Test]
         public void TestInGameCard_SupportsNotDefined()
         {
             // Arrange & Act
-            IInGameCard card = new TestInGameCard("Undefined Card", CardOwner.NotDefined);
+            IInGameCard card = new TestInGameCard("Undefined Card", JDG.Domain.CardOwner.NotDefined);
 
             // Assert
-            Assert.AreEqual(CardOwner.NotDefined, card.CardOwner);
+            Assert.AreEqual(JDG.Domain.CardOwner.NotDefined, card.CardOwner);
         }
 
         #endregion
@@ -57,7 +56,7 @@ namespace JDG.Application.Tests.Cards
             // Arrange & Act
             IInGameInvocationCard card = new TestInGameInvocationCard(
                 "Invocation Card",
-                CardOwner.Player1,
+                JDG.Domain.CardOwner.Player1,
                 attack: 100,
                 defense: 50
             );
@@ -73,7 +72,7 @@ namespace JDG.Application.Tests.Cards
         public void TestInvocationCard_AttackAndDefenseAreSettable()
         {
             // Arrange
-            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+            var card = new TestInGameInvocationCard("Test", JDG.Domain.CardOwner.Player1, 100, 50);
 
             // Act
             card.Attack = 150;
@@ -88,7 +87,7 @@ namespace JDG.Application.Tests.Cards
         public void TestInvocationCard_ResetNewTurn_TracksCall()
         {
             // Arrange
-            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+            var card = new TestInGameInvocationCard("Test", JDG.Domain.CardOwner.Player1, 100, 50);
 
             // Act
             card.ResetNewTurn();
@@ -101,7 +100,7 @@ namespace JDG.Application.Tests.Cards
         public void TestInvocationCard_UnblockAttack_TracksCall()
         {
             // Arrange
-            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+            var card = new TestInGameInvocationCard("Test", JDG.Domain.CardOwner.Player1, 100, 50);
 
             // Act
             card.UnblockAttack();
@@ -114,7 +113,7 @@ namespace JDG.Application.Tests.Cards
         public void TestInvocationCard_FreeCard_TracksCall()
         {
             // Arrange
-            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+            var card = new TestInGameInvocationCard("Test", JDG.Domain.CardOwner.Player1, 100, 50);
 
             // Act
             card.FreeCard();
@@ -127,7 +126,7 @@ namespace JDG.Application.Tests.Cards
         public void TestInvocationCard_BaseStats_AreImmutable()
         {
             // Arrange
-            var card = new TestInGameInvocationCard("Test", CardOwner.Player1, 100, 50);
+            var card = new TestInGameInvocationCard("Test", JDG.Domain.CardOwner.Player1, 100, 50);
 
             // Act - Modify current stats
             card.Attack = 200;
@@ -151,7 +150,7 @@ namespace JDG.Application.Tests.Cards
             // Assert
             Assert.IsNotNull(collection);
             Assert.IsTrue(collection.IsPlayerOne);
-            Assert.AreEqual(CardOwner.Player1, collection.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, collection.Owner);
         }
 
         [Test]
@@ -162,7 +161,7 @@ namespace JDG.Application.Tests.Cards
 
             // Assert
             Assert.IsFalse(collection.IsPlayerOne);
-            Assert.AreEqual(CardOwner.Player2, collection.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player2, collection.Owner);
         }
 
         [Test]
@@ -191,14 +190,14 @@ namespace JDG.Application.Tests.Cards
     {
         public string CardId { get; }
         public string Title { get; }
-        public CardOwner CardOwner { get; }
+        public JDG.Domain.CardOwner CardOwner { get; }
         public CardType Type { get; }
         public bool Collector { get; }
         public string Description { get; }
         public string DetailedDescription { get; }
         public string VisualId => Title;
 
-        public TestInGameCard(string title, CardOwner owner, CardType type = CardType.Invocation)
+        public TestInGameCard(string title, JDG.Domain.CardOwner owner, CardType type = CardType.Invocation)
         {
             CardId = title.ToLowerInvariant().Replace(" ", "-");
             Title = title;
@@ -221,7 +220,7 @@ namespace JDG.Application.Tests.Cards
         // IInGameCard members
         public string CardId { get; }
         public string Title { get; }
-        public CardOwner CardOwner { get; }
+        public JDG.Domain.CardOwner CardOwner { get; }
         public CardType Type => CardType.Invocation;
         public bool Collector { get; }
         public string Description { get; }
@@ -268,7 +267,7 @@ namespace JDG.Application.Tests.Cards
         public bool ControlCardCalled { get; private set; }
         public int LastSetRemainedAttack { get; private set; }
 
-        public TestInGameInvocationCard(string title, CardOwner owner, float attack, float defense)
+        public TestInGameInvocationCard(string title, JDG.Domain.CardOwner owner, float attack, float defense)
         {
             CardId = title.ToLowerInvariant().Replace(" ", "-");
             Title = title;
@@ -351,7 +350,7 @@ namespace JDG.Application.Tests.Cards
     public class TestPlayerCardCollection : IPlayerCardCollection
     {
         public bool IsPlayerOne { get; }
-        public CardOwner Owner => IsPlayerOne ? CardOwner.Player1 : CardOwner.Player2;
+        public JDG.Domain.CardOwner Owner => IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
         public IReadOnlyList<IInGameInvocationCard> InvocationCards { get; } = new List<IInGameInvocationCard>();
         public IReadOnlyList<IInGameEffectCard> EffectCards { get; } = new List<IInGameEffectCard>();
         public IInGameFieldCard FieldCard => null;

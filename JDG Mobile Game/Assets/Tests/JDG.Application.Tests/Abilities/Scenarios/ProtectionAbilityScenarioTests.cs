@@ -6,6 +6,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using System.Linq;
 
 namespace JDG.Application.Tests.Abilities.Scenarios
@@ -70,7 +71,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - A card that simply cannot be attacked
             var protectedCard = CreateCard("Untouchable Monster", 5, 5, CardFamily.Monster);
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, protectedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -96,7 +97,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange
             var protectedCard = CreateCard("Untouchable", 3, 3, CardFamily.Monster);
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, protectedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -126,7 +127,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var protectedCard = CreateCard("Comic Protected Card", 3, 3, CardFamily.Human);
             var comicsCard = CreateCard("Spiderman", 4, 3, CardFamily.Comics);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, protectedCard);
             deck.Insert(1, comicsCard);
 
@@ -155,7 +156,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var protectedCard = CreateCard("Comic Protected Card", 3, 3, CardFamily.Human);
             var nonComicsCard = CreateCard("Normal Human", 2, 2, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, protectedCard);
             deck.Insert(1, nonComicsCard);
 
@@ -182,9 +183,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - Comics card present initially
             var protectedCard = CreateCard("Comic Protected", 3, 3, CardFamily.Human);
-            var comicsCard = CardFactory.CreateInvocation("Batman", 4, 3, CardFamily.Comics);
+            var comicsCard = TestCardFactory.CreateInvocation("Batman", 4, 3, CardFamily.Comics);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, protectedCard);
             deck.Insert(1, comicsCard);
 
@@ -228,7 +229,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var starlightUnicorn = CreateCard("Starlight Unicorn", 4, 4, CardFamily.Rpg);
             var protectedCard = CreateCard("Granolax", 2, 2, CardFamily.Rpg);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, starlightUnicorn);
             deck.Insert(1, protectedCard);
 
@@ -260,7 +261,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var lowDefCard = CreateCard("Low Def Card", 4, 2, CardFamily.Human);
             var highDefCard = CreateCard("High Def Card", 3, 4, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(27);
+            var deck = TestCardFactory.CreateDeck(27);
             deck.Insert(0, protectorCard);
             deck.Insert(1, lowDefCard);
             deck.Insert(2, highDefCard);
@@ -294,7 +295,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Only protector on field
             var protectorCard = CreateCard("Lonely Protector", 3, 5, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, protectorCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -325,7 +326,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var restrictedCard = CreateCard("Self-Attacking Monster", 4, 4, CardFamily.Monster);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, restrictedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -352,7 +353,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var restrictedCard = CreateCard("Restricted", 2, 2, CardFamily.Monster);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, restrictedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -419,7 +420,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var alphaMan = CreateCard("Alpha Man", 4, 4, CardFamily.Fistiland);
             var otherCard = CreateCard("Some Other Card", 2, 2, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, alphaMan);
             deck.Insert(1, otherCard);
 
@@ -533,7 +534,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var dependentCard = CreateCard("JDG Fan", 2, 2, CardFamily.Fistiland);
             var jdg = CreateCard("Joueur du Grenier", 5, 5, CardFamily.Fistiland);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, jdg);
             deck.Insert(1, dependentCard);
 
@@ -565,7 +566,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var dependentCard = CreateCard("JDG Fan", 2, 2, CardFamily.Fistiland);
             var otherCard = CreateCard("Other", 2, 2, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, dependentCard);
             deck.Insert(1, otherCard);
 
@@ -605,7 +606,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var dependentCard = CreateCard("Multi-Dependent", 2, 2, CardFamily.Human);
             var validCard = CreateCard("Card B", 3, 3, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(28);
+            var deck = TestCardFactory.CreateDeck(28);
             deck.Insert(0, dependentCard);
             deck.Insert(1, validCard);
 
@@ -634,14 +635,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var protectorCard = CreateCard("Protector", 4, 4, CardFamily.Human);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, protectorCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var opponentCard = CardFactory.CreateInvocation("Enemy", 3, 3, CardFamily.Monster);
-            var deck2 = CardFactory.CreateDeck(29);
+            var opponentCard = TestCardFactory.CreateInvocation("Enemy", 3, 3, CardFamily.Monster);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, opponentCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();

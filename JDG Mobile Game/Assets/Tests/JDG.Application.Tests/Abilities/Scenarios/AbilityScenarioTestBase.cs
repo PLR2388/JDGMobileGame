@@ -8,6 +8,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 
 namespace JDG.Application.Tests.Abilities.Scenarios
 {
@@ -76,7 +77,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         /// </summary>
         protected Card CreateCard(string name, int atk, int def, CardFamily family = CardFamily.Human)
         {
-            return CardFactory.CreateInvocation(name, atk, def, family);
+            return TestCardFactory.CreateInvocation(name, atk, def, family);
         }
 
         /// <summary>
@@ -84,7 +85,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         /// </summary>
         protected Card CreateEffectCard(string name, params EffectAbilityName[] abilities)
         {
-            return CardFactory.CreateEffect(name, abilities);
+            return TestCardFactory.CreateEffect(name, abilities);
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         /// </summary>
         protected Card CreateFieldCard(string name, CardFamily family)
         {
-            return CardFactory.CreateField(name, family);
+            return TestCardFactory.CreateField(name, family);
         }
 
         /// <summary>

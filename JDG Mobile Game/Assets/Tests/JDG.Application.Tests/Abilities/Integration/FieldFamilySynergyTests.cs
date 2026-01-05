@@ -54,7 +54,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, benzaie, benzaieJeune);
 
-            var ability = _fieldFactory.CreateFamilyBoostField(CardFamily.Fistiland, 1, 0);
+            var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -73,7 +73,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, japanCard);
 
-            var ability = _fieldFactory.CreateFamilyBoostField(CardFamily.Fistiland, 1, 0);
+            var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -98,7 +98,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, devCard1, devCard2);
 
-            var ability = _fieldFactory.CreateFamilyBoostField(CardFamily.Developer, 1, 0);
+            var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Developer, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -122,7 +122,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, japanCard);
 
-            var ability = _fieldFactory.CreateFamilyBoostField(CardFamily.Japan, 1, 0);
+            var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Japan, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -146,7 +146,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, spatialCard);
 
-            var ability = _fieldFactory.CreateFamilyBoostField(CardFamily.Spatial, 0, 1);
+            var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Spatial, 0, 1);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -214,7 +214,7 @@ namespace JDG.Application.Tests.Abilities.Integration
             // Arrange
             var fieldCard = TestCardFactory.CreateField("Draw Field", CardFamily.None);
 
-            var ability = _fieldFactory.CreateDrawBonusField(1);
+            var ability = _fieldFactory.CreateDrawBonus(1);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -239,7 +239,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, wizard1, wizard2);
 
-            var ability = _fieldFactory.CreateHealPerFamilyField(CardFamily.Wizard, 1); // 1 HP per Wizard
+            var ability = _fieldFactory.CreateHealPerFamily(CardFamily.Wizard, 1); // 1 HP per Wizard
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -263,7 +263,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, genericCard);
 
-            var ability = _fieldFactory.CreateChangeFamilyField(CardFamily.Developer);
+            var ability = _fieldFactory.CreateChangeFamily(CardFamily.Developer);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -284,7 +284,7 @@ namespace JDG.Application.Tests.Abilities.Integration
             // Skip normal draw to search for a specific family card
             var fieldCard = TestCardFactory.CreateField("Search Field", CardFamily.Fistiland);
 
-            var ability = _fieldFactory.CreateSkipDrawForFamilyCardField(CardFamily.Fistiland);
+            var ability = _fieldFactory.CreateSkipDrawForFamily(CardFamily.Fistiland);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act
@@ -310,7 +310,7 @@ namespace JDG.Application.Tests.Abilities.Integration
 
             PlaceOnField(_player1, card1, card2, card3, nonFamilyCard);
 
-            var ability = _fieldFactory.CreateFamilyBoostField(CardFamily.Fistiland, 1, 1);
+            var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 1);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
 
             // Act

@@ -24,12 +24,12 @@ namespace JDG.Application.Tests.Mappers
                 defense: 6,
                 families: new[] { CardFamily.Monster, CardFamily.Wizard },
                 affectedByEffect: true,
-                conditions: new[] { ConditionName.WizardOnField },
+                conditions: new JDG.Domain.Enums.ConditionName[] { JDG.Domain.Enums.ConditionName.WizardOnField },
                 abilities: new[] { AbilityName.Draw2Cards },
                 isCollector: true
             );
 
-            card.SetOwner(CardOwner.Player1);
+            card.SetOwner(JDG.Domain.CardOwner.Player1);
 
             // Act
             var dto = card.ToDTO(isInHand: true);
@@ -40,7 +40,7 @@ namespace JDG.Application.Tests.Mappers
             Assert.AreEqual("Test Dragon", dto.Title);
             Assert.AreEqual("A test dragon", dto.Description);
             Assert.AreEqual(CardType.Invocation, dto.Type);
-            Assert.AreEqual(CardOwner.Player1, dto.Owner);
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, dto.Owner);
             Assert.IsTrue(dto.IsCollector);
             Assert.AreEqual(8, dto.Attack);
             Assert.AreEqual(6, dto.Defense);

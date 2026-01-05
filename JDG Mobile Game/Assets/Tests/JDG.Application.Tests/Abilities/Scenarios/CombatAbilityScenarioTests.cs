@@ -6,6 +6,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using System.Linq;
 
 namespace JDG.Application.Tests.Abilities.Scenarios
@@ -59,14 +60,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var defenderCard = CreateCard("Victim", 3, 3, CardFamily.Human);
 
             // Player 1's deck with attacker
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, attackerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
             // Player 2's deck with defender
-            var deck2 = CardFactory.CreateDeck(29);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, defenderCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -95,13 +96,13 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var attackerCard = CreateCard("Attacker", 4, 4, CardFamily.Human);
             var defenderCard = CreateCard("Defender", 3, 3, CardFamily.Human);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, attackerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var deck2 = CardFactory.CreateDeck(29);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, defenderCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -124,7 +125,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var attackerCard = CreateCard("Attacker", 4, 4, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, attackerCard);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -152,7 +153,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var sourceCard = CreateCard("Attack Skipper", 2, 5, CardFamily.Wizard);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, sourceCard);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -178,7 +179,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var sourceCard = CreateCard("Permanent Skipper", 2, 5, CardFamily.Wizard);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, sourceCard);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -204,7 +205,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var sourceCard = CreateCard("Skipper", 2, 2, CardFamily.Human);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, sourceCard);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -234,7 +235,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var sourceCard = CreateCard("Direct Attacker", 5, 3, CardFamily.Monster);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, sourceCard);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -282,7 +283,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var resurrectionCard = CreateCard("Phoenix", 3, 3, CardFamily.Monster);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, resurrectionCard);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -313,7 +314,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var resurrectionCard = CreateCard("Undying", 2, 2, CardFamily.Monster);
 
-            var deck = CardFactory.CreateDeck(29);
+            var deck = TestCardFactory.CreateDeck(29);
             deck.Insert(0, resurrectionCard);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -341,14 +342,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var triggerCard = CreateCard("Death Dealer", 3, 3, CardFamily.Monster);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, triggerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var opponentCard = CardFactory.CreateInvocation("Target", 2, 2, CardFamily.Human);
-            var deck2 = CardFactory.CreateDeck(29);
+            var opponentCard = TestCardFactory.CreateInvocation("Target", 2, 2, CardFamily.Human);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, opponentCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -374,14 +375,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var triggerCard = CreateCard("Death Dealer", 3, 3, CardFamily.Monster);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, triggerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var opponentCard = CardFactory.CreateInvocation("Target", 2, 2, CardFamily.Human);
-            var deck2 = CardFactory.CreateDeck(29);
+            var opponentCard = TestCardFactory.CreateInvocation("Target", 2, 2, CardFamily.Human);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, opponentCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -403,7 +404,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var triggerCard = CreateCard("Death Dealer", 3, 3, CardFamily.Monster);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, triggerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
@@ -431,14 +432,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var destroyerCard = CreateCard("Destroyer", 4, 4, CardFamily.Monster);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, destroyerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var targetCard = CardFactory.CreateInvocation("Only Target", 2, 2, CardFamily.Human);
-            var deck2 = CardFactory.CreateDeck(29);
+            var targetCard = TestCardFactory.CreateInvocation("Only Target", 2, 2, CardFamily.Human);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, targetCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -464,15 +465,15 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var destroyerCard = CreateCard("Destroyer", 4, 4, CardFamily.Monster);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, destroyerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var target1 = CardFactory.CreateInvocation("Target 1", 2, 2, CardFamily.Human);
-            var target2 = CardFactory.CreateInvocation("Target 2", 3, 3, CardFamily.Human);
-            var deck2 = CardFactory.CreateDeck(28);
+            var target1 = TestCardFactory.CreateInvocation("Target 1", 2, 2, CardFamily.Human);
+            var target2 = TestCardFactory.CreateInvocation("Target 2", 3, 3, CardFamily.Human);
+            var deck2 = TestCardFactory.CreateDeck(28);
             deck2.Insert(0, target1);
             deck2.Insert(1, target2);
             var player2 = new Player(PlayerId.Player2, deck2);
@@ -501,7 +502,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var destroyerCard = CreateCard("Destroyer", 4, 4, CardFamily.Monster);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, destroyerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
@@ -533,7 +534,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var attackerCard = CreateCard("Attacker", 4, 4, CardFamily.Human);
             var bystander = CreateCard("Bystander", 2, 2, CardFamily.Human);
 
-            var deck1 = CardFactory.CreateDeck(28);
+            var deck1 = TestCardFactory.CreateDeck(28);
             deck1.Insert(0, attackerCard);
             deck1.Insert(1, bystander);
             var player1 = new Player(PlayerId.Player1, deck1);
@@ -542,8 +543,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Attacker"));
             player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Bystander"));
 
-            var defenderCard = CardFactory.CreateInvocation("Defender", 3, 3, CardFamily.Human);
-            var deck2 = CardFactory.CreateDeck(29);
+            var defenderCard = TestCardFactory.CreateInvocation("Defender", 3, 3, CardFamily.Human);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, defenderCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
@@ -569,14 +570,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var attackerCard = CreateCard("Attacker", 4, 4, CardFamily.Human);
 
-            var deck1 = CardFactory.CreateDeck(29);
+            var deck1 = TestCardFactory.CreateDeck(29);
             deck1.Insert(0, attackerCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
-            var defenderCard = CardFactory.CreateInvocation("Defender", 3, 3, CardFamily.Human);
-            var deck2 = CardFactory.CreateDeck(29);
+            var defenderCard = TestCardFactory.CreateInvocation("Defender", 3, 3, CardFamily.Human);
+            var deck2 = TestCardFactory.CreateDeck(29);
             deck2.Insert(0, defenderCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();

@@ -7,6 +7,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
 using JDG.Domain.Events;
 using JDG.TestUtilities;
+using TestCardFactory = JDG.TestUtilities.CardFactory;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -123,7 +124,7 @@ namespace JDG.Application.Tests.UseCases
         public void Execute_DrawnCardAddedToHand()
         {
             // Arrange
-            var deck = CardFactory.CreateDeck(5);
+            var deck = TestCardFactory.CreateDeck(5);
             var player = PlayerFactory.CreatePlayerWithCards(PlayerId.Player1, deck);
             // Player.DrawCard() draws from END of deck (last element), not beginning
             var expectedCard = player.Deck[^1];
