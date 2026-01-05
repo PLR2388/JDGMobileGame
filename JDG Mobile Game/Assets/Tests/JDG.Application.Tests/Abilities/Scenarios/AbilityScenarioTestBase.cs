@@ -176,12 +176,29 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
         /// <summary>
         /// Creates an ability context for the given player and source card.
+        /// Defaults to Player1 as current player.
+        /// </summary>
+        protected AbilityContext CreateContext(Card sourceCard, AbilityName abilityName)
+        {
+            return CreateContext(sourceCard, abilityName, PlayerId.Player1, null);
+        }
+
+        /// <summary>
+        /// Creates an ability context with specific current player.
+        /// </summary>
+        protected AbilityContext CreateContext(Card sourceCard, AbilityName abilityName, PlayerId currentPlayer)
+        {
+            return CreateContext(sourceCard, abilityName, currentPlayer, null);
+        }
+
+        /// <summary>
+        /// Creates an ability context for the given player and source card with optional target.
         /// </summary>
         protected AbilityContext CreateContext(
             Card sourceCard,
             AbilityName abilityName,
-            PlayerId currentPlayer = PlayerId.Player1,
-            Card targetCard = null)
+            PlayerId currentPlayer,
+            Card targetCard)
         {
             var opponentId = currentPlayer == PlayerId.Player1 ? PlayerId.Player2 : PlayerId.Player1;
 
