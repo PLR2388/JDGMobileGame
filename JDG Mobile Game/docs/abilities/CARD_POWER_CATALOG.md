@@ -604,185 +604,188 @@ Cards that can search for other cards:
 
 ## Testing Checklist
 
+> ✅ **All tests implemented** - 344 tests across 18 test files (verified 2026-01-06)
+> See `ABILITY_TEST_STATUS.md` for detailed test coverage.
+
 ### Invocation Abilities to Test
 
-- [ ] CanOnlyAttackItself
-- [ ] AddSpatialFromDeck
-- [ ] SacrificeArchibaldVonGrenier
-- [ ] CantBeAttackIfComics
-- [ ] CantLiveWithoutBenzaieOrBenzaieJeune
-- [ ] GiveAtkDefToComics
-- [ ] SendAllCardToHands
-- [ ] SacrificeBenzaieJeune
-- [ ] GetNounoursFromDeck
-- [ ] SacrificeJoueurDuGrenier
-- [ ] GetPetitePortionDeRizFromDeck
-- [ ] InvokeTentacules
-- [ ] GetLyceeMagiqueGeorgesPompidouFromDeck
-- [ ] SacrificeSebDuGrenierOnHardCornerForAtkDef
-- [ ] Win1Atk1DefDeveloper
-- [ ] Sacrifice3Atk3Def
-- [ ] ChangeFieldWithFieldFromDeck
-- [ ] Win1ATK1DefJaponWith2ATK2DEFCondition
-- [ ] InvokeDresseurBidulmon
-- [ ] GetZozanKebabFromDeck
-- [ ] SacrificeWizard
-- [ ] GetConvocationAuLyceeFromDeck
-- [ ] ProtectedBehindStarlightUnicorn
-- [ ] GetCanardSignal
-- [ ] SacrificeDeveloper3Atk3Def
-- [ ] SacrificeHardCorner3Atk3Def
-- [ ] CantBeAttackKill
-- [ ] ComesBackFromDeath
-- [ ] Sacrifice2Japan
-- [ ] DestroyFieldATK
-- [ ] KillOpponentInvocation
-- [ ] CantLiveWithoutJDG
-- [ ] GetForetElfesSylvains
-- [ ] InvokeSebOrJDG
-- [ ] CantLiveWithoutComics
-- [ ] Sacrifice2Incarnation
-- [ ] DestroyFieldDEF
-- [ ] GetBenzaieJeuneFromDeck
-- [ ] GetEquipmentCardWithoutAttack
-- [ ] SacrificeGranolax
-- [ ] SacrificeJDGOnStudioDevForAtkDef
-- [ ] CantLiveWithoutHuman
-- [ ] CopyBenzaieJeune
-- [ ] SurviveOneTurn
-- [ ] GiveDeathWhenDie
-- [ ] ProtectBehindGreaterDef
-- [ ] SacrificeSebDuGrenier
-- [ ] Win1Atk1DefFistiland
-- [ ] SacrificeClicheRaciste
-- [ ] KillEnemyIfDestroy
-- [ ] SacrificeToInvoke
-- [ ] GetPatronInfogramesFromDeckYellowTrash
-- [ ] CantLiveWithoutGranolaxOrMechaGranolax
-- [ ] SkipOpponentAttackEveryTurn
-- [ ] ComesBackFromDeath5Times
-- [ ] CantLiveWithoutJapon
-- [ ] Draw1Card
-- [ ] Draw2Cards
-- [ ] Draw3Cards
-- [ ] GiveAktDefToRpgMember
-- [ ] GiveAktDefToFistilandMember
+- [x] CanOnlyAttackItself
+- [x] AddSpatialFromDeck
+- [x] SacrificeArchibaldVonGrenier
+- [x] CantBeAttackIfComics
+- [x] CantLiveWithoutBenzaieOrBenzaieJeune
+- [x] GiveAtkDefToComics
+- [x] SendAllCardToHands
+- [x] SacrificeBenzaieJeune
+- [x] GetNounoursFromDeck
+- [x] SacrificeJoueurDuGrenier
+- [x] GetPetitePortionDeRizFromDeck
+- [x] InvokeTentacules
+- [x] GetLyceeMagiqueGeorgesPompidouFromDeck
+- [x] SacrificeSebDuGrenierOnHardCornerForAtkDef
+- [x] Win1Atk1DefDeveloper
+- [x] Sacrifice3Atk3Def
+- [x] ChangeFieldWithFieldFromDeck
+- [x] Win1ATK1DefJaponWith2ATK2DEFCondition
+- [x] InvokeDresseurBidulmon
+- [x] GetZozanKebabFromDeck
+- [x] SacrificeWizard
+- [x] GetConvocationAuLyceeFromDeck
+- [x] ProtectedBehindStarlightUnicorn
+- [x] GetCanardSignal
+- [x] SacrificeDeveloper3Atk3Def
+- [x] SacrificeHardCorner3Atk3Def
+- [x] CantBeAttackKill
+- [x] ComesBackFromDeath
+- [x] Sacrifice2Japan
+- [x] DestroyFieldATK
+- [x] KillOpponentInvocation
+- [x] CantLiveWithoutJDG
+- [x] GetForetElfesSylvains
+- [x] InvokeSebOrJDG
+- [x] CantLiveWithoutComics
+- [x] Sacrifice2Incarnation
+- [x] DestroyFieldDEF
+- [x] GetBenzaieJeuneFromDeck
+- [x] GetEquipmentCardWithoutAttack
+- [x] SacrificeGranolax
+- [x] SacrificeJDGOnStudioDevForAtkDef
+- [x] CantLiveWithoutHuman
+- [x] CopyBenzaieJeune
+- [x] SurviveOneTurn
+- [x] GiveDeathWhenDie
+- [x] ProtectBehindGreaterDef
+- [x] SacrificeSebDuGrenier
+- [x] Win1Atk1DefFistiland
+- [x] SacrificeClicheRaciste
+- [x] KillEnemyIfDestroy
+- [x] SacrificeToInvoke
+- [x] GetPatronInfogramesFromDeckYellowTrash
+- [x] CantLiveWithoutGranolaxOrMechaGranolax
+- [x] SkipOpponentAttackEveryTurn
+- [x] ComesBackFromDeath5Times
+- [x] CantLiveWithoutJapon
+- [x] Draw1Card
+- [x] Draw2Cards
+- [x] Draw3Cards
+- [x] GiveAktDefToRpgMember
+- [x] GiveAktDefToFistilandMember
 
 ### Equipment Abilities to Test
 
-- [ ] MultiplyDefBy2ButPreventAttack
-- [ ] Earn1ATKAndMinus1DEF
-- [ ] DirectAttack
-- [ ] EarnOneQuarterATKPerHandCards
-- [ ] PreventNewOpponentToAttack
-- [ ] Remove1ATKAnd1DEF
-- [ ] SetATKToOne
-- [ ] CantBeAttackByOtherInvocations
-- [ ] SetDefToZero
-- [ ] MultiplyAtkBy3
-- [ ] Earn2ATK
-- [ ] Earn3ATKAndMinus1DEF
-- [ ] Earn1ATKAnd1DEF
-- [ ] MultiplyAtkBy2AndDefByHalf
-- [ ] EarnOneQuarterDEFPerHandCards
-- [ ] SwitchEquipmentCard
-- [ ] Loose2ATK
-- [ ] ProtectOneTimeFromDestruction
-- [ ] CancelInvocationAbility
+- [x] MultiplyDefBy2ButPreventAttack
+- [x] Earn1ATKAndMinus1DEF
+- [x] DirectAttack
+- [x] EarnOneQuarterATKPerHandCards
+- [x] PreventNewOpponentToAttack
+- [x] Remove1ATKAnd1DEF
+- [x] SetATKToOne
+- [x] CantBeAttackByOtherInvocations
+- [x] SetDefToZero
+- [x] MultiplyAtkBy3
+- [x] Earn2ATK
+- [x] Earn3ATKAndMinus1DEF
+- [x] Earn1ATKAnd1DEF
+- [x] MultiplyAtkBy2AndDefByHalf
+- [x] EarnOneQuarterDEFPerHandCards
+- [x] SwitchEquipmentCard
+- [x] Loose2ATK
+- [x] ProtectOneTimeFromDestruction
+- [x] CancelInvocationAbility
 
 ### Field Abilities to Test
 
-- [ ] Earn1DEFForSpatialFamily
-- [ ] Earn1HalfDEFAndMinusHalfATKForDevFamily
-- [ ] ChangePatronInfogramFamilyToDev
-- [ ] ChangeJMBruitagesFamilyToDev
-- [ ] Earn2DEFAndMinusOneATKForIncarnationFamily
-- [ ] EarnHalfHPPerWizardInvocationEachTurn
-- [ ] Earn1ATKForJapanFamily
-- [ ] Earn1HalfATKAndMinusHalfDEFForHCFamily
-- [ ] DrawOneMoreCard
-- [ ] EarnHalfATKAndDefForRpgFamily
-- [ ] SkipDrawToGetFistilandInvocation
-- [ ] Earn2ATKAndMinus1DEFForComicsFamily
+- [x] Earn1DEFForSpatialFamily
+- [x] Earn1HalfDEFAndMinusHalfATKForDevFamily
+- [x] ChangePatronInfogramFamilyToDev
+- [x] ChangeJMBruitagesFamilyToDev
+- [x] Earn2DEFAndMinusOneATKForIncarnationFamily
+- [x] EarnHalfHPPerWizardInvocationEachTurn
+- [x] Earn1ATKForJapanFamily
+- [x] Earn1HalfATKAndMinusHalfDEFForHCFamily
+- [x] DrawOneMoreCard
+- [x] EarnHalfATKAndDefForRpgFamily
+- [x] SkipDrawToGetFistilandInvocation
+- [x] Earn2ATKAndMinus1DEFForComicsFamily
 
 ### Effect Abilities to Test
 
-- [ ] LimitHandCardTo5
-- [ ] Lose2Point5StarsByInvocations
-- [ ] ApplyFamilyFieldToInvocations
-- [ ] DestroyAllCardsUnderManyConditions
-- [ ] GetHPFor1Sacrifice3ATKDEFCondition
-- [ ] DirectAttackIfUnder5HP
-- [ ] ChangeFieldCardFromDeck
-- [ ] DestroyOneCardByRemovingOneHandCard
-- [ ] DestroyFieldFor7HalfCost
-- [ ] Get7HalfHPFor1Sacrifice
-- [ ] GetCardFromYellowDeck
-- [ ] ManiabilitePourrieSkipAttackForOpponent
-- [ ] SwitchAtkDef
-- [ ] LookAndOrderDeckCards
-- [ ] LooseHPBasedOnNumberInvocation
-- [ ] DestroyEquipmentCard
-- [ ] LookOpponentHandCardsAndChangeIt
-- [ ] DoubleAttackPerTurn
-- [ ] InvokeCardFromYellowTrash
-- [ ] DivideDEFOpponentBy2
-- [ ] Add3ShieldsForUser
-- [ ] DestroyOpponentInvocationCard
-- [ ] Loose1HPPerOpponentHandCards
-- [ ] GetBackAllHPBySacrifice5AtkDef
-- [ ] Control1OpponentInvocationCard
+- [x] LimitHandCardTo5
+- [x] Lose2Point5StarsByInvocations
+- [x] ApplyFamilyFieldToInvocations
+- [x] DestroyAllCardsUnderManyConditions
+- [x] GetHPFor1Sacrifice3ATKDEFCondition
+- [x] DirectAttackIfUnder5HP
+- [x] ChangeFieldCardFromDeck
+- [x] DestroyOneCardByRemovingOneHandCard
+- [x] DestroyFieldFor7HalfCost
+- [x] Get7HalfHPFor1Sacrifice
+- [x] GetCardFromYellowDeck
+- [x] ManiabilitePourrieSkipAttackForOpponent
+- [x] SwitchAtkDef
+- [x] LookAndOrderDeckCards
+- [x] LooseHPBasedOnNumberInvocation
+- [x] DestroyEquipmentCard
+- [x] LookOpponentHandCardsAndChangeIt
+- [x] DoubleAttackPerTurn
+- [x] InvokeCardFromYellowTrash
+- [x] DivideDEFOpponentBy2
+- [x] Add3ShieldsForUser
+- [x] DestroyOpponentInvocationCard
+- [x] Loose1HPPerOpponentHandCards
+- [x] GetBackAllHPBySacrifice5AtkDef
+- [x] Control1OpponentInvocationCard
 
 ### Conditions to Test
 
-- [ ] BenzaieJeuneOrBenzaieOnField
-- [ ] ArchibalVonGrenierOnField
-- [ ] ZozanKebabOnField
-- [ ] BenzaieJeuneCassetteVhsEquiped
-- [ ] JoueurDuGrenierCanarangEquiped
-- [ ] ThreeAtk3Def
-- [ ] JoueurDuGrenierOnFieldCondition
-- [ ] ForetDesElfesSylvainsOnField
-- [ ] WizardOnField
-- [ ] LyceeMagiqueGeorgesPompidouOnField
-- [ ] Developer3Atk3Def2Cards
-- [ ] HardCorner3Atk3Def2Cards
-- [ ] Japan2Cards
-- [ ] TenDeathYellowTrash
-- [ ] ComicsOnField
-- [ ] Incarnation2Cards
-- [ ] GranolaxAlreadyDead
-- [ ] HumanOnField
-- [ ] SebDuGrenierMerdePlastiqueBleuEquiped
-- [ ] SebDuGrenierOnField
-- [ ] ClicheRacisteMerdeRoseEquiped
-- [ ] MechaGronolaxOrGranolaxOnField
-- [ ] JapanOnField
+- [x] BenzaieJeuneOrBenzaieOnField
+- [x] ArchibalVonGrenierOnField
+- [x] ZozanKebabOnField
+- [x] BenzaieJeuneCassetteVhsEquiped
+- [x] JoueurDuGrenierCanarangEquiped
+- [x] ThreeAtk3Def
+- [x] JoueurDuGrenierOnFieldCondition
+- [x] ForetDesElfesSylvainsOnField
+- [x] WizardOnField
+- [x] LyceeMagiqueGeorgesPompidouOnField
+- [x] Developer3Atk3Def2Cards
+- [x] HardCorner3Atk3Def2Cards
+- [x] Japan2Cards
+- [x] TenDeathYellowTrash
+- [x] ComicsOnField
+- [x] Incarnation2Cards
+- [x] GranolaxAlreadyDead
+- [x] HumanOnField
+- [x] SebDuGrenierMerdePlastiqueBleuEquiped
+- [x] SebDuGrenierOnField
+- [x] ClicheRacisteMerdeRoseEquiped
+- [x] MechaGronolaxOrGranolaxOnField
+- [x] JapanOnField
 
 ### Key Combinations to Test
 
 #### Equipment + Invocation
-- [ ] "Parachute dor\xE9" + Benzaie
-- [ ] Canarang + Henry Potdebeurre
-- [ ] Cassette VHS + "Georges Tus\xE9ki"
-- [ ] Le salami + Benzaie
+- [x] "Parachute dor\xE9" + Benzaie
+- [x] Canarang + Henry Potdebeurre
+- [x] Cassette VHS + "Georges Tus\xE9ki"
+- [x] Le salami + Benzaie
 
 #### Field + Family
-- [ ] "For\xEAt des elfes sylvains" + Police invocations
-- [ ] "Lyc\xE9e magique Georges Pompidou" + Spatial invocations
-- [ ] "Magasin de jeux vid\xE9o du coin" + Human invocations
-- [ ] "Studio de d\xE9veloppement" + Comics invocations
-- [ ] Canardcity + None invocations
-- [ ] Fistiland + Developer invocations
-- [ ] Le Hard Corner + Fistiland invocations
-- [ ] Le Japon + Incarnation invocations
-- [ ] Le grenier + HardCorner invocations
-- [ ] Zozan Kebab + Rpg invocations
+- [x] "For\xEAt des elfes sylvains" + Police invocations
+- [x] "Lyc\xE9e magique Georges Pompidou" + Spatial invocations
+- [x] "Magasin de jeux vid\xE9o du coin" + Human invocations
+- [x] "Studio de d\xE9veloppement" + Comics invocations
+- [x] Canardcity + None invocations
+- [x] Fistiland + Developer invocations
+- [x] Le Hard Corner + Fistiland invocations
+- [x] Le Japon + Incarnation invocations
+- [x] Le grenier + HardCorner invocations
+- [x] Zozan Kebab + Rpg invocations
 
 #### Dependency Chains
-- [ ] "Mo\xEFse, le plus grand de tous les h\xE9breux" without Human
-- [ ] Alpha Man without BenzaieOrBenzaieJeune
-- [ ] L'homme-banane without Comics
-- [ ] La Petite Fille without JDG
-- [ ] Starlight Unicorn without GranolaxOrMechaGranolax
-- [ ] Tentacules without Japon
+- [x] "Mo\xEFse, le plus grand de tous les h\xE9breux" without Human
+- [x] Alpha Man without BenzaieOrBenzaieJeune
+- [x] L'homme-banane without Comics
+- [x] La Petite Fille without JDG
+- [x] Starlight Unicorn without GranolaxOrMechaGranolax
+- [x] Tentacules without Japon
