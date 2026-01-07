@@ -36,8 +36,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Register combat abilities
             AbilityRegistry.Register(AbilityName.KillEnemyIfDestroy,
                 () => _combatFactory.CreateMutualDestruction(AbilityName.KillEnemyIfDestroy));
-            AbilityRegistry.Register(AbilityName.SkipOpponentAttackEveryTurn,
-                () => _combatFactory.CreateSkipAttack(AbilityName.SkipOpponentAttackEveryTurn));
+            // Note: SkipOpponentAttackEveryTurn with everyTurn=true is the intended behavior
             AbilityRegistry.Register(AbilityName.SkipOpponentAttackEveryTurn,
                 () => _combatFactory.CreateSkipAttack(AbilityName.SkipOpponentAttackEveryTurn, everyTurn: true));
             AbilityRegistry.Register(AbilityName.ComesBackFromDeath,

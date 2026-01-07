@@ -6,13 +6,16 @@
         "JDG.Application",
         "JDG.Infrastructure",
         "JDG.Presentation",
+        "JDG.Legacy",
         "JDG.TestUtilities",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "VContainer",
         "Unity.TextMeshPro"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,

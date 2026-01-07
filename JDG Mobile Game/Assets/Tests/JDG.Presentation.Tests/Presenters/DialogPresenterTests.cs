@@ -84,7 +84,7 @@ namespace JDG.Presentation.Tests.Presenters
         public void ShowPauseMenu_CallsLocalizationService()
         {
             // Arrange
-            Action testAction = () => { };
+            System.Action testAction = () => { };
 
             // Act
             _presenter.ShowPauseMenu(testAction);
@@ -97,7 +97,7 @@ namespace JDG.Presentation.Tests.Presenters
         public void ShowPauseMenu_CallsDialogService()
         {
             // Arrange
-            Action testAction = () => { };
+            System.Action testAction = () => { };
 
             // Act
             _presenter.ShowPauseMenu(testAction);
@@ -111,7 +111,7 @@ namespace JDG.Presentation.Tests.Presenters
         public void ShowPauseMenu_PassesCanvasToDialogService()
         {
             // Arrange
-            Action testAction = () => { };
+            System.Action testAction = () => { };
 
             // Act
             _presenter.ShowPauseMenu(testAction);
@@ -124,7 +124,7 @@ namespace JDG.Presentation.Tests.Presenters
         public void ShowPauseMenu_PassesCorrectOptions()
         {
             // Arrange
-            Action testAction = () => { };
+            System.Action testAction = () => { };
 
             // Act
             _presenter.ShowPauseMenu(testAction);
@@ -153,7 +153,7 @@ namespace JDG.Presentation.Tests.Presenters
         public void ShowMessageBox_WithPositiveAction_SetsShowPositiveButton()
         {
             // Arrange
-            Action positiveAction = () => { };
+            System.Action positiveAction = () => { };
 
             // Act
             _presenter.ShowMessageBox("Title", "Message", positiveAction, null);
@@ -168,7 +168,7 @@ namespace JDG.Presentation.Tests.Presenters
         public void ShowMessageBox_WithNegativeAction_SetsShowNegativeButton()
         {
             // Arrange
-            Action negativeAction = () => { };
+            System.Action negativeAction = () => { };
 
             // Act
             _presenter.ShowMessageBox("Title", "Message", null, negativeAction);
@@ -258,8 +258,8 @@ namespace JDG.Presentation.Tests.Presenters
             // Arrange & Act
             bool positiveActionCalled = false;
             bool negativeActionCalled = false;
-            Action positiveAction = () => positiveActionCalled = true;
-            Action negativeAction = () => negativeActionCalled = true;
+            System.Action positiveAction = () => positiveActionCalled = true;
+            System.Action negativeAction = () => negativeActionCalled = true;
 
             var options = new MessageBoxOptions
             {
@@ -308,7 +308,7 @@ namespace JDG.Presentation.Tests.Presenters
         {
             // Arrange
             bool okActionCalled = false;
-            Action okAction = () => okActionCalled = true;
+            System.Action okAction = () => okActionCalled = true;
 
             // Act
             var options = new MessageBoxOptions

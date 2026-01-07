@@ -12,6 +12,10 @@ namespace JDG.PlayMode.Tests
     /// Play Mode tests for MonoBehaviour integration.
     /// Tests that services work correctly when used from MonoBehaviours.
     /// Phase 11: Play Mode test implementation.
+    ///
+    /// IMPORTANT: These tests require PlayMode to run correctly.
+    /// They use coroutines and WaitForSeconds which don't work in EditMode.
+    /// Tests will be skipped (Inconclusive) when run in EditMode.
     /// </summary>
     [TestFixture]
     public class MonoBehaviourPlayTests
@@ -21,6 +25,11 @@ namespace JDG.PlayMode.Tests
         [SetUp]
         public void SetUp()
         {
+            // Skip these tests when run in EditMode - they require PlayMode for coroutines
+            // Use fully qualified name to avoid conflict with JDG.Application namespace
+            Assume.That(UnityEngine.Application.isPlaying, Is.True,
+                "These tests require PlayMode. Run them via the Test Runner in PlayMode tab.");
+
             _testObject = new GameObject("TestObject");
         }
 
