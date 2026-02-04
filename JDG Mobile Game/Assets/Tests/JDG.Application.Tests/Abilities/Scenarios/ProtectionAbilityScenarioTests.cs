@@ -71,8 +71,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange - A card that simply cannot be attacked
             var protectedCard = CreateCard("Untouchable Monster", 5, 5, CardFamily.Monster);
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, protectedCard);
+            deck.Add(protectedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -97,8 +98,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange
             var protectedCard = CreateCard("Untouchable", 3, 3, CardFamily.Monster);
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, protectedCard);
+            deck.Add(protectedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -127,13 +129,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var protectedCard = CreateCard("Comic Protected Card", 3, 3, CardFamily.Human);
             var comicsCard = CreateCard("Spiderman", 4, 3, CardFamily.Comics);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, protectedCard);
-            deck.Insert(1, comicsCard);
+            deck.Add(comicsCard);      // Added first, drawn second
+            deck.Add(protectedCard);   // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.DrawCard();
+            player1.DrawCard();  // Gets protectedCard
+            player1.DrawCard();  // Gets comicsCard
             player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Comic Protected Card"));
             player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Spiderman"));
 
@@ -156,9 +159,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var protectedCard = CreateCard("Comic Protected Card", 3, 3, CardFamily.Human);
             var nonComicsCard = CreateCard("Normal Human", 2, 2, CardFamily.Human);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, protectedCard);
-            deck.Insert(1, nonComicsCard);
+            deck.Add(nonComicsCard);   // Added first, drawn second
+            deck.Add(protectedCard);   // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -185,9 +189,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var protectedCard = CreateCard("Comic Protected", 3, 3, CardFamily.Human);
             var comicsCard = TestCardFactory.CreateInvocation("Batman", 4, 3, CardFamily.Comics);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, protectedCard);
-            deck.Insert(1, comicsCard);
+            deck.Add(comicsCard);      // Added first, drawn second
+            deck.Add(protectedCard);   // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -229,9 +234,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var starlightUnicorn = CreateCard("Starlight Unicorn", 4, 4, CardFamily.Rpg);
             var protectedCard = CreateCard("Granolax", 2, 2, CardFamily.Rpg);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, starlightUnicorn);
-            deck.Insert(1, protectedCard);
+            deck.Add(protectedCard);      // Added first, drawn second
+            deck.Add(starlightUnicorn);   // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -261,10 +267,11 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var lowDefCard = CreateCard("Low Def Card", 4, 2, CardFamily.Human);
             var highDefCard = CreateCard("High Def Card", 3, 4, CardFamily.Human);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(27);
-            deck.Insert(0, protectorCard);
-            deck.Insert(1, lowDefCard);
-            deck.Insert(2, highDefCard);
+            deck.Add(highDefCard);    // Added first, drawn last
+            deck.Add(lowDefCard);     // Added second, drawn second
+            deck.Add(protectorCard);  // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -295,8 +302,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange - Only protector on field
             var protectorCard = CreateCard("Lonely Protector", 3, 5, CardFamily.Human);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, protectorCard);
+            deck.Add(protectorCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -326,8 +334,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var restrictedCard = CreateCard("Self-Attacking Monster", 4, 4, CardFamily.Monster);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, restrictedCard);
+            deck.Add(restrictedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -353,8 +362,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var restrictedCard = CreateCard("Restricted", 2, 2, CardFamily.Monster);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, restrictedCard);
+            deck.Add(restrictedCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -420,9 +430,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var alphaMan = CreateCard("Alpha Man", 4, 4, CardFamily.Fistiland);
             var otherCard = CreateCard("Some Other Card", 2, 2, CardFamily.Human);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, alphaMan);
-            deck.Insert(1, otherCard);
+            deck.Add(otherCard);   // Added first, drawn second
+            deck.Add(alphaMan);    // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -440,8 +451,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Act
             var result = ability.Execute(context);
 
-            // Assert - Card should be destroyed
-            AssertAbilitySuccess(result, "destroyed");
+            // Assert - Card should be destroyed (ability returns Failure when dependency not met)
+            AssertAbilityFailure(result, "destroyed");
             AssertCardNotOnField(player1, "Alpha Man");
         }
 
@@ -468,8 +479,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Act - Check dependency after removal
             var result = ability.Execute(context);
 
-            // Assert - Alpha Man should be destroyed
-            AssertAbilitySuccess(result, "destroyed");
+            // Assert - Alpha Man should be destroyed (ability returns Failure when dependency not met)
+            AssertAbilityFailure(result, "destroyed");
         }
 
         #endregion
@@ -519,8 +530,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Act
             var result = ability.Execute(context);
 
-            // Assert
-            AssertAbilitySuccess(result, "destroyed");
+            // Assert - ability returns Failure when dependency not met
+            AssertAbilityFailure(result, "destroyed");
         }
 
         #endregion
@@ -534,9 +545,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var dependentCard = CreateCard("JDG Fan", 2, 2, CardFamily.Fistiland);
             var jdg = CreateCard("Joueur du Grenier", 5, 5, CardFamily.Fistiland);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, jdg);
-            deck.Insert(1, dependentCard);
+            deck.Add(dependentCard);  // Added first, drawn second
+            deck.Add(jdg);            // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -566,9 +578,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var dependentCard = CreateCard("JDG Fan", 2, 2, CardFamily.Fistiland);
             var otherCard = CreateCard("Other", 2, 2, CardFamily.Human);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, dependentCard);
-            deck.Insert(1, otherCard);
+            deck.Add(otherCard);       // Added first, drawn second
+            deck.Add(dependentCard);   // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -586,8 +599,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Act
             var result = ability.Execute(context);
 
-            // Assert
-            AssertAbilitySuccess(result, "destroyed");
+            // Assert - ability returns Failure when dependency not met
+            AssertAbilityFailure(result, "destroyed");
             AssertCardNotOnField(player1, "JDG Fan");
         }
 
@@ -606,9 +619,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var dependentCard = CreateCard("Multi-Dependent", 2, 2, CardFamily.Human);
             var validCard = CreateCard("Card B", 3, 3, CardFamily.Human);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, dependentCard);
-            deck.Insert(1, validCard);
+            deck.Add(validCard);       // Added first, drawn second (Card B - satisfies dependency)
+            deck.Add(dependentCard);   // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -635,15 +649,16 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var protectorCard = CreateCard("Protector", 4, 4, CardFamily.Human);
 
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck1 = TestCardFactory.CreateDeck(29);
-            deck1.Insert(0, protectorCard);
+            deck1.Add(protectorCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
             var opponentCard = TestCardFactory.CreateInvocation("Enemy", 3, 3, CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());

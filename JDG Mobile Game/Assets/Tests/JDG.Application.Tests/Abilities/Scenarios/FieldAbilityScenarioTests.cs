@@ -46,13 +46,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Spatial, 0, 1);
 
             var spatialCard = TestCardFactory.CreateInvocation("Space Ship", 3, 3, CardFamily.Spatial);
-            var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, spatialCard);
 
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.First());
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, spatialCard);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -75,16 +71,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var japanCard1 = TestCardFactory.CreateInvocation("Samurai", 2, 2, CardFamily.Japan);
             var japanCard2 = TestCardFactory.CreateInvocation("Ninja", 3, 3, CardFamily.Japan);
 
-            var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, japanCard1);
-            deck.Insert(1, japanCard2);
-
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Samurai"));
-            player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Ninja"));
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, japanCard1, japanCard2);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -105,13 +93,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 1);
 
             var fistilandCard = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
-            var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, fistilandCard);
 
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.First());
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, fistilandCard);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -132,13 +116,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Wizard, 1, 0);
 
             var humanCard = TestCardFactory.CreateInvocation("Regular Human", 2, 2, CardFamily.Human);
-            var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, humanCard);
 
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.First());
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, humanCard);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -159,13 +139,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.HardCorner, 1, 0);
 
             var hardCornerCard = TestCardFactory.CreateInvocation("HC Card", 3, 3, CardFamily.HardCorner);
-            var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, hardCornerCard);
 
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.First());
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, hardCornerCard);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -201,14 +177,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var wizard2 = TestCardFactory.CreateInvocation("Sorcerer", 3, 3, CardFamily.Wizard);
 
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, wizard1);
-            deck.Insert(1, wizard2);
+            deck.Add(wizard1);  // First added, drawn second
+            deck.Add(wizard2);  // Last added, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
             player1.DrawCard();
-            player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Mage"));
             player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Sorcerer"));
+            player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Mage"));
 
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
@@ -231,7 +207,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var humanCard = TestCardFactory.CreateInvocation("Human", 2, 2, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, humanCard);
+            deck.Add(humanCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -274,16 +250,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var card1 = TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human);
             var card2 = TestCardFactory.CreateInvocation("Card 2", 3, 3, CardFamily.Monster);
 
-            var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, card1);
-            deck.Insert(1, card2);
-
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Card 1"));
-            player1.PlayCard(player1.Hand.FirstOrDefault(c => c.Title == "Card 2"));
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, card1, card2);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -329,13 +297,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _fieldFactory.CreateChangeByName("Patron Infogrames", CardFamily.Developer);
 
             var patronCard = TestCardFactory.CreateInvocation("Patron Infogrames", 4, 3, CardFamily.HardCorner);
-            var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, patronCard);
 
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.First());
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, patronCard);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -356,13 +320,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var ability = _fieldFactory.CreateChangeByName("Missing Card", CardFamily.Developer);
 
             var otherCard = TestCardFactory.CreateInvocation("Other Card", 2, 2, CardFamily.Human);
-            var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, otherCard);
 
-            var player1 = new Player(PlayerId.Player1, deck);
-            player1.DrawCard();
-            player1.PlayCard(player1.Hand.First());
-
+            // Use CreatePlayerWithFieldCards helper to properly place cards on field
+            var player1 = CreatePlayerWithFieldCards(PlayerId.Player1, otherCard);
             var player2 = PlayerFactory.CreatePlayer2();
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
@@ -451,7 +411,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var fistilandCard = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(10, fistilandCard); // In middle of deck
+            deck.Insert(10, fistilandCard); // In middle of deck for search
 
             var player1 = new Player(PlayerId.Player1, deck);
 
@@ -500,7 +460,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var fistilandCard = TestCardFactory.CreateInvocation("Fistiland Card", 2, 2, CardFamily.Fistiland);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(5, fistilandCard);
+            deck.Insert(5, fistilandCard); // In middle of deck for search
 
             var player1 = new Player(PlayerId.Player1, deck);
 
@@ -547,7 +507,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Player 1's Fistiland card
             var myCard = TestCardFactory.CreateInvocation("My Fistiland", 3, 3, CardFamily.Fistiland);
             var deck1 = TestCardFactory.CreateDeck(29);
-            deck1.Insert(0, myCard);
+            deck1.Add(myCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
@@ -555,7 +515,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Player 2's Fistiland card
             var opponentCard = TestCardFactory.CreateInvocation("Enemy Fistiland", 3, 3, CardFamily.Fistiland);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -590,8 +550,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var humanCard = TestCardFactory.CreateInvocation("Human Card", 3, 3, CardFamily.Human);
 
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, fistilandCard);
-            deck.Insert(1, humanCard);
+            deck.Add(humanCard);      // First added, drawn second
+            deck.Add(fistilandCard);  // Last added, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();

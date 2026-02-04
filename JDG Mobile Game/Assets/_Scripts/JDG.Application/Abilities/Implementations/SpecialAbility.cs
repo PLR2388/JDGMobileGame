@@ -304,6 +304,12 @@ namespace JDG.Application.Abilities.Implementations
 
         public AbilityResult Execute(AbilityContext context)
         {
+            // Check if conditions are met before requesting user input
+            if (!CanActivate(context))
+            {
+                return AbilityResult.Failure("No valid cards to sacrifice - conditions not met");
+            }
+
             return AbilityResult.NeedsUserInput("Sacrifice card meeting conditions");
         }
     }

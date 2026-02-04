@@ -33,10 +33,14 @@ namespace JDG.Application.Tests.Abilities.Integration
             _playerRepository = Substitute.For<IPlayerRepository>();
             _protectionFactory = new ProtectionAbilityFactory(_playerRepository);
 
-            // Setup players
-            _player1 = CreateTestPlayer(PlayerId.Player1);
-            _player2 = CreateTestPlayer(PlayerId.Player2);
+            // Note: Individual tests set up their own players with specific cards on field
+            // Default empty players for tests that don't need specific setup
+            _player1 = new Player(PlayerId.Player1, TestCardFactory.CreateDeck(30));
+            _player2 = new Player(PlayerId.Player2, TestCardFactory.CreateDeck(30));
+        }
 
+        private void SetupRepositoryMocks()
+        {
             _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
             _playerRepository.GetPlayer(PlayerId.Player2).Returns(_player2);
         }
@@ -51,7 +55,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var alphaMan = TestCardFactory.CreateInvocation("Alpha Man", 4, 4, CardFamily.Fistiland);
             var benzaie = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
 
-            PlaceOnField(_player1, benzaie, alphaMan);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, benzaie, alphaMan);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Benzaie", "Benzaie jeune" });
             var context = CreateContext(_player1, alphaMan, AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
@@ -70,7 +75,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var alphaMan = TestCardFactory.CreateInvocation("Alpha Man", 4, 4, CardFamily.Fistiland);
             var benzaieJeune = TestCardFactory.CreateInvocation("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
-            PlaceOnField(_player1, benzaieJeune, alphaMan);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, benzaieJeune, alphaMan);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Benzaie", "Benzaie jeune" });
             var context = CreateContext(_player1, alphaMan, AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
@@ -89,7 +95,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var alphaMan = TestCardFactory.CreateInvocation("Alpha Man", 4, 4, CardFamily.Fistiland);
             // No Benzaie or Benzaie jeune on field
 
-            PlaceOnField(_player1, alphaMan);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, alphaMan);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Benzaie", "Benzaie jeune" });
             var context = CreateContext(_player1, alphaMan, AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune);
@@ -113,7 +120,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var unicorn = TestCardFactory.CreateInvocation("Starlight Unicorn", 4, 4, CardFamily.Rpg);
             var granolax = TestCardFactory.CreateInvocation("Granolax", 2, 2, CardFamily.Rpg);
 
-            PlaceOnField(_player1, granolax, unicorn);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, granolax, unicorn);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Granolax", "Mecha-Granolax" });
             var context = CreateContext(_player1, unicorn, AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
@@ -132,7 +140,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var unicorn = TestCardFactory.CreateInvocation("Starlight Unicorn", 4, 4, CardFamily.Rpg);
             var mechaGranolax = TestCardFactory.CreateInvocation("Mecha-Granolax", 5, 4, CardFamily.Rpg);
 
-            PlaceOnField(_player1, mechaGranolax, unicorn);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, mechaGranolax, unicorn);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Granolax", "Mecha-Granolax" });
             var context = CreateContext(_player1, unicorn, AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
@@ -151,7 +160,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var unicorn = TestCardFactory.CreateInvocation("Starlight Unicorn", 4, 4, CardFamily.Rpg);
             // No Granolax or Mecha-Granolax
 
-            PlaceOnField(_player1, unicorn);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, unicorn);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Granolax", "Mecha-Granolax" });
             var context = CreateContext(_player1, unicorn, AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
@@ -175,7 +185,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var henry = TestCardFactory.CreateInvocation("Henry Potdebeurre", 3, 3, CardFamily.Developer);
             var jdg = TestCardFactory.CreateInvocation("Joueur Du Grenier", 5, 5, CardFamily.Developer);
 
-            PlaceOnField(_player1, jdg, henry);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, jdg, henry);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Joueur Du Grenier" });
             var context = CreateContext(_player1, henry, AbilityName.CantLiveWithoutJDG);
@@ -194,7 +205,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var henry = TestCardFactory.CreateInvocation("Henry Potdebeurre", 3, 3, CardFamily.Developer);
             // No JDG on field
 
-            PlaceOnField(_player1, henry);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, henry);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Joueur Du Grenier" });
             var context = CreateContext(_player1, henry, AbilityName.CantLiveWithoutJDG);
@@ -218,7 +230,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var dependentCard = TestCardFactory.CreateInvocation("Comics Dependent", 3, 3, CardFamily.Comics);
             var comicsCard = TestCardFactory.CreateInvocation("Comics Hero", 4, 4, CardFamily.Comics);
 
-            PlaceOnField(_player1, comicsCard, dependentCard);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, comicsCard, dependentCard);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateFamilyDependencyAbility(CardFamily.Comics);
             var context = CreateContext(_player1, dependentCard, AbilityName.CantLiveWithoutComics);
@@ -242,7 +255,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var dependentCard = TestCardFactory.CreateInvocation("Human Dependent", 3, 3, CardFamily.Human);
             var humanCard = TestCardFactory.CreateInvocation("Human", 3, 3, CardFamily.Human);
 
-            PlaceOnField(_player1, humanCard, dependentCard);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, humanCard, dependentCard);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateFamilyDependencyAbility(CardFamily.Human);
             var context = CreateContext(_player1, dependentCard, AbilityName.CantLiveWithoutHuman);
@@ -266,7 +280,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var dependentCard = TestCardFactory.CreateInvocation("Japan Dependent", 3, 3, CardFamily.Japan);
             var japanCard = TestCardFactory.CreateInvocation("Sangoku", 4, 4, CardFamily.Japan);
 
-            PlaceOnField(_player1, japanCard, dependentCard);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, japanCard, dependentCard);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateFamilyDependencyAbility(CardFamily.Japan);
             var context = CreateContext(_player1, dependentCard, AbilityName.CantLiveWithoutJapon);
@@ -290,7 +305,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var benzaie = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
             var alphaMan = TestCardFactory.CreateInvocation("Alpha Man", 4, 4, CardFamily.Fistiland);
 
-            PlaceOnField(_player1, benzaie, alphaMan);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, benzaie, alphaMan);
+            SetupRepositoryMocks();
 
             // Simulate Benzaie being removed
             var removedCards = _player1.Field.Where(c => c.Title == "Benzaie").ToList();
@@ -299,7 +315,7 @@ namespace JDG.Application.Tests.Abilities.Integration
             var remainingField = _player1.Field.Where(c => c.Title != "Benzaie").ToList();
             var hasValidDependency = remainingField.Any(c => c.Title == "Benzaie" || c.Title == "Benzaie jeune");
 
-            // Assert - Alpha Man should not have valid dependency
+            // Assert - Alpha Man should not have valid dependency after Benzaie removal
             Assert.IsFalse(hasValidDependency);
         }
 
@@ -344,7 +360,8 @@ namespace JDG.Application.Tests.Abilities.Integration
             var unicorn = TestCardFactory.CreateInvocation("Starlight Unicorn", 4, 4, CardFamily.Rpg);
             // Unicorn has protection equipment but no Granolax
 
-            PlaceOnField(_player1, unicorn);
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, unicorn);
+            SetupRepositoryMocks();
 
             var ability = _protectionFactory.CreateDependencyAbility(new[] { "Granolax", "Mecha-Granolax" });
             var context = CreateContext(_player1, unicorn, AbilityName.CantLiveWithoutGranolaxOrMechaGranolax);
@@ -360,18 +377,27 @@ namespace JDG.Application.Tests.Abilities.Integration
 
         #region Helper Methods
 
-        private Player CreateTestPlayer(PlayerId playerId)
+        /// <summary>
+        /// Creates a test player with specific cards that will be placed on field.
+        /// Cards are added to the deck, then drawn and played properly.
+        /// </summary>
+        private Player CreatePlayerWithFieldCards(PlayerId playerId, params Card[] cardsForField)
         {
-            var deck = TestCardFactory.CreateDeck(30);
-            return new Player(playerId, deck);
-        }
+            // Create deck with our test cards at the END (so they're drawn first with DrawCard taking from end)
+            var deck = new List<Card>(TestCardFactory.CreateDeck(30 - cardsForField.Length));
+            deck.AddRange(cardsForField);
 
-        private void PlaceOnField(Player player, params Card[] cards)
-        {
-            foreach (var card in cards)
+            var player = new Player(playerId, deck);
+
+            // Draw and play each card
+            for (int i = 0; i < cardsForField.Length; i++)
             {
-                player.PlayCard(card);
+                player.DrawCard(); // Draws from end of deck
+                var handCard = player.Hand[^1]; // Get the drawn card
+                player.PlayCard(handCard); // Play to field
             }
+
+            return player;
         }
 
         private AbilityContext CreateContext(Player player, Card sourceCard, AbilityName abilityName)

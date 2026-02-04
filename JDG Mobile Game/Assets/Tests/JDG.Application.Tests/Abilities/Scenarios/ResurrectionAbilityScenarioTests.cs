@@ -55,7 +55,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Jean-Marc Soul: ComesBackFromDeath - Resurrects once after death
             var jeanMarcSoul = TestCardFactory.CreateInvocation("Jean-Marc Soul", 1, 1, CardFamily.Fistiland);
 
-            PlaceOnField(_player1, jeanMarcSoul);
+            // Card must be in graveyard for resurrection to work
+            _player1 = CreatePlayerWithCardInGraveyard(PlayerId.Player1, jeanMarcSoul);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _combatFactory.CreateResurrection(AbilityName.ComesBackFromDeath);
             var context = CreateContext(_player1, jeanMarcSoul, AbilityName.ComesBackFromDeath);
@@ -96,6 +98,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Arrange
             var jeanMarcSoul = TestCardFactory.CreateInvocation("Jean-Marc Soul", 1, 1, CardFamily.Fistiland);
 
+            // Card must be in graveyard for resurrection to work
+            _player1 = CreatePlayerWithCardInGraveyard(PlayerId.Player1, jeanMarcSoul);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
+
             var ability = _combatFactory.CreateResurrection(AbilityName.ComesBackFromDeath);
             var context = CreateContext(_player1, jeanMarcSoul, AbilityName.ComesBackFromDeath);
 
@@ -116,7 +122,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Studio de scenaristes Canadien: ComesBackFromDeath5Times
             var studio = TestCardFactory.CreateInvocation("Studio de scenaristes Canadien", 1, 1, CardFamily.Comics);
 
-            PlaceOnField(_player1, studio);
+            // Card must be in graveyard for resurrection to work
+            _player1 = CreatePlayerWithCardInGraveyard(PlayerId.Player1, studio);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _combatFactory.CreateResurrection(AbilityName.ComesBackFromDeath5Times, 5);
             var context = CreateContext(_player1, studio, AbilityName.ComesBackFromDeath5Times);
@@ -153,6 +161,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange
             var studio = TestCardFactory.CreateInvocation("Studio de scenaristes Canadien", 1, 1, CardFamily.Comics);
+
+            // Card must be in graveyard for resurrection to work
+            _player1 = CreatePlayerWithCardInGraveyard(PlayerId.Player1, studio);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _combatFactory.CreateResurrection(AbilityName.ComesBackFromDeath5Times, 5);
             var context = CreateContext(_player1, studio, AbilityName.ComesBackFromDeath5Times);
@@ -236,7 +248,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var nounours = TestCardFactory.CreateInvocation("Nounours", 1, 1, CardFamily.Fistiland);
             var benzaieJeune = TestCardFactory.CreateInvocation("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
-            PlaceOnField(_player1, nounours, benzaieJeune);
+            // Cards must be properly placed on field using deck -> draw -> play
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, nounours, benzaieJeune);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _statModifierFactory.CreateCopyStats(AbilityName.CopyBenzaieJeune, "Benzaie jeune");
             var context = CreateContext(_player1, nounours, AbilityName.CopyBenzaieJeune);
@@ -298,11 +312,48 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             return new Player(playerId, deck);
         }
 
+        /// <summary>
+        /// Creates a player with specified cards on field.
+        /// Cards are added to deck, drawn, and played in proper order.
+        /// </summary>
+        private Player CreatePlayerWithFieldCards(PlayerId playerId, params Card[] cardsForField)
+        {
+            var baseDeckSize = 30 - cardsForField.Length;
+            var deck = new List<Card>(TestCardFactory.CreateDeck(baseDeckSize > 0 ? baseDeckSize : 0));
+            deck.AddRange(cardsForField); // Add to end so they're drawn first
+
+            var player = new Player(playerId, deck);
+
+            for (int i = 0; i < cardsForField.Length; i++)
+            {
+                player.DrawCard();
+                var handCard = player.Hand[^1];
+                player.PlayCard(handCard);
+            }
+
+            return player;
+        }
+
+        /// <summary>
+        /// Creates a player with a card on field, then moves it to graveyard (for resurrection tests).
+        /// </summary>
+        private Player CreatePlayerWithCardInGraveyard(PlayerId playerId, Card cardToResurrect)
+        {
+            var player = CreatePlayerWithFieldCards(playerId, cardToResurrect);
+            player.DestroyCardFromField(cardToResurrect);
+            return player;
+        }
+
         private void PlaceOnField(Player player, params Card[] cards)
         {
+            // NOTE: This method is deprecated and silently fails if cards are not in hand
+            // Use CreatePlayerWithFieldCards instead
             foreach (var card in cards)
             {
-                player.PlayCard(card);
+                if (player.Hand.Contains(card))
+                {
+                    player.PlayCard(card);
+                }
             }
         }
 

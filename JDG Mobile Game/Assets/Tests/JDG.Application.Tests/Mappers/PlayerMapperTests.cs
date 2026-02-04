@@ -41,7 +41,9 @@ namespace JDG.Application.Tests.Mappers
             Assert.AreEqual(0, dto.FieldCount);
             Assert.AreEqual(0, dto.GraveyardCount);
             Assert.AreEqual(false, dto.IsDefeated);
-            Assert.AreEqual(CardOwner.Player1, dto.Owner);
+            // Compare by int value to avoid enum type mismatch issues between assemblies
+            Assert.AreEqual((int)JDG.Domain.CardOwner.Player1, (int)dto.Owner,
+                $"Expected Owner to be Player1. Got: {dto.Owner} (type: {dto.Owner.GetType().FullName})");
         }
 
         [Test]
@@ -68,7 +70,9 @@ namespace JDG.Application.Tests.Mappers
             Assert.IsTrue(dto.IsDefeated);
             Assert.AreEqual(0, dto.Health);
             Assert.AreEqual(2, dto.PlayerId);
-            Assert.AreEqual(CardOwner.Player2, dto.Owner);
+            // Compare by int value to avoid enum type mismatch issues between assemblies
+            Assert.AreEqual((int)JDG.Domain.CardOwner.Player2, (int)dto.Owner,
+                $"Expected Owner to be Player2. Got: {dto.Owner} (type: {dto.Owner.GetType().FullName})");
         }
     }
 }

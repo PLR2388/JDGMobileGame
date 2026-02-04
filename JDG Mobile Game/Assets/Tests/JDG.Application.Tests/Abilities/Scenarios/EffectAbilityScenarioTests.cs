@@ -55,7 +55,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var card1 = TestCardFactory.CreateInvocation("Card 1", 5, 2, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, card1);
+            deck.Add(card1);  // Add to end, DrawCard takes from end
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -84,7 +84,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var opponentCard = TestCardFactory.CreateInvocation("Enemy Card", 6, 2, CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -135,7 +135,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var opponentCard = TestCardFactory.CreateInvocation("Tank", 2, 6, CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -162,7 +162,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var opponentCard = TestCardFactory.CreateInvocation("Card", 2, 4, CardFamily.Human);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -205,14 +205,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var myCard = TestCardFactory.CreateInvocation("My Card", 2, 2, CardFamily.Human);
             var deck1 = TestCardFactory.CreateDeck(29);
-            deck1.Insert(0, myCard);
+            deck1.Add(myCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
             var opponentCard = TestCardFactory.CreateInvocation("Target", 3, 3, CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -237,16 +237,16 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             // Player 1 has 3 cards (room for 1 more)
             var deck1 = TestCardFactory.CreateDeck(27);
-            deck1.Insert(0, TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human));
-            deck1.Insert(1, TestCardFactory.CreateInvocation("Card 2", 2, 2, CardFamily.Human));
-            deck1.Insert(2, TestCardFactory.CreateInvocation("Card 3", 2, 2, CardFamily.Human));
+            deck1.Add(TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human));
+            deck1.Add(TestCardFactory.CreateInvocation("Card 2", 2, 2, CardFamily.Human));
+            deck1.Add(TestCardFactory.CreateInvocation("Card 3", 2, 2, CardFamily.Human));
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard(); player1.DrawCard(); player1.DrawCard();
             foreach (var c in player1.Hand.ToList()) player1.PlayCard(c);
 
             var opponentCard = TestCardFactory.CreateInvocation("Target", 3, 3, CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -455,9 +455,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             // Player 1 has 3 invocations
             var deck1 = TestCardFactory.CreateDeck(27);
-            deck1.Insert(0, TestCardFactory.CreateInvocation("C1", 2, 2, CardFamily.Human));
-            deck1.Insert(1, TestCardFactory.CreateInvocation("C2", 2, 2, CardFamily.Human));
-            deck1.Insert(2, TestCardFactory.CreateInvocation("C3", 2, 2, CardFamily.Human));
+            deck1.Add(TestCardFactory.CreateInvocation("C1", 2, 2, CardFamily.Human));
+            deck1.Add(TestCardFactory.CreateInvocation("C2", 2, 2, CardFamily.Human));
+            deck1.Add(TestCardFactory.CreateInvocation("C3", 2, 2, CardFamily.Human));
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard(); player1.DrawCard(); player1.DrawCard();
             foreach (var c in player1.Hand.ToList()) player1.PlayCard(c);
@@ -519,7 +519,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var opponentCard = TestCardFactory.CreateInvocation("Attacker", 4, 3, CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -565,9 +565,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var card1 = TestCardFactory.CreateInvocation("Fighter 1", 3, 3, CardFamily.Human);
             var card2 = TestCardFactory.CreateInvocation("Fighter 2", 4, 2, CardFamily.Human);
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(28);
-            deck.Insert(0, card1);
-            deck.Insert(1, card2);
+            deck.Add(card1);  // First added, drawn second
+            deck.Add(card2);  // Last added, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -596,7 +597,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var card = TestCardFactory.CreateInvocation("Fighter", 3, 3, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, card);
+            deck.Add(card);  // Add to end, DrawCard takes from end
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -667,7 +668,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var fieldCard = TestCardFactory.CreateField("Le Hard Corner", CardFamily.HardCorner);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, fieldCard);
+            deck2.Add(fieldCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -695,7 +696,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var fieldCard = TestCardFactory.CreateField("Field", CardFamily.Human);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, fieldCard);
+            deck2.Add(fieldCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -739,7 +740,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var card = TestCardFactory.CreateInvocation("Attacker", 4, 3, CardFamily.Monster);
             var deck1 = TestCardFactory.CreateDeck(29);
-            deck1.Insert(0, card);
+            deck1.Add(card);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
@@ -903,14 +904,14 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var myCard = TestCardFactory.CreateInvocation("My Card", 5, 2, CardFamily.Human);
             var deck1 = TestCardFactory.CreateDeck(29);
-            deck1.Insert(0, myCard);
+            deck1.Add(myCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
 
             var opponentCard = TestCardFactory.CreateInvocation("Enemy", 3, 4, CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -948,9 +949,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var player1 = PlayerFactory.CreatePlayer1();
 
             var deck2 = TestCardFactory.CreateDeck(27);
-            deck2.Insert(0, TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human));
-            deck2.Insert(1, TestCardFactory.CreateInvocation("Card 2", 3, 3, CardFamily.Developer));
-            deck2.Insert(2, TestCardFactory.CreateInvocation("Card 3", 2, 2, CardFamily.Comics));
+            deck2.Add(TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human));
+            deck2.Add(TestCardFactory.CreateInvocation("Card 2", 3, 3, CardFamily.Developer));
+            deck2.Add(TestCardFactory.CreateInvocation("Card 3", 2, 2, CardFamily.Comics));
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard(); player2.DrawCard(); player2.DrawCard();
             foreach (var c in player2.Hand.ToList()) player2.PlayCard(c);
@@ -1014,7 +1015,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Fatalite: Sacrifice invocation with 3+ ATK and 3+ DEF to gain HP
             var sacrificeCard = TestCardFactory.CreateInvocation("Sacrifice", 4, 4, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, sacrificeCard);
+            deck.Add(sacrificeCard);  // Add to end, DrawCard takes from end
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
@@ -1064,7 +1065,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Feuille: Discard a card to destroy field and search for new one
             var fieldCard = TestCardFactory.CreateField("New Field", CardFamily.Rpg);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, fieldCard);
+            deck.Add(fieldCard);  // Add to end, DrawCard takes from end
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard(); // Get some cards in hand
 
@@ -1092,7 +1093,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var opponentCard = TestCardFactory.CreateInvocation("Target", 3, 3, CardFamily.Human);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);  // Add to end, DrawCard takes from end
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -1120,7 +1121,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var fieldCard = TestCardFactory.CreateField("Enemy Field", CardFamily.Monster);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, fieldCard);
+            deck2.Add(fieldCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -1148,7 +1149,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Le mot de passe: Sacrifice invocation to gain 7.5 HP
             var sacrificeCard = TestCardFactory.CreateInvocation("Sacrifice", 2, 2, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, sacrificeCard);
+            deck.Add(sacrificeCard);  // Add to end, DrawCard takes from end
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
@@ -1246,9 +1247,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         {
             // Arrange
             // Pains aux raisins: Player loses HP per invocation on field
+            // Cards must be added to END of deck because DrawCard takes from end
             var deck = TestCardFactory.CreateDeck(27);
-            deck.Insert(0, TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human));
-            deck.Insert(1, TestCardFactory.CreateInvocation("Card 2", 3, 3, CardFamily.Developer));
+            deck.Add(TestCardFactory.CreateInvocation("Card 1", 2, 2, CardFamily.Human));
+            deck.Add(TestCardFactory.CreateInvocation("Card 2", 3, 3, CardFamily.Developer));
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard(); player1.DrawCard();
             foreach (var c in player1.Hand.ToList()) player1.PlayCard(c);
@@ -1386,7 +1388,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Youtube Money: Sacrifice invocation with 5+ ATK/DEF to restore all HP
             var sacrificeCard = TestCardFactory.CreateInvocation("5/5 Card", 5, 5, CardFamily.Developer);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, sacrificeCard);
+            deck.Add(sacrificeCard);  // Add to end, DrawCard takes from end
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());

@@ -51,29 +51,27 @@ namespace JDG.Presentation.Tests.Presenters
         }
 
         [Test]
-        public void Constructor_WithNullCanvas_DoesNotThrow()
+        public void Constructor_WithNullCanvas_ThrowsArgumentNullException()
         {
-            // Arrange & Act
-            var presenter = new DialogPresenter(null, _localizationService, _dialogService);
-
-            // Assert
-            Assert.IsNotNull(presenter);
+            // Arrange & Act & Assert
+            Assert.Throws<ArgumentNullException>(() =>
+                new DialogPresenter(null, _localizationService, _dialogService));
         }
 
         [Test]
-        public void Constructor_WithNullLocalizationService_DoesNotThrow()
+        public void Constructor_WithNullLocalizationService_ThrowsArgumentNullException()
         {
             // Arrange & Act & Assert
-            var presenter = new DialogPresenter(_canvas, null, _dialogService);
-            Assert.IsNotNull(presenter);
+            Assert.Throws<ArgumentNullException>(() =>
+                new DialogPresenter(_canvas, null, _dialogService));
         }
 
         [Test]
-        public void Constructor_WithNullDialogService_DoesNotThrow()
+        public void Constructor_WithNullDialogService_ThrowsArgumentNullException()
         {
             // Arrange & Act & Assert
-            var presenter = new DialogPresenter(_canvas, _localizationService, null);
-            Assert.IsNotNull(presenter);
+            Assert.Throws<ArgumentNullException>(() =>
+                new DialogPresenter(_canvas, _localizationService, null));
         }
 
         #endregion

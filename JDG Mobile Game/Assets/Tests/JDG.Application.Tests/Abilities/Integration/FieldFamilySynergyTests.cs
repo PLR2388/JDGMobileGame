@@ -52,7 +52,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var benzaie = TestCardFactory.CreateInvocation("Benzaie", 5, 4, CardFamily.Fistiland);
             var benzaieJeune = TestCardFactory.CreateInvocation("Benzaie jeune", 2, 2, CardFamily.Fistiland);
 
-            PlaceOnField(_player1, benzaie, benzaieJeune);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, benzaie, benzaieJeune);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -71,7 +73,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var fieldCard = TestCardFactory.CreateField("Le Hard Corner", CardFamily.Fistiland);
             var japanCard = TestCardFactory.CreateInvocation("Japan Card", 3, 3, CardFamily.Japan);
 
-            PlaceOnField(_player1, japanCard);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, japanCard);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -96,7 +100,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var devCard1 = TestCardFactory.CreateInvocation("Dev 1", 3, 3, CardFamily.Developer);
             var devCard2 = TestCardFactory.CreateInvocation("Dev 2", 4, 4, CardFamily.Developer);
 
-            PlaceOnField(_player1, devCard1, devCard2);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, devCard1, devCard2);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Developer, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -120,7 +126,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var fieldCard = TestCardFactory.CreateField("Tokyo-3", CardFamily.Japan);
             var japanCard = TestCardFactory.CreateInvocation("Sangoku", 4, 4, CardFamily.Japan);
 
-            PlaceOnField(_player1, japanCard);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, japanCard);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Japan, 1, 0);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -144,7 +152,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var fieldCard = TestCardFactory.CreateField("Centre Spatial de Kourou", CardFamily.Spatial);
             var spatialCard = TestCardFactory.CreateInvocation("Space Card", 3, 3, CardFamily.Spatial);
 
-            PlaceOnField(_player1, spatialCard);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, spatialCard);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Spatial, 0, 1);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -168,7 +178,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var fieldCard = TestCardFactory.CreateField("Lycee magique Georges Pompidou", CardFamily.Wizard);
             var wizardCard = TestCardFactory.CreateInvocation("Wizard", 3, 3, CardFamily.Wizard);
 
-            PlaceOnField(_player1, wizardCard);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, wizardCard);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             // The field should enable summon condition for specific cards
             Assert.IsNotNull(fieldCard);
@@ -237,7 +249,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var wizard1 = TestCardFactory.CreateInvocation("Wizard 1", 2, 2, CardFamily.Wizard);
             var wizard2 = TestCardFactory.CreateInvocation("Wizard 2", 3, 3, CardFamily.Wizard);
 
-            PlaceOnField(_player1, wizard1, wizard2);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, wizard1, wizard2);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateHealPerFamily(CardFamily.Wizard, 1); // 1 HP per Wizard
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -261,7 +275,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var fieldCard = TestCardFactory.CreateField("Change Family Field", CardFamily.Developer);
             var genericCard = TestCardFactory.CreateInvocation("Generic", 3, 3, CardFamily.Human);
 
-            PlaceOnField(_player1, genericCard);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, genericCard);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateChangeFamily(CardFamily.Developer);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -283,6 +299,13 @@ namespace JDG.Application.Tests.Abilities.Integration
             // Arrange
             // Skip normal draw to search for a specific family card
             var fieldCard = TestCardFactory.CreateField("Search Field", CardFamily.Fistiland);
+            var fistilandCard = TestCardFactory.CreateInvocation("Fistiland Card", 3, 3, CardFamily.Fistiland);
+
+            // Create player with a Fistiland card in deck to be found
+            var deck = new List<Card>(TestCardFactory.CreateDeck(29));
+            deck.Add(fistilandCard);
+            _player1 = new Player(PlayerId.Player1, deck);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateSkipDrawForFamily(CardFamily.Fistiland);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -290,8 +313,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             // Act
             var result = ability.Execute(context);
 
-            // Assert - Should allow search
-            Assert.IsTrue(result.IsSuccess || result.RequiresUserInput);
+            // Assert - Should allow search or require user input for selection
+            Assert.IsTrue(result.IsSuccess || result.RequiresUserInput,
+                $"Expected Success or RequiresUserInput but got: {result.Message}");
         }
 
         #endregion
@@ -308,7 +332,9 @@ namespace JDG.Application.Tests.Abilities.Integration
             var card3 = TestCardFactory.CreateInvocation("Card 3", 4, 4, CardFamily.Fistiland);
             var nonFamilyCard = TestCardFactory.CreateInvocation("Other", 3, 3, CardFamily.Japan);
 
-            PlaceOnField(_player1, card1, card2, card3, nonFamilyCard);
+            // Create player with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, card1, card2, card3, nonFamilyCard);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _fieldFactory.CreateFamilyBoost(CardFamily.Fistiland, 1, 1);
             var context = CreateContext(_player1, fieldCard, AbilityName.Default);
@@ -345,11 +371,40 @@ namespace JDG.Application.Tests.Abilities.Integration
             return new Player(playerId, deck);
         }
 
+        /// <summary>
+        /// Creates a player with specific cards that will be placed on field.
+        /// Cards are added to the deck, drawn to hand, and played to field.
+        /// </summary>
+        private Player CreatePlayerWithFieldCards(PlayerId playerId, params Card[] cardsForField)
+        {
+            // Create deck with test cards at the END (DrawCard takes from end)
+            var baseDeckSize = 30 - cardsForField.Length;
+            var deck = new List<Card>(TestCardFactory.CreateDeck(baseDeckSize > 0 ? baseDeckSize : 0));
+            deck.AddRange(cardsForField);
+
+            var player = new Player(playerId, deck);
+
+            // Draw and play each card
+            for (int i = 0; i < cardsForField.Length; i++)
+            {
+                player.DrawCard(); // Draws from end of deck (our test cards)
+                var handCard = player.Hand[player.Hand.Count - 1]; // Get the drawn card
+                player.PlayCard(handCard); // Play to field
+            }
+
+            return player;
+        }
+
         private void PlaceOnField(Player player, params Card[] cards)
         {
+            // DEPRECATED: This helper doesn't work correctly.
+            // Use CreatePlayerWithFieldCards instead for proper card placement.
             foreach (var card in cards)
             {
-                player.PlayCard(card);
+                if (player.Hand.Contains(card))
+                {
+                    player.PlayCard(card);
+                }
             }
         }
 

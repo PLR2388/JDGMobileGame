@@ -193,10 +193,10 @@ namespace JDG.Application.Abilities.Implementations
 
             if (!hasDependency)
             {
-                // Card must be destroyed
+                // Card must be destroyed - dependency check FAILED
                 player.DestroyCardFromField(context.SourceCard);
                 _playerRepository.SavePlayer(player);
-                return AbilityResult.Success("Card destroyed due to missing dependency");
+                return AbilityResult.Failure("Card destroyed due to missing dependency");
             }
 
             return AbilityResult.Success("Dependency satisfied");

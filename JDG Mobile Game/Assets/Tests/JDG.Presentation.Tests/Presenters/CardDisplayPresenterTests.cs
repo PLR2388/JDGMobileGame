@@ -232,27 +232,34 @@ namespace JDG.Presentation.Tests.Presenters
     /// <summary>
     /// Test double for the BigImageCard GameObject.
     /// Simulates a Unity GameObject with an Image component.
+    /// Note: In EditMode tests, OnEnable/OnDisable callbacks don't fire reliably,
+    /// so we poll the GameObject's activeSelf property directly.
+    /// Note: UI.Image component requires a Canvas parent to initialize correctly.
     /// </summary>
     internal class TestBigImageCard : System.IDisposable
     {
         public GameObject GameObject { get; private set; }
-        public bool IsActive { get; private set; }
+        /// <summary>
+        /// Returns the GameObject's actual active state.
+        /// Direct polling works reliably in both EditMode and PlayMode tests.
+        /// </summary>
+        public bool IsActive => GameObject != null && GameObject.activeSelf;
         public Material ImageMaterial => _image?.material;
         private UnityEngine.UI.Image _image;
+        private GameObject _canvasObject;
 
         public TestBigImageCard()
         {
-            GameObject = new GameObject("TestBigImageCard");
-            _image = GameObject.AddComponent<UnityEngine.UI.Image>();
-            IsActive = false;
-            GameObject.SetActive(false);
+            // UI.Image requires a Canvas in the hierarchy to function correctly
+            _canvasObject = new GameObject("TestCanvas");
+            var canvas = _canvasObject.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
-            // Track SetActive calls
-            var tracker = GameObject.AddComponent<GameObjectActiveTracker>();
-            tracker.OnActiveChanged += (active) =>
-            {
-                IsActive = active;
-            };
+            // Create the image card as child of canvas
+            GameObject = new GameObject("TestBigImageCard");
+            GameObject.transform.SetParent(_canvasObject.transform);
+            _image = GameObject.AddComponent<UnityEngine.UI.Image>();
+            GameObject.SetActive(false);
         }
 
         public void Dispose()
@@ -261,24 +268,10 @@ namespace JDG.Presentation.Tests.Presenters
             {
                 Object.DestroyImmediate(GameObject);
             }
-        }
-    }
-
-    /// <summary>
-    /// Helper MonoBehaviour to track GameObject active state changes.
-    /// </summary>
-    internal class GameObjectActiveTracker : MonoBehaviour
-    {
-        public event System.Action<bool> OnActiveChanged;
-
-        private void OnEnable()
-        {
-            OnActiveChanged?.Invoke(true);
-        }
-
-        private void OnDisable()
-        {
-            OnActiveChanged?.Invoke(false);
+            if (_canvasObject != null)
+            {
+                Object.DestroyImmediate(_canvasObject);
+            }
         }
     }
 

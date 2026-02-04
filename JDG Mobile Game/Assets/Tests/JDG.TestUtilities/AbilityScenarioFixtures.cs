@@ -97,11 +97,13 @@ namespace JDG.TestUtilities
             var protectedCard = CardFactory.CreateInvocation(protectedName, 2, 2, family);
             var protectorCard = CardFactory.CreateInvocation(protectorName, 3, 3, family);
 
-            var attackerDeck = new List<Card> { attackingCard };
-            attackerDeck.AddRange(CardFactory.CreateDeck(29));
+            // Cards must be added to END of deck because DrawCard takes from end
+            var attackerDeck = CardFactory.CreateDeck(29);
+            attackerDeck.Add(attackingCard);
 
-            var defenderDeck = new List<Card> { protectedCard, protectorCard };
-            defenderDeck.AddRange(CardFactory.CreateDeck(28));
+            var defenderDeck = CardFactory.CreateDeck(28);
+            defenderDeck.Add(protectorCard);  // Add protector first (drawn second)
+            defenderDeck.Add(protectedCard);  // Add protected last (drawn first)
 
             var attacker = new Player(PlayerId.Player1, attackerDeck);
             var defender = new Player(PlayerId.Player2, defenderDeck);
@@ -149,8 +151,10 @@ namespace JDG.TestUtilities
             var dependentCard = CardFactory.CreateInvocation(dependentName, dependentAtk, dependentDef, family);
             var requiredCard = CardFactory.CreateInvocation(requiredName, requiredAtk, requiredDef, family);
 
-            var deck1 = new List<Card> { dependentCard, requiredCard };
-            deck1.AddRange(CardFactory.CreateDeck(28));
+            // Cards must be added to END of deck because DrawCard takes from end
+            var deck1 = CardFactory.CreateDeck(28);
+            deck1.Add(requiredCard);    // Added first to deck end, drawn second
+            deck1.Add(dependentCard);   // Added last to deck end, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck1);
             var player2 = PlayerFactory.CreatePlayer2();
@@ -212,11 +216,12 @@ namespace JDG.TestUtilities
             var searcher = CardFactory.CreateInvocation(searcherName, 2, 2, family);
             var targetInDeck = CardFactory.CreateInvocation(targetName, 2, 2, family);
 
-            var deck1 = new List<Card> { searcher };
-            // Add target somewhere in the middle of deck
-            var restOfDeck = CardFactory.CreateDeck(28);
-            restOfDeck.Insert(10, targetInDeck);
-            deck1.AddRange(restOfDeck);
+            // Cards must be added to END of deck because DrawCard takes from end
+            // Searcher goes at end to be drawn first
+            // Target goes in middle of deck to be searched
+            var deck1 = CardFactory.CreateDeck(28);
+            deck1.Insert(10, targetInDeck);  // Insert target in middle of deck
+            deck1.Add(searcher);             // Add searcher at end to be drawn
 
             var player1 = new Player(PlayerId.Player1, deck1);
             var player2 = PlayerFactory.CreatePlayer2();
@@ -262,8 +267,10 @@ namespace JDG.TestUtilities
                 false
             );
 
-            var deck1 = new List<Card> { invocation, equipment };
-            deck1.AddRange(CardFactory.CreateDeck(28));
+            // Cards must be added to END of deck because DrawCard takes from end
+            var deck1 = CardFactory.CreateDeck(28);
+            deck1.Add(equipment);   // Added first, drawn second
+            deck1.Add(invocation);  // Added last, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck1);
             var player2 = PlayerFactory.CreatePlayer2();
@@ -303,14 +310,15 @@ namespace JDG.TestUtilities
             var fieldCard = CardFactory.CreateField(fieldName, boostedFamily);
             var affectedCards = new List<Card>();
 
-            var deck1 = new List<Card> { fieldCard };
+            // Cards must be added to END of deck because DrawCard takes from end
+            var deck1 = CardFactory.CreateDeck(30 - numberOfAffectedCards - 1);
             for (int i = 0; i < numberOfAffectedCards; i++)
             {
                 var card = CardFactory.CreateInvocation($"Affected Card {i + 1}", 2, 2, boostedFamily);
                 affectedCards.Add(card);
-                deck1.Add(card);
+                deck1.Add(card);  // Add affected cards before field card
             }
-            deck1.AddRange(CardFactory.CreateDeck(30 - deck1.Count));
+            deck1.Add(fieldCard);  // Field card at end, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck1);
             var player2 = PlayerFactory.CreatePlayer2();
@@ -354,11 +362,13 @@ namespace JDG.TestUtilities
         {
             var drawSource = CardFactory.CreateInvocation(sourceName, 2, 2);
 
-            var deck1 = new List<Card> { drawSource };
+            // Cards must be added to END of deck because DrawCard takes from end
+            var deck1 = new List<Card>();
             for (int i = 1; i < deckSize; i++)
             {
                 deck1.Add(CardFactory.CreateInvocation($"Deck Card {i}", 2, 2));
             }
+            deck1.Add(drawSource);  // Source at end, drawn first
 
             var player1 = new Player(PlayerId.Player1, deck1);
             var player2 = PlayerFactory.CreatePlayer2();
@@ -405,16 +415,18 @@ namespace JDG.TestUtilities
         {
             var resurrectionCard = CardFactory.CreateInvocation(cardName, atk, def, family);
 
-            var deck1 = new List<Card> { resurrectionCard };
-            deck1.AddRange(CardFactory.CreateDeck(29));
+            // Cards must be added to END of deck because DrawCard takes from end
+            var deck1 = CardFactory.CreateDeck(29);
+            deck1.Add(resurrectionCard);
 
             var player1 = new Player(PlayerId.Player1, deck1);
             var player2 = PlayerFactory.CreatePlayer2();
 
-            // Draw, play, then simulate death (remove from field)
+            // Draw, play, then simulate death (move card to graveyard)
             player1.DrawCard();
             player1.PlayCard(player1.Hand[0]);
-            // Note: Actual death handling would be done by the test
+            // Destroy card to move it to graveyard - resurrection requires card in graveyard
+            player1.DestroyCardFromField(resurrectionCard);
 
             return (player1, player2, resurrectionCard);
         }

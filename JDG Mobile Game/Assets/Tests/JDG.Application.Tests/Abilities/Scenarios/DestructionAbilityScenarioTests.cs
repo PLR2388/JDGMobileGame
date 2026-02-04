@@ -60,7 +60,13 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 "Koaloutre-Ornithambas Lapinzord nain de Californie", 4, 4, CardFamily.Incarnation);
             var opponentField = TestCardFactory.CreateField("Opponent Field", CardFamily.Human);
 
-            PlaceOnField(_player1, koaloutre);
+            // Create player 1 with koaloutre on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, koaloutre);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
+
+            // Create player 2 with a field card
+            _player2 = CreatePlayerWithFieldCards(PlayerId.Player2, opponentField);
+            _playerRepository.GetPlayer(PlayerId.Player2).Returns(_player2);
 
             var ability = _effectFactory.CreateDestroyFieldCard(0); // hpCost = 0 for test
             var context = CreateContext(_player1, koaloutre, AbilityName.DestroyFieldATK);
@@ -113,7 +119,13 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var lolhitler = TestCardFactory.CreateInvocation("Lolhitler", 4, 4, CardFamily.Incarnation);
             var opponentField = TestCardFactory.CreateField("Opponent Field", CardFamily.Developer);
 
-            PlaceOnField(_player1, lolhitler);
+            // Create player 1 with lolhitler on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, lolhitler);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
+
+            // Create player 2 with a field card
+            _player2 = CreatePlayerWithFieldCards(PlayerId.Player2, opponentField);
+            _playerRepository.GetPlayer(PlayerId.Player2).Returns(_player2);
 
             var ability = _effectFactory.CreateDestroyFieldCard(0); // hpCost = 0 for test
             var context = CreateContext(_player1, lolhitler, AbilityName.DestroyFieldDEF);
@@ -165,8 +177,11 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var alphaMan = TestCardFactory.CreateInvocation("Alpha Man", 4, 4, CardFamily.Fistiland);
             var otherCard = TestCardFactory.CreateInvocation("Other Card", 3, 3, CardFamily.Human);
 
-            PlaceOnField(_player1, alphaMan);
-            PlaceOnField(_player2, otherCard);
+            // Create players with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, alphaMan);
+            _player2 = CreatePlayerWithFieldCards(PlayerId.Player2, otherCard);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
+            _playerRepository.GetPlayer(PlayerId.Player2).Returns(_player2);
 
             var ability = _protectionFactory.CreateCanOnlyAttackItself();
             var context = CreateContext(_player1, alphaMan, AbilityName.CanOnlyAttackItself);
@@ -186,8 +201,11 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var laPetiteFille = TestCardFactory.CreateInvocation("La Petite Fille", 4, 4, CardFamily.Human);
             var opponent = TestCardFactory.CreateInvocation("Opponent", 3, 3, CardFamily.Developer);
 
-            PlaceOnField(_player1, laPetiteFille);
-            PlaceOnField(_player2, opponent);
+            // Create players with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, laPetiteFille);
+            _player2 = CreatePlayerWithFieldCards(PlayerId.Player2, opponent);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
+            _playerRepository.GetPlayer(PlayerId.Player2).Returns(_player2);
 
             var ability = _protectionFactory.CreateCanOnlyAttackItself();
             var context = CreateContext(_player1, laPetiteFille, AbilityName.CanOnlyAttackItself);
@@ -206,7 +224,9 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Tentacules also has CanOnlyAttackItself
             var tentacules = TestCardFactory.CreateInvocation("Tentacules", 2, 4, CardFamily.Incarnation);
 
-            PlaceOnField(_player1, tentacules);
+            // Create player with card on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, tentacules);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
 
             var ability = _protectionFactory.CreateCanOnlyAttackItself();
             var context = CreateContext(_player1, tentacules, AbilityName.CanOnlyAttackItself);
@@ -243,8 +263,11 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var laMort = TestCardFactory.CreateInvocation("La Mort", 2, 4, CardFamily.Human);
             var target = TestCardFactory.CreateInvocation("Target", 5, 5, CardFamily.Developer);
 
-            PlaceOnField(_player1, laMort);
-            PlaceOnField(_player2, target);
+            // Create players with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, laMort);
+            _player2 = CreatePlayerWithFieldCards(PlayerId.Player2, target);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
+            _playerRepository.GetPlayer(PlayerId.Player2).Returns(_player2);
 
             var ability = _combatFactory.CreateMutualDestruction(AbilityName.KillOpponentInvocation);
             var context = CreateContext(_player1, laMort, AbilityName.KillOpponentInvocation);
@@ -282,8 +305,11 @@ namespace JDG.Application.Tests.Abilities.Scenarios
                 "Sandrine le porte-manteau extraterrestre", 1, 1, CardFamily.Rpg);
             var attacker = TestCardFactory.CreateInvocation("Attacker", 5, 5, CardFamily.Human);
 
-            PlaceOnField(_player1, sandrine);
-            PlaceOnField(_player2, attacker);
+            // Create players with cards on field
+            _player1 = CreatePlayerWithFieldCards(PlayerId.Player1, sandrine);
+            _player2 = CreatePlayerWithFieldCards(PlayerId.Player2, attacker);
+            _playerRepository.GetPlayer(PlayerId.Player1).Returns(_player1);
+            _playerRepository.GetPlayer(PlayerId.Player2).Returns(_player2);
 
             var ability = _combatFactory.CreateMutualDestruction(AbilityName.KillEnemyIfDestroy);
             var context = CreateContext(_player1, sandrine, AbilityName.KillEnemyIfDestroy);
@@ -319,11 +345,40 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             return new Player(playerId, deck);
         }
 
+        /// <summary>
+        /// Creates a player with specific cards already on their field.
+        /// Cards are added to the deck end, drawn, and played to field.
+        /// </summary>
+        private Player CreatePlayerWithFieldCards(PlayerId playerId, params Card[] cardsForField)
+        {
+            // Create deck with test cards at the END (DrawCard takes from end)
+            var baseDeckSize = 30 - cardsForField.Length;
+            var deck = new List<Card>(TestCardFactory.CreateDeck(baseDeckSize > 0 ? baseDeckSize : 0));
+            deck.AddRange(cardsForField);
+
+            var player = new Player(playerId, deck);
+
+            // Draw and play each card
+            for (int i = 0; i < cardsForField.Length; i++)
+            {
+                player.DrawCard();
+                var handCard = player.Hand[player.Hand.Count - 1];
+                player.PlayCard(handCard);
+            }
+
+            return player;
+        }
+
         private void PlaceOnField(Player player, params Card[] cards)
         {
+            // DEPRECATED: This helper doesn't work correctly because cards must be in hand.
+            // Use CreatePlayerWithFieldCards instead.
             foreach (var card in cards)
             {
-                player.PlayCard(card);
+                if (player.Hand.Contains(card))
+                {
+                    player.PlayCard(card);
+                }
             }
         }
 

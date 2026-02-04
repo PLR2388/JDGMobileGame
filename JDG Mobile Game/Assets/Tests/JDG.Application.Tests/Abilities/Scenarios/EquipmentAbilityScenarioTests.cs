@@ -47,7 +47,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Target Card", 5, 5, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -76,7 +76,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             var invocation = TestCardFactory.CreateInvocation("Target", 2, 2, CardFamily.Human);
 
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
@@ -121,7 +121,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Target Card", 3, 4, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -149,7 +149,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Test Card", 3, 4, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -177,7 +177,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Test Card", 2, 2, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -209,7 +209,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Tank", 2, 4, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -237,7 +237,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Attacker", 3, 2, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -265,7 +265,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Glass Cannon", 4, 4, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -318,7 +318,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Protected Card", 3, 3, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -346,7 +346,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Protected Card", 3, 3, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -378,7 +378,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Ability Card", 4, 4, CardFamily.Wizard);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -463,7 +463,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Direct Attacker", 4, 2, CardFamily.Monster);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -516,7 +516,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Untargetable", 3, 3, CardFamily.Monster);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -544,7 +544,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Untargetable", 3, 3, CardFamily.Monster);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -576,7 +576,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var newCard = TestCardFactory.CreateInvocation("New Summon", 2, 2, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, newCard);
+            deck.Add(newCard);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();
@@ -619,7 +619,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Hand Scaler", 2, 2, CardFamily.Wizard);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
             // Add extra cards to deck for drawing
 
             var player1 = new Player(PlayerId.Player1, deck);
@@ -668,7 +668,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Player 1's card
             var myCard = TestCardFactory.CreateInvocation("My Card", 2, 2, CardFamily.Human);
             var deck1 = TestCardFactory.CreateDeck(29);
-            deck1.Insert(0, myCard);
+            deck1.Add(myCard);
             var player1 = new Player(PlayerId.Player1, deck1);
             player1.DrawCard();
             player1.PlayCard(player1.Hand.First());
@@ -676,7 +676,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Player 2's card
             var opponentCard = TestCardFactory.CreateInvocation("Opponent Card", 3, 3, CardFamily.Human);
             var deck2 = TestCardFactory.CreateDeck(29);
-            deck2.Insert(0, opponentCard);
+            deck2.Add(opponentCard);
             var player2 = new Player(PlayerId.Player2, deck2);
             player2.DrawCard();
             player2.PlayCard(player2.Hand.First());
@@ -709,7 +709,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
             var invocation = TestCardFactory.CreateInvocation("Stacking Target", 1, 1, CardFamily.Human);
             var deck = TestCardFactory.CreateDeck(29);
-            deck.Insert(0, invocation);
+            deck.Add(invocation);
 
             var player1 = new Player(PlayerId.Player1, deck);
             player1.DrawCard();

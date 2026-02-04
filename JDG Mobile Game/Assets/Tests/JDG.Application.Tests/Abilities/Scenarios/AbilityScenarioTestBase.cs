@@ -116,19 +116,39 @@ namespace JDG.Application.Tests.Abilities.Scenarios
         #region Helper Methods - Player Actions
 
         /// <summary>
-        /// Places cards on a player's field.
+        /// Creates a player with specific cards on field.
+        /// This is the recommended way to set up players with cards for scenario tests.
+        /// Cards are added to deck, drawn to hand, and played to field.
         /// </summary>
+        protected Player CreatePlayerWithFieldCards(PlayerId playerId, params Card[] cardsForField)
+        {
+            // Create deck with our test cards at the END (so they're drawn first with DrawCard taking from end)
+            var baseDeckSize = 30 - cardsForField.Length;
+            var deck = new List<Card>(TestCardFactory.CreateDeck(baseDeckSize > 0 ? baseDeckSize : 0));
+            deck.AddRange(cardsForField);
+
+            var player = new Player(playerId, deck);
+
+            // Draw and play each card
+            for (int i = 0; i < cardsForField.Length; i++)
+            {
+                player.DrawCard(); // Draws from end of deck (our test cards)
+                var handCard = player.Hand[^1]; // Get the drawn card
+                player.PlayCard(handCard); // Play to field
+            }
+
+            return player;
+        }
+
+        /// <summary>
+        /// DEPRECATED: Use CreatePlayerWithFieldCards instead.
+        /// This method silently fails if cards are not in hand.
+        /// </summary>
+        [System.Obsolete("Use CreatePlayerWithFieldCards to properly set up players with cards on field")]
         protected void PlaceOnField(Player player, params Card[] cards)
         {
             foreach (var card in cards)
             {
-                // Add to deck, draw, then play
-                if (!player.Deck.Contains(card))
-                {
-                    // Create a method to add card to hand directly for testing
-                    // For now, we'll assume the card is already in hand or deck
-                }
-
                 if (player.Hand.Contains(card))
                 {
                     player.PlayCard(card);
