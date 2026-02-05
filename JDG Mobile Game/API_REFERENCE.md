@@ -5,11 +5,20 @@ This document provides detailed documentation for all public interfaces in the J
 ## Table of Contents
 
 1. [Repository Interfaces](#repository-interfaces)
+   - ICardRepository, IPlayerRepository, IGameStateRepository, IDeckRepository, IInGameCardStateRepository
 2. [Service Interfaces](#service-interfaces)
+   - Core: IAudioService, ILocalizationService, IDialogService, ISceneLoaderService, ICardFactory
+   - Player/State: IPlayerService, ICardStateService, ICardSelectionService
+   - Combat: ICombatQueryService, ICombatLogic, ICardPlacementLogic
+   - Data: ICardVisualService, ICardDataProvider, ICardSyncService
+   - Input/UI: IInputService, ICanvasProvider, IRoundDisplayService, IInvocationMenuService
+   - Other: IConditionProvider, ITutorialStateService
 3. [EventBus](#eventbus)
 4. [Use Cases](#use-cases)
 5. [Domain Events](#domain-events)
 6. [Ability System](#ability-system)
+   - IAbility, AbilityContext, AbilityResult
+   - IPassiveAbility, IEquipmentAbility, AbilityTrigger
 7. [DI Registration](#di-registration)
 
 ---
@@ -145,17 +154,89 @@ Manages deck configurations (saved decks for deck building).
 ```csharp
 public interface IDeckRepository
 {
-    // Get all saved decks
-    IEnumerable<DeckConfiguration> GetAllDecks();
-
-    // Get specific deck
-    DeckConfiguration GetDeck(string deckId);
+    // Get deck by name (returns card IDs)
+    CardId[] GetDeck(string deckName);
 
     // Save a deck
-    void SaveDeck(DeckConfiguration deck);
+    void SaveDeck(string deckName, CardId[] cardIds);
+
+    // Get all available deck names
+    IEnumerable<string> GetAllDeckNames();
 
     // Delete a deck
-    void DeleteDeck(string deckId);
+    void DeleteDeck(string deckName);
+
+    // Get the default deck for a player
+    CardId[] GetDefaultDeck(PlayerId playerId);
+}
+```
+
+---
+
+### IInGameCardStateRepository
+
+Manages runtime card state during gameplay. This is the primary repository for querying and modifying cards in play.
+
+Located in: `JDG.Application/Repositories/IInGameCardStateRepository.cs`
+
+```csharp
+public interface IInGameCardStateRepository
+{
+    // Get card by unique ID
+    InGameCard GetById(Guid id);
+
+    // Get all cards for a player by location
+    IEnumerable<InGameCard> GetCardsInLocation(CardOwner owner, CardLocation location);
+
+    // Field queries
+    IEnumerable<InGameCard> GetFieldCards(CardOwner owner);
+    IEnumerable<InGameCard> GetAllFieldCards();
+    InGameCard GetFieldCard(CardOwner owner);
+    int GetFieldCardCount(CardOwner owner);
+
+    // Hand queries
+    IEnumerable<InGameCard> GetHandCards(CardOwner owner);
+    int GetHandCardCount(CardOwner owner);
+
+    // Deck queries
+    IEnumerable<InGameCard> GetDeckCards(CardOwner owner);
+    int GetDeckCardCount(CardOwner owner);
+
+    // Graveyard queries
+    IEnumerable<InGameCard> GetGraveyardCards(CardOwner owner);
+
+    // Invocation queries
+    IEnumerable<InGameCard> GetInvocations(CardOwner owner);
+    InGameCard GetInvocationAtSlot(CardOwner owner, int slot);
+    int GetInvocationCount(CardOwner owner);
+
+    // Equipment queries
+    IEnumerable<InGameCard> GetEquipments(CardOwner owner);
+    InGameCard GetEquipmentForInvocation(Guid invocationId);
+
+    // State modifications
+    void SetCardLocation(Guid cardId, CardLocation newLocation);
+    void UpdateCard(InGameCard card);
+    void RemoveCard(Guid cardId);
+
+    // Bulk operations
+    void ClearAllCards();
+    void ClearCardsForOwner(CardOwner owner);
+}
+```
+
+**Usage Example:**
+```csharp
+public class CombatService
+{
+    private readonly IInGameCardStateRepository _cardStateRepo;
+
+    public IEnumerable<InGameCard> GetAttackableTargets(CardOwner attacker)
+    {
+        var defender = attacker == CardOwner.Player1 ? CardOwner.Player2 : CardOwner.Player1;
+        return _cardStateRepo.GetInvocations(defender)
+            .Where(card => !card.IsProtected);
+    }
 }
 ```
 
@@ -225,6 +306,12 @@ public interface ILocalizationService
 
     // Check if key exists
     bool HasKey(string key);
+
+    // Card localization (Phase 126)
+    string GetCardTitle(string cardId);
+    string GetCardDescription(string cardId);
+    string GetCardDetailedDescription(string cardId);
+    bool HasCardLocalization(string cardId);
 }
 
 public enum GameLanguage
@@ -337,6 +424,302 @@ public interface ICardFactory
 
 ---
 
+### IPlayerService
+
+Manages player state including health, shields, and deck operations.
+
+```csharp
+public interface IPlayerService
+{
+    // Health management
+    int GetHealth(CardOwner owner);
+    void SetHealth(CardOwner owner, int health);
+    void DamagePlayer(CardOwner owner, int damage);
+    void HealPlayer(CardOwner owner, int amount);
+
+    // Shield management
+    int GetShields(CardOwner owner);
+    void SetShields(CardOwner owner, int shields);
+    void AddShields(CardOwner owner, int amount);
+    bool UseShield(CardOwner owner);
+
+    // Deck operations
+    void InitializeDeck(CardOwner owner, IEnumerable<CardId> cardIds);
+    bool HasCardsInDeck(CardOwner owner);
+}
+```
+
+---
+
+### ICardStateService
+
+Provides card state operations during gameplay.
+
+```csharp
+public interface ICardStateService
+{
+    // Card state queries
+    bool IsCardAttackable(Guid cardId);
+    bool HasCardAttackedThisTurn(Guid cardId);
+    bool IsCardProtected(Guid cardId);
+
+    // Card state modifications
+    void SetCardAttacked(Guid cardId, bool hasAttacked);
+    void ResetCardForNewTurn(Guid cardId);
+    void MarkCardAsProtected(Guid cardId, bool isProtected);
+
+    // Equipment operations
+    void AttachEquipment(Guid invocationId, Guid equipmentId);
+    void DetachEquipment(Guid invocationId);
+    Guid? GetAttachedEquipment(Guid invocationId);
+
+    // Stat modifications
+    void ModifyStats(Guid cardId, int atkModifier, int defModifier);
+    void ResetStats(Guid cardId);
+}
+```
+
+---
+
+### ICardSelectionService
+
+Manages card selection state and user input for card choices.
+
+```csharp
+public interface ICardSelectionService
+{
+    // Selection state
+    bool IsInSelectionMode { get; }
+    IReadOnlyList<Guid> GetSelectedCardIds();
+
+    // Selection operations
+    void StartSelection(CardSelectionConfig config);
+    void AddToSelection(Guid cardId);
+    void RemoveFromSelection(Guid cardId);
+    void ClearSelection();
+    void ConfirmSelection();
+    void CancelSelection();
+
+    // Events
+    event Action<IReadOnlyList<Guid>> OnSelectionConfirmed;
+    event Action OnSelectionCancelled;
+}
+```
+
+---
+
+### ICardVisualService
+
+Resolves card visual materials for rendering.
+
+```csharp
+public interface ICardVisualService
+{
+    // Get material for card display
+    Material GetCardMaterial(string cardName);
+    Material GetCardBackMaterial();
+    Material GetEmptySlotMaterial();
+}
+```
+
+---
+
+### ICombatQueryService
+
+Queries combat-related state without modifying it.
+
+```csharp
+public interface ICombatQueryService
+{
+    // Query available actions
+    IEnumerable<Guid> GetAttackableInvocations(CardOwner defender);
+    bool CanAttackDirectly(CardOwner attacker);
+    bool CanCardAttack(Guid cardId);
+}
+```
+
+---
+
+### ICombatLogic
+
+Pure combat calculation logic (no state modification).
+
+```csharp
+public interface ICombatLogic
+{
+    // Calculate combat results
+    CombatResult CalculateCombat(int attackerAtk, int defenderDef);
+    int CalculateDamageToPlayer(int attackerAtk);
+    bool WouldDestroyTarget(int attackerAtk, int targetDef);
+
+    // Combat validation
+    bool IsValidAttackTarget(InGameCard attacker, InGameCard target);
+    bool CanBypassDefenders(InGameCard attacker);
+}
+```
+
+---
+
+### ICardPlacementLogic
+
+Validates and determines card placement on the field.
+
+```csharp
+public interface ICardPlacementLogic
+{
+    // Validate placement
+    bool CanPlaceCard(InGameCard card, CardOwner owner, int? slot = null);
+    int? GetAvailableSlot(CardOwner owner, CardType cardType);
+    bool IsSlotOccupied(CardOwner owner, int slot);
+
+    // Placement requirements
+    IEnumerable<PlacementRequirement> GetPlacementRequirements(InGameCard card);
+    bool MeetsRequirements(InGameCard card, CardOwner owner);
+}
+```
+
+---
+
+### ICardDataProvider
+
+Provides access to card definition data.
+
+```csharp
+public interface ICardDataProvider
+{
+    // Card data access
+    Card GetCardData(string cardName);
+    IEnumerable<Card> GetAllCards();
+    IEnumerable<Card> GetCardsByFamily(CardFamily family);
+}
+```
+
+---
+
+### ICardSyncService
+
+Synchronizes domain card state with presentation layer.
+
+```csharp
+public interface ICardSyncService
+{
+    // Sync operations
+    void SyncCardToView(Guid cardId);
+    void SyncAllCards();
+    void RefreshCardVisuals(Guid cardId);
+    void NotifyCardMoved(Guid cardId, CardLocation from, CardLocation to);
+}
+```
+
+---
+
+### IInputService
+
+Handles touch and input events for cards.
+
+```csharp
+public interface IInputService
+{
+    // Touch state
+    bool IsTouching { get; }
+    Vector2 TouchPosition { get; }
+
+    // Input detection
+    bool DetectLongPress(float threshold = 0.5f);
+    bool DetectSwipe(out SwipeDirection direction);
+
+    // Card hit detection
+    Guid? GetCardAtPosition(Vector2 screenPosition);
+    bool IsOverCard(Vector2 screenPosition);
+}
+```
+
+---
+
+### IConditionProvider
+
+Provides condition evaluation for card abilities.
+
+```csharp
+public interface IConditionProvider
+{
+    // Get condition by name
+    ICondition GetCondition(ConditionName name);
+
+    // Evaluate conditions
+    bool EvaluateCondition(ConditionName name, AbilityContext context);
+}
+```
+
+---
+
+### ICanvasProvider
+
+Provides access to UI canvas for dialog display.
+
+```csharp
+public interface ICanvasProvider
+{
+    Canvas GetMainCanvas();
+}
+```
+
+---
+
+### ITutorialStateService
+
+Manages tutorial progression state.
+
+```csharp
+public interface ITutorialStateService
+{
+    // Tutorial state
+    bool IsTutorialActive { get; }
+    int CurrentStep { get; }
+
+    // Tutorial control
+    void StartTutorial();
+    void AdvanceStep();
+    void EndTutorial();
+}
+```
+
+---
+
+### IRoundDisplayService
+
+Manages round/turn display UI.
+
+```csharp
+public interface IRoundDisplayService
+{
+    // Display control
+    void ShowRoundIndicator(int roundNumber);
+    void ShowPlayerTurnIndicator(CardOwner currentPlayer);
+}
+```
+
+---
+
+### IInvocationMenuService
+
+Controls the invocation ability menu UI.
+
+```csharp
+public interface IInvocationMenuService
+{
+    // Menu control
+    void ShowMenu(Guid invocationId, IEnumerable<AbilityName> availableAbilities);
+    void HideMenu();
+    bool IsMenuVisible { get; }
+
+    // Selection
+    event Action<AbilityName> OnAbilitySelected;
+}
+```
+
+---
+
 ## EventBus
 
 Located in: `JDG.Application/IEventBus.cs`
@@ -413,11 +796,14 @@ Use cases encapsulate business operations. Each returns a result object.
 
 | Use Case | Purpose | Events Published |
 |----------|---------|------------------|
-| `StartGameUseCase` | Initialize new game | `GameStartedEvent` |
 | `DrawCardUseCase` | Draw card from deck | `CardDrawnEvent` |
-| `PlayCardUseCase` | Play card to field | `CardPlayedEvent` |
-| `AttackUseCase` | Attack with card | `AttackEvent`, `DamageDealtEvent` |
-| `EndTurnUseCase` | End current turn | `TurnEndedEvent`, `PlayerTurnChangedEvent` |
+| `ResetCardsForNewTurnUseCase` | Reset cards at turn start | `CardsResetForNewTurnEvent` |
+| `HandleCardDeathUseCase` | Handle card death | `CardDiedEvent` |
+| `HandleCardAddedToFieldUseCase` | Handle card placed on field | `CardAddedToFieldEvent` |
+| `HandleCardRemovedFromFieldUseCase` | Handle card removed from field | `CardRemovedFromFieldEvent` |
+| `HandleHandCardsChangeUseCase` | Handle hand card count change | `HandCardsChangedEvent` |
+| `HandleFieldCardChangedUseCase` | Handle field card state change | - |
+| `SummonPlayerEntityUseCase` | Summon player entity card | `CardAddedToFieldEvent` |
 
 ### Use Case Pattern
 
@@ -467,29 +853,65 @@ Located in: `JDG.Domain/Events/`
 
 Domain events are value types (structs) that represent things that happened.
 
-### Event Categories
+### Event Categories (58 total)
 
-**Game Events:**
-- `GameStartedEvent` - Game initialized
+**Phase & Turn Events:**
 - `PhaseChangedEvent` - Phase transition (Draw → Play → Attack)
 - `PlayerTurnChangedEvent` - Turn switched to other player
-- `GameOverEvent` - Game ended
+- `TurnStartEvent` - Turn begins
+- `TurnEndEvent` - Turn ends
+- `CardsResetForNewTurnEvent` - Cards reset at turn start
 
 **Card Events:**
 - `CardDrawnEvent` - Card drawn from deck
 - `CardPlayedEvent` - Card played to field
 - `CardDestroyedEvent` - Card removed from game
+- `CardDiedEvent` - Card dies and moves to graveyard
+- `HandCardsChangedEvent` - Hand card count changes
 - `CardAddedToFieldEvent` - Card placed on field
 - `CardRemovedFromFieldEvent` - Card left field
+- `CardSelectedEvent` - Card selected/clicked
+- `CardDiscardedEvent` - Card discarded from hand
 
 **Combat Events:**
-- `AttackEvent` - Attack initiated
-- `DamageDealtEvent` - Damage applied
-- `DirectAttackEvent` - Direct attack on player
+- `AttackExecutedEvent` - Attack executed
+- `PlayerHealthChangedEvent` - Player health changes
+- `PlayerShieldChangedEvent` - Player shields change
+- `PlayerDamagedEvent` - Player takes damage
+- `GameStartedEvent` - Game initialized
+- `GameOverEvent` - Game ended
 
-**Selection Events:**
-- `CardAddedToSelectionEvent` - Card selected
-- `CardRemovedFromSelectionEvent` - Card deselected
+**Input Events:**
+- `TouchStartedEvent`, `TouchEndedEvent`, `LongTouchEvent`, `BackButtonPressedEvent`
+
+**UI Events:**
+- `NextPhaseButtonClickedEvent`, `AttackButtonClickedEvent`, `EndTurnButtonClickedEvent`
+- `CardLocationChangedEvent`, `HandCardsDisplayChangedEvent`
+- `InvocationCancelledEvent`, `ChoicePlayerChangedEvent`
+
+**Ability Events:**
+- `AbilityActivatedEvent`, `EffectAppliedEvent`, `AbilityExecutedEvent`
+- `CardStatsModifiedEvent`, `ShieldsAddedEvent`, `PlayerHealedEvent`
+
+**Card Play Request Events:**
+- `InvocationCardPlayRequestedEvent`, `FieldCardPlayRequestedEvent`
+- `EffectCardPlayRequestedEvent`, `EquipmentCardPlayRequestedEvent`
+- `ContreCardPlayRequestedEvent`
+
+**Card State Events (Phase 75):**
+- `CardStatsResetEvent`, `CardControlledEvent`, `CardFreedEvent`
+- `InvocationTurnCountIncrementedEvent`, `InvocationDeathCountIncrementedEvent`
+- `EquipmentAttachedEvent`, `EquipmentDetachedEvent`, `FieldCardReplacedEvent`
+
+**Selection & Highlight Events:**
+- `CardNumberedEvent`, `CardAddedToSelectionEvent`, `CardRemovedFromSelectionEvent`
+- `HighlightRequestedEvent`
+
+**Dialogue Events:**
+- `DialogueTriggerCompletedEvent`, `DialogueIndexChangedEvent`
+
+**Click Events:**
+- `InGameCardClickedEvent`
 
 ---
 
@@ -513,6 +935,83 @@ public interface IAbility
 }
 ```
 
+### AbilityContext
+
+Provides all context needed for ability execution.
+
+```csharp
+public class AbilityContext
+{
+    // The card that owns this ability
+    public InGameCard SourceCard { get; }
+
+    // The owner of the source card
+    public CardOwner Owner { get; }
+
+    // Target card (if ability targets a specific card)
+    public InGameCard TargetCard { get; set; }
+
+    // Target player (if ability targets a player)
+    public CardOwner? TargetPlayer { get; set; }
+
+    // Additional parameters for the ability
+    public Dictionary<string, object> Parameters { get; }
+
+    // Services available during execution
+    public IEventBus EventBus { get; }
+    public IInGameCardStateRepository CardStateRepository { get; }
+    public IPlayerService PlayerService { get; }
+
+    // Constructor
+    public AbilityContext(
+        InGameCard sourceCard,
+        CardOwner owner,
+        IEventBus eventBus,
+        IInGameCardStateRepository cardStateRepository,
+        IPlayerService playerService)
+    {
+        SourceCard = sourceCard;
+        Owner = owner;
+        EventBus = eventBus;
+        CardStateRepository = cardStateRepository;
+        PlayerService = playerService;
+        Parameters = new Dictionary<string, object>();
+    }
+
+    // Helper to get opponent
+    public CardOwner GetOpponent() =>
+        Owner == CardOwner.Player1 ? CardOwner.Player2 : CardOwner.Player1;
+}
+```
+
+**Usage Example:**
+```csharp
+public class MyAbility : IAbility
+{
+    public AbilityResult Execute(AbilityContext context)
+    {
+        // Access the source card
+        var attacker = context.SourceCard;
+
+        // Get opponent's cards
+        var opponent = context.GetOpponent();
+        var enemyCards = context.CardStateRepository.GetInvocations(opponent);
+
+        // Damage opponent
+        context.PlayerService.DamagePlayer(opponent, 2);
+
+        // Publish event
+        context.EventBus.Publish(new AbilityExecutedEvent
+        {
+            AbilityName = Name,
+            SourceCardId = attacker.Id
+        });
+
+        return AbilityResult.Success("Dealt 2 damage");
+    }
+}
+```
+
 ### AbilityResult
 
 ```csharp
@@ -527,6 +1026,87 @@ public class AbilityResult
     public static AbilityResult Failure(string message);
     public static AbilityResult NeedsUserInput(string message);
     public static AbilityResult NeedsLegacyExecution(string message);
+}
+```
+
+### IPassiveAbility
+
+Abilities that trigger automatically based on game events.
+
+```csharp
+public interface IPassiveAbility : IAbility
+{
+    // The trigger condition for this passive ability
+    AbilityTrigger Trigger { get; }
+}
+```
+
+### AbilityTrigger Enum
+
+Defines when passive abilities activate.
+
+```csharp
+public enum AbilityTrigger
+{
+    OnSummon,       // When the card is summoned to field
+    OnDeath,        // When the card dies
+    OnAttack,       // When the card attacks
+    OnDefend,       // When the card defends
+    OnTurnStart,    // At the start of owner's turn
+    OnTurnEnd,      // At the end of owner's turn
+    OnCardDrawn,    // When a card is drawn
+    OnCardPlayed,   // When any card is played
+    Continuous,     // Always active while on field
+    OnEquip,        // When equipment is attached
+    OnUnequip,      // When equipment is removed
+    OnHandChange    // When hand card count changes
+}
+```
+
+### IEquipmentAbility
+
+Abilities specific to equipment cards with attachment/detachment lifecycle.
+
+```csharp
+public interface IEquipmentAbility : IAbility
+{
+    // True if this equipment can be placed without normal restrictions
+    bool CanAlwaysBePlaced { get; }
+
+    // Called before the equipped card is destroyed
+    // Return true to prevent destruction
+    bool OnPreDestroy(AbilityContext context);
+}
+```
+
+**Usage Example:**
+```csharp
+public class ShieldEquipmentAbility : IEquipmentAbility
+{
+    public AbilityName Name => AbilityName.ShieldEquipment;
+    public string Description => "Prevents destruction once";
+    public bool CanAlwaysBePlaced => false;
+
+    private bool _hasProtected = false;
+
+    public bool CanActivate(AbilityContext context) => true;
+
+    public AbilityResult Execute(AbilityContext context)
+    {
+        // Boost defense when equipped
+        context.SourceCard.DefenseModifier += 1;
+        return AbilityResult.Success("Defense boosted");
+    }
+
+    public bool OnPreDestroy(AbilityContext context)
+    {
+        if (!_hasProtected)
+        {
+            _hasProtected = true;
+            return true; // Prevent destruction
+        }
+        return false; // Allow destruction
+    }
 }
 ```
 
@@ -642,8 +1222,29 @@ using JDG.Application.Abilities;
 |------|-----------|---------|
 | `Card` | JDG.Domain.Entities | Domain card entity |
 | `Player` | JDG.Domain.Entities | Domain player entity |
+| `InGameCard` | (Legacy) | Runtime card instance during gameplay |
 | `CardId` | JDG.Domain.ValueObjects | Card identifier |
 | `PlayerId` | JDG.Domain.ValueObjects | Player identifier |
 | `CardType` | JDG.Domain.Enums | Card type enum |
-| `Phase` | JDG.Domain | Game phase enum |
+| `CardFamily` | JDG.Domain.Enums | Card family enum |
+| `CardLocation` | JDG.Domain.Enums | Card location (Hand, Field, Deck, Graveyard) |
+| `Phase` | JDG.Domain | Game phase enum (Draw, Play, Attack) |
 | `CardOwner` | JDG.Domain | Player ownership enum |
+| `AbilityName` | JDG.Domain.Enums | Ability identifier enum |
+| `AbilityTrigger` | JDG.Application.Abilities | Passive ability trigger enum |
+| `AbilityContext` | JDG.Application.Abilities | Execution context for abilities |
+| `AbilityResult` | JDG.Application.Abilities | Result of ability execution |
+
+### Key Interfaces
+
+| Interface | Layer | Purpose |
+|-----------|-------|---------|
+| `IAbility` | Application | Base ability contract |
+| `IPassiveAbility` | Application | Auto-triggered abilities |
+| `IEquipmentAbility` | Application | Equipment-specific abilities |
+| `IEventBus` | Application | Pub/sub event system |
+| `ICardRepository` | Application | Card definition access |
+| `IPlayerRepository` | Application | Player state persistence |
+| `IInGameCardStateRepository` | Application | Runtime card state |
+| `IPlayerService` | Application | Player health/shields |
+| `ICardStateService` | Application | Card state operations |

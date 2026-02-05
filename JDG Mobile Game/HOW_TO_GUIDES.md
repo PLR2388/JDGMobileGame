@@ -50,7 +50,7 @@ public class MyNewAbility : IAbility
     public bool CanActivate(AbilityContext context)
     {
         // Return true if ability can be activated
-        return context.OwnerCards != null;
+        return context.SourceCard != null;
     }
 
     public AbilityResult Execute(AbilityContext context)
@@ -69,33 +69,23 @@ public class MyNewAbility : IAbility
 Add a factory method in the appropriate factory class:
 
 ```csharp
-// In the factory class (e.g., EffectAbilityFactory.cs)
-public class EffectAbilityFactory
+// Abilities are created via existing factory classes.
+// For example, in EffectAbilityFactory:
+public IAbility CreateMyNewAbility()
 {
-    private readonly IEventBus _eventBus;
-    private readonly IPlayerRepository _playerRepository;
-
-    public EffectAbilityFactory(IEventBus eventBus, IPlayerRepository playerRepository)
-    {
-        _eventBus = eventBus;
-        _playerRepository = playerRepository;
-    }
-
-    public IAbility CreateMyNewAbility()
-    {
-        return new MyNewAbility(_eventBus, _playerRepository);
-    }
+    return new MyNewAbility(_eventBus, _playerRepository);
 }
 ```
 
 ### Step 4: Register in AbilityRegistry
 
-Add the registration in `GameLifetimeScope.cs` or where abilities are registered:
+Add the registration in `SharedServicesScope.cs` where all abilities are registered:
 
 ```csharp
-// In RegisterAbilities() method
+// In SharedServicesScope.RegisterAllAbilities() method
+var effectFactory = container.Resolve<EffectAbilityFactory>();
 registry.Register(AbilityName.MyNewAbility, () =>
-    effectAbilityFactory.CreateMyNewAbility());
+    effectFactory.CreateMyNewAbility());
 ```
 
 ### Step 5: Write Tests
@@ -122,7 +112,10 @@ public class MyNewAbilityTests
     public void Execute_WhenConditionMet_ReturnsSuccess()
     {
         // Arrange
-        var context = new AbilityContext { /* ... */ };
+        var playerId = new PlayerId(Guid.NewGuid());
+        var opponentId = new PlayerId(Guid.NewGuid());
+        var card = TestFixtures.CardFactory.CreateInvocation("TestCard");
+        var context = new AbilityContext(playerId, opponentId, card, AbilityName.MyNewAbility);
 
         // Act
         var result = _ability.Execute(context);

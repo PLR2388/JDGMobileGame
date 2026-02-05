@@ -4,7 +4,7 @@ A Unity-based mobile card game implementing Clean Architecture with dependency i
 
 ## Quick Start
 
-1. **Prerequisites**: Unity 2022.3.9f1+, .NET 6.0+
+1. **Prerequisites**: Unity 6000.0.60f1+, .NET 6.0+
 2. **Open Project**: Open the `JDG Mobile Game` folder in Unity Hub
 3. **Run**: Open `_preload` scene and press Play
 

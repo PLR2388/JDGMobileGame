@@ -29,12 +29,12 @@ This project follows **Clean Architecture** principles with 4 distinct layers, i
 │  ┌─────────────────────────────────────────────────────────────────────────┐│
 │  │ JDG.Application Assembly                                                ││
 │  │                                                                         ││
-│  │  Use Cases:           Service Interfaces:       Abilities:              ││
-│  │  - StartGameUseCase   - ICardVisualService      - IAbility interface    ││
-│  │  - DrawCardUseCase    - ICombatQueryService     - 57 implementations    ││
-│  │  - PlayCardUseCase    - ICardCollectionService  - 11 ability factories  ││
-│  │  - AttackUseCase      - ICardSelectionService                           ││
-│  │  - EndTurnUseCase                                                       ││
+│  │  Use Cases:                      Service Interfaces:       Abilities:              ││
+│  │  - DrawCardUseCase               - ICardVisualService      - IAbility interface    ││
+│  │  - ResetCardsForNewTurnUseCase   - ICombatQueryService     - 57 implementations    ││
+│  │  - HandleCardDeathUseCase        - ICardCollectionService  - 11 ability factories  ││
+│  │  - SummonPlayerEntityUseCase     - ICardSelectionService                           ││
+│  │  - + 4 more event handlers                                                        ││
 │  │                                                                         ││
 │  │  Repository Interfaces:                                                 ││
 │  │  - ICardRepository, IPlayerRepository, IGameStateRepository             ││
@@ -54,7 +54,7 @@ This project follows **Clean Architecture** principles with 4 distinct layers, i
 │  │                                                                         ││
 │  │  Repositories:        Events:            DI:                            ││
 │  │  - CardRepository     - EventBus         - SharedServicesScope          ││
-│  │  - PlayerRepository   - 30+ events       - GameSceneScope               ││
+│  │  - PlayerRepository   - 58 events        - GameSceneScope               ││
 │  │  - GameStateRepository                   - MainScreenScope              ││
 │  │  - DeckRepository                                                       ││
 │  │                                                                         ││
@@ -76,7 +76,7 @@ This project follows **Clean Architecture** principles with 4 distinct layers, i
 │  │ JDG.Domain Assembly (Pure C# - NO Unity dependencies)                  ││
 │  │                                                                         ││
 │  │  Entities:            Value Objects:       Enums:                       ││
-│  │  - Card               - CardId             - AbilityName (69 values)    ││
+│  │  - Card               - CardId             - AbilityName (71 values)    ││
 │  │  - Player             - PlayerId           - CardType                   ││
 │  │  - PlayerState        - CardStats          - Phase                      ││
 │  │                       - Vector2            - CardOwner                  ││
@@ -131,7 +131,7 @@ Forbidden:
   Application → Presentation
 ```
 
-**Note**: JDG.Presentation currently references JDG.Infrastructure for CardVisualService. This is a known issue to be fixed by moving ICardVisualService to JDG.Application.
+**Note**: ICardVisualService is defined in JDG.Application. The Presentation layer should not reference Infrastructure directly.
 
 ## Assembly Structure
 
@@ -194,14 +194,14 @@ SharedServicesScope (Root - DontDestroyOnLoad)
 │   ├── IPlayerRepository → PlayerRepository
 │   ├── IGameStateRepository → GameStateRepository
 │   ├── AbilityRegistry
-│   └── All Ability Factories
+│   └── 8 Ability Factories (DrawCards, DestroyCard, DeckSearch, Sacrifice, StatModifier, Protection, Combat, Special)
 │
 ├── Transient:
-│   ├── StartGameUseCase
 │   ├── DrawCardUseCase
-│   ├── PlayCardUseCase
-│   ├── AttackUseCase
-│   └── EndTurnUseCase
+│   ├── ResetCardsForNewTurnUseCase
+│   ├── HandleCardDeathUseCase
+│   ├── SummonPlayerEntityUseCase
+│   └── + 4 more event handler use cases
 │
 ├── GameSceneScope (Child)
 │   ├── CardPoolManager
@@ -224,7 +224,7 @@ builder.Register<CardRepository>(Lifetime.Singleton).AsImplementedInterfaces();
 
 **Transient (no memory leaks)**:
 ```csharp
-builder.Register<StartGameUseCase>(Lifetime.Transient);
+builder.Register<DrawCardUseCase>(Lifetime.Transient);
 ```
 
 **MonoBehaviour injection**:
@@ -247,13 +247,13 @@ _eventBus.Subscribe<CardPlayedEvent>(OnCardPlayed);
 _eventBus.Unsubscribe<CardPlayedEvent>(OnCardPlayed);
 ```
 
-### Domain Events (40+)
+### Domain Events (58)
 
 | Category | Events |
 |----------|--------|
 | Game | GameStartedEvent, PhaseChangedEvent, PlayerTurnChangedEvent |
 | Cards | CardPlayedEvent, CardDrawnEvent, CardDestroyedEvent, CardNumberedEvent |
-| Combat | AttackEvent, DamageDealtEvent |
+| Combat | AttackExecutedEvent, PlayerDamagedEvent, PlayerHealthChangedEvent |
 | Selection | CardAddedToSelectionEvent, CardRemovedFromSelectionEvent |
 | UI | InGameCardClickedEvent, HighlightRequestedEvent |
 | Dialogue | DialogueTriggerCompletedEvent, DialogueIndexChangedEvent |
@@ -279,7 +279,7 @@ _eventBus.Unsubscribe<CardPlayedEvent>(OnCardPlayed);
 
 ## Testing Strategy
 
-### Test Assemblies (7 total)
+### Test Assemblies (8 total)
 
 | Assembly | Type | Purpose |
 |----------|------|---------|
@@ -290,9 +290,10 @@ _eventBus.Unsubscribe<CardPlayedEvent>(OnCardPlayed);
 | `JDG.PlayMode.Tests` | PlayMode | DI container, full game flow |
 | `JDG.TestUtilities` | Shared | Test doubles, fixtures |
 | `JDG.TestUtilities.Editor` | Editor | Editor-only test helpers |
+| `JDG.Tests.Editor` | EditMode | Additional editor tests |
 
 ### Test Types
-- **Unit Tests** (EditMode): 615+ tests covering domain logic, use cases, services
+- **Unit Tests** (EditMode): 618+ tests covering domain logic, use cases, services
 - **Scenario Tests**: Combat, abilities, card placement, game loop
 - **Integration Tests** (PlayMode): DI resolution, service wiring
 - **Presenter Tests**: MVP pattern with mocked views
@@ -490,10 +491,10 @@ Legacy code coexists with clean architecture:
 │                          ▼                      ▼                           │
 │              ┌─────────────────┐    ┌─────────────────┐                    │
 │              │ AbilityContext  │    │  AbilityResult  │                    │
-│              │ - Card          │    │ - IsSuccess     │                    │
-│              │ - OwnerCards    │    │ - Message       │                    │
-│              │ - OpponentCards │    │ - RequiresInput │                    │
-│              │ - EventBus      │    └─────────────────┘                    │
+│              │ - SourceCard       │    │ - IsSuccess     │                    │
+│              │ - CurrentPlayerId  │    │ - Message       │                    │
+│              │ - OpponentPlayerId │    │ - RequiresInput │                    │
+│              │ - AbilityName      │    └─────────────────┘                    │
 │              └─────────────────┘                                           │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -522,8 +523,8 @@ Legacy code coexists with clean architecture:
 │  │  └─────────────────────────────────────────────────────────────────┘  │ │
 │  │  ┌─────────────────────────────────────────────────────────────────┐  │ │
 │  │  │ TRANSIENT (new instance per request):                           │  │ │
-│  │  │ - StartGameUseCase, DrawCardUseCase, PlayCardUseCase            │  │ │
-│  │  │ - AttackUseCase, EndTurnUseCase                                 │  │ │
+│  │  │ - DrawCardUseCase, ResetCardsForNewTurnUseCase                  │  │ │
+│  │  │ - HandleCardDeathUseCase, SummonPlayerEntityUseCase, + 4 more   │  │ │
 │  │  └─────────────────────────────────────────────────────────────────┘  │ │
 │  └─────────────────────────────────────────────────────────────────────┬─┘ │
 │                                                                        │   │
@@ -600,4 +601,4 @@ For complete bridge documentation, see `Assets/_Scripts/Bridge/README.md`.
 
 ---
 
-**Last Updated**: 2025-12-30
+**Last Updated**: 2026-02-04

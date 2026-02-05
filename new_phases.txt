@@ -1,0 +1,124 @@
+### Phase 124-126: Card Multilanguage System ✅ (Completed 2025-12-31)
+
+**Goal**: Add localization support for card content and complete static event migration.
+
+#### Phase 124: Complete Static UnityEvent Migration
+- ✅ Final static UnityEvent cleanup (included in Phase 121-123 commit)
+
+#### Phase 126: Implement Card Multilanguage System
+- ✅ Added `ILocalizationService` card methods: `GetCardTitle`, `GetCardDescription`, `GetCardDetailedDescription`, `HasCardLocalization`
+- ✅ Populated `cards_fr.json` with 166 card localizations
+- ✅ Card display now uses localization service for all text
+
+---
+
+### Phase 127: UIManager Removal ✅ (Completed)
+
+**Goal**: Remove obsolete UIManager class.
+
+- ✅ GameLoop now uses presenters directly instead of routing through UIManager
+- ✅ Simplified presentation layer communication
+
+---
+
+### Phase 128-132: Scenario Tests & Documentation ✅ (Completed)
+
+**Goal**: Add comprehensive scenario-based ability tests and project documentation.
+
+#### Phase 128-131: Comprehensive Scenario Tests
+- ✅ Added scenario test infrastructure (`AbilityScenarioTestBase`)
+- ✅ Combat ability scenario tests
+- ✅ Deck search ability scenario tests
+- ✅ Destruction ability scenario tests
+- ✅ Effect ability scenario tests
+- ✅ Equipment ability scenario tests
+- ✅ Field ability scenario tests
+- ✅ Protection ability scenario tests
+- ✅ Resurrection ability scenario tests
+- ✅ Stat boost ability scenario tests
+
+#### Phase 132: Documentation
+- ✅ Created README.md
+- ✅ Documentation fixes and cleanup
+
+---
+
+### Phase 135-158: Validation, Safety & Stability Fixes ✅ (Completed)
+
+**Goal**: Comprehensive audit and hardening of the refactored codebase.
+
+#### Phase 135: Game State Validation & DI Safety Audit
+- ✅ Validated DI configuration and game state management
+
+#### Phase 138: DisplayCards and OnHover DI Injection Fix
+- ✅ Fixed DI injection for dynamically instantiated prefabs in CardPoolManager
+
+#### Phase 139-140: Attack Target Selector Fix
+- ✅ Added diagnostic logging for missing Player entity in attack target selector
+- ✅ Fixed null reference in attack flow
+
+#### Phase 141-143: CardSyncService
+- ✅ Created `ICardSyncService` for domain Card to InGameInvocationCard synchronization
+- ✅ Extended with `TimesRevived`, `BonusAttacks`, `AttackBlocked` sync
+- ✅ Added `SyncAllFieldCards` for bulk domain-to-presentation sync
+
+#### Phase 144-145: Dead Code & Performance
+- ✅ Removed dead events (`ButtonClickedEvent`, `CardStatsChangedEvent`)
+- ✅ Added error logging and performance improvements
+- ✅ Documented extensibility events
+
+#### Phase 146-153: Null Safety & Stability
+- ✅ Comprehensive null safety fixes across the codebase
+- ✅ Fixed null `SourceCard` in ability contexts
+- ✅ Added safety checks throughout ability execution pipeline
+
+#### Phase 154-158: Verification & Compilation Fixes
+- ✅ Fixed `CardFamily` enum mismatch
+- ✅ Fixed `AbilityProviderService` null return
+- ✅ Added null validation and runtime validation for stability
+- ✅ Fixed pre-existing compilation errors
+- ✅ Comprehensive refactoring verification
+
+---
+
+### Phase 159-163: Ability Test Foundation & Scenarios ✅ (Completed)
+
+**Goal**: Build comprehensive test coverage for the ability system.
+
+#### Phase 159: Ability Test Infrastructure
+- ✅ Created ability test foundation and draw ability tests
+- ✅ Changed `CardStats` from `int` to `float` for half-star support
+- ✅ Created `AbilityScenarioFixtures` test utility class
+
+#### Phase 160: Invocation Ability Scenario Tests
+- ✅ Added remaining invocation ability scenario tests
+
+#### Phase 161: Equipment & Field Ability Scenario Tests
+- ✅ Equipment ability scenario tests
+- ✅ Field ability scenario tests
+
+#### Phase 162: Effect Ability Scenario Tests
+- ✅ Complete effect ability scenario tests
+- ✅ Fixed `AbilityName` references
+
+#### Phase 163: Condition Scenario Tests
+- ✅ Implemented 23 condition scenario tests
+
+---
+
+### Phase 164-165: Integration & E2E Tests ✅ (Completed 2026-02-04)
+
+**Goal**: Add integration and end-to-end PlayMode tests for complex ability interactions.
+
+#### Phase 164: Synergy/Combination Integration Tests
+- ✅ `EquipmentInvocationSynergyTests` - Equipment + invocation ability interactions
+- ✅ `FieldFamilySynergyTests` - Field card + family bonus interactions
+- ✅ `DependencyChainTests` - Multi-card dependency chain validation
+- 16 integration test scenarios
+
+#### Phase 165: E2E PlayMode Tests
+- ✅ `KeyCombinationE2ETests` - End-to-end tests for key card combinations
+- 16 PlayMode test scenarios
+- Tests verify full stack from card play to ability resolution
+
+---

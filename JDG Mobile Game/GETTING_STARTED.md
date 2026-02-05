@@ -19,7 +19,7 @@
 | Software | Version | Purpose |
 |----------|---------|---------|
 | **Unity Hub** | Latest | Project management |
-| **Unity Editor** | 2022.3.9f1 | Development environment |
+| **Unity Editor** | 6000.0.60f1 | Development environment |
 | **Git** | Latest | Version control |
 | **IDE** | Rider 2023.2+ or VS Code | Code editing |
 
@@ -50,7 +50,7 @@ cd JDGMobileGame
 1. Open Unity Hub
 2. Click "Add" → "Add project from disk"
 3. Select the `JDG Mobile Game` folder
-4. Unity Hub will prompt to install Unity 2022.3.9f1 if not present
+4. Unity Hub will prompt to install Unity 6000.0.60f1 if not present
 
 ### 3. Open the Project
 

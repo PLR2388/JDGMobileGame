@@ -886,10 +886,10 @@ SharedServicesScope (Root - DontDestroyOnLoad)
 | Metric | Count |
 |--------|-------|
 | Test Assemblies | 4 (Domain, Application, Infrastructure, Presentation) |
-| Unit Tests | 700+ |
+| Unit Tests | 618+ |
 | Abilities (Modern) | 57 (all via factories) |
 | Abilities (Legacy) | 0 (all deleted) |
-| Domain Events | 30+ |
+| Domain Events | 58 |
 | Service Interfaces | 15+ |
 | Presenters in JDG.Presentation | 4 |
 | DI Scopes | 3 (1 root + 2 scene) |
@@ -1151,8 +1151,8 @@ Libraries remain functional during transition:
 ## Refactoring Complete Summary
 
 ### Final Statistics
-- **Phases Completed**: 100
-- **Test Count**: ~700 tests (672 EditMode + PlayMode)
+- **Phases Completed**: 165
+- **Test Count**: 618+ tests (EditMode + PlayMode)
 - **Assemblies**: 8 (4 main + 4 test)
 - **Services with DI**: 40+
 - **Singletons Removed**: MessageBox, CardSelector, DisplayCards, CardChoiceUIManager, DialogueTutoHandler, LegacyServicesScope
@@ -1372,6 +1372,14 @@ Libraries remain functional during transition:
 | 101-107 | Ability Migration Verification | ~20 |
 | 108-115 | Event Migration, Documentation | ~25 |
 | **115-119** | **Legacy Ability Class Removal** | **~50** |
+| 121-123 | Static UnityEvent Final Migration | ~14 |
+| 126 | Card Multilanguage System | ~10 |
+| 127 | UIManager Removal | ~5 |
+| 128-131 | Comprehensive Scenario Tests | ~20 |
+| 132 | Documentation & README | ~5 |
+| 135-158 | Validation, Safety & Stability Fixes | ~60 |
+| 159-163 | Ability Test Foundation & Scenarios | ~40 |
+| **164-165** | **Integration & E2E PlayMode Tests** | **~15** |
 
 ## Constraints (Updated)
 
@@ -1520,6 +1528,182 @@ public struct DialogueIndexChangedEvent { int DialogueIndex; }
 
 ---
 
-**Last Updated**: 2025-12-30
+### Phase 124-126: Card Multilanguage System ✅ (Completed 2025-12-31)
+
+**Goal**: Implement multilanguage support for card content and complete static event migration.
+
+#### Phase 124: Static UnityEvent Final Cleanup
+- ✅ Completed remaining static UnityEvent migration (included in Phase 121-124 commit)
+- Zero static UnityEvents remaining in codebase
+
+#### Phase 126: Card Multilanguage System
+- ✅ Extended `ILocalizationService` with card-specific methods:
+  - `GetCardTitle(string cardId)` - Localized card title
+  - `GetCardDescription(string cardId)` - Localized card description
+  - `GetCardDetailedDescription(string cardId)` - Localized detailed description
+  - `HasCardLocalization(string cardId)` - Check if localization exists
+- ✅ Populated `cards_fr.json` with 166 card localizations
+- ✅ Updated `LocalizationService` implementation
+
+---
+
+### Phase 127: UIManager Removal ✅ (Completed)
+
+- ✅ Removed UIManager - GameLoop now uses presenters directly
+- ✅ Simplified presentation layer by eliminating obsolete manager
+
+---
+
+### Phase 128-132: Comprehensive Testing & Documentation ✅ (Completed)
+
+#### Phase 128-131: Scenario Tests
+- ✅ Added comprehensive scenario tests for abilities
+- ✅ Covered combat, protection, stat modification, and special abilities
+
+#### Phase 132: Documentation
+- ✅ Documentation fixes and README.md creation
+- ✅ Updated test coverage documentation
+
+---
+
+### Phase 135-143: Stability & Sync Fixes ✅ (Completed 2025-01)
+
+#### Phase 135: Game State Validation & DI Safety Audit
+- ✅ Comprehensive validation of game state management
+- ✅ DI container safety audit and fixes
+
+#### Phase 138: DI Injection Fixes
+- ✅ Fixed DisplayCards DI injection for dynamically instantiated prefabs
+- ✅ Fixed OnHover DI injection in CardPoolManager
+
+#### Phase 139-140: Player Entity Target Fix
+- ✅ Added diagnostic logging for missing Player entity
+- ✅ Fixed player entity card appearing in attack target selector
+
+#### Phase 141: CardSyncService
+- ✅ Created `ICardSyncService` for domain Card → InGameInvocationCard sync
+- ✅ Fixed equipment ability stat synchronization
+
+#### Phase 142: Extended CardSyncService
+- ✅ Added TimesRevived, BonusAttacks, AttackBlocked sync fields
+
+#### Phase 143: Bulk Sync
+- ✅ Added `SyncAllFieldCards` for bulk domain-to-presentation sync
+
+---
+
+### Phase 144-157: Verification & Stability ✅ (Completed 2025-01)
+
+**Goal**: Comprehensive verification of refactored code and stability fixes.
+
+#### Phase 144: Refactoring Analysis Fixes
+- ✅ Removed dead events (`ButtonClickedEvent`, `CardStatsChangedEvent`)
+- ✅ Fixed issues identified in refactoring analysis
+
+#### Phase 145: Logging & Performance
+- ✅ Added error logging for extensibility events
+- ✅ Performance fixes
+- ✅ Documented extensibility event patterns in GameEvents.cs
+
+#### Phase 146-147: Verification Fixes
+- ✅ Fixed issues identified in refactoring verification passes
+
+#### Phase 148-150: Null Safety
+- ✅ Comprehensive null safety and stability fixes across the codebase
+
+#### Phase 151-153: Ability Context Safety
+- ✅ Fixed null SourceCard in ability contexts
+- ✅ Added safety checks for ability execution
+
+#### Phase 154: Enum & Provider Fixes
+- ✅ Fixed CardFamily enum mismatch
+- ✅ Fixed AbilityProviderService null return
+
+#### Phase 155-157: Final Verification
+- ✅ Comprehensive refactoring verification fixes
+- ✅ Added null validation and runtime validation for stability
+
+---
+
+### Phase 158: Compilation Fixes ✅ (Completed 2025-01)
+
+- ✅ Fixed Phase 2 verification issues
+- ✅ Resolved pre-existing compilation errors
+
+---
+
+### Phase 159-165: Ability Test Suite ✅ (Completed 2025-01)
+
+**Goal**: Comprehensive test coverage for all 57 abilities across 10 categories.
+
+#### Phase 159: Test Foundation
+- ✅ Created ability test infrastructure (AbilityScenarioTestBase, AbilityScenarioFixtures)
+- ✅ Implemented Draw ability scenario tests
+- ✅ Changed `CardStats` from `int` to `float` for half-star support
+
+#### Phase 160: Invocation Ability Tests
+- ✅ Added remaining Invocation ability scenario tests
+- ✅ Covered sacrifice, invoke, stat modifier, protection, dependency, lifecycle, combat abilities
+
+#### Phase 161: Equipment & Field Tests
+- ✅ Added Equipment ability scenario tests (26 tests)
+- ✅ Added Field ability scenario tests (23 tests)
+
+#### Phase 162: Effect Ability Tests
+- ✅ Completed Effect Ability scenario tests (35 tests)
+- ✅ Fixed AbilityName reference issues
+
+#### Phase 163: Condition Tests
+- ✅ Implemented tests for all 23 summon conditions
+- ✅ Created ConditionScenarioTests.cs
+
+#### Phase 164: Synergy Integration Tests
+- ✅ EquipmentInvocationSynergyTests (10 tests) - Equipment + card combos
+- ✅ FieldFamilySynergyTests (14 tests) - Field + family interactions
+- ✅ DependencyChainTests (15 tests) - Card dependency chains
+
+#### Phase 165: E2E PlayMode Tests
+- ✅ KeyCombinationE2ETests (16 tests) - All documented card combos from CARD_POWER_CATALOG.md
+- ✅ Tests cover: sacrifice combos, equipment synergies, field boosts, dependency chains, special abilities
+
+#### Test Metrics (Phase 159-165)
+- Scenario tests: 213 tests across 10 test files
+- Integration tests: 39 tests across 3 test files
+- E2E tests: 16 tests in 1 test file
+- Total added: 268 tests
+
+---
+
+## Final Phase Summary (Updated)
+
+| Phase Range | Description | Files Changed |
+|-------------|-------------|---------------|
+| 1-8 | Foundation, DI, EventBus | ~50 |
+| 9-12 | Integration & Presentation | ~30 |
+| 13-28 | MVP Migration, Singletons | ~100 |
+| 29-33 | Ability Registration, Cleanup | ~40 |
+| 39-48 | Presenter Migration, Providers | ~60 |
+| 85-100 | Singleton Cleanup, Testing | ~40 |
+| 101-107 | Ability Migration Verification | ~20 |
+| 108-123 | Event Migration, Documentation | ~25 |
+| 115-119 | Legacy Ability Class Removal | ~50 |
+| 124-132 | Multilanguage, UIManager Removal, Tests | ~30 |
+| 135-157 | Stability, Sync, Verification | ~60 |
+| 158-165 | Compilation Fixes, Ability Test Suite | ~40 |
+
+## Final Statistics (Updated)
+
+- **Phases Completed**: 165
+- **Test Count**: 618+ tests
+- **Test Assemblies**: 8 (Domain, Application, Infrastructure, Presentation, TestUtilities, TestUtilities.Editor, Tests.Editor, PlayMode)
+- **Abilities (Modern)**: 57 (all via factories)
+- **Domain Events**: 58
+- **Service Interfaces**: 15+
+- **Presenters in JDG.Presentation**: 4
+- **DI Scopes**: 3 (1 root + 2 scene)
+
+---
+
+**Last Updated**: 2026-02-04
 **Current Branch**: refactor-v3
-**Status**: ✅ REFACTORING COMPLETE (123 Phases)
+**Status**: ✅ REFACTORING COMPLETE (165 Phases)

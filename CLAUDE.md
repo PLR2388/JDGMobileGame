@@ -5,7 +5,7 @@
 **JDG (Joueur du Grenier) Trading Card Game Mobile** is a digital adaptation of a French physical trading card game. It's a turn-based TCG where two players compete in 1v1 duels, each starting with 30 life points and a custom 30-card deck. The goal is to reduce the opponent's life to 0 through strategic card play and combat.
 
 - **Platform**: Android (available on Google Play)
-- **Engine**: Unity 2022.3.9f1
+- **Engine**: Unity 6000.0.60f1
 - **License**: MIT
 
 ## Architecture
@@ -26,7 +26,7 @@ The project follows **Clean Architecture** with 4 layers:
 
 **Key Patterns:**
 - **Dependency Injection**: VContainer 1.15.4
-- **Event-Driven**: Custom EventBus (40+ domain events)
+- **Event-Driven**: Custom EventBus (58 domain events)
 - **MVP**: Thin MonoBehaviour views with pure C# presenters
 - **Strangler Fig**: Legacy code coexists with clean architecture during migration
 
@@ -78,7 +78,7 @@ Assets/_Scripts/
 
 ## Testing
 
-- **615+ unit tests** across 7 test assemblies
+- **618+ unit tests** across 8 test assemblies
 - Test types: Unit, Scenario, Integration, Presenter
 - Framework: NUnit + NSubstitute
 
@@ -88,7 +88,10 @@ Assets/Tests/
 ├── JDG.Application.Tests/    # Use case/ability tests
 ├── JDG.Infrastructure.Tests/ # Service/repository tests
 ├── JDG.Presentation.Tests/   # Presenter tests (mocked views)
-└── JDG.PlayMode.Tests/       # Full integration tests
+├── JDG.TestUtilities/        # Shared test fixtures and helpers
+├── JDG.TestUtilities.Editor/ # Editor-only test helpers
+├── JDG.Tests.Editor/         # Additional editor tests
+└── PlayMode/                 # Full integration tests
 ```
 
 ## Scenes
@@ -112,8 +115,8 @@ Assets/Tests/
 
 ## Current State
 
-- **Refactoring Phase**: 158 (ongoing clean architecture migration)
-- **Cards**: 174 unique cards (ScriptableObjects)
+- **Refactoring Phase**: 165 (ongoing clean architecture migration)
+- **Cards**: 166 unique cards (ScriptableObjects)
 - **Abilities**: 57 implementations across 10 categories
 - **Localization**: French only
 
