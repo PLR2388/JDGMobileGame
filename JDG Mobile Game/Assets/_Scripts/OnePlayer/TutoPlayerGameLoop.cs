@@ -406,14 +406,20 @@ namespace OnePlayer
             // Defense-in-depth: Block attack if attack phase should be skipped
             if (_gameStateService.ShouldSkipAttackPhase)
             {
+#if UNITY_EDITOR
                 Debug.Log("TutoPlayerGameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
+#endif
                 return;
             }
 
+#if UNITY_EDITOR
             Debug.Log("TutoPlayerGameLoop.DisplayAvailableOpponent: Called");
+#endif
             // Phase 17-18: Use ICombatService instead of CardManager.Instance
             var notEmptyOpponent = _combatService.BuildValidTargets();
+#if UNITY_EDITOR
             Debug.Log($"TutoPlayerGameLoop.DisplayAvailableOpponent: Found {notEmptyOpponent?.Count ?? 0} valid targets");
+#endif
             DisplayOpponentMessageBox(notEmptyOpponent);
             // Phase 19-20: Use injected InputManager from base class instead of .Instance
             _inputManager.DisableDetectionTouch();

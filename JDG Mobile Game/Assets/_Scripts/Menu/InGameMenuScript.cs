@@ -186,7 +186,9 @@ public class InGameMenuScript : MonoBehaviour
         // Phase 135: Validate game state before handling card click
         if (_gameStateService != null && _gameStateService.IsGameOver)
         {
+#if UNITY_EDITOR
             Debug.Log("InGameMenuScript: Cannot interact with card - game is over");
+#endif
             return;
         }
 
@@ -248,12 +250,16 @@ public class InGameMenuScript : MonoBehaviour
         {
             if (_gameStateService.IsGameOver)
             {
+#if UNITY_EDITOR
                 Debug.Log("InGameMenuScript: Cannot place card - game is over");
+#endif
                 return;
             }
             if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
             {
+#if UNITY_EDITOR
                 Debug.Log($"InGameMenuScript: Cannot place card - current phase is {_gameStateService.CurrentPhase}, must be Choose phase");
+#endif
                 return;
             }
         }

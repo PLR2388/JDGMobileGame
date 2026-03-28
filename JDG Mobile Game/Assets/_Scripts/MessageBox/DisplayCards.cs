@@ -95,22 +95,30 @@ public class DisplayCards : MonoBehaviour
     /// <param name="newItems">List of new cards to be displayed.</param>
     private void DisplayNewCards(IList newItems)
     {
+#if UNITY_EDITOR
         Debug.Log($"DisplayCards.DisplayNewCards() - START, count: {newItems?.Count ?? -1}");
+#endif
         foreach (var card in newItems)
         {
             var inGameCard = card as InGameCard;
+#if UNITY_EDITOR
             Debug.Log($"DisplayCards.DisplayNewCards() - Card: {inGameCard?.Title ?? "NULL"}, Type: {card?.GetType().FullName ?? "NULL"}");
+#endif
 
             // Phase 9: Use injected service instead of CardPoolManager.Instance
             var newCardObject = _cardPoolService?.GetPooledObject(inGameCard);
+#if UNITY_EDITOR
             Debug.Log($"DisplayCards.DisplayNewCards() - GetPooledObject returned: {(newCardObject != null ? "FOUND" : "NULL")}");
+#endif
 
             if (newCardObject != null)
             {
                 newCardObject.transform.SetParent(transform, true);
                 newCardObject.SetActive(true);
                 associatedGameObject.Add(newCardObject);
+#if UNITY_EDITOR
                 Debug.Log($"DisplayCards.DisplayNewCards() - Card displayed successfully: {inGameCard?.Title}");
+#endif
             }
             else
             {

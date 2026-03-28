@@ -18,7 +18,9 @@ namespace JDG.Infrastructure.Services
         public void SetCanvas(Transform canvas)
         {
             _gameCanvas = canvas;
+#if UNITY_EDITOR
             Debug.Log($"CanvasProviderService: Canvas set to {canvas?.name ?? "null"}");
+#endif
         }
 
         /// <summary>
@@ -28,7 +30,9 @@ namespace JDG.Infrastructure.Services
         public void ClearCanvas()
         {
             _gameCanvas = null;
+#if UNITY_EDITOR
             Debug.Log("CanvasProviderService: Canvas cleared");
+#endif
         }
 
         /// <summary>

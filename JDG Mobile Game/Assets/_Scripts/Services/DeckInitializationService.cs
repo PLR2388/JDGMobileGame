@@ -21,7 +21,9 @@ public class DeckInitializationService : IDeckInitializationService
     {
         _deckManagementService = deckManagementService;
         _cardInstantiationService = cardInstantiationService;
+#if UNITY_EDITOR
         UnityEngine.Debug.Log($"DeckInitializationService: Received ICardInstantiationService (HashCode={cardInstantiationService?.GetHashCode()})");
+#endif
     }
 
     public List<InGameCard> GetPlayerDeck(bool isPlayerOne)

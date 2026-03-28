@@ -51,7 +51,9 @@ namespace JDG.Bridge
             // Phase 126: Initialize card localization for multilanguage support
             Cards.InGameCard.SetLocalizationService(localizationService);
 
+#if UNITY_EDITOR
             Debug.Log("LegacySystemInitializer: Initialized extension class static fields and card localization");
+#endif
         }
 
         /// <summary>
@@ -83,7 +85,9 @@ namespace JDG.Bridge
             // Load cards using the bridge initializer
             CardRepositoryInitializer.Initialize(concreteRepository);
 
+#if UNITY_EDITOR
             Debug.Log("LegacySystemInitializer: Legacy cards loaded successfully");
+#endif
         }
     }
 }

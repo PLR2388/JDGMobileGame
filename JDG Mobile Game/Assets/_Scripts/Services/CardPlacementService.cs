@@ -77,12 +77,16 @@ public class CardPlacementService : ICardPlacementService
         {
             if (_gameStateService.IsGameOver)
             {
+#if UNITY_EDITOR
                 Debug.Log("CardPlacementService: Cannot place invocation card - game is over");
+#endif
                 return false;
             }
             if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
             {
+#if UNITY_EDITOR
                 Debug.Log($"CardPlacementService: Cannot place invocation card - current phase is {_gameStateService.CurrentPhase}");
+#endif
                 return false;
             }
         }
@@ -152,12 +156,16 @@ public class CardPlacementService : ICardPlacementService
         {
             if (_gameStateService.IsGameOver)
             {
+#if UNITY_EDITOR
                 Debug.Log("CardPlacementService: Cannot place effect card - game is over");
+#endif
                 return false;
             }
             if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
             {
+#if UNITY_EDITOR
                 Debug.Log($"CardPlacementService: Cannot place effect card - current phase is {_gameStateService.CurrentPhase}");
+#endif
                 return false;
             }
         }
@@ -196,12 +204,16 @@ public class CardPlacementService : ICardPlacementService
         {
             if (_gameStateService.IsGameOver)
             {
+#if UNITY_EDITOR
                 Debug.Log("CardPlacementService: Cannot place field card - game is over");
+#endif
                 return false;
             }
             if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
             {
+#if UNITY_EDITOR
                 Debug.Log($"CardPlacementService: Cannot place field card - current phase is {_gameStateService.CurrentPhase}");
+#endif
                 return false;
             }
         }
@@ -289,12 +301,16 @@ public class CardPlacementService : ICardPlacementService
         {
             if (_gameStateService.IsGameOver)
             {
+#if UNITY_EDITOR
                 Debug.Log("CardPlacementService: Cannot place equipment card - game is over");
+#endif
                 return false;
             }
             if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
             {
+#if UNITY_EDITOR
                 Debug.Log($"CardPlacementService: Cannot place equipment card - current phase is {_gameStateService.CurrentPhase}");
+#endif
                 return false;
             }
         }

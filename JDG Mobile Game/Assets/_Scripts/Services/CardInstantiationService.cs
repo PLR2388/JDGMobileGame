@@ -44,7 +44,9 @@ public class CardInstantiationService : ICardInstantiationService
         }
 
         _cardNameToGameObject = new Dictionary<string, GameObject>();
+#if UNITY_EDITOR
         Debug.Log($"CardInstantiationService: Created instance (HashCode={GetHashCode()})");
+#endif
     }
 
     /// <summary>
@@ -113,7 +115,9 @@ public class CardInstantiationService : ICardInstantiationService
                 continue;
             }
             _cardNameToGameObject.Add(newPhysicalCardName, newPhysicalCard);
+#if UNITY_EDITOR
             Debug.Log($"CardInstantiationService: Added '{newPhysicalCardName}' (isPlayerOne={isPlayerOne}). Dictionary now has {_cardNameToGameObject.Count} entries.");
+#endif
         }
     }
 

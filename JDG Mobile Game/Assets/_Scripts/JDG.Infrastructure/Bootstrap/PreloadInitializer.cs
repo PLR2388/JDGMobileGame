@@ -17,7 +17,9 @@ namespace JDG.Infrastructure.Bootstrap
             var currentScene = SceneManager.GetActiveScene();
             if (currentScene.name == PreloadSceneName)
             {
+#if UNITY_EDITOR
                 Debug.Log("PreloadInitializer: Starting from _preload, loading MainScreen...");
+#endif
                 SceneManager.LoadSceneAsync(MainScreenSceneName, LoadSceneMode.Single);
             }
         }

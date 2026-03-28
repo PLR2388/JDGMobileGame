@@ -24,7 +24,9 @@ namespace JDG.DI
     {
         protected override void Awake()
         {
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Awake called");
+#endif
 
             // Find SharedServicesScope in DontDestroyOnLoad
             var sharedScope = FindFirstObjectByType<SharedServicesScope>();
@@ -48,7 +50,9 @@ namespace JDG.DI
 
             if (sharedScope != null)
             {
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Found SharedServicesScope, setting as parent");
+#endif
                 EnqueueParent(sharedScope);
             }
             else
@@ -66,7 +70,9 @@ namespace JDG.DI
         /// </summary>
         private SharedServicesScope CreateSharedServicesScope()
         {
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Creating SharedServicesScope dynamically...");
+#endif
 
             var sharedScopeGO = new GameObject("SharedServicesScope (Dynamic)");
             var sharedScope = sharedScopeGO.AddComponent<SharedServicesScope>();
@@ -74,13 +80,17 @@ namespace JDG.DI
             // SharedServicesScope.Awake() is called immediately by Unity when AddComponent runs,
             // which sets up DontDestroyOnLoad and triggers VContainer's initialization.
 
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: SharedServicesScope created and initialized");
+#endif
             return sharedScope;
         }
 
         protected override void Configure(IContainerBuilder builder)
         {
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Configure called");
+#endif
 
             // Phase 155: Validate all required scene components before registration
             ValidateRequiredSceneComponents();
@@ -94,7 +104,9 @@ namespace JDG.DI
             if (cardPoolManager != null)
             {
                 builder.RegisterInstance(cardPoolManager);
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Registered CardPoolManager instance");
+#endif
             }
             else
             {
@@ -106,7 +118,9 @@ namespace JDG.DI
             if (invocationMenuManager != null)
             {
                 builder.RegisterInstance(invocationMenuManager);
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Registered InvocationMenuManager instance");
+#endif
             }
             else
             {
@@ -118,7 +132,9 @@ namespace JDG.DI
             if (roundDisplayManager != null)
             {
                 builder.RegisterInstance(roundDisplayManager);
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Registered RoundDisplayManager instance");
+#endif
             }
             else
             {
@@ -130,7 +146,9 @@ namespace JDG.DI
             if (inputManager != null)
             {
                 builder.RegisterInstance(inputManager);
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Registered InputManager instance");
+#endif
             }
             else
             {
@@ -150,7 +168,9 @@ namespace JDG.DI
                     "Ensure MessageBox exists in the Game scene.");
             }
             builder.RegisterInstance(messageBox);
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Registered MessageBox instance");
+#endif
 
             // Phase 94: CardSelector - required by DialogService
             // Phase 156: Throw exception if CardSelector is missing (required for card selection)
@@ -163,7 +183,9 @@ namespace JDG.DI
                     "Ensure CardSelector exists in the Game scene.");
             }
             builder.RegisterInstance(cardSelector);
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Registered CardSelector instance");
+#endif
 
             // ============================================
             // SCENE-SPECIFIC SERVICES
@@ -209,7 +231,9 @@ namespace JDG.DI
                     "Ensure PlayerManager exists in the Game scene.");
             }
             builder.RegisterInstance<IPlayerStatusProvider>(playerManager);
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Registered PlayerManager as IPlayerStatusProvider");
+#endif
 
             // Canvas Transform for CombatService
             // Phase 156: Throw exception if Canvas is missing (required for UI)
@@ -222,7 +246,9 @@ namespace JDG.DI
                     "Ensure a Canvas exists in the Game scene.");
             }
             builder.RegisterInstance(canvas.transform).As<Transform>();
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Registered Canvas Transform");
+#endif
 
             // Phase 84 Fix: Set canvas on the singleton CanvasProviderService from parent scope
             // (ICanvasProvider is now registered in SharedServicesScope, we just set the canvas here)
@@ -231,7 +257,9 @@ namespace JDG.DI
             {
                 var canvasProvider = container.Resolve<CanvasProviderService>();
                 canvasProvider.SetCanvas(canvas.transform);
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Set canvas on CanvasProviderService from parent scope");
+#endif
 
                 // Phase 94: Set MessageBox and CardSelector on DialogService from parent scope
                 // Phase 156: Simplified since messageBox/cardSelector guaranteed non-null
@@ -243,7 +271,9 @@ namespace JDG.DI
                         "Ensure DialogService is properly registered in SharedServicesScope.");
                 }
                 dialogService.SetDialogComponents(messageBox, cardSelector);
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Set dialog components on DialogService from parent scope");
+#endif
             });
 
             // ICardPlacementService - depends on ICardCollectionService, IPlayerStatusProvider
@@ -316,16 +346,19 @@ namespace JDG.DI
                 );
             }, Lifetime.Scoped);
 
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: Registered ITurnService and ICardDrawService with PlayerCardManagers");
-
             Debug.Log("GameSceneScope: Scene-specific services registered");
+#endif
 
             // ============================================
             // MANUAL INJECTION for scene MonoBehaviours
             // ============================================
             builder.RegisterBuildCallback(container =>
             {
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Injecting dependencies into scene MonoBehaviours...");
+#endif
 
                 // ============================================
                 // CRITICAL ORDER DEPENDENCY - DO NOT REORDER
@@ -338,7 +371,9 @@ namespace JDG.DI
                 var tutoInitializers = FindObjectsByType<TutoSceneInitializer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
                 if (tutoInitializers.Length > 0)
                 {
+#if UNITY_EDITOR
                     Debug.Log($"GameSceneScope: Tutorial scene detected ({tutoInitializers.Length} TutoSceneInitializer) - injecting first");
+#endif
                     InjectAllOfType<TutoSceneInitializer>(container);
                 }
 
@@ -382,7 +417,9 @@ namespace JDG.DI
                 // Phase 155: Log summary of any injection failures
                 LogInjectionSummary();
 
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: Injection complete");
+#endif
             });
         }
 
@@ -409,7 +446,11 @@ namespace JDG.DI
                 }
             }
             if (components.Length > 0)
+            {
+#if UNITY_EDITOR
                 Debug.Log($"GameSceneScope: Injected {components.Length} {typeof(T).Name}");
+#endif
+            }
         }
 
         /// <summary>
@@ -426,7 +467,9 @@ namespace JDG.DI
             }
             else
             {
+#if UNITY_EDITOR
                 Debug.Log("GameSceneScope: All component injections successful");
+#endif
             }
         }
 
@@ -488,7 +531,9 @@ namespace JDG.DI
         /// </summary>
         protected override void OnDestroy()
         {
+#if UNITY_EDITOR
             Debug.Log("GameSceneScope: OnDestroy called");
+#endif
 
             // Clear canvas reference from singleton service
             try

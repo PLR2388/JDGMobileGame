@@ -42,7 +42,9 @@ namespace JDG.Bridge
                 }
             }
 
+#if UNITY_EDITOR
             Debug.Log($"CardRepositoryInitializer: Loaded {loadedCount} card definitions from ScriptableObjects");
+#endif
         }
     }
 }

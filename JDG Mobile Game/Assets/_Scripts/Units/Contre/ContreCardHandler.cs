@@ -66,7 +66,9 @@ public class ContreCardHandler : CardHandler
         // Phase 135: Validate game state before placing card
         if (!menuScript.CanPlaceCards())
         {
+#if UNITY_EDITOR
             UnityEngine.Debug.Log("ContreCardHandler: Cannot place contre card - wrong phase or game over");
+#endif
             return;
         }
 

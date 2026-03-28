@@ -69,7 +69,9 @@ namespace JDG.DI
 
         protected override void Configure(IContainerBuilder builder)
         {
+#if UNITY_EDITOR
             UnityEngine.Debug.Log("SharedServicesScope: Configuring ROOT scope...");
+#endif
 
             // ============================================
             // INFRASTRUCTURE LAYER - Event Bus & Repositories
@@ -222,7 +224,9 @@ namespace JDG.DI
                 RegisterAllAbilities(container);
             });
 
+#if UNITY_EDITOR
             UnityEngine.Debug.Log("SharedServicesScope: ROOT scope configuration complete");
+#endif
         }
 
         /// <summary>
@@ -328,7 +332,9 @@ namespace JDG.DI
             // DEFAULT ABILITY
             registry.Register(JDG.Domain.AbilityName.Default, () => new JDG.Application.Abilities.Implementations.DefaultAbility());
 
+#if UNITY_EDITOR
             UnityEngine.Debug.Log("SharedServicesScope: Abilities registered");
+#endif
         }
     }
 }

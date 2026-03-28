@@ -41,7 +41,9 @@ namespace JDG.Infrastructure.Repositories
             PersistDeck(deckName, cardIds);
             SaveDeckList();
 
+#if UNITY_EDITOR
             Debug.Log($"DeckRepository: Saved deck '{deckName}' with {cardIds.Length} cards to PlayerPrefs");
+#endif
         }
 
         public IEnumerable<string> GetAllDeckNames()
@@ -59,7 +61,9 @@ namespace JDG.Infrastructure.Repositories
                 PlayerPrefs.DeleteKey(DeckPrefix + deckName);
                 SaveDeckList();
 
+#if UNITY_EDITOR
                 Debug.Log($"DeckRepository: Deleted deck '{deckName}' from PlayerPrefs");
+#endif
             }
         }
 
@@ -87,7 +91,9 @@ namespace JDG.Infrastructure.Repositories
                 }
             }
 
+#if UNITY_EDITOR
             Debug.Log($"DeckRepository: Created default deck for {playerId} with {deckCardIds.Count} cards");
+#endif
             return deckCardIds.ToArray();
         }
 
@@ -102,7 +108,9 @@ namespace JDG.Infrastructure.Repositories
             var deckListJson = PlayerPrefs.GetString(DeckListKey, "");
             if (string.IsNullOrEmpty(deckListJson))
             {
+#if UNITY_EDITOR
                 Debug.Log("DeckRepository: No saved decks found in PlayerPrefs");
+#endif
                 return;
             }
 
@@ -111,7 +119,9 @@ namespace JDG.Infrastructure.Repositories
                 var deckList = JsonUtility.FromJson<DeckListData>(deckListJson);
                 if (deckList?.DeckNames == null)
                 {
+#if UNITY_EDITOR
                     Debug.Log("DeckRepository: Empty deck list");
+#endif
                     return;
                 }
 
@@ -155,7 +165,9 @@ namespace JDG.Infrastructure.Repositories
                     }
                 }
 
+#if UNITY_EDITOR
                 Debug.Log($"DeckRepository: Loaded {_decks.Count} decks from PlayerPrefs");
+#endif
             }
             catch (Exception ex)
             {

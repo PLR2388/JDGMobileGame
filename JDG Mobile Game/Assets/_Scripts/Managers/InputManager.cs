@@ -136,7 +136,9 @@ public class InputManager : MonoBehaviour
 
             if (totalDownTime >= clickDuration)
             {
+#if UNITY_EDITOR
                 Debug.Log("Long click");
+#endif
                 var mousePos = Input.mousePosition;
                 _eventBus.Publish(new LongTouchEvent
                 {

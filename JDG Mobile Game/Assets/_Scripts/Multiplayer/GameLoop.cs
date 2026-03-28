@@ -361,7 +361,9 @@ public class GameLoop : MonoBehaviour
         // HandlePlayerDeath(), OnNoCards() callback, GameOverEvent, etc.)
         if (_isGameOverTriggered)
         {
+#if UNITY_EDITOR
             Debug.Log("GameLoop.GameOver: Already triggered, ignoring duplicate call");
+#endif
             return;
         }
         _isGameOverTriggered = true;
@@ -376,7 +378,9 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void OnGameOver(GameOverEvent evt)
     {
+#if UNITY_EDITOR
         Debug.Log($"GameLoop.OnGameOver: Winner = {evt.Winner}, Reason = {evt.Reason}");
+#endif
         GameOver();
     }
 
@@ -399,14 +403,20 @@ public class GameLoop : MonoBehaviour
         // Defense-in-depth: Block attack if attack phase should be skipped
         if (_gameStateService.ShouldSkipAttackPhase)
         {
+#if UNITY_EDITOR
             Debug.Log("GameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
+#endif
             return;
         }
 
+#if UNITY_EDITOR
         Debug.Log("GameLoop.DisplayAvailableOpponent: Called");
+#endif
         // Phase 17-18: Use ICombatService instead of CardManager.Instance
         var notEmptyOpponent = _combatService.BuildValidTargets();
+#if UNITY_EDITOR
         Debug.Log($"GameLoop.DisplayAvailableOpponent: Found {notEmptyOpponent?.Count ?? 0} valid targets");
+#endif
         DisplayOpponentMessageBox(notEmptyOpponent);
         // Phase 19-20: Use injected InputManager instead of .Instance
         _inputManager.DisableDetectionTouch();
@@ -420,6 +430,7 @@ public class GameLoop : MonoBehaviour
     /// <param name="invocationCards">Available opponents list</param>
     private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
     {
+#if UNITY_EDITOR
         Debug.Log($"GameLoop.DisplayOpponentMessageBox() - START, count: {invocationCards?.Count ?? -1}");
         if (invocationCards != null)
         {
@@ -428,6 +439,7 @@ public class GameLoop : MonoBehaviour
                 Debug.Log($"GameLoop.DisplayOpponentMessageBox() - Card: {card?.Title ?? "NULL"}, Type: {card?.GetType().FullName ?? "NULL"}");
             }
         }
+#endif
         void OnCardSelected(IInGameInvocationCard selectedCard)
         {
             if (selectedCard != null)

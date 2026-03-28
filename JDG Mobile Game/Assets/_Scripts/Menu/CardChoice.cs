@@ -74,7 +74,9 @@ namespace Menu
             JDG.Application.Services.ISceneLoaderService sceneLoaderService,
             JDG.Application.Services.ICardFactory cardFactory)
         {
+#if UNITY_EDITOR
             Debug.Log("CardChoice.Construct() called by VContainer!");
+#endif
             _cardSelectionService = cardSelectionService;
             _deckManagementService = deckManagementService;
             _eventBus = eventBus;
@@ -82,7 +84,9 @@ namespace Menu
             _cardChoiceUIManager = cardChoiceUIManager;
             _sceneLoaderService = sceneLoaderService;
             _cardFactory = cardFactory;
+#if UNITY_EDITOR
             Debug.Log($"CardChoice.Construct() complete. _deckManagementService = {(_deckManagementService != null ? "OK" : "NULL")}");
+#endif
         }
 
         /// <summary>
@@ -198,6 +202,7 @@ namespace Menu
         /// </summary>
         public void RandomDeck()
         {
+#if UNITY_EDITOR
             // Debug: Check all dependencies
             Debug.Log($"CardChoice.RandomDeck() called. Checking dependencies:");
             Debug.Log($"  _deckManagementService: {(_deckManagementService != null ? "OK" : "NULL")}");
@@ -206,6 +211,7 @@ namespace Menu
             Debug.Log($"  _cardChoiceUIManager: {(_cardChoiceUIManager != null ? "OK" : "NULL")}");
             Debug.Log($"  _cardSelectionService: {(_cardSelectionService != null ? "OK" : "NULL")}");
             Debug.Log($"  _cardFactory: {(_cardFactory != null ? "OK" : "NULL")}");
+#endif
 
             if (_deckManagementService == null)
             {
@@ -228,8 +234,10 @@ namespace Menu
                 }
             }
 
+#if UNITY_EDITOR
             Debug.Log($"CardChoice: Deck1AllCards count = {_deckManagementService.Deck1AllCards.Count}");
             Debug.Log($"CardChoice: Deck2AllCards count = {_deckManagementService.Deck2AllCards.Count}");
+#endif
 
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
@@ -237,8 +245,10 @@ namespace Menu
             var deck1AllCard = FilterCards(_deckManagementService.Deck1AllCards);
             var deck2AllCard = FilterCards(_deckManagementService.Deck2AllCards);
 
+#if UNITY_EDITOR
             Debug.Log($"CardChoice: After filter - deck1AllCard count = {deck1AllCard.Count}");
             Debug.Log($"CardChoice: After filter - deck2AllCard count = {deck2AllCard.Count}");
+#endif
 
             if (deck1AllCard.Count < DeckConfiguration.MaxDeckCards || deck2AllCard.Count < DeckConfiguration.MaxDeckCards)
             {

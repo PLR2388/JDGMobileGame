@@ -61,7 +61,9 @@ namespace JDG.Infrastructure.Services
             JObject jsonObject = JObject.Parse(fileData.text);
             ProcessJsonObject(jsonObject);
 
+#if UNITY_EDITOR
             Debug.Log($"LocalizationService: Loaded localization data from: {fileName}");
+#endif
             return true;
         }
 
@@ -194,7 +196,9 @@ namespace JDG.Infrastructure.Services
             if (fileData == null)
             {
                 // Card localization is optional - silently fall back to ScriptableObject text
+#if UNITY_EDITOR
                 Debug.Log($"LocalizationService: Card localization file not found: {fileName} (using ScriptableObject fallback)");
+#endif
                 _cardStrings = new Dictionary<string, CardLocalizedStrings>();
                 return false;
             }
@@ -225,7 +229,9 @@ namespace JDG.Infrastructure.Services
                     };
                 }
 
+#if UNITY_EDITOR
                 Debug.Log($"LocalizationService: Loaded {_cardStrings.Count} card localizations from: {fileName}");
+#endif
                 return true;
             }
             catch (System.Exception ex)

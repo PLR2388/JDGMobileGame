@@ -53,7 +53,9 @@ public class HandCardDisplay : MonoBehaviour
 
         // Subscribe immediately after injection since Awake/OnEnable may have already run
         SubscribeToEvents();
+#if UNITY_EDITOR
         Debug.Log("HandCardDisplay.Construct: Dependencies injected and subscribed");
+#endif
     }
 
     /// <summary>
@@ -72,18 +74,24 @@ public class HandCardDisplay : MonoBehaviour
     /// <param name="handCards">Collection of in-game cards.</param>
     private void DisplayHandCard(ObservableCollection<InGameCard> handCards)
     {
+#if UNITY_EDITOR
         Debug.Log($"HandCardDisplay.DisplayHandCard: Received {handCards.Count} cards, " +
             $"IsP1Turn={IsP1Turn}, " +
             $"FirstCardOwner={(handCards.Count > 0 ? handCards[0].CardOwner.ToString() : "N/A")}");
+#endif
 
         if (handCards.Count == 0 || IsCurrentPlayerTurn(handCards[0]))
         {
+#if UNITY_EDITOR
             Debug.Log($"HandCardDisplay.DisplayHandCard: Building {handCards.Count} cards");
+#endif
             BuildCards(handCards);
         }
         else
         {
+#if UNITY_EDITOR
             Debug.Log($"HandCardDisplay.DisplayHandCard: Skipping - not current player's turn");
+#endif
         }
     }
     
@@ -144,7 +152,9 @@ public class HandCardDisplay : MonoBehaviour
             }
 
             CreatedCards.Add(newCard);
+#if UNITY_EDITOR
             Debug.Log($"HandCardDisplay.CreateCards: Created card '{handCard.Title}'");
+#endif
         }
 
         AdjustRectTransformSize(handCards.Count);
@@ -233,9 +243,11 @@ public class HandCardDisplay : MonoBehaviour
     /// </summary>
     private void OnHandCardsDisplayChanged(HandCardsDisplayChangedEvent evt)
     {
+#if UNITY_EDITOR
         Debug.Log($"HandCardDisplay.OnHandCardsDisplayChanged: Event received, Player={evt.Player}, " +
             $"HandCards type={(evt.HandCards?.GetType().Name ?? "null")}, " +
             $"gameObject.activeInHierarchy={gameObject.activeInHierarchy}");
+#endif
 
         if (evt.HandCards is ObservableCollection<InGameCard> handCards)
         {

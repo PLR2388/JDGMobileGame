@@ -16,7 +16,9 @@ namespace JDG.DI
     {
         protected override void Awake()
         {
+#if UNITY_EDITOR
             Debug.Log("MainScreenScope: Awake called, looking for SharedServicesScope...");
+#endif
 
             // SharedServicesScope is in DontDestroyOnLoad, so auto-find doesn't work.
             // We must explicitly enqueue it as parent before base.Awake() builds the container.
@@ -41,7 +43,9 @@ namespace JDG.DI
 
             if (sharedScope != null)
             {
+#if UNITY_EDITOR
                 Debug.Log($"MainScreenScope: Found SharedServicesScope, enqueueing as parent");
+#endif
                 EnqueueParent(sharedScope);
             }
             else
@@ -51,7 +55,9 @@ namespace JDG.DI
             }
 
             base.Awake();
+#if UNITY_EDITOR
             Debug.Log($"MainScreenScope: After Awake, Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+#endif
         }
 
         /// <summary>
@@ -60,7 +66,9 @@ namespace JDG.DI
         /// </summary>
         private SharedServicesScope CreateSharedServicesScope()
         {
+#if UNITY_EDITOR
             Debug.Log("MainScreenScope: Creating SharedServicesScope dynamically...");
+#endif
 
             var sharedScopeGO = new GameObject("SharedServicesScope (Dynamic)");
             var sharedScope = sharedScopeGO.AddComponent<SharedServicesScope>();
@@ -68,14 +76,18 @@ namespace JDG.DI
             // SharedServicesScope.Awake() is called immediately by Unity when AddComponent runs,
             // which sets up DontDestroyOnLoad and triggers VContainer's initialization.
 
+#if UNITY_EDITOR
             Debug.Log("MainScreenScope: SharedServicesScope created and initialized");
+#endif
             return sharedScope;
         }
 
         protected override void Configure(IContainerBuilder builder)
         {
+#if UNITY_EDITOR
             UnityEngine.Debug.Log("MainScreenScope: Configuring...");
             UnityEngine.Debug.Log($"MainScreenScope: Parent = {(Parent != null ? Parent.GetType().Name : "NULL")}");
+#endif
 
             // ============================================
             // MAINSCREEN SCENE MONOBEHAVIOURS
@@ -101,7 +113,9 @@ namespace JDG.DI
             // Phase 84 Fix: Manual injection for scene MonoBehaviours (same pattern as GameSceneScope)
             builder.RegisterBuildCallback(container =>
             {
+#if UNITY_EDITOR
                 UnityEngine.Debug.Log("MainScreenScope: Injecting dependencies into scene MonoBehaviours...");
+#endif
                 InjectAllOfType<MainMenuAction>(container);
                 InjectAllOfType<SceneLoader>(container);
 
@@ -115,10 +129,14 @@ namespace JDG.DI
                 InjectAllOfType<Menu.CardChoice>(container);
                 InjectAllOfType<Menu.CardChoiceUIManager>(container);
 
+#if UNITY_EDITOR
                 UnityEngine.Debug.Log("MainScreenScope: Injection complete");
+#endif
             });
 
+#if UNITY_EDITOR
             UnityEngine.Debug.Log("MainScreenScope: Configuration complete");
+#endif
         }
 
         /// <summary>
@@ -141,7 +159,11 @@ namespace JDG.DI
                 }
             }
             if (components.Length > 0)
+            {
+#if UNITY_EDITOR
                 UnityEngine.Debug.Log($"MainScreenScope: Injected {components.Length} {typeof(T).Name}");
+#endif
+            }
             else
                 UnityEngine.Debug.LogWarning($"MainScreenScope: No {typeof(T).Name} found in scene!");
         }

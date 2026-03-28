@@ -162,7 +162,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
         var deckLocation = CardLocation.GetDeckLocation(IsPlayerOne);
         _deckInitService.InitializePhysicalCards(Deck, deckLocation, IsPlayerOne);
 
+#if UNITY_EDITOR
         Debug.Log($"PlayerCards.Construct() - IsPlayerOne={IsPlayerOne}, Deck={Deck?.Count ?? 0} cards, Physical cards created");
+#endif
 
         // Phase 155: Warn if deck is empty - may indicate TutoSceneInitializer order issue in tutorial scenes
         if (Deck == null || Deck.Count == 0)
@@ -207,7 +209,9 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
         else
         {
             // Phase 140: Add success logging for debugging target building
+#if UNITY_EDITOR
             Debug.Log($"PlayerCards.BuildPlayer() - SUCCESS! IsPlayerOne={IsPlayerOne}, Player.Title='{Player.Title}', Player.GetType()={Player.GetType().Name}");
+#endif
 
             // Phase 140: Register Player entity with card pool so it can be displayed in attack target selector
             _cardPoolService?.AddCardToPool(Player);
@@ -217,12 +221,16 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
     // Start is called before the first frame update
     private void Start()
     {
+#if UNITY_EDITOR
         Debug.Log($"PlayerCards.Start() - IsPlayerOne={IsPlayerOne}, Deck.Count={Deck?.Count ?? 0}");
+#endif
 
         // Phase 137: Build player entity in Start() to ensure SerializeFields are populated
         // (Construct() is called by VContainer before Unity populates SerializeFields)
         BuildPlayer();
+#if UNITY_EDITOR
         Debug.Log($"PlayerCards.Start() - Player entity created: {Player?.Title ?? "null"}");
+#endif
 
         // Note: Deck and physical cards are initialized in Construct() to ensure
         // they're ready before any Start() methods run.

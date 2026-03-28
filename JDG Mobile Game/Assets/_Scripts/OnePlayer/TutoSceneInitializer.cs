@@ -27,13 +27,19 @@ public class TutoSceneInitializer : MonoBehaviour
             deckManagementService.Player2DeckCards == null ||
             deckManagementService.Player2DeckCards.Count == 0)
         {
+#if UNITY_EDITOR
             Debug.Log("TutoSceneInitializer: Decks empty, building tutorial decks for Editor playback");
+#endif
             deckManagementService.BuildTutorialDecks();
+#if UNITY_EDITOR
             Debug.Log($"TutoSceneInitializer: Built tutorial decks - P1: {deckManagementService.Player1DeckCards?.Count ?? 0} cards, P2: {deckManagementService.Player2DeckCards?.Count ?? 0} cards");
+#endif
         }
         else
         {
+#if UNITY_EDITOR
             Debug.Log($"TutoSceneInitializer: Decks already populated - P1: {deckManagementService.Player1DeckCards.Count} cards, P2: {deckManagementService.Player2DeckCards.Count} cards");
+#endif
         }
     }
 }

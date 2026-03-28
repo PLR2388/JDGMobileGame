@@ -44,7 +44,9 @@ namespace Cards
         {
             _cardInstantiationService = cardInstantiationService;
             _eventBus = eventBus;
+#if UNITY_EDITOR
             Debug.Log($"CardLocation.Construct: Received ICardInstantiationService (HashCode={cardInstantiationService?.GetHashCode()})");
+#endif
         }
 
         private static readonly PlayerCardLocations Player1Locations = new PlayerCardLocations

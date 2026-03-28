@@ -48,7 +48,9 @@ namespace JDG.Infrastructure.Services
                         _cardsDict[card.Title] = card;
                     }
                 }
+#if UNITY_EDITOR
                 Debug.Log($"CardDataProvider: Loaded {_cards.Count} cards from Resources/Cards ({_cardsDict.Count} unique titles)");
+#endif
             }
             else
             {

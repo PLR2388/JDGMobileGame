@@ -263,11 +263,15 @@ public class CardPoolManager : MonoBehaviour
         // Check if card is already in the pool
         if (GetPooledObject(inGameCard) != null)
         {
+#if UNITY_EDITOR
             Debug.Log($"CardPoolManager.AddCardToPool: Card '{inGameCard.Title}' already in pool, skipping");
+#endif
             return;
         }
 
+#if UNITY_EDITOR
         Debug.Log($"CardPoolManager.AddCardToPool: Adding card '{inGameCard.Title}' (Owner: {inGameCard.CardOwner})");
+#endif
         BuildNewCard(inGameCard);
     }
 
