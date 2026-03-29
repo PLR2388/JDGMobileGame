@@ -461,7 +461,7 @@ namespace JDG.Application.Abilities.Implementations
 
     /// <summary>
     /// Effect ability that damages opponent based on card counts.
-    /// Migrated from LooseHPOpponentEffectAbility.
+    /// Migrated from LoseHPOpponentEffectAbility.
     /// </summary>
     public class DamageOpponentEffectAbility : IAbility
     {

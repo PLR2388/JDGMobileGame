@@ -17,8 +17,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
     ///
     /// Stat Modifier Abilities:
     /// - GiveAtkDefToComics: Give +ATK/+DEF to Comics family
-    /// - GiveAktDefToRpgMember: Give bonuses to RPG family
-    /// - GiveAktDefToFistilandMember: Give bonuses to Fistiland family
+    /// - GiveAtkDefToRpgMember: Give bonuses to RPG family
+    /// - GiveAtkDefToFistilandMember: Give bonuses to Fistiland family
     /// - ConditionalStats: Bonus based on card having min ATK/DEF
     /// - CopyStats: Copy ATK/DEF from another card
     /// </summary>
@@ -34,10 +34,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             // Family stat boost abilities
             AbilityRegistry.Register(AbilityName.GiveAtkDefToComics,
                 () => _statFactory.CreateGiveFamilyStats(AbilityName.GiveAtkDefToComics, CardFamily.Comics, 1, 1));
-            AbilityRegistry.Register(AbilityName.GiveAktDefToRpgMember,
-                () => _statFactory.CreateGiveFamilyStats(AbilityName.GiveAktDefToRpgMember, CardFamily.Rpg, 1, 1));
-            AbilityRegistry.Register(AbilityName.GiveAktDefToFistilandMember,
-                () => _statFactory.CreateGiveFamilyStats(AbilityName.GiveAktDefToFistilandMember, CardFamily.Fistiland, 1, 1));
+            AbilityRegistry.Register(AbilityName.GiveAtkDefToRpgMember,
+                () => _statFactory.CreateGiveFamilyStats(AbilityName.GiveAtkDefToRpgMember, CardFamily.Rpg, 1, 1));
+            AbilityRegistry.Register(AbilityName.GiveAtkDefToFistilandMember,
+                () => _statFactory.CreateGiveFamilyStats(AbilityName.GiveAtkDefToFistilandMember, CardFamily.Fistiland, 1, 1));
         }
 
         #region GiveFamilyStats Tests
@@ -135,10 +135,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
         #endregion
 
-        #region GiveAktDefToRpgMember Tests
+        #region GiveAtkDefToRpgMember Tests
 
         [Test]
-        public void GiveAktDefToRpgMember_BoostsRpgFamily()
+        public void GiveAtkDefToRpgMember_BoostsRpgFamily()
         {
             // Arrange
             var boosterCard = CreateCard("RPG Leader", 4, 4, CardFamily.Rpg);
@@ -158,8 +158,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.GiveAktDefToRpgMember);
-            var context = CreateContext(boosterCard, AbilityName.GiveAktDefToRpgMember);
+            var ability = GetAbility(AbilityName.GiveAtkDefToRpgMember);
+            var context = CreateContext(boosterCard, AbilityName.GiveAtkDefToRpgMember);
 
             // Act
             var result = ability.Execute(context);
@@ -170,10 +170,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
         #endregion
 
-        #region GiveAktDefToFistilandMember Tests
+        #region GiveAtkDefToFistilandMember Tests
 
         [Test]
-        public void GiveAktDefToFistilandMember_BoostsFistilandFamily()
+        public void GiveAtkDefToFistilandMember_BoostsFistilandFamily()
         {
             // Arrange
             var boosterCard = CreateCard("Fistiland Leader", 4, 4, CardFamily.Fistiland);
@@ -198,8 +198,8 @@ namespace JDG.Application.Tests.Abilities.Scenarios
             PlayerRepository.AddPlayer(player1);
             PlayerRepository.AddPlayer(player2);
 
-            var ability = GetAbility(AbilityName.GiveAktDefToFistilandMember);
-            var context = CreateContext(boosterCard, AbilityName.GiveAktDefToFistilandMember);
+            var ability = GetAbility(AbilityName.GiveAtkDefToFistilandMember);
+            var context = CreateContext(boosterCard, AbilityName.GiveAtkDefToFistilandMember);
 
             // Act
             var result = ability.Execute(context);

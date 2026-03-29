@@ -50,14 +50,14 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 
 | Card | ATK | DEF | Abilities | Conditions |
 |------|-----|-----|-----------|------------|
-| "J\xE9r\xF4me" | 2 | 3 | GiveAktDefToRpgMember | None |
-| "R\xE9mi" | 3 | 2 | GiveAktDefToRpgMember | None |
+| "J\xE9r\xF4me" | 2 | 3 | GiveAtkDefToRpgMember | None |
+| "R\xE9mi" | 3 | 2 | GiveAtkDefToRpgMember | None |
 | "Studio de sc\xE9naristes Canadien" | 1 | 1 | ComesBackFromDeath5Times | None |
 | Carole du service marketing | 2 | 2 | GetPetitePortionDeRizFromDeck | None |
 | David Gnouf | 2 | 2 | Win1Atk1DefDeveloper | None |
-| David Goodenough | 2 | 2 | GiveAktDefToRpgMember | None |
+| David Goodenough | 2 | 2 | GiveAtkDefToRpgMember | None |
 | Jean-Claude | 4 | 4 | SacrificeDeveloper3Atk3Def | None |
-| Jean-Philippe Hardfist | 3 | 2 | GiveAktDefToRpgMember | None |
+| Jean-Philippe Hardfist | 3 | 2 | GiveAtkDefToRpgMember | None |
 | Mohammad | 2 | 2 | SacrificeJDGOnStudioDevForAtkDef | None |
 | Patron D'Infogrames | 4 | 4 | SacrificeSebDuGrenier | None |
 
@@ -66,9 +66,9 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | Card | ATK | DEF | Abilities | Conditions |
 |------|-----|-----|-----------|------------|
 | "Propri\xE9taire De Fistiland" | 2 | 2 | Win1Atk1DefFistiland | None |
-| Fisti | 2 | 2 | GiveAktDefToRpgMember | None |
-| Jean-Cule | 2 | 3 | GiveAktDefToRpgMember | None |
-| Jean-Philippe Hardfist | 3 | 2 | GiveAktDefToRpgMember | None |
+| Fisti | 2 | 2 | GiveAtkDefToRpgMember | None |
+| Jean-Cule | 2 | 3 | GiveAtkDefToRpgMember | None |
+| Jean-Philippe Hardfist | 3 | 2 | GiveAtkDefToRpgMember | None |
 | Sangoku | 2 | 2 | Draw3Cards | None |
 
 ### Fistiland Family (11 cards)
@@ -85,30 +85,30 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | Maman | 2 | 2 | GetBenzaieJeuneFromDeck | None |
 | Manuel Ferrara | 2 | 2 | GetEquipmentCardWithoutAttack | None |
 | Nounours | 1 | 1 | CopyBenzaieJeune | None |
-| Petite caille | 3 | 2 | GiveAktDefToRpgMember | None |
+| Petite caille | 3 | 2 | GiveAtkDefToRpgMember | None |
 
 ### HardCorner Family (8 cards)
 
 | Card | ATK | DEF | Abilities | Conditions |
 |------|-----|-----|-----------|------------|
-| Cap'tain Iglou | 3 | 2 | GiveAktDefToRpgMember | None |
-| Jean-Michel Bruitages | 3 | 2 | GiveAktDefToRpgMember | None |
-| Joueur Du Grenier | 3 | 3 | GiveAktDefToRpgMember | None |
-| Karim | 2 | 2 | GiveAktDefToRpgMember | None |
-| Kechua | 2 | 3 | GiveAktDefToRpgMember | None |
+| Cap'tain Iglou | 3 | 2 | GiveAtkDefToRpgMember | None |
+| Jean-Michel Bruitages | 3 | 2 | GiveAtkDefToRpgMember | None |
+| Joueur Du Grenier | 3 | 3 | GiveAtkDefToRpgMember | None |
+| Karim | 2 | 2 | GiveAtkDefToRpgMember | None |
+| Kechua | 2 | 3 | GiveAtkDefToRpgMember | None |
 | Papy Grenier | 4 | 2 | SurviveOneTurn, GiveDeathWhenDie | None |
-| Seb Du Grenier | 3 | 3 | GiveAktDefToRpgMember | None |
+| Seb Du Grenier | 3 | 3 | GiveAtkDefToRpgMember | None |
 | Sheik Point | 1 | 1 | SacrificeToInvoke | None |
 
 ### Human Family (11 cards)
 
 | Card | ATK | DEF | Abilities | Conditions |
 |------|-----|-----|-----------|------------|
-| "Fant\xF4me De Japonaise" | 3 | 2 | GiveAktDefToRpgMember | None |
+| "Fant\xF4me De Japonaise" | 3 | 2 | GiveAtkDefToRpgMember | None |
 | "Mo\xEFse, le plus grand de tous les h\xE9breux" | 4 | 2 | CantLiveWithoutHuman | None |
 | Alpha Man | 4 | 4 | CanOnlyAttackItself, CantLiveWithoutBenzaieOrBenzaieJeune | None |
-| Archibald Von Grenier | 2 | 2 | GiveAktDefToRpgMember | None |
-| Jacques Chirac en 3D | 3 | 2 | GiveAktDefToRpgMember | None |
+| Archibald Von Grenier | 2 | 2 | GiveAtkDefToRpgMember | None |
+| Jacques Chirac en 3D | 3 | 2 | GiveAtkDefToRpgMember | None |
 | Jean-Louis La Chaussette | 1 | 1 | CantBeAttackKill | None |
 | Jeu pourri | 2 | 4 | None | None |
 | La Mort | 2 | 4 | KillOpponentInvocation | None |
@@ -121,7 +121,7 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | Card | ATK | DEF | Abilities | Conditions |
 |------|-----|-----|-----------|------------|
 | "Clich\xE9 Raciste" | 1 | 1 | InvokeTentacules | None |
-| "Fant\xF4me De Japonaise" | 3 | 2 | GiveAktDefToRpgMember | None |
+| "Fant\xF4me De Japonaise" | 3 | 2 | GiveAtkDefToRpgMember | None |
 | "Poign\xE9e de porte" | 2 | 2 | InvokeDresseurBidulmon | None |
 | Dresseur de Bidulmon | 2 | 2 | Win1ATK1DefJaponWith2ATK2DEFCondition | None |
 | Fourchette | 2 | 2 | InvokeDresseurBidulmon | None |
@@ -140,7 +140,7 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | Dictateur Sympa | 4 | 3 | Sacrifice3Atk3Def, ChangeFieldWithFieldFromDeck | None |
 | Dresseur de Bidulmon | 2 | 2 | Win1ATK1DefJaponWith2ATK2DEFCondition | None |
 | Le voisin | 2 | 2 | InvokeSebOrJDG | None |
-| Max | 2 | 2 | GiveAktDefToRpgMember | None |
+| Max | 2 | 2 | GiveAtkDefToRpgMember | None |
 | Spaghetti | 2 | 2 | GetPatronInfogramesFromDeckYellowTrash | None |
 
 ### Monster Family (6 cards)
@@ -148,11 +148,11 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | Card | ATK | DEF | Abilities | Conditions |
 |------|-----|-----|-----------|------------|
 | Babs | 1 | 1 | CantBeAttackIfComics, GiveAtkDefToComics | None |
-| Barry Redfield | 2 | 2 | GiveAktDefToRpgMember | None |
-| Bon flic | 2 | 3 | GiveAktDefToRpgMember | None |
-| Gilles Valentin | 2 | 2 | GiveAktDefToRpgMember | None |
-| Inspecteur Magret | 2 | 2 | GiveAktDefToRpgMember | None |
-| Mauvais flic | 3 | 2 | GiveAktDefToRpgMember | None |
+| Barry Redfield | 2 | 2 | GiveAtkDefToRpgMember | None |
+| Bon flic | 2 | 3 | GiveAtkDefToRpgMember | None |
+| Gilles Valentin | 2 | 2 | GiveAtkDefToRpgMember | None |
+| Inspecteur Magret | 2 | 2 | GiveAtkDefToRpgMember | None |
+| Mauvais flic | 3 | 2 | GiveAtkDefToRpgMember | None |
 
 ### None Family (9 cards)
 
@@ -160,12 +160,12 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 |------|-----|-----|-----------|------------|
 | Babs | 1 | 1 | CantBeAttackIfComics, GiveAtkDefToComics | None |
 | Canardman | 5 | 4 | SacrificeJoueurDuGrenier | None |
-| Captain URSSAF | 3 | 2 | GiveAktDefToRpgMember | None |
-| Inspecteur Magret | 2 | 2 | GiveAktDefToRpgMember | None |
-| L'Aigle De La Nuit | 3 | 2 | GiveAktDefToRpgMember | None |
+| Captain URSSAF | 3 | 2 | GiveAtkDefToRpgMember | None |
+| Inspecteur Magret | 2 | 2 | GiveAtkDefToRpgMember | None |
+| L'Aigle De La Nuit | 3 | 2 | GiveAtkDefToRpgMember | None |
 | L'homme-banane | 2 | 4 | CantLiveWithoutComics | None |
-| Le Pygargue | 2 | 3 | GiveAktDefToRpgMember | None |
-| Le chevalier noir | 2 | 3 | GiveAktDefToRpgMember | None |
+| Le Pygargue | 2 | 3 | GiveAtkDefToRpgMember | None |
+| Le chevalier noir | 2 | 3 | GiveAtkDefToRpgMember | None |
 | Player | 0 | 0 | None | None |
 
 ### Police Family (7 cards)
@@ -176,15 +176,15 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | Jean-Marc Soul | 1 | 1 | ComesBackFromDeath | None |
 | L'Elfette | 2 | 2 | Draw2Cards | None |
 | Le Hobbit | 2 | 2 | InvokeSebOrJDG | None |
-| Le Pyro-Barbare | 3 | 2 | GiveAktDefToRpgMember | None |
-| Sylvain, Fils de Sylvain, Roi des Elfes | 2 | 3 | GiveAktDefToRpgMember | None |
+| Le Pyro-Barbare | 3 | 2 | GiveAtkDefToRpgMember | None |
+| Sylvain, Fils de Sylvain, Roi des Elfes | 2 | 3 | GiveAtkDefToRpgMember | None |
 | Vieux Sage | 4 | 5 | SacrificeSebDuGrenier | None |
 
 ### Rpg Family (6 cards)
 
 | Card | ATK | DEF | Abilities | Conditions |
 |------|-----|-----|-----------|------------|
-| "Amiral Om\xE9ga 3" | 3 | 2 | GiveAktDefToRpgMember | None |
+| "Amiral Om\xE9ga 3" | 3 | 2 | GiveAtkDefToRpgMember | None |
 | Alpha V De Gelganech | 4 | 3 | AddSpatialFromDeck, SacrificeArchibaldVonGrenier | None |
 | Frangipanus | 1 | 1 | GetZozanKebabFromDeck | None |
 | Granolax | 2 | 2 | ProtectedBehindStarlightUnicorn | None |
@@ -199,10 +199,10 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | "Georges Tus\xE9ki" | 4 | 3 | SacrificeWizard | None |
 | Clodo du coin | 2 | 2 | GetLyceeMagiqueGeorgesPompidouFromDeck | None |
 | Henry Potdebeurre | 4 | 5 | SacrificeJoueurDuGrenier | None |
-| Prof de SVT | 2 | 3 | GiveAktDefToRpgMember | None |
+| Prof de SVT | 2 | 3 | GiveAtkDefToRpgMember | None |
 | Professeur Humblebundledore | 5 | 4 | SacrificeSebDuGrenier | None |
-| Professeur Rogue-Like | 3 | 2 | GiveAktDefToRpgMember | None |
-| Texas Granger | 2 | 2 | GiveAktDefToRpgMember | None |
+| Professeur Rogue-Like | 3 | 2 | GiveAtkDefToRpgMember | None |
+| Texas Granger | 2 | 2 | GiveAtkDefToRpgMember | None |
 
 ## Equipment Cards
 
@@ -249,10 +249,10 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 | "Fatalit\xE9" | GetHPFor1Sacrifice3ATKDEFCondition | S'il reste \xE0 votre adversaire moins de 5 \xE9toiles de |
 | "Filtre d\xE9gueulasse FMV" | None | Les effets des cartes TERRAIN pr\xE9sentes sur le terrain |
 | "Maniabilit\xE9 pourrie" | GetCardFromYellowDeck | Fait sauter la phase d'attaque des cartes INVOCATION adverses |
-| "Pains aux raisins \xE0 la place des mains" | LooseHPBasedOnNumberInvocation | D\xE9truit une carte EQUIPEMENT pr\xE9sente sur le terrain. |
+| "Pains aux raisins \xE0 la place des mains" | LoseHPBasedOnNumberInvocation | D\xE9truit une carte EQUIPEMENT pr\xE9sente sur le terrain. |
 | "Petite portions de \xAB riz \xBB" | LookOpponentHandCardsAndChangeIt | Vos cartes INVOCATION peuvent attaquer 2 fois chacune pendant |
 | "Plume de ph\xE9nix" | DoubleAttackPerTurn | Permet au joueur de ramener par invocation sp\xE9ciale une |
-| "Un d\xE9licieux risotto" | Loose1HPPerOpponentHandCards | Sacrifiez une INVOCATION de votre terrain ayant au moins |
+| "Un d\xE9licieux risotto" | Lose1HPPerOpponentHandCards | Sacrifiez une INVOCATION de votre terrain ayant au moins |
 | Attaque de la tour Eiffel | None | Cette carte vous permet ce tour de combiner ensemble 2 cartes |
 | Blague interdite | None | Cette carte ne peut \xEAtre contr\xE9e. Cette carte emp\xEAche |
 | Bloue touche | Default | Chaque joueur pioche ou se d\xE9fausse d'autant de cartes |
@@ -374,8 +374,8 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 - **Win1ATK1DefJaponWith2ATK2DEFCondition**: Dresseur de Bidulmon
 - **GiveDeathWhenDie**: Papy Grenier
 - **Win1Atk1DefFistiland**: "Propri\xE9taire De Fistiland"
-- **GiveAktDefToRpgMember**: "Amiral Om\xE9ga 3", "Fant\xF4me De Japonaise", "J\xE9r\xF4me", "R\xE9mi", Archibald Von Grenier, Barry Redfield, Bon flic, Cap'tain Iglou, Captain URSSAF, David Goodenough, Fisti, Gilles Valentin, Inspecteur Magret, Jacques Chirac en 3D, Jean-Cule, Jean-Michel Bruitages, Jean-Philippe Hardfist, Joueur Du Grenier, Karim, Kechua, L'Aigle De La Nuit, Le Pygargue, Le Pyro-Barbare, Le chevalier noir, Mauvais flic, Max, Petite caille, Prof de SVT, Professeur Rogue-Like, Seb Du Grenier, Sylvain, Fils de Sylvain, Roi des Elfes, Texas Granger
-- **GiveAktDefToFistilandMember**: None
+- **GiveAtkDefToRpgMember**: "Amiral Om\xE9ga 3", "Fant\xF4me De Japonaise", "J\xE9r\xF4me", "R\xE9mi", Archibald Von Grenier, Barry Redfield, Bon flic, Cap'tain Iglou, Captain URSSAF, David Goodenough, Fisti, Gilles Valentin, Inspecteur Magret, Jacques Chirac en 3D, Jean-Cule, Jean-Michel Bruitages, Jean-Philippe Hardfist, Joueur Du Grenier, Karim, Kechua, L'Aigle De La Nuit, Le Pygargue, Le Pyro-Barbare, Le chevalier noir, Mauvais flic, Max, Petite caille, Prof de SVT, Professeur Rogue-Like, Seb Du Grenier, Sylvain, Fils de Sylvain, Roi des Elfes, Texas Granger
+- **GiveAtkDefToFistilandMember**: None
 
 #### Dependency Abilities
 
@@ -457,7 +457,7 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 - **ManiabilitePourrieSkipAttackForOpponent**: Mauvais doublage
 - **SwitchAtkDef**: MJ corrompu
 - **LookAndOrderDeckCards**: Musique de Mega Drive
-- **LooseHPBasedOnNumberInvocation**: "Pains aux raisins \xE0 la place des mains"
+- **LoseHPBasedOnNumberInvocation**: "Pains aux raisins \xE0 la place des mains"
 - **DestroyEquipmentCard**: Passage secret dans le mur du voisin
 - **LookOpponentHandCardsAndChangeIt**: "Petite portions de \xAB riz \xBB"
 - **DoubleAttackPerTurn**: "Plume de ph\xE9nix"
@@ -465,7 +465,7 @@ This document catalogs all abilities, powers, and synergies in the JDG Trading C
 - **DivideDEFOpponentBy2**: Sceaux magiques
 - **Add3ShieldsForUser**: Squalala !
 - **DestroyOpponentInvocationCard**: Torture Ninja
-- **Loose1HPPerOpponentHandCards**: "Un d\xE9licieux risotto"
+- **Lose1HPPerOpponentHandCards**: "Un d\xE9licieux risotto"
 - **GetBackAllHPBySacrifice5AtkDef**: Youtube Money
 - **Control1OpponentInvocationCard**: None
 
@@ -668,8 +668,8 @@ Cards that can search for other cards:
 - [x] Draw1Card
 - [x] Draw2Cards
 - [x] Draw3Cards
-- [x] GiveAktDefToRpgMember
-- [x] GiveAktDefToFistilandMember
+- [x] GiveAtkDefToRpgMember
+- [x] GiveAtkDefToFistilandMember
 
 ### Equipment Abilities to Test
 
@@ -724,7 +724,7 @@ Cards that can search for other cards:
 - [x] ManiabilitePourrieSkipAttackForOpponent
 - [x] SwitchAtkDef
 - [x] LookAndOrderDeckCards
-- [x] LooseHPBasedOnNumberInvocation
+- [x] LoseHPBasedOnNumberInvocation
 - [x] DestroyEquipmentCard
 - [x] LookOpponentHandCardsAndChangeIt
 - [x] DoubleAttackPerTurn
@@ -732,7 +732,7 @@ Cards that can search for other cards:
 - [x] DivideDEFOpponentBy2
 - [x] Add3ShieldsForUser
 - [x] DestroyOpponentInvocationCard
-- [x] Loose1HPPerOpponentHandCards
+- [x] Lose1HPPerOpponentHandCards
 - [x] GetBackAllHPBySacrifice5AtkDef
 - [x] Control1OpponentInvocationCard
 

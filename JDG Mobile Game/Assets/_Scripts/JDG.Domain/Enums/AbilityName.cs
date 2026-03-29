@@ -64,8 +64,8 @@ namespace JDG.Domain
         Draw1Card,
         Draw2Cards,
         Draw3Cards,
-        GiveAktDefToRpgMember,
-        GiveAktDefToFistilandMember,
+        GiveAtkDefToRpgMember,
+        GiveAtkDefToFistilandMember,
         Default
     }
 }

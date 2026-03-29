@@ -22,7 +22,7 @@ namespace JDG.Domain.Enums
         ManiabilitePourrieSkipAttackForOpponent,
         SwitchAtkDef,
         LookAndOrderDeckCards,
-        LooseHPBasedOnNumberInvocation,
+        LoseHPBasedOnNumberInvocation,
         DestroyEquipmentCard,
         LookOpponentHandCardsAndChangeIt,
         DoubleAttackPerTurn,
@@ -30,7 +30,7 @@ namespace JDG.Domain.Enums
         DivideDEFOpponentBy2,
         Add3ShieldsForUser,
         DestroyOpponentInvocationCard,
-        Loose1HPPerOpponentHandCards,
+        Lose1HPPerOpponentHandCards,
         GetBackAllHPBySacrifice5AtkDef,
         Control1OpponentInvocationCard
     }

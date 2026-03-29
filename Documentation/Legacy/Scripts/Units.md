@@ -296,9 +296,9 @@ The `LookHandCardsEffectAbility` class is a feature in the game that grants play
   - This ability can be particularly useful for players to make informed decisions about their next moves based on the opponent's potential actions.
   - It introduces a layer of strategy, where players must weigh the benefits of gaining information against the cost of possibly weakening their own hand if they choose to remove cards.
 
-#### LooseHPOpponentEffectAbility
+#### LoseHPOpponentEffectAbility
 
-The `LooseHPOpponentEffectAbility` class defines an effect ability within the game that allows a player to inflict damage to their opponent's health points (HP) based on specific conditions.
+The `LoseHPOpponentEffectAbility` class defines an effect ability within the game that allows a player to inflict damage to their opponent's health points (HP) based on specific conditions.
 
 - **Purpose**: To offer a strategic game ability that reduces the opponent's HP by a calculated amount of damage, enhancing the competitive aspect of the game.
 - **Functionality**:

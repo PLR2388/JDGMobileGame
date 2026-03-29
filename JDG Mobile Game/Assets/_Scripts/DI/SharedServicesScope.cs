@@ -294,8 +294,8 @@ namespace JDG.DI
 
             // STAT MODIFIER ABILITIES
             registry.Register(JDG.Domain.AbilityName.GiveAtkDefToComics, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAtkDefToComics, JDG.Domain.Enums.CardFamily.Comics, 1, 1));
-            registry.Register(JDG.Domain.AbilityName.GiveAktDefToRpgMember, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAktDefToRpgMember, JDG.Domain.Enums.CardFamily.Rpg, 1, 1));
-            registry.Register(JDG.Domain.AbilityName.GiveAktDefToFistilandMember, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAktDefToFistilandMember, JDG.Domain.Enums.CardFamily.Fistiland, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.GiveAtkDefToRpgMember, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAtkDefToRpgMember, JDG.Domain.Enums.CardFamily.Rpg, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.GiveAtkDefToFistilandMember, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAtkDefToFistilandMember, JDG.Domain.Enums.CardFamily.Fistiland, 1, 1));
             registry.Register(JDG.Domain.AbilityName.Win1Atk1DefDeveloper, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.Win1Atk1DefDeveloper, JDG.Domain.Enums.CardFamily.Developer, 1, 1));
             registry.Register(JDG.Domain.AbilityName.Win1Atk1DefFistiland, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.Win1Atk1DefFistiland, JDG.Domain.Enums.CardFamily.Fistiland, 1, 1));
             registry.Register(JDG.Domain.AbilityName.Win1ATK1DefJaponWith2ATK2DEFCondition, () => statModifierFactory.CreateConditionalStats(JDG.Domain.AbilityName.Win1ATK1DefJaponWith2ATK2DEFCondition, JDG.Domain.Enums.CardFamily.Japan, 2, 2, 1, 1));

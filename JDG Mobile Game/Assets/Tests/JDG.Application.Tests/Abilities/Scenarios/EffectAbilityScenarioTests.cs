@@ -1240,10 +1240,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
         #endregion
 
-        #region LooseHPBasedOnNumberInvocation (Pains aux raisins)
+        #region LoseHPBasedOnNumberInvocation (Pains aux raisins)
 
         [Test]
-        public void LooseHPBasedOnNumberInvocation_DamagesBasedOnInvocationCount()
+        public void LoseHPBasedOnNumberInvocation_DamagesBasedOnInvocationCount()
         {
             // Arrange
             // Pains aux raisins: Player loses HP per invocation on field
@@ -1345,10 +1345,10 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
         #endregion
 
-        #region Loose1HPPerOpponentHandCards (Un delicieux risotto)
+        #region Lose1HPPerOpponentHandCards (Un delicieux risotto)
 
         [Test]
-        public void Loose1HPPerOpponentHandCards_DamagesPerHandCard()
+        public void Lose1HPPerOpponentHandCards_DamagesPerHandCard()
         {
             // Arrange
             // Un delicieux risotto: Opponent loses 1 HP per card in their hand

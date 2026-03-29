@@ -388,7 +388,7 @@ For questions or issues:
 - **Deck Search Abilities (11):** AddSpatialFromDeck, GetNounoursFromDeck, GetPetitePortionDeRizFromDeck, GetLycéeMagiqueGeorgesPompidouFromDeck, GetZozanKebabFromDeck, GetConvocationAuLyceeFromDeck, GetCanardSignal, GetForetElfesSylvains, GetBenzaieJeuneFromDeck, GetPatronInfogramesFromDeckYellowTrash, GetEquipmentCardWithoutAttack
 - **Sacrifice Abilities (15):** SacrificeArchibaldVonGrenier, SacrificeBenzaieJeune, SacrificeJoueurDuGrenier, SacrificeWizard, SacrificeSebDuGrenier, SacrificeGranolax, SacrificeClicheRaciste, SacrificeToInvoke, SacrificeSebDuGrenierOnHardCornerForAtkDef, SacrificeJDGOnStudioDevForAtkDef, Sacrifice3Atk3Def, SacrificeDeveloper3Atk3Def, SacrificeHardCorner3Atk3Def, Sacrifice2Japan, Sacrifice2Incarnation
 - **Invoke Abilities (3):** InvokeTentacules, InvokeDresseurBidulmon, InvokeSebOrJDG
-- **Stat Modifier Abilities (7):** GiveAtkDefToComics, GiveAktDefToRpgMember, GiveAktDefToFistilandMember, Win1Atk1DefDeveloper, Win1Atk1DefFistiland, Win1ATK1DefJaponWith2ATK2DEFCondition, CopyBenzaieJeune
+- **Stat Modifier Abilities (7):** GiveAtkDefToComics, GiveAtkDefToRpgMember, GiveAtkDefToFistilandMember, Win1Atk1DefDeveloper, Win1Atk1DefFistiland, Win1ATK1DefJaponWith2ATK2DEFCondition, CopyBenzaieJeune
 - **Protection Abilities (5):** CantBeAttackIfComics, CantBeAttackKill, ProtectedBehindStarlightUnicorn, ProtectBehindGreaterDef, CanOnlyAttackItself
 - **Dependency Abilities (6):** CantLiveWithoutBenzaieOrBenzaieJeune, CantLiveWithoutJDG, CantLiveWithoutComics, CantLiveWithoutHuman, CantLiveWithoutJapon, CantLiveWithoutGranolaxOrMechaGranolax
 - **Lifecycle Abilities (4):** SurviveOneTurn, ComesBackFromDeath, ComesBackFromDeath5Times, GiveDeathWhenDie
@@ -1327,7 +1327,7 @@ Libraries remain functional during transition:
 - GetCardFromDeckYellowEffectAbility.cs, GetHPBackEffectAbility.cs
 - IncrementNumberAttackEffectAbility.cs, InvokeCardFromDeckYellowEffectAbility.cs
 - LimitHandCardsEffectAbility.cs, LookDeckCardsEffectAbility.cs
-- LookHandCardsEffectAbility.cs, LooseHPOpponentEffectAbility.cs
+- LookHandCardsEffectAbility.cs, LoseHPOpponentEffectAbility.cs
 - SkipOpponentAttackEffectAbility.cs, SwitchAtkDefEffectAbility.cs
 
 **Field Abilities (5 files)**:

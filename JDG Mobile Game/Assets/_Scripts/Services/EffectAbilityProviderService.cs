@@ -96,9 +96,9 @@ public class EffectAbilityProviderService : IEffectAbilityProvider
             // Damage abilities
             [DomainEffectAbilityName.Lose2Point5StarsByInvocations] = _factory.CreateDamageOpponent(
                 DamageCalculationType.ByPlayerInvocationCount, 2.5f),
-            [DomainEffectAbilityName.LooseHPBasedOnNumberInvocation] = _factory.CreateDamageOpponent(
+            [DomainEffectAbilityName.LoseHPBasedOnNumberInvocation] = _factory.CreateDamageOpponent(
                 DamageCalculationType.ByOpponentInvocationCount, 2.5f),
-            [DomainEffectAbilityName.Loose1HPPerOpponentHandCards] = _factory.CreateDamageOpponent(
+            [DomainEffectAbilityName.Lose1HPPerOpponentHandCards] = _factory.CreateDamageOpponent(
                 DamageCalculationType.ByOpponentHandCount, 1f),
 
             // Healing abilities
