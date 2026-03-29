@@ -1,3 +1,4 @@
+using JDG.Infrastructure.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -116,6 +117,23 @@ namespace JDG.DI
 #if UNITY_EDITOR
                 UnityEngine.Debug.Log("MainScreenScope: Injecting dependencies into scene MonoBehaviours...");
 #endif
+                // Phase 166: Wire DialogService with MessageBox/CardSelector from _preload scene
+                // These components live on Systems/UI (DontDestroyOnLoad) and must be set
+                // for any scene that uses IDialogService (e.g., CardChoice validation messages).
+                var messageBox = FindFirstObjectByType<MessageBox>();
+                var cardSelector = FindFirstObjectByType<CardSelector>();
+                if (messageBox != null)
+                {
+                    var dialogService = container.Resolve<JDG.Application.Services.IDialogService>() as DialogService;
+                    if (dialogService != null)
+                    {
+                        dialogService.SetDialogComponents(messageBox, cardSelector);
+#if UNITY_EDITOR
+                        UnityEngine.Debug.Log("MainScreenScope: Set dialog components on DialogService");
+#endif
+                    }
+                }
+
                 InjectAllOfType<MainMenuAction>(container);
                 InjectAllOfType<SceneLoader>(container);
 
