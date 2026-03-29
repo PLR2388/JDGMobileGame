@@ -4,6 +4,7 @@ using Cards;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Services;
 using TMPro;
 using UnityEngine;

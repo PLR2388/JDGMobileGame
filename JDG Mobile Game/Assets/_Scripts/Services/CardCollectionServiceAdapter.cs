@@ -1,4 +1,6 @@
 using Cards;
+using JDG.Application.Cards;
+using JDG.Application.Services;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 
@@ -19,7 +21,7 @@ using UnityEngine;
 /// - Player1's PlayerCardManager should have a lower InstanceID (be first in hierarchy)
 /// - Typically these are on "Player1Cards" and "Player2Cards" GameObjects
 /// </summary>
-public class CardCollectionServiceAdapter : ICardCollectionService
+public class CardCollectionServiceAdapter : ICardCollectionService, ICardCollectionProvider
 {
     private readonly CardCollectionService _cardCollectionService;
 
@@ -63,4 +65,8 @@ public class CardCollectionServiceAdapter : ICardCollectionService
     {
         return _cardCollectionService.GetOpponentPlayerCards();
     }
+
+    // Phase 166: ICardCollectionProvider implementation
+    public IPlayerCardCollection GetCurrentPlayerCardCollection() => GetCurrentPlayerCards();
+    public IPlayerCardCollection GetOpponentPlayerCardCollection() => GetOpponentPlayerCards();
 }

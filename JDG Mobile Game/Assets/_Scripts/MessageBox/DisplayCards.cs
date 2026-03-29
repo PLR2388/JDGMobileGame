@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Cards;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using VContainer;
 using JDG.Application.Services;

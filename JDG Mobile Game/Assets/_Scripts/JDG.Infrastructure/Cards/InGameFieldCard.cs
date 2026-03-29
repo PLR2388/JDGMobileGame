@@ -1,3 +1,4 @@
+using JDG.Application.Services;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
@@ -5,6 +6,8 @@ using Cards.FieldCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 
+namespace JDG.Infrastructure.Cards
+{
 /// <summary>
 /// Represents a card on the field in the game with additional runtime behaviors.
 /// Phase 49: Implements IInGameFieldCard for complete abstraction.
@@ -78,4 +81,5 @@ public class InGameFieldCard : InGameCard, IInGameFieldCard
     IReadOnlyList<IAbility> IInGameFieldCard.FieldAbilities => ModernFieldAbilities.AsReadOnly();
 
     #endregion
+}
 }

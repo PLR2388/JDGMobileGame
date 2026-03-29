@@ -1,3 +1,4 @@
+using Cards;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Infrastructure.Services;
@@ -5,7 +6,7 @@ using UnityEngine;
 using DomainCardOwner = JDG.Domain.CardOwner;
 using DomainCardType = JDG.Domain.Enums.CardType;
 
-namespace Cards
+namespace JDG.Infrastructure.Cards
 {
     /// <summary>
     /// Represents a card used in the game with various properties and attributes.
@@ -82,7 +83,7 @@ namespace Cards
         /// Generated from the ScriptableObject asset name.
         /// Phase 126: Added for card multilanguage support.
         /// </summary>
-        public string CardId => LocalizationService.GenerateCardId(BaseCard?.name ?? title);
+        public string CardId => CardIdGenerator.GenerateCardId(BaseCard?.name ?? title);
 
         /// <summary>
         /// Gets the title of the card.

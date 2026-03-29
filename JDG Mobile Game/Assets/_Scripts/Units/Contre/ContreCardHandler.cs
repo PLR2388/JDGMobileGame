@@ -3,6 +3,7 @@ using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 
 /// <summary>
 /// Handler responsible for contre card-specific behaviors in the game.

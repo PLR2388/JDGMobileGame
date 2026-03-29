@@ -1,8 +1,8 @@
 ﻿using System;
-using _Scripts.Units.Invocation;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;

@@ -1,8 +1,5 @@
-using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
-using Cards.EquipmentCards;
-using Cards.FieldCards;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 
 /// <summary>

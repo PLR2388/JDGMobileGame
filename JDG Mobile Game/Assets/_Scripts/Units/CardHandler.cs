@@ -1,6 +1,7 @@
 using Cards;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 
 /// <summary>
 /// Represents a base class for handling card-specific behaviors within the game.

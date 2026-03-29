@@ -7,6 +7,7 @@ using Cards.InvocationCards;
 using JDG.Application;
 using JDG.Application.Cards;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Services;
 using OnePlayer;
 using OnePlayer.DialogueBox;
@@ -198,8 +199,11 @@ namespace JDG.DI
             // Phase 90: ITutorialStateService - replaces DialogueTutoHandler singleton
             builder.Register<ITutorialStateService, TutorialStateService>(Lifetime.Scoped);
 
-            // ICardCollectionService - requires PlayerCardManager from scene
-            builder.Register<ICardCollectionService, CardCollectionServiceAdapter>(Lifetime.Scoped);
+            // ICardCollectionService + ICardCollectionProvider - requires PlayerCardManager from scene
+            // Phase 166: CardCollectionServiceAdapter now implements both interfaces
+            builder.Register<CardCollectionServiceAdapter>(Lifetime.Scoped);
+            builder.Register<ICardCollectionService>(container => container.Resolve<CardCollectionServiceAdapter>(), Lifetime.Scoped);
+            builder.Register<ICardCollectionProvider>(container => container.Resolve<CardCollectionServiceAdapter>(), Lifetime.Scoped);
 
             // Phase 144: Override ICardFactory from parent (SharedServicesScope) with scene-scoped version.
             // IMPORTANT: SharedServicesScope also registers ICardFactory but with null ICardCollectionService.
@@ -211,7 +215,7 @@ namespace JDG.DI
             {
                 return new CardFactory(
                     container.Resolve<IEventBus>(),
-                    container.Resolve<ICardCollectionService>(),
+                    container.Resolve<ICardCollectionProvider>(),
                     container.Resolve<IAbilityProvider>(),
                     container.Resolve<IFieldAbilityProvider>(),
                     container.Resolve<IEquipmentAbilityProvider>(),

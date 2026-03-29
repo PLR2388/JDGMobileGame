@@ -1,4 +1,5 @@
 using Cards;
+using JDG.Infrastructure.Cards;
 using JetBrains.Annotations;
 
 /// <summary>

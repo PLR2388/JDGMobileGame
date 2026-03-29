@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
 using Cards.InvocationCards;
 using JDG.Application;
 using JDG.Application.Cards;
 using JDG.Application.UseCases;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using VContainer;
 

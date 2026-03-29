@@ -1,6 +1,7 @@
 ﻿using System;
 using JDG.Application;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using Sound;
 using UnityEngine;
 using VContainer;

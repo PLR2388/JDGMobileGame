@@ -248,34 +248,9 @@ namespace JDG.Infrastructure.Services
         /// </summary>
         /// <param name="assetName">The ScriptableObject asset name (e.g., "Alpha Man").</param>
         /// <returns>Normalized card ID (e.g., "alpha-man").</returns>
-        public static string GenerateCardId(string assetName)
-        {
-            if (string.IsNullOrEmpty(assetName))
-                return string.Empty;
-
-            // Normalize to decompose accented characters, then filter out combining marks
-            var normalized = assetName
-                .ToLowerInvariant()
-                .Normalize(NormalizationForm.FormD);
-
-            var sb = new StringBuilder();
-            foreach (var c in normalized)
-            {
-                var category = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (category != UnicodeCategory.NonSpacingMark)
-                {
-                    sb.Append(c);
-                }
-            }
-
-            return sb.ToString()
-                .Replace(" ", "-")
-                .Replace("'", "")
-                .Replace("!", "")
-                .Replace(".", "")
-                .Replace(",", "")
-                .Replace("?", "");
-        }
+        /// Phase 166: Delegates to CardIdGenerator in JDG.Application.
+        public static string GenerateCardId(string assetName) =>
+            JDG.Application.Services.CardIdGenerator.GenerateCardId(assetName);
 
         /// <inheritdoc />
         public string GetCardTitle(string cardId)

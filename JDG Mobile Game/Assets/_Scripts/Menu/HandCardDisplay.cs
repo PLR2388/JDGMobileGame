@@ -5,6 +5,7 @@ using Cards;
 using JDG.Application;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 using UnityEngine.Events;

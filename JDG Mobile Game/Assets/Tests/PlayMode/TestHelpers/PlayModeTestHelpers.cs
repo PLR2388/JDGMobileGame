@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
-using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
 using JDG.Application;
+using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 
 namespace JDG.PlayMode.Tests.TestHelpers

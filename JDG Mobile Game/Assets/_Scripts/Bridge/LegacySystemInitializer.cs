@@ -1,5 +1,6 @@
 using JDG.Application.Repositories;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Repositories;
 using UnityEngine;
 
@@ -49,7 +50,7 @@ namespace JDG.Bridge
             MessageBoxBaseComponentExtensions.LocalizationService = localizationService;
 
             // Phase 126: Initialize card localization for multilanguage support
-            Cards.InGameCard.SetLocalizationService(localizationService);
+            InGameCard.SetLocalizationService(localizationService);
 
 #if UNITY_EDITOR
             Debug.Log("LegacySystemInitializer: Initialized extension class static fields and card localization");

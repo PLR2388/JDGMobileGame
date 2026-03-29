@@ -4,6 +4,7 @@ using Cards;
 using JDG.Application;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 using Sound;
 using UnityEngine;
 using UnityEngine.Events;

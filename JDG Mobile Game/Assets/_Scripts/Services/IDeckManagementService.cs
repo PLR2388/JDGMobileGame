@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Cards;
+using JDG.Infrastructure.Cards;
 
 /// <summary>
 /// Service interface for managing deck data and card pools.

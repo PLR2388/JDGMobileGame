@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using _Scripts.Units.Invocation;
-using Cards.EffectCards;
 using JDG.Application;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;

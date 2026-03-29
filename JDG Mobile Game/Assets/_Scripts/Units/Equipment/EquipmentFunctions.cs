@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Scripts.Units.Invocation;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using VContainer;
 using DomainCardOwner = JDG.Domain.CardOwner;

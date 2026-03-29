@@ -1,5 +1,4 @@
 using System;
-using _Scripts.Units.Invocation;
 using Cards;
 using Cards.EffectCards;
 using Cards.EquipmentCards;
@@ -9,6 +8,8 @@ using JDG.Application;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 
+namespace JDG.Infrastructure.Cards
+{
 /// <summary>
 /// Provides functionality to create specific instances of InGameCard based on the provided card type.
 /// Phase 24-25: Updated to accept dependencies for InGameInvocationCard constructor.
@@ -20,7 +21,7 @@ using JDG.Application.Services;
 public class CardFactory : ICardFactory
 {
     private readonly IEventBus _eventBus;
-    private readonly ICardCollectionService _cardCollectionService;
+    private readonly ICardCollectionProvider _cardCollectionService;
     private readonly IAbilityProvider _abilityProvider;
     private readonly IFieldAbilityProvider _fieldAbilityProvider;
     private readonly IEquipmentAbilityProvider _equipmentAbilityProvider;
@@ -35,7 +36,7 @@ public class CardFactory : ICardFactory
     /// </summary>
     public CardFactory(
         IEventBus eventBus,
-        ICardCollectionService cardCollectionService,
+        ICardCollectionProvider cardCollectionService,
         IAbilityProvider abilityProvider,
         IFieldAbilityProvider fieldAbilityProvider,
         IEquipmentAbilityProvider equipmentAbilityProvider,
@@ -124,7 +125,7 @@ public class CardFactory : ICardFactory
         Card card,
         CardOwner cardOwner,
         IEventBus eventBus,
-        ICardCollectionService cardCollectionService,
+        ICardCollectionProvider cardCollectionService,
         IAbilityProvider abilityProvider,
         IFieldAbilityProvider fieldAbilityProvider,
         IEquipmentAbilityProvider equipmentAbilityProvider,
@@ -140,4 +141,5 @@ public class CardFactory : ICardFactory
             _ => throw new InvalidOperationException("Unsupported card type provided.")
         };
     }
+}
 }

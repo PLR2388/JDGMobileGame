@@ -1,13 +1,12 @@
 using System.Linq;
-using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 using CardOwner = Cards.CardOwner;
 using UnityEngine;
 using DomainCardFamily = JDG.Domain.Enums.CardFamily;

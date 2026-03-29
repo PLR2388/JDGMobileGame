@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
 using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Abilities.Implementations;
@@ -12,6 +10,7 @@ using JDG.Domain;
 using JDG.Domain.Events;
 using DomainCard = JDG.Domain.Entities.Card;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 
 /// <summary>

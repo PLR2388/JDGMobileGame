@@ -1,9 +1,9 @@
 ﻿using System;
 using _Scripts.Cards.InvocationCards;
-using _Scripts.Units.Invocation;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using OnePlayer;
 using VContainer;
 

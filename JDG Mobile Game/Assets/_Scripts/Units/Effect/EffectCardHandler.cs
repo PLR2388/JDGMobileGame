@@ -1,12 +1,12 @@
 using System.Linq;
 using Cards;
-using Cards.EffectCards;
 using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 
 /// <summary>
 /// Handler responsible for effect card-specific behaviors in the game.

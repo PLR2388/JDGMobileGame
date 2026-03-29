@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
-using Cards.EquipmentCards;
-using Cards.FieldCards;
 using JDG.Application.Abilities;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 

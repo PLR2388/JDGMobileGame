@@ -1,9 +1,9 @@
-using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 
 /// <summary>
 /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.

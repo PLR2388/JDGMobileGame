@@ -7,6 +7,7 @@ using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Application.UseCases;
 using JDG.Bridge;
+using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Events;
 using JDG.Infrastructure.Repositories;
 using JDG.Infrastructure.Services;
@@ -146,7 +147,7 @@ namespace JDG.DI
             {
                 return new CardFactory(
                     container.Resolve<IEventBus>(),
-                    null, // ICardCollectionService - only available in Game scene
+                    null, // ICardCollectionProvider - only available in Game scene
                     container.Resolve<IAbilityProvider>(),
                     container.Resolve<IFieldAbilityProvider>(),
                     container.Resolve<IEquipmentAbilityProvider>(),

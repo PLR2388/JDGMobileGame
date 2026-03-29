@@ -4,11 +4,11 @@ using NUnit.Framework;
 using NSubstitute;
 using UnityEngine;
 using UnityEngine.TestTools;
-using _Scripts.Units.Invocation;
 using Cards;
 using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 
 namespace JDG.PlayMode.Tests
 {

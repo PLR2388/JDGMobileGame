@@ -5,15 +5,12 @@ using NUnit.Framework;
 using NSubstitute;
 using UnityEngine;
 using UnityEngine.TestTools;
-using _Scripts.Units.Invocation;
 using Cards;
-using Cards.EffectCards;
-using Cards.EquipmentCards;
-using Cards.FieldCards;
 using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Repositories;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Services;
 
 namespace JDG.PlayMode.Tests

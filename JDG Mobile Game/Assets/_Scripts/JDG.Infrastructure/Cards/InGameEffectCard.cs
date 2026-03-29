@@ -1,9 +1,12 @@
+using JDG.Application.Services;
 using System.Collections.Generic;
 using System.Linq;
+using Cards;
+using Cards.EffectCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 
-namespace Cards.EffectCards
+namespace JDG.Infrastructure.Cards
 {
     /// <summary>
     /// Represents an in-game effect card, which is derived from a base effect card and has additional in-game properties and behaviors.

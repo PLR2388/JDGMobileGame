@@ -1,6 +1,7 @@
 using Cards;
 using JDG.Application.Cards;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 
 /// <summary>

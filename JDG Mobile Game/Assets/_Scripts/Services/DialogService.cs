@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 
 // Alias to avoid conflict with global CardSelectorConfig in MessageBox/Config.cs
@@ -126,7 +127,7 @@ namespace JDG.Infrastructure.Services
 
             var tcs = new TaskCompletionSource<List<Guid>>();
 
-            var cards = config.CardIds != null ? ConvertCardIds(config.CardIds) : new List<Cards.InGameCard>();
+            var cards = config.CardIds != null ? ConvertCardIds(config.CardIds) : new List<InGameCard>();
 
             var cardSelectorConfig = new global::CardSelectorConfig(
                 title: config.Title,
@@ -263,12 +264,12 @@ namespace JDG.Infrastructure.Services
             }
 
             // Convert List<object> to List<InGameCard>
-            var cards = new List<Cards.InGameCard>();
+            var cards = new List<InGameCard>();
             if (options.Cards != null)
             {
                 foreach (var card in options.Cards)
                 {
-                    if (card is Cards.InGameCard inGameCard)
+                    if (card is InGameCard inGameCard)
                     {
                         cards.Add(inGameCard);
                     }
@@ -276,10 +277,10 @@ namespace JDG.Infrastructure.Services
             }
 
             // Create callbacks that convert InGameCard back to object
-            UnityEngine.Events.UnityAction<Cards.InGameCard> okSingle = null;
-            UnityEngine.Events.UnityAction<List<Cards.InGameCard>> okMultiple = null;
-            UnityEngine.Events.UnityAction<Cards.InGameCard> positiveSingle = null;
-            UnityEngine.Events.UnityAction<List<Cards.InGameCard>> positiveMultiple = null;
+            UnityEngine.Events.UnityAction<InGameCard> okSingle = null;
+            UnityEngine.Events.UnityAction<List<InGameCard>> okMultiple = null;
+            UnityEngine.Events.UnityAction<InGameCard> positiveSingle = null;
+            UnityEngine.Events.UnityAction<List<InGameCard>> positiveMultiple = null;
 
             if (options.OnOkSingle != null)
             {
@@ -338,9 +339,9 @@ namespace JDG.Infrastructure.Services
         /// This is a permanent bridge pattern - InGameCard uses Unity objects while the
         /// domain layer uses GUIDs. Full integration requires InGameCard to domain entity migration.
         /// </summary>
-        private List<Cards.InGameCard> ConvertCardIds(List<Guid> cardIds)
+        private List<InGameCard> ConvertCardIds(List<Guid> cardIds)
         {
-            var cards = new List<Cards.InGameCard>();
+            var cards = new List<InGameCard>();
 
             // Note: CardSelector works with InGameCard references, not domain IDs.
             // This is an intentional design limitation - the card selection UI needs

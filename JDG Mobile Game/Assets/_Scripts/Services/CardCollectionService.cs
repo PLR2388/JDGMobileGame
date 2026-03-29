@@ -1,20 +1,18 @@
 using Cards;
+using JDG.Application.Cards;
+using JDG.Application.Services;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Services;
 using UnityEngine;
 
 /// <summary>
-/// Implementation of ICardCollectionService.
+/// Implementation of ICardCollectionService and ICardCollectionProvider.
 /// Provides access to player card collections based on current turn state.
 ///
-/// Note: This service is in the default assembly because it depends on legacy types
-/// (PlayerCardManager, PlayerCards). It will be moved to JDG.Infrastructure once
-/// these types are fully refactored.
-///
 /// Part of Phase 4 migration - decomposes CardManager god class.
-/// Phase 135: Added null checks for defensive programming.
+/// Phase 166: Also implements ICardCollectionProvider for clean architecture compatibility.
 /// </summary>
-public class CardCollectionService : ICardCollectionService
+public class CardCollectionService : ICardCollectionService, ICardCollectionProvider
 {
     private readonly GameStateService _gameStateService;
     private readonly PlayerCardManager _player1CardManager;
@@ -55,4 +53,8 @@ public class CardCollectionService : ICardCollectionService
         }
         return cardManager.PlayerCards;
     }
+
+    // Phase 166: ICardCollectionProvider implementation (returns clean interfaces)
+    public IPlayerCardCollection GetCurrentPlayerCardCollection() => GetCurrentPlayerCards();
+    public IPlayerCardCollection GetOpponentPlayerCardCollection() => GetOpponentPlayerCards();
 }

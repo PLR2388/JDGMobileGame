@@ -1,3 +1,4 @@
+using JDG.Application.Services;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
@@ -5,6 +6,8 @@ using Cards.EquipmentCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 
+namespace JDG.Infrastructure.Cards
+{
 /// <summary>
 /// Represents an in-game version of an equipment card with its abilities.
 /// Phase 49: Implements IInGameEquipmentCard for complete abstraction.
@@ -90,4 +93,5 @@ public class InGameEquipmentCard : InGameCard, IInGameEquipmentCard
         ModernEquipmentAbilities.OfType<IEquipmentAbility>().Any(a => a.CanAlwaysBePlaced);
 
     #endregion
+}
 }

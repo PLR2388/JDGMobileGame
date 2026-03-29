@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using _Scripts.Cards.InvocationCards;
 using Cards;
 using Cards.InvocationCards;
 using JDG.Application;
@@ -10,10 +9,10 @@ using JDG.Application.Services;
 using JDG.Domain.Events;
 using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
-namespace _Scripts.Units.Invocation
+namespace JDG.Infrastructure.Cards
 {
     /// <summary>
-    /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+    /// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionProvider.
     /// Phase 24-25: Removed ServiceLocator, using constructor injection.
     /// Phase 7: Added IAbilityProvider for AbilityLibrary → AbilityRegistry migration.
     /// Phase 49: Implements IInGameInvocationCard for complete abstraction.
@@ -31,7 +30,7 @@ namespace _Scripts.Units.Invocation
 
         // Phase 24-25: Injected dependencies
         private readonly IEventBus _eventBus;
-        private readonly ICardCollectionService _cardCollectionService;
+        private readonly ICardCollectionProvider _cardCollectionProvider;
 
         // Phase 42ag: Required ability provider (legacy AbilityLibrary removed)
         private readonly IAbilityProvider _abilityProvider;
@@ -106,7 +105,7 @@ namespace _Scripts.Units.Invocation
 
         /// <summary>
         /// Initializes an instance of the InGameInvocationCard.
-        /// Phase 24-25: Added dependency injection for IEventBus and ICardCollectionService.
+        /// Phase 24-25: Added dependency injection for IEventBus and ICardCollectionProvider.
         /// Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed).
         /// Phase 56: Added IConditionProvider to replace ConditionLibrary.Instance.
         /// Phase 61: Made IConditionProvider required (removed fallback to legacy singleton).
@@ -122,14 +121,14 @@ namespace _Scripts.Units.Invocation
             InvocationCard invocationCard,
             CardOwner cardOwner,
             IEventBus eventBus,
-            ICardCollectionService cardCollectionService,
+            ICardCollectionProvider cardCollectionService,
             IAbilityProvider abilityProvider,
             IConditionProvider conditionProvider)
         {
             BaseInvocationCard = invocationCard;
             CardOwner = cardOwner;
             _eventBus = eventBus;
-            _cardCollectionService = cardCollectionService;
+            _cardCollectionProvider = cardCollectionService;
             _abilityProvider = abilityProvider;
             _conditionProvider = conditionProvider;
             Reset();
@@ -210,7 +209,7 @@ namespace _Scripts.Units.Invocation
         /// </summary>
         /// <param name="playerCards">The player cards.</param>
         /// <returns>true if can be summoned; otherwise, false.</returns>
-        public bool CanBeSummoned(PlayerCards playerCards)
+        public bool CanBeSummoned(IPlayerCardCollection playerCards)
         {
             return conditions.Count == 0 || conditions.TrueForAll(condition => condition.CanBeSummoned(playerCards));
         }
@@ -293,14 +292,14 @@ namespace _Scripts.Units.Invocation
 
         /// <summary>
         /// Checks if invoking the card is possible.
-        /// Phase 17-18: Uses ICardCollectionService instead of CardManager.Instance.
-        /// Phase 24-25: Uses injected _cardCollectionService.
+        /// Phase 17-18: Uses ICardCollectionProvider instead of CardManager.Instance.
+        /// Phase 24-25: Uses injected _cardCollectionProvider.
         /// </summary>
         /// <returns>true if invocation is possible; otherwise, false.</returns>
         public bool IsInvocationPossible()
         {
-            // Phase 24-25: Use injected _cardCollectionService
-            return CanBeSummoned(_cardCollectionService.GetCurrentPlayerCards());
+            // Phase 24-25: Use injected _cardCollectionProvider
+            return CanBeSummoned(_cardCollectionProvider.GetCurrentPlayerCardCollection());
         }
 
         /// <summary>

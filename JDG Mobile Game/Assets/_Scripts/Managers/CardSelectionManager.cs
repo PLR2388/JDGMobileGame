@@ -5,6 +5,7 @@ using UnityEngine;
 using Cards;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using VContainer;
 
 /// <summary>

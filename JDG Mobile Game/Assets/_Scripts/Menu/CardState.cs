@@ -1,6 +1,7 @@
 using Cards;
-using UnityEngine;
 using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
+using UnityEngine;
 
 /// <summary>
 /// Represents an abstract card state. Contains common functionality and provides the interface for concrete card states.
