@@ -38,13 +38,13 @@ public class TutoInGameMenuScript : InGameMenuScript
     /// Phase 90: VContainer injection for tutorial-specific dependencies.
     /// Phase 133: Renamed from ConstructTutorial to Construct for VContainer compatibility.
     /// Phase 144: Fixed to inject ALL base class dependencies including _eventBus.
-    /// Previously only injected ITutorialStateService, leaving _eventBus null.
-    /// This caused DialogueTriggerCompletedEvent to never publish in ClickPutCard().
+    /// Phase 166: Added ICardCollectionProvider for CardHandler migration.
     /// </summary>
     [Inject]
     public void Construct(
         ITutorialStateService tutorialStateService,
         ICardCollectionService cardCollectionService,
+        ICardCollectionProvider cardCollectionProvider,
         IEventBus eventBus,
         IPlayerStatusProvider playerStatusProvider,
         ILocalizationService localizationService,
@@ -52,6 +52,7 @@ public class TutoInGameMenuScript : InGameMenuScript
     {
         _tutorialStateService = tutorialStateService;
         _cardCollectionService = cardCollectionService;
+        _cardCollectionProvider = cardCollectionProvider;
         _eventBus = eventBus;
         _playerStatusProvider = playerStatusProvider;
         _localizationService = localizationService;

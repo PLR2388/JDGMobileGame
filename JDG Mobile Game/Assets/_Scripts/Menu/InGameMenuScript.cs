@@ -5,6 +5,7 @@ using JDG.Application;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
+using JDG.Infrastructure.Cards.Handlers;
 using JDG.Infrastructure.Services;
 using TMPro;
 using UnityEngine;
@@ -18,11 +19,15 @@ using VContainer;
 /// Phase 28: Added IPlayerStatusProvider for player status access in card handlers.
 /// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// Phase 109: Fully migrated to EventBus - removed all static UnityEvents.
+/// Phase 166: Implements ICardMenuView to decouple CardHandlers from this MonoBehaviour.
 /// </summary>
-public class InGameMenuScript : MonoBehaviour
+public class InGameMenuScript : MonoBehaviour, ICardMenuView
 {
     // Phase 17-18: Injected dependency (protected so TutoInGameMenuScript can access)
     protected ICardCollectionService _cardCollectionService;
+
+    // Phase 166: Clean interface for card collection access (used by CardHandlers)
+    protected ICardCollectionProvider _cardCollectionProvider;
 
     // Phase 28: Injected player status provider
     protected IPlayerStatusProvider _playerStatusProvider;
@@ -88,6 +93,22 @@ public class InGameMenuScript : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Phase 166: ICardMenuView implementation - sets the put card button text.
+    /// </summary>
+    public void SetPutCardButtonText(string text)
+    {
+        putCardButtonText.SetText(text);
+    }
+
+    /// <summary>
+    /// Phase 166: ICardMenuView implementation - sets the put card button interactability.
+    /// </summary>
+    public void SetPutCardButtonInteractable(bool interactable)
+    {
+        putCardButton.interactable = interactable;
+    }
+
     private const float ButtonGroupPosX = 600f;
     private const float ButtonGroupPosY = 400f;
     private const float ButtonGroupPosZ = 0f;
@@ -111,16 +132,19 @@ public class InGameMenuScript : MonoBehaviour
     /// Phase 28: Inject IPlayerStatusProvider for player status access.
     /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
     /// Phase 135: Inject GameStateService for phase/state validation.
+    /// Phase 166: Inject ICardCollectionProvider for CardHandler migration.
     /// </summary>
     [Inject]
     public void Construct(
         ICardCollectionService cardCollectionService,
+        ICardCollectionProvider cardCollectionProvider,
         IEventBus eventBus,
         IPlayerStatusProvider playerStatusProvider,
         ILocalizationService localizationService,
         GameStateService gameStateService)
     {
         _cardCollectionService = cardCollectionService;
+        _cardCollectionProvider = cardCollectionProvider;
         _eventBus = eventBus;
         _playerStatusProvider = playerStatusProvider;
         _localizationService = localizationService;
@@ -129,18 +153,16 @@ public class InGameMenuScript : MonoBehaviour
 
     /// <summary>
     /// Initializes handlers for different types of cards.
-    /// Phase 17-18: Pass ICardCollectionService to handlers.
-    /// Phase 28: Pass IPlayerStatusProvider to handlers.
-    /// Phase 34: Pass ILocalizationService to handlers.
-    /// Phase 36: Pass IEventBus to handlers for static UnityEvent migration.
+    /// Phase 166: Uses ICardMenuView (this) and ICardCollectionProvider for clean architecture.
+    /// Removed IPlayerStatusProvider (unused by handlers).
     /// </summary>
     protected void InitializeCardHandlers()
     {
-        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
-        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
-        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
-        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
-        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionService, _playerStatusProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
     }
 
     /// <summary>
