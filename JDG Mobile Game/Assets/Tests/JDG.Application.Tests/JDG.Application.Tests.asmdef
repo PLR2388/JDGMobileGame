@@ -4,6 +4,7 @@
     "references": [
         "JDG.Domain",
         "JDG.Application",
+        "JDG.Infrastructure",
         "JDG.Cards",
         "JDG.Legacy",
         "JDG.TestUtilities",

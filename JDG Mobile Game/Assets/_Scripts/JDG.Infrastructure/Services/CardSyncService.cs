@@ -9,7 +9,7 @@ using JDG.Infrastructure.Cards;
 using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 using LegacyCardFamily = Cards.CardFamily;
 
-namespace Services
+namespace JDG.Infrastructure.Services
 {
     /// <summary>
     /// Service for synchronizing domain Card state changes back to InGameInvocationCard.

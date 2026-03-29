@@ -1,3 +1,4 @@
+using JDG.Infrastructure.Services;
 using System.Collections.Generic;
 using NUnit.Framework;
 using JDG.Application.Cards;
