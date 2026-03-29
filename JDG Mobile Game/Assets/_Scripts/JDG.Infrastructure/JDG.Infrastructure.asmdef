@@ -6,7 +6,8 @@
         "JDG.Application",
         "JDG.Cards",
         "JDG.Core",
-        "VContainer"
+        "VContainer",
+        "Newtonsoft.Json"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

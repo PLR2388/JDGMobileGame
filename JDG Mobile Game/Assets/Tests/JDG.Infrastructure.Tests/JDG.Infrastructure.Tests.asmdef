@@ -6,6 +6,7 @@
         "JDG.Application",
         "JDG.Cards",
         "JDG.Infrastructure",
+        "JDG.Core",
         "JDG.Legacy",
         "JDG.TestUtilities",
         "UnityEngine.TestRunner",
