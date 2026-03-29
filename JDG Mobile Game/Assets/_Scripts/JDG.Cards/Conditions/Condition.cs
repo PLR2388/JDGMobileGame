@@ -1,4 +1,8 @@
 using System;
+using JDG.Application.Cards;
+
+namespace Cards
+{
 
 /// <summary>
 /// Enumerates the names of various conditions in the game.
@@ -41,6 +45,8 @@ public enum ConditionName
 /// <remarks>
 /// DEPRECATED: Use ICondition from JDG.Application.Abilities instead.
 /// This class is kept for backward compatibility - concrete implementations still inherit from it.
+/// Phase 165: Changed parameter from PlayerCards to IPlayerCardCollection
+/// to decouple from MonoBehaviour and enable migration to JDG.Cards assembly.
 /// </remarks>
 [Obsolete("Use ICondition from JDG.Application.Abilities for new code. Kept for backward compatibility.")]
 public abstract class Condition
@@ -49,7 +55,7 @@ public abstract class Condition
     /// Gets or sets the name of the condition.
     /// </summary>
     public ConditionName Name { get; set; }
-    
+
     /// <summary>
     /// Gets or sets the description of the condition.
     /// </summary>
@@ -60,5 +66,7 @@ public abstract class Condition
     /// </summary>
     /// <param name="playerCards">The player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if the condition can be met; otherwise, <c>false</c>.</returns>
-    public abstract bool CanBeSummoned(PlayerCards playerCards);
+    public abstract bool CanBeSummoned(IPlayerCardCollection playerCards);
 }
+
+} // namespace Cards

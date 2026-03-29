@@ -1,15 +1,19 @@
+using Cards;
+using JDG.Application.Cards;
+
 /// <summary>
 /// Represents a condition that checks whether a specific field card, identified by its name,
 /// is present on the field to determine if a card can be summoned.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class FieldCardOnFieldCondition : Condition
 {
-    
+
     /// <summary>
     /// The name of the field card to check for its presence on the field.
     /// </summary>
     private readonly string fieldName;
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="FieldCardOnFieldCondition"/> class.
     /// </summary>
@@ -28,7 +32,7 @@ public class FieldCardOnFieldCondition : Condition
     /// </summary>
     /// <param name="playerCards">A collection of player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if the specified field card is on the field; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
         return playerCards.FieldCard != null && playerCards.FieldCard.Title == fieldName;
     }

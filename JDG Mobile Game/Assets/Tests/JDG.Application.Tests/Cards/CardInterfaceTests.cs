@@ -354,6 +354,7 @@ namespace JDG.Application.Tests.Cards
         public IReadOnlyList<IInGameInvocationCard> InvocationCards { get; } = new List<IInGameInvocationCard>();
         public IReadOnlyList<IInGameEffectCard> EffectCards { get; } = new List<IInGameEffectCard>();
         public IInGameFieldCard FieldCard => null;
+        public IReadOnlyList<IInGameCard> GraveyardCards { get; } = new List<IInGameCard>();
         public IReadOnlyList<IInGameCard> HandCards { get; } = new List<IInGameCard>();
         public int HandCardCount => HandCards.Count;
 

@@ -1,14 +1,17 @@
 using System.Linq;
 using Cards;
+using JDG.Application.Cards;
+using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 
 /// <summary>
 /// Represents a condition that checks for the presence of a specific number of
 /// invocation cards belonging to a specific card family with the specified attack and defense on the field.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Condition
 {
-    private readonly CardFamily family;
+    private readonly DomainCardFamily family;
     private readonly float attack;
     private readonly float defense;
     private readonly int numberOfCards;
@@ -22,7 +25,7 @@ public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Conditio
     /// <param name="attack">The minimum attack value of the card.</param>
     /// <param name="defense">The minimum defense value of the card.</param>
     /// <param name="number">The minimum number of cards required on the field.</param>
-    public SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(ConditionName name, string description, CardFamily family,
+    public SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(ConditionName name, string description, DomainCardFamily family,
         float attack, float defense, int number)
     {
         Name = name;
@@ -41,7 +44,7 @@ public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Conditio
     /// <param name="family">The specific card family to check for.</param>
     /// <param name="number">The minimum number of cards required on the field.</param>
     public SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(ConditionName name, string description,
-        CardFamily family, int number)
+        DomainCardFamily family, int number)
     {
         Name = name;
         Description = description;
@@ -50,14 +53,14 @@ public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Conditio
         defense = 0;
         numberOfCards = number;
     }
-    
-    
+
+
     /// <summary>
     /// Determines whether the specific number of invocation cards with the specified attack and defense belonging to the specific card family are present on the field.
     /// </summary>
     /// <param name="playerCards">The player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if the condition is met; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
         return playerCards.InvocationCards.Count(card => (card.Attack >= attack || card.Defense >= defense) && card.Families.Contains(family)) >=
                numberOfCards;

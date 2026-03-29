@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cards;
+using JDG.Application.Cards;
 
 /// <summary>
 /// Represents a condition that checks whether a specific card, that has previously been 'dead',
 /// is back on the field for a card to be summoned.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class SpecificCardBackFromDeathCondition : InvocationCardOnFieldCondition
 {
@@ -15,7 +18,7 @@ public class SpecificCardBackFromDeathCondition : InvocationCardOnFieldCondition
     /// <param name="cardNames">The names of the cards relevant to this condition.</param>
     public SpecificCardBackFromDeathCondition(ConditionName name, string description, List<string> cardNames) : base(name, description, cardNames)
     {
-        
+
     }
 
     /// <summary>
@@ -24,7 +27,7 @@ public class SpecificCardBackFromDeathCondition : InvocationCardOnFieldCondition
     /// </summary>
     /// <param name="playerCards">A collection of player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if the condition for summoning is met; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
         return base.CanBeSummoned(playerCards) && playerCards.InvocationCards.First(card => card.Title == CardNames[0]).NumberOfDeaths > 0;
     }

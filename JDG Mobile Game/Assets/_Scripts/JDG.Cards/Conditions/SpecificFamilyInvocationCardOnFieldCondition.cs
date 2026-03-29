@@ -1,16 +1,19 @@
 using System.Linq;
 using Cards;
+using JDG.Application.Cards;
+using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 /// <summary>
 /// Represents a condition that checks for the presence of an invocation card
 /// belonging to a specific card family on the field.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class SpecificFamilyInvocationCardOnFieldCondition : Condition
 {
     /// <summary>
     /// The specific card family that an invocation card should belong to, in order to meet the condition.
     /// </summary>
-    private readonly CardFamily family;
+    private readonly DomainCardFamily family;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpecificFamilyInvocationCardOnFieldCondition"/> class.
@@ -18,7 +21,7 @@ public class SpecificFamilyInvocationCardOnFieldCondition : Condition
     /// <param name="name">The name of the condition.</param>
     /// <param name="description">The description of the condition.</param>
     /// <param name="family">The specific card family to check for.</param>
-    public SpecificFamilyInvocationCardOnFieldCondition(ConditionName name, string description, CardFamily family)
+    public SpecificFamilyInvocationCardOnFieldCondition(ConditionName name, string description, DomainCardFamily family)
     {
         Name = name;
         Description = description;
@@ -30,9 +33,8 @@ public class SpecificFamilyInvocationCardOnFieldCondition : Condition
     /// </summary>
     /// <param name="playerCards">The player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if an invocation card of the specified family is on the field; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
         return playerCards.InvocationCards.Any(card => card.Families.Contains(family));
     }
-
 }

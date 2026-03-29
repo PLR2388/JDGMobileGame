@@ -1,3 +1,4 @@
+using Cards;
 using NUnit.Framework;
 
 namespace JDG.Application.Tests.Abilities.Scenarios

@@ -184,7 +184,7 @@ namespace JDG.Bridge
             return abilityName;
         }
 
-        private static DomainConditionName ConvertConditionName(global::ConditionName oldCondition)
+        private static DomainConditionName ConvertConditionName(Cards.ConditionName oldCondition)
         {
             // The enums have the same names, so we can parse
             return (DomainConditionName)System.Enum.Parse(typeof(DomainConditionName), oldCondition.ToString());

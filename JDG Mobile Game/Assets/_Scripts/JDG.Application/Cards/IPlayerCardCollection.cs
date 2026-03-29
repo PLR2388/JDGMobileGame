@@ -36,6 +36,12 @@ namespace JDG.Application.Cards
         IInGameFieldCard FieldCard { get; }
 
         /// <summary>
+        /// Gets the cards in the graveyard (yellow cards / dead cards).
+        /// Phase 165: Added for Condition migration to JDG.Cards assembly.
+        /// </summary>
+        IReadOnlyList<IInGameCard> GraveyardCards { get; }
+
+        /// <summary>
         /// Gets the cards in hand.
         /// </summary>
         IReadOnlyList<IInGameCard> HandCards { get; }

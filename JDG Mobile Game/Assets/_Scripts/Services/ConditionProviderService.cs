@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using JDG.Application.Services;
+using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 /// <summary>
 /// Provides conditions.
@@ -76,7 +77,7 @@ public class ConditionProviderService : IConditionProvider
             new SpecificFamilyInvocationCardOnFieldCondition(
                 ConditionName.WizardOnField,
                 "Check if an invocation card of the wizard family is on Field",
-                CardFamily.Wizard
+                DomainCardFamily.Wizard
             ),
             new FieldCardOnFieldCondition(
                 ConditionName.LyceeMagiqueGeorgesPompidouOnField,
@@ -86,7 +87,7 @@ public class ConditionProviderService : IConditionProvider
             new SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(
                 ConditionName.Developer3Atk3Def2Cards,
                 "Check if at least 2 cards are on the field with Developer as Family and at least 3 ATK or 3 DEF",
-                CardFamily.Developer,
+                DomainCardFamily.Developer,
                 3,
                 3,
                 2
@@ -94,7 +95,7 @@ public class ConditionProviderService : IConditionProvider
             new SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(
                 ConditionName.HardCorner3Atk3Def2Cards,
                 "Check if at least 2 cards are on the field with HardCorner as Family and at least 3 ATK or 3 DEF",
-                CardFamily.HardCorner,
+                DomainCardFamily.HardCorner,
                 3,
                 3,
                 2
@@ -102,7 +103,7 @@ public class ConditionProviderService : IConditionProvider
             new SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(
                 ConditionName.Japan2Cards,
                 "Check if there are at least 2 cards with family Japan",
-                CardFamily.Japan,
+                DomainCardFamily.Japan,
                 2
             ),
             new NumberInvocationDeadCondition(
@@ -113,12 +114,12 @@ public class ConditionProviderService : IConditionProvider
             new SpecificFamilyInvocationCardOnFieldCondition(
                 ConditionName.ComicsOnField,
                 "Check if there is an invocation card with Comics Family",
-                CardFamily.Comics
+                DomainCardFamily.Comics
             ),
             new SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(
                 ConditionName.Incarnation2Cards,
                 "Check if there is 2 card belonging to Incarnation family",
-                CardFamily.Incarnation,
+                DomainCardFamily.Incarnation,
                 2
             ),
             new SpecificCardBackFromDeathCondition(
@@ -132,7 +133,7 @@ public class ConditionProviderService : IConditionProvider
             new SpecificFamilyInvocationCardOnFieldCondition(
                 ConditionName.HumanOnField,
                 "Check if there is invocation card bellonging to Human family",
-                CardFamily.Human
+                DomainCardFamily.Human
             ),
             new EquipmentCardOnCardCondition(
                 ConditionName.SebDuGrenierMerdePlastiqueBleuEquiped,
@@ -166,7 +167,7 @@ public class ConditionProviderService : IConditionProvider
             new SpecificFamilyInvocationCardOnFieldCondition(
                 ConditionName.JapanOnField,
                 "Check if there are cards whose family is Japan",
-                CardFamily.Japan
+                DomainCardFamily.Japan
             )
         };
 

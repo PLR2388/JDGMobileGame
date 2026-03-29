@@ -1,10 +1,12 @@
 using System.Linq;
 using Cards;
+using JDG.Application.Cards;
 
 /// <summary>
-/// Represents a condition that checks whether the number of invocation type cards 
-/// in the player's YellowCards collection that have "died" (i.e., been used or destroyed)
+/// Represents a condition that checks whether the number of invocation type cards
+/// in the player's graveyard collection that have "died" (i.e., been used or destroyed)
 /// is greater than or equal to a specified threshold, to determine if a card can be summoned.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class NumberInvocationDeadCondition : Condition
 {
@@ -28,12 +30,12 @@ public class NumberInvocationDeadCondition : Condition
 
     /// <summary>
     /// Evaluates if a card can be summoned based on whether the number of invocation cards
-    /// in the player's YellowCards collection that have "died" meets or exceeds the specified number.
+    /// in the player's graveyard collection that have "died" meets or exceeds the specified number.
     /// </summary>
     /// <param name="playerCards">A collection of player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if the condition for summoning is met; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
-        return playerCards.YellowCards.Count(card => card.Type == CardType.Invocation) >= numberDeath;
+        return playerCards.GraveyardCards.Count(card => card.Type == JDG.Domain.Enums.CardType.Invocation) >= numberDeath;
     }
 }

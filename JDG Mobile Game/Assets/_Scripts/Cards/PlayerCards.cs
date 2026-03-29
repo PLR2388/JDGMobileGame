@@ -386,6 +386,14 @@ public class PlayerCards : MonoBehaviour, IPlayerCardCollectionMutable
     IInGameFieldCard IPlayerCardCollection.FieldCard => _fieldCard;
 
     /// <summary>
+    /// Gets the graveyard cards as a read-only list of interface types.
+    /// Phase 165: Explicit implementation for IPlayerCardCollection interface.
+    /// Wraps the legacy YellowCards collection.
+    /// </summary>
+    IReadOnlyList<IInGameCard> IPlayerCardCollection.GraveyardCards =>
+        YellowCards.Cast<IInGameCard>().ToList().AsReadOnly();
+
+    /// <summary>
     /// Gets the cards in hand as a read-only list of interface types.
     /// Phase 53: Explicit implementation for IPlayerCardCollection interface.
     /// </summary>

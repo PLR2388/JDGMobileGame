@@ -1,8 +1,11 @@
 using System.Linq;
+using Cards;
+using JDG.Application.Cards;
 
 /// <summary>
 /// Represents a condition that checks if there is any invocation card on the field
 /// with specific attack (atk) or defense (def) values for a card to be summoned.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class SpecificAtkDefInvocationCardOnFieldCondition : Condition
 {
@@ -10,7 +13,7 @@ public class SpecificAtkDefInvocationCardOnFieldCondition : Condition
     /// The attack value to check against the invocation card's attack.
     /// </summary>
     private readonly float atk;
-    
+
     /// <summary>
     /// The defense value to check against the invocation card's defense.
     /// </summary>
@@ -37,7 +40,7 @@ public class SpecificAtkDefInvocationCardOnFieldCondition : Condition
     /// </summary>
     /// <param name="playerCards">A collection of player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if the condition for summoning is met; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
         return playerCards.InvocationCards.Any(card => card.Defense >= def || card.Attack >= atk);
     }

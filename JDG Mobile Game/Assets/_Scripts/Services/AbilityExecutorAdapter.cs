@@ -8,6 +8,7 @@ using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Entities;
 using JDG.Domain.ValueObjects;
+using CardOwner = Cards.CardOwner;
 using UnityEngine;
 using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 using DomainCard = JDG.Domain.Entities.Card;

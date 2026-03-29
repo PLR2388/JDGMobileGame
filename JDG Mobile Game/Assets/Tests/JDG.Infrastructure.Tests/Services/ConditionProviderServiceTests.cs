@@ -1,4 +1,5 @@
 using System;
+using Cards;
 using NUnit.Framework;
 
 namespace JDG.Infrastructure.Tests.Services

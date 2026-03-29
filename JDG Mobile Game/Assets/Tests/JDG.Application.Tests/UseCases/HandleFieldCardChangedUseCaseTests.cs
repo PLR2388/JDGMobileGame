@@ -175,6 +175,7 @@ namespace JDG.Application.Tests.UseCases
             public IReadOnlyList<IInGameInvocationCard> InvocationCards => new List<IInGameInvocationCard>();
             public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
             public IInGameFieldCard FieldCard => null;
+            public IReadOnlyList<IInGameCard> GraveyardCards => new List<IInGameCard>();
             public IReadOnlyList<IInGameCard> HandCards => new List<IInGameCard>();
             public int HandCardCount => 0;
 

@@ -4,6 +4,7 @@
     "references": [
         "JDG.Domain",
         "JDG.Application",
+        "JDG.Core",
         "VContainer"
     ],
     "includePlatforms": [],

@@ -1,8 +1,11 @@
 using System.Linq;
+using Cards;
+using JDG.Application.Cards;
 
 /// <summary>
-/// Represents a condition that checks whether a specific equipment card is attached to a specific invocation card 
+/// Represents a condition that checks whether a specific equipment card is attached to a specific invocation card
 /// on the field to determine if a card can be summoned.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class EquipmentCardOnCardCondition : Condition
 {
@@ -10,12 +13,12 @@ public class EquipmentCardOnCardCondition : Condition
     /// The name of the equipment card to check for its attachment to the invocation card.
     /// </summary>
     private readonly string equipmentCardName;
-    
+
     /// <summary>
     /// The name of the invocation card to check for the presence of the equipment card.
     /// </summary>
     private readonly string invocationCardName;
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EquipmentCardOnCardCondition"/> class.
     /// </summary>
@@ -33,12 +36,12 @@ public class EquipmentCardOnCardCondition : Condition
     }
 
     /// <summary>
-    /// Evaluates if a card can be summoned based on the presence of a specific equipment card attached to a 
+    /// Evaluates if a card can be summoned based on the presence of a specific equipment card attached to a
     /// specific invocation card on the field.
     /// </summary>
     /// <param name="playerCards">A collection of player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if the specified equipment card is attached to the specified invocation card; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
         return playerCards.InvocationCards.Any(card =>
             card.Title == invocationCardName && card.EquipmentCard != null &&

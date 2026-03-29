@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cards;
+using JDG.Application.Cards;
 
 /// <summary>
 /// Represents a condition that checks whether specific invocation cards, identified by their names,
 /// are present on the field in order to determine if a card can be summoned.
+/// Phase 165: Migrated from PlayerCards to IPlayerCardCollection.
 /// </summary>
 public class InvocationCardOnFieldCondition : Condition
 {
@@ -31,7 +34,7 @@ public class InvocationCardOnFieldCondition : Condition
     /// </summary>
     /// <param name="playerCards">A collection of player cards to evaluate the condition against.</param>
     /// <returns><c>true</c> if any of the specified invocation cards are on the field; otherwise, <c>false</c>.</returns>
-    public override bool CanBeSummoned(PlayerCards playerCards)
+    public override bool CanBeSummoned(IPlayerCardCollection playerCards)
     {
         return playerCards.InvocationCards.Any(card => CardNames.Contains(card.Title));
     }

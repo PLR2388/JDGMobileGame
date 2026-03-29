@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JDG.Application.Services;
+using JDG.Core;
 
 namespace Cards
 {

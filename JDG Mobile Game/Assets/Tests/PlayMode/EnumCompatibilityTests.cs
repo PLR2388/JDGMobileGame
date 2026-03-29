@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using LegacyCardOwner = CardOwner;
+using LegacyCardOwner = Cards.CardOwner;
 using LegacyCardFamily = Cards.CardFamily;
 using LegacyCardType = Cards.CardType;
 using DomainCardOwner = JDG.Domain.CardOwner;

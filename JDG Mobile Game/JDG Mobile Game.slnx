@@ -3,6 +3,7 @@
   <Project Path="JDG.PlayMode.Tests.csproj" />
   <Project Path="JDG.Application.Tests.csproj" />
   <Project Path="JDG.Domain.csproj" />
+  <Project Path="JDG.Cards.csproj" />
   <Project Path="JDG.Application.csproj" />
   <Project Path="JDG.Infrastructure.csproj" />
   <Project Path="JDG.Presentation.csproj" />

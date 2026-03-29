@@ -381,6 +381,7 @@ namespace JDG.Infrastructure.Tests.Services
             public IReadOnlyList<IInGameInvocationCard> InvocationCards { get; set; } = new List<IInGameInvocationCard>();
             public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
             public IInGameFieldCard FieldCard => null;
+            public IReadOnlyList<IInGameCard> GraveyardCards => new List<IInGameCard>();
             public IReadOnlyList<IInGameCard> HandCards => new List<IInGameCard>();
             public int HandCardCount => 0;
 

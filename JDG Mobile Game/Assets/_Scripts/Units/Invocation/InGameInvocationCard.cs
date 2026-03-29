@@ -70,7 +70,7 @@ namespace _Scripts.Units.Invocation
 
         public bool Aggro { get; set; }
 
-        private List<global::Condition> conditions = new List<global::Condition>();
+        private List<Condition> conditions = new List<Condition>();
 
         /// <summary>
         /// List of modern IAbility implementations for this card.
@@ -178,7 +178,7 @@ namespace _Scripts.Units.Invocation
             // Phase 146: Added warning for missing conditions
             conditions = BaseInvocationCard.Conditions
                 .Select(conditionName => {
-                    var condition = _conditionProvider.GetCondition(conditionName) as global::Condition;
+                    var condition = _conditionProvider.GetCondition(conditionName) as Condition;
                     if (condition == null)
                         UnityEngine.Debug.LogWarning($"[InGameInvocationCard] Condition '{conditionName}' not found for card '{title}'");
                     return condition;
