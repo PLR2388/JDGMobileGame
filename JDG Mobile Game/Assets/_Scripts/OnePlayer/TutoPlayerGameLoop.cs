@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
@@ -119,7 +120,7 @@ namespace OnePlayer
 
             // Step 2: User (Player2) clicked on Tentacules (their attacking card)
             if (cardTouch.Title == CardNameMappings.CardNameMap[CardNames.Tentacules]
-                && cardTouch.CardOwner == CardOwner.Player2)
+                && cardTouch.CardOwner == JDG.Domain.CardOwner.Player2)
             {
                 // Deactivate Tentacules highlight
                 _eventBus?.Publish(new HighlightRequestedEvent
@@ -426,12 +427,13 @@ namespace OnePlayer
         }
 
         /// <summary>
-        /// Display the MessageBox with the available opponents
+        /// Display the MessageBox with the available opponents.
         /// Phase 35: Uses inherited _dialogService instead of CardSelector.Instance.
         /// Phase 143: Multi-step highlight flow - deactivate attack button, highlight JMB.
+        /// Phase 166: Changed parameter to IReadOnlyList{IInGameCard} to match BuildValidTargets().
         /// </summary>
         /// <param name="invocationCards">Available opponents list</param>
-        private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
+        private void DisplayOpponentMessageBox(IReadOnlyList<IInGameCard> invocationCards)
         {
             // Phase 143: Deactivate attack button highlight when selector opens
             _eventBus?.Publish(new HighlightRequestedEvent
@@ -443,14 +445,14 @@ namespace OnePlayer
             // Phase 143: Set card to highlight in selector
             DisplayCards.CardToHighlight = CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages];
 
-            void PositiveAction(InGameInvocationCard invocationCard)
+            void PositiveAction(IInGameInvocationCard invocationCard)
             {
                 // Phase 143: Clear the card to highlight
                 DisplayCards.CardToHighlight = null;
 
                 if (invocationCard?.Title == CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages])
                 {
-                    // Phase 17-18: Use ICombatService instead of CardManager.Instance
+                    // Phase 166: Opponent is now IInGameInvocationCard, no cast needed
                     _combatService.Opponent = invocationCard;
                     ComputeAttack();
                     miniCardMenu.SetActive(false);
@@ -475,7 +477,7 @@ namespace OnePlayer
                 ShowOkButton = true,
                 OnOkSingle = (card) =>
                 {
-                    PositiveAction(card as InGameInvocationCard);
+                    PositiveAction(card as IInGameInvocationCard);
                     nextPhaseButtonGameObject.SetActive(true);
                 }
             };

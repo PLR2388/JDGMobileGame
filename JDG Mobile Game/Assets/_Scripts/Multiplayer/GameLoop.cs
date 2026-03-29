@@ -248,12 +248,13 @@ public class GameLoop : MonoBehaviour
     }
 
     /// <summary>
-    /// Display a menu and set attacker if user touches a card he owns
+    /// Display a menu and set attacker if user touches a card he owns.
+    /// Phase 166: Changed parameter to IInGameCard (from concrete InGameCard).
     /// </summary>
     /// <param name="cardTouch">Current card touched</param>
     /// <param name="currentOwner">Owner associated to the current player</param>
     /// <param name="isAttackPhase">Is the touch happen during attack phase</param>
-    protected void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
+    protected void HandleSingleTouch(IInGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
     {
 
         if (cardTouch is InGameInvocationCard invocationCard)
@@ -423,12 +424,13 @@ public class GameLoop : MonoBehaviour
     }
 
     /// <summary>
-    /// Display the MessageBox with the available opponents
+    /// Display the MessageBox with the available opponents.
     /// Phase 127: Uses CardSelectorPresenter directly with interface types.
     /// Phase 140: Added tracing for debugging target display.
+    /// Phase 166: Changed parameter to IReadOnlyList{IInGameCard} to match BuildValidTargets().
     /// </summary>
     /// <param name="invocationCards">Available opponents list</param>
-    private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
+    private void DisplayOpponentMessageBox(IReadOnlyList<IInGameCard> invocationCards)
     {
 #if UNITY_EDITOR
         Debug.Log($"GameLoop.DisplayOpponentMessageBox() - START, count: {invocationCards?.Count ?? -1}");
@@ -444,16 +446,8 @@ public class GameLoop : MonoBehaviour
         {
             if (selectedCard != null)
             {
-                // Phase 17-18: Use ICombatService instead of CardManager.Instance
-                // Phase 144: Add null check for cast result
-                var concreteCard = selectedCard as InGameInvocationCard;
-                if (concreteCard == null)
-                {
-                    Debug.LogWarning($"GameLoop.OnCardSelected: Failed to cast {selectedCard.GetType().Name} to InGameInvocationCard");
-                    _inputManager.EnableDetectionTouch();
-                    return;
-                }
-                _combatService.Opponent = concreteCard;
+                // Phase 166: Opponent is now IInGameInvocationCard, no cast needed
+                _combatService.Opponent = selectedCard;
                 ComputeAttack();
             }
             // Phase 19-20: Use injected InputManager instead of .Instance
@@ -467,8 +461,7 @@ public class GameLoop : MonoBehaviour
         }
 
         // Phase 127: Use CardSelectorPresenter directly with interface types
-        IReadOnlyList<IInGameCard> cards = invocationCards?.Cast<IInGameCard>().ToList();
-        _cardSelectorPresenter.ShowOpponentSelector(cards, OnCardSelected, OnCancelled);
+        _cardSelectorPresenter.ShowOpponentSelector(invocationCards, OnCardSelected, OnCancelled);
     }
 
     /// <summary>

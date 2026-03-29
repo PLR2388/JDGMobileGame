@@ -1,5 +1,6 @@
 using Cards;
 using JDG.Application;
+using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Infrastructure.Cards;
 using JetBrains.Annotations;
@@ -14,6 +15,7 @@ using UnityEngine;
 /// legacy card types are migrated to the Domain layer.
 ///
 /// Part of Phase 1 migration - replaces CardRaycastManager singleton with DI.
+/// Phase 166: Returns IInGameCard interface. InGameCard already implements IInGameCard.
 /// </summary>
 public class RaycastService : IRaycastService
 {
@@ -34,11 +36,11 @@ public class RaycastService : IRaycastService
     }
 
     /// <summary>
-    /// Retrieves the InGameCard under the user's current touch or click position.
+    /// Retrieves the card under the user's current touch or click position.
     /// </summary>
-    /// <returns>The InGameCard being touched or null if no card is detected.</returns>
+    /// <returns>The IInGameCard being touched or null if no card is detected.</returns>
     [CanBeNull]
-    public InGameCard GetTouchedCard()
+    public IInGameCard GetTouchedCard()
     {
         if (_mainCamera == null)
         {

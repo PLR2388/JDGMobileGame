@@ -5,6 +5,7 @@ using Cards;
 using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Abilities.Implementations;
+using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
@@ -25,6 +26,8 @@ using UnityEngine;
 /// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
 /// Phase 115: Updated to use modern EnableDirectAttackEffectAbility type.
 /// Phase 118: Moved combat logic from legacy Ability class. Uses only ModernAbilities.
+/// Phase 166: Interface uses IInGameInvocationCard/IInGameCard; implementation casts
+/// to concrete types internally for legacy operations.
 /// </summary>
 public class CombatService : ICombatService
 {
@@ -42,8 +45,24 @@ public class CombatService : ICombatService
     private readonly IEventBus _eventBus;
     private readonly Transform _canvas;
 
-    public InGameInvocationCard Attacker { get; set; }
-    public InGameInvocationCard Opponent { get; set; }
+    /// <summary>
+    /// Phase 166: Interface properties with concrete backing fields.
+    /// Internal methods still need InGameInvocationCard for legacy operations.
+    /// </summary>
+    private InGameInvocationCard _attacker;
+    private InGameInvocationCard _opponent;
+
+    public IInGameInvocationCard Attacker
+    {
+        get => _attacker;
+        set => _attacker = (InGameInvocationCard)value;
+    }
+
+    public IInGameInvocationCard Opponent
+    {
+        get => _opponent;
+        set => _opponent = (InGameInvocationCard)value;
+    }
 
     /// <summary>
     /// Phase 144: Added IEventBus for publishing AttackExecutedEvent.
@@ -69,34 +88,34 @@ public class CombatService : ICombatService
 
     public bool CanAttackerAttack()
     {
-        if (Attacker == null)
+        if (_attacker == null)
             return false;
 
         var currentPlayerCards = _cardCollectionService.GetCurrentPlayerCards();
-        return Attacker.CanAttack() && currentPlayerCards.ContainsCardInInvocation(Attacker);
+        return _attacker.CanAttack() && currentPlayerCards.ContainsCardInInvocation(_attacker);
     }
 
     public bool HasAttackerAction()
     {
-        return Attacker != null && Attacker.HasAction();
+        return _attacker != null && _attacker.HasAction();
     }
 
     public float ComputeDamageAttack()
     {
-        if (Opponent == null || Attacker == null)
+        if (_opponent == null || _attacker == null)
             return 0f;
 
-        return Opponent.GetCurrentDefense() - Attacker.GetCurrentAttack();
+        return _opponent.GetCurrentDefense() - _attacker.GetCurrentAttack();
     }
 
     public void HandleAttack()
     {
-        if (Attacker == null || Opponent == null)
+        if (_attacker == null || _opponent == null)
             return;
 
-        Attacker.AttackTurnDone();
+        _attacker.AttackTurnDone();
 
-        if (Opponent.Title == CardNameMappings.CardNameMap[CardNames.Player])
+        if (_opponent.Title == CardNameMappings.CardNameMap[CardNames.Player])
         {
             _playerStatusProvider.HandleAttackIfOpponentIsPlayer();
         }
@@ -106,11 +125,11 @@ public class CombatService : ICombatService
         }
     }
 
-    public List<InGameCard> BuildValidTargets()
+    public IReadOnlyList<IInGameCard> BuildValidTargets()
     {
-        if (Attacker == null)
+        if (_attacker == null)
         {
-            return new List<InGameCard>();
+            return new List<IInGameCard>();
         }
 
         var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
@@ -159,7 +178,7 @@ public class CombatService : ICombatService
     /// </summary>
     public void UseSpecialAction()
     {
-        if (Attacker == null)
+        if (_attacker == null)
             return;
 
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
@@ -167,9 +186,9 @@ public class CombatService : ICombatService
 
         // Phase 118: Execute modern abilities that are actions
         // Phase 151: Create linked domain Card for proper ability context
-        var (context, domainCard) = CreateAbilityContext(Attacker, playerCards);
+        var (context, domainCard) = CreateAbilityContext(_attacker, playerCards);
         // Phase 148: Added null-coalescing to prevent NullReferenceException
-        foreach (var ability in Attacker.ModernAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
+        foreach (var ability in _attacker.ModernAbilities ?? System.Linq.Enumerable.Empty<IAbility>())
         {
             // Execute action-type abilities
             if (ability.CanActivate(context))
@@ -189,19 +208,19 @@ public class CombatService : ICombatService
     /// </summary>
     public bool IsSpecialActionPossible()
     {
-        if (Attacker == null)
+        if (_attacker == null)
             return false;
 
-        if (Attacker.CancelEffect)
+        if (_attacker.CancelEffect)
             return false;
 
         // Phase 118: Check if any modern ability can activate
         // Phase 151: Create linked domain Card for proper ability context
         var playerCards = _cardCollectionService.GetCurrentPlayerCards();
-        var (context, _) = CreateAbilityContext(Attacker, playerCards);
+        var (context, _) = CreateAbilityContext(_attacker, playerCards);
 
         // Phase 148: Added null-safe check to prevent NullReferenceException
-        return Attacker.ModernAbilities?.Any(ability => ability.CanActivate(context)) ?? false;
+        return _attacker.ModernAbilities?.Any(ability => ability.CanActivate(context)) ?? false;
     }
 
     // Private helper methods
@@ -221,32 +240,32 @@ public class CombatService : ICombatService
 
         // Phase 118: Execute modern abilities with OnDefend trigger for defender
         // Phase 151: Create linked domain Cards for proper ability context
-        var (defenderContext, defenderDomainCard) = CreateAbilityContext(Opponent, opponentCards);
-        ExecuteModernAbilities(Opponent.ModernAbilities, AbilityTrigger.OnDefend, defenderContext);
+        var (defenderContext, defenderDomainCard) = CreateAbilityContext(_opponent, opponentCards);
+        ExecuteModernAbilities(_opponent.ModernAbilities, AbilityTrigger.OnDefend, defenderContext);
         SyncCardStateIfNeeded(defenderDomainCard);
 
         // Phase 118: Execute modern abilities with OnAttack trigger for attacker
-        var (attackerContext, attackerDomainCard) = CreateAbilityContext(Attacker, playerCards);
-        ExecuteModernAbilities(Attacker.ModernAbilities, AbilityTrigger.OnAttack, attackerContext);
+        var (attackerContext, attackerDomainCard) = CreateAbilityContext(_attacker, playerCards);
+        ExecuteModernAbilities(_attacker.ModernAbilities, AbilityTrigger.OnAttack, attackerContext);
         SyncCardStateIfNeeded(attackerDomainCard);
 
         // Phase 118: Calculate and apply combat damage (moved from Ability.OnCardAttacked)
-        float resultAttack = Opponent.Defense - Attacker.Attack;
+        float resultAttack = _opponent.Defense - _attacker.Attack;
 
         bool attackerDestroyed = false;
         bool defenderDestroyed = false;
 
         if (resultAttack > 0)
         {
-            attackerDestroyed = HandlePositiveAttackResult(Attacker, playerCards, opponentCards, playerStatus, resultAttack);
+            attackerDestroyed = HandlePositiveAttackResult(_attacker, playerCards, opponentCards, playerStatus, resultAttack);
         }
         else if (resultAttack == 0)
         {
-            (attackerDestroyed, defenderDestroyed) = HandleNeutralAttackResult(Opponent, Attacker, playerCards, opponentCards);
+            (attackerDestroyed, defenderDestroyed) = HandleNeutralAttackResult(_opponent, _attacker, playerCards, opponentCards);
         }
         else
         {
-            defenderDestroyed = HandleNegativeAttackResult(Opponent, playerCards, opponentCards, opponentStatus, resultAttack);
+            defenderDestroyed = HandleNegativeAttackResult(_opponent, playerCards, opponentCards, opponentStatus, resultAttack);
         }
 
         // Phase 144: Publish AttackExecutedEvent for attack animations/UI feedback
@@ -500,6 +519,6 @@ public class CombatService : ICombatService
 
     private bool AttackerCanDirectAttack()
     {
-        return Attacker.CanDirectAttack;
+        return _attacker.CanDirectAttack;
     }
 }
