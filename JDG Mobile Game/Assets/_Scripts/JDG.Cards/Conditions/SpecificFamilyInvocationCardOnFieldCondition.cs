@@ -1,7 +1,7 @@
 using System.Linq;
 using Cards;
 using JDG.Application.Cards;
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
+using JDG.Domain.Enums;
 
 /// <summary>
 /// Represents a condition that checks for the presence of an invocation card
@@ -13,7 +13,7 @@ public class SpecificFamilyInvocationCardOnFieldCondition : Condition
     /// <summary>
     /// The specific card family that an invocation card should belong to, in order to meet the condition.
     /// </summary>
-    private readonly DomainCardFamily family;
+    private readonly CardFamily family;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpecificFamilyInvocationCardOnFieldCondition"/> class.
@@ -21,7 +21,7 @@ public class SpecificFamilyInvocationCardOnFieldCondition : Condition
     /// <param name="name">The name of the condition.</param>
     /// <param name="description">The description of the condition.</param>
     /// <param name="family">The specific card family to check for.</param>
-    public SpecificFamilyInvocationCardOnFieldCondition(ConditionName name, string description, DomainCardFamily family)
+    public SpecificFamilyInvocationCardOnFieldCondition(ConditionName name, string description, CardFamily family)
     {
         Name = name;
         Description = description;

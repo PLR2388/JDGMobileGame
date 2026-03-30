@@ -1,7 +1,7 @@
 using System.Linq;
 using Cards;
 using JDG.Application.Cards;
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
+using JDG.Domain.Enums;
 
 
 /// <summary>
@@ -11,7 +11,7 @@ using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 /// </summary>
 public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Condition
 {
-    private readonly DomainCardFamily family;
+    private readonly CardFamily family;
     private readonly float attack;
     private readonly float defense;
     private readonly int numberOfCards;
@@ -25,7 +25,7 @@ public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Conditio
     /// <param name="attack">The minimum attack value of the card.</param>
     /// <param name="defense">The minimum defense value of the card.</param>
     /// <param name="number">The minimum number of cards required on the field.</param>
-    public SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(ConditionName name, string description, DomainCardFamily family,
+    public SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(ConditionName name, string description, CardFamily family,
         float attack, float defense, int number)
     {
         Name = name;
@@ -44,7 +44,7 @@ public class SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition : Conditio
     /// <param name="family">The specific card family to check for.</param>
     /// <param name="number">The minimum number of cards required on the field.</param>
     public SpecificFamilyAtkDefNumberInvocationCardOnFieldCondition(ConditionName name, string description,
-        DomainCardFamily family, int number)
+        CardFamily family, int number)
     {
         Name = name;
         Description = description;

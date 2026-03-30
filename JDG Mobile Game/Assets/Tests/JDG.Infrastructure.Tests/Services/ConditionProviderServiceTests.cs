@@ -1,6 +1,6 @@
 using JDG.Infrastructure.Services;
 using System;
-using Cards;
+using JDG.Domain.Enums;
 using NUnit.Framework;
 
 namespace JDG.Infrastructure.Tests.Services

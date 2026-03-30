@@ -1,5 +1,5 @@
 using JDG.Infrastructure.Services;
-using Cards;
+using JDG.Domain.Enums;
 using NUnit.Framework;
 
 namespace JDG.Application.Tests.Abilities.Scenarios

@@ -11,8 +11,6 @@ using JDG.Domain.ValueObjects;
 using Services;
 using System.Linq;
 
-// Alias to avoid namespace conflicts
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 namespace JDG.Infrastructure.Tests.Services
 {
@@ -110,7 +108,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "Detailed",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -132,7 +130,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -156,7 +154,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -178,7 +176,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -200,7 +198,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -222,7 +220,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -245,7 +243,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -267,7 +265,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "",
                 attack: 100,
                 defense: 50,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
 
@@ -350,7 +348,7 @@ namespace JDG.Infrastructure.Tests.Services
                 detailedDescription: "Detailed Description",
                 attack: attack,
                 defense: defense,
-                families: new[] { DomainCardFamily.Developer },
+                families: new[] { CardFamily.Developer },
                 affectedByEffect: true
             );
         }

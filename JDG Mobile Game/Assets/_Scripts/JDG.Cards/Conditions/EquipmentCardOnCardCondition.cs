@@ -1,6 +1,7 @@
 using System.Linq;
 using Cards;
 using JDG.Application.Cards;
+using JDG.Domain.Enums;
 
 /// <summary>
 /// Represents a condition that checks whether a specific equipment card is attached to a specific invocation card

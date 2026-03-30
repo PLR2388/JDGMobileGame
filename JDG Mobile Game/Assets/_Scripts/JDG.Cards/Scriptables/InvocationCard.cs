@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Cards;
 using JDG.Domain;
+using JDG.Domain.Enums;
 using UnityEngine;
 
 namespace Cards.InvocationCards
@@ -48,17 +49,17 @@ public struct InvocationCardStats
     /// The attack value of the invocation card.
     /// </summary>
     public float Attack;
-    
+
     /// <summary>
     /// The defense value of the invocation card.
     /// </summary>
     public float Defense;
-    
+
     /// <summary>
     /// The families to which this invocation card belongs.
     /// </summary>
     public CardFamily[] Families;
-    
+
     /// <summary>
     /// Indicates whether the invocation card is affected by certain effects.
     /// </summary>

@@ -1,31 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JDG.Application.Services;
 using JDG.Core;
+using JDG.Domain.Enums;
 
 namespace Cards
 {
-
-    /// <summary>
-    /// Defines different types of cards.
-    /// </summary>
-    /// <remarks>
-    /// DEPRECATED: Use JDG.Domain.Enums.CardType instead for clean architecture compatibility.
-    /// This enum is kept for Unity ScriptableObject serialization - existing card assets reference these values.
-    /// </remarks>
-    [Obsolete("Use JDG.Domain.Enums.CardType for new code. This enum is kept for Unity serialization compatibility.")]
-    public enum CardType
-    {
-        Contre,
-        Effect,
-        Equipment,
-        Field,
-        Invocation
-    }
-
     /// <summary>
     /// Provides extension methods related to the CardType enum.
     /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 166: Now targets JDG.Domain.Enums.CardType (legacy enum removed).
     /// </summary>
     public static class CardTypeExtensions
     {

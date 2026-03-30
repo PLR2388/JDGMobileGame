@@ -4,11 +4,7 @@ using JDG.Domain.Entities;
 using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using System.Collections.Generic;
-
-// Alias to resolve global namespace conflicts
-using DomainCardOwner = JDG.Domain.CardOwner;
-using DomainAbilityName = JDG.Domain.AbilityName;
-using DomainConditionName = JDG.Domain.Enums.ConditionName;
+using JDG.Domain;
 
 namespace JDG.Infrastructure.Tests.Services
 {
@@ -351,7 +347,7 @@ namespace JDG.Infrastructure.Tests.Services
             var state = InGameCardState.Create(
                 CardId.New(),
                 CardType.Effect,
-                DomainCardOwner.Player1);
+                CardOwner.Player1);
             state.TurnsOnField = 3;
             state.IsBlocked = true;
             state.IsControlled = true;
@@ -428,12 +424,12 @@ namespace JDG.Infrastructure.Tests.Services
         {
             return new InvocationCardState(
                 cardDefinitionId: CardId.New(),
-                owner: DomainCardOwner.Player1,
+                owner: CardOwner.Player1,
                 baseAttack: baseAttack,
                 baseDefense: baseDefense,
                 families: new List<CardFamily> { CardFamily.Comics },
-                abilities: new List<DomainAbilityName>(),
-                conditions: new List<DomainConditionName>(),
+                abilities: new List<AbilityName>(),
+                conditions: new List<ConditionName>(),
                 isAffectedByEffect: true);
         }
 

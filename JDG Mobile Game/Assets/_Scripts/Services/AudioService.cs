@@ -1,5 +1,6 @@
 using Cards;
 using JDG.Application.Services;
+using JDG.Domain.Enums;
 using Sound;
 using UnityEngine;
 

@@ -6,8 +6,9 @@ using JDG.Application;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 namespace JDG.Infrastructure.Cards
 {
@@ -54,7 +55,7 @@ namespace JDG.Infrastructure.Cards
                 // Modern abilities check CancelEffect in their CanActivate implementation
 
                 // Phase 24-25: Use injected _eventBus
-                var domainOwner = (JDG.Domain.CardOwner)(int)CardOwner;
+                var domainOwner = CardOwner;
                 _eventBus.Publish(new InvocationCancelledEvent
                 {
                     CancelledCard = this,
@@ -414,12 +415,12 @@ namespace JDG.Infrastructure.Cards
 
         /// <summary>
         /// Gets or sets the families via interface type.
-        /// Phase 68: Explicit implementation to convert between Cards.CardFamily and JDG.Domain.Enums.CardFamily.
+        /// Phase 166: No conversion needed - uses domain CardFamily directly.
         /// </summary>
-        DomainCardFamily[] IInGameInvocationCard.Families
+        CardFamily[] IInGameInvocationCard.Families
         {
-            get => Families?.Select(f => (DomainCardFamily)(int)f).ToArray() ?? System.Array.Empty<DomainCardFamily>();
-            set => Families = value?.Select(f => (CardFamily)(int)f).ToArray();
+            get => Families ?? System.Array.Empty<CardFamily>();
+            set => Families = value;
         }
 
         #endregion

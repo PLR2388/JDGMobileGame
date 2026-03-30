@@ -1,4 +1,5 @@
 ﻿using Cards;
+using JDG.Domain.Enums;
 using UnityEngine;
 
 namespace _Scripts.Scriptables

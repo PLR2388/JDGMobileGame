@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using JDG.Application.Services;
 using JDG.Domain;
-using DomainCardOwner = JDG.Domain.CardOwner;
 using JDG.Domain.Events;
 using JDG.PlayMode.Tests.TestHelpers;
 using UnityEngine;
@@ -167,7 +166,7 @@ namespace JDG.PlayMode.Tests.Controllers
             _eventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = card.Title,
-                Owner = isPlayer1 ? DomainCardOwner.Player1 : DomainCardOwner.Player2
+                Owner = isPlayer1 ? CardOwner.Player1 : CardOwner.Player2
             });
         }
 
@@ -194,7 +193,7 @@ namespace JDG.PlayMode.Tests.Controllers
             _eventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = card.Title,
-                Owner = isPlayer1 ? DomainCardOwner.Player1 : DomainCardOwner.Player2
+                Owner = isPlayer1 ? CardOwner.Player1 : CardOwner.Player2
             });
         }
 
@@ -221,7 +220,7 @@ namespace JDG.PlayMode.Tests.Controllers
             _eventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = card.Title,
-                Owner = isPlayer1 ? DomainCardOwner.Player1 : DomainCardOwner.Player2
+                Owner = isPlayer1 ? CardOwner.Player1 : CardOwner.Player2
             });
         }
 
@@ -374,7 +373,7 @@ namespace JDG.PlayMode.Tests.Controllers
                 opponentField.Remove(target);
                 _eventBus.Publish(new CardDestroyedEvent
                 {
-                    Owner = isPlayer1Attacking ? DomainCardOwner.Player2 : DomainCardOwner.Player1,
+                    Owner = isPlayer1Attacking ? CardOwner.Player2 : CardOwner.Player1,
                     Reason = $"Destroyed by {_currentAttacker.Title}"
                 });
             }
@@ -385,7 +384,7 @@ namespace JDG.PlayMode.Tests.Controllers
                 attackerField.Remove(_currentAttacker);
                 _eventBus.Publish(new CardDestroyedEvent
                 {
-                    Owner = isPlayer1Attacking ? DomainCardOwner.Player1 : DomainCardOwner.Player2,
+                    Owner = isPlayer1Attacking ? CardOwner.Player1 : CardOwner.Player2,
                     Reason = $"Destroyed by {target.Title}"
                 });
             }
@@ -397,12 +396,12 @@ namespace JDG.PlayMode.Tests.Controllers
                 attackerField.Remove(_currentAttacker);
                 _eventBus.Publish(new CardDestroyedEvent
                 {
-                    Owner = isPlayer1Attacking ? DomainCardOwner.Player2 : DomainCardOwner.Player1,
+                    Owner = isPlayer1Attacking ? CardOwner.Player2 : CardOwner.Player1,
                     Reason = "Mutual destruction"
                 });
                 _eventBus.Publish(new CardDestroyedEvent
                 {
-                    Owner = isPlayer1Attacking ? DomainCardOwner.Player1 : DomainCardOwner.Player2,
+                    Owner = isPlayer1Attacking ? CardOwner.Player1 : CardOwner.Player2,
                     Reason = "Mutual destruction"
                 });
             }
@@ -436,7 +435,7 @@ namespace JDG.PlayMode.Tests.Controllers
 
             _eventBus.Publish(new PlayerHealthChangedEvent
             {
-                Player = isPlayer1Attacking ? DomainCardOwner.Player2 : DomainCardOwner.Player1,
+                Player = isPlayer1Attacking ? CardOwner.Player2 : CardOwner.Player1,
                 NewHealth = isPlayer1Attacking
                     ? _playerStatusProvider.OpponentPlayerStatus.CurrentHealth
                     : _playerStatusProvider.CurrentPlayerStatus.CurrentHealth

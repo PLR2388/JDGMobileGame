@@ -1,13 +1,13 @@
 ﻿using System;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
 using UnityEngine;
 using UnityEngine.Events;
 using VContainer;
-using DomainCardOwner = JDG.Domain.CardOwner;
-using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace _Scripts.Cards.InvocationCards
 {
@@ -130,8 +130,8 @@ namespace _Scripts.Cards.InvocationCards
                 _eventBus.Publish(new CardPlayedEvent
                 {
                     CardId = Guid.NewGuid(), // Unique ID for this play event
-                    Owner = (DomainCardOwner)(int)invocationCard.CardOwner,
-                    CardType = DomainCardType.Invocation,
+                    Owner = invocationCard.CardOwner,
+                    CardType = CardType.Invocation,
                     CardTitle = invocationCard.Title
                 });
             }

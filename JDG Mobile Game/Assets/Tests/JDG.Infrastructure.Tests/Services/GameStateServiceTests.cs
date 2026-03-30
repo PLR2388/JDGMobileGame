@@ -8,8 +8,6 @@ using JDG.Domain.Events;
 using System.Collections.Generic;
 using System.Linq;
 
-// Alias to avoid conflict with global namespace CardOwner
-using DomainCardOwner = JDG.Domain.CardOwner;
 
 namespace JDG.Infrastructure.Tests.Services
 {
@@ -232,7 +230,7 @@ namespace JDG.Infrastructure.Tests.Services
         public void EndGame_SetsGameOverState()
         {
             // Act
-            _service.EndGame(DomainCardOwner.Player1, "Test reason");
+            _service.EndGame(CardOwner.Player1, "Test reason");
 
             // Assert
             Assert.IsTrue(_repository.IsGameOver);
@@ -242,7 +240,7 @@ namespace JDG.Infrastructure.Tests.Services
         public void EndGame_SetsPhaseToGameOver()
         {
             // Act
-            _service.EndGame(DomainCardOwner.Player1, "Test reason");
+            _service.EndGame(CardOwner.Player1, "Test reason");
 
             // Assert
             Assert.AreEqual(Phase.GameOver, _repository.CurrentPhase);
@@ -252,13 +250,13 @@ namespace JDG.Infrastructure.Tests.Services
         public void EndGame_PublishesGameOverEvent()
         {
             // Act
-            _service.EndGame(DomainCardOwner.Player1, "Victory");
+            _service.EndGame(CardOwner.Player1, "Victory");
 
             // Assert
             var gameOverEvents = _eventBus.PublishedEvents.Where(e => e is GameOverEvent).ToList();
             Assert.AreEqual(1, gameOverEvents.Count);
             var gameOverEvent = (GameOverEvent)gameOverEvents[0];
-            Assert.AreEqual(DomainCardOwner.Player1, gameOverEvent.Winner);
+            Assert.AreEqual(CardOwner.Player1, gameOverEvent.Winner);
             Assert.AreEqual("Victory", gameOverEvent.Reason);
         }
 

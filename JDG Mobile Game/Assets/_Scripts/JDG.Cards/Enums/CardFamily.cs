@@ -1,39 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JDG.Application.Services;
 using JDG.Core;
+using JDG.Domain.Enums;
 
 namespace Cards
 {
     /// <summary>
-    /// Defines different card families/types.
-    /// </summary>
-    /// <remarks>
-    /// DEPRECATED: Use JDG.Domain.Enums.CardFamily instead for clean architecture compatibility.
-    /// This enum is kept for Unity ScriptableObject serialization - existing card assets reference these values.
-    /// </remarks>
-    [Obsolete("Use JDG.Domain.Enums.CardFamily for new code. This enum is kept for Unity serialization compatibility.")]
-    public enum CardFamily
-    {
-        None,
-        Comics,
-        Developer,
-        Fistiland,
-        HardCorner,
-        Human,
-        Incarnation,
-        Japan,
-        Monster,
-        Police,
-        Rpg,
-        Spatial,
-        Wizard,
-        Any
-    }
-
-    /// <summary>
     /// Provides extension methods related to the CardFamily enum.
     /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 166: Now targets JDG.Domain.Enums.CardFamily (legacy enum removed).
     /// </summary>
     public static class CardFamilyExtensions
     {

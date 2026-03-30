@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Cards;
 using JDG.Application;
+using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Cards;

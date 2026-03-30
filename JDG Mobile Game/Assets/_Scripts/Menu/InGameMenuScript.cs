@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cards;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
 using JDG.Infrastructure.Cards.Handlers;

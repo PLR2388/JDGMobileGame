@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using JDG.Application.Abilities;
 using JDG.Application.Abilities.Implementations;
 using JDG.Application.Repositories;
+using JDG.Domain.Enums;
 using DomainFieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
 
 namespace JDG.Infrastructure.Services
 {
@@ -95,36 +95,36 @@ namespace JDG.Infrastructure.Services
             {
                 // Family boost abilities
                 [DomainFieldAbilityName.Earn1DEFForSpatialFamily] = _factory.CreateFamilyBoost(
-                    DomainCardFamily.Spatial, 0f, 1f),
+                    CardFamily.Spatial, 0f, 1f),
                 [DomainFieldAbilityName.Earn1HalfDEFAndMinusHalfATKForDevFamily] = _factory.CreateFamilyBoost(
-                    DomainCardFamily.Developer, -0.5f, 1.5f),
+                    CardFamily.Developer, -0.5f, 1.5f),
                 [DomainFieldAbilityName.Earn2DEFAndMinusOneATKForIncarnationFamily] = _factory.CreateFamilyBoost(
-                    DomainCardFamily.Incarnation, -1f, 2f),
+                    CardFamily.Incarnation, -1f, 2f),
                 [DomainFieldAbilityName.Earn1ATKForJapanFamily] = _factory.CreateFamilyBoost(
-                    DomainCardFamily.Japan, 1f, 0f),
+                    CardFamily.Japan, 1f, 0f),
                 [DomainFieldAbilityName.Earn1HalfATKAndMinusHalfDEFForHCFamily] = _factory.CreateFamilyBoost(
-                    DomainCardFamily.HardCorner, 1.5f, -0.5f),
+                    CardFamily.HardCorner, 1.5f, -0.5f),
                 [DomainFieldAbilityName.EarnHalfATKAndDefForRpgFamily] = _factory.CreateFamilyBoost(
-                    DomainCardFamily.Rpg, 0.5f, 0.5f),
+                    CardFamily.Rpg, 0.5f, 0.5f),
                 [DomainFieldAbilityName.Earn2ATKAndMinus1DEFForComicsFamily] = _factory.CreateFamilyBoost(
-                    DomainCardFamily.Comics, 2f, -1f),
+                    CardFamily.Comics, 2f, -1f),
 
                 // Card-specific family changes
                 [DomainFieldAbilityName.ChangeJMBruitagesFamilyToDev] = _factory.CreateChangeByName(
-                    "Jean-Michel Bruitages", DomainCardFamily.Developer),
+                    "Jean-Michel Bruitages", CardFamily.Developer),
                 [DomainFieldAbilityName.ChangePatronInfogramFamilyToDev] = _factory.CreateChangeByName(
-                    "Patron D'Infogrames", DomainCardFamily.Developer),
+                    "Patron D'Infogrames", CardFamily.Developer),
 
                 // Heal per family ability
                 [DomainFieldAbilityName.EarnHalfHPPerWizardInvocationEachTurn] = _factory.CreateHealPerFamily(
-                    DomainCardFamily.Wizard, 0.5f),
+                    CardFamily.Wizard, 0.5f),
 
                 // Draw bonus ability
                 [DomainFieldAbilityName.DrawOneMoreCard] = _factory.CreateDrawBonus(1),
 
                 // Skip draw for family card ability
                 [DomainFieldAbilityName.SkipDrawToGetFistilandInvocation] = _factory.CreateSkipDrawForFamily(
-                    DomainCardFamily.Fistiland)
+                    CardFamily.Fistiland)
             };
         }
     }

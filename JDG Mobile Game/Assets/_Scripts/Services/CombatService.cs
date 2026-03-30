@@ -8,11 +8,12 @@ using JDG.Application.Abilities.Implementations;
 using JDG.Application.Cards;
 using JDG.Application.Services;
 using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
-using DomainCard = JDG.Domain.Entities.Card;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Cards;
 using UnityEngine;
+using DomainCard = JDG.Domain.Entities.Card;
 
 /// <summary>
 /// Implementation of ICombatService.

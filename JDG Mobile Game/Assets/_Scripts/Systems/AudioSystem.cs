@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cards;
+using JDG.Domain.Enums;
 using UnityEngine;
 
 namespace Sound

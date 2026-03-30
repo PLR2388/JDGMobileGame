@@ -1,6 +1,7 @@
 using System.Linq;
 using Cards;
 using JDG.Application.Cards;
+using JDG.Domain.Enums;
 
 /// <summary>
 /// Represents a condition that checks if there is any invocation card on the field

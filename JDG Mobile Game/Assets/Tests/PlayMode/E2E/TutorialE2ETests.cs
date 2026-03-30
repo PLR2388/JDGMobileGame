@@ -1,7 +1,6 @@
 using System.Collections;
 using JDG.Domain;
 using JDG.Domain.Events;
-using DomainCardOwner = JDG.Domain.CardOwner;
 using JDG.Domain.ValueObjects;
 using JDG.PlayMode.Tests.Assertions;
 using JDG.PlayMode.Tests.Controllers;
@@ -272,7 +271,7 @@ namespace JDG.PlayMode.Tests.E2E
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "TestEquipment",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;

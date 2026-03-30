@@ -13,8 +13,6 @@ using JDG.Infrastructure.Events;
 using JDG.Infrastructure.Repositories;
 using JDG.Infrastructure.Services;
 using JDG.TestUtilities;
-// Alias to avoid conflict with legacy CardOwner in global namespace
-using DomainCardOwner = JDG.Domain.CardOwner;
 
 namespace JDG.PlayMode.Tests
 {
@@ -139,10 +137,10 @@ namespace JDG.PlayMode.Tests
 
             // Act - Mix of phase and card events
             _gameStateService.SetPhase(Phase.Draw);
-            _eventBus.Publish(new CardDrawnEvent { Owner = DomainCardOwner.Player1 });
-            _eventBus.Publish(new CardDrawnEvent { Owner = DomainCardOwner.Player1 });
+            _eventBus.Publish(new CardDrawnEvent { Owner = CardOwner.Player1 });
+            _eventBus.Publish(new CardDrawnEvent { Owner = CardOwner.Player1 });
             _gameStateService.SetPhase(Phase.Choose);
-            _eventBus.Publish(new CardDrawnEvent { Owner = DomainCardOwner.Player2 });
+            _eventBus.Publish(new CardDrawnEvent { Owner = CardOwner.Player2 });
 
             yield return null;
 

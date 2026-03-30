@@ -12,19 +12,14 @@ using _Scripts.Scriptables;
 // Type aliases to avoid ambiguity
 using LegacyCard = Cards.Card;
 using DomainCard = JDG.Domain.Entities.Card;
-using LegacyCardFamily = Cards.CardFamily;
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
-using DomainAbilityName = JDG.Domain.AbilityName;
-using DomainConditionName = JDG.Domain.Enums.ConditionName;
-using DomainEquipmentAbilityName = JDG.Domain.Enums.EquipmentAbilityName;
-using DomainFieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
-using DomainEffectAbilityName = JDG.Domain.Enums.EffectAbilityName;
 
 namespace JDG.Bridge
 {
     /// <summary>
     /// Converts old ScriptableObject cards to new domain Card entities.
     /// Bridges the legacy card system with the new Clean Architecture.
+    /// Phase 166: Simplified - legacy and domain enums are now unified,
+    /// so enum conversion methods are identity operations.
     /// </summary>
     public static class CardConverter
     {
@@ -76,22 +71,18 @@ namespace JDG.Bridge
 
         private static DomainCard ConvertInvocationCard(InvocationCard scriptableCard, CardId cardId)
         {
-            // Convert old CardFamily[] to new domain CardFamily enum
+            // Phase 166: Families are already domain CardFamily[], no conversion needed
             var families = scriptableCard.BaseInvocationCardStats.Families
-                ?.Select(ConvertFamily)
-                .ToArray() ?? new DomainCardFamily[0];
+                ?? new CardFamily[0];
 
-            // Convert old AbilityName to new domain AbilityName
-            var abilities = scriptableCard.Abilities
-                ?.Select(ConvertAbilityName)
-                .ToArray() ?? new DomainAbilityName[0];
+            // Phase 166: Abilities are already domain AbilityName, no conversion needed
+            var abilities = scriptableCard.Abilities?.ToArray()
+                ?? new AbilityName[0];
 
-            // Convert old ConditionName to new domain ConditionName
-            var conditions = scriptableCard.Conditions
-                ?.Select(ConvertConditionName)
-                .ToArray() ?? new DomainConditionName[0];
+            // Phase 166: Conditions are already domain ConditionName, no conversion needed
+            var conditions = scriptableCard.Conditions?.ToArray()
+                ?? new ConditionName[0];
 
-            // Phase 159: Pass float stats directly for half-star support
             return DomainCard.CreateInvocation(
                 cardId,
                 scriptableCard.Title,
@@ -109,10 +100,9 @@ namespace JDG.Bridge
 
         private static DomainCard ConvertEquipmentCard(EquipmentCard scriptableCard, CardId cardId)
         {
-            // Convert old EquipmentAbilityName to new domain EquipmentAbilityName
-            var abilities = scriptableCard.EquipmentAbilities
-                ?.Select(ConvertEquipmentAbilityName)
-                .ToArray() ?? new DomainEquipmentAbilityName[0];
+            // Phase 166: Abilities are already domain EquipmentAbilityName, no conversion needed
+            var abilities = scriptableCard.EquipmentAbilities?.ToArray()
+                ?? new EquipmentAbilityName[0];
 
             return DomainCard.CreateEquipment(
                 cardId,
@@ -126,17 +116,16 @@ namespace JDG.Bridge
 
         private static DomainCard ConvertFieldCard(FieldCard scriptableCard, CardId cardId)
         {
-            // Convert old FieldAbilityName to new domain FieldAbilityName
-            var abilities = scriptableCard.FieldAbilities
-                ?.Select(ConvertFieldAbilityName)
-                .ToArray() ?? new DomainFieldAbilityName[0];
+            // Phase 166: Abilities are already domain FieldAbilityName, no conversion needed
+            var abilities = scriptableCard.FieldAbilities?.ToArray()
+                ?? new FieldAbilityName[0];
 
             return DomainCard.CreateField(
                 cardId,
                 scriptableCard.Title,
                 scriptableCard.Description,
                 scriptableCard.DetailedDescription,
-                ConvertFamily(scriptableCard.Family),
+                scriptableCard.Family,
                 abilities,
                 scriptableCard.Collector
             );
@@ -144,10 +133,9 @@ namespace JDG.Bridge
 
         private static DomainCard ConvertEffectCard(EffectCard scriptableCard, CardId cardId)
         {
-            // Convert old EffectAbilityName to new domain EffectAbilityName
-            var abilities = scriptableCard.EffectAbilities
-                ?.Select(ConvertEffectAbilityName)
-                .ToArray() ?? new DomainEffectAbilityName[0];
+            // Phase 166: Abilities are already domain EffectAbilityName, no conversion needed
+            var abilities = scriptableCard.EffectAbilities?.ToArray()
+                ?? new EffectAbilityName[0];
 
             return DomainCard.CreateEffect(
                 cardId,
@@ -168,44 +156,6 @@ namespace JDG.Bridge
                 scriptableCard.DetailedDescription,
                 scriptableCard.Collector
             );
-        }
-
-        // Enum conversion methods - these convert from old to new namespace
-
-        private static DomainCardFamily ConvertFamily(LegacyCardFamily oldFamily)
-        {
-            // The enums have the same names, so we can parse
-            return (DomainCardFamily)System.Enum.Parse(typeof(DomainCardFamily), oldFamily.ToString());
-        }
-
-        private static DomainAbilityName ConvertAbilityName(JDG.Domain.AbilityName abilityName)
-        {
-            // Phase 24-25: AbilityName is now in JDG.Domain namespace (no conversion needed)
-            return abilityName;
-        }
-
-        private static DomainConditionName ConvertConditionName(Cards.ConditionName oldCondition)
-        {
-            // The enums have the same names, so we can parse
-            return (DomainConditionName)System.Enum.Parse(typeof(DomainConditionName), oldCondition.ToString());
-        }
-
-        private static DomainEquipmentAbilityName ConvertEquipmentAbilityName(DomainEquipmentAbilityName ability)
-        {
-            // Phase 116+: ScriptableObjects now use domain enums directly (no conversion needed)
-            return ability;
-        }
-
-        private static DomainFieldAbilityName ConvertFieldAbilityName(DomainFieldAbilityName ability)
-        {
-            // Phase 116+: ScriptableObjects now use domain enums directly (no conversion needed)
-            return ability;
-        }
-
-        private static DomainEffectAbilityName ConvertEffectAbilityName(DomainEffectAbilityName ability)
-        {
-            // Phase 116+: ScriptableObjects now use domain enums directly (no conversion needed)
-            return ability;
         }
     }
 }

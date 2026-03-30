@@ -1,131 +1,52 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using LegacyCardOwner = Cards.CardOwner;
-using LegacyCardFamily = Cards.CardFamily;
-using LegacyCardType = Cards.CardType;
-using DomainCardOwner = JDG.Domain.CardOwner;
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
-using DomainCardType = JDG.Domain.Enums.CardType;
+using JDG.Domain;
+using JDG.Domain.Enums;
 
 namespace JDG.PlayMode.Tests
 {
     /// <summary>
-    /// Tests that verify enum values are compatible between legacy and domain enums.
-    /// Phase 145: Added to catch potential issues when casting between enum types.
-    ///
-    /// These tests ensure that (DomainEnum)(int)legacyEnum produces the correct result.
-    /// If these tests fail, it means the enum values have diverged and casts in the
-    /// codebase (CardFactory, CardSyncService, InGameInvocationCard) will be broken.
+    /// Tests that verify domain enum values are well-defined and consistent.
+    /// Phase 145: Originally tested legacy-to-domain enum compatibility.
+    /// Phase 166: Legacy enums removed - now validates domain enums have expected values.
     /// </summary>
     [TestFixture]
     public class EnumCompatibilityTests
     {
         [Test]
-        public void CardOwner_LegacyAndDomain_HaveMatchingValues()
+        public void CardOwner_HasExpectedValues()
         {
-            // Get all values from both enums
-            var legacyValues = Enum.GetValues(typeof(LegacyCardOwner)).Cast<LegacyCardOwner>().ToList();
-            var domainValues = Enum.GetValues(typeof(DomainCardOwner)).Cast<DomainCardOwner>().ToList();
+            var values = Enum.GetValues(typeof(CardOwner)).Cast<CardOwner>().ToList();
 
-            // Verify same number of values
-            Assert.AreEqual(legacyValues.Count, domainValues.Count,
-                "CardOwner enums have different number of values");
-
-            // Verify each value matches
-            foreach (var legacyValue in legacyValues)
-            {
-                var expectedDomainValue = (DomainCardOwner)(int)legacyValue;
-                Assert.IsTrue(Enum.IsDefined(typeof(DomainCardOwner), expectedDomainValue),
-                    $"Legacy CardOwner.{legacyValue} ({(int)legacyValue}) has no matching domain value");
-
-                // Verify the name matches
-                var legacyName = legacyValue.ToString();
-                var domainName = expectedDomainValue.ToString();
-                Assert.AreEqual(legacyName, domainName,
-                    $"CardOwner names don't match: Legacy={legacyName}, Domain={domainName}");
-            }
+            Assert.AreEqual(3, values.Count, "CardOwner should have 3 values");
+            Assert.AreEqual(0, (int)CardOwner.NotDefined);
+            Assert.AreEqual(1, (int)CardOwner.Player1);
+            Assert.AreEqual(2, (int)CardOwner.Player2);
         }
 
         [Test]
-        public void CardFamily_LegacyAndDomain_HaveMatchingValues()
+        public void CardFamily_HasExpectedValues()
         {
-            var legacyValues = Enum.GetValues(typeof(LegacyCardFamily)).Cast<LegacyCardFamily>().ToList();
-            var domainValues = Enum.GetValues(typeof(DomainCardFamily)).Cast<DomainCardFamily>().ToList();
+            var values = Enum.GetValues(typeof(CardFamily)).Cast<CardFamily>().ToList();
 
-            Assert.AreEqual(legacyValues.Count, domainValues.Count,
-                "CardFamily enums have different number of values");
-
-            foreach (var legacyValue in legacyValues)
-            {
-                var expectedDomainValue = (DomainCardFamily)(int)legacyValue;
-                Assert.IsTrue(Enum.IsDefined(typeof(DomainCardFamily), expectedDomainValue),
-                    $"Legacy CardFamily.{legacyValue} ({(int)legacyValue}) has no matching domain value");
-
-                var legacyName = legacyValue.ToString();
-                var domainName = expectedDomainValue.ToString();
-                Assert.AreEqual(legacyName, domainName,
-                    $"CardFamily names don't match: Legacy={legacyName}, Domain={domainName}");
-            }
+            Assert.AreEqual(14, values.Count, "CardFamily should have 14 values");
+            Assert.AreEqual(0, (int)CardFamily.None);
+            Assert.AreEqual(1, (int)CardFamily.Comics);
+            Assert.AreEqual(13, (int)CardFamily.Any);
         }
 
         [Test]
-        public void CardType_LegacyAndDomain_HaveMatchingValues()
+        public void CardType_HasExpectedValues()
         {
-            var legacyValues = Enum.GetValues(typeof(LegacyCardType)).Cast<LegacyCardType>().ToList();
-            var domainValues = Enum.GetValues(typeof(DomainCardType)).Cast<DomainCardType>().ToList();
+            var values = Enum.GetValues(typeof(CardType)).Cast<CardType>().ToList();
 
-            Assert.AreEqual(legacyValues.Count, domainValues.Count,
-                "CardType enums have different number of values");
-
-            foreach (var legacyValue in legacyValues)
-            {
-                var expectedDomainValue = (DomainCardType)(int)legacyValue;
-                Assert.IsTrue(Enum.IsDefined(typeof(DomainCardType), expectedDomainValue),
-                    $"Legacy CardType.{legacyValue} ({(int)legacyValue}) has no matching domain value");
-
-                var legacyName = legacyValue.ToString();
-                var domainName = expectedDomainValue.ToString();
-                Assert.AreEqual(legacyName, domainName,
-                    $"CardType names don't match: Legacy={legacyName}, Domain={domainName}");
-            }
-        }
-
-        [Test]
-        public void CardOwner_RoundTripConversion_PreservesValue()
-        {
-            // Test that converting legacy -> domain -> legacy preserves the value
-            foreach (LegacyCardOwner legacyValue in Enum.GetValues(typeof(LegacyCardOwner)))
-            {
-                var domainValue = (DomainCardOwner)(int)legacyValue;
-                var backToLegacy = (LegacyCardOwner)(int)domainValue;
-                Assert.AreEqual(legacyValue, backToLegacy,
-                    $"Round-trip conversion failed for CardOwner.{legacyValue}");
-            }
-        }
-
-        [Test]
-        public void CardFamily_RoundTripConversion_PreservesValue()
-        {
-            foreach (LegacyCardFamily legacyValue in Enum.GetValues(typeof(LegacyCardFamily)))
-            {
-                var domainValue = (DomainCardFamily)(int)legacyValue;
-                var backToLegacy = (LegacyCardFamily)(int)domainValue;
-                Assert.AreEqual(legacyValue, backToLegacy,
-                    $"Round-trip conversion failed for CardFamily.{legacyValue}");
-            }
-        }
-
-        [Test]
-        public void CardType_RoundTripConversion_PreservesValue()
-        {
-            foreach (LegacyCardType legacyValue in Enum.GetValues(typeof(LegacyCardType)))
-            {
-                var domainValue = (DomainCardType)(int)legacyValue;
-                var backToLegacy = (LegacyCardType)(int)domainValue;
-                Assert.AreEqual(legacyValue, backToLegacy,
-                    $"Round-trip conversion failed for CardType.{legacyValue}");
-            }
+            Assert.AreEqual(5, values.Count, "CardType should have 5 values");
+            Assert.AreEqual(0, (int)CardType.Contre);
+            Assert.AreEqual(1, (int)CardType.Effect);
+            Assert.AreEqual(2, (int)CardType.Equipment);
+            Assert.AreEqual(3, (int)CardType.Field);
+            Assert.AreEqual(4, (int)CardType.Invocation);
         }
     }
 }

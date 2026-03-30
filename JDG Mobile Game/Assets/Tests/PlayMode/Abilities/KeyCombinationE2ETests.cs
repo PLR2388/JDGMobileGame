@@ -2,7 +2,6 @@ using System.Collections;
 using JDG.Domain;
 using JDG.Domain.Enums;
 using JDG.Domain.Events;
-using DomainCardOwner = JDG.Domain.CardOwner;
 using JDG.PlayMode.Tests.Assertions;
 using JDG.PlayMode.Tests.Controllers;
 using JDG.PlayMode.Tests.Fixtures;
@@ -78,7 +77,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new AbilityExecutedEvent
             {
                 AbilityName = AbilityName.SacrificeBenzaieJeune,
-                PlayerId = DomainCardOwner.Player1,
+                PlayerId = CardOwner.Player1,
                 IsSuccess = true,
                 Message = "Sacrificed Benzaie jeune"
             });
@@ -86,7 +85,7 @@ namespace JDG.PlayMode.Tests.Abilities
             // Simulate card destruction
             _controller.EventBus.Publish(new CardDestroyedEvent
             {
-                Owner = DomainCardOwner.Player1,
+                Owner = CardOwner.Player1,
                 Reason = "Sacrificed"
             });
 
@@ -120,7 +119,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new AbilityExecutedEvent
             {
                 AbilityName = AbilityName.SacrificeGranolax,
-                PlayerId = DomainCardOwner.Player1,
+                PlayerId = CardOwner.Player1,
                 IsSuccess = true,
                 Message = "Sacrificed Granolax"
             });
@@ -147,7 +146,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Parachute dore",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -178,7 +177,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Canarang",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -205,7 +204,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Le Salami",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -227,7 +226,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Le Hard Corner",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             // Play Fistiland cards
@@ -258,7 +257,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Tokyo-3",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             // Play Japan family cards
@@ -351,7 +350,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Cassette VHS",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -377,7 +376,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Protection Equipment",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             // Opponent attacks
@@ -409,7 +408,7 @@ namespace JDG.PlayMode.Tests.Abilities
             // Simulate death
             _controller.EventBus.Publish(new CardDestroyedEvent
             {
-                Owner = DomainCardOwner.Player1,
+                Owner = CardOwner.Player1,
                 Reason = "Combat"
             });
 
@@ -417,7 +416,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new AbilityExecutedEvent
             {
                 AbilityName = AbilityName.ComesBackFromDeath,
-                PlayerId = DomainCardOwner.Player1,
+                PlayerId = CardOwner.Player1,
                 IsSuccess = true,
                 Message = "Resurrected"
             });
@@ -446,7 +445,7 @@ namespace JDG.PlayMode.Tests.Abilities
                 _controller.EventBus.Publish(new CardDrawnEvent
                 {
                     CardTitle = $"Drawn{i}",
-                    Owner = DomainCardOwner.Player1
+                    Owner = CardOwner.Player1
                 });
             }
 
@@ -476,7 +475,7 @@ namespace JDG.PlayMode.Tests.Abilities
             _controller.EventBus.Publish(new AbilityExecutedEvent
             {
                 AbilityName = AbilityName.GetNounoursFromDeck,
-                PlayerId = DomainCardOwner.Player1,
+                PlayerId = CardOwner.Player1,
                 IsSuccess = true,
                 Message = "Found Nounours"
             });

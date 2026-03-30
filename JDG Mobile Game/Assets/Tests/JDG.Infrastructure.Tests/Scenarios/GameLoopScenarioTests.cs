@@ -8,8 +8,6 @@ using JDG.Domain.ValueObjects;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Services;
 
-// Alias to avoid conflict with global namespace CardOwner
-using DomainCardOwner = JDG.Domain.CardOwner;
 
 namespace JDG.Infrastructure.Tests.Scenarios
 {
@@ -136,7 +134,7 @@ namespace JDG.Infrastructure.Tests.Scenarios
 
             // Assert
             var turnEndEvent = (TurnEndEvent)_eventBus.PublishedEvents[0];
-            Assert.AreEqual(DomainCardOwner.Player1, turnEndEvent.CurrentPlayer);
+            Assert.AreEqual(CardOwner.Player1, turnEndEvent.CurrentPlayer);
             Assert.AreEqual(2, turnEndEvent.TurnNumber);
         }
 
@@ -151,7 +149,7 @@ namespace JDG.Infrastructure.Tests.Scenarios
 
             // Assert
             var turnStartEvent = (TurnStartEvent)_eventBus.PublishedEvents[0];
-            Assert.AreEqual(DomainCardOwner.Player1, turnStartEvent.CurrentPlayer);
+            Assert.AreEqual(CardOwner.Player1, turnStartEvent.CurrentPlayer);
             Assert.AreEqual(2, turnStartEvent.TurnNumber); // Incremented
         }
 
@@ -163,7 +161,7 @@ namespace JDG.Infrastructure.Tests.Scenarios
         public void WinCondition_Player1Wins_GameOver()
         {
             // Act
-            _gameStateService.EndGame(DomainCardOwner.Player1, "Player 2 HP reached 0");
+            _gameStateService.EndGame(CardOwner.Player1, "Player 2 HP reached 0");
 
             // Assert
             Assert.IsTrue(_gameStateService.IsGameOver);
@@ -174,7 +172,7 @@ namespace JDG.Infrastructure.Tests.Scenarios
         public void WinCondition_Player2Wins_GameOver()
         {
             // Act
-            _gameStateService.EndGame(DomainCardOwner.Player2, "Player 1 HP reached 0");
+            _gameStateService.EndGame(CardOwner.Player2, "Player 1 HP reached 0");
 
             // Assert
             Assert.IsTrue(_gameStateService.IsGameOver);
@@ -185,13 +183,13 @@ namespace JDG.Infrastructure.Tests.Scenarios
         public void WinCondition_GameOverPublishesEvent()
         {
             // Act
-            _gameStateService.EndGame(DomainCardOwner.Player1, "Victory");
+            _gameStateService.EndGame(CardOwner.Player1, "Victory");
 
             // Assert
             var gameOverEvents = _eventBus.PublishedEvents.Where(e => e is GameOverEvent).ToList();
             Assert.AreEqual(1, gameOverEvents.Count);
             var evt = (GameOverEvent)gameOverEvents[0];
-            Assert.AreEqual(DomainCardOwner.Player1, evt.Winner);
+            Assert.AreEqual(CardOwner.Player1, evt.Winner);
             Assert.AreEqual("Victory", evt.Reason);
         }
 
@@ -199,7 +197,7 @@ namespace JDG.Infrastructure.Tests.Scenarios
         public void WinCondition_GameOver_StopsPhaseProgression()
         {
             // Arrange
-            _gameStateService.EndGame(DomainCardOwner.Player1, "Test");
+            _gameStateService.EndGame(CardOwner.Player1, "Test");
             _eventBus.PublishedEvents.Clear();
 
             // Act - Try to progress phases
@@ -305,7 +303,7 @@ namespace JDG.Infrastructure.Tests.Scenarios
         public void Reset_AllowsNewGameAfterGameOver()
         {
             // Arrange - Game was over
-            _gameStateService.EndGame(DomainCardOwner.Player1, "Previous game");
+            _gameStateService.EndGame(CardOwner.Player1, "Previous game");
 
             // Act
             _gameStateService.ResetGame();

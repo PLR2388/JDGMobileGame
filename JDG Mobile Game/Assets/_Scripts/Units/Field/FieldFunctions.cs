@@ -1,12 +1,12 @@
 ﻿using System;
 using JDG.Application;
+using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
 using Sound;
 using UnityEngine;
 using VContainer;
-using DomainCardOwner = JDG.Domain.CardOwner;
-using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace Cards.FieldCards
 {
@@ -89,8 +89,8 @@ namespace Cards.FieldCards
                 _eventBus.Publish(new CardPlayedEvent
                 {
                     CardId = Guid.NewGuid(),
-                    Owner = (DomainCardOwner)(int)fieldCard.CardOwner,
-                    CardType = DomainCardType.Field,
+                    Owner = fieldCard.CardOwner,
+                    CardType = CardType.Field,
                     CardTitle = fieldCard.Title
                 });
             }

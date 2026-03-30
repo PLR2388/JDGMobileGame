@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using JDG.Application.Cards;
+using JDG.Domain.Enums;
 
 /// <summary>
 /// Represents a condition that checks whether specific invocation cards, identified by their names,

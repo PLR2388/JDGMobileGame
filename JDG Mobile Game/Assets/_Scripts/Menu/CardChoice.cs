@@ -2,6 +2,7 @@
 using System.Linq;
 using Cards;
 using JDG.Application;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Cards;

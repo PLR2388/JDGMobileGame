@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
 using UnityEngine;
 using VContainer;
-using DomainCardOwner = JDG.Domain.CardOwner;
-using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace Cards.EquipmentCards
 {
@@ -117,8 +117,8 @@ namespace Cards.EquipmentCards
                         _eventBus.Publish(new CardPlayedEvent
                         {
                             CardId = Guid.NewGuid(),
-                            Owner = (DomainCardOwner)(int)equipmentCard.CardOwner,
-                            CardType = DomainCardType.Equipment,
+                            Owner = equipmentCard.CardOwner,
+                            CardType = CardType.Equipment,
                             CardTitle = equipmentCard.Title
                         });
 

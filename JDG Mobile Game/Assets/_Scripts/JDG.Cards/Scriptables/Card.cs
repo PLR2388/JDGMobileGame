@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using JDG.Domain.Enums;
+using UnityEngine;
 
 namespace Cards
 {

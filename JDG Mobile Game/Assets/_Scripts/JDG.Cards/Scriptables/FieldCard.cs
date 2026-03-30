@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JDG.Domain.Enums;
 using UnityEngine;
 using FieldAbilityName = JDG.Domain.Enums.FieldAbilityName;
 

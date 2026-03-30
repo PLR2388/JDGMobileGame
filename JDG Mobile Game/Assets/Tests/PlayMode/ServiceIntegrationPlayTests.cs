@@ -10,7 +10,6 @@ using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Domain;
 using JDG.Domain.Events;
-using DomainCardOwner = JDG.Domain.CardOwner;
 using JDG.Infrastructure.Events;
 using JDG.Infrastructure.Repositories;
 using JDG.Infrastructure.Services;
@@ -124,7 +123,7 @@ namespace JDG.PlayMode.Tests
             // Create test state
             var state = new JDG.Domain.Entities.InvocationCardState(
                 cardDefinitionId: JDG.Domain.ValueObjects.CardId.New(),
-                owner: DomainCardOwner.Player1,
+                owner: CardOwner.Player1,
                 baseAttack: 50,
                 baseDefense: 100,
                 families: new[] { JDG.Domain.Enums.CardFamily.Comics },
@@ -157,13 +156,13 @@ namespace JDG.PlayMode.Tests
             eventBus.Subscribe<GameOverEvent>(e => receivedEvent = e);
 
             // Act - End game
-            gameStateService.EndGame(DomainCardOwner.Player1, "Test Victory");
+            gameStateService.EndGame(CardOwner.Player1, "Test Victory");
 
             yield return null;
 
             // Assert
             Assert.IsTrue(receivedEvent.HasValue, "GameOverEvent should be received");
-            Assert.AreEqual(DomainCardOwner.Player1, receivedEvent.Value.Winner);
+            Assert.AreEqual(CardOwner.Player1, receivedEvent.Value.Winner);
             Assert.AreEqual("Test Victory", receivedEvent.Value.Reason);
             Assert.AreEqual(Phase.GameOver, gameStateService.CurrentPhase);
         }

@@ -4,10 +4,9 @@ using JDG.Application.Cards;
 using JDG.Application.Repositories;
 using JDG.Application.Services;
 using JDG.Domain.Entities;
+using JDG.Domain.Enums;
 using JDG.Domain.ValueObjects;
 using JDG.Infrastructure.Cards;
-using DomainCardFamily = JDG.Domain.Enums.CardFamily;
-using LegacyCardFamily = Cards.CardFamily;
 
 namespace JDG.Infrastructure.Services
 {
@@ -17,6 +16,7 @@ namespace JDG.Infrastructure.Services
     /// Phase 141: Fixes the equipment ability sync issue where domain Card modifications
     /// were lost because ConvertToCard() created a disconnected temporary Card.
     /// Phase 143: Added bulk sync for modern abilities that modify cards via IPlayerRepository.
+    /// Phase 166: Simplified - uses domain enums directly (legacy enum conversion removed).
     ///
     /// This service maintains a mapping between domain Cards and their originating
     /// InGameInvocationCards, enabling state to be synced back after ability execution.
@@ -39,17 +39,17 @@ namespace JDG.Infrastructure.Services
         /// <summary>
         /// Creates a domain Card linked to an InGameInvocationCard for ability execution.
         /// Uses Card.CreateInvocation with current stats (unlike old ConvertToCard which used CreateEffect).
+        /// Phase 166: Simplified - Families are already domain CardFamily[], no conversion needed.
         /// </summary>
         public Card CreateLinkedCard(IInGameInvocationCard inGameCard)
         {
             if (inGameCard is not InGameInvocationCard concreteCard)
                 return null;
 
-            // Convert legacy CardFamily[] to domain CardFamily enumerable
-            var domainFamilies = ConvertFamiliesToDomain(concreteCard.Families);
+            // Phase 166: Families are already domain CardFamily[], pass directly
+            var domainFamilies = concreteCard.Families ?? System.Array.Empty<CardFamily>();
 
             // Create domain Card using CreateInvocation with CURRENT stats (not base stats)
-            // Phase 159: Pass float stats directly - no more int truncation
             var domainCard = Card.CreateInvocation(
                 id: CardId.New(),
                 title: concreteCard.Title,
@@ -73,11 +73,9 @@ namespace JDG.Infrastructure.Services
                 domainCard.SetCantBeAttacked(true);
 
             // Phase 142: Sync additional runtime state
-            // Copy TimesRevived for resurrection ability tracking
             for (int i = 0; i < concreteCard.TimesRevived; i++)
                 domainCard.IncrementTimesRevived();
 
-            // Copy BonusAttacks for multi-attack abilities
             if (concreteCard.BonusAttacks > 0)
                 domainCard.SetBonusAttacks(concreteCard.BonusAttacks);
 
@@ -98,7 +96,7 @@ namespace JDG.Infrastructure.Services
             if (!_cardMappings.TryGetValue(domainCard.Id, out var inGameCard))
                 return;
 
-            // Sync stats (domain Card uses int, InGameInvocationCard uses float)
+            // Sync stats
             if (domainCard.Stats.HasValue)
             {
                 inGameCard.Attack = domainCard.Stats.Value.Attack;
@@ -106,30 +104,22 @@ namespace JDG.Infrastructure.Services
             }
 
             // Sync boolean state flags
-            // Note: CancelEffect setter publishes an event, so only set if changed
             if (inGameCard.CancelEffect != domainCard.CancelEffect)
             {
                 inGameCard.CancelEffect = domainCard.CancelEffect;
             }
 
             inGameCard.CanDirectAttack = domainCard.CanDirectAttack;
-
-            // Note naming difference: CantBeAttack (legacy) vs CantBeAttacked (domain)
             inGameCard.CantBeAttack = domainCard.CantBeAttacked;
 
-            // Sync families if they were changed
-            // Phase 144: Add null check before accessing Count to prevent NullReferenceException
+            // Phase 166: Families are already domain CardFamily[], assign directly
             if (domainCard.Families != null && domainCard.Families.Count > 0)
             {
-                inGameCard.Families = ConvertFamiliesToLegacy(domainCard.Families);
+                inGameCard.Families = domainCard.Families.ToArray();
             }
 
             // Phase 142: Sync additional runtime state
-            // Sync TimesRevived for resurrection ability tracking
             inGameCard.TimesRevived = domainCard.TimesRevived;
-
-            // Sync BonusAttacks for multi-attack abilities
-            // Domain Card uses BonusAttacks as extra attacks, InGameCard tracks total remaining
             inGameCard.BonusAttacks = domainCard.BonusAttacks;
 
             // Sync AttackBlocked
@@ -157,7 +147,7 @@ namespace JDG.Infrastructure.Services
         /// <summary>
         /// Syncs all field cards from the player repository back to InGameInvocationCards.
         /// Phase 143: Matches cards by Title since CardId differs between domain and presentation.
-        /// Phase 144: Added logging for debugging sync failures.
+        /// Phase 166: Simplified - Families are already domain CardFamily[], assign directly.
         /// </summary>
         public void SyncAllFieldCards(PlayerId playerId, IPlayerCardCollection playerCards)
         {
@@ -184,19 +174,16 @@ namespace JDG.Infrastructure.Services
                 if (inGameCard is not InGameInvocationCard concreteCard)
                     continue;
 
-                // Match by Title (CardId differs between domain and presentation systems)
                 var domainCard = player.Field.FirstOrDefault(c => c.Title == concreteCard.Title);
                 if (domainCard == null)
                     continue;
 
-                // Sync stats (domain Card uses int, InGameInvocationCard uses float)
                 if (domainCard.Stats.HasValue)
                 {
                     concreteCard.Attack = domainCard.Stats.Value.Attack;
                     concreteCard.Defense = domainCard.Stats.Value.Defense;
                 }
 
-                // Sync boolean state flags
                 if (concreteCard.CancelEffect != domainCard.CancelEffect)
                 {
                     concreteCard.CancelEffect = domainCard.CancelEffect;
@@ -205,18 +192,15 @@ namespace JDG.Infrastructure.Services
                 concreteCard.CanDirectAttack = domainCard.CanDirectAttack;
                 concreteCard.CantBeAttack = domainCard.CantBeAttacked;
 
-                // Sync families if they were changed
-                // Phase 144: Add null check before accessing Count to prevent NullReferenceException
+                // Phase 166: Families are already domain CardFamily[], assign directly
                 if (domainCard.Families != null && domainCard.Families.Count > 0)
                 {
-                    concreteCard.Families = ConvertFamiliesToLegacy(domainCard.Families);
+                    concreteCard.Families = domainCard.Families.ToArray();
                 }
 
-                // Sync runtime state counters
                 concreteCard.TimesRevived = domainCard.TimesRevived;
                 concreteCard.BonusAttacks = domainCard.BonusAttacks;
 
-                // Sync AttackBlocked state
                 if (domainCard.AttackBlocked)
                 {
                     concreteCard.BlockAttack();
@@ -227,33 +211,5 @@ namespace JDG.Infrastructure.Services
                 }
             }
         }
-
-        #region Helper Methods
-
-        /// <summary>
-        /// Converts legacy CardFamily[] to domain CardFamily enumerable.
-        /// Both enums have the same values, allowing safe int casting.
-        /// </summary>
-        private static IEnumerable<DomainCardFamily> ConvertFamiliesToDomain(LegacyCardFamily[] families)
-        {
-            if (families == null)
-                return Enumerable.Empty<DomainCardFamily>();
-
-            return families.Select(f => (DomainCardFamily)(int)f);
-        }
-
-        /// <summary>
-        /// Converts domain CardFamily list to legacy CardFamily array.
-        /// Both enums have the same values, allowing safe int casting.
-        /// </summary>
-        private static LegacyCardFamily[] ConvertFamiliesToLegacy(IReadOnlyList<DomainCardFamily> families)
-        {
-            if (families == null || families.Count == 0)
-                return System.Array.Empty<LegacyCardFamily>();
-
-            return families.Select(f => (LegacyCardFamily)(int)f).ToArray();
-        }
-
-        #endregion
     }
 }

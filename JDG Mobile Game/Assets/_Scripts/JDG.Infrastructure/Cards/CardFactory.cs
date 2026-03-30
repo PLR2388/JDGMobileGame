@@ -7,6 +7,7 @@ using Cards.InvocationCards;
 using JDG.Application;
 using JDG.Application.Cards;
 using JDG.Application.Services;
+using JDG.Domain;
 
 namespace JDG.Infrastructure.Cards
 {
@@ -17,6 +18,7 @@ namespace JDG.Infrastructure.Cards
 /// Phase 48: Added card-type ability providers for Field, Equipment, and Effect cards.
 /// Phase 49: Implements ICardFactory for complete abstraction.
 /// Phase 56: Added IConditionProvider for InGameInvocationCard conditions.
+/// Phase 166: Uses domain CardOwner directly (legacy enum removed).
 /// </summary>
 public class CardFactory : ICardFactory
 {
@@ -65,62 +67,42 @@ public class CardFactory : ICardFactory
     #region ICardFactory Implementation
 
     /// <inheritdoc />
-    public IInGameCard CreateCard(object card, JDG.Domain.CardOwner owner)
+    public IInGameCard CreateCard(object card, CardOwner owner)
     {
-        var legacyOwner = (CardOwner)(int)owner;
-        return CreateInGameCard((Card)card, legacyOwner, _eventBus, _cardCollectionService, _abilityProvider,
+        return CreateInGameCard((Card)card, owner, _eventBus, _cardCollectionService, _abilityProvider,
             _fieldAbilityProvider, _equipmentAbilityProvider, _effectAbilityProvider, _conditionProvider);
     }
 
     /// <inheritdoc />
-    public IInGameInvocationCard CreateInvocationCard(object invocationCard, JDG.Domain.CardOwner owner)
+    public IInGameInvocationCard CreateInvocationCard(object invocationCard, CardOwner owner)
     {
-        var legacyOwner = (CardOwner)(int)owner;
-        return new InGameInvocationCard((InvocationCard)invocationCard, legacyOwner, _eventBus, _cardCollectionService, _abilityProvider, _conditionProvider);
+        return new InGameInvocationCard((InvocationCard)invocationCard, owner, _eventBus, _cardCollectionService, _abilityProvider, _conditionProvider);
     }
 
     /// <inheritdoc />
-    public IInGameEffectCard CreateEffectCard(object effectCard, JDG.Domain.CardOwner owner)
+    public IInGameEffectCard CreateEffectCard(object effectCard, CardOwner owner)
     {
-        var legacyOwner = (CardOwner)(int)owner;
-        return new InGameEffectCard((EffectCard)effectCard, legacyOwner, _effectAbilityProvider);
+        return new InGameEffectCard((EffectCard)effectCard, owner, _effectAbilityProvider);
     }
 
     /// <inheritdoc />
-    public IInGameFieldCard CreateFieldCard(object fieldCard, JDG.Domain.CardOwner owner)
+    public IInGameFieldCard CreateFieldCard(object fieldCard, CardOwner owner)
     {
-        var legacyOwner = (CardOwner)(int)owner;
-        return new InGameFieldCard((FieldCard)fieldCard, legacyOwner, _fieldAbilityProvider);
+        return new InGameFieldCard((FieldCard)fieldCard, owner, _fieldAbilityProvider);
     }
 
     /// <inheritdoc />
-    public IInGameEquipmentCard CreateEquipmentCard(object equipmentCard, JDG.Domain.CardOwner owner)
+    public IInGameEquipmentCard CreateEquipmentCard(object equipmentCard, CardOwner owner)
     {
-        var legacyOwner = (CardOwner)(int)owner;
-        return new InGameEquipmentCard((EquipmentCard)equipmentCard, legacyOwner, _equipmentAbilityProvider);
+        return new InGameEquipmentCard((EquipmentCard)equipmentCard, owner, _equipmentAbilityProvider);
     }
 
     #endregion
 
     /// <summary>
     /// Creates an instance of InGameCard based on the type and owner of the provided card.
-    /// Phase 24-25: Added eventBus and cardCollectionService parameters for InGameInvocationCard dependency injection.
-    /// Phase 42ag: IAbilityProvider is now required (legacy AbilityLibrary removed).
-    /// Phase 48: Added providers for Field, Equipment, and Effect cards.
-    /// Phase 56: Added IConditionProvider for InGameInvocationCard conditions.
-    /// Phase 61: Made all providers required (removed fallback patterns in InGameCard classes).
+    /// Phase 166: Uses domain CardOwner directly (no more legacy conversion).
     /// </summary>
-    /// <param name="card">The base card for which the InGameCard is to be created.</param>
-    /// <param name="cardOwner">The owner of the card.</param>
-    /// <param name="eventBus">EventBus for publishing domain events (required).</param>
-    /// <param name="cardCollectionService">Service for accessing player cards (required).</param>
-    /// <param name="abilityProvider">Provider for invocation abilities (required).</param>
-    /// <param name="fieldAbilityProvider">Provider for field abilities (required).</param>
-    /// <param name="equipmentAbilityProvider">Provider for equipment abilities (required).</param>
-    /// <param name="effectAbilityProvider">Provider for effect abilities (required).</param>
-    /// <param name="conditionProvider">Provider for conditions (required).</param>
-    /// <returns>An instance of a specific InGameCard subtype based on the card provided.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when an unsupported card type is provided.</exception>
     public static InGameCard CreateInGameCard(
         Card card,
         CardOwner cardOwner,

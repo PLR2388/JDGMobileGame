@@ -1,12 +1,12 @@
 ﻿using System;
 using JDG.Application;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
 using UnityEngine;
 using VContainer;
-using DomainCardOwner = JDG.Domain.CardOwner;
-using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace Cards.EffectCards
 {
@@ -101,8 +101,8 @@ namespace Cards.EffectCards
                 _eventBus.Publish(new CardPlayedEvent
                 {
                     CardId = Guid.NewGuid(),
-                    Owner = (DomainCardOwner)(int)effectCard.CardOwner,
-                    CardType = DomainCardType.Effect,
+                    Owner = effectCard.CardOwner,
+                    CardType = CardType.Effect,
                     CardTitle = effectCard.Title
                 });
             }

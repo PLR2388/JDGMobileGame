@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using JDG.Application.Cards;
+using JDG.Domain.Enums;
 
 /// <summary>
 /// Represents a condition that checks whether a specific card, that has previously been 'dead',

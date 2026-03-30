@@ -1,10 +1,10 @@
 using Cards;
 using JDG.Application.Cards;
 using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.Enums;
 using JDG.Infrastructure.Services;
 using UnityEngine;
-using DomainCardOwner = JDG.Domain.CardOwner;
-using DomainCardType = JDG.Domain.Enums.CardType;
 
 namespace JDG.Infrastructure.Cards
 {
@@ -12,6 +12,7 @@ namespace JDG.Infrastructure.Cards
     /// Represents a card used in the game with various properties and attributes.
     /// Phase 39: Implements IInGameCard to enable presenter migration to JDG.Presentation.
     /// Phase 126: Added multilanguage support via ILocalizationService.
+    /// Phase 166: Uses domain enums directly (legacy enum wrappers removed).
     /// </summary>
     public class InGameCard : IInGameCard
     {
@@ -60,6 +61,7 @@ namespace JDG.Infrastructure.Cards
 
         /// <summary>
         /// Type classification of the card.
+        /// Phase 166: Now uses JDG.Domain.Enums.CardType directly.
         /// </summary>
         protected CardType type;
 
@@ -74,7 +76,8 @@ namespace JDG.Infrastructure.Cards
         protected bool collector;
 
         /// <summary>
-        /// Gets the owner of the card (legacy type).
+        /// Gets the owner of the card.
+        /// Phase 166: Now uses JDG.Domain.CardOwner directly.
         /// </summary>
         public CardOwner CardOwner { get; protected set; } = CardOwner.NotDefined;
 
@@ -106,7 +109,8 @@ namespace JDG.Infrastructure.Cards
         public string GetDetailedDescription() => _localizationService?.GetCardDetailedDescription(CardId) ?? DetailedDescription;
 
         /// <summary>
-        /// Gets the type classification of the card (legacy type).
+        /// Gets the type classification of the card.
+        /// Phase 166: Now returns JDG.Domain.Enums.CardType directly.
         /// </summary>
         public CardType Type => type;
 
@@ -120,19 +124,19 @@ namespace JDG.Infrastructure.Cards
         /// </summary>
         public bool Collector => collector;
 
-        #region IInGameCard Explicit Implementation (Domain Types)
+        #region IInGameCard Implementation (Domain Types)
 
         /// <summary>
         /// Gets the card owner using domain type.
-        /// Phase 39: Explicit implementation for IInGameCard interface.
+        /// Phase 166: Direct pass-through, no conversion needed.
         /// </summary>
-        DomainCardOwner IInGameCard.CardOwner => ConvertToDomainOwner(CardOwner);
+        CardOwner IInGameCard.CardOwner => CardOwner;
 
         /// <summary>
         /// Gets the card type using domain type.
-        /// Phase 39: Explicit implementation for IInGameCard interface.
+        /// Phase 166: Direct pass-through, no conversion needed.
         /// </summary>
-        DomainCardType IInGameCard.Type => ConvertToDomainType(type);
+        CardType IInGameCard.Type => type;
 
         /// <summary>
         /// Gets the brief description of the card.
@@ -160,69 +164,6 @@ namespace JDG.Infrastructure.Cards
         /// Phase 39: Added for IInGameCard interface.
         /// </summary>
         public string VisualId => title;
-
-        #endregion
-
-        #region Type Conversion Helpers
-
-        /// <summary>
-        /// Converts legacy CardOwner to domain CardOwner.
-        /// </summary>
-        private static DomainCardOwner ConvertToDomainOwner(CardOwner owner)
-        {
-            return owner switch
-            {
-                CardOwner.Player1 => DomainCardOwner.Player1,
-                CardOwner.Player2 => DomainCardOwner.Player2,
-                _ => DomainCardOwner.NotDefined
-            };
-        }
-
-        /// <summary>
-        /// Converts legacy CardType to domain CardType.
-        /// </summary>
-        private static DomainCardType ConvertToDomainType(CardType cardType)
-        {
-            return cardType switch
-            {
-                CardType.Invocation => DomainCardType.Invocation,
-                CardType.Equipment => DomainCardType.Equipment,
-                CardType.Field => DomainCardType.Field,
-                CardType.Effect => DomainCardType.Effect,
-                CardType.Contre => DomainCardType.Contre,
-                _ => DomainCardType.Invocation // Default fallback
-            };
-        }
-
-        /// <summary>
-        /// Safely converts legacy CardOwner to domain CardOwner using int cast.
-        /// Phase 146: Added validation to catch enum definition mismatches.
-        /// </summary>
-        public static DomainCardOwner SafeConvertOwner(CardOwner owner)
-        {
-            var intValue = (int)owner;
-            if (!System.Enum.IsDefined(typeof(DomainCardOwner), intValue))
-            {
-                UnityEngine.Debug.LogWarning($"[InGameCard] CardOwner value {intValue} is not defined in DomainCardOwner. Using NotDefined.");
-                return DomainCardOwner.NotDefined;
-            }
-            return (DomainCardOwner)intValue;
-        }
-
-        /// <summary>
-        /// Safely converts legacy CardFamily to domain CardFamily using int cast.
-        /// Phase 146: Added validation to catch enum definition mismatches.
-        /// </summary>
-        public static JDG.Domain.Enums.CardFamily SafeConvertFamily(CardFamily family)
-        {
-            var intValue = (int)family;
-            if (!System.Enum.IsDefined(typeof(JDG.Domain.Enums.CardFamily), intValue))
-            {
-                UnityEngine.Debug.LogWarning($"[InGameCard] CardFamily value {intValue} is not defined in domain CardFamily. Using default.");
-                return JDG.Domain.Enums.CardFamily.None;
-            }
-            return (JDG.Domain.Enums.CardFamily)intValue;
-        }
 
         #endregion
     }

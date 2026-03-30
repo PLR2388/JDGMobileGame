@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using JDG.Application.Cards;
+using JDG.Domain;
 using JDG.Infrastructure.Cards;
 using JDG.Presentation.Presenters;
 using Sound;
@@ -225,9 +226,7 @@ public class GameLoop : MonoBehaviour
     private void OnTouch(TouchStartedEvent evt)
     {
         var cardTouch = _raycastService.GetTouchedCard();
-        // Convert domain CardOwner to global CardOwner enum
-        var domainOwner = _gameStateService.CurrentPlayer.ToCardOwner();
-        var currentOwner = (CardOwner)(int)domainOwner;
+        var currentOwner = _gameStateService.CurrentPlayer.ToCardOwner();
         if (cardTouch != null)
         {
             switch (_gameStateService.CurrentPhase)

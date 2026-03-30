@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using JDG.Application;
+using JDG.Domain;
 using JDG.Domain.Events;
 using JDG.Infrastructure.Cards;
 using UnityEngine;

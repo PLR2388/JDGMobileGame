@@ -2,6 +2,7 @@
 using Cards;
 using Cards.InvocationCards;
 using JDG.Application.Services;
+using JDG.Domain.Enums;
 using UnityEngine;
 using VContainer;
 

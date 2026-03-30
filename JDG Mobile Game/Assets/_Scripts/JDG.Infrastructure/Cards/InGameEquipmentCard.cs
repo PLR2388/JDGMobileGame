@@ -5,6 +5,8 @@ using Cards;
 using Cards.EquipmentCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;
+using JDG.Domain;
+using JDG.Domain.Enums;
 
 namespace JDG.Infrastructure.Cards
 {

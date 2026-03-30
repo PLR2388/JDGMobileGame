@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using JDG.Application.Abilities;
 using JDG.Domain;
 using JDG.Domain.Events;
-using DomainCardOwner = JDG.Domain.CardOwner;
 using JDG.PlayMode.Tests.Assertions;
 using JDG.PlayMode.Tests.Controllers;
 using JDG.PlayMode.Tests.Fixtures;
@@ -188,7 +187,7 @@ namespace JDG.PlayMode.Tests.E2E
             _controller.EventBus.Publish(new CardDrawnEvent
             {
                 CardTitle = "DrawnCard",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -238,7 +237,7 @@ namespace JDG.PlayMode.Tests.E2E
             // Act - Simulate sacrifice by publishing destruction event
             _controller.EventBus.Publish(new CardDestroyedEvent
             {
-                Owner = DomainCardOwner.Player1,
+                Owner = CardOwner.Player1,
                 Reason = "Sacrificed"
             });
             // Note: In real game, the card would be removed. For simulation, we track via events.
@@ -267,7 +266,7 @@ namespace JDG.PlayMode.Tests.E2E
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "PowerEquipment",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -290,7 +289,7 @@ namespace JDG.PlayMode.Tests.E2E
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "FamilyBoostField",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             // Play matching family card
@@ -341,7 +340,7 @@ namespace JDG.PlayMode.Tests.E2E
             _controller.EventBus.Publish(new TurnStartEvent
             {
                 TurnNumber = 1,
-                CurrentPlayer = DomainCardOwner.Player1
+                CurrentPlayer = CardOwner.Player1
             });
 
             yield return null;
@@ -381,7 +380,7 @@ namespace JDG.PlayMode.Tests.E2E
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Equipment",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -403,7 +402,7 @@ namespace JDG.PlayMode.Tests.E2E
             _controller.EventBus.Publish(new CardPlayedEvent
             {
                 CardTitle = "Equipment",
-                Owner = DomainCardOwner.Player1
+                Owner = CardOwner.Player1
             });
 
             yield return null;
@@ -411,7 +410,7 @@ namespace JDG.PlayMode.Tests.E2E
             // Act - Remove equipment (via destruction)
             _controller.EventBus.Publish(new CardDestroyedEvent
             {
-                Owner = DomainCardOwner.Player1,
+                Owner = CardOwner.Player1,
                 Reason = "Equipment removed"
             });
 
