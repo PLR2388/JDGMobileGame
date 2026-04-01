@@ -1,7 +1,6 @@
 using JDG.Application.Services;
 using System.Collections.Generic;
 using System.Linq;
-using Cards;
 using Cards.FieldCards;
 using JDG.Application.Abilities;
 using JDG.Application.Cards;

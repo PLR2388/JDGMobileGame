@@ -122,13 +122,10 @@ namespace JDG.Application.Tests.UseCases
 
         public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
-        public void ResetPlayer(PlayerId playerId)
-        {
-            throw new NotImplementedException();
-        }
+        public void ResetPlayer(PlayerId playerId) { }
     }
 
     /// <summary>

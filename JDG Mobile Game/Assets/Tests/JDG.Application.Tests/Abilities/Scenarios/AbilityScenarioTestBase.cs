@@ -316,7 +316,7 @@ namespace JDG.Application.Tests.Abilities.Scenarios
 
         public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
         {
-            throw new System.NotImplementedException("Use AddPlayer for scenario tests");
+            return null;
         }
 
         public void ResetPlayer(PlayerId playerId)

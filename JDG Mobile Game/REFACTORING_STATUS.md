@@ -1674,7 +1674,63 @@ public struct DialogueIndexChangedEvent { int DialogueIndex; }
 
 ---
 
-## Final Phase Summary (Updated)
+### Phase 166: Assembly Migration - Legacy Types to Clean Assemblies ✅ (Completed 2026-03)
+
+**Goal**: Move legacy enums, ScriptableObjects, conditions, and InGameCard hierarchy to proper clean architecture assemblies.
+
+#### Legacy Type Migration
+- ✅ Moved legacy enums, ScriptableObjects, and Conditions to `JDG.Cards` assembly (19 files)
+- ✅ Moved InGameCard hierarchy + CardFactory to `JDG.Infrastructure` (6 files)
+- ✅ Created ability provider interfaces in `JDG.Application` (5 files)
+
+#### Phase 167: Ability Provider Services Migration
+- ✅ Moved AbilityProviderService, FieldAbilityProviderService, ConditionProviderService, CardSyncService to `JDG.Infrastructure` (6 files)
+
+#### Phase 168: CardHandler Hierarchy Migration
+- ✅ Moved CardHandler hierarchy to `JDG.Infrastructure` (6 files)
+
+#### Phase 169: Service Interface Migration
+- ✅ Moved ICombatService, IRaycastService, ITurnService to `JDG.Application` (3 files)
+
+#### Phase 170: Service Implementation Migration
+- ✅ Moved LocalizationService, PlayerService, and 3 more services to `JDG.Infrastructure` (5 files)
+
+#### Migration Metrics (Phases 166-170)
+- Files moved: 50
+- Clean architecture assemblies: 176 files
+- Default assembly: 94 files remaining (MonoBehaviour-dependent)
+- Migration ratio: ~90% by functional importance
+
+---
+
+### Phase 171: Legacy Enum Elimination ✅ (Completed 2026-03-30)
+
+**Goal**: Eliminate duplicate legacy enums in Cards namespace, replacing with domain equivalents.
+
+- ✅ Deleted `Cards.CardOwner` enum (replaced by `JDG.Domain.CardOwner`)
+- ✅ Removed `Cards.CardType` enum definition (kept extension methods targeting domain enum)
+- ✅ Removed `Cards.CardFamily` enum definition (kept extension methods targeting domain enum)
+- ✅ Removed `Cards.ConditionName` enum definition
+- ✅ Simplified `CardConverter` (removed 6 identity conversion methods)
+- ✅ Simplified `CardSyncService` (removed family conversion methods)
+- ✅ Updated ScriptableObjects to use domain enums (binary compatible)
+- 54 files modified, 1 deleted
+- All 1,414 tests pass
+
+---
+
+### Phase 172: Final Cleanup ✅ (Completed 2026-04-01)
+
+**Goal**: Remove all remaining legacy code artifacts and finalize test infrastructure.
+
+- ✅ Removed redundant `using Cards;` imports from 3 JDG.Infrastructure files (InGameEffectCard, InGameEquipmentCard, InGameFieldCard)
+- ✅ Fixed 17 `NotImplementedException` stubs in test mock classes (replaced with no-op/default returns)
+- ✅ Removed dead `TestInGameCardFactory` class from PlayModeTestHelpers
+- ✅ Updated documentation to reflect final state
+
+---
+
+## Final Phase Summary
 
 | Phase Range | Description | Files Changed |
 |-------------|-------------|---------------|
@@ -1690,20 +1746,23 @@ public struct DialogueIndexChangedEvent { int DialogueIndex; }
 | 124-132 | Multilanguage, UIManager Removal, Tests | ~30 |
 | 135-157 | Stability, Sync, Verification | ~60 |
 | 158-165 | Compilation Fixes, Ability Test Suite | ~40 |
+| 166-172 | Assembly Migration, Enum Elimination, Final Cleanup | ~110 |
 
-## Final Statistics (Updated)
+## Final Statistics
 
-- **Phases Completed**: 165
-- **Test Count**: 618+ tests
+- **Phases Completed**: 172
+- **Test Count**: 1,414+ tests
 - **Test Assemblies**: 8 (Domain, Application, Infrastructure, Presentation, TestUtilities, TestUtilities.Editor, Tests.Editor, PlayMode)
 - **Abilities (Modern)**: 57 (all via factories)
 - **Domain Events**: 58
 - **Service Interfaces**: 15+
 - **Presenters in JDG.Presentation**: 4
 - **DI Scopes**: 3 (1 root + 2 scene)
+- **Clean Architecture Files**: 176 (in 6 assemblies)
+- **Default Assembly Files**: 94 (MonoBehaviour-dependent, permanent residents)
 
 ---
 
-**Last Updated**: 2026-02-04
+**Last Updated**: 2026-04-01
 **Current Branch**: refactor-v3
-**Status**: ✅ REFACTORING COMPLETE (165 Phases)
+**Status**: ✅ REFACTORING COMPLETE (172 Phases)

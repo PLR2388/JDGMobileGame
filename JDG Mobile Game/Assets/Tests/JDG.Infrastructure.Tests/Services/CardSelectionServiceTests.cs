@@ -399,17 +399,19 @@ namespace JDG.Infrastructure.Tests.Services
 
             public System.IDisposable Subscribe<T>(System.Action<T> handler) where T : struct
             {
-                throw new System.NotImplementedException();
+                return new DummyDisposable();
             }
 
-            public void ClearSubscriptions<T>() where T : struct
-            {
-                throw new System.NotImplementedException();
-            }
+            public void ClearSubscriptions<T>() where T : struct { }
 
             public void ClearAllSubscriptions()
             {
                 PublishedEvents.Clear();
+            }
+
+            private class DummyDisposable : System.IDisposable
+            {
+                public void Dispose() { }
             }
         }
 

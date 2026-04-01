@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using JDG.Domain;
 using JDG.Domain.Entities;
@@ -95,10 +96,10 @@ namespace JDG.Infrastructure.Tests.Repositories
 
         public Card GetCard(CardId cardId) => _cards.ContainsKey(cardId) ? _cards[cardId] : null;
 
-        public Card CreateCardInstance(string cardDefinitionName) => throw new System.NotImplementedException();
+        public Card CreateCardInstance(string cardDefinitionName) => null;
         public IEnumerable<Card> GetAllCardDefinitions() => _cards.Values;
-        public IEnumerable<Card> GetCardsByType(CardType type) => throw new System.NotImplementedException();
-        public IEnumerable<Card> GetCardsByFamily(CardFamily family) => throw new System.NotImplementedException();
-        public Card GetCardByTitle(string title) => throw new System.NotImplementedException();
+        public IEnumerable<Card> GetCardsByType(CardType type) => Enumerable.Empty<Card>();
+        public IEnumerable<Card> GetCardsByFamily(CardFamily family) => Enumerable.Empty<Card>();
+        public Card GetCardByTitle(string title) => null;
     }
 }

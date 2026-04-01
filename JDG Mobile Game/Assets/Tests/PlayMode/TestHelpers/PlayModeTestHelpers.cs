@@ -363,36 +363,6 @@ namespace JDG.PlayMode.Tests.TestHelpers
     }
 
     /// <summary>
-    /// Factory for creating test InGameInvocationCards without Unity dependencies.
-    /// </summary>
-    public static class TestInGameCardFactory
-    {
-        /// <summary>
-        /// Creates a minimal test InGameInvocationCard.
-        /// Note: This requires actual InvocationCard ScriptableObject which is hard to create in tests.
-        /// For pure unit tests, prefer using NSubstitute mocks.
-        /// </summary>
-        public static InGameInvocationCard CreateTestInvocationCard(
-            string title,
-            float attack,
-            float defense,
-            CardOwner owner,
-            IEventBus eventBus,
-            ICardCollectionService cardCollectionService,
-            IAbilityProvider abilityProvider = null)
-        {
-            // Note: This won't work without a real InvocationCard ScriptableObject
-            // In practice, tests should either:
-            // 1. Use NSubstitute to create mock InGameInvocationCard
-            // 2. Load actual cards from Resources in integration tests
-            // 3. Create a TestInGameInvocationCard subclass
-            throw new NotImplementedException(
-                "Creating InGameInvocationCard requires an InvocationCard ScriptableObject. " +
-                "Use NSubstitute mocks or load cards from Resources for integration tests.");
-        }
-    }
-
-    /// <summary>
     /// Extension methods for test assertions.
     /// </summary>
     public static class TestAssertionExtensions

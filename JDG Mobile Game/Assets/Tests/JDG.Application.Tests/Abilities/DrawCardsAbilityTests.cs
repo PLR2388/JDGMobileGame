@@ -232,7 +232,7 @@ namespace JDG.Application.Tests.Abilities
 
         public Player CreatePlayer(PlayerId playerId, CardId[] deckCardIds, int maxHealth = 30)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
 
         public void ResetPlayer(PlayerId playerId)

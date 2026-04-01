@@ -154,17 +154,17 @@ namespace JDG.Application.Tests.UseCases
 
             public IInGameEffectCard CreateEffectCard(object baseEffectCard, JDG.Domain.CardOwner owner)
             {
-                throw new NotImplementedException();
+                return null;
             }
 
             public IInGameFieldCard CreateFieldCard(object baseFieldCard, JDG.Domain.CardOwner owner)
             {
-                throw new NotImplementedException();
+                return null;
             }
 
             public IInGameEquipmentCard CreateEquipmentCard(object baseEquipmentCard, JDG.Domain.CardOwner owner)
             {
-                throw new NotImplementedException();
+                return null;
             }
         }
 
