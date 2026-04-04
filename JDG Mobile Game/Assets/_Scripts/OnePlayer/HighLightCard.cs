@@ -1,8 +1,15 @@
+using System;
 using System.Collections;
+using JDG.Application;
+using JDG.Domain.Events;
 using OnePlayer;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
+/// <summary>
+/// Phase 122: Migrated from static UnityEvent to EventBus.
+/// </summary>
 public class HighLightCard : MonoBehaviour
 {
     [SerializeField] [Tooltip("Type of element to be highlighted.")]
@@ -19,6 +26,20 @@ public class HighLightCard : MonoBehaviour
 
     private Image cardImage;
 
+    // Phase 122: EventBus subscription
+    private IEventBus _eventBus;
+    private IDisposable _highlightSubscription;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 122: Added EventBus for highlight events.
+    /// </summary>
+    [Inject]
+    public void Construct(IEventBus eventBus)
+    {
+        _eventBus = eventBus;
+    }
+
     /// <summary>
     /// Cache frequently used components.
     /// </summary>
@@ -26,21 +47,32 @@ public class HighLightCard : MonoBehaviour
     {
         cardImage = GetComponent<Image>();
     }
-    
+
     /// <summary>
     /// Initialization logic for the card. Subscribes to the Highlight event.
+    /// Phase 122: Subscribe via EventBus.
     /// </summary>
     private void Start()
     {
-        HighLightPlane.Highlight.AddListener(UpdateStatus);
+        _highlightSubscription = _eventBus?.Subscribe<HighlightRequestedEvent>(OnHighlightRequested);
     }
 
     /// <summary>
     /// Ensure we unsubscribe from events to avoid potential memory leaks.
+    /// Phase 122: Dispose EventBus subscription.
     /// </summary>
     private void OnDestroy()
     {
-        HighLightPlane.Highlight.RemoveListener(UpdateStatus);
+        _highlightSubscription?.Dispose();
+    }
+
+    /// <summary>
+    /// Handles HighlightRequestedEvent from EventBus.
+    /// Phase 122: Replaces static UnityEvent listener.
+    /// </summary>
+    private void OnHighlightRequested(HighlightRequestedEvent evt)
+    {
+        UpdateStatus((HighlightElement)evt.Element, evt.IsActivated);
     }
 
     /// <summary>

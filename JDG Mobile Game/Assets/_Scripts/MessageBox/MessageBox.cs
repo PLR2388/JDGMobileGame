@@ -3,7 +3,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class MessageBox : StaticInstance<MessageBox>, IMessageBoxBaseComponent
+/// <summary>
+/// Displays message boxes with configurable buttons and text.
+/// Phase 52: Marked obsolete - use IDialogService via dependency injection instead.
+/// Phase 94: Removed StaticInstance inheritance - now a regular MonoBehaviour.
+/// </summary>
+public class MessageBox : MonoBehaviour, IMessageBoxBaseComponent
 {
 
     [SerializeField] private GameObject prefab;

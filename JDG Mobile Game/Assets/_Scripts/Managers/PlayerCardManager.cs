@@ -56,7 +56,19 @@ public class PlayerCardManager : MonoBehaviour
     /// </summary>
     public void ProcessEndOfTurn()
     {
+        // Phase 148: Add null checks to prevent NullReferenceException
+        if (PlayerCards == null)
+        {
+            Debug.LogWarning("PlayerCardManager.ProcessEndOfTurn: PlayerCards is null");
+            return;
+        }
+
         var invocationCards = PlayerCards.InvocationCards;
+        if (invocationCards == null)
+        {
+            Debug.LogWarning("PlayerCardManager.ProcessEndOfTurn: InvocationCards is null");
+            return;
+        }
 
         foreach (var invocationCard in invocationCards)
         {

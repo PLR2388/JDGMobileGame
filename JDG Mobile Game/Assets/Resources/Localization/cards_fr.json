@@ -1,0 +1,834 @@
+﻿{
+  "card": {
+    "alpha-man": {
+      "title": "Alpha Man",
+      "description": "Est-ce que j'ai l'air de m'appeler Alpha Girl ?",
+      "detailed": "Cette carte ne peut être invoquée et subsister sur le terrain que si s'y trouve une carte \" Benzaie jeune \" ou \" Benzaie \". Tant que cette carte reste sur le terrain, les cartes INVOCATION adverses ne peuvent pas attaquer d'autre carte que celle-ci."
+    },
+    "alpha-v-de-gelganech": {
+      "title": "Alpha V De Gelganech",
+      "description": "De la planète Gelganox.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain la carte \" Archibald von Grenier \" sur le terrain \" Zozan Kebab \". Invoquer cette carte vous permet d'ajouter à votre main une autre carte de type \" Spacial \" depuis votre pioche."
+    },
+    "amiral-omega-3": {
+      "title": "Amiral Oméga 3",
+      "description": "Pour une bonne digestion !",
+      "detailed": "Le bonus pour toi, c'est un bon transit intestinal ! Félicitations !"
+    },
+    "archibald-von-grenier": {
+      "title": "Archibald Von Grenier",
+      "description": "Dispense des cours de fitness les mercredis et samedis.",
+      "detailed": "Si on avait mis un effet bonus à un mec déguisé en colon occidental en Afrique, ça aurait pu finir au tribunal donc : pas d'effet du tout."
+    },
+    "armure-trop-lourde": {
+      "title": "Armure trop lourde",
+      "description": "Quoi ?! Game Over ?!!",
+      "detailed": "La DEF de l'INVOCATION équipée est multiplée par deux, mais elle ne peut plus attaquer tant que cette carte lui est équipée."
+    },
+    "assist-": {
+      "title": "Assist' !",
+      "description": "New challenger !",
+      "detailed": "Vous permet d'échanger par invocation spéciale une carte INVOCATION de votre terrain contrre une autre carte INVOCATION de votre main."
+    },
+    "attaque-de-la-tour-eiffel": {
+      "title": "Attaque de la tour Eiffel",
+      "description": "Des passes quoi...",
+      "detailed": "Cette carte vous permet ce tour de combiner ensemble 2 cartes INVOCATION présentes sur votre terrain. Leurs étoiles d'ATQ et de DEF sont additionnées, et les cartes combinées comptent comme une seule carte. Si votre combinaison est détruite, toutes les cartes qui la composent le sont."
+    },
+    "babs": {
+      "title": "Babs",
+      "description": "Tout roule pour elle !",
+      "detailed": "Cette carte ne peut être attaquée par une autre INVOCATION si sur le même terrain qu'elle se trouve une autre INVOCATION de la famille \" Comics \". De plus, elle fait gagner 0,5 étoile d'ATQ et de DEF à chaque autre carte INVOCATION de type \" Comics \" sur votre terrain."
+    },
+    "barry-redfield": {
+      "title": "Barry Redfield",
+      "description": "Chris ! Putain !",
+      "detailed": "Si tu te souviens de ce personnage, bravo ! Mais ça ne t'apportera pas d'effet bonus."
+    },
+    "benzaie": {
+      "title": "Benzaie",
+      "description": "Oh ! Bonjour et bienvenue dans le Hard Corner !",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain une carte \" Benzaie jeune \" équipée d'une carte \" Cassette VHS \"."
+    },
+    "benzaie-jeune": {
+      "title": "Benzaie jeune",
+      "description": "Wow ! Alors là on les voit bien les 16-bits !",
+      "detailed": "Invoquer cette carte vous permet d'ajouter à votre main la carte \" Nounours \" depuis votre pioche."
+    },
+    "blague-interdite": {
+      "title": "Blague interdite",
+      "description": "Tous les sujets sont acceptés... Par contre à ne pas faire avec tout le monde.",
+      "detailed": "Cette carte ne peut être contrée. Cette carte empêche l'utilisation de cartes CONTRE pendant ce tour."
+    },
+    "bloue-touche": {
+      "title": "Bloue touche",
+      "description": "Tiens ! Bloue touche-toi avec ça !",
+      "detailed": "Chaque joueur pioche ou se défausse d'autant de cartes nécessaires pour en avoir un total de cinq dans sa main."
+    },
+    "bolossage-gratuit": {
+      "title": "Bolossage gratuit",
+      "description": "Mange tes mangemorts !",
+      "detailed": "Votre adversaire perd 2,5 étoiles de vie pour chaque carte INVOCATION présente sur votre terrain."
+    },
+    "bon-flic": {
+      "title": "Bon flic",
+      "description": "Beauf de Miami.",
+      "detailed": "Ce magnifique mulet ne t'apportera étrangement aucun effet bonus."
+    },
+    "bebe-terreur-nocturne": {
+      "title": "Bébé Terreur-Nocturne",
+      "description": "Découvre les joies de la maternité !",
+      "detailed": "Invoquer cette carte sur votre terrain renvoie toutes les cartes INVOCATION présentes sur le terrain dans la main de leur propriétaire. Aucune autre INVOCATION que cette carte ne peut subsister plus d'un tour sur le terrain tant qu'elle y est présente."
+    },
+    "canarang": {
+      "title": "Canarang",
+      "description": "Le gadget le plus discret du monde.",
+      "detailed": "Ajoute 1 étoile d'ATQ et soustraint une étoile de DEF à l'INVOCATION équipée, et lui permet d'attaquer directement les étoiles de vie de l'adversaire."
+    },
+    "canard-signal": {
+      "title": "Canard-signal",
+      "description": "La justice m'appelle !",
+      "detailed": "Si vous n'avez pas de carte INVOCATION sur votre terrain et qu'une INVOCATION adverse attaque directement vos étoiles de vie, vous pouvez faire l'invocation spéciale sur votre terrain d'une carte INVOCATION de votre choix depuis votre main ou votre pioche pour faire barrage à cette attaque."
+    },
+    "canardcity": {
+      "title": "Canardcity",
+      "description": "À poser avec une voix exagérément grave.",
+      "detailed": "Toutes les cartes INVOCATION de la famille \" Comics \" sur ce terrain gagnent 2 étoiles d'ATQ et perdent 1 étoile de DEF."
+    },
+    "canardman": {
+      "title": "Canardman",
+      "description": "Pas le héros dont on a besoin mais le héros qu'on mérite.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain une carte \" Joueur du grenier \" équipé d'une carte \" Canarang \"."
+    },
+    "captain-iglou": {
+      "title": "Cap'tain Iglou",
+      "description": "Ne faites pas sauter son sursis.",
+      "detailed": "Le bonus, c'est 150 calories. Ça ne va pas t'aider à gagner cette partie cela dit."
+    },
+    "captain-urssaf": {
+      "title": "Captain URSSAF",
+      "description": "Vous permet de taxer 100 balles à votre adversaire.",
+      "detailed": "Ce mec apparaît une demi-seconde, tu ne croyais quand même pas qu'il allait avoir un vrai effet bonus ?!"
+    },
+    "carole-du-service-marketing": {
+      "title": "Carole du service marketing",
+      "description": "Une vraie bombe sexuelle.",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'aller chercher dans votre pioche une carte \" Petite portion de 'riz' \" pour l'ajouter à votre main."
+    },
+    "cassette-vhs": {
+      "title": "Cassette VHS",
+      "description": "Mais quel artefact étrange venu d'un autre temps !",
+      "detailed": "L'INVOCATION équipée gagne 0,25 étoile d'ATQ par carte présente dans la main de celui qui la contrôle."
+    },
+    "cependant-": {
+      "title": "Cependant !",
+      "description": "20 milliards de points pour Nintendor !",
+      "detailed": "S'utilise dans le cas où votre adversaire inflige des dommages à vos étoiles de vie. Le montant d'abord soustrait est ensuite multiplé par deux pour l'additionner à vos étoiles de vie."
+    },
+    "cicatrice-maudite": {
+      "title": "Cicatrice maudite",
+      "description": "La douleur me signale la présence d'un jeu de merde de puissance 5 !",
+      "detailed": "Tant qu'une des cartes INVOCATION présentes sur votre terrain est équipée de cette carte, les cartes INVOCATION de votre adversaire ne peuvent pas attaquer lors de leur tour d'invocation."
+    },
+    "claquement-de-doigts": {
+      "title": "Claquement de doigts",
+      "description": "Silence femme.",
+      "detailed": "Annule une carte CONTRE et l'envoie à la poubelle jaune."
+    },
+    "classe-de-segpa": {
+      "title": "Classe de Segpa",
+      "description": "Arrêtez de faire les cons !",
+      "detailed": "Si une carte INVOCATION de votre adversaire lance une attaque sur l'une des vôtres ou directement sur vos étoiles de vie, vous pouvez annuler cette attaque et clore la phase d'attaque de votre adversaire."
+    },
+    "cliche-raciste": {
+      "title": "Cliché Raciste",
+      "description": "En plus elle est même pas japonaise.",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'y invoquer également la carte \" Tentacules \" depuis votre pioche."
+    },
+    "clochette-de-10-grammes": {
+      "title": "Clochette de 10 grammes",
+      "description": "Comment ça peut tuer un homme de 25 ans ?! Merde !!!",
+      "detailed": "Si votre adversaire invoque une INVOCATION à effet bonus sur le terrain, cette carte est envoyée directement à la poubelle jaune."
+    },
+    "clodo-du-coin": {
+      "title": "Clodo du coin",
+      "description": "Hey, une p'tite pièce, c'est bon, vazy !",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'aller chercher dans votre pioche la carte \" Lycée magique Georges Pompidou \" pour l'ajouter à votre main."
+    },
+    "convocation-au-lycee": {
+      "title": "Convocation au lycée",
+      "description": "N'oubliez votre justificatif de domicile et le chèque de 42€ pour la vie scolaire !",
+      "detailed": "Cette carte vous permet d'attribuer la famille d'INVOCATION affilié à votre TERRAIN à toutes les cartes INVOCATION présentes sur votre terrain tant que cette carte y subsiste. Vous pouvez la conserver pour le tour suivant en sacrifiant 0,5 de vos étoiles de vie à la fin de chaque tour."
+    },
+    "cosplay-pourri": {
+      "title": "Cosplay pourri",
+      "description": "Voilà ce qui arrive quand la costumière est malade.",
+      "detailed": "Enlève à une invocation une étoile en ATQ et une étoile en DEF."
+    },
+    "croisement-des-effluves": {
+      "title": "Croisement des effluves",
+      "description": "J'vous jure que ça va marcher !",
+      "detailed": "Sacrifiez une carte INVOCATION de votre terrain, défaussez la première carte de votre pioche, et défaussez une carte de votre main pour pouvoir détruire toutes les cartes présentes sur le terrain."
+    },
+    "crotte-de-nez": {
+      "title": "Crotte de nez",
+      "description": "Cadeau de la maison, joie du patron.",
+      "detailed": "Si votre adversaire invoque une ou plusieurs cartes INVOCATION lors de ce tour, vous pouvez lui soustraire 3 étoiles de vie par carte invoquée."
+    },
+    "daffy": {
+      "title": "Daffy",
+      "description": "Pro labs gaming, c'est les prix qui te retournent comme une chaussette !",
+      "detailed": "Si cette carte est invoquée sur votre TERRAIN \" Hard Cordner \" et que vous y sacrifiez une carte \" Seb du grenier \", ses statistiques passent à 4,5 d'ATQ et 4,5 de DEF."
+    },
+    "danse-de-la-victoire": {
+      "title": "Danse de la victoire",
+      "description": "Tintintintin Tin Tin Tintinliiiin !",
+      "detailed": "S'utilise dans le cas où une INVOCATION adverse attaque et détruit une de celles de votre terrain. L'INVOCATION victorieuse lance après destruction de votre carte une attaque sur chacune des autres cartes INVOCATION présentes sur son propre terrain."
+    },
+    "david-gnouf": {
+      "title": "David Gnouf",
+      "description": "Mais c'est ce que recherchent tous ces cons...ommateurs !",
+      "detailed": "Cette carte gagne 1 étoile en ATQ et en DEF pour chaque autre carte INVOCATION de la famille \" Développeur \" présente sur votre terrain."
+    },
+    "david-goodenough": {
+      "title": "David Goodenough",
+      "description": "Le personnage que tout le monde attendait.",
+      "detailed": "Ok, elle fait rien mais elle est pas si mal cette carte non ?"
+    },
+    "deltaplane": {
+      "title": "Deltaplane",
+      "description": "Le pire accessoire de jeu vidéo de tous les temps.",
+      "detailed": "L'ATQ de l'INVOCATION équipée passe à 1 étoile."
+    },
+    "demi-pizza": {
+      "title": "Demi-pizza",
+      "description": "... with pepperoni.",
+      "detailed": "Sacrifiez une INVOCATION de votre terrain ayant au moins 3 étoiles d'ATQ ou de DEF pour récupérer 15 étoiles de vie."
+    },
+    "dictateur-sympa": {
+      "title": "Dictateur Sympa",
+      "description": "Pas vraiment pire que nos hommes politiques actuels.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain une autre carte INVOCATION d'au moins 3 étoiles d'ATQ ou de DEF. Cette carte vous permet d'aller chercher et de poser immédiatement uen carte TERRAIN de votre pioche sur votre terrain."
+    },
+    "dresseur-de-bidulmon": {
+      "title": "Dresseur de Bidulmon",
+      "description": "Expert en braconnage depuis 1997.",
+      "detailed": "Ajoutez 1 étoile d'ATQ et de DEF à cette carte pour chaque autre carte de type \" Japon \" présente sur le terrain dont les statistiques d'ATQ et de DEF de base sont égales à 2."
+    },
+    "enfant-de-juron": {
+      "title": "Enfant De Juron",
+      "description": "Fils de P*** !!",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant la carte \" Joueur du grenier \" sur le TERRAIN \" Forêt des elfes sylvains \"."
+    },
+    "fantome-de-japonaise": {
+      "title": "Fantôme De Japonaise",
+      "description": "Attende, c'est pas Benzaie ?",
+      "detailed": "Et si tu arrives à imiter sa voix en posant cette carte, eh bien super ! Mais tu ne gagnes rien de particulier ..."
+    },
+    "fatalite": {
+      "title": "Fatalité",
+      "description": "« Benzaie wins. ». NOTE: c'est un pavé de saumon à l'image",
+      "detailed": "S'il reste à votre adversaire moins de 5 étoiles de vie, vous pouvez les attaquer directement avec une de vos cartes INVOCATION pendant ce tour."
+    },
+    "faux-raccord": {
+      "title": "Faux raccord",
+      "description": "Eh oui, le tiroir était ouvert !",
+      "detailed": "Vous permet d'aller chercher directement depuis votre pioche une carte TERRAIN pour la jouer immédiatement, même sur un emplacement déjà occupé par une autre carte TERRAIN. Auquel cas, la carte précédente est détruite."
+    },
+    "feuille": {
+      "title": "Feuille",
+      "description": "Attention, une feuille !",
+      "detailed": "Défaussez-vous d'une carte de votre main pour détruire n'importe quelle carte sur votre terrain ou celui de votre adversaire."
+    },
+    "filtre-degueulasse-fmv": {
+      "title": "Filtre dégueulasse FMV",
+      "description": "N'empêche qu'on trouvait ça plus cool à l'époque.",
+      "detailed": "Les effets des cartes TERRAIN présentes sur le terrain sont anulés pour le tour en cours ainsi que pour le tour suivant."
+    },
+    "fisti": {
+      "title": "Fisti",
+      "description": "Un poing c'est tout !",
+      "detailed": "Ne me tente pas de te dire pourquoi cette carte n'a pas d'effet bonus."
+    },
+    "fistiland": {
+      "title": "Fistiland",
+      "description": "Au fond du fun !",
+      "detailed": "Permet au joueur ayant cette carte sur son terrain de sauter sa phase de pioche aller chercher une carte INVOCATION de type \" Fistiland \" dans sa pioche ou sa poubelle jaune pour l'ajouter à sa main."
+    },
+    "foret-des-elfes-sylvains": {
+      "title": "Forêt des elfes sylvains",
+      "description": "Les arbres aussi s'appellent Sylvain.",
+      "detailed": "Toutes les cartes INVOCATION de type \" RPG \" sur ce terrain obtiennent 0,5 étoiles d'ATQ et de DEF supplémentaires."
+    },
+    "fourchette": {
+      "title": "Fourchette",
+      "description": "Je suis presque sûr que ça sera un vrai pokémon un jour.",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'y invoquer depuis votre pioche la carte \" Dresseur de Bidulmon \"."
+    },
+    "frangipanus": {
+      "title": "Frangipanus",
+      "description": "Bientôt un spin-off centré sur ce personnage.",
+      "detailed": "Invoquer cette carte vous permet d'ajouter à votre main la carte"
+    },
+    "georges-tuseki": {
+      "title": "Georges Tuséki",
+      "description": "C'est d'origine grecque.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain une autre carte INVOCATION de la famille \" Sorcier \"."
+    },
+    "gilles-valentin": {
+      "title": "Gilles Valentin",
+      "description": "2 L-E-S.",
+      "detailed": "Si tu sais à quel personnage cet homme charmant fait référence ... Eh bien tant mieux pour toi."
+    },
+    "granolax": {
+      "title": "Granolax",
+      "description": "Maudit Shi-Nwa.",
+      "detailed": "Si elle est ciblée par une attaque adverse, cette carte peut se protéger automatiquement derrière la carte \" Starlight Unicorn \" si celle-ci est sur le terrain du joueur."
+    },
+    "gerard-choixpeau": {
+      "title": "Gérard Choixpeau",
+      "description": "Conseiller d'orientation. Trois enquêtes au cul pour attouchement.",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'aller chercher dans votre pioche la carte \" Convocation au lycée \" pour l'ajouter à votre main."
+    },
+    "henry-potdebeurre": {
+      "title": "Henry Potdebeurre",
+      "description": "Toujours au collège même à 36 ans.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant une carte \" Joueur du grenier \" sur le TERRAIN \" Lycée magique Georges Pompidou \"."
+    },
+    "hitbox-buguee": {
+      "title": "Hitbox buguée",
+      "description": "C'est vraiment magnifique !",
+      "detailed": "Si une INVOCATION adverse attaque une de vos cartes INVOCATION sur le terrain ou directement vos étoiles de vie, son attaque est annulée et le montant de ses étoiles d'ATQ au moment de l'attaque est soustraite directement des étoiles de vie de votre adversaire."
+    },
+    "hypno-boobs": {
+      "title": "Hypno-boobs",
+      "description": "Ok Bibiche, je vais me raser et me mettre au sport !",
+      "detailed": "L'INVOCATION équipée ne peut être attaquée ni détruite par une autre carte INVOCATION."
+    },
+    "incendie": {
+      "title": "Incendie",
+      "description": "Bon, je rangerai demain...",
+      "detailed": "Sacrifiez 7,5 de vos étoiles de vie pour détruire une carte TERRAIN présente sur le terrain."
+    },
+    "injonction-du-tribunal": {
+      "title": "Injonction du tribunal",
+      "description": "Pour vous empêcher de faire cette blague.",
+      "detailed": "Défaussez une carte de votre main pour annuler l'activation d'une carte brillante jouée par votre adversaire et l'envoyer à la poubelle jaune."
+    },
+    "inspecteur-magret": {
+      "title": "Inspecteur Magret",
+      "description": "Une carte assez chouette... 'Chouette', z'avez compris ?",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'aller chercher dans votre pioche la carte \" Canard-signal \" pour l'ajouter à votre main."
+    },
+    "jacques-chirac-en-3d": {
+      "title": "Jacques Chirac en 3D",
+      "description": "Ce jeu n'a vraiment aucun sens.",
+      "detailed": "Peut dissoudre l'Assemblée nationale. Dommage que ça ne serve à rien ici."
+    },
+    "jean-claude": {
+      "title": "Jean-Claude",
+      "description": "Mais enfin, ça dépasse l'entendement !",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale ou en sacrifiant sur votre terrain 2 autres cartes INVOCATION de la famille \" Développeur \" ayant au moins 3 d'ATQ ou de DEF."
+    },
+    "jean-cule": {
+      "title": "Jean-Cule",
+      "description": "Vous voulez de la graisse sur votre sel ?",
+      "detailed": "Si j'osais, je mettrais un malus, mais non, ça ne sera rien du tout."
+    },
+    "jean-guy": {
+      "title": "Jean-Guy",
+      "description": "C'est Jean-Guillaume enfin ! En deux syllabes !",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale ou en sacrifiant sur votre terrain deux autres cartes INVOCATION de la famille \" Hard Corner \" ayant au moins 3 d'ATQ ou de DEF."
+    },
+    "jean-louis-la-chaussette": {
+      "title": "Jean-Louis La Chaussette",
+      "description": "L'esprit de noël, qui réchauffe les coeurs et les pieds.",
+      "detailed": "Cette carte ne peut pas être attaquée ni détruite par une autre carte INVOCATION."
+    },
+    "jean-marc-soul": {
+      "title": "Jean-Marc Soul",
+      "description": "Je suis mort 34 fois pour traverser la rue. C'est la vie.",
+      "detailed": "Chaque fois que cette carte est envoyée à la poubelle jaune, elle revient dans la main de son propriétaire."
+    },
+    "jean-michel-bruitages": {
+      "title": "Jean-Michel Bruitages",
+      "description": "Artiste japonais authentique.",
+      "detailed": "Les bonus sont en japonais aussi."
+    },
+    "jean-philippe-hardfist": {
+      "title": "Jean-Philippe Hardfist",
+      "description": "Entre nous, on le surnomme 'Jean-Phile'.",
+      "detailed": "Pour l'effet bonus, tu peux t'asseoir dessus."
+    },
+    "jeu-pourri": {
+      "title": "Jeu pourri",
+      "description": "Bouge avec deux fils de nylon. Parle avec la voix de Seb.",
+      "detailed": "Agrougrou les veilles intrigues !"
+    },
+    "joueur-du-grenier": {
+      "title": "Joueur Du Grenier",
+      "description": "Une carte originale !",
+      "detailed": "Saviez-vous que cette chemise a été achetée dans un magasin et que du coup cette carte n'a aucun effet spécial ?"
+    },
+    "jerome": {
+      "title": "Jérôme",
+      "description": "J'adore mon job, c'est payé en passion et en exposition pour mon travail.",
+      "detailed": "Si son mariage avec Jean-Claude avait été possible, tu aurais eu un effet bonus. Malheureusement, ça n'est pas le cas..."
+    },
+    "karim": {
+      "title": "Karim",
+      "description": "Humanoïde le plus drôle de la terre.",
+      "detailed": "Non sérieusement, allez voir Chroma."
+    },
+    "kebab-magique": {
+      "title": "Kebab magique",
+      "description": "Agenouillez vous devant la surpuissance de ce kebab au goût si exceptionnel.",
+      "detailed": "Sacrifiez une INVOCATION de votre terrain pour récupérer 7,5 étoiles de vie."
+    },
+    "kechua": {
+      "title": "Kechua",
+      "description": "Anana wa oni wananou osheshtach.",
+      "detailed": "J'ai découpé un morceau de la nappe de ma mère pour faire ce costume. Donc, évidemment que cette carte ne fait rien de spécial."
+    },
+    "kenavo-": {
+      "title": "Kenavo !",
+      "description": "Sort d'attaque classique du Lycée George Pompidou.",
+      "detailed": "Si une carte INVOCATION de votre adversaire lance une attaque sur l'une des vôtres, vous pouvez suspendre cette attaque pour en lancer une avant avec une de vos cartes INVOCATION. Si l'INVOCATION adverse est détruite par cette attaque, l'attaque d'origine suspendue est annulée."
+    },
+    "koaloutre-ornithambas-lapinzord-nain-de-californie": {
+      "title": "Koaloutre-Ornithambas Lapinzord nain de Californie",
+      "description": "Je parie que vous aviez oublié l'existence de ce truc.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain 2 cartes INVOCATION de la famille \" Japon \". Cette carte a la capacité de détruire une carte TERRAIN sur le terrain le tour de son invocation en sautant son tour d'attaque et en divisant son ATQ par 2."
+    },
+    "laigle-de-la-nuit": {
+      "title": "L'Aigle De La Nuit",
+      "description": "Facilement confondu avec Le Pygargue.",
+      "detailed": "C'est juste un mec en costume de motard ! Tu ne croyais quand même pas que tu allais avoir un effet bonus pour ça, non ?"
+    },
+    "lelfette": {
+      "title": "L'Elfette",
+      "description": "C'est pour les quotas.",
+      "detailed": "Cette carte peut se soustraire de ses étoiles d'ATQ et de DEF pour les additionner sur les mêmes statistiques d'autres cartes INVOCATION de type \" RPG \" sur le terrain. Les étoiles distribuées sont annulées si cette carte est détruite."
+    },
+    "lhomme-banane": {
+      "title": "L'homme-banane",
+      "description": "Il a toujours la pêche... Les jeux de mots dans cette série de cartes défoncent tout !",
+      "detailed": "Cette carte ne peut être invoquée et subsister sur le terrain que si s'y trouve une carte INVOCATION de type \" Comics \"."
+    },
+    "la-drooogue-": {
+      "title": "La drooogue !",
+      "description": "Mais ils ont pris de la drogue ces développeurs ?!?",
+      "detailed": "L'ATQ de l'INVOCATION équipée est multipliée par 3 et sa DEF passe à 0 étoile."
+    },
+    "la-mort": {
+      "title": "La Mort",
+      "description": "Mdr !",
+      "detailed": "Cette carte ne peut-être invoquée et subsister sur votre terrain que si se trouvent au moins 10 cartes INVOCATION dans votre poubelle jaune. Invoquer cette carte vous permet le tour de son invocation d'envoyer une carte INVOCATION du terrain de votre adversaire à la poubelle jaune."
+    },
+    "la-petite-fille": {
+      "title": "La Petite Fille",
+      "description": "Putain Putain Putain Putain !!",
+      "detailed": "Cette carte ne peut être invoquéeet subsister sur le terrain que si s'y trouve une carte \" Joueur du grenier \". Tant que cette carte reste sur le terrain, les cartes INVOCATION adverses ne peuvent pas attaquer d'autre carte que celle-ci."
+    },
+    "le-cancer": {
+      "title": "Le cancer",
+      "description": "Les blagues de cancéreux sont toujours les plus drôles.",
+      "detailed": "Si votre adversaire fait une invocation spéciale ou normale d'une INVOCATION sur le terrain, cette carte est envoyée directement à la poubelle jaune."
+    },
+    "le-chevalier-noir": {
+      "title": "Le chevalier noir",
+      "description": "Non, non, je... Pas de blague.",
+      "detailed": "Ce jeu de mot vaut déjà tous les effets bonus du monde."
+    },
+    "le-grenier": {
+      "title": "Le grenier",
+      "description": "En réalité c'est le salon, mais on s'en fout.",
+      "detailed": "Permet au joueur ayant cette carte sur son terrain de piocher 2 cartes par tour."
+    },
+    "le-hard-corner": {
+      "title": "Le Hard Corner",
+      "description": "Une pile de jeux et un écran sur une planche, et paf : des millions de vues !",
+      "detailed": "Toutes les cartes INVOCATION de la famille \" Hard Corner \" sur ce terrain gagnent 1,5 étoiles d'ATQ et perdent 0,5 étoile de DEF."
+    },
+    "le-hobbit": {
+      "title": "Le Hobbit",
+      "description": "Ne l'écoutez pas quand il vous dit qu'il est humain !",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'ajouter la carte \" Forêt des elfes sylvains \" à votre main depuis votre pioche."
+    },
+    "le-japon": {
+      "title": "Le Japon",
+      "description": "Weirdest place on earth.",
+      "detailed": "Toutes les cartes INVOCATION de type \" Japon \" sur ce terrain obtiennent 1 étoile d'ATQ supplémentaire."
+    },
+    "le-mot-de-passe": {
+      "title": "Le mot de passe",
+      "description": "Moi aussi je perds la boule !",
+      "detailed": "Aller chercher n'importe quelle carte dans votre pioche ou votre poubelle jaune pour l'ajouter à votre main."
+    },
+    "le-pygargue": {
+      "title": "Le Pygargue",
+      "description": "Facilement confondu avec L'Aigle De La Nuit.",
+      "detailed": "Aucun effet ! Question de droits pour la photo. Sinon cette carte aurait valu au moins 5 étoiles d'ATQ !"
+    },
+    "le-pyro-barbare": {
+      "title": "Le Pyro-Barbare",
+      "description": "C'est comme L'Enfant De Juron, mais en moins bien.",
+      "detailed": "Bisous Bob. Et pour la peine ta carte ne fait rien de spécial !"
+    },
+    "le-salami": {
+      "title": "Le salami",
+      "description": "Votre seul ami.",
+      "detailed": "Ajoute à une INVOCATION 2 étoiles de plus en ATQ."
+    },
+    "le-triple-dwa": {
+      "title": "Le triple dwa",
+      "description": "À utiliser dans toutes les situations !",
+      "detailed": "Jouable à la fin du tour en cours. Faites l'invocation spéciale sur votre terrain d'un maximum de trois de vos cartes INVOCATION envoyées à la poubelle jaune pendant ce tour."
+    },
+    "le-voisin": {
+      "title": "Le voisin",
+      "description": "C'est bizarre, ce type avait la voix de seb avant.",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'y invoquer également au choix une carte \" Joueur du Grenier \" ou \" Seb du Grenier \" depuis votre pioche."
+    },
+    "lolhitler": {
+      "title": "Lolhitler",
+      "description": "Une carte qui va faire fureur.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain 2 cartes INVOCATION de la famille \" Incarnation \". Cette carte a la capacité de détruire une carte TERRAIN sur le terrain le tour de son invocation en sautant son tour d'attaque et en divisant sa DEF par 2."
+    },
+    "lycee-magique-georges-pompidou": {
+      "title": "Lycée magique Georges Pompidou",
+      "description": "On n'apprend pas la magie avec du salami.",
+      "detailed": "Toutes les cartes INVOCATION de la famille \" Sorcier \" sur ce terrain font gagner 0,5 étoile de vie chacune à son propriétaire à chaque fois que son tour commence."
+    },
+    "magasin-de-jeux-video-du-coin": {
+      "title": "Magasin de jeux vidéo du coin",
+      "description": "Construit sur les ruines d'un ancien restaurant indien.",
+      "detailed": "Toutes les cartes INVOCATION de la famille \" Incarnation \" sur ce terrain perdent 1 étoile d'ATQ et gagnent 2 étoiles de DEF."
+    },
+    "main-bionique": {
+      "title": "Main bionique",
+      "description": "Métal jouir ?",
+      "detailed": "L'INVOCATION équipée gagne 3 étoiles d'ATQ et perd 1 étoiles de DEF."
+    },
+    "maman": {
+      "title": "Maman",
+      "description": "Benzou ! Lâche cette console ou j'appelle un de tes cinq beaux-pères !",
+      "detailed": "Invoquer cette carte vous permet d'ajouter à votre main la carte \" Benzaie jeune \" depuis votre pioche."
+    },
+    "maniabilite-pourrie": {
+      "title": "Maniabilité pourrie",
+      "description": "Des fois, c'est aussi la faute de la manette.",
+      "detailed": "Fait sauter la phase d'attaque des cartes INVOCATION adverses lors du prochain tour de votre adversaire."
+    },
+    "manuel-ferrara": {
+      "title": "Manuel Ferrara",
+      "description": "Je vous mets une carte de membre ? Membre, comme ma...",
+      "detailed": "Au moment de l'invocation de cette carte sur votre terrain, vous pouvez faire sauter sa phase d'attaque pour ajouter une carte EQUIPEMENT de votre pioche à votre main, sauf en cas d'invocation spéciale."
+    },
+    "mauvais-doublage": {
+      "title": "Mauvais doublage",
+      "description": "Ouais, alors forcément, ça rend moins bien sur une image.",
+      "detailed": "Pour la durée du tour, les statistiques d'ATQ et de DEF de toutes les cartes INVOCATION présentes sur le terrain sont interverties."
+    },
+    "mauvais-flic": {
+      "title": "Mauvais flic",
+      "description": "Muthafucka !",
+      "detailed": "Cette magnifique coupe afro ne t'apportera étrangement aucun effet bonus."
+    },
+    "mauvaise-traduction": {
+      "title": "Mauvaise traduction",
+      "description": "Rayon magique !",
+      "detailed": "Si votre adversaire joue une carte EFFET, vous pouvez l'annuler et l'envoyer à la poubelle jaune."
+    },
+    "max": {
+      "title": "Max",
+      "description": "Effectivement il ressemble à... Non à rien en fait.",
+      "detailed": "Cette magnifique moustache ne t'apportera étrangement aucun effet bonus."
+    },
+    "mecha-granolax": {
+      "title": "Mecha-Granolax",
+      "description": "Se déplace à bord de sa N.E.M. (Nano-Electro-Machine).",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable uniquement en sacrifiant sur votre terrain une carte \" Granolax \" qui a été ramenée de la poubelle jaune. Cette carte est insensible aux cartes EFFET jouées par l'adversaire."
+    },
+    "merde-magique-en-plastique-rose": {
+      "title": "Merde magique en plastique rose",
+      "description": "Pour vous les filles !",
+      "detailed": "Ajoute à une INVOCATION 1 étoile de plus en ATQ et en DEF."
+    },
+    "merde-tournoyante-en-plastique-bleu": {
+      "title": "Merde tournoyante en plastique bleu",
+      "description": "Pour vous les mecs !",
+      "detailed": "Multiplie par 2 l'ATQ et divise par 2 la DEF de l'INVOCATION équipée."
+    },
+    "mj-corrompu": {
+      "title": "MJ corrompu",
+      "description": "Cette carte chitineuse vous scrute avec un regard carnassier.",
+      "detailed": "Vous permet de regarder les cinq premières cartes d'une des pioches du terrain et de les remettre dans l'ordre que vous souhaitez."
+    },
+    "mohammad": {
+      "title": "Mohammad",
+      "description": "J'espère que Jeannot ne nous a pas posé... un lapin !",
+      "detailed": "Si cette carte est invoquée sur votre TERRAIN \" Studio de développement \" et que vous y sacrifiez une carte \" Joueur du grenier \", ses statistiques passent à 4,5 d'ATQ et 4,5 de DEF."
+    },
+    "moise-le-plus-grand-de-tous-les-hebreux": {
+      "title": "Moïse, le plus grand de tous les hébreux",
+      "description": "J'vais ouvrir ta mère en deux !",
+      "detailed": "Cette carte ne peut être invoquée et subsister sur votre terrain que si s'y trouve au moins une autre carte de type \" Humain \"."
+    },
+    "musique-de-mega-drive": {
+      "title": "Musique de Mega Drive",
+      "description": "Mes oreilles viennent de vomir je crois.",
+      "detailed": "Votre adversaire perd 2,5 étoiles de vie pour chaque carte INVOCATION présente sur son terrain."
+    },
+    "nounours": {
+      "title": "Nounours",
+      "description": "La rumeur veut qu'il ait couché avec Benzaie pour réussir.",
+      "detailed": "Cette carte obtient les mêmes statistiques d'ATQ et de DEF que la carte \" Benzaie jeune \" si celle-ci est sur le terrain."
+    },
+    "pains-aux-raisins-a-la-place-des-mains": {
+      "title": "Pains aux raisins à la place des mains",
+      "description": "C'est qu'une petite carte. Y'a 150 endroits où elle pourrait se la mettre !",
+      "detailed": "Détruit une carte EQUIPEMENT présente sur le terrain."
+    },
+    "papy-grenier": {
+      "title": "Papy Grenier",
+      "description": "Et la description de la carte ça sera pour une prochaine fois.",
+      "detailed": "Cette carte ne peut rester qu'un seul tour sur le terrain avant d'aller directement à la poubelle jaune. Le tour fini, vous pouvez ajouter à votre main une carte \" La Mort \" depuis votre pioche."
+    },
+    "parachute-dore": {
+      "title": "Parachute doré",
+      "description": "Permet d'atterrir en douceur sur le malheur des autres.",
+      "detailed": "L'INVOCATION équipée gagne 0,25 étoile de DEF par carte présente dans la main de celui qui la contrôle."
+    },
+    "passage-secret-dans-le-mur-du-voisin": {
+      "title": "Passage secret dans le mur du voisin",
+      "description": "M'sieu grenier ! C'est vous qui avez cassé le mur ?!",
+      "detailed": "Vous permet de regarder la main de votre adversaire. Vous pouvez choisir une de ses cartes et lui faire défausser en en défaussant une de votre propre main."
+    },
+    "patate": {
+      "title": "Patate",
+      "description": "Pata-Patate ?",
+      "detailed": "Si elle est ciblée par une attaque adverse, cette carte peut se protéger automatiquement derrière une autre carte INVOCATION sur le terrain du joueur si celle-ci a une plus grande DEF."
+    },
+    "patron-dinfogrames": {
+      "title": "Patron D'Infogrames",
+      "description": "Vendeur de cauchemars depuis 1983.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant sur votre terrain une carte \" Seb du grenier \" équipé d'une carte \" Merde tournoyante en plastique bleu \"."
+    },
+    "petite-caille": {
+      "title": "Petite caille",
+      "description": "Attends mon benzou. Je me fais le maillot !",
+      "detailed": "Ça va peut-être t'étonner, mais même ce corps d'athlète ne t'apportera pas d'effet bonus."
+    },
+    "petite-culotte": {
+      "title": "Petite culotte",
+      "description": "Taille 12 ans évidemment.",
+      "detailed": "Équiper cette carte à une INVOCATION permet de lui déséquiper et envoyer à la poubelle jaune une carte EQUIPEMENT déjà équipée."
+    },
+    "petite-portions-de-«-riz-»": {
+      "title": "Petite portions de « riz »",
+      "description": "Plot twist : c'était pas du riz.",
+      "detailed": "Vos cartes INVOCATION peuvent attaquer 2 fois chacune pendant ce tour."
+    },
+    "player": {
+      "title": "Player",
+      "description": "",
+      "detailed": ""
+    },
+    "plume-de-phenix": {
+      "title": "Plume de phénix",
+      "description": "Ok mec ! Ça va ! J'suis plus mort !",
+      "detailed": "Permet au joueur de ramener par invocation spéciale une carte INVOCATION de sa poubelle jaune à son terrain."
+    },
+    "poignee-de-porte": {
+      "title": "Poignée de porte",
+      "description": "Dix-septième génération...",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'y invoquer depuis votre pioche la carte \" Dresseur de Bidulmon \"."
+    },
+    "prof-de-svt": {
+      "title": "Prof de SVT",
+      "description": "Caméo officiel, celui-là...",
+      "detailed": "La magie n'existe pas et c'est pour ça que cette carte ne fait rien."
+    },
+    "professeur-humblebundledore": {
+      "title": "Professeur Humblebundledore",
+      "description": "Proviseur du Lycée magique public George Pompidou.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant une carte \" Seb du grenier \" sur le TERRAIN \" Lycée magique Georges Pompidou \"."
+    },
+    "professeur-rogue-like": {
+      "title": "Professeur Rogue-Like",
+      "description": "Une carte incroyable du cul.",
+      "detailed": "Pas d'effet bonus, même avec sa boule magique."
+    },
+    "proprietaire-de-fistiland": {
+      "title": "Propriétaire De Fistiland",
+      "description": "Vive l'argent !",
+      "detailed": "Cette carte gagne 1 étoile en ATQ et en DEF pour chaque carte INVOCATION de type \" Fistiland \" présente sur le terrain du joueur."
+    },
+    "quart-de-smiley-sur-la-main": {
+      "title": "Quart de smiley sur la main",
+      "description": "S'accompagne en général d'un dicours sur l'amitié.",
+      "detailed": "Les étoiles de DEF des cartes INVOCATION de votre adversaire sont divisées par 2 pour ce tour."
+    },
+    "repop": {
+      "title": "Repop",
+      "description": "Parce que le malheur ne s'arrête jamais complètement.",
+      "detailed": "Si votre adversaire envoie une de vos cartes INVOCATION à la poubelle jaune, vous pouvez la réinvoquer par invocation spéciale immédiatement sur le terrain."
+    },
+    "revers-du-droit": {
+      "title": "Revers du droit",
+      "description": "Apparemment ça parle de tennis.",
+      "detailed": "Si une INVOCATION adverse attaque une de vos cartes INVOCATION sur le terrain ou directement vos étoiles de vie, la puissance de son attaque est multipliée par 2 et lui est renvoyée."
+    },
+    "remi": {
+      "title": "Rémi",
+      "description": "Une suite pour LOL ? MDR ",
+      "detailed": "Sa casquette pourrait presque lui donner un malus, alors  estime-toi heureux de ne simplement pas avoir de bonus !"
+    },
+    "sailor-justice": {
+      "title": "Sailor Justice",
+      "description": "Attendez, c'est pas le cliché raciste ?",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant une carte \" Cliché raciste \" équipé d'une carte \" Merde magique en plastique rose \"."
+    },
+    "salut-metalleux": {
+      "title": "Salut métalleux",
+      "description": "Saluez-moi en bonne et due forme !",
+      "detailed": "Si une INVOCATION adverse attaque une carte INVOCATION de votre terrain, son attaque est annulée et l'INVOCATION qui a lancé l'attaque passe de votre côté du terrain s'il y a un emplacement libre, ce qui vous permet d'en prendre le contrôle jusqu'à la fin du prochain tour."
+    },
+    "sandrine-le-porte-manteau-extraterrestre": {
+      "title": "Sandrine le porte-manteau extraterrestre",
+      "description": "Un de nos meilleurs personnages.",
+      "detailed": "Si cette carte est détruite lors d'une phase d'attaque contre une autre INVOCATION, après calcul de la différence d'étoiles ce sont les deux cartes qui partent à la poubelle jaune."
+    },
+    "sangoku": {
+      "title": "Sangoku",
+      "description": "Oui c'est le comptable de fistiland. Je sais, ce jeu est bizarre.",
+      "detailed": "Cette carte peut se soustraire de ses étoiles d'ATQ et de DEF pour les additionner sur les mêmes statistiques d'autres cartes INVOCATION de type \" Fistiland \" sur le terrain. Les étoiles distribuées sont annulées si cette carte est détruite."
+    },
+    "sauvegarde-effacee": {
+      "title": "Sauvegarde effacée",
+      "description": "C'est génial ! J'ai hâte de tout recommencer !",
+      "detailed": "Si votre adversaire inflige des dégâts à vos étoiles de vie, ces dégâts sont annulés et toutes les cartes qu'il a joué ce tour vont directement à la poubelle jaune."
+    },
+    "sceaux-magiques": {
+      "title": "Sceaux magiques",
+      "description": "On s'en sert pour ouvrir la porte... enfin je crois.",
+      "detailed": "Utilisable si vous n'avez aucune carte INVOCATION sur votre terrain. Cette carte agit comme un bouclier qui annule un total de 3 attaques des cartes INVOCATION de votre adversaire."
+    },
+    "seb-du-grenier": {
+      "title": "Seb Du Grenier",
+      "description": "En métal ça aurait eu la classe !",
+      "detailed": "Sa voix change parfois. Mais ça n'apporte aucun effet spécifique."
+    },
+    "sheik-point": {
+      "title": "Sheik Point",
+      "description": "Je dédie cette blague à toute l'équipe d'écriture.. qui n'a pas souhaitée être créditée...",
+      "detailed": "Vous pouvez pendant votre phase de pose choisir de sacrifier cette carte pour faire l'invocation spéciale sur votre terrain d'une autre carte INVOCATION non-brillante depuis votre poubelle jaune."
+    },
+    "slime": {
+      "title": "Slime",
+      "description": "Tu peux faire un prélévement ?",
+      "detailed": "Si votre adversaire joue une carte quelle qu'elle soit, vous pouvez annuler cette action et la renvoyer dans sa main, l'empêchant de la jouer avant le tour suivant."
+    },
+    "spaghetti": {
+      "title": "Spaghetti",
+      "description": "Joue aussi du piano dans certains épisodes.",
+      "detailed": "Invoquer cette carte sur votre terrain vous permet d'aller chercher dans votre pioche ou votre poubelle jaune une carte \" Patron d'Infogrames \" pour l'ajouter à votre main."
+    },
+    "squalala-": {
+      "title": "Squalala !",
+      "description": "Nous sommes partis !",
+      "detailed": "Envoie une carte INVOCATION du terrain de votre adversaire directement à la poubelle jaune."
+    },
+    "starlight-unicorn": {
+      "title": "Starlight Unicorn",
+      "description": "Pony Pony Pony Pony !!",
+      "detailed": "Cette carte ne peut être invoquée et subsister sur le terrain que si s'y trouve une carte \" Granolax \" ou  \" Mecha-Granolax \". Tant que cette carte reste sur le terrain, vous pouvez chaque tour faire sauter la phase d'attaque d'une carte INVOCATION du terrain de votre adversaire."
+    },
+    "steelbook-vide": {
+      "title": "Steelbook vide",
+      "description": "C'est à moi de finir l'assemblage des jeux ou quoi ?!",
+      "detailed": "Si votre adversaire joue une carte CONTRE, elle est annulée et retourne dans sa pioche avant de la remélanger."
+    },
+    "studio-de-developpement": {
+      "title": "Studio de développement",
+      "description": "La vie de développeur, c'est pas toujours facile !",
+      "detailed": "Toutes les cartes INVOCATION de la famille \" Développeur \" sur ce terrain perdent 0,5 étoile d'ATQ et gagnent 1,5 étoile de DEF. Si les cartes \" Jean-Michel Bruitages \" et/ou \" Le patron d'Infogrames \" sont invoquées sur ce terrain, leur famille de base est remplacée par \" Développeur \"."
+    },
+    "studio-de-scenaristes-canadien": {
+      "title": "Studio de scénaristes Canadien",
+      "description": "De 13h à 15h ils font la sieste.",
+      "detailed": "Cette carte doit être détruite/sacrifiée cinq fois pour partir à la poubelle jaune. Le décompte des étoiles se fait normalement."
+    },
+    "sylvain-fils-de-sylvain-roi-des-elfes": {
+      "title": "Sylvain, Fils de Sylvain, Roi des Elfes",
+      "description": "Où est l'office du tourisme ?",
+      "detailed": "Le costume valait 12 €. C'est sûrement pour ça que cette carte ne mérite aucun effet bonus."
+    },
+    "tatouage-golde": {
+      "title": "Tatouage goldé",
+      "description": "Ah ouais... La classe !",
+      "detailed": "L'INVOCATION équipée perd 2 étoiles d'ATQ."
+    },
+    "tentacules": {
+      "title": "Tentacules",
+      "description": "Parce que forcément ça devait arriver.",
+      "detailed": "Cette carte ne peut être invoquée et subsister sur votre terrain que si s'y trouve une autre carte de type \" Japon \". Tant que cette carte reste sur le terrain, les cartes INVOCATION adverses ne peuvent pas attaquer d'autre carte que celle-ci."
+    },
+    "texas-granger": {
+      "title": "Texas Granger",
+      "description": "La plus belle fille du... Attendez, mais c'est encore Benzaie ?!",
+      "detailed": "Toujours à l'heure et pourtant, deux semaines en retard. D'où l'absence d'effet bonus, sans doute..."
+    },
+    "theodule": {
+      "title": "Théodule",
+      "description": "Adopté ? Mais alors c'est pour ça que j'ai pas l'accent du poitou !",
+      "detailed": "Au moment de l'invocation de cette carte sur votre terrain, vous pouvez piocher deux cartes."
+    },
+    "torture-ninja": {
+      "title": "Torture Ninja",
+      "description": "Une carte de merde qui va vous faire mal au cul.",
+      "detailed": "Votre adversaire perd 1 étoile de vie pour chaque carte de sa main."
+    },
+    "turbo-cradozaure": {
+      "title": "Turbo Cradozaure",
+      "description": "Il détruit tous ses ennemis en leur vomissant dessus !",
+      "detailed": "L'INVOCATION équipée obtient la capacité de pouvoir attaquer directement les étoiles de vie même si d'autres cartes INVOCATION sont présentes sur le terrain, et elle est protégée par cette carte en cas destruction, auquel cas c'est cette carte qui sera détruite à la place de la carte INVOCATION équipée."
+    },
+    "un-bon-tuyau": {
+      "title": "Un bon tuyau",
+      "description": "Permet de vous tenir au parfum.",
+      "detailed": "Annule l'effet bonus de la carte INVOCATION équipée."
+    },
+    "un-delicieux-risotto": {
+      "title": "Un délicieux risotto",
+      "description": "Ajoutez du poivre... Et voilà c'est prêt !",
+      "detailed": "Sacrifiez une INVOCATION de votre terrain ayant au moins 5 étoiles d'ATQ ou de DEF pour récupérer l'intégralité de vos étoiles de vie."
+    },
+    "vieux-sage": {
+      "title": "Vieux Sage",
+      "description": "Pour méditer avec lui, appelez le 0835837512 numéro payant 1,30€/min.",
+      "detailed": "Cette carte ne peut être invoquée directement sur le terrain. Invocable par invocation spéciale, ou en sacrifiant la carte \" Seb du grenier \" sur le TERRAIN \" Forêt des elfes sylvains \"."
+    },
+    "youtube-money": {
+      "title": "Youtube Money",
+      "description": "Muchos Dineros !",
+      "detailed": "Transférez une INVOCATION du terrain de votre adversaire à votre propre terrain ce qui vous permet d'en prendre le contrôle pendant ce tour."
+    },
+    "zozan-kebab": {
+      "title": "Zozan Kebab",
+      "description": "Meilleur Kebab de l'hémisphère nord.",
+      "detailed": "Toutes les cartes INVOCATION de type \" Spatial \" sur ce terrain obtiennent 1 étoile de DEF supplémentaires."
+    },
+    "ecran-de-fin-nul": {
+      "title": "Écran de fin nul",
+      "description": "Bravo... je crois.",
+      "detailed": "S'utilise dans le cas où une INVOCATION adverse attaque et détruit une de celles de votre terrain. L'INVOCATION victorieuse ne pourra plus lancer d'attaque et ce jusqu'à la fin du duel."
+    },
+    "etouffe-sous-les-jeux-de-merde": {
+      "title": "Étouffé sous les jeux de merde",
+      "description": "Mon p'tit gars ?!",
+      "detailed": "Si une INVOCATION adverse attaque une de vos cartes INVOCATION sur le terrain ou directement vos étoiles de vie, vous pouvez annuler son attaque et l'envoyer directement à la poubelle jaune en vous défaussant d'une carte de votre main."
+    }
+  }
+}

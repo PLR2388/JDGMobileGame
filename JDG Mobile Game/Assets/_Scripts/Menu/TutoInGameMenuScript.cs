@@ -1,22 +1,63 @@
-﻿using Cards;
+﻿using System;
+using Cards;
+using JDG.Application;
+using JDG.Application.Services;
+using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
+using JDG.Infrastructure.Services;
 using OnePlayer;
 using OnePlayer.DialogueBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 /// <summary>
 /// Represents the tutorial version of the in-game menu.
+/// Phase 17-18: Inherits ICardCollectionService from base class.
+/// Phase 34: Inherits ILocalizationService from base class.
+/// Phase 90: Uses ITutorialStateService instead of DialogueTutoHandler.Instance.
 /// </summary>
 public class TutoInGameMenuScript : InGameMenuScript
 {
     private const int CardDialogChangeIndex = 36;
     private const int PutCardIndex = 38;
 
+    // Phase 90: Tutorial state service replaces DialogueTutoHandler singleton
+    private ITutorialStateService _tutorialStateService;
+
+    // Phase 109: EventBus subscription for card click events
+    private IDisposable _tutoCardClickedSubscription;
+
     private TextMeshProUGUI buttonTextMeshProUGUI;
     private Button button;
     private HighLightButton highLightButton;
     private HighLightButton putCardHighLightButton;
+
+    /// <summary>
+    /// Phase 90: VContainer injection for tutorial-specific dependencies.
+    /// Phase 133: Renamed from ConstructTutorial to Construct for VContainer compatibility.
+    /// Phase 144: Fixed to inject ALL base class dependencies including _eventBus.
+    /// Phase 166: Added ICardCollectionProvider for CardHandler migration.
+    /// </summary>
+    [Inject]
+    public void Construct(
+        ITutorialStateService tutorialStateService,
+        ICardCollectionService cardCollectionService,
+        ICardCollectionProvider cardCollectionProvider,
+        IEventBus eventBus,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService,
+        GameStateService gameStateService)
+    {
+        _tutorialStateService = tutorialStateService;
+        _cardCollectionService = cardCollectionService;
+        _cardCollectionProvider = cardCollectionProvider;
+        _eventBus = eventBus;
+        _playerStatusProvider = playerStatusProvider;
+        _localizationService = localizationService;
+        _gameStateService = gameStateService;
+    }
 
     /// <summary>
     /// Awake method to cache component references.
@@ -31,13 +72,35 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     /// <summary>
     /// Initializes the state of UI and card handlers.
+    /// Phase 109: Uses EventBus instead of static EventClick UnityEvent.
     /// </summary>
     private void Start()
     {
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
-        EventClick.AddListener(ClickOnCard);
+        _tutoCardClickedSubscription = _eventBus?.Subscribe<InGameCardClickedEvent>(OnTutoCardClicked);
         InitializeCardHandlers();
+    }
+
+    /// <summary>
+    /// Event handler for InGameCardClickedEvent from EventBus.
+    /// Phase 109: Replaces static UnityEvent listener.
+    /// </summary>
+    private void OnTutoCardClicked(InGameCardClickedEvent evt)
+    {
+        if (evt.Card is InGameCard card)
+        {
+            ClickOnCard(card);
+        }
+    }
+
+    /// <summary>
+    /// Cleanup EventBus subscription on destroy.
+    /// Phase 109: Added for proper resource cleanup.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _tutoCardClickedSubscription?.Dispose();
     }
     
     /// <summary>
@@ -46,7 +109,9 @@ public class TutoInGameMenuScript : InGameMenuScript
     /// <param name="card">The in-game card that was clicked.</param>
     private void ClickOnCard(InGameCard card)
     {
-        var authorizedCard = DialogueTutoHandler.Instance.CurrentDialogIndex > CardDialogChangeIndex
+        // Phase 90: Use injected service instead of singleton
+        var currentIndex = _tutorialStateService?.CurrentDialogIndex ?? 0;
+        var authorizedCard = currentIndex > CardDialogChangeIndex
             ? CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive]
             : CardNameMappings.CardNameMap[CardNames.ClichéRaciste];
         if (card.Title != authorizedCard) return;
@@ -67,8 +132,10 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     /// <summary>
     /// Handles the "Put Card" action, triggering the appropriate event based on the card's type.
+    /// Phase 146: Changed from 'new' to 'override' to fix method hiding bug.
+    /// Phase 148: Moved DialogueTriggerCompletedEvent to HideHand (triggered when closing highlighted hand).
     /// </summary>
-    public new void ClickPutCard()
+    public override void ClickPutCard()
     {
         if (CardHandlerMap.TryGetValue(CurrentSelectedCard.Type, out var handler))
         {
@@ -83,7 +150,8 @@ public class TutoInGameMenuScript : InGameMenuScript
 
         if (CurrentSelectedCard.Title == CardNameMappings.CardNameMap[CardNames.MusiqueDeMegaDrive])
         {
-            HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+            // Phase 122: Publish via EventBus
+            _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.InHandButton, IsActivated = true });
         }
 
         if (!detailCardPanel.activeSelf) return;
@@ -121,11 +189,12 @@ public class TutoInGameMenuScript : InGameMenuScript
 
     /// <summary>
     /// Updates the button text based on the given localization key.
+    /// Phase 34: Uses inherited _localizationService instead of LocalizationSystem.Instance.
     /// </summary>
     /// <param name="key">Localization key for the button text.</param>
     private void UpdateButtonText(LocalizationKeys key)
     {
-        buttonTextMeshProUGUI.text = LocalizationSystem.Instance.GetLocalizedValue(key);
+        buttonTextMeshProUGUI.text = _localizationService.GetLocalizedValue(key);
     }
 
     /// <summary>
@@ -145,7 +214,15 @@ public class TutoInGameMenuScript : InGameMenuScript
         SetHandVisibility(true);
         UpdateButtonText(LocalizationKeys.BUTTON_BACK);
         UnselectButton();
-        HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
+        // Phase 17-18: Use ICardCollectionService from base class instead of CardManager.Instance
+        // Phase 23: Publish to EventBus instead of static UnityEvent
+        var playerCards = _cardCollectionService.GetCurrentPlayerCards();
+        var domainOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        _eventBus.Publish(new JDG.Domain.Events.HandCardsDisplayChangedEvent
+        {
+            Player = domainOwner,
+            HandCards = playerCards.HandCards
+        });
     }
 
     /// <summary>
@@ -153,20 +230,30 @@ public class TutoInGameMenuScript : InGameMenuScript
     /// </summary>
     private void HideHand()
     {
+        // Phase 148: Publish PutCard trigger when InHandButton was highlighted (player followed tutorial guidance)
+        if (highLightButton.isActivated)
+        {
+            _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.PutCard });
+        }
+
         SetHandVisibility(false);
         UpdateButtonText(LocalizationKeys.BUTTON_HAND);
         UnselectButton();
-        
+
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
-        
-        if (DialogueTutoHandler.Instance.CurrentDialogIndex == PutCardIndex)
+
+        // Phase 90: Use injected service instead of singleton
+        if (_tutorialStateService?.CurrentDialogIndex == PutCardIndex)
         {
-            DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.PutEffectCard);
+            // Phase 123: Publish via EventBus instead of static TriggerDoneEvent
+            _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.PutEffectCard });
         }
-        if (CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)
+        // Phase 17-18: Use ICardCollectionService from base class instead of CardManager.Instance
+        if (_cardCollectionService.GetCurrentPlayerCards().InvocationCards.Count == 2)
         {
-            HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
+            // Phase 122: Publish via EventBus
+            _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = true });
         }
     }
 }

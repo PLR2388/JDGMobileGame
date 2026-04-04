@@ -1,0 +1,16 @@
+{
+    "name": "JDG.Application",
+    "rootNamespace": "JDG.Application",
+    "references": [
+        "JDG.Domain"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

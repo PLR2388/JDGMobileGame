@@ -1,7 +1,16 @@
 ﻿using Cards;
+using JDG.Application;
+using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
+/// <summary>
+/// Phase 24-25: Added VContainer injection for IEventBus and ICardCollectionService.
+/// Phase 7: Added IAbilityProvider for ability system migration.
+/// Phase 61: Added all ability providers (required by CardFactory).
+/// </summary>
 public class CardDisplay : MonoBehaviour
 {
     private InGameCard _inGameCard;
@@ -9,6 +18,19 @@ public class CardDisplay : MonoBehaviour
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private bool isFaceHidden;
     private Image image;
+
+    // Phase 62: ICardFactory for card creation (replaces individual providers)
+    private ICardFactory _cardFactory;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 62: Simplified - uses ICardFactory instead of individual ability providers.
+    /// </summary>
+    [Inject]
+    public void Construct(ICardFactory cardFactory)
+    {
+        _cardFactory = cardFactory;
+    }
 
     /// <summary>
     /// Public property for accessing and setting the InGameCard. When set, it also initializes the card and updates its material.
@@ -65,12 +87,22 @@ public class CardDisplay : MonoBehaviour
     /// <summary>
     /// Initializes the card. If the Card exists and InGameCard doesn't, a new InGameCard is created.
     /// If Card doesn't exist but InGameCard does, the base card of the InGameCard is set as the Card.
+    /// Phase 62: Uses ICardFactory instead of static CardFactory.CreateInGameCard.
+    /// Phase 144: Added null check after cast.
     /// </summary>
     private void InitializeCard()
     {
         if (Card != null && InGameCard == null)
         {
-            InGameCard = CardFactory.CreateInGameCard(Card, CardOwner.NotDefined);
+            var createdCard = _cardFactory?.CreateCard(Card, JDG.Domain.CardOwner.NotDefined);
+            if (createdCard is InGameCard inGameCard)
+            {
+                InGameCard = inGameCard;
+            }
+            else if (_cardFactory != null)
+            {
+                Debug.LogWarning($"[CardDisplay] Failed to create InGameCard for {Card?.Title}. Factory returned: {createdCard?.GetType().Name ?? "null"}");
+            }
         }
         else if (Card == null && InGameCard != null)
         {
@@ -101,9 +133,31 @@ public class CardDisplay : MonoBehaviour
 
     /// <summary>
     /// Updates the material used for the card's display.
+    /// Includes null safety to prevent NullReferenceException when called before Awake().
     /// </summary>
     private void UpdateCardMaterial()
     {
-        image.material = CurrentMaterial;
+        // Ensure image component is available (may be called before Awake)
+        if (image == null)
+        {
+            image = GetComponent<Image>();
+        }
+
+        if (image == null)
+        {
+            Debug.LogError($"CardDisplay.UpdateCardMaterial: Image component not found on {gameObject.name}");
+            return;
+        }
+
+        var material = CurrentMaterial;
+        if (material != null)
+        {
+            image.material = material;
+        }
+        else
+        {
+            Debug.LogWarning($"CardDisplay.UpdateCardMaterial: CurrentMaterial is null for card '{Card?.Title ?? "Unknown"}'");
+            image.material = defaultMaterial;
+        }
     }
 }

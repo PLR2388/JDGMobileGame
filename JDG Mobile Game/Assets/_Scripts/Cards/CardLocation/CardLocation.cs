@@ -1,18 +1,24 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using _Scripts.Units.Invocation;
-using Cards.EffectCards;
+using JDG.Application;
+using JDG.Domain;
+using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 
 namespace Cards
 {
+    /// <summary>
+    /// Phase 17-18: Removed UnitManager singleton dependency via ICardInstantiationService.
+    /// Phase 23: Migrated from static UnityEvent to EventBus subscription.
+    /// </summary>
     public class CardLocation : MonoBehaviour
     {
         [SerializeField] private GameObject player1;
         [SerializeField] private GameObject player2;
-
-        public static readonly UnityEvent UpdateLocation = new UnityEvent();
 
         private const float CardYOffset = 0.5f;
         private const float HiddenCardPosition = 1000f;
@@ -20,6 +26,28 @@ namespace Cards
 
         private PlayerCards player1Cards;
         private PlayerCards player2Cards;
+
+        // Phase 17-18: Injected dependencies
+        private ICardInstantiationService _cardInstantiationService;
+
+        // Phase 23: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+        private IDisposable _cardLocationSubscription;
+
+        /// <summary>
+        /// VContainer method injection for dependencies.
+        /// Phase 17-18: Inject ICardInstantiationService instead of UnitManager.Instance.
+        /// Phase 23: Inject IEventBus for static UnityEvent migration.
+        /// </summary>
+        [Inject]
+        public void Construct(ICardInstantiationService cardInstantiationService, IEventBus eventBus)
+        {
+            _cardInstantiationService = cardInstantiationService;
+            _eventBus = eventBus;
+#if UNITY_EDITOR
+            Debug.Log($"CardLocation.Construct: Received ICardInstantiationService (HashCode={cardInstantiationService?.GetHashCode()})");
+#endif
+        }
 
         private static readonly PlayerCardLocations Player1Locations = new PlayerCardLocations
         {
@@ -88,21 +116,40 @@ namespace Cards
         }
 
         /// <summary>
-        /// Initializes the player1Cards and player2Cards by getting the PlayerCards component from the serialized GameObjects. It also adds a listener to the UpdateLocation UnityEvent.
+        /// Initializes the player1Cards and player2Cards by getting the PlayerCards component from the serialized GameObjects.
         /// </summary>
         void Awake()
         {
             player1Cards = player1.GetComponent<PlayerCards>();
             player2Cards = player2.GetComponent<PlayerCards>();
-            UpdateLocation.AddListener(UpdateCardLocation);
         }
 
         /// <summary>
-        /// Removes the listener from the UpdateLocation UnityEvent when the object is destroyed.
+        /// Subscribes to EventBus events.
+        /// Phase 46: Moved from Awake to Start to ensure VContainer injection is complete.
+        /// Phase 23: Subscribes to EventBus instead of static UnityEvent.
+        /// </summary>
+        void Start()
+        {
+            _cardLocationSubscription = _eventBus.Subscribe<CardLocationChangedEvent>(OnCardLocationChanged);
+        }
+
+        /// <summary>
+        /// Removes the listener when the object is destroyed.
+        /// Phase 23: Disposes EventBus subscription.
         /// </summary>
         void OnDestroy()
         {
-            UpdateLocation.RemoveListener(UpdateCardLocation);
+            _cardLocationSubscription?.Dispose();
+        }
+
+        /// <summary>
+        /// Event handler for CardLocationChangedEvent.
+        /// Phase 23: Replaces static UnityEvent listener.
+        /// </summary>
+        private void OnCardLocationChanged(CardLocationChangedEvent evt)
+        {
+            UpdateCardLocation();
         }
 
         /// <summary>
@@ -120,15 +167,30 @@ namespace Cards
         /// <param name="cards"></param>
         public void HideCards(List<InGameCard> cards)
         {
+            if (_cardInstantiationService == null)
+            {
+                Debug.LogError("CardLocation.HideCards: _cardInstantiationService is null! VContainer injection may have failed.");
+                return;
+            }
+
             foreach (var card in cards)
             {
-                var cardGameObject = GetPhysicalCard(card, card.CardOwner == CardOwner.Player1);
+                bool isPlayerOne = card.CardOwner == CardOwner.Player1;
+                var cardGameObject = GetPhysicalCard(card, isPlayerOne);
+                if (cardGameObject == null)
+                {
+                    Debug.LogWarning($"CardLocation.HideCards: Could not find physical card for '{card.Title}' " +
+                        $"(CardOwner={card.CardOwner}, isPlayerOne={isPlayerOne}). " +
+                        $"Dictionary has {_cardInstantiationService.GetDictionaryCount()} entries.");
+                    continue;
+                }
                 cardGameObject.transform.position = secretHide;
             }
         }
 
         /// <summary>
-        /// Fetches the physical game object of the card from the UnitManager.
+        /// Fetches the physical game object of the card from the CardInstantiationService.
+        /// Phase 17-18: Now uses ICardInstantiationService instead of UnitManager.Instance.
         /// </summary>
         /// <param name="card"></param>
         /// <param name="isPlayerOne"></param>
@@ -136,7 +198,7 @@ namespace Cards
         private GameObject GetPhysicalCard(InGameCard card, bool isPlayerOne)
         {
             var cardName = card.Title + (isPlayerOne ? "P1" : "P2");
-            UnitManager.Instance.CardNameToGameObject.TryGetValue(cardName, out var cardGameObject);
+            _cardInstantiationService.TryGetCardGameObject(cardName, out var cardGameObject);
             return cardGameObject;
         }
 
@@ -149,8 +211,20 @@ namespace Cards
         /// <param name="cardTag"></param>
         private void UpdateCardDisplay(GameObject cardGameObject, Vector3 position, bool shouldDisplay, string cardTag)
         {
+            if (cardGameObject == null)
+            {
+                Debug.LogWarning("CardLocation.UpdateCardDisplay: cardGameObject is null");
+                return;
+            }
+
             cardGameObject.transform.position = position;
             var displayComponent = cardGameObject.GetComponent<PhysicalCardDisplay>();
+            if (displayComponent == null)
+            {
+                Debug.LogWarning($"CardLocation.UpdateCardDisplay: PhysicalCardDisplay component not found on '{cardGameObject.name}'");
+                return;
+            }
+
             if (displayComponent.IsFaceHidden == shouldDisplay)
             {
                 if (shouldDisplay)
@@ -210,13 +284,17 @@ namespace Cards
         /// <param name="cardTag"></param>
         private void DisplayFieldCard(bool isPlayerOne, InGameFieldCard field, string cardTag)
         {
+            if (field == null) return;
 
-            if (field != null)
+            var cardGameObject = GetPhysicalCard(field, field.CardOwner == CardOwner.Player1);
+            if (cardGameObject == null)
             {
-                var cardGameObject = GetPhysicalCard(field, field.CardOwner == CardOwner.Player1);
-                var fieldCardLocation = isPlayerOne ? Player1Locations.FieldCard : Player2Locations.FieldCard;
-                UpdateCardDisplay(cardGameObject, fieldCardLocation, true, cardTag);
+                Debug.LogWarning($"CardLocation.DisplayFieldCard: Could not find physical card for field '{field.Title}'");
+                return;
             }
+
+            var fieldCardLocation = isPlayerOne ? Player1Locations.FieldCard : Player2Locations.FieldCard;
+            UpdateCardDisplay(cardGameObject, fieldCardLocation, true, cardTag);
         }
 
         /// <summary>

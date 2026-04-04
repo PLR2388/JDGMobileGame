@@ -1,28 +1,197 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using _Scripts.Units.Invocation;
+using System.Linq;
 using Cards;
+using JDG.Application.Cards;
+using JDG.Domain;
+using JDG.Infrastructure.Cards;
+using JDG.Presentation.Presenters;
 using Sound;
 using UnityEngine;
+using VContainer;
+using JDG.Application;
+using JDG.Application.Abilities;
+using JDG.Application.Services;
+using JDG.Domain.Events;
+using JDG.Infrastructure.Services;
 
+/// <summary>
+/// Phase 17-18: Removed CardManager singleton dependency via Phase 4 services.
+/// Phase 28: Uses IPlayerStatusProvider instead of PlayerManager.Instance.
+/// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 35: Uses IDialogService instead of MessageBox/CardSelector.Instance.
+/// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
+/// Phase 127: Removed UIManager - uses presenters directly.
+/// </summary>
 public class GameLoop : MonoBehaviour
 {
+    // Phase 127: SerializeField references for presenter construction
+    [SerializeField] private GameObject bigImageCard;
+    [SerializeField] protected GameObject nextPhaseButton;
+    // Phase 136: Removed canvasTransform SerializeField - now uses ICanvasProvider
+    // Phase 122: Changed to protected so TutoPlayerGameLoop can access for HighlightRequestedEvent
+    protected IEventBus _eventBus;
+    protected GameStateService _gameStateService;
+    protected IRaycastService _raycastService;
+    protected IInvocationMenuService _invocationMenuService;
+    protected IRoundDisplayService _roundDisplayService;
+
+    // Phase 17-18: Phase 4 services replacing CardManager
+    // Changed to protected so TutoPlayerGameLoop can access them
+    protected ICombatService _combatService;
+    protected ICardCollectionService _cardCollectionService;
+    protected ITurnService _turnService;
+    protected ICardDrawService _cardDrawService;
+
+    // Phase 127: Direct presenters replacing UIManager
+    protected CardDisplayPresenter _cardDisplayPresenter;
+    protected DialogPresenter _dialogPresenter;
+    protected CardSelectorPresenter _cardSelectorPresenter;
+
+    // Phase 127: ICardVisualService for CardDisplayPresenter
+    protected ICardVisualService _cardVisualService;
+
+    // Phase 19-20: Injected InputManager (protected so TutoPlayerGameLoop can access)
+    protected InputManager _inputManager;
+
+    // Phase 28: IPlayerStatusProvider instead of PlayerManager.Instance
+    protected IPlayerStatusProvider _playerStatusProvider;
+
+    // Phase 34: ILocalizationService instead of LocalizationSystem.Instance
+    protected ILocalizationService _localizationService;
+
+    // Phase 35: IDialogService instead of MessageBox/CardSelector.Instance
+    protected IDialogService _dialogService;
+
+    // Phase 8: IAudioService instead of AudioSystem.Instance
+    protected IAudioService _audioService;
+
+    // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
+    protected ISceneLoaderService _sceneLoaderService;
+
+    // Phase 136: ICanvasProvider instead of SerializeField canvasTransform
+    protected ICanvasProvider _canvasProvider;
+
+    // Phase 141: IAbilityExecutor for equipment ability execution with sync
+    protected IAbilityExecutor _abilityExecutor;
+
+    // Phase 144: Store subscriptions for proper disposal
+    private IDisposable _longTouchSubscription;
+    private IDisposable _touchStartedSubscription;
+    private IDisposable _touchEndedSubscription;
+    private IDisposable _backPressedSubscription;
+    private IDisposable _gameOverSubscription;
+
+    // Phase 158: Guard to prevent multiple GameOver() calls causing duplicate scene loads
+    private bool _isGameOverTriggered;
+
+    /// <summary>
+    /// VContainer injection point. Called before Start().
+    /// Phase 17-18: Added Phase 4 services to replace CardManager.Instance.
+    /// Phase 28: Added IPlayerStatusProvider to replace PlayerManager.Instance.
+    /// Phase 34: Added ILocalizationService to replace LocalizationSystem.Instance.
+    /// Phase 35: Added IDialogService to replace MessageBox/CardSelector.Instance.
+    /// Phase 8: Added IAudioService to replace AudioSystem.Instance.
+    /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
+    /// Phase 127: Removed UIManager, added ICardVisualService for presenters.
+    /// Phase 136: Added ICanvasProvider to replace SerializeField canvasTransform.
+    /// Phase 141: Added IAbilityExecutor for equipment ability execution with sync.
+    /// </summary>
+    [Inject]
+    public void Construct(
+        IEventBus eventBus,
+        GameStateService gameStateService,
+        IRaycastService raycastService,
+        IInvocationMenuService invocationMenuService,
+        IRoundDisplayService roundDisplayService,
+        ICombatService combatService,
+        ICardCollectionService cardCollectionService,
+        ITurnService turnService,
+        ICardDrawService cardDrawService,
+        InputManager inputManager,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService,
+        IDialogService dialogService,
+        IAudioService audioService,
+        ISceneLoaderService sceneLoaderService,
+        ICardVisualService cardVisualService,
+        ICanvasProvider canvasProvider,
+        IAbilityExecutor abilityExecutor)
+    {
+        _eventBus = eventBus;
+        _gameStateService = gameStateService;
+        _raycastService = raycastService;
+        _invocationMenuService = invocationMenuService;
+        _roundDisplayService = roundDisplayService;
+        _combatService = combatService;
+        _cardCollectionService = cardCollectionService;
+        _turnService = turnService;
+        _cardDrawService = cardDrawService;
+        _inputManager = inputManager;
+        _playerStatusProvider = playerStatusProvider;
+        _localizationService = localizationService;
+        _dialogService = dialogService;
+        _audioService = audioService;
+        _sceneLoaderService = sceneLoaderService;
+        _cardVisualService = cardVisualService;
+        _canvasProvider = canvasProvider;
+        _abilityExecutor = abilityExecutor;
+    }
 
     // Start is called before the first frame update
-    private void Start()
+    protected virtual void Start()
     {
-        InputManager.OnLongTouch.AddListener(OnLongTouch);
-        InputManager.OnTouch.AddListener(OnTouch);
-        InputManager.OnReleaseTouch.AddListener(OnReleaseTouch);
-        InputManager.OnBackPressed.AddListener(OnBackPressed);
+        // Phase 127: Initialize presenters (replacing UIManager)
+        // Phase 136: Get canvas from ICanvasProvider instead of SerializeField
+        // Phase 147: Added null check for canvas to prevent presenter crashes
+        // Phase 156: Throw exception instead of silent return - game cannot function without UI
+        var canvas = _canvasProvider.GetGameCanvas() as Transform;
+        if (canvas == null)
+        {
+            throw new System.InvalidOperationException(
+                "GameLoop: Canvas is null! Game cannot function without UI. " +
+                "Ensure ICanvasProvider is properly configured in GameSceneScope and a Canvas exists in the scene.");
+        }
+        _cardDisplayPresenter = new CardDisplayPresenter(bigImageCard, _cardVisualService);
+        _dialogPresenter = new DialogPresenter(canvas, _localizationService, _dialogService);
+        _cardSelectorPresenter = new CardSelectorPresenter(canvas, nextPhaseButton, _localizationService, _dialogService);
+
+        // Subscribe to EventBus events instead of static UnityEvents
+        // Phase 144: Store subscriptions for disposal in OnDestroy
+        _longTouchSubscription = _eventBus.Subscribe<LongTouchEvent>(OnLongTouch);
+        _touchStartedSubscription = _eventBus.Subscribe<TouchStartedEvent>(OnTouch);
+        _touchEndedSubscription = _eventBus.Subscribe<TouchEndedEvent>(OnReleaseTouch);
+        _backPressedSubscription = _eventBus.Subscribe<BackButtonPressedEvent>(OnBackPressed);
+        // Phase 144: Subscribe to GameOverEvent to handle game ending
+        _gameOverSubscription = _eventBus.Subscribe<GameOverEvent>(OnGameOver);
+
+        // Defer Draw() to next frame to ensure all Start() methods complete first.
+        // This fixes the race condition where Draw() might run before PlayerCards.Start()
+        // has finished setting up hand cards and collection change handlers.
+        StartCoroutine(DeferredDraw());
+    }
+
+    /// <summary>
+    /// Waits one frame before drawing the first card, ensuring all MonoBehaviour
+    /// Start() methods have completed their initialization.
+    /// </summary>
+    private IEnumerator DeferredDraw()
+    {
+        yield return null; // Wait one frame
         Draw();
     }
 
-    private void OnDestroy()
+    /// <summary>
+    /// Phase 144: Fixed - subscriptions must be manually disposed.
+    /// </summary>
+    protected virtual void OnDestroy()
     {
-        InputManager.OnLongTouch.RemoveListener(OnLongTouch);
-        InputManager.OnTouch.RemoveListener(OnTouch);
-        InputManager.OnReleaseTouch.RemoveListener(OnReleaseTouch);
-        InputManager.OnBackPressed.RemoveListener(OnBackPressed);
+        _longTouchSubscription?.Dispose();
+        _touchStartedSubscription?.Dispose();
+        _touchEndedSubscription?.Dispose();
+        _backPressedSubscription?.Dispose();
+        _gameOverSubscription?.Dispose();
     }
 
     #region UI Interaction
@@ -30,41 +199,44 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Action when back is pressed
     /// </summary>
-    protected void OnBackPressed()
+    protected void OnBackPressed(BackButtonPressedEvent evt)
     {
         void PositiveAction()
         {
-            SceneLoaderSystem.LoadMainScreen();
+            // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+            _sceneLoaderService.LoadMainScreen();
         }
 
-        UIManager.Instance.DisplayPauseMenu(PositiveAction);
+        // Phase 127: Use DialogPresenter directly instead of UIManager
+        _dialogPresenter.ShowPauseMenu(PositiveAction);
     }
 
     /// <summary>
     /// When user just stops to touch the screen
     /// </summary>
-    protected void OnReleaseTouch()
+    protected void OnReleaseTouch(TouchEndedEvent evt)
     {
-        UIManager.Instance.HideBigImage();
+        // Phase 127: Use CardDisplayPresenter directly instead of UIManager
+        _cardDisplayPresenter.HideCard();
     }
 
     /// <summary>
     /// When user just touches the screen
     /// </summary>
-    private void OnTouch()
+    private void OnTouch(TouchStartedEvent evt)
     {
-        var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
-        var currentOwner = GameStateManager.Instance.IsP1Turn ? CardOwner.Player1 : CardOwner.Player2;
+        var cardTouch = _raycastService.GetTouchedCard();
+        var currentOwner = _gameStateService.CurrentPlayer.ToCardOwner();
         if (cardTouch != null)
         {
-            switch (GameStateManager.Instance.Phase)
+            switch (_gameStateService.CurrentPhase)
             {
-                case Phase.Choose:
+                case JDG.Domain.Phase.Choose:
                 {
                     HandleSingleTouch(cardTouch, currentOwner, false);
                 }
                     break;
-                case Phase.Attack:
+                case JDG.Domain.Phase.Attack:
                 {
                     HandleSingleTouch(cardTouch, currentOwner, true);
                 }
@@ -75,20 +247,23 @@ public class GameLoop : MonoBehaviour
     }
 
     /// <summary>
-    /// Display a menu and set attacker if user touches a card he owns
+    /// Display a menu and set attacker if user touches a card he owns.
+    /// Phase 166: Changed parameter to IInGameCard (from concrete InGameCard).
     /// </summary>
     /// <param name="cardTouch">Current card touched</param>
     /// <param name="currentOwner">Owner associated to the current player</param>
     /// <param name="isAttackPhase">Is the touch happen during attack phase</param>
-    protected static void HandleSingleTouch(InGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
+    protected void HandleSingleTouch(IInGameCard cardTouch, CardOwner currentOwner, bool isAttackPhase)
     {
 
         if (cardTouch is InGameInvocationCard invocationCard)
         {
             if (invocationCard.CardOwner == currentOwner || invocationCard.IsControlled)
             {
-                CardManager.Instance.Attacker = invocationCard;
-                InvocationMenuManager.Instance.Display(isAttackPhase);
+                // Phase 17-18: Use ICombatService instead of CardManager.Instance
+                _combatService.Attacker = invocationCard;
+                // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+                _invocationMenuService.Display(isAttackPhase);
             }
         }
     }
@@ -96,45 +271,46 @@ public class GameLoop : MonoBehaviour
     /// <summary>
     /// Called when user touches during a long time
     /// </summary>
-    protected void OnLongTouch()
+    protected void OnLongTouch(LongTouchEvent evt)
     {
-        InvocationMenuManager.Instance.Hide();
-        var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.Hide();
+        var cardTouch = _raycastService.GetTouchedCard();
         if (cardTouch != null)
         {
-            UIManager.Instance.DisplayCardOnLargeView(cardTouch);
+            // Phase 127: Use CardDisplayPresenter directly instead of UIManager
+            _cardDisplayPresenter.ShowCard(cardTouch);
         }
     }
 
     /// <summary>
-    /// Called when user presses the next phase button
+    /// Called when user presses the next phase button.
+    /// Note: Attack phase skip for Player 1 on Turn 1 is handled automatically by GameStateService.NextPhase().
     /// </summary>
     protected virtual void NextRound()
     {
-        InvocationMenuManager.Instance.Hide();
-        if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
-        {
-            GameStateManager.Instance.SetPhase(Phase.End);
-        }
-        else
-        {
-            GameStateManager.Instance.NextPhase();
-        }
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.Hide();
 
-        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
+        // NextPhase() automatically skips Attack phase for Player 1 on Turn 1
+        _gameStateService.NextPhase();
+
+        // Check if attack is blocked by card effects
+        var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
+        if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
         {
-            GameStateManager.Instance.SetPhase(Phase.End);
+            _gameStateService.SetPhase(JDG.Domain.Phase.End);
         }
 
-        RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(true);
+        // Phase 9: Use injected service instead of RoundDisplayManager.Instance
+        _roundDisplayService.AdaptUIToPhaseIdInNextRound(true);
 
-        switch (GameStateManager.Instance.Phase)
+        switch (_gameStateService.CurrentPhase)
         {
-            case Phase.Attack:
+            case JDG.Domain.Phase.Attack:
                 PlayAttackMusic();
                 break;
-            case Phase.End:
+            case JDG.Domain.Phase.End:
                 EndTurnPhase();
                 break;
         }
@@ -149,75 +325,142 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected virtual void ChoosePhase()
     {
-        InvocationMenuManager.Instance.Enable();
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.Enable();
         ChoosePhaseMusic();
     }
 
     /// <summary>
     /// Choose the right Choose music
+    /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// </summary>
     protected void ChoosePhaseMusic()
     {
-        var currentFieldCard = CardManager.Instance.GetCurrentPlayerCards().FieldCard;
+        // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+        var currentFieldCard = _cardCollectionService.GetCurrentPlayerCards().FieldCard;
         if (currentFieldCard == null)
         {
-            AudioSystem.Instance.PlayMusic(Music.DrawPhase);
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService.PlayMusic(nameof(Music.DrawPhase));
         }
         else
         {
-            AudioSystem.Instance.PlayFamilyMusic(currentFieldCard.Family);
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService.PlayFamilyMusic(currentFieldCard.Family);
         }
     }
 
     /// <summary>
     /// Redirect player after a Gameover
+    /// Phase 55: Uses ISceneLoaderService instead of SceneLoaderSystem.
+    /// Phase 158: Added guard to prevent duplicate calls from multiple sources.
     /// </summary>
-    private static void GameOver()
+    private void GameOver()
     {
-        GameStateManager.Instance.SetPhase(Phase.GameOver);
-        SceneLoaderSystem.LoadMainScreen();
+        // Phase 158: Guard against duplicate GameOver calls (can come from multiple sources:
+        // HandlePlayerDeath(), OnNoCards() callback, GameOverEvent, etc.)
+        if (_isGameOverTriggered)
+        {
+#if UNITY_EDITOR
+            Debug.Log("GameLoop.GameOver: Already triggered, ignoring duplicate call");
+#endif
+            return;
+        }
+        _isGameOverTriggered = true;
+
+        _gameStateService.SetPhase(JDG.Domain.Phase.GameOver);
+        _sceneLoaderService.LoadMainScreen();
+    }
+
+    /// <summary>
+    /// Handler for GameOverEvent from EventBus.
+    /// Phase 144: Subscribes to GameOverEvent to trigger game over flow.
+    /// </summary>
+    private void OnGameOver(GameOverEvent evt)
+    {
+#if UNITY_EDITOR
+        Debug.Log($"GameLoop.OnGameOver: Winner = {evt.Winner}, Reason = {evt.Reason}");
+#endif
+        GameOver();
     }
 
     /// <summary>
     /// Play the attack music
+    /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
     /// </summary>
     protected void PlayAttackMusic()
     {
-        AudioSystem.Instance.PlayMusic(Music.Fight);
+        // Phase 8: Use IAudioService instead of AudioSystem.Instance
+        _audioService.PlayMusic(nameof(Music.Fight));
     }
 
     /// <summary>
-    /// Display all available opponent after pressing Attack button
+    /// Display all available opponent after pressing Attack button.
+    /// Defense-in-depth: Uses GameStateService.ShouldSkipAttackPhase for Turn 1 restriction.
     /// </summary>
     protected void DisplayAvailableOpponent()
     {
-        var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
+        // Defense-in-depth: Block attack if attack phase should be skipped
+        if (_gameStateService.ShouldSkipAttackPhase)
+        {
+#if UNITY_EDITOR
+            Debug.Log("GameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
+#endif
+            return;
+        }
+
+#if UNITY_EDITOR
+        Debug.Log("GameLoop.DisplayAvailableOpponent: Called");
+#endif
+        // Phase 17-18: Use ICombatService instead of CardManager.Instance
+        var notEmptyOpponent = _combatService.BuildValidTargets();
+#if UNITY_EDITOR
+        Debug.Log($"GameLoop.DisplayAvailableOpponent: Found {notEmptyOpponent?.Count ?? 0} valid targets");
+#endif
         DisplayOpponentMessageBox(notEmptyOpponent);
-        InputManager.Instance.DisableDetectionTouch();
+        // Phase 19-20: Use injected InputManager instead of .Instance
+        _inputManager.DisableDetectionTouch();
     }
 
     /// <summary>
-    /// Display the MessageBox with the available opponents
+    /// Display the MessageBox with the available opponents.
+    /// Phase 127: Uses CardSelectorPresenter directly with interface types.
+    /// Phase 140: Added tracing for debugging target display.
+    /// Phase 166: Changed parameter to IReadOnlyList{IInGameCard} to match BuildValidTargets().
     /// </summary>
     /// <param name="invocationCards">Available opponents list</param>
-    private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
+    private void DisplayOpponentMessageBox(IReadOnlyList<IInGameCard> invocationCards)
     {
-        void PositiveAction(InGameInvocationCard invocationCard)
+#if UNITY_EDITOR
+        Debug.Log($"GameLoop.DisplayOpponentMessageBox() - START, count: {invocationCards?.Count ?? -1}");
+        if (invocationCards != null)
         {
-            if (invocationCard != null)
+            foreach (var card in invocationCards)
             {
-                CardManager.Instance.Opponent = invocationCard;
+                Debug.Log($"GameLoop.DisplayOpponentMessageBox() - Card: {card?.Title ?? "NULL"}, Type: {card?.GetType().FullName ?? "NULL"}");
+            }
+        }
+#endif
+        void OnCardSelected(IInGameInvocationCard selectedCard)
+        {
+            if (selectedCard != null)
+            {
+                // Phase 166: Opponent is now IInGameInvocationCard, no cast needed
+                _combatService.Opponent = selectedCard;
                 ComputeAttack();
             }
-            InputManager.Instance.EnableDetectionTouch();
+            // Phase 19-20: Use injected InputManager instead of .Instance
+            _inputManager.EnableDetectionTouch();
         }
 
-        void NegativeAction()
+        void OnCancelled()
         {
-            InputManager.Instance.EnableDetectionTouch();
+            // Phase 19-20: Use injected InputManager instead of .Instance
+            _inputManager.EnableDetectionTouch();
         }
 
-        UIManager.Instance.DisplayOpponentAvailableMessageBox(invocationCards, PositiveAction, NegativeAction);
+        // Phase 127: Use CardSelectorPresenter directly with interface types
+        _cardSelectorPresenter.ShowOpponentSelector(invocationCards, OnCardSelected, OnCancelled);
     }
 
     /// <summary>
@@ -225,19 +468,29 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void ComputeAttack()
     {
-        CardManager.Instance.HandleAttack();
-        InvocationMenuManager.Instance.UpdateAttackButton();
+        // Phase 17-18: Use ICombatService instead of CardManager.Instance
+        _combatService.HandleAttack();
+        // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+        _invocationMenuService.UpdateAttackButton();
         HandlePlayerDeath();
     }
 
     /// <summary>
     /// Check if one of the player die
     /// </summary>
-    private static void HandlePlayerDeath()
+    private void HandlePlayerDeath()
     {
         // Check if one player die
-        var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-        var opponentPlayerStatus = PlayerManager.Instance.GetOpponentPlayerStatus();
+        var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
+        var opponentPlayerStatus = _playerStatusProvider.GetOpponentPlayerStatus();
+
+        // Phase 148: Add null checks to prevent NullReferenceException
+        if (playerStatus == null || opponentPlayerStatus == null)
+        {
+            Debug.LogWarning("GameLoop.HandlePlayerDeath: PlayerStatus or OpponentPlayerStatus is null");
+            return;
+        }
+
         if (playerStatus.GetCurrentHealth() <= 0)
         {
             GameOver();
@@ -254,12 +507,14 @@ public class GameLoop : MonoBehaviour
     protected void Draw()
     {
         DoDraw();
-        GameStateManager.Instance.IncrementNumberOfTurn();
-        GameStateManager.Instance.NextPhase();
+        _gameStateService.StartNewTurn();
+        _gameStateService.NextPhase();
 
         ChoosePhase();
-        RoundDisplayManager.Instance.SetRoundText(
-            LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE)
+        // Phase 9: Use injected service instead of RoundDisplayManager.Instance
+        // Phase 34: Use injected ILocalizationService instead of LocalizationSystem.Instance
+        _roundDisplayService.SetRoundText(
+            _localizationService.GetLocalizedValue(LocalizationKeys.PHASE_CHOOSE)
         );
     }
 
@@ -268,14 +523,16 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     private void DoDraw()
     {
-        CardManager.Instance.OnTurnStart();
+        // Phase 17-18: Use ITurnService instead of CardManager.Instance
+        _turnService.OnTurnStart();
 
         void OnNoCards()
         {
             GameOver();
         }
 
-        CardManager.Instance.Draw(OnNoCards);
+        // Phase 17-18: Use ICardDrawService instead of CardManager.Instance
+        _cardDrawService.DrawCard(OnNoCards);
     }
 
     /// <summary>
@@ -283,8 +540,9 @@ public class GameLoop : MonoBehaviour
     /// </summary>
     protected void EndTurnPhase()
     {
-        CardManager.Instance.HandleEndTurn();
-        GameStateManager.Instance.HandleEndTurn();
+        // Phase 17-18: Use ITurnService instead of CardManager.Instance
+        _turnService.HandleEndTurn();
+        _gameStateService.HandleEndTurn();
         Draw();
     }
 

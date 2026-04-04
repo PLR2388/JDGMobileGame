@@ -237,7 +237,7 @@ When you're on Unity Editor, select the `_preload` scene and press the Play butt
 
 ### Requirements for Running the Game
 
-- **Unity Editor Version**: The game is developed for Unity Editor version 2022.3.9f1. Ensure you have this version installed for compatibility.
+- **Unity Editor Version**: The game is developed for Unity Editor version 6000.0.60f1. Ensure you have this version installed for compatibility.
 - **Additional Libraries**: No additional libraries are required. All necessary components are included within the project.
 - **System Requirements**: A computer capable of running the Unity Editor is sufficient to develop and test the game.
 - **Target Platform**: The game targets Android devices, specifically Android API 22 (Lollipop) and above.

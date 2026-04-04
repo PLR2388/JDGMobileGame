@@ -1,0 +1,32 @@
+{
+    "name": "JDG.Infrastructure.Tests",
+    "rootNamespace": "JDG.Infrastructure.Tests",
+    "references": [
+        "JDG.Domain",
+        "JDG.Application",
+        "JDG.Cards",
+        "JDG.Infrastructure",
+        "JDG.Core",
+        "JDG.Legacy",
+        "JDG.TestUtilities",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "NSubstitute.dll",
+        "Castle.Core.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

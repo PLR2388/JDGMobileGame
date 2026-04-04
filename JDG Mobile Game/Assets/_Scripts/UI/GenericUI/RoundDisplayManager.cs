@@ -1,10 +1,22 @@
+using JDG.Application;
+using JDG.Application.Services;
+using JDG.Domain;
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Services;
+using JDG.Presentation.Presenters;
+using JDG.Presentation.Views;
 using TMPro;
 using UnityEngine;
+using VContainer;
 
 /// <summary>
-/// Manages the round display, including round text, player indicators, and camera orientation.
+/// View implementation for round/turn display.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
+/// Phase 24-25: Removed ServiceLocator, using VContainer DI.
+/// Phase 27: Updated to use JDG.Domain.Phase after global Phase enum was removed with GameStateManager.
+/// Phase 28: Migrated to MVP pattern - now implements IRoundDisplayView, business logic moved to RoundDisplayPresenter.
 /// </summary>
-public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
+public class RoundDisplayManager : MonoBehaviour, IRoundDisplayView
 {
     [SerializeField] private TextMeshProUGUI playerText;
     [SerializeField] private TextMeshProUGUI roundText;
@@ -13,60 +25,120 @@ public class RoundDisplayManager : StaticInstance<RoundDisplayManager>
 
     private readonly Vector3 cameraRotation = new Vector3(0, 0, 180);
 
+    // Phase 28: Presenter handles business logic
+    private RoundDisplayPresenter _presenter;
+    private GameStateService _gameStateService;
+
     /// <summary>
-    /// Sets the displayed round text.
+    /// VContainer method injection for dependencies.
+    /// Phase 28: Injects services needed to create the presenter.
     /// </summary>
-    /// <param name="value">The text value to set.</param>
-    public void SetRoundText(string value)
+    [Inject]
+    public void Construct(
+        GameStateService gameStateService,
+        IEventBus eventBus,
+        ILocalizationService localizationService)
     {
-        if (roundText)
-            roundText.text = value;
+        _gameStateService = gameStateService;
+
+        // Phase 28: Create presenter with this view and injected services
+        _presenter = new RoundDisplayPresenter(this, eventBus, localizationService);
     }
+
+    private void Start()
+    {
+        // Phase 144: Null check for presenter in case Construct() wasn't called
+        if (_presenter == null)
+        {
+            Debug.LogError("[RoundDisplayManager] Presenter not initialized. Ensure Construct() was called via VContainer.");
+            return;
+        }
+
+        if (_gameStateService == null)
+        {
+            Debug.LogError("[RoundDisplayManager] GameStateService not injected.");
+            return;
+        }
+
+        // Initialize presenter with current game state
+        _presenter.Initialize(_gameStateService.CurrentPlayer, _gameStateService.CurrentPhase);
+    }
+
+    #region IRoundDisplayView Implementation
+
+    /// <summary>
+    /// Sets the displayed round/phase text.
+    /// Phase 28: Pure view operation, no business logic.
+    /// </summary>
+    public void SetRoundText(string text)
+    {
+        if (roundText != null)
+        {
+            roundText.text = text;
+        }
+    }
+
+    /// <summary>
+    /// Sets the player turn indicator text.
+    /// Phase 28: Pure view operation, no business logic.
+    /// </summary>
+    public void SetPlayerTurnText(string playerName)
+    {
+        if (playerText != null)
+        {
+            playerText.text = playerName;
+        }
+    }
+
+    /// <summary>
+    /// Shows or hides the "in hand" button.
+    /// Phase 28: Pure view operation, no business logic.
+    /// </summary>
+    public void SetInHandButtonVisible(bool visible)
+    {
+        if (inHandButton != null)
+        {
+            inHandButton.SetActive(visible);
+        }
+    }
+
+    /// <summary>
+    /// Rotates the camera for the end phase transition.
+    /// Phase 28: Unity-specific operation kept in view.
+    /// </summary>
+    public void RotateCamera()
+    {
+        if (playerCamera != null)
+        {
+            playerCamera.transform.Rotate(cameraRotation);
+        }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Cleanup method - disposes presenter to prevent memory leaks from EventBus subscriptions.
+    /// Phase 144: Added to fix memory leak identified in code audit.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _presenter?.Dispose();
+    }
+
+    #region Legacy Public Methods (for backward compatibility)
 
     /// <summary>
     /// Updates the UI elements based on the game phase in the next round.
+    /// Phase 28: Delegates to presenter for business logic.
+    /// DEPRECATED: Direct calls to this method should eventually use presenter directly.
     /// </summary>
     public void AdaptUIToPhaseIdInNextRound(bool rotate)
     {
-        var phaseId = GameStateManager.Instance.Phase;
-        switch (phaseId)
+        if (_presenter != null)
         {
-            case Phase.End:
-                inHandButton.SetActive(true);
-                SetRoundText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_DRAW));
-                if (rotate)
-                {
-                    RotateCameraForEndPhase();   
-                }
-                SetPlayerTurnText();
-                break;
-            case Phase.Attack:
-                inHandButton.SetActive(false);
-                SetRoundText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PHASE_ATTACK));
-                break;
-            // Optionally, add more phases as needed.
+            _presenter.AdaptUIToNextRound(rotate);
         }
     }
 
-    /// <summary>
-    /// Rotates the camera for the end phase of the game.
-    /// </summary>
-    private void RotateCameraForEndPhase()
-    {
-        if (playerCamera)
-            playerCamera.transform.Rotate(cameraRotation);
-    }
-
-    /// <summary>
-    /// Sets the text indicating whose turn it is.
-    /// </summary>
-    private void SetPlayerTurnText()
-    {
-        if (playerText)
-        {
-            playerText.text = GameStateManager.Instance.IsP1Turn 
-                ? LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_TWO) 
-                : LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.PLAYER_ONE);
-        }
-    }
+    #endregion
 }

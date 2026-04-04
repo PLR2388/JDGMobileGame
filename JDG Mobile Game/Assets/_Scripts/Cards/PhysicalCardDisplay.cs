@@ -1,4 +1,5 @@
 ﻿using Cards;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 
 public class PhysicalCardDisplay : MonoBehaviour

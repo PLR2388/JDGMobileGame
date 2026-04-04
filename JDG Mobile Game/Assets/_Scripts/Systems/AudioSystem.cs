@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using Cards;
+using JDG.Domain.Enums;
 using UnityEngine;
 
 namespace Sound
 {
     /// <summary>
     /// Manages the playback and control of audio, including both music and sound effects.
+    /// Phase 52: Marked obsolete - use IAudioService via dependency injection instead.
+    /// Phase 84 Fix: Changed to PersistentSingleton to survive scene loads (uses DontDestroyOnLoad).
     /// </summary>
-    public class AudioSystem : StaticInstance<AudioSystem>
+    [Obsolete("AudioSystem singleton is obsolete. Use IAudioService via dependency injection. Inject IAudioService in your constructor or use [Inject] attribute for MonoBehaviours.")]
+    public class AudioSystem : PersistentSingleton<AudioSystem>
     {
         [SerializeField] private Music[] musicNames;
         [SerializeField] private AudioClip[] musics;

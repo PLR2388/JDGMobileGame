@@ -1,0 +1,21 @@
+{
+    "name": "JDG.Infrastructure",
+    "rootNamespace": "JDG.Infrastructure",
+    "references": [
+        "JDG.Domain",
+        "JDG.Application",
+        "JDG.Cards",
+        "JDG.Core",
+        "VContainer",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,29 +1,95 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Application;
+using JDG.Domain.Enums;
+using JDG.Domain.Events;
+using JDG.Domain.ValueObjects;
+using JDG.Infrastructure.Cards;
 using Sound;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 using Random = UnityEngine.Random;
 
 namespace Menu
 {
     /// <summary>
     /// Manages the card choices and selections in the game menu.
+    /// Phase 9: Removed CardSelectionManager singleton dependency via DI.
+    /// Phase 17-18: Removed GameState singleton dependency via IDeckManagementService.
+    /// Phase 23: Migrated static UnityEvent to EventBus (ChangeChoicePlayer).
+    /// Phase 24-25: Added ICardCollectionService dependency for CardFactory.
+    /// Phase 8: Uses IAudioService instead of AudioSystem.Instance.
+    /// Phase 8: Uses CardChoiceUIManager DI instead of .Instance.
+    /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
+    /// Phase 7: Added IAbilityProvider for ability system migration.
     /// </summary>
     public class CardChoice : MonoBehaviour
     {
         [SerializeField] private GameObject container;
 
         /// <summary>
-        /// Event raised when the card choice of a player changes.
-        /// </summary>
-        public static readonly UnityEvent<int> ChangeChoicePlayer = new UnityEvent<int>();
-
-        /// <summary>
         /// Indicates if the player one has chosen their cards.
         /// </summary>
         public bool isPlayerOneCardChosen;
+
+        // Phase 41: Migrated to clean ICardSelectionService
+        private JDG.Application.Services.ICardSelectionService _cardSelectionService;
+
+        // Phase 17-18: Injected dependencies
+        private IDeckManagementService _deckManagementService;
+
+        // Phase 23: EventBus for static UnityEvent migration
+        private IEventBus _eventBus;
+
+        // Phase 8: IAudioService instead of AudioSystem.Instance
+        private JDG.Application.Services.IAudioService _audioService;
+
+        // Phase 8: CardChoiceUIManager DI instead of .Instance
+        private CardChoiceUIManager _cardChoiceUIManager;
+
+        // Phase 62: ICardFactory for card creation (replaces individual providers)
+        private JDG.Application.Services.ICardFactory _cardFactory;
+
+        // Phase 55: ISceneLoaderService instead of SceneLoaderSystem static calls
+        private JDG.Application.Services.ISceneLoaderService _sceneLoaderService;
+
+        /// <summary>
+        /// VContainer method injection for dependencies.
+        /// Phase 9: Inject ICardSelectionService instead of using singleton.
+        /// Phase 17-18: Inject IDeckManagementService instead of GameState.Instance.
+        /// Phase 23: Inject IEventBus for static UnityEvent migration.
+        /// Phase 8: Inject IAudioService instead of AudioSystem.Instance.
+        /// Phase 8: Inject CardChoiceUIManager instead of using .Instance.
+        /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
+        /// Phase 55: Added ISceneLoaderService to replace SceneLoaderSystem static calls.
+        /// Phase 62: Simplified - uses ICardFactory instead of individual ability providers.
+        /// </summary>
+        [Inject]
+        public void Construct(
+            JDG.Application.Services.ICardSelectionService cardSelectionService,
+            IDeckManagementService deckManagementService,
+            IEventBus eventBus,
+            JDG.Application.Services.IAudioService audioService,
+            CardChoiceUIManager cardChoiceUIManager,
+            JDG.Application.Services.ISceneLoaderService sceneLoaderService,
+            JDG.Application.Services.ICardFactory cardFactory)
+        {
+#if UNITY_EDITOR
+            Debug.Log("CardChoice.Construct() called by VContainer!");
+#endif
+            _cardSelectionService = cardSelectionService;
+            _deckManagementService = deckManagementService;
+            _eventBus = eventBus;
+            _audioService = audioService;
+            _cardChoiceUIManager = cardChoiceUIManager;
+            _sceneLoaderService = sceneLoaderService;
+            _cardFactory = cardFactory;
+#if UNITY_EDITOR
+            Debug.Log($"CardChoice.Construct() complete. _deckManagementService = {(_deckManagementService != null ? "OK" : "NULL")}");
+#endif
+        }
 
         /// <summary>
         /// Checks and counts the selected cards in the deck.
@@ -50,7 +116,8 @@ namespace Menu
         /// </summary>
         private void DeselectAllCards()
         {
-            CardSelectionManager.Instance.ClearSelection();
+            // Phase 9: Use injected service instead of CardSelectionManager.Instance
+            _cardSelectionService?.ClearSelection();
         }
 
         /// <summary>
@@ -61,33 +128,43 @@ namespace Menu
             var deck = new List<Card>();
             var numberSelected = CheckCard(deck);
 
-            if (numberSelected == GameState.MaxDeckCards)
+            if (numberSelected == DeckConfiguration.MaxDeckCards)
             {
-                CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(isPlayerOneCardChosen);
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.UpdateTitleAndButtonTextForPlayer(isPlayerOneCardChosen);
                 if (isPlayerOneCardChosen)
                 {
-                    AudioSystem.Instance.StopMusic();
-                    SceneLoaderSystem.LoadGameScreen();
+                    // Phase 8: Use IAudioService instead of AudioSystem.Instance
+                    _audioService?.StopMusic();
+                    // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+                    _sceneLoaderService.LoadGameScreen();
                     isPlayerOneCardChosen = false;
-                    ChangeChoicePlayer.Invoke(1);
+                    _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
 
-                    GameState.Instance.Player2DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player2)).ToList();
+                    // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+                    _deckManagementService.Player2DeckCards = deck
+                        .Select(card => _cardFactory.CreateCard(card, JDG.Domain.CardOwner.Player2) as InGameCard)
+                        .Where(card => card != null)
+                        .ToList();
                 }
                 else
                 {
                     isPlayerOneCardChosen = true;
-                    ChangeChoicePlayer.Invoke(2);
+                    _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 2 });
 
-                    GameState.Instance.Player1DeckCards =
-                        deck.Select(card => CardFactory.CreateInGameCard(card, CardOwner.Player1)).ToList();
+                    // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+                    _deckManagementService.Player1DeckCards = deck
+                        .Select(card => _cardFactory.CreateCard(card, JDG.Domain.CardOwner.Player1) as InGameCard)
+                        .Where(card => card != null)
+                        .ToList();
                     DeselectAllCards();
                 }
             }
             else
             {
-                var remainedCards = GameState.MaxDeckCards - numberSelected;
-                CardChoiceUIManager.Instance.DisplayMessageBox(remainedCards);
+                var remainedCards = DeckConfiguration.MaxDeckCards - numberSelected;
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.DisplayMessageBox(remainedCards);
             }
         }
 
@@ -127,28 +204,84 @@ namespace Menu
         /// </summary>
         public void RandomDeck()
         {
+#if UNITY_EDITOR
+            // Debug: Check all dependencies
+            Debug.Log($"CardChoice.RandomDeck() called. Checking dependencies:");
+            Debug.Log($"  _deckManagementService: {(_deckManagementService != null ? "OK" : "NULL")}");
+            Debug.Log($"  _eventBus: {(_eventBus != null ? "OK" : "NULL")}");
+            Debug.Log($"  _audioService: {(_audioService != null ? "OK" : "NULL")}");
+            Debug.Log($"  _cardChoiceUIManager: {(_cardChoiceUIManager != null ? "OK" : "NULL")}");
+            Debug.Log($"  _cardSelectionService: {(_cardSelectionService != null ? "OK" : "NULL")}");
+            Debug.Log($"  _cardFactory: {(_cardFactory != null ? "OK" : "NULL")}");
+#endif
+
+            if (_deckManagementService == null)
+            {
+                Debug.LogError("CardChoice: _deckManagementService is NULL! VContainer injection failed. " +
+                    "Check that SharedServicesScope is in _preload scene with Auto Run enabled.");
+                return;
+            }
+
+            // Check if card pools are initialized
+            if (_deckManagementService.Deck1AllCards == null || _deckManagementService.Deck1AllCards.Count == 0)
+            {
+                Debug.LogError("CardChoice: Deck1AllCards is empty! Cards not loaded. " +
+                    "Check CardDataProvider and Resources/Cards folder.");
+                // Try to reinitialize
+                _deckManagementService.ResetDeckPools();
+                if (_deckManagementService.Deck1AllCards == null || _deckManagementService.Deck1AllCards.Count == 0)
+                {
+                    Debug.LogError("CardChoice: Failed to initialize deck pools. Cannot start game.");
+                    return;
+                }
+            }
+
+#if UNITY_EDITOR
+            Debug.Log($"CardChoice: Deck1AllCards count = {_deckManagementService.Deck1AllCards.Count}");
+            Debug.Log($"CardChoice: Deck2AllCards count = {_deckManagementService.Deck2AllCards.Count}");
+#endif
+
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var deck1AllCard = FilterCards(GameState.Instance.deck1AllCards);
-            var deck2AllCard = FilterCards(GameState.Instance.deck2AllCards);
+            var deck1AllCard = FilterCards(_deckManagementService.Deck1AllCards);
+            var deck2AllCard = FilterCards(_deckManagementService.Deck2AllCards);
 
-            while (deck1.Count != GameState.MaxDeckCards)
+#if UNITY_EDITOR
+            Debug.Log($"CardChoice: After filter - deck1AllCard count = {deck1AllCard.Count}");
+            Debug.Log($"CardChoice: After filter - deck2AllCard count = {deck2AllCard.Count}");
+#endif
+
+            if (deck1AllCard.Count < DeckConfiguration.MaxDeckCards || deck2AllCard.Count < DeckConfiguration.MaxDeckCards)
+            {
+                Debug.LogError($"CardChoice: Not enough cards after filtering! Need {DeckConfiguration.MaxDeckCards}, " +
+                    $"have deck1={deck1AllCard.Count}, deck2={deck2AllCard.Count}");
+                return;
+            }
+
+            while (deck1.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
 
-            while (deck2.Count != GameState.MaxDeckCards)
+            while (deck2.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck2AllCard, deck2);
             }
 
-            GameState.Instance.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
-            AudioSystem.Instance.StopMusic();
-            SceneLoaderSystem.LoadGameScreen();
+            // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+            _deckManagementService.Player1DeckCards = deck1
+                .Select(card1 => _cardFactory.CreateCard(card1, JDG.Domain.CardOwner.Player1) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
+            _deckManagementService.Player2DeckCards = deck2
+                .Select(card2 => _cardFactory.CreateCard(card2, JDG.Domain.CardOwner.Player2) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService?.StopMusic();
+            // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+            _sceneLoaderService.LoadGameScreen();
         }
 
         /// <summary>
@@ -159,8 +292,8 @@ namespace Menu
             var deck1 = new List<Card>();
             var deck2 = new List<Card>();
 
-            var deck1AllCard = GameState.Instance.deck1AllCards;
-            var deck2AllCard = GameState.Instance.deck2AllCards;
+            var deck1AllCard = _deckManagementService.Deck1AllCards;
+            var deck2AllCard = _deckManagementService.Deck2AllCards;
 
             deck2.Add(GetSpecificCard(CardNames.LycéeMagiqueGeorgesPompidou, deck2AllCard));
             deck1.Add(GetSpecificCard(CardNames.SandrineLePorteManteauExtraterrestre, deck1AllCard));
@@ -168,7 +301,7 @@ namespace Menu
             deck1.Add(GetSpecificCard(CardNames.AlphaMan, deck1AllCard));
             deck1.Add(GetSpecificCard(CardNames.FiltreDégueulasseFMV, deck1AllCard));
 
-            while (deck1.Count != GameState.MaxDeckCards)
+            while (deck1.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck1AllCard, deck1);
             }
@@ -176,19 +309,26 @@ namespace Menu
             deck1.Reverse();
 
 
-            while (deck2.Count != GameState.MaxDeckCards)
+            while (deck2.Count != DeckConfiguration.MaxDeckCards)
             {
                 GetRandomCards(deck2AllCard, deck2);
             }
 
             deck2.Reverse();
 
-            GameState.Instance.Player1DeckCards =
-                deck1.Select(card1 => CardFactory.CreateInGameCard(card1, CardOwner.Player1)).ToList();
-            GameState.Instance.Player2DeckCards =
-                deck2.Select(card2 => CardFactory.CreateInGameCard(card2, CardOwner.Player2)).ToList();
-            AudioSystem.Instance.StopMusic();
-            SceneLoaderSystem.LoadGameScreen();
+            // Phase 62: Use ICardFactory instead of static CardFactory.CreateInGameCard
+            _deckManagementService.Player1DeckCards = deck1
+                .Select(card1 => _cardFactory.CreateCard(card1, JDG.Domain.CardOwner.Player1) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
+            _deckManagementService.Player2DeckCards = deck2
+                .Select(card2 => _cardFactory.CreateCard(card2, JDG.Domain.CardOwner.Player2) as InGameCard)
+                .Where(card => card != null)
+                .ToList();
+            // Phase 8: Use IAudioService instead of AudioSystem.Instance
+            _audioService?.StopMusic();
+            // Phase 55: Use ISceneLoaderService instead of SceneLoaderSystem
+            _sceneLoaderService.LoadGameScreen();
         }
 
         /// <summary>
@@ -216,7 +356,8 @@ namespace Menu
         /// <param name="deck">The deck to which the card is added.</param>
         private static void GetRandomCards(IList<Card> allCards, ICollection<Card> deck)
         {
-            var randomIndex = Random.Range(0, allCards.Count - 1);
+            // BUG FIX: Random.Range(int, int) upper bound is exclusive, so Count-1 would exclude the last card
+            var randomIndex = Random.Range(0, allCards.Count);
             var card = allCards[randomIndex];
             if (card.Type == CardType.Contre) return;
             if (card == null) return;
@@ -226,22 +367,26 @@ namespace Menu
 
         /// <summary>
         /// Handles the back action in the game menu.
+        /// Phase 8: Uses injected CardChoiceUIManager instead of .Instance.
         /// </summary>
         public void Back()
         {
             if (isPlayerOneCardChosen)
             {
-                CardChoiceUIManager.Instance.UpdateTitleAndButtonTextForPlayer(true);
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.UpdateTitleAndButtonTextForPlayer(true);
                 isPlayerOneCardChosen = false;
-                GameState.Instance.Player1DeckCards = new List<InGameCard>();
+                // Phase 17-18: Use IDeckManagementService instead of GameState.Instance
+                _deckManagementService.Player1DeckCards = new List<InGameCard>();
                 DeselectAllCards();
-                ChangeChoicePlayer.Invoke(1);
+                _eventBus.Publish(new ChoicePlayerChangedEvent { PlayerIndex = 1 });
             }
             else
             {
                 DeselectAllCards();
-                CardChoiceUIManager.Instance.ShowChoiceCardMenu(false);
-                CardChoiceUIManager.Instance.ShowTwoPlayerModeMenu(true);
+                // Phase 8: Use injected CardChoiceUIManager instead of .Instance
+                _cardChoiceUIManager.ShowChoiceCardMenu(false);
+                _cardChoiceUIManager.ShowTwoPlayerModeMenu(true);
             }
         }
     }

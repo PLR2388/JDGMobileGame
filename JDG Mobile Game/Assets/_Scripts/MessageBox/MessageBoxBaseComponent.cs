@@ -1,3 +1,4 @@
+using JDG.Application.Services;
 using TMPro;
 using UnityEngine;
 
@@ -27,9 +28,15 @@ static class MessageBoxBaseComponentConstants
 
 /// <summary>
 /// Extension methods for the IMessageBoxBaseComponent interface.
+/// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
 /// </summary>
 public static class MessageBoxBaseComponentExtensions
 {
+    /// <summary>
+    /// Shared ILocalizationService instance for MessageBox extensions.
+    /// Phase 39: Set once at initialization to remove LocalizationSystem.Instance calls.
+    /// </summary>
+    public static ILocalizationService LocalizationService { get; set; }
     /// <summary>
     /// Finds a child transform within a parent game object based on the child's name.
     /// </summary>
@@ -69,6 +76,7 @@ public static class MessageBoxBaseComponentExtensions
     
     /// <summary>
     /// Configures a button's text and visibility within the provided game object based on specified parameters.
+    /// Phase 39: Uses ILocalizationService instead of LocalizationSystem.Instance.
     /// </summary>
     /// <param name="parent">The game object containing the button.</param>
     /// <param name="buttonName">The name of the button within the game object.</param>
@@ -79,7 +87,16 @@ public static class MessageBoxBaseComponentExtensions
         var buttonTransform = FindChildTransform(parent, buttonName);
         var buttonText = buttonTransform.GetComponentInChildren<TextMeshProUGUI>();
         var button = buttonTransform.gameObject;
-        buttonText.text = LocalizationSystem.Instance.GetLocalizedValue(localizationKey);
+
+        // Phase 63: Removed fallback - LocalizationService is set by LegacySystemInitializer
+        if (LocalizationService == null)
+        {
+            throw new System.InvalidOperationException(
+                "MessageBoxBaseComponentExtensions.LocalizationService is not set. " +
+                "Ensure LegacySystemInitializer.Initialize() is called before using message box components.");
+        }
+        buttonText.text = LocalizationService.GetLocalizedValue(localizationKey.ToString());
+
         button.SetActive(setActive);
     }
 }

@@ -1,0 +1,418 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JDG.Application.Services;
+using JDG.Infrastructure.Cards;
+using UnityEngine;
+
+// Alias to avoid conflict with global CardSelectorConfig in MessageBox/Config.cs
+using DomainCardSelectorConfig = JDG.Application.Services.CardSelectorConfig;
+
+namespace JDG.Infrastructure.Services
+{
+    /// <summary>
+    /// Infrastructure implementation of IDialogService.
+    /// Phase 64: Changed to lazy resolution to avoid constructor singleton access.
+    /// Phase 94: Changed to use DI-injected instances instead of singletons.
+    /// MessageBox and CardSelector are set via SetDialogComponents() from GameSceneScope.
+    /// </summary>
+    public class DialogService : IDialogService
+    {
+        private Transform _canvas;
+        private MessageBox _messageBox;
+        private CardSelector _cardSelector;
+
+        // Phase 94: Properties access injected instances
+        private MessageBox MessageBox => _messageBox;
+        private CardSelector CardSelector => _cardSelector;
+
+        /// <summary>
+        /// Phase 64: Empty constructor - components set via SetDialogComponents().
+        /// </summary>
+        public DialogService()
+        {
+        }
+
+        /// <summary>
+        /// Phase 94: Sets the dialog components from scene scope.
+        /// Called by GameSceneScope after finding the scene MonoBehaviours.
+        /// </summary>
+        public void SetDialogComponents(MessageBox messageBox, CardSelector cardSelector)
+        {
+            _messageBox = messageBox;
+            _cardSelector = cardSelector;
+        }
+
+        /// <summary>
+        /// Sets the canvas where dialogs will be displayed.
+        /// </summary>
+        public void SetCanvas(Transform canvas)
+        {
+            _canvas = canvas;
+        }
+
+        public async Task<bool> ShowMessageBoxAsync(string title, string message, MessageBoxType type)
+        {
+            if (_canvas == null)
+            {
+                Debug.LogError("DialogService: Canvas not set. Call SetCanvas() first.");
+                return false;
+            }
+
+            var tcs = new TaskCompletionSource<bool>();
+
+            MessageBoxConfig config;
+
+            switch (type)
+            {
+                case MessageBoxType.Ok:
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showOkButton: true,
+                        okAction: () => tcs.TrySetResult(true)
+                    );
+                    break;
+
+                case MessageBoxType.YesNo:
+                case MessageBoxType.OkCancel:
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showPositiveButton: true,
+                        positiveAction: () => tcs.TrySetResult(true),
+                        showNegativeButton: true,
+                        negativeAction: () => tcs.TrySetResult(false)
+                    );
+                    break;
+
+                case MessageBoxType.Custom:
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showOkButton: true,
+                        okAction: () => tcs.TrySetResult(true)
+                    );
+                    break;
+
+                default:
+                    config = new MessageBoxConfig(
+                        title: title,
+                        description: message,
+                        showOkButton: true,
+                        okAction: () => tcs.TrySetResult(true)
+                    );
+                    break;
+            }
+
+            // Phase 135: Add null check for MessageBox
+            if (MessageBox == null)
+            {
+                Debug.LogError("DialogService: MessageBox is null! Cannot show message box. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return false;
+            }
+            MessageBox.CreateMessageBox(_canvas, config);
+
+            return await tcs.Task;
+        }
+
+        public async Task<List<Guid>> ShowCardSelectorAsync(DomainCardSelectorConfig config)
+        {
+            if (_canvas == null)
+            {
+                Debug.LogError("DialogService: Canvas not set. Call SetCanvas() first.");
+                return null;
+            }
+
+            var tcs = new TaskCompletionSource<List<Guid>>();
+
+            var cards = config.CardIds != null ? ConvertCardIds(config.CardIds) : new List<InGameCard>();
+
+            var cardSelectorConfig = new global::CardSelectorConfig(
+                title: config.Title,
+                cards: cards,
+                showPositiveButton: true,
+                positiveMultipleAction: (selectedCards) =>
+                {
+                    // Note: InGameCard doesn't have a domain Id property.
+                    // This limitation will be addressed when InGameCard is fully migrated to domain entities.
+                    // For now, return empty list as card selection works via callbacks, not IDs.
+                    var selectedIds = new List<Guid>();
+                    Debug.LogWarning($"DialogService: Card selection returned {selectedCards.Count} cards, but ID mapping not implemented yet.");
+                    tcs.TrySetResult(selectedIds);
+                },
+                showNegativeButton: config.AllowCancel,
+                negativeAction: config.AllowCancel ? () => tcs.TrySetResult(null) : null,
+                numberCardSelection: config.MaxSelection
+            );
+
+            // Phase 135: Add null check for CardSelector
+            if (CardSelector == null)
+            {
+                Debug.LogError("DialogService: CardSelector is null! Cannot show card selector. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return null;
+            }
+            CardSelector.CreateCardSelection(_canvas, cardSelectorConfig);
+
+            return await tcs.Task;
+        }
+
+        public async Task<bool> ShowConfirmAsync(string message)
+        {
+            return await ShowMessageBoxAsync("Confirm", message, MessageBoxType.YesNo);
+        }
+
+        public async Task ShowInfoAsync(string message)
+        {
+            await ShowMessageBoxAsync("Information", message, MessageBoxType.Ok);
+        }
+
+        // Phase 35: Synchronous callback-based methods for legacy pattern support
+
+        /// <summary>
+        /// Shows a message box with callback actions.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        /// <param name="canvas">The Unity Transform canvas (passed as object to avoid Unity dependency in interface)</param>
+        /// <param name="options">Message box configuration</param>
+        public void ShowMessageBox(object canvas, MessageBoxOptions options)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            var config = new MessageBoxConfig(
+                title: options.Title,
+                description: options.Message,
+                showOkButton: options.ShowOkButton,
+                okAction: options.OnOk != null ? new UnityEngine.Events.UnityAction(options.OnOk) : null,
+                showPositiveButton: options.ShowPositiveButton,
+                positiveAction: options.OnPositive != null ? new UnityEngine.Events.UnityAction(options.OnPositive) : null,
+                showNegativeButton: options.ShowNegativeButton,
+                negativeAction: options.OnNegative != null ? new UnityEngine.Events.UnityAction(options.OnNegative) : null
+            );
+
+            // Phase 144: Add null check for MessageBox
+            if (MessageBox == null)
+            {
+                Debug.LogError("DialogService: MessageBox is null! Cannot show message box. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return;
+            }
+            MessageBox.CreateMessageBox(canvasTransform, config);
+        }
+
+        /// <summary>
+        /// Shows an OK-only message box (warning style) with callback.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// Note: Using System.Action to avoid conflict with OnePlayer.Action enum.
+        /// </summary>
+        public void ShowWarning(object canvas, string title, string message, System.Action onOk)
+        {
+            ShowMessageBox(canvas, new MessageBoxOptions
+            {
+                Title = title,
+                Message = message,
+                ShowOkButton = true,
+                OnOk = onOk
+            });
+        }
+
+        /// <summary>
+        /// Shows an OK-only message box (warning style) without callback.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        public void ShowWarning(object canvas, string title, string message)
+        {
+            ShowWarning(canvas, title, message, (System.Action)null);
+        }
+
+        /// <summary>
+        /// Shows a Yes/No confirmation dialog.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// Note: Using System.Action to avoid conflict with OnePlayer.Action enum.
+        /// </summary>
+        public void ShowConfirm(object canvas, string title, string message, System.Action onYes, System.Action onNo)
+        {
+            ShowMessageBox(canvas, new MessageBoxOptions
+            {
+                Title = title,
+                Message = message,
+                ShowPositiveButton = true,
+                OnPositive = onYes,
+                ShowNegativeButton = true,
+                OnNegative = onNo
+            });
+        }
+
+        /// <summary>
+        /// Shows a card selector dialog with callback actions.
+        /// Phase 35: Synchronous version for legacy code migration.
+        /// </summary>
+        public void ShowCardSelector(object canvas, CardSelectorOptions options)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            // Convert List<object> to List<InGameCard>
+            var cards = new List<InGameCard>();
+            if (options.Cards != null)
+            {
+                foreach (var card in options.Cards)
+                {
+                    if (card is InGameCard inGameCard)
+                    {
+                        cards.Add(inGameCard);
+                    }
+                }
+            }
+
+            // Create callbacks that convert InGameCard back to object
+            UnityEngine.Events.UnityAction<InGameCard> okSingle = null;
+            UnityEngine.Events.UnityAction<List<InGameCard>> okMultiple = null;
+            UnityEngine.Events.UnityAction<InGameCard> positiveSingle = null;
+            UnityEngine.Events.UnityAction<List<InGameCard>> positiveMultiple = null;
+
+            if (options.OnOkSingle != null)
+            {
+                okSingle = (card) => options.OnOkSingle(card);
+            }
+            if (options.OnOkMultiple != null)
+            {
+                okMultiple = (selectedCards) =>
+                {
+                    var objects = new List<object>();
+                    foreach (var card in selectedCards) objects.Add(card);
+                    options.OnOkMultiple(objects);
+                };
+            }
+            if (options.OnPositiveSingle != null)
+            {
+                positiveSingle = (card) => options.OnPositiveSingle(card);
+            }
+            if (options.OnPositiveMultiple != null)
+            {
+                positiveMultiple = (selectedCards) =>
+                {
+                    var objects = new List<object>();
+                    foreach (var card in selectedCards) objects.Add(card);
+                    options.OnPositiveMultiple(objects);
+                };
+            }
+
+            var config = new global::CardSelectorConfig(
+                title: options.Title,
+                cards: cards,
+                showOkButton: options.ShowOkButton,
+                showPositiveButton: options.ShowPositiveButton,
+                showNegativeButton: options.ShowNegativeButton,
+                okAction: okSingle,
+                okMultipleAction: okMultiple,
+                positiveAction: positiveSingle,
+                positiveMultipleAction: positiveMultiple,
+                negativeAction: options.OnNegative != null ? new UnityEngine.Events.UnityAction(options.OnNegative) : null,
+                numberCardSelection: options.NumberCardSelection,
+                showOrder: options.ShowOrder
+            );
+
+            // Phase 134: Add null check for CardSelector
+            if (CardSelector == null)
+            {
+                Debug.LogError("DialogService: CardSelector is null! Cannot show card selector. " +
+                    "Ensure SetDialogComponents() was called from GameSceneScope.");
+                return;
+            }
+            CardSelector.CreateCardSelection(canvasTransform, config);
+        }
+
+        /// <summary>
+        /// Helper method to convert card GUIDs to InGameCard instances.
+        /// This is a permanent bridge pattern - InGameCard uses Unity objects while the
+        /// domain layer uses GUIDs. Full integration requires InGameCard to domain entity migration.
+        /// </summary>
+        private List<InGameCard> ConvertCardIds(List<Guid> cardIds)
+        {
+            var cards = new List<InGameCard>();
+
+            // Note: CardSelector works with InGameCard references, not domain IDs.
+            // This is an intentional design limitation - the card selection UI needs
+            // Unity GameObjects while domain operations use GUIDs.
+            Debug.LogWarning($"DialogService: Card conversion not fully implemented. Returning empty list.");
+
+            return cards;
+        }
+
+        // Phase 38: Legacy config support methods for Ability base class migration
+
+        /// <summary>
+        /// Shows a message box using the legacy MessageBoxConfig type.
+        /// Phase 38: Added for legacy Ability class migration.
+        /// Delegates directly to MessageBox.Instance.CreateMessageBox.
+        /// </summary>
+        public void ShowMessageBoxLegacy(object canvas, object config)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            if (config is MessageBoxConfig messageBoxConfig)
+            {
+                // Phase 135: Add null check for MessageBox
+                if (MessageBox == null)
+                {
+                    Debug.LogError("DialogService: MessageBox is null! Cannot show message box. " +
+                        "Ensure SetDialogComponents() was called from GameSceneScope.");
+                    return;
+                }
+                MessageBox.CreateMessageBox(canvasTransform, messageBoxConfig);
+            }
+            else
+            {
+                Debug.LogError($"DialogService: Invalid config type. Expected MessageBoxConfig, got {config?.GetType().Name ?? "null"}.");
+            }
+        }
+
+        /// <summary>
+        /// Shows a card selector using the legacy CardSelectorConfig type.
+        /// Phase 38: Added for legacy Ability class migration.
+        /// Delegates directly to CardSelector.Instance.CreateCardSelection.
+        /// </summary>
+        public void ShowCardSelectorLegacy(object canvas, object config)
+        {
+            var canvasTransform = canvas as Transform;
+            if (canvasTransform == null)
+            {
+                Debug.LogError("DialogService: Invalid canvas. Expected UnityEngine.Transform.");
+                return;
+            }
+
+            if (config is global::CardSelectorConfig cardSelectorConfig)
+            {
+                // Phase 135: Add null check for CardSelector
+                if (CardSelector == null)
+                {
+                    Debug.LogError("DialogService: CardSelector is null! Cannot show card selector. " +
+                        "Ensure SetDialogComponents() was called from GameSceneScope.");
+                    return;
+                }
+                CardSelector.CreateCardSelection(canvasTransform, cardSelectorConfig);
+            }
+            else
+            {
+                Debug.LogError($"DialogService: Invalid config type. Expected CardSelectorConfig, got {config?.GetType().Name ?? "null"}.");
+            }
+        }
+    }
+}

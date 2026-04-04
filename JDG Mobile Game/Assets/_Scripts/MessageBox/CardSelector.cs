@@ -2,34 +2,74 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using JDG.Infrastructure.Cards;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using VContainer;
+using JDG.Application;
+using JDG.Application.Services;
+using JDG.Domain.Events;
 
-[System.Serializable]
-public class NumberedCardEvent : UnityEvent<InGameCard, int>
-{
-}
-
-public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseComponent
+/// <summary>
+/// Displays card selector dialogs for card selection.
+/// Phase 9: Removed CardSelectionManager singleton dependency via DI.
+/// Phase 41: Migrated to clean ICardSelectionService with EventBus.
+/// Phase 52: Marked obsolete - use IDialogService via dependency injection instead.
+/// Phase 94: Removed StaticInstance inheritance - now a regular MonoBehaviour.
+/// Phase 121: Removed static NumberedCardEvent - now published via EventBus.
+/// Phase 138: Added IObjectResolver to inject dynamically instantiated DisplayCards.
+/// </summary>
+public class CardSelector : MonoBehaviour, IMessageBoxBaseComponent
 {
     #region Fields and Properties
 
     [SerializeField] private GameObject prefab;
-    public static readonly NumberedCardEvent NumberedCardEvent = new NumberedCardEvent();
-    
+
     private bool displayNumberOnCard = false;
 
+    // Phase 41: Migrated to clean ICardSelectionService with EventBus
+    private ICardSelectionService _cardSelectionService;
+    private IEventBus _eventBus;
+    private IDisposable _selectionChangedSubscription;
+
+    // Phase 138: Container reference for injecting dynamically instantiated components
+    private VContainer.IObjectResolver _container;
+
     #endregion
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 9: Inject ICardSelectionService instead of using singleton.
+    /// Phase 41: Migrated to clean JDG.Application.Services.ICardSelectionService.
+    /// Phase 138: Added IObjectResolver for injecting dynamically instantiated DisplayCards.
+    /// Phase 146: Moved EventBus subscription here from Start() to avoid race conditions.
+    /// Phase 156: Added null checks to fail early if DI is not properly configured.
+    /// </summary>
+    [Inject]
+    public void Construct(ICardSelectionService cardSelectionService, IEventBus eventBus, VContainer.IObjectResolver container)
+    {
+        _cardSelectionService = cardSelectionService ?? throw new ArgumentNullException(
+            nameof(cardSelectionService), "CardSelector requires ICardSelectionService");
+        _eventBus = eventBus ?? throw new ArgumentNullException(
+            nameof(eventBus), "CardSelector requires IEventBus for event subscriptions");
+        _container = container ?? throw new ArgumentNullException(
+            nameof(container), "CardSelector requires IObjectResolver for injecting dynamically created components");
+
+        // Phase 146: Subscribe immediately in Construct() to avoid missing events between
+        // VContainer injection and Unity's Start() callback.
+        _selectionChangedSubscription = _eventBus.Subscribe<CardSelectionChangedEvent>(OnSelectionChangedEvent);
+    }
 
     #region Unity Callbacks
 
     /// <summary>
-    /// Initialization method called by Unity. It sets up card selection and unselection event listeners.
+    /// EventBus handler for selection changed.
+    /// Phase 41: Replaces UnityEvent SelectionChanged listener.
     /// </summary>
-    void Start()
+    private void OnSelectionChangedEvent(CardSelectionChangedEvent evt)
     {
-        CardSelectionManager.Instance.SelectionChanged.AddListener(SelectionChanged);
+        SelectionChanged();
     }
 
     #endregion
@@ -42,16 +82,22 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     }
 
     /// <summary>
-    /// If the display number on card feature is enabled, it invokes the NumberedCardEvent 
+    /// If the display number on card feature is enabled, it publishes CardNumberedEvent
     /// for each card in the list with its corresponding order.
+    /// Phase 41: Cast from object to InGameCard for clean interface.
+    /// Phase 121: Changed from static UnityEvent.Invoke to EventBus.Publish.
     /// </summary>
     private void InvokeNumberedEventIfRequired()
     {
         if (displayNumberOnCard)
         {
-            for (var i = 0; i < CardSelectionManager.Instance.SelectedCards.Count; i++)
+            var selectedCards = _cardSelectionService.SelectedCards;
+            for (var i = 0; i < selectedCards.Count; i++)
             {
-                NumberedCardEvent.Invoke(CardSelectionManager.Instance.SelectedCards[i], i + 1);
+                if (selectedCards[i] is InGameCard card)
+                {
+                    _eventBus?.Publish(new CardNumberedEvent { Card = card, Number = i + 1 });
+                }
             }
         }
     }
@@ -108,6 +154,7 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
     /// <summary>
     /// Configures the OK, Positive, and Negative buttons for the card selector.
+    /// Phase 41: Cast from object to InGameCard for clean interface.
     /// </summary>
     private void ConfigureButtons(GameObject newGameObject, UIConfig config, CardSelectorConfig cardSelectorConfig)
     {
@@ -117,10 +164,11 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction okAction = () =>
         {
-            var singleCard = CardSelectionManager.Instance.SelectedCards.Count > 0
-                ? CardSelectionManager.Instance.SelectedCards[0]
+            var selectedCards = _cardSelectionService.SelectedCards;
+            var singleCard = selectedCards.Count > 0
+                ? selectedCards[0] as InGameCard
                 : null;
-            var multipleCards = CardSelectionManager.Instance.SelectedCards;
+            var multipleCards = selectedCards.OfType<InGameCard>().ToList();
             cardSelectorConfig?.OkActions.SingleAction?.Invoke(singleCard);
             cardSelectorConfig?.OkActions.MultipleAction?.Invoke(multipleCards);
             switch (cardSelectorConfig?.NumberCardSelection)
@@ -144,10 +192,11 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
 
         UnityAction positiveAction = () =>
         {
-            var singleCard = CardSelectionManager.Instance.SelectedCards.Count > 0
-                ? CardSelectionManager.Instance.SelectedCards[0]
+            var selectedCards = _cardSelectionService.SelectedCards;
+            var singleCard = selectedCards.Count > 0
+                ? selectedCards[0] as InGameCard
                 : null;
-            var multipleCards = CardSelectionManager.Instance.SelectedCards;
+            var multipleCards = selectedCards.OfType<InGameCard>().ToList();
             cardSelectorConfig?.PositiveActions.SingleAction?.Invoke(singleCard);
             cardSelectorConfig?.PositiveActions.MultipleAction?.Invoke(multipleCards);
             if (cardSelectorConfig?.NumberCardSelection == 1)
@@ -168,9 +217,9 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     /// </summary>
     private void DestroyGameObjectSingleCard(GameObject newGameObject)
     {
-        if (CardSelectionManager.Instance.SelectedCards.Count > 0)
+        if (_cardSelectionService.SelectedCards.Count > 0)
         {
-            CardSelectionManager.Instance.ClearSelection();
+            _cardSelectionService.ClearSelection();
             Destroy(newGameObject);
         }
     }
@@ -180,9 +229,9 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
     /// </summary>
     private void DestroyGameObjectMultipleSelectedCards(GameObject newGameObject, CardSelectorConfig cardSelectorConfig)
     {
-        if (CardSelectionManager.Instance.SelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
+        if (_cardSelectionService.SelectedCards.Count == cardSelectorConfig?.NumberCardSelection)
         {
-            CardSelectionManager.Instance.ClearSelection();
+            _cardSelectionService.ClearSelection();
             Destroy(newGameObject);
         }
     }
@@ -206,14 +255,15 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         displayCardsScript.CardsList = cardSelectorConfig?.Cards;
 
         displayNumberOnCard = cardSelectorConfig?.ShowOrder == true;
-        CardSelectionManager.Instance.MultipleSelectionLimit = cardSelectorConfig?.NumberCardSelection ?? 0;
-        CardSelectionManager.Instance.MultipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
+        _cardSelectionService.MultipleSelectionLimit = cardSelectorConfig?.NumberCardSelection ?? 0;
+        _cardSelectionService.MultipleCardSelection = cardSelectorConfig?.NumberCardSelection > 1;
 
         ConfigureButtons(newGameObject, config, cardSelectorConfig);
     }
 
     /// <summary>
     /// Creates and initializes a new card selection instance on the provided canvas using the specified configuration.
+    /// Phase 138: Injects DisplayCards component after instantiation to fix DI for dynamically created prefabs.
     /// </summary>
     public void CreateCardSelection(Transform canvas, CardSelectorConfig config)
     {
@@ -221,7 +271,25 @@ public class CardSelector : StaticInstance<CardSelector>, IMessageBoxBaseCompone
         message.SetActive(true);
         message.transform.SetParent(canvas);
 
+        // Phase 138: Inject DisplayCards component that was dynamically instantiated
+        // This fixes the issue where DisplayCards._cardPoolService was null because
+        // VContainer only injects scene objects at startup, not runtime instantiated prefabs.
+        var displayCardsScript = GetDisplayCards(message);
+        if (displayCardsScript != null && _container != null)
+        {
+            _container.Inject(displayCardsScript);
+        }
+
         SetNewValueGameObject(message, config);
+    }
+
+    /// <summary>
+    /// Cleanup and dispose of EventBus subscriptions.
+    /// Phase 41: Added disposal for EventBus subscription.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _selectionChangedSubscription?.Dispose();
     }
 
     #endregion

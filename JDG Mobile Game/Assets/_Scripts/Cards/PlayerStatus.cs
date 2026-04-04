@@ -1,49 +1,117 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
+﻿using System;
+using JDG.Application;
+using JDG.Application.Services;
+using JDG.Domain.Events;
+using UnityEngine;
+using VContainer;
 
-[System.Serializable]
-public class ChangePvEvent : UnityEvent<float, bool>
-{
-}
-
+/// <summary>
+/// View component for displaying player health and shield status.
+/// Phase 21-22: Refactored to be a thin view that delegates to PlayerService.
+/// All business logic moved to PlayerService, this class only handles UI state.
+/// </summary>
 public class PlayerStatus : MonoBehaviour
 {
-    public static readonly ChangePvEvent OnHealthChanged = new ChangePvEvent();
     public const float MaxHealth = 30f;
-    
+
     [SerializeField]
     private float currentHealth = 30f;
 
     [SerializeField] private bool isP1;
 
+    // Phase 21-22: Injected dependencies
+    private IPlayerService _playerService;
+    private IEventBus _eventBus;
+
+    // Phase 144: Store subscriptions for proper disposal
+    private IDisposable _healthChangedSubscription;
+    private IDisposable _shieldChangedSubscription;
+
+    private JDG.Domain.CardOwner PlayerId => isP1 ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 21-22: Inject IPlayerService and IEventBus.
+    /// </summary>
+    [Inject]
+    public void Construct(IPlayerService playerService, IEventBus eventBus)
+    {
+        _playerService = playerService;
+        _eventBus = eventBus;
+    }
+
+    private void Start()
+    {
+        // Subscribe to EventBus events for this player
+        // Phase 144: Store subscriptions for disposal in OnDestroy
+        _healthChangedSubscription = _eventBus.Subscribe<PlayerHealthChangedEvent>(OnPlayerHealthChanged);
+        _shieldChangedSubscription = _eventBus.Subscribe<PlayerShieldChangedEvent>(OnPlayerShieldChanged);
+
+        // Initialize local state from PlayerService
+        var playerState = _playerService.GetPlayerState(PlayerId);
+        currentHealth = playerState.CurrentHealth;
+    }
+
+    /// <summary>
+    /// Phase 144: Fixed - subscriptions must be manually disposed.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _healthChangedSubscription?.Dispose();
+        _shieldChangedSubscription?.Dispose();
+    }
+
+    /// <summary>
+    /// EventBus handler for health changes.
+    /// Updates local UI state when player health changes.
+    /// </summary>
+    private void OnPlayerHealthChanged(PlayerHealthChangedEvent evt)
+    {
+        if (evt.Player == PlayerId)
+        {
+            currentHealth = evt.NewHealth;
+        }
+    }
+
+    /// <summary>
+    /// EventBus handler for shield changes.
+    /// Updates local UI state when player shields change.
+    /// </summary>
+    private void OnPlayerShieldChanged(PlayerShieldChangedEvent evt)
+    {
+        if (evt.Player == PlayerId)
+        {
+            // Shield count is tracked in PlayerService, not locally
+        }
+    }
+
     /// <summary>
     /// Gets the number of shields the player has.
+    /// Phase 21-22: Delegates to PlayerService.
     /// </summary>
-    public int NumberShield { get; private set; }
+    public int NumberShield => _playerService?.GetPlayerState(PlayerId).ShieldCount ?? 0;
 
     /// <summary>
-    /// Gets or sets whether the player can block an attack.
+    /// Gets whether the player can block an attack.
+    /// Phase 21-22: Delegates to PlayerService.
     /// </summary>
-    public bool BlockAttack { get; private set; }
+    public bool BlockAttack => _playerService?.GetPlayerState(PlayerId).CanBlockAttack ?? false;
 
     /// <summary>
-    /// Changes the player's health by the given amount and triggers the OnHealthChanged event.
+    /// Changes the player's health by the given amount.
+    /// Phase 21-22: Delegates to PlayerService, which publishes PlayerHealthChangedEvent.
+    /// Phase 151: Removed int cast to support half-star damage values (e.g., 2.5 damage).
     /// </summary>
     /// <param name="pv">Amount to change the health by (can be positive or negative).</param>
     public void ChangePv(float pv)
     {
-        currentHealth += pv;
-        if (currentHealth > MaxHealth)
-        {
-            currentHealth = MaxHealth;
-        }
-
-        OnHealthChanged.Invoke(currentHealth, isP1);
+        _playerService.ChangeHealth(PlayerId, pv);
+        // currentHealth will be updated by OnPlayerHealthChanged event handler
     }
 
     /// <summary>
     /// Gets the current health of the player.
+    /// Phase 21-22: Returns local UI state (updated by EventBus).
     /// </summary>
     /// <returns>The current health value.</returns>
     public float GetCurrentHealth()
@@ -52,35 +120,51 @@ public class PlayerStatus : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the health directly.
+    /// Phase 21-22: Delegates to PlayerService.SetHealth().
+    /// Phase 151: Removed int cast to support half-star health values.
+    /// </summary>
+    /// <param name="health">The health value to set.</param>
+    public void SetHealthDirect(float health)
+    {
+        _playerService.SetHealth(PlayerId, health);
+        // currentHealth will be updated by OnPlayerHealthChanged event handler
+    }
+
+    /// <summary>
     /// Sets the shield count for the player.
+    /// Phase 21-22: Delegates to PlayerService.
     /// </summary>
     /// <param name="number">The number of shields to set.</param>
     public void SetShieldCount(int number)
     {
-        NumberShield = number;
+        _playerService.SetShieldCount(PlayerId, number);
     }
 
     /// <summary>
     /// Decreases the shield count by one.
+    /// Phase 21-22: Delegates to PlayerService.
     /// </summary>
     public void DecrementShield()
     {
-        NumberShield--;
+        _playerService.DecrementShield(PlayerId);
     }
-    
+
     /// <summary>
     /// Enables the player to block an attack.
+    /// Phase 21-22: Delegates to PlayerService.
     /// </summary>
     public void EnableBlockAttack()
     {
-        BlockAttack = true;
+        _playerService.EnableBlockAttack(PlayerId);
     }
-    
+
     /// <summary>
     /// Disables the player's ability to block an attack.
+    /// Phase 21-22: Delegates to PlayerService.
     /// </summary>
     public void DisableBlockAttack()
     {
-        BlockAttack = false;
+        _playerService.DisableBlockAttack(PlayerId);
     }
 }

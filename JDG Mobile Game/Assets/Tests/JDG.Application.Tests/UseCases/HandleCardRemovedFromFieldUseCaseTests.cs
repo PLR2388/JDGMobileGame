@@ -1,0 +1,217 @@
+using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+using JDG.Application;
+using JDG.Application.Abilities;
+using JDG.Application.Cards;
+using JDG.Application.UseCases;
+using JDG.Domain.Enums;
+using JDG.Domain.Events;
+
+namespace JDG.Application.Tests.UseCases
+{
+    /// <summary>
+    /// Tests for HandleCardRemovedFromFieldUseCase.
+    /// Phase 84: Created for UseCase migration validation.
+    /// </summary>
+    [TestFixture]
+    public class HandleCardRemovedFromFieldUseCaseTests
+    {
+        private HandleCardRemovedFromFieldUseCase _useCase;
+        private TestEventBus _eventBus;
+        private TestAbilityExecutor _abilityExecutor;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _eventBus = new TestEventBus();
+            _abilityExecutor = new TestAbilityExecutor();
+            _useCase = new HandleCardRemovedFromFieldUseCase(_eventBus, _abilityExecutor);
+        }
+
+        [Test]
+        public void Execute_WithValidCard_ReturnsSuccess()
+        {
+            // Arrange
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+
+            // Act
+            var result = _useCase.Execute(card, owner, null);
+
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+        }
+
+        [Test]
+        public void Execute_WithNullCard_ReturnsFailure()
+        {
+            // Arrange
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+
+            // Act
+            var result = _useCase.Execute(null, owner, null);
+
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual("Removed card is null", result.Message);
+        }
+
+        [Test]
+        public void Execute_WithNullOwnerCards_ReturnsFailure()
+        {
+            // Arrange
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
+
+            // Act
+            var result = _useCase.Execute(card, null, null);
+
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual("Owner cards collection is null", result.Message);
+        }
+
+        [Test]
+        public void Execute_PublishesCardRemovedFromFieldEvent()
+        {
+            // Arrange
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+
+            // Act
+            _useCase.Execute(card, owner, null);
+
+            // Assert
+            var removedEvents = _eventBus.PublishedEvents.FindAll(e => e is CardRemovedFromFieldEvent);
+            Assert.AreEqual(1, removedEvents.Count);
+            var evt = (CardRemovedFromFieldEvent)removedEvents[0];
+            Assert.AreEqual(JDG.Domain.CardOwner.Player1, evt.Owner);
+        }
+
+        [Test]
+        public void Execute_DelegatesToAbilityExecutor()
+        {
+            // Arrange
+            var card = new TestInvocationCard("Test Card", JDG.Domain.CardOwner.Player1);
+            var owner = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player1);
+            var opponent = new TestPlayerCardCollection(JDG.Domain.CardOwner.Player2);
+
+            // Act
+            _useCase.Execute(card, owner, opponent);
+
+            // Assert
+            Assert.IsTrue(_abilityExecutor.OnCardRemovedCalled);
+        }
+
+        #region Test Doubles
+
+        private class TestEventBus : IEventBus
+        {
+            public List<object> PublishedEvents { get; } = new List<object>();
+
+            public void Publish<T>(T eventData) where T : struct
+            {
+                PublishedEvents.Add(eventData);
+            }
+
+            public IDisposable Subscribe<T>(Action<T> handler) where T : struct
+            {
+                return new TestDisposable();
+            }
+
+            public void ClearSubscriptions<T>() where T : struct { }
+            public void ClearAllSubscriptions() { }
+        }
+
+        private class TestDisposable : IDisposable
+        {
+            public void Dispose() { }
+        }
+
+        private class TestAbilityExecutor : IAbilityExecutor
+        {
+            public bool OnCardRemovedCalled { get; private set; }
+
+            public void ExecuteOnCardAddedToField(IInGameInvocationCard addedCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnCardRemovedFromField(IInGameInvocationCard removedCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards)
+            {
+                OnCardRemovedCalled = true;
+            }
+            public void ExecuteOnCardDeath(IInGameInvocationCard deadCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnTurnStart(IPlayerCardCollection currentPlayer, IPlayerCardCollection opponent) { }
+            public void ExecuteOnTurnEnd(IPlayerCardCollection currentPlayer, IPlayerCardCollection opponent) { }
+            public void ExecuteOnHandCardsChanged(IPlayerCardCollection playerCards, IPlayerCardCollection opponentCards, int oldCount, int newCount) { }
+            public void ExecuteOnFieldCardChanged(IInGameFieldCard oldFieldCard, IInGameFieldCard newFieldCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEquipmentAttached(IInGameEquipmentCard equipment, IInGameInvocationCard target, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEquipmentDetached(IInGameEquipmentCard equipment, IInGameInvocationCard previousTarget, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+            public void ExecuteOnEffectCardPlayed(IInGameEffectCard effectCard, IPlayerCardCollection ownerCards, IPlayerCardCollection opponentCards) { }
+        }
+
+        private class TestInvocationCard : IInGameInvocationCard
+        {
+            public string CardId => Title.ToLowerInvariant().Replace(" ", "-");
+            public string Title { get; }
+            public JDG.Domain.CardOwner CardOwner { get; }
+            public CardType Type => CardType.Invocation;
+            public bool Collector => false;
+            public string Description => "";
+            public string DetailedDescription => "";
+            public string VisualId => Title;
+            public float Attack { get; set; }
+            public float Defense { get; set; }
+            public float BaseAttack => 5f;
+            public float BaseDefense => 5f;
+            public bool CanDirectAttack { get; set; }
+            public bool CantBeAttack { get; set; }
+            public bool Aggro { get; set; }
+            public bool CancelEffect { get; set; }
+            public bool IsAffectedByEffectCard { get; set; } = true;
+            public bool IsControlled { get; private set; }
+            public int NumberOfTurnOnField { get; private set; }
+            public int NumberOfDeaths { get; private set; }
+            public int TimesRevived { get; set; }
+            public int BonusAttacks { get; set; }
+            public IReadOnlyList<object> Abilities => new List<object>();
+            public IInGameEquipmentCard EquipmentCard { get; private set; }
+            public CardFamily[] Families { get; set; } = System.Array.Empty<CardFamily>();
+
+            public TestInvocationCard(string title, JDG.Domain.CardOwner owner)
+            {
+                Title = title;
+                CardOwner = owner;
+            }
+
+            public void ResetNewTurn() { }
+            public void FreeCard() { IsControlled = false; }
+            public void UnblockAttack() { }
+            public bool CanAttack() => true;
+            public void BlockAttack() { }
+            public void AttackTurnDone() { }
+            public void SetRemainedAttackThisTurn(int count) { }
+            public bool HasAction() => false;
+            public bool SetEquipmentCard(IInGameEquipmentCard equipment) { EquipmentCard = equipment; return true; }
+            public void ControlCard() { IsControlled = true; }
+            public void IncrementNumberTurnOnField() { NumberOfTurnOnField++; }
+            public void IncrementNumberDeaths() { NumberOfDeaths++; }
+        }
+
+        private class TestPlayerCardCollection : IPlayerCardCollection
+        {
+            public JDG.Domain.CardOwner Owner { get; }
+            public bool IsPlayerOne => Owner == JDG.Domain.CardOwner.Player1;
+            public IReadOnlyList<IInGameInvocationCard> InvocationCards => new List<IInGameInvocationCard>();
+            public IReadOnlyList<IInGameEffectCard> EffectCards => new List<IInGameEffectCard>();
+            public IInGameFieldCard FieldCard => null;
+            public IReadOnlyList<IInGameCard> GraveyardCards => new List<IInGameCard>();
+            public IReadOnlyList<IInGameCard> HandCards => new List<IInGameCard>();
+            public int HandCardCount => 0;
+
+            public TestPlayerCardCollection(JDG.Domain.CardOwner owner)
+            {
+                Owner = owner;
+            }
+        }
+
+        #endregion
+    }
+}

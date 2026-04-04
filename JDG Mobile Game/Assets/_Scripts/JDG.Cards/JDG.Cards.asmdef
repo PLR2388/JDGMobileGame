@@ -1,0 +1,19 @@
+{
+    "name": "JDG.Cards",
+    "rootNamespace": "JDG.Cards",
+    "references": [
+        "JDG.Domain",
+        "JDG.Application",
+        "JDG.Core",
+        "VContainer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

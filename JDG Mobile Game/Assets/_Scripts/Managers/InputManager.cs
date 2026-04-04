@@ -1,7 +1,16 @@
+using JDG.Application;
+using JDG.Domain.Events;
+using JDG.Domain.ValueObjects;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 
-public class InputManager : Singleton<InputManager>
+/// <summary>
+/// Handles input detection including touch/click and Android back button.
+/// Phase 19-20: Converted from singleton to regular MonoBehaviour with VContainer registration.
+/// Phase 23: Migrated static UnityEvents to EventBus.
+/// </summary>
+public class InputManager : MonoBehaviour
 {
     [SerializeField] private float clickDuration = 2f;
 
@@ -9,9 +18,25 @@ public class InputManager : Singleton<InputManager>
     private bool isTouchInProgress;
     private float totalDownTime;
 
+    // Phase 23: EventBus for static UnityEvent migration
+    private IEventBus _eventBus;
+
     /// <summary>
-    /// Checks if the user tap at a random location
+    /// VContainer method injection for EventBus.
+    /// Phase 23: Inject IEventBus for static UnityEvent migration.
     /// </summary>
+    [Inject]
+    public void Construct(IEventBus eventBus)
+    {
+        _eventBus = eventBus;
+    }
+
+    /// <summary>
+    /// Checks if the user tap at a random location.
+    ///
+    /// [OBSOLETE] Use IInputService with EventBus (TouchStartedEvent) instead.
+    /// </summary>
+    [System.Obsolete("Use IInputService.SubscribeToTouchStarted() or EventBus TouchStartedEvent instead.")]
     public static bool IsTap
     {
         get
@@ -43,7 +68,10 @@ public class InputManager : Singleton<InputManager>
 
     /// <summary>
     /// Gets the position of the current touch or click input.
+    ///
+    /// [OBSOLETE] Use IInputService.GetCurrentTouchPosition() instead.
     /// </summary>
+    [System.Obsolete("Use IInputService.GetCurrentTouchPosition() instead for better testability.")]
     public static Vector3 TouchPosition
     {
         get
@@ -75,26 +103,6 @@ public class InputManager : Singleton<InputManager>
         isTouchDetectionDisabled = true;
     }
 
-    /// <summary>
-    /// Event invoked when a touch/click starts.
-    /// </summary
-    public static readonly UnityEvent OnTouch = new UnityEvent();
-
-    /// <summary>
-    /// Event invoked when a long touch/click is detected.
-    /// </summary>
-    public static readonly UnityEvent OnLongTouch = new UnityEvent();
-
-    /// <summary>
-    /// Event invoked when a touch/click ends.
-    /// </summary>
-    public static readonly UnityEvent OnReleaseTouch = new UnityEvent();
-
-    /// <summary>
-    /// Event invoked when the Android back button is pressed.
-    /// </summary>
-    public static readonly UnityEvent OnBackPressed = new UnityEvent();
-
     private void Update()
     {
         HandleTouchInput();
@@ -103,6 +111,7 @@ public class InputManager : Singleton<InputManager>
 
     /// <summary>
     /// Handles touch and click input detection.
+    /// Phase 23: Publishes to EventBus (static UnityEvents removed).
     /// </summary>
     private void HandleTouchInput()
     {
@@ -112,7 +121,12 @@ public class InputManager : Singleton<InputManager>
         {
             totalDownTime = 0;
             isTouchInProgress = true;
-            OnTouch.Invoke();
+            var mousePos = Input.mousePosition;
+            _eventBus.Publish(new TouchStartedEvent
+            {
+                Position = new JDG.Domain.ValueObjects.Vector2(mousePos.x, mousePos.y),
+                Timestamp = Time.time
+            });
         }
 
         if (!isTouchInProgress) return;
@@ -122,28 +136,44 @@ public class InputManager : Singleton<InputManager>
 
             if (totalDownTime >= clickDuration)
             {
+#if UNITY_EDITOR
                 Debug.Log("Long click");
-                OnLongTouch.Invoke();
+#endif
+                var mousePos = Input.mousePosition;
+                _eventBus.Publish(new LongTouchEvent
+                {
+                    Position = new JDG.Domain.ValueObjects.Vector2(mousePos.x, mousePos.y),
+                    Duration = totalDownTime
+                });
             }
         }
         if (IsJustStopTouching)
         {
             isTouchInProgress = false;
-            OnReleaseTouch.Invoke();
+            var mousePos = Input.mousePosition;
+            _eventBus.Publish(new TouchEndedEvent
+            {
+                Position = new JDG.Domain.ValueObjects.Vector2(mousePos.x, mousePos.y),
+                Duration = totalDownTime
+            });
         }
     }
 
     /// <summary>
     /// Handles the behavior for the Android back button.
+    /// Phase 23: Publishes to EventBus (static UnityEvent removed).
     /// </summary>
-    private static void HandleAndroidBackButton()
+    private void HandleAndroidBackButton()
     {
         if (Application.platform == RuntimePlatform.Android &&
             Input.GetKeyDown(KeyCode.Escape))
         {
             // Make sure user is on Android platform
             // Check if Back was pressed this frame
-            OnBackPressed.Invoke();
+            _eventBus.Publish(new BackButtonPressedEvent
+            {
+                Timestamp = Time.time
+            });
         }
     }
 }

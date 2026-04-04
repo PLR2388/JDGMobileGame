@@ -1,0 +1,17 @@
+﻿<Solution>
+  <Project Path="JDG.Legacy.csproj" />
+  <Project Path="JDG.PlayMode.Tests.csproj" />
+  <Project Path="JDG.Application.Tests.csproj" />
+  <Project Path="JDG.Infrastructure.csproj" />
+  <Project Path="JDG.Domain.csproj" />
+  <Project Path="JDG.Cards.csproj" />
+  <Project Path="JDG.Application.csproj" />
+  <Project Path="JDG.Presentation.csproj" />
+  <Project Path="JDG.Presentation.Tests.csproj" />
+  <Project Path="JDG.Infrastructure.Tests.csproj" />
+  <Project Path="JDG.Domain.Tests.csproj" />
+  <Project Path="JDG.Core.csproj" />
+  <Project Path="JDG.TestUtilities.csproj" />
+  <Project Path="JDG.Tests.Editor.csproj" />
+  <Project Path="JDG.TestUtilities.Editor.csproj" />
+</Solution>

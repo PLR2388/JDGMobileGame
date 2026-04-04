@@ -38,7 +38,10 @@
     },
     {
       "index": 16,
-      "trigger": "put_card"
+      "highlight": "next_phase"
+    },
+    {
+      "index": 17
     },
     {
       "index": 19,

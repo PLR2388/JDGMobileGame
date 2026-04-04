@@ -1,14 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Cards;
+using JDG.Application;
+using JDG.Application.Services;
+using JDG.Domain.Enums;
+using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
+using JDG.Infrastructure.Cards.Handlers;
+using JDG.Infrastructure.Services;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 /// <summary>
 /// Manages in-game card interactions, handling events, and displaying UI elements related to cards.
+/// Phase 17-18: Removed CardManager singleton dependency via ICardCollectionService.
+/// Phase 23: Migrated HandCardChange invocations to EventBus.
+/// Phase 28: Added IPlayerStatusProvider for player status access in card handlers.
+/// Phase 34: Uses ILocalizationService instead of LocalizationSystem.Instance.
+/// Phase 109: Fully migrated to EventBus - removed all static UnityEvents.
+/// Phase 166: Implements ICardMenuView to decouple CardHandlers from this MonoBehaviour.
 /// </summary>
-public class InGameMenuScript : MonoBehaviour
+public class InGameMenuScript : MonoBehaviour, ICardMenuView
 {
+    // Phase 17-18: Injected dependency (protected so TutoInGameMenuScript can access)
+    protected ICardCollectionService _cardCollectionService;
+
+    // Phase 166: Clean interface for card collection access (used by CardHandlers)
+    protected ICardCollectionProvider _cardCollectionProvider;
+
+    // Phase 28: Injected player status provider
+    protected IPlayerStatusProvider _playerStatusProvider;
+
+    // Phase 23: EventBus for hand card display events
+    protected IEventBus _eventBus;
+
+    // Phase 34: ILocalizationService instead of LocalizationSystem.Instance
+    protected ILocalizationService _localizationService;
+
+    // Phase 135: GameStateService for phase/state validation
+    protected GameStateService _gameStateService;
+
+    // Phase 109: EventBus subscription for card click events
+    private IDisposable _cardClickedSubscription;
     // Serialized fields for UI components
     [SerializeField] protected TextMeshProUGUI buttonText;
     [SerializeField] protected GameObject handScreen;
@@ -29,13 +64,51 @@ public class InGameMenuScript : MonoBehaviour
 
     [SerializeField] protected GameObject invocationMenu;
 
-    // Static events for various card interactions
-    public static readonly CardEvent EventClick = new CardEvent();
-    public static readonly InvocationCardEvent InvocationCardEvent = new InvocationCardEvent();
-    public static readonly FieldCardEvent FieldCardEvent = new FieldCardEvent();
-    public static readonly EffectCardEvent EffectCardEvent = new EffectCardEvent();
-    public static readonly EquipmentCardEvent EquipmentCardEvent = new EquipmentCardEvent();
+    // Phase 109: Static events removed - all card interactions now use EventBus.
+    // EventClick → InGameCardClickedEvent
+    // InvocationCardEvent → InvocationCardPlayRequestedEvent
+    // FieldCardEvent → FieldCardPlayRequestedEvent
+    // EffectCardEvent → EffectCardPlayRequestedEvent
+    // EquipmentCardEvent → EquipmentCardPlayRequestedEvent
 
+    /// <summary>
+    /// Phase 135: Helper method for CardHandlers to check if card interaction is allowed.
+    /// </summary>
+    /// <returns>True if cards can be interacted with, false otherwise.</returns>
+    public bool CanInteractWithCards()
+    {
+        if (_gameStateService == null) return true; // Allow if no validation available
+        if (_gameStateService.IsGameOver) return false;
+        return true;
+    }
+
+    /// <summary>
+    /// Phase 135: Helper method for CardHandlers to check if card placement is allowed.
+    /// </summary>
+    /// <returns>True if cards can be placed, false otherwise.</returns>
+    public bool CanPlaceCards()
+    {
+        if (_gameStateService == null) return true; // Allow if no validation available
+        if (_gameStateService.IsGameOver) return false;
+        if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose) return false;
+        return true;
+    }
+
+    /// <summary>
+    /// Phase 166: ICardMenuView implementation - sets the put card button text.
+    /// </summary>
+    public void SetPutCardButtonText(string text)
+    {
+        putCardButtonText.SetText(text);
+    }
+
+    /// <summary>
+    /// Phase 166: ICardMenuView implementation - sets the put card button interactability.
+    /// </summary>
+    public void SetPutCardButtonInteractable(bool interactable)
+    {
+        putCardButton.interactable = interactable;
+    }
 
     private const float ButtonGroupPosX = 600f;
     private const float ButtonGroupPosY = 400f;
@@ -54,34 +127,95 @@ public class InGameMenuScript : MonoBehaviour
     protected readonly Dictionary<CardType, CardHandler> CardHandlerMap = new Dictionary<CardType, CardHandler>();
 
     /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 17-18: Inject ICardCollectionService instead of CardManager.Instance.
+    /// Phase 23: Inject IEventBus for hand card display events.
+    /// Phase 28: Inject IPlayerStatusProvider for player status access.
+    /// Phase 34: Inject ILocalizationService instead of LocalizationSystem.Instance.
+    /// Phase 135: Inject GameStateService for phase/state validation.
+    /// Phase 166: Inject ICardCollectionProvider for CardHandler migration.
+    /// </summary>
+    [Inject]
+    public void Construct(
+        ICardCollectionService cardCollectionService,
+        ICardCollectionProvider cardCollectionProvider,
+        IEventBus eventBus,
+        IPlayerStatusProvider playerStatusProvider,
+        ILocalizationService localizationService,
+        GameStateService gameStateService)
+    {
+        _cardCollectionService = cardCollectionService;
+        _cardCollectionProvider = cardCollectionProvider;
+        _eventBus = eventBus;
+        _playerStatusProvider = playerStatusProvider;
+        _localizationService = localizationService;
+        _gameStateService = gameStateService;
+    }
+
+    /// <summary>
     /// Initializes handlers for different types of cards.
+    /// Phase 166: Uses ICardMenuView (this) and ICardCollectionProvider for clean architecture.
+    /// Removed IPlayerStatusProvider (unused by handlers).
     /// </summary>
     protected void InitializeCardHandlers()
     {
-        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this);
-        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this);
-        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this);
-        CardHandlerMap[CardType.Field] = new FieldCardHandler(this);
-        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this);
+        CardHandlerMap[CardType.Invocation] = new InvocationCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Effect] = new EffectCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Contre] = new ContreCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Field] = new FieldCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
+        CardHandlerMap[CardType.Equipment] = new EquipmentCardHandler(this, _cardCollectionProvider, _localizationService, _eventBus);
     }
 
     /// <summary>
     /// Unity's start method, called before the first frame update. Initializes UI states and card handlers.
+    /// Phase 109: Subscribes to InGameCardClickedEvent via EventBus instead of static event.
     /// </summary>
     private void Start()
     {
         miniMenuCard.SetActive(false);
         detailCardPanel.SetActive(false);
-        EventClick.AddListener(ClickOnCard);
+        // Phase 109: Subscribe to EventBus instead of static event
+        _cardClickedSubscription = _eventBus?.Subscribe<InGameCardClickedEvent>(OnCardClicked);
         InitializeCardHandlers();
     }
 
     /// <summary>
+    /// Cleanup method. Unsubscribes from events when the object is destroyed.
+    /// Phase 109: Disposes EventBus subscriptions.
+    /// </summary>
+    private void OnDestroy()
+    {
+        _cardClickedSubscription?.Dispose();
+    }
+
+    /// <summary>
+    /// Event handler for InGameCardClickedEvent from EventBus.
+    /// Phase 109: Replaces static UnityEvent listener.
+    /// </summary>
+    private void OnCardClicked(InGameCardClickedEvent evt)
+    {
+        if (evt.Card is InGameCard card)
+        {
+            ClickOnCard(card);
+        }
+    }
+
+    /// <summary>
     /// Handles the event of clicking on a card.
+    /// Phase 135: Added game state validation.
     /// </summary>
     /// <param name="card">The card that was clicked on.</param>
     private void ClickOnCard(InGameCard card)
     {
+        // Phase 135: Validate game state before handling card click
+        if (_gameStateService != null && _gameStateService.IsGameOver)
+        {
+#if UNITY_EDITOR
+            Debug.Log("InGameMenuScript: Cannot interact with card - game is over");
+#endif
+            return;
+        }
+
         CurrentSelectedCard = card;
         if (CardHandlerMap.TryGetValue(card.Type, out var handler))
         {
@@ -130,9 +264,30 @@ public class InGameMenuScript : MonoBehaviour
 
     /// <summary>
     /// Handles the "Put Card" action, triggering the appropriate event based on the card's type.
+    /// Phase 135: Added phase and game state validation.
+    /// Phase 146: Made virtual to allow TutoInGameMenuScript to override and publish dialogue events.
     /// </summary>
-    public void ClickPutCard()
+    public virtual void ClickPutCard()
     {
+        // Phase 135: Validate game state before placing card
+        if (_gameStateService != null)
+        {
+            if (_gameStateService.IsGameOver)
+            {
+#if UNITY_EDITOR
+                Debug.Log("InGameMenuScript: Cannot place card - game is over");
+#endif
+                return;
+            }
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Choose)
+            {
+#if UNITY_EDITOR
+                Debug.Log($"InGameMenuScript: Cannot place card - current phase is {_gameStateService.CurrentPhase}, must be Choose phase");
+#endif
+                return;
+            }
+        }
+
         if (CardHandlerMap.TryGetValue(CurrentSelectedCard.Type, out var handler))
         {
             handler.HandleCardPut(CurrentSelectedCard);
@@ -157,12 +312,20 @@ public class InGameMenuScript : MonoBehaviour
     {
         if (detailCardPanel.activeSelf)
         {
-            detailButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS));
+            detailButtonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_DETAILS));
             miniMenuCard.SetActive(false);
             detailCardPanel.SetActive(false);
             handScreen.SetActive(true);
             inHandButton.SetActive(true);
-            HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            // Phase 23: Publish to EventBus instead of static UnityEvent
+            var playerCards = _cardCollectionService.GetCurrentPlayerCards();
+            var domainOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+            _eventBus.Publish(new HandCardsDisplayChangedEvent
+            {
+                Player = domainOwner,
+                HandCards = playerCards.HandCards
+            });
         }
         else
         {
@@ -170,7 +333,7 @@ public class InGameMenuScript : MonoBehaviour
 
             miniMenuCard.transform.position = buttonGroupPosition;
 
-            detailButtonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
+            detailButtonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
             detailCardPanel.transform.GetChild(0).gameObject.GetComponent<CardDisplay>().InGameCard =
                 CurrentSelectedCard;
             detailCardPanel.SetActive(true);
@@ -201,8 +364,16 @@ public class InGameMenuScript : MonoBehaviour
     {
         handScreen.SetActive(true);
         backgroundInformation.SetActive(false);
-        buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
-        HandCardDisplay.HandCardChange.Invoke(CardManager.Instance.GetCurrentPlayerCards().HandCards);
+        buttonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_BACK));
+        // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+        // Phase 23: Publish to EventBus instead of static UnityEvent
+        var playerCards = _cardCollectionService.GetCurrentPlayerCards();
+        var domainOwner = playerCards.IsPlayerOne ? JDG.Domain.CardOwner.Player1 : JDG.Domain.CardOwner.Player2;
+        _eventBus.Publish(new HandCardsDisplayChangedEvent
+        {
+            Player = domainOwner,
+            HandCards = playerCards.HandCards
+        });
     }
 
     /// <summary>
@@ -214,6 +385,6 @@ public class InGameMenuScript : MonoBehaviour
         detailCardPanel.SetActive(false);
         handScreen.SetActive(false);
         backgroundInformation.SetActive(true);
-        buttonText.SetText(LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
+        buttonText.SetText(_localizationService.GetLocalizedValue(LocalizationKeys.BUTTON_HAND));
     }
 }

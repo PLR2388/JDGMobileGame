@@ -1,0 +1,25 @@
+{
+    "name": "JDG.Legacy",
+    "rootNamespace": "",
+    "references": [
+        "Unity.TextMeshPro",
+        "Newtonsoft.Json",
+        "VContainer",
+        "JDG.Domain",
+        "JDG.Application",
+        "JDG.Infrastructure",
+        "JDG.Presentation",
+        "JDG.UI",
+        "JDG.Cards",
+        "JDG.Bridge"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

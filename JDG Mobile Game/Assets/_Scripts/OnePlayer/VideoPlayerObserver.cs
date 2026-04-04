@@ -1,13 +1,30 @@
+using JDG.Application;
+using JDG.Domain.Events;
 using OnePlayer.DialogueBox;
 using UnityEngine;
 using UnityEngine.Video;
+using VContainer;
 
 /// <summary>
 /// Observes a VideoPlayer component and provides functionality when the video reaches its end point.
+/// Phase 123: Uses EventBus instead of static DialogueUI.TriggerDoneEvent.
 /// </summary>
 public class VideoPlayerObserver : MonoBehaviour
 {
     private VideoPlayer videoPlayer;
+
+    // Phase 123: EventBus for dialogue trigger events
+    private IEventBus _eventBus;
+
+    /// <summary>
+    /// VContainer method injection for dependencies.
+    /// Phase 123: Added IEventBus for DialogueTriggerCompletedEvent.
+    /// </summary>
+    [Inject]
+    public void Construct(IEventBus eventBus)
+    {
+        _eventBus = eventBus;
+    }
 
     /// <summary>
     /// Initializes the VideoPlayerObserver by acquiring the VideoPlayer component and setting up event listeners.
@@ -39,11 +56,13 @@ public class VideoPlayerObserver : MonoBehaviour
 
     /// <summary>
     /// Called when the video reaches its end. Triggers the corresponding dialogue event and deactivates the game object.
+    /// Phase 123: Uses EventBus instead of static TriggerDoneEvent.
     /// </summary>
     /// <param name="vp">The VideoPlayer that has reached its end point.</param>
     private void OnVideoEnd(VideoPlayer vp)
     {
-        DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.EndVideo);
+        // Phase 123: Publish via EventBus instead of static TriggerDoneEvent
+        _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.EndVideo });
         gameObject.SetActive(false);
     }
 }

@@ -1,0 +1,341 @@
+using VContainer;
+using VContainer.Unity;
+using JDG.Application;
+using JDG.Application.Abilities;
+using JDG.Application.Abilities.Implementations;
+using JDG.Application.Repositories;
+using JDG.Application.Services;
+using JDG.Application.UseCases;
+using JDG.Bridge;
+using JDG.Infrastructure.Cards;
+using JDG.Infrastructure.Events;
+using JDG.Infrastructure.Repositories;
+using JDG.Infrastructure.Services;
+using Services; // For AbilityExecutorAdapter (CardStateService moved to JDG.Infrastructure.Services)
+
+namespace JDG.DI
+{
+    /// <summary>
+    /// ROOT VContainer lifetime scope for the entire game.
+    /// Contains ALL service registrations (merged from GameLifetimeScope + old SharedServicesScope).
+    /// Phase 46: Simplified to single root scope for reliable DI.
+    ///
+    /// Place this in the preload scene with Auto Run = true, Parent = None.
+    /// Scene scopes (MainScreenScope, GameSceneScope) will auto-find this as parent.
+    /// Uses DontDestroyOnLoad to persist across scene loads.
+    /// </summary>
+    public class SharedServicesScope : LifetimeScope
+    {
+        // Phase 148: Static instance tracking to prevent duplicate SharedServicesScope creation
+        private static SharedServicesScope _instance;
+
+        /// <summary>
+        /// Returns true if an instance of SharedServicesScope already exists.
+        /// Used by child scopes to check before dynamically creating one.
+        /// </summary>
+        public static bool InstanceExists => _instance != null;
+
+        protected override void Awake()
+        {
+            // Phase 148: Check for duplicate instances
+            if (_instance != null && _instance != this)
+            {
+                UnityEngine.Debug.LogWarning("SharedServicesScope: Duplicate instance detected! Destroying this instance.");
+                Destroy(gameObject);
+                return;
+            }
+            _instance = this;
+
+            // Must be a root GameObject for DontDestroyOnLoad to work
+            // Detach from parent if we're a child object
+            if (transform.parent != null)
+            {
+                transform.SetParent(null);
+            }
+
+            // Persist across scene loads (scenes use LoadSceneMode.Single)
+            DontDestroyOnLoad(gameObject);
+            base.Awake();
+        }
+
+        protected override void OnDestroy()
+        {
+            // Phase 148: Clear static instance reference on destroy
+            if (_instance == this)
+            {
+                _instance = null;
+            }
+            base.OnDestroy();
+        }
+
+        protected override void Configure(IContainerBuilder builder)
+        {
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log("SharedServicesScope: Configuring ROOT scope...");
+#endif
+
+            // ============================================
+            // INFRASTRUCTURE LAYER - Event Bus & Repositories
+            // ============================================
+
+            // Event Bus (Singleton) - core messaging system
+            builder.Register<IEventBus, EventBus>(Lifetime.Singleton);
+
+            // Repositories (Singleton - maintain state throughout game session)
+            builder.Register<ICardRepository, CardRepository>(Lifetime.Singleton);
+            builder.Register<IDeckRepository, DeckRepository>(Lifetime.Singleton);
+            builder.Register<IPlayerRepository, PlayerRepository>(Lifetime.Singleton);
+            builder.Register<IGameStateRepository, GameStateRepository>(Lifetime.Singleton);
+
+            // Game State Service
+            builder.Register<GameStateService>(Lifetime.Singleton);
+
+            // ============================================
+            // LEGACY WRAPPER SERVICES
+            // ============================================
+
+            // Audio, Localization, Dialog services (wrap singletons)
+            builder.Register<IAudioService, AudioService>(Lifetime.Singleton);
+            builder.Register<ILocalizationService, LocalizationService>(Lifetime.Singleton);
+            builder.Register<IDialogService, DialogService>(Lifetime.Singleton);
+
+            // Card Visual Service - abstracts Unity Material dependencies
+            builder.Register<ICardVisualService, CardVisualService>(Lifetime.Singleton);
+
+            // Note: IRaycastService is registered in GameSceneScope because it depends on
+            // IInputService, which depends on InputManager (scene-specific MonoBehaviour)
+
+            // Player Service - manages player state
+            builder.Register<IPlayerService, PlayerService>(Lifetime.Singleton);
+
+            // Note: ICardPlacementService is NOT registered here because it depends on
+            // scene-specific services (ICardCollectionService, IPlayerStatusProvider).
+            // MonoBehaviours that need card placement should use CardPlacementService directly
+            // or we need to refactor the dependency structure.
+
+            // Card Data Provider - replaces ResourceSystem.Instance
+            builder.Register<JDG.Application.Services.ICardDataProvider, JDG.Infrastructure.Services.CardDataProvider>(Lifetime.Singleton);
+
+            // Scene Loader Service - replaces SceneLoaderSystem singleton (Phase 55)
+            builder.Register<ISceneLoaderService, SceneLoaderService>(Lifetime.Singleton);
+
+            // Deck Management Service - deck data storage
+            builder.Register<IDeckManagementService, DeckManagementService>(Lifetime.Singleton);
+
+            // Note: ICardInstantiationService, IDeckInitializationService, and CombatService are registered in
+            // GameSceneScope because they depend on scene-specific MonoBehaviours
+
+            // Card Selection Service - pure C#, no MonoBehaviour needed
+            builder.Register<JDG.Application.Services.ICardSelectionService, CardSelectionService>(Lifetime.Singleton);
+
+            // Phase 87: Pure logic services - unit testable without Unity dependencies
+            builder.Register<ICombatLogic, CombatLogic>(Lifetime.Singleton);
+            builder.Register<ICardPlacementLogic, CardPlacementLogic>(Lifetime.Singleton);
+
+            // Phase 48: Card-type ability providers (wrap legacy ability libraries for DI)
+            builder.Register<IFieldAbilityProvider, FieldAbilityProviderService>(Lifetime.Singleton);
+            builder.Register<IEquipmentAbilityProvider, EquipmentAbilityProviderService>(Lifetime.Singleton);
+            builder.Register<IEffectAbilityProvider, EffectAbilityProviderService>(Lifetime.Singleton);
+
+            // Phase 56: Condition provider (wraps ConditionLibrary for DI)
+            builder.Register<IConditionProvider, ConditionProviderService>(Lifetime.Singleton);
+
+            // Phase 62: ICardFactory for card creation
+            // Note: ICardCollectionService is null here (scene-specific, only available in GameSceneScope)
+            // This is fine for deck building which doesn't need card collection queries
+            builder.Register<ICardFactory>(container =>
+            {
+                return new CardFactory(
+                    container.Resolve<IEventBus>(),
+                    null, // ICardCollectionProvider - only available in Game scene
+                    container.Resolve<IAbilityProvider>(),
+                    container.Resolve<IFieldAbilityProvider>(),
+                    container.Resolve<IEquipmentAbilityProvider>(),
+                    container.Resolve<IEffectAbilityProvider>(),
+                    container.Resolve<IConditionProvider>()
+                );
+            }, Lifetime.Singleton);
+
+            // ============================================
+            // APPLICATION LAYER - Use Cases
+            // ============================================
+
+            // Card Use Cases
+            builder.Register<DrawCardUseCase>(Lifetime.Transient);
+
+            // Migrated Use Cases (Phase 77+)
+            builder.Register<ResetCardsForNewTurnUseCase>(Lifetime.Transient);
+            builder.Register<HandleHandCardsChangeUseCase>(Lifetime.Transient); // Phase 78: Migrated
+            builder.Register<HandleFieldCardChangedUseCase>(Lifetime.Transient); // Phase 79: Migrated
+            builder.Register<HandleCardAddedToFieldUseCase>(Lifetime.Transient); // Phase 80: Migrated
+            builder.Register<HandleCardRemovedFromFieldUseCase>(Lifetime.Transient); // Phase 81: Migrated
+            builder.Register<HandleCardDeathUseCase>(Lifetime.Transient); // Phase 82: Migrated
+            builder.Register<SummonPlayerEntityUseCase>(Lifetime.Transient); // Phase 83: Migrated
+
+            // Phase 84 Fix: ICanvasProvider must be in root scope for AbilityExecutorAdapter
+            // Canvas is set later by GameSceneScope when game scene loads
+            builder.Register<CanvasProviderService>(Lifetime.Singleton);
+            builder.Register<ICanvasProvider>(container =>
+                container.Resolve<CanvasProviderService>(), Lifetime.Singleton);
+
+            // Card State Services (Phase 71+)
+            builder.Register<ICardStateService, CardStateService>(Lifetime.Singleton);
+
+            // Phase 141: Card sync service for syncing domain Card changes back to InGameInvocationCard
+            builder.Register<ICardSyncService, CardSyncService>(Lifetime.Singleton);
+
+            builder.Register<IAbilityExecutor, AbilityExecutorAdapter>(Lifetime.Singleton);
+
+            // ============================================
+            // ABILITY SYSTEM
+            // ============================================
+
+            // Ability Core
+            builder.Register<AbilityRegistry>(Lifetime.Singleton);
+            builder.Register<AbilityManager>(Lifetime.Singleton);
+
+            // Ability Provider (bridges modern and legacy)
+            builder.Register<IAbilityProvider, AbilityProviderService>(Lifetime.Singleton);
+
+            // Ability Factories (for invocation abilities registered in AbilityRegistry)
+            // Phase 156: Removed EffectAbilityFactory, EquipmentAbilityFactory, FieldAbilityFactory
+            // as they are created directly in their provider services (EffectAbilityProviderService, etc.)
+            builder.Register<DrawCardsAbilityFactory>(Lifetime.Singleton);
+            builder.Register<DestroyCardAbilityFactory>(Lifetime.Singleton);
+            builder.Register<DeckSearchAbilityFactory>(Lifetime.Singleton);
+            builder.Register<SacrificeAbilityFactory>(Lifetime.Singleton);
+            builder.Register<StatModifierAbilityFactory>(Lifetime.Singleton);
+            builder.Register<ProtectionAbilityFactory>(Lifetime.Singleton);
+            builder.Register<CombatAbilityFactory>(Lifetime.Singleton);
+            builder.Register<SpecialAbilityFactory>(Lifetime.Singleton);
+
+            // Initialize legacy systems and register abilities after container is built
+            builder.RegisterBuildCallback(container =>
+            {
+                // Initialize legacy static fields for extension methods
+                // Phase 118: Removed dialogService - Ability class deleted
+                var localizationService = container.Resolve<ILocalizationService>();
+                LegacySystemInitializer.Initialize(localizationService);
+
+                // Load legacy cards
+                var cardRepository = container.Resolve<ICardRepository>();
+                LegacySystemInitializer.LoadCards(cardRepository);
+
+                // Register all abilities
+                RegisterAllAbilities(container);
+            });
+
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log("SharedServicesScope: ROOT scope configuration complete");
+#endif
+        }
+
+        /// <summary>
+        /// Registers all game abilities with the AbilityRegistry.
+        /// </summary>
+        private static void RegisterAllAbilities(IObjectResolver container)
+        {
+            var registry = container.Resolve<AbilityRegistry>();
+            var drawFactory = container.Resolve<DrawCardsAbilityFactory>();
+            var destroyFactory = container.Resolve<DestroyCardAbilityFactory>();
+            var deckSearchFactory = container.Resolve<DeckSearchAbilityFactory>();
+            var sacrificeFactory = container.Resolve<SacrificeAbilityFactory>();
+            var statModifierFactory = container.Resolve<StatModifierAbilityFactory>();
+            var protectionFactory = container.Resolve<ProtectionAbilityFactory>();
+            var combatFactory = container.Resolve<CombatAbilityFactory>();
+            var specialFactory = container.Resolve<SpecialAbilityFactory>();
+
+            // DRAW ABILITIES
+            registry.Register(JDG.Domain.AbilityName.Draw1Card, () => drawFactory.CreateDrawNCards(1));
+            registry.Register(JDG.Domain.AbilityName.Draw2Cards, () => drawFactory.CreateDraw2Cards());
+            registry.Register(JDG.Domain.AbilityName.Draw3Cards, () => drawFactory.CreateDrawNCards(3));
+
+            // DESTROY ABILITIES
+            registry.Register(JDG.Domain.AbilityName.KillOpponentInvocation, () => destroyFactory.CreateKillOpponentInvocation());
+            registry.Register(JDG.Domain.AbilityName.DestroyFieldATK, () => destroyFactory.CreateDestroyField());
+            registry.Register(JDG.Domain.AbilityName.DestroyFieldDEF, () => destroyFactory.CreateDestroyField());
+            registry.Register(JDG.Domain.AbilityName.KillEnemyIfDestroy, () => combatFactory.CreateMutualDestruction(JDG.Domain.AbilityName.KillEnemyIfDestroy));
+
+            // DECK SEARCH ABILITIES
+            registry.Register(JDG.Domain.AbilityName.AddSpatialFromDeck, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.AddSpatialFromDeck, "Spatial"));
+            registry.Register(JDG.Domain.AbilityName.GetNounoursFromDeck, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetNounoursFromDeck, "Nounours"));
+            registry.Register(JDG.Domain.AbilityName.GetPetitePortionDeRizFromDeck, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetPetitePortionDeRizFromDeck, "Petite Portion de Riz"));
+            registry.Register(JDG.Domain.AbilityName.GetLycéeMagiqueGeorgesPompidouFromDeck, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetLycéeMagiqueGeorgesPompidouFromDeck, "Lycée Magique Georges Pompidou"));
+            registry.Register(JDG.Domain.AbilityName.GetZozanKebabFromDeck, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetZozanKebabFromDeck, "Zozan Kebab"));
+            registry.Register(JDG.Domain.AbilityName.GetConvocationAuLyceeFromDeck, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetConvocationAuLyceeFromDeck, "Convocation au Lycée"));
+            registry.Register(JDG.Domain.AbilityName.GetCanardSignal, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetCanardSignal, "Canard Signal"));
+            registry.Register(JDG.Domain.AbilityName.GetForetElfesSylvains, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetForetElfesSylvains, "Forêt des Elfes Sylvains"));
+            registry.Register(JDG.Domain.AbilityName.GetBenzaieJeuneFromDeck, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetBenzaieJeuneFromDeck, "Benzaie Jeune"));
+            registry.Register(JDG.Domain.AbilityName.GetPatronInfogramesFromDeckYellowTrash, () => deckSearchFactory.CreateGetSpecificCard(JDG.Domain.AbilityName.GetPatronInfogramesFromDeckYellowTrash, "Patron Infogrames"));
+            registry.Register(JDG.Domain.AbilityName.GetEquipmentCardWithoutAttack, () => specialFactory.CreateSearchEquipment());
+
+            // SACRIFICE ABILITIES
+            registry.Register(JDG.Domain.AbilityName.SacrificeArchibaldVonGrenier, () => sacrificeFactory.CreateSacrificeCard(JDG.Domain.AbilityName.SacrificeArchibaldVonGrenier, "Archibald Von Grenier"));
+            registry.Register(JDG.Domain.AbilityName.SacrificeBenzaieJeune, () => sacrificeFactory.CreateSacrificeCard(JDG.Domain.AbilityName.SacrificeBenzaieJeune, "Benzaie Jeune"));
+            registry.Register(JDG.Domain.AbilityName.SacrificeJoueurDuGrenier, () => sacrificeFactory.CreateSacrificeCard(JDG.Domain.AbilityName.SacrificeJoueurDuGrenier, "Joueur Du Grenier"));
+            registry.Register(JDG.Domain.AbilityName.SacrificeWizard, () => sacrificeFactory.CreateSacrificeCard(JDG.Domain.AbilityName.SacrificeWizard, "Wizard"));
+            registry.Register(JDG.Domain.AbilityName.SacrificeSebDuGrenier, () => sacrificeFactory.CreateSacrificeCard(JDG.Domain.AbilityName.SacrificeSebDuGrenier, "Seb Du Grenier"));
+            registry.Register(JDG.Domain.AbilityName.SacrificeGranolax, () => sacrificeFactory.CreateSacrificeCard(JDG.Domain.AbilityName.SacrificeGranolax, "Granolax"));
+            registry.Register(JDG.Domain.AbilityName.SacrificeClicheRaciste, () => sacrificeFactory.CreateSacrificeCard(JDG.Domain.AbilityName.SacrificeClicheRaciste, "Cliché Raciste"));
+            registry.Register(JDG.Domain.AbilityName.SacrificeToInvoke, () => sacrificeFactory.CreateSacrificeToInvoke());
+
+            // Sacrifice with ATK/DEF gain
+            registry.Register(JDG.Domain.AbilityName.SacrificeSebDuGrenierOnHardCornerForAtkDef, () => specialFactory.CreateOptionalSacrificeForStats(JDG.Domain.AbilityName.SacrificeSebDuGrenierOnHardCornerForAtkDef, 3, 3));
+            registry.Register(JDG.Domain.AbilityName.SacrificeJDGOnStudioDevForAtkDef, () => specialFactory.CreateOptionalSacrificeForStats(JDG.Domain.AbilityName.SacrificeJDGOnStudioDevForAtkDef, 3, 3));
+            registry.Register(JDG.Domain.AbilityName.Sacrifice3Atk3Def, () => specialFactory.CreateOptionalSacrificeForStats(JDG.Domain.AbilityName.Sacrifice3Atk3Def, 3, 3));
+            registry.Register(JDG.Domain.AbilityName.SacrificeDeveloper3Atk3Def, () => specialFactory.CreateOptionalSacrificeForStats(JDG.Domain.AbilityName.SacrificeDeveloper3Atk3Def, 3, 3));
+            registry.Register(JDG.Domain.AbilityName.SacrificeHardCorner3Atk3Def, () => specialFactory.CreateOptionalSacrificeForStats(JDG.Domain.AbilityName.SacrificeHardCorner3Atk3Def, 3, 3));
+            registry.Register(JDG.Domain.AbilityName.Sacrifice2Japan, () => specialFactory.CreateConditionalSacrifice(JDG.Domain.AbilityName.Sacrifice2Japan, 0, 0, JDG.Domain.Enums.CardFamily.Japan, 2));
+            registry.Register(JDG.Domain.AbilityName.Sacrifice2Incarnation, () => specialFactory.CreateConditionalSacrifice(JDG.Domain.AbilityName.Sacrifice2Incarnation, 0, 0, JDG.Domain.Enums.CardFamily.Incarnation, 2));
+
+            // INVOKE ABILITIES
+            registry.Register(JDG.Domain.AbilityName.InvokeTentacules, () => sacrificeFactory.CreateInvokeSpecificCard(JDG.Domain.AbilityName.InvokeTentacules, "Tentacules"));
+            registry.Register(JDG.Domain.AbilityName.InvokeDresseurBidulmon, () => sacrificeFactory.CreateInvokeSpecificCard(JDG.Domain.AbilityName.InvokeDresseurBidulmon, "Dresseur Bidulmon"));
+            registry.Register(JDG.Domain.AbilityName.InvokeSebOrJDG, () => sacrificeFactory.CreateInvokeSpecificCard(JDG.Domain.AbilityName.InvokeSebOrJDG, "Seb Du Grenier"));
+
+            // STAT MODIFIER ABILITIES
+            registry.Register(JDG.Domain.AbilityName.GiveAtkDefToComics, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAtkDefToComics, JDG.Domain.Enums.CardFamily.Comics, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.GiveAtkDefToRpgMember, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAtkDefToRpgMember, JDG.Domain.Enums.CardFamily.Rpg, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.GiveAtkDefToFistilandMember, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.GiveAtkDefToFistilandMember, JDG.Domain.Enums.CardFamily.Fistiland, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.Win1Atk1DefDeveloper, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.Win1Atk1DefDeveloper, JDG.Domain.Enums.CardFamily.Developer, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.Win1Atk1DefFistiland, () => statModifierFactory.CreateGiveFamilyStats(JDG.Domain.AbilityName.Win1Atk1DefFistiland, JDG.Domain.Enums.CardFamily.Fistiland, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.Win1ATK1DefJaponWith2ATK2DEFCondition, () => statModifierFactory.CreateConditionalStats(JDG.Domain.AbilityName.Win1ATK1DefJaponWith2ATK2DEFCondition, JDG.Domain.Enums.CardFamily.Japan, 2, 2, 1, 1));
+            registry.Register(JDG.Domain.AbilityName.CopyBenzaieJeune, () => statModifierFactory.CreateCopyStats(JDG.Domain.AbilityName.CopyBenzaieJeune, "Benzaie Jeune"));
+
+            // PROTECTION ABILITIES
+            registry.Register(JDG.Domain.AbilityName.CantBeAttackIfComics, () => protectionFactory.CreateCantBeAttacked(JDG.Domain.AbilityName.CantBeAttackIfComics, JDG.Domain.Enums.CardFamily.Comics));
+            registry.Register(JDG.Domain.AbilityName.CantBeAttackKill, () => protectionFactory.CreateCantBeAttacked(JDG.Domain.AbilityName.CantBeAttackKill, null));
+            registry.Register(JDG.Domain.AbilityName.ProtectedBehindStarlightUnicorn, () => protectionFactory.CreateProtectBehind(JDG.Domain.AbilityName.ProtectedBehindStarlightUnicorn, null));
+            registry.Register(JDG.Domain.AbilityName.ProtectBehindGreaterDef, () => protectionFactory.CreateProtectBehind(JDG.Domain.AbilityName.ProtectBehindGreaterDef, null));
+            registry.Register(JDG.Domain.AbilityName.CanOnlyAttackItself, () => protectionFactory.CreateCanOnlyAttackItself());
+
+            // DEPENDENCY ABILITIES
+            registry.Register(JDG.Domain.AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune, () => protectionFactory.CreateDependency(JDG.Domain.AbilityName.CantLiveWithoutBenzaieOrBenzaieJeune, "Benzaie", "Benzaie Jeune"));
+            registry.Register(JDG.Domain.AbilityName.CantLiveWithoutJDG, () => protectionFactory.CreateDependency(JDG.Domain.AbilityName.CantLiveWithoutJDG, "Joueur Du Grenier"));
+            registry.Register(JDG.Domain.AbilityName.CantLiveWithoutComics, () => protectionFactory.CreateDependency(JDG.Domain.AbilityName.CantLiveWithoutComics, "Comics"));
+            registry.Register(JDG.Domain.AbilityName.CantLiveWithoutHuman, () => protectionFactory.CreateDependency(JDG.Domain.AbilityName.CantLiveWithoutHuman, "Human"));
+            registry.Register(JDG.Domain.AbilityName.CantLiveWithoutJapon, () => protectionFactory.CreateDependency(JDG.Domain.AbilityName.CantLiveWithoutJapon, "Japon"));
+            registry.Register(JDG.Domain.AbilityName.CantLiveWithoutGranolaxOrMechaGranolax, () => protectionFactory.CreateDependency(JDG.Domain.AbilityName.CantLiveWithoutGranolaxOrMechaGranolax, "Granolax", "Mecha Granolax"));
+
+            // LIFECYCLE ABILITIES
+            registry.Register(JDG.Domain.AbilityName.SurviveOneTurn, () => protectionFactory.CreateLimitedLifetime(JDG.Domain.AbilityName.SurviveOneTurn, 1));
+            registry.Register(JDG.Domain.AbilityName.ComesBackFromDeath, () => combatFactory.CreateResurrection(JDG.Domain.AbilityName.ComesBackFromDeath, 1, false));
+            registry.Register(JDG.Domain.AbilityName.ComesBackFromDeath5Times, () => combatFactory.CreateResurrection(JDG.Domain.AbilityName.ComesBackFromDeath5Times, 5, false));
+            registry.Register(JDG.Domain.AbilityName.GiveDeathWhenDie, () => combatFactory.CreateDeathTrigger());
+
+            // COMBAT ABILITIES
+            registry.Register(JDG.Domain.AbilityName.SkipOpponentAttackEveryTurn, () => combatFactory.CreateSkipAttack(JDG.Domain.AbilityName.SkipOpponentAttackEveryTurn, true));
+
+            // SPECIAL ABILITIES
+            registry.Register(JDG.Domain.AbilityName.SendAllCardToHands, () => specialFactory.CreateSendAllToHand());
+            registry.Register(JDG.Domain.AbilityName.ChangeFieldWithFieldFromDeck, () => specialFactory.CreateOptionalChangeField());
+
+            // DEFAULT ABILITY
+            registry.Register(JDG.Domain.AbilityName.Default, () => new JDG.Application.Abilities.Implementations.DefaultAbility());
+
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log("SharedServicesScope: Abilities registered");
+#endif
+        }
+    }
+}

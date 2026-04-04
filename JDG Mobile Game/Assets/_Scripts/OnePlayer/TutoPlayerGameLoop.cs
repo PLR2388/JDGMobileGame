@@ -1,8 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using _Scripts.Units.Invocation;
 using Cards;
+using JDG.Application.Cards;
+using JDG.Application.Services;
+using JDG.Domain.Events;
+using JDG.Infrastructure.Cards;
 using OnePlayer.DialogueBox;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +15,7 @@ namespace OnePlayer
 {
     /// <summary>
     /// Represents the game loop for the tutorial player.
+    /// Phase 122: Uses EventBus for HighlightRequestedEvent instead of static UnityEvent.
     /// </summary>
     public class TutoPlayerGameLoop : GameLoop
     {
@@ -18,7 +23,7 @@ namespace OnePlayer
         [SerializeField] private GameObject tutoVideo;
 
         [SerializeField] private GameObject miniCardMenu;
-        [SerializeField] private Transform canvas;
+        // Phase 136: Removed canvas SerializeField - now uses inherited _canvasProvider
         [SerializeField] private GameObject nextPhaseButtonGameObject;
         private Button nextPhaseButton;
 
@@ -60,6 +65,12 @@ namespace OnePlayer
 
         private const string EquipSymbol = ">";
 
+        // Phase 123: EventBus subscription for dialogue index changes
+        private IDisposable _dialogueIndexSubscription;
+
+        // Phase 143: EventBus subscription for tutorial-specific touch handling
+        private IDisposable _touchSubscription;
+
         /// <summary>
         /// Awake is called when the script instance is being loaded.
         /// </summary>
@@ -67,31 +78,88 @@ namespace OnePlayer
         {
             // The opponent is player1 (only the AI attacks the player directly)
             actionScenarios = GetComponent<ScenarioDecoder>().Scenario.ActionScenarios;
-            DialogueUI.DialogIndex.AddListener(TriggerScenarioAction);
             nextPhaseButton = nextPhaseButtonGameObject.GetComponent<Button>();
         }
 
         /// <summary>
         /// Start is called on the frame when a script is enabled just before any of the Update methods are called the first time.
+        /// Phase 123: Subscribe to DialogueIndexChangedEvent for tutorial scenario triggers.
+        /// Phase 143: Subscribe to TouchStartedEvent for tutorial attack phase handling.
         /// </summary>
-        private void Start()
+        protected override void Start()
         {
-            InputManager.OnLongTouch.AddListener(OnLongTouch);
-            InputManager.OnTouch.AddListener(OnTouch);
-            InputManager.OnReleaseTouch.AddListener(OnReleaseTouch);
-            InputManager.OnBackPressed.AddListener(OnBackPressed);
-            Draw();
+            // Base class handles EventBus subscriptions and calls Draw()
+            base.Start();
+            // Phase 123: Subscribe to DialogueIndexChangedEvent via EventBus
+            _dialogueIndexSubscription = _eventBus?.Subscribe<DialogueIndexChangedEvent>(OnDialogueIndexChanged);
+            // Phase 143: Subscribe to TouchStartedEvent for tutorial attack phase
+            _touchSubscription = _eventBus?.Subscribe<TouchStartedEvent>(OnTutoTouch);
+        }
+
+        /// <summary>
+        /// Handles DialogueIndexChangedEvent to trigger scenario actions.
+        /// Phase 123: Replaces DialogueUI.DialogIndex static event listener.
+        /// </summary>
+        private void OnDialogueIndexChanged(DialogueIndexChangedEvent evt)
+        {
+            TriggerScenarioAction(evt.DialogueIndex);
+        }
+
+        /// <summary>
+        /// Tutorial-specific touch handling for Attack phase.
+        /// Phase 143: Multi-step attack flow - highlight Tentacules, then attack button.
+        /// Note: Human is Player2 in the tutorial.
+        /// </summary>
+        private void OnTutoTouch(TouchStartedEvent evt)
+        {
+            // Only handle during Attack phase
+            if (_gameStateService.CurrentPhase != JDG.Domain.Phase.Attack) return;
+
+            var cardTouch = _raycastService.GetTouchedCard();
+            if (cardTouch == null) return;
+
+            // Step 2: User (Player2) clicked on Tentacules (their attacking card)
+            if (cardTouch.Title == CardNameMappings.CardNameMap[CardNames.Tentacules]
+                && cardTouch.CardOwner == JDG.Domain.CardOwner.Player2)
+            {
+                // Deactivate Tentacules highlight
+                _eventBus?.Publish(new HighlightRequestedEvent
+                {
+                    Element = (int)HighlightElement.Tentacules,
+                    IsActivated = false
+                });
+                // Base class will show the attack menu - highlight attack button after a frame
+                StartCoroutine(HighlightAttackButtonAfterDelay());
+            }
+        }
+
+        /// <summary>
+        /// Highlights the attack button after the menu appears.
+        /// Phase 143: Waits one frame for the attack menu to be displayed.
+        /// </summary>
+        private IEnumerator HighlightAttackButtonAfterDelay()
+        {
+            yield return null; // Wait for attack menu to appear
+            _eventBus?.Publish(new HighlightRequestedEvent
+            {
+                Element = (int)HighlightElement.AttackButton,
+                IsActivated = true
+            });
         }
 
         /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.
+        /// Phase 123: Dispose DialogueIndexChangedEvent subscription.
+        /// Phase 143: Dispose TouchStartedEvent subscription.
         /// </summary>
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
-            InputManager.OnLongTouch.RemoveListener(OnLongTouch);
-            InputManager.OnTouch.RemoveListener(OnTouch);
-            InputManager.OnReleaseTouch.RemoveListener(OnReleaseTouch);
-            InputManager.OnBackPressed.RemoveListener(OnBackPressed);
+            // Phase 123: Dispose subscription
+            _dialogueIndexSubscription?.Dispose();
+            // Phase 143: Dispose touch subscription
+            _touchSubscription?.Dispose();
+            // Base class handles EventBus cleanup
+            base.OnDestroy();
         }
 
         /// <summary>
@@ -102,7 +170,8 @@ namespace OnePlayer
         {
             try
             {
-                var actionScenario = actionScenarios.First(elt => elt.Index == index);
+                var actionScenario = actionScenarios.FirstOrDefault(elt => elt.Index == index);
+                if (actionScenario == null) return; // No scenario action defined for this dialogue index
                 var highlight = actionScenario.Highlight;
                 var putCard = actionScenario.PutCard;
                 var image = actionScenario.Image;
@@ -139,7 +208,8 @@ namespace OnePlayer
             catch (Exception e)
             {
                 UnsetHighlight();
-                Console.WriteLine(e);
+                // Phase 158: Use Debug.LogError instead of Console.WriteLine for Unity visibility
+                Debug.LogError($"TutoPlayerGameLoop.TriggerScenarioAction: Exception at index {index}: {e}");
             }
         }
         
@@ -152,23 +222,41 @@ namespace OnePlayer
             string attacker = attack[0];
             string defender = attack.Length > 1 && !string.IsNullOrEmpty(attack[1]) ? attack[1] : CardNameMappings.CardNameMap[CardNames.Player];
 
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            // Phase 158: Use FirstOrDefault + null check to prevent InvalidOperationException
             InGameInvocationCard attackerInvocationCard =
-                CardManager.Instance.GetCurrentPlayerCards().InvocationCards.First(card => card.Title == attacker);
+                _cardCollectionService.GetCurrentPlayerCards().InvocationCards.FirstOrDefault(card => card.Title == attacker);
 
-            PlayerCards opponentPlayerCards = CardManager.Instance.GetOpponentPlayerCards();
+            if (attackerInvocationCard == null)
+            {
+                Debug.LogError($"TutoPlayerGameLoop.HandleAttack: Attacker '{attacker}' not found in current player's invocation cards");
+                return;
+            }
 
+            PlayerCards opponentPlayerCards = _cardCollectionService.GetOpponentPlayerCards();
+
+            // Phase 158: Use FirstOrDefault + null check to prevent InvalidOperationException
             InGameInvocationCard opponentInvocationCard = defender == CardNameMappings.CardNameMap[CardNames.Player]
                 ? opponentPlayerCards.Player as InGameInvocationCard
                 : opponentPlayerCards.InvocationCards
-                    .First(card => card.Title == defender);
+                    .FirstOrDefault(card => card.Title == defender);
 
-            CardManager.Instance.Attacker = attackerInvocationCard;
-            CardManager.Instance.Opponent = opponentInvocationCard;
+            // Phase 144: Add null check for the cast result
+            if (opponentInvocationCard == null)
+            {
+                Debug.LogWarning($"TutoPlayerGameLoop: Failed to cast defender '{defender}' to InGameInvocationCard");
+                return;
+            }
+
+            // Phase 17-18: Use ICombatService instead of CardManager.Instance
+            _combatService.Attacker = attackerInvocationCard;
+            _combatService.Opponent = opponentInvocationCard;
             ComputeAttack();
 
             if (defender == CardNameMappings.CardNameMap[CardNames.Player])
             {
-                HighLightPlane.Highlight.Invoke(HighlightElement.InHandButton, true);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.InHandButton, IsActivated = true });
             }
         }
         
@@ -177,9 +265,10 @@ namespace OnePlayer
         /// </summary>
         /// <param name="putCard">The name of the card to be placed.</param>
 
-        private static void PlaceCard(string putCard)
+        private void PlaceCard(string putCard)
         {
-            PlayerCards playerCards = CardManager.Instance.GetCurrentPlayerCards();
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            PlayerCards playerCards = _cardCollectionService.GetCurrentPlayerCards();
             if (putCard.Contains(EquipSymbol))
             {
                 EquipInvocationCard(putCard, playerCards);
@@ -216,31 +305,38 @@ namespace OnePlayer
         
         /// <summary>
         /// Equips the specified invocation card with the given equipment.
+        /// Phase 141: Now uses IAbilityExecutor with ICardSyncService for proper stat sync.
+        /// Phase 146: Added validation for card type to catch tutorial data issues.
         /// </summary>
         /// <param name="putCard">Card data for equipment and invocation card.</param>
         /// <param name="playerCards">Current player's card details.</param>
-        private static void EquipInvocationCard(string putCard, PlayerCards playerCards)
+        private void EquipInvocationCard(string putCard, PlayerCards playerCards)
         {
-
             var cardNames = putCard.Split('>');
 
-            InGameEquipmentCard equipmentCard =
-                playerCards.HandCards.FirstOrDefault(elt => elt.Title == cardNames[0]) as InGameEquipmentCard;
+            // Phase 146: Search for card by title first, then validate type
+            var handCardByTitle = playerCards.HandCards.FirstOrDefault(elt => elt.Title == cardNames[0]);
+            InGameEquipmentCard equipmentCard = handCardByTitle as InGameEquipmentCard;
+
+            // Phase 146: Log warning if card found by title but wrong type
+            if (handCardByTitle != null && equipmentCard == null)
+            {
+                Debug.LogWarning($"[TutoPlayerGameLoop] Card '{cardNames[0]}' found in hand but is {handCardByTitle.GetType().Name}, not InGameEquipmentCard. Check tutorial data.");
+            }
+
             InGameInvocationCard invocationCard =
                 playerCards.InvocationCards.FirstOrDefault(elt => elt.Title == cardNames[1]);
 
-            if (equipmentCard == null) return;
+            if (equipmentCard == null || invocationCard == null) return;
 
-            invocationCard?.SetEquipmentCard(equipmentCard);
+            // Phase 141: Execute equipment abilities via IAbilityExecutor
+            // This uses ICardSyncService internally to sync domain Card changes back to InGameInvocationCard
+            var opponentCards = _cardCollectionService.GetOpponentPlayerCards();
+            _abilityExecutor.ExecuteOnEquipmentAttached(equipmentCard, invocationCard, playerCards, opponentCards);
+
+            // Attach equipment and remove from hand
+            invocationCard.SetEquipmentCard(equipmentCard);
             playerCards.HandCards.Remove(equipmentCard);
-            foreach (var equipmentCardEquipmentAbility in equipmentCard.EquipmentAbilities)
-            {
-                equipmentCardEquipmentAbility.ApplyEffect(
-                    invocationCard,
-                    playerCards,
-                    CardManager.Instance.GetOpponentPlayerCards()
-                );
-            }
         }
         
         /// <summary>
@@ -252,7 +348,8 @@ namespace OnePlayer
             UnsetHighlight();
             if (highlightMapping.TryGetValue(highlight, out var highlightElement))
             {
-                HighLightPlane.Highlight.Invoke(highlightElement, true);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)highlightElement, IsActivated = true });
             }
             else if (highlight != Highlight.unknown)
             {
@@ -262,38 +359,39 @@ namespace OnePlayer
 
         /// <summary>
         /// Handles the transition to the next round of the game.
+        /// Note: Attack phase skip for Player 1 on Turn 1 is handled automatically by GameStateService.NextPhase().
         /// </summary>
         protected override void NextRound()
         {
-            HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, false);
-            InvocationMenuManager.Instance.Hide();
-            if (GameStateManager.Instance.IsP1Turn == false)
+            // Phase 122: Publish via EventBus
+            _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = false });
+            // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+            _invocationMenuService.Hide();
+            if (_gameStateService.CurrentPlayer != JDG.Domain.ValueObjects.PlayerId.Player1)
             {
-                DialogueUI.TriggerDoneEvent.Invoke(NextDialogueTrigger.NextPhase);
-            }
-            if (GameStateManager.Instance.NumberOfTurn == 1 && GameStateManager.Instance.IsP1Turn)
-            {
-                GameStateManager.Instance.SetPhase(Phase.End);
-            }
-            else
-            {
-                GameStateManager.Instance.NextPhase();
+                // Phase 123: Publish via EventBus instead of static TriggerDoneEvent
+                _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.NextPhase });
             }
 
-            var playerStatus = PlayerManager.Instance.GetCurrentPlayerStatus();
-            if (GameStateManager.Instance.Phase == Phase.Attack && playerStatus.BlockAttack)
+            // NextPhase() automatically skips Attack phase for Player 1 on Turn 1
+            _gameStateService.NextPhase();
+
+            // Check if attack is blocked by card effects
+            var playerStatus = _playerStatusProvider.GetCurrentPlayerStatus();
+            if (_gameStateService.CurrentPhase == JDG.Domain.Phase.Attack && playerStatus.BlockAttack)
             {
-                GameStateManager.Instance.SetPhase(Phase.End);
+                _gameStateService.SetPhase(JDG.Domain.Phase.End);
             }
 
-            RoundDisplayManager.Instance.AdaptUIToPhaseIdInNextRound(false);
+            // Phase 9: Use injected service instead of RoundDisplayManager.Instance
+            _roundDisplayService.AdaptUIToPhaseIdInNextRound(false);
 
-            switch (GameStateManager.Instance.Phase)
+            switch (_gameStateService.CurrentPhase)
             {
-                case Phase.Attack:
+                case JDG.Domain.Phase.Attack:
                     PlayAttackMusic();
                     break;
-                case Phase.End:
+                case JDG.Domain.Phase.End:
                     EndTurnPhase();
                     break;
             }
@@ -302,47 +400,90 @@ namespace OnePlayer
 
         /// <summary>
         /// Displays available opponents for the current player.
+        /// Defense-in-depth: Uses GameStateService.ShouldSkipAttackPhase for Turn 1 restriction.
         /// </summary>
         public new void DisplayAvailableOpponent()
         {
-            var notEmptyOpponent = CardManager.Instance.BuildInvocationCardsForAttack();
+            // Defense-in-depth: Block attack if attack phase should be skipped
+            if (_gameStateService.ShouldSkipAttackPhase)
+            {
+#if UNITY_EDITOR
+                Debug.Log("TutoPlayerGameLoop: Attack blocked - Player 1 cannot attack on Turn 1");
+#endif
+                return;
+            }
+
+#if UNITY_EDITOR
+            Debug.Log("TutoPlayerGameLoop.DisplayAvailableOpponent: Called");
+#endif
+            // Phase 17-18: Use ICombatService instead of CardManager.Instance
+            var notEmptyOpponent = _combatService.BuildValidTargets();
+#if UNITY_EDITOR
+            Debug.Log($"TutoPlayerGameLoop.DisplayAvailableOpponent: Found {notEmptyOpponent?.Count ?? 0} valid targets");
+#endif
             DisplayOpponentMessageBox(notEmptyOpponent);
-            InputManager.Instance.DisableDetectionTouch();
+            // Phase 19-20: Use injected InputManager from base class instead of .Instance
+            _inputManager.DisableDetectionTouch();
         }
 
         /// <summary>
-        /// Display the MessageBox with the available opponents
+        /// Display the MessageBox with the available opponents.
+        /// Phase 35: Uses inherited _dialogService instead of CardSelector.Instance.
+        /// Phase 143: Multi-step highlight flow - deactivate attack button, highlight JMB.
+        /// Phase 166: Changed parameter to IReadOnlyList{IInGameCard} to match BuildValidTargets().
         /// </summary>
         /// <param name="invocationCards">Available opponents list</param>
-        private void DisplayOpponentMessageBox(List<InGameCard> invocationCards)
+        private void DisplayOpponentMessageBox(IReadOnlyList<IInGameCard> invocationCards)
         {
-            void PositiveAction(InGameInvocationCard invocationCard)
+            // Phase 143: Deactivate attack button highlight when selector opens
+            _eventBus?.Publish(new HighlightRequestedEvent
             {
+                Element = (int)HighlightElement.AttackButton,
+                IsActivated = false
+            });
+
+            // Phase 143: Set card to highlight in selector
+            DisplayCards.CardToHighlight = CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages];
+
+            void PositiveAction(IInGameInvocationCard invocationCard)
+            {
+                // Phase 143: Clear the card to highlight
+                DisplayCards.CardToHighlight = null;
+
                 if (invocationCard?.Title == CardNameMappings.CardNameMap[CardNames.JeanMichelBruitages])
                 {
-                    CardManager.Instance.Opponent = invocationCard;
+                    // Phase 166: Opponent is now IInGameInvocationCard, no cast needed
+                    _combatService.Opponent = invocationCard;
                     ComputeAttack();
-                    HighLightPlane.Highlight.Invoke(HighlightElement.Tentacules, false);
                     miniCardMenu.SetActive(false);
-                    HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
+                    // Phase 143: Highlight next phase button after attack
+                    _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = true });
+                    // Phase 142: Publish NextPhase trigger to advance dialogue from index 19 (Attack trigger)
+                    _eventBus?.Publish(new DialogueTriggerCompletedEvent { TriggerType = (int)NextDialogueTrigger.Attack });
                 }
-                InputManager.Instance.EnableDetectionTouch();
+                // Phase 19-20: Use injected InputManager from base class instead of .Instance
+                _inputManager.EnableDetectionTouch();
             }
 
-            var config = new CardSelectorConfig(
-                LocalizationSystem.Instance.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
-                invocationCards,
-                showOkButton: true,
-                okAction: (invocationCard) =>
+            // Phase 34: Use inherited _localizationService from GameLoop
+            // Phase 35: Use inherited _dialogService instead of CardSelector.Instance
+            var cardObjects = new List<object>();
+            foreach (var card in invocationCards) cardObjects.Add(card);
+
+            var options = new CardSelectorOptions
+            {
+                Title = _localizationService.GetLocalizedValue(LocalizationKeys.CARDS_SELECTOR_TITLE_CHOOSE_OPPONENT),
+                Cards = cardObjects,
+                ShowOkButton = true,
+                OnOkSingle = (card) =>
                 {
-                    PositiveAction(invocationCard as InGameInvocationCard);
+                    PositiveAction(card as IInGameInvocationCard);
                     nextPhaseButtonGameObject.SetActive(true);
                 }
-            );
-            CardSelector.Instance.CreateCardSelection(
-                canvas,
-                config
-            );
+            };
+            // Phase 136: Use inherited _canvasProvider instead of SerializeField
+            var canvasTransform = _canvasProvider.GetGameCanvas() as Transform;
+            _dialogService.ShowCardSelector(canvasTransform, options);
         }
 
         /// <summary>
@@ -352,7 +493,8 @@ namespace OnePlayer
         {
             foreach (var element in highlightMapping.Values)
             {
-                HighLightPlane.Highlight.Invoke(element, false);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)element, IsActivated = false });
             }
         }
 
@@ -361,23 +503,17 @@ namespace OnePlayer
         /// </summary>
         protected override void ChoosePhase()
         {
-            InvocationMenuManager.Instance.Enable();
+            // Phase 9: Use injected service instead of InvocationMenuManager.Instance
+            _invocationMenuService.Enable();
             ChoosePhaseMusic();
 
-            if (GameStateManager.Instance.NumberOfTurn == 2 && CardManager.Instance.GetCurrentPlayerCards().InvocationCards.Count == 2)
+            // Phase 17-18: Use ICardCollectionService instead of CardManager.Instance
+            if (_gameStateService.TurnNumber == 2 && _cardCollectionService.GetCurrentPlayerCards().InvocationCards.Count == 2)
             {
-                HighLightPlane.Highlight.Invoke(HighlightElement.NextPhaseButton, true);
+                // Phase 122: Publish via EventBus
+                _eventBus?.Publish(new HighlightRequestedEvent { Element = (int)HighlightElement.NextPhaseButton, IsActivated = true });
             }
         }
 
-        /// <summary>
-        /// Handles the touch input by the player during the game.
-        /// </summary>
-        private void OnTouch()
-        {
-            var cardTouch = CardRaycastManager.Instance.GetTouchedCard();
-            if (cardTouch?.Title != CardNameMappings.CardNameMap[CardNames.Tentacules] || GameStateManager.Instance.Phase != Phase.Attack) return;
-            HandleSingleTouch(cardTouch, CardOwner.Player2, true);
-        }
     }
 }
